@@ -46,6 +46,7 @@ public partial class App
             .AddSingleton<IProjectService, ProjectService>()
             .AddSingleton<IFileService, FileService>()
             .AddSingleton<IBuildService, BuildService>()
+            .AddSingleton<IDebugService, DebugService>()
 
             // Page ViewModels
             .AddTransient<AboutPageViewModel>()

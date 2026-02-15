@@ -1,16 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-
-// Avishai Dernis 2025
-
-
-// Avishai Dernis 2025
-
-
-// Avishai Dernis 2025
-
-using Zarem.Emulator.Executor;
-
 namespace Zarem.Emulator.Executor.Enum;
 
 /// <summary>

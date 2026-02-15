@@ -31,6 +31,12 @@ public interface IProject
     DebugSession? StartDebug();
 
     /// <summary>
+    /// Creates a debug session.
+    /// </summary>
+    /// <param name="file">The file to use as an entry point.</param>
+    Task<DebugSession?> StartDebugAsync(ObjectFile file);
+
+    /// <summary>
     /// Builds the project.
     /// </summary>
     Task<BuildResult?> BuildProjectAsync(bool rebuild = false, Logger? logger = null);

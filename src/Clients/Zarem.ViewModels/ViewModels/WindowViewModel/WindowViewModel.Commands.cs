@@ -20,9 +20,6 @@ public partial class WindowViewModel
     [RelayCommand]
     private void OpenSettings() => MainViewModel.GoToPageByType<SettingsPageViewModel>();
 
-    /// <summary>
-    /// Open the welcome page.
-    /// </summary>
     [RelayCommand]
     private void OpenWelcome() => MainViewModel.GoToPageByType<WelcomePageViewModel>();
 
@@ -30,5 +27,5 @@ public partial class WindowViewModel
     private void ShowConsole() => _consoleService.ShowConsoleWindow();
 
     [RelayCommand]
-    private void ToggleFullscrenMode() => _windowingService.ToggleFullScreen();
+    private void ToggleFullScreenMode() => _windowingService.ToggleFullScreen();
 }

@@ -24,6 +24,7 @@ public partial class WindowViewModel : ObservableRecipient
     private readonly IProjectService _projectService;
     private readonly IWindowingService _windowingService;
     private readonly IBuildService _buildService;
+    private readonly IDebugService _debugService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowViewModel"/> class.
@@ -34,6 +35,7 @@ public partial class WindowViewModel : ObservableRecipient
         IProjectService projectService,
         IWindowingService windowingService,
         IBuildService buildService,
+        IDebugService debugService,
         MainViewModel mainViewModel,
         PanelViewModel panelViewModel)
     {
@@ -42,6 +44,7 @@ public partial class WindowViewModel : ObservableRecipient
         _projectService = projectService;
         _windowingService = windowingService;
         _buildService = buildService;
+        _debugService = debugService;
 
         MainViewModel = mainViewModel;
         PanelViewModel = panelViewModel;

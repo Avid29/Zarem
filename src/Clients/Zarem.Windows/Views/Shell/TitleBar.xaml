@@ -210,8 +210,8 @@
             </MenuBarItem>
 
             <!--  View  -->
-            <!--<MenuBarItem x:Uid="/TitleBar/ViewMBI" Title="View">
-                <MenuFlyoutItem x:Uid="/TitleBar/ToggleFullScreenMFI" Text="Toggle Full Screen"
+            <MenuBarItem x:Uid="/TitleBar/ViewMBI" Title="View">
+                <!--<MenuFlyoutItem x:Uid="/TitleBar/ToggleFullScreenMFI" Text="Toggle Full Screen"
                                 Command="{x:Bind ViewModel.ToggleFullScreenModeCommand, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE72B;" />
@@ -219,11 +219,9 @@
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control,Shift" Key="F12"/>
                     </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-                <MenuFlyoutItem Text="Show Console" Command="{x:Bind ViewModel.ShowConsoleCommand, Mode=OneWay}">
-                    
-                </MenuFlyoutItem>
-            </MenuBarItem>-->
+                </MenuFlyoutItem>-->
+                <MenuFlyoutItem Text="Show Console" Command="{x:Bind ViewModel.ShowConsoleCommand, Mode=OneWay}"/>
+            </MenuBarItem>
 
             <!--  Build  -->
             <MenuBarItem x:Uid="/TitleBar/BuildMBI" Title="Build">
@@ -283,7 +281,14 @@
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Uid="/TitleBar/StartWithoutDebuggingMFI" Text="Start Without Debugging"
-                                Command="{x:Bind ViewModel.StartWithoutDebuggingCommand, Mode=OneWay}">
+                                Command="{x:Bind ViewModel.StartWithoutDebuggingCommand, Mode=OneWay}" IsEnabled="False">
+                    <MenuFlyoutItem.Icon>
+                        <ImageIcon Source="{StaticResource StartWithoutDebuggingIcon}"/>
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem x:Uid="/TitleBar/StartFileWithoutDebuggingMFI" Text="Start File Without Debugging"
+                                Command="{x:Bind ViewModel.StartFileWithoutDebuggingCommand, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartWithoutDebuggingIcon}"/>
                     </MenuFlyoutItem.Icon>

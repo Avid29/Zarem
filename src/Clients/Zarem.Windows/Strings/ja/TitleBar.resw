@@ -273,4 +273,7 @@
   <data name="OpenWikiMFI.Text" xml:space="preserve">
     <value>Open Wiki</value>
   </data>
+  <data name="StartFileWithoutDebuggingMFI.Text" xml:space="preserve">
+    <value>Start File Without Debugging</value>
+  </data>
 </root>

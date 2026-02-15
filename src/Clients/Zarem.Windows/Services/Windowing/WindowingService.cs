@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-
-// Avishai Dernis 2025
-
 using Zarem.Services.Windowing;
 using Windows.UI.ViewManagement;
 

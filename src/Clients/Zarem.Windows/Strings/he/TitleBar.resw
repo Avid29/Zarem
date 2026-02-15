@@ -273,4 +273,7 @@
   <data name="OpenWikiMFI.Text" xml:space="preserve">
     <value>פתח ויקי</value>
   </data>
+  <data name="StartFileWithoutDebuggingMFI.Text" xml:space="preserve">
+    <value>הפעל קובץ ללא ניפוי שגיאות</value>
+  </data>
 </root>

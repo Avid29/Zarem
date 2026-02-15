@@ -1,6 +1,12 @@
 ﻿// Avishai Dernis 2026
 
+using System.IO;
 using System.Threading.Tasks;
+using Zarem.Assembler;
+using Zarem.Elf;
+using Zarem.Elf.Config;
+using Zarem.Emulator;
+using Zarem.Emulator.Interpreter;
 using Zarem.Models.Files;
 using Zarem.Services.Popup;
 using Zarem.Services.Popup.Enums;
@@ -29,21 +35,60 @@ public class DebugService : IDebugService
         _projectService = projectService;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public async Task RunAsync(SourceFile file, bool debug = true)
+    /// <inheritdoc/>
+    public async Task RunAsync(bool debug = true)
     {
         // TODO: Report issue
         if (_projectService.Project is null)
             return;
 
-        // Run checks to see if the file can/should run
-        bool shouldRun = await PreRunChecks(file);
-        if (!shouldRun)
+        // Start a debug session
+        var session = _projectService.Project.StartDebug();
+        if (session is null)
             return;
 
-        // Run the file
+        session.Emulator.Start();
+    }
+
+    /// <inheritdoc/>
+    public async Task RunFileAsync(SourceFile file, bool debug = true)
+    {
+        // TODO: Report issue
+        if (_projectService.Project is null)
+            return;
+
+        // Run checks for if the file should/can run
+        //bool shouldRun = await PreRunChecks(file);
+        //if (!shouldRun)
+        //    return;
+
+        // TODO: Have the project build it based on the config
+
+        // Cheat and build the file here
+        using var readStream = File.OpenRead(file.FullPath);
+        var result = await MIPSAssembler.AssembleAsync(readStream, file.Name, new());
+        if (result.Module is null)
+            return;
+
+        // Cheat and link here
+        var module = MIPSLinker.Link("entry", result.Module);
+        var elfModule = ElfModule.Create(module, new ElfConfig());
+        if (elfModule is null)
+            return;
+
+        // Start a debug session
+        var session = _projectService.Project.StartDebug();
+        if (session is null)
+            return;
+
+        // Cheat and grab the mips emulator
+        if (session.Emulator is not MIPSEmulator mipsEmu)
+            return;
+
+        var trapHandler = new MARSTrapHandler(mipsEmu.Computer);
+
+        session.Emulator.Load(elfModule);
+        session.Emulator.Start();
     }
 
     private async Task<bool> PreRunChecks(SourceFile file)
