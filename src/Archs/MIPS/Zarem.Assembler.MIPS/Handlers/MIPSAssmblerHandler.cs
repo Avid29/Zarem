@@ -6,26 +6,25 @@ using System.Collections.Generic;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Models;
-using Zarem.Assembler.Models.Instructions;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
-namespace Zarem.Assembler;
+namespace Zarem.Assembler.Handlers;
 
 /// <summary>
-/// An <see cref="IArchHandler"/> for the mips architecture.
+/// An <see cref="IAssemblerHandler"/> for the mips architecture.
 /// </summary>
-public class MIPSHandler : IArchHandler
+public class MIPSAssmblerHandler : IAssemblerHandler
 {
     private readonly MIPSAssemblerConfig _config;
     private readonly InstructionTable _instructionTable;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSHandler"/> class.
+    /// Initializes a new instance of the <see cref="MIPSAssmblerHandler"/> class.
     /// </summary>
-    public MIPSHandler(MIPSAssemblerConfig config)
+    public MIPSAssmblerHandler(MIPSAssemblerConfig config)
     {
         _config = config;
         _instructionTable = new InstructionTable(config);

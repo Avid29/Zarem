@@ -2,15 +2,14 @@
 
 using System.Collections.Generic;
 using System.Numerics;
-using Zarem.Assembler.MIPS.Tokenization;
-using Zarem.Assembler.Models.Instructions;
+using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers;
+using Zarem.Assembler.Tokenization;
 using Zarem.Emulator;
+using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine.CPU.Registers;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Executor.Enum;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models;
 
 namespace Test.Emulator.MIPS;
 

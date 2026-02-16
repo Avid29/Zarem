@@ -7,7 +7,7 @@ using Zarem.Assembler.Parsers;
 using Zarem.Models.Instructions;
 using Zarem.Models.Tables;
 
-namespace Zarem.Assembler.Models.Instructions;
+namespace Zarem.Assembler.Models;
 
 /// <summary>
 /// An instruction as parsed by the <see cref="MIPSInstructionParser"/>.

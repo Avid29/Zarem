@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Zarem.Registry.Attributes;
+namespace Zarem.Attributes;
 
 /// <summary>
 /// Marks a class as a zarem plugin type.

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Test.MIPS.Helpers;
 using Zarem.Assembler;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Emulator;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Interpreter;
@@ -22,7 +23,8 @@ public class InterpreterTests
         var stream = File.Open(path, FileMode.Open);
 
         // Run assembler, and assert successful assembly
-        var result = await Zarembler.AssembleAsync(stream, path, new MIPSHandler(new()), new MIPSAssemblerConfig());
+        var config = new MIPSAssemblerConfig();
+        var result = await Zarembler.AssembleAsync(stream, path, new MIPSAssmblerHandler(config), config);
         Assert.IsNotNull(result.Module);
 
         //// Link

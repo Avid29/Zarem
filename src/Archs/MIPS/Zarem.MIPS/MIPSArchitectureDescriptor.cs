@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Registry.Attributes;
-using Zarem.Registry.Descriptors;
+using Zarem.Attributes;
+using Zarem.Descriptors;
 
 namespace Zarem.MIPS;
 

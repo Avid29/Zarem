@@ -13,7 +13,6 @@ using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
-using Zarem.Assembler.Models.Instructions;
 using Zarem.Assembler.Parsers.Enums;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;

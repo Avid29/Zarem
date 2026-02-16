@@ -2,7 +2,6 @@
 
 using Zarem.Emulator;
 using Zarem.Emulator.Config;
-using Zarem.Registry.Descriptors;
 
 namespace Zarem.Components.Interfaces;
 

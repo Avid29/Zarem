@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using Zarem.Descriptors;
 using Zarem.Emulator;
 using Zarem.Emulator.Config;
-using Zarem.Registry.Attributes;
-using Zarem.Registry.Descriptors;
+using Zarem.Attributes;
 
 namespace Zarem.MIPS;
 

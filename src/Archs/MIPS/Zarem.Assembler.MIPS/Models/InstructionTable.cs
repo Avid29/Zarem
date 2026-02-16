@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Enums;
-using Zarem.Assembler.Models.Instructions.Abstract;
 using Zarem.Models.Instructions.Enums;
 
-namespace Zarem.Assembler.Models.Instructions;
+namespace Zarem.Assembler.Models;
 
 /// <summary>
 /// A class for managing instruction lookup by name.

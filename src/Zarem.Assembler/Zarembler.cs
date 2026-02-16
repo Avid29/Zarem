@@ -5,13 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging;
-using Zarem.Assembler.MIPS.Tokenization;
 using Zarem.Assembler.Models;
+using Zarem.Assembler.Tokenization;
 using Zarem.Localization;
 using Zarem.Models;
 using Zarem.Models.Tables;
-using Module = Zarem.Models.Module;
 
 
 namespace Zarem.Assembler;
@@ -23,8 +23,6 @@ namespace Zarem.Assembler;
 //     Pass 1 - Alignment Pass:
 //      - Track all labels and macros
 //      - Assess instruction size
-//        - Real instructions are 4 bytes
-//        - Pseudo instructions have a real instruction count
 //      - Allocate memory
 //        - Note: Memory will be assigned as well where possible,
 //          but all memory will be overwritten on the second pass.
@@ -45,13 +43,13 @@ public partial class Zarembler
 {
     private readonly Logger _logger;
     private readonly Module _module;
-    private readonly IArchHandler _archHandler;
+    private readonly IAssemblerHandler _archHandler;
     private Section _activeSection;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Zarembler"/> class.
     /// </summary>
-    private Zarembler(IArchHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    private Zarembler(IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         _logger = logger ?? new Logger();
         _logger.Register(new Localizer("Zarem.Assembler.Resources.Logger", typeof(Zarembler).Assembly));
@@ -88,7 +86,7 @@ public partial class Zarembler
     /// <summary>
     /// Assembles a string.
     /// </summary>
-    public static async Task<AssemblerResult> AssembleAsync(string str, string? filename, IArchHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    public static async Task<AssemblerResult> AssembleAsync(string str, string? filename, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         using var reader = new StringReader(str);
         var assembler = await AssembleAsync(reader, filename, archHandler, config, logger);
@@ -98,7 +96,7 @@ public partial class Zarembler
     /// <summary>
     /// Assembles a stream.
     /// </summary>
-    public static async Task<AssemblerResult> AssembleAsync(Stream stream, string? filename, IArchHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    public static async Task<AssemblerResult> AssembleAsync(Stream stream, string? filename, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         using var reader = new StreamReader(stream);
         var assembler = await AssembleAsync(reader, filename, archHandler, config, logger);
@@ -108,7 +106,7 @@ public partial class Zarembler
     /// <summary>
     /// Assembles an object module from a stream of assembly.
     /// </summary>
-    private static async Task<Zarembler> AssembleAsync(TextReader reader, string? filename, IArchHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    private static async Task<Zarembler> AssembleAsync(TextReader reader, string? filename, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         logger?.Flush();
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Zarem.Assembler;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Elf;
 using Zarem.Elf.Config;
 using Zarem.Emulator;
@@ -67,7 +68,8 @@ public class DebugService : IDebugService
 
         // Cheat and build the file here
         using var readStream = File.OpenRead(file.FullPath);
-        var result = await Zarembler.AssembleAsync(readStream, file.Name, new MIPSHandler(new()), new MIPSAssemblerConfig());
+        var config = new MIPSAssemblerConfig();
+        var result = await Zarembler.AssembleAsync(readStream, file.Name, new MIPSAssmblerHandler(config), config);
         if (result.Module is null)
             return;
 

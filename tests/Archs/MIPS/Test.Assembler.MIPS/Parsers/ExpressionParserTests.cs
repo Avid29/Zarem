@@ -2,12 +2,9 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using Zarem.Assembler.MIPS.Tokenization;
-using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers;
+using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models.Enums;
-using Zarem.Models;
-using Zarem.Models.Tables.Enums;
 
 namespace Test.Assembler.MIPS.Parsers;
 

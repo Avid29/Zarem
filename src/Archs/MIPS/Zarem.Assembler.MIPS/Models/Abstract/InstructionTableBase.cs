@@ -9,7 +9,7 @@ using System.Text.Json;
 using Zarem.Assembler.Config;
 using Zarem.Models.Instructions.Enums;
 
-namespace Zarem.Assembler.Models.Instructions.Abstract;
+namespace Zarem.Assembler.Models.Abstract;
 
 /// <summary>
 /// A class for managing instruction lookup.

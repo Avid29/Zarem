@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Zarem.Assembler.Models;
 using Zarem.Components.Interfaces;
 using Zarem.Config;
+using Zarem.Descriptors;
 using Zarem.Emulator.Models.Modules;
 using Zarem.Models;
 using Zarem.Models.Files;
-using Zarem.Registry.Descriptors;
 
 namespace Zarem.Components;
 

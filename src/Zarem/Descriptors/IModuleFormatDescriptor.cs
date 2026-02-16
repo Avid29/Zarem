@@ -1,9 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Descriptors;
 
-namespace Zarem.Registry.Descriptors;
+namespace Zarem.Descriptors;
 
 /// <summary>
 /// An interface for a class describing a supported architecture.

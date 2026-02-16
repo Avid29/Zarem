@@ -10,8 +10,6 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.MIPS.Tokenization;
-using Zarem.Assembler.Models.Instructions;
 using Zarem.Assembler.Parsers;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
@@ -20,6 +18,10 @@ using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
+using Zarem.Assembler.Models;
+using Zarem.Assembler.Tokenization;
+
+
 
 #if DEBUG
 using Zarem.Disassembler.Services;

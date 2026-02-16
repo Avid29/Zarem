@@ -5,29 +5,28 @@ using System.IO;
 using System.Threading.Tasks;
 using Zarem.Assembler;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Models;
 using Zarem.Components.Interfaces;
+using Zarem.Descriptors;
 using Zarem.Models.Files;
-using Zarem.Registry.Descriptors;
 
 namespace Zarem.Components;
 
 /// <summary>
 /// A component of a <see cref="Project"/> class for assembling assembly code.
 /// </summary>
-/// <typeparam name="TAsmHandler"></typeparam>
-/// <typeparam name="TConfig"></typeparam>
-public class AssembleComponent<TAsmHandler, TConfig> : IAssembleComponent
-    where TAsmHandler : IArchHandler
+public class AssembleComponent<TAssemblerHandler, TConfig> : IAssembleComponent
+    where TAssemblerHandler : IAssemblerHandler
     where TConfig : AssemblerConfig
 {
-    private TAsmHandler _asmHandler;
+    private TAssemblerHandler _asmHandler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssembleComponent{TAssembler, TConfig}"/> class.
     /// </summary>
-    public AssembleComponent(TAsmHandler asmHandler, TConfig config, IAssemblerDescriptor descriptor)
+    public AssembleComponent(TAssemblerHandler asmHandler, TConfig config, IAssemblerDescriptor descriptor)
     {
         _asmHandler = asmHandler;
         Config = config;

@@ -8,12 +8,12 @@ using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
-namespace Zarem.Assembler;
+namespace Zarem.Assembler.Handlers;
 
 /// <summary>
 /// An interface for an handling architecture specific assembler functions.
 /// </summary>
-public interface IArchHandler
+public interface IAssemblerHandler
 {
     /// <summary>
     /// Gets the name of the architecture.

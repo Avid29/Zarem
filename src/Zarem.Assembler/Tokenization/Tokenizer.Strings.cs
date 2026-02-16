@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Assembler.Tokenization.Models;
 
-namespace Zarem.Assembler.MIPS.Tokenization;
+namespace Zarem.Assembler.Tokenization;
 
 public partial class Tokenizer
 {

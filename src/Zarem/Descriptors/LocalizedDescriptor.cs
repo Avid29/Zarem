@@ -1,10 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Descriptors;
 using Zarem.Localization;
 
-namespace Zarem.Registry.Descriptors;
+namespace Zarem.Descriptors;
 
 /// <summary>
 /// A base class for a <see cref="IDescriptor"/> which implements a lazy localizer.

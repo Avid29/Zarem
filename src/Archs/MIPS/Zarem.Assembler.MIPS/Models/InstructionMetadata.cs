@@ -11,7 +11,7 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
-namespace Zarem.Assembler.Models.Instructions;
+namespace Zarem.Assembler.Models;
 
 /// <summary>
 /// A struct containing info on how an instruction is encoded.

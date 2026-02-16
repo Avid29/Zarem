@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
 
-namespace Zarem.Assembler.MIPS.Tokenization;
+namespace Zarem.Assembler.Tokenization;
 
 /// <summary>
 /// A class for tokenizing an assembly file.
