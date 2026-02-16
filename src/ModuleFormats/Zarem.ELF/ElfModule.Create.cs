@@ -65,7 +65,11 @@ public partial class ElfModule
 
         public void CreateSymTable()
         {
-            _symtab = new ElfSymbolTable();
+            _symtab = new ElfSymbolTable()
+            {
+                Link = new(new ElfStringTable()),
+            };
+
             foreach (var symbol in Module.Symbols.Values)
             {
                 var sectionName = symbol.Address.Section?.Name;

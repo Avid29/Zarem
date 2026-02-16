@@ -40,6 +40,10 @@ public class AbstractionTests<TModule, TConfig>
         var module = TModule.Create(assemblyResult.Module, formatConfig);
         Guard.IsNotNull(module);
 
+        // Save (to nothing)
+        await module.SaveAsync(new MemoryStream());
+
+        // Unextract
         var reconvertedAbstractModule = module.Abstract(formatConfig);
         Guard.IsNotNull(reconvertedAbstractModule);
 
