@@ -12,7 +12,6 @@ namespace Zarem.Models.Tables;
 public class Section
 {
     private readonly List<RelocationEntry> _relocations = [];
-    private readonly Stream _stream;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Section"/> class.
@@ -21,7 +20,7 @@ public class Section
     {
         Name = name;
         Alignment = alignment;
-        _stream = stream ?? new MemoryStream();
+        Stream = stream ?? new MemoryStream();
     } 
 
     /// <summary>
@@ -35,23 +34,33 @@ public class Section
     public uint Alignment { get; }
 
     /// <summary>
+    /// Gets the section's stream.
+    /// </summary>
+    public Stream Stream { get; }
+
+    /// <summary>
+    /// Gets or sets the virtual address of the section when loaded.
+    /// </summary>
+    public ulong VirtualAddress { get; set; }
+
+    /// <summary>
     /// Gets the active position within the section.
     /// </summary>
     public long Position
     {
-        get => _stream.Position;
-        set => _stream.Position = value;
+        get => Stream.Position;
+        set => Stream.Position = value;
     }
 
     /// <summary>
     /// Gets the size of the section.
     /// </summary>
-    public long Size => _stream.Length;
+    public long Size => Stream.Length;
 
     /// <summary>
     /// Gets the current address within the section.
     /// </summary>
-    public Address CurrentAddress => new(this, _stream.Position);
+    public Address CurrentAddress => new(this, Stream.Position);
 
     /// <summary>
     /// Gets a list of the relocations in the section.
@@ -64,7 +73,7 @@ public class Section
     /// <remarks>
     /// Bytes must be in architecture-appropriate endianness.
     /// </remarks>
-    public void Append(ReadOnlySpan<byte> bytes) => _stream.Write(bytes);
+    public void Append(ReadOnlySpan<byte> bytes) => Stream.Write(bytes);
 
     /// <summary>
     /// Reserves a number of bytes in the section.
@@ -80,7 +89,7 @@ public class Section
         if (boundary <= 1)
             return;
 
-        long padding = (boundary - (_stream.Position % boundary)) % boundary;
+        long padding = (boundary - (Stream.Position % boundary)) % boundary;
         if (padding > 0)
             WriteZeroes(padding);
     }
@@ -91,7 +100,7 @@ public class Section
         while (count > 0)
         {
             int chunk = (int)Math.Min(count, zero.Length);
-            _stream.Write(zero[..chunk]);
+            Stream.Write(zero[..chunk]);
             count -= chunk;
         }
     }

@@ -10,7 +10,7 @@ public sealed class RelocationEntry
     /// <summary>
     /// Initializes a new instance of the <see cref="RelocationEntry"/> class.
     /// </summary>
-    public RelocationEntry(string symbolName, Address location, int type, long addend = 0)
+    public RelocationEntry(string symbolName, Address location, uint type, long addend = 0)
     {
         SymbolName = symbolName;
         Location = location;
@@ -34,7 +34,7 @@ public sealed class RelocationEntry
     /// <remarks>
     /// Handled differently depending on architecture.
     /// </remarks>
-    public int Type { get; }
+    public uint Type { get; }
 
     /// <summary>
     /// Gets the addend component

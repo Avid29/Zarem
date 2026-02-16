@@ -309,7 +309,7 @@ public struct MIPSInstructionParser
 
             // Create the relocation
             var reference = expResult.Symbol;
-            relocation = new RelocationEntry(reference.Name, _currentAddress, (int)type, addend + expResult.Addend);
+            relocation = new RelocationEntry(reference.Name, _currentAddress, (uint)type, addend + expResult.Addend);
         }
 
         // NOTE: Casting might truncate the value to fit the bit size.

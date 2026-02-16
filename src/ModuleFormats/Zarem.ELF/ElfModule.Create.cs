@@ -5,7 +5,6 @@ using LibObjectFile.Elf;
 using ObjFormats.LibOF.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using Zarem.Assembler.Config;
 using Zarem.Elf.Config;
 using Zarem.Extensions.System.IO;
 using Zarem.Models;
@@ -52,7 +51,7 @@ public partial class ElfModule
                     _ => ElfSectionSpecialType.None,
                 };
 
-                var elfSec = new ElfStreamSection(type);
+                var elfSec = new ElfStreamSection(type, section.Stream);
                 ElfFile.Add(elfSec);
 
                 section.Stream.Position = 0;
@@ -69,7 +68,8 @@ public partial class ElfModule
             _symtab = new ElfSymbolTable();
             foreach (var symbol in Module.Symbols.Values)
             {
-                var sectionName = symbol.Address?.Section;
+                var sectionName = symbol.Address.Section?.Name;
+
                 ElfSectionLink link = default;
                 if (sectionName is not null)
                 {
@@ -80,7 +80,7 @@ public partial class ElfModule
                 var elfSymbol = new ElfSymbol()
                 {
                     Name = symbol.Name,
-                    Value = (ulong)(symbol.Address?.Value ?? 0),
+                    Value = (ulong)symbol.Address.Offset,
                     Bind = symbol.Binding.ToElf(),
                     SectionLink = link,
                 };
@@ -95,28 +95,31 @@ public partial class ElfModule
         {
             Guard.IsNotNull(_symtab);
 
-            Dictionary<(string, bool), ElfRelocationTable> relTables = new();
+            Dictionary<(string, bool), ElfRelocationTable> relTables = [];
 
-            foreach (var @ref in Module.References)
+            foreach (var section in Module.Sections.Values)
             {
-                Guard.IsNotNull(@ref.Location.Section);
-
-                var isRela = @ref.Append is not 0;
-
-                if (!relTables.TryGetValue((@ref.Location.Section, isRela), out var table))
+                foreach (var relocation in section.Relocations)
                 {
-                    table = new ElfRelocationTable(isRela);
-                    relTables[(@ref.Location.Section, isRela)] = table;
+                    var location = relocation.Location;
+                    Guard.IsNotNull(location.Section);
+
+                    var isRela = relocation.Addend is not 0;
+                    if (!relTables.TryGetValue((location.Section.Name, isRela), out var table))
+                    {
+                        table = new ElfRelocationTable(isRela);
+                        relTables[(location.Section.Name, isRela)] = table;
+                    }
+
+                    var offset = relocation.Location.Offset;
+                    var symbolIndex = _symtab.Entries.FindIndex(x => x.Name.Value == relocation.SymbolName);
+                    Guard.IsNotEqualTo(symbolIndex, -1);
+
+                    var type = new ElfRelocationType(ElfArchEx.MIPS, relocation.Type);
+                    var relItem = new ElfRelocation((ulong)location.Offset, type, (uint)symbolIndex, relocation.Addend);
+
+                    table.Entries.Add(relItem);
                 }
-
-                var offset = @ref.Location.Value;
-                var symbolIndex = _symtab.Entries.FindIndex(x => x.Name.Value == @ref.Symbol);
-                Guard.IsNotEqualTo(symbolIndex, -1);
-
-                var type = new ElfRelocationType(ElfArchEx.MIPS, (uint)@ref.Type);
-                var relItem = new ElfRelocation((ulong)@ref.Location.Value, type, (uint)symbolIndex, @ref.Append);
-
-                table.Entries.Add(relItem);
             }
 
             foreach (var ((section, isRela), table) in relTables)
@@ -130,17 +133,17 @@ public partial class ElfModule
         public void SetEntry()
         {
             // Ensure there is an entry point
-            var entry = Module.Entry;
+            var entry = Module.EntryPoint;
             if (entry is null || !entry.IsDefined)
                 return;
 
             // Fetch the section the entry point belongs to
-            var entrySection = ElfFile.Sections.FirstOrDefault(x => x.Name == (entry.Address.Value.Section ?? ""));
+            var entrySection = ElfFile.Sections.FirstOrDefault(x => x.Name == (entry.Address.Section?.Name ?? ""));
             if (entrySection is null)
                 return;
 
             // Calculate and set the entry point address as an offset of the section's virual address
-            var entryPoint = entrySection.VirtualAddress + (uint)entry.Address.Value.Value;
+            var entryPoint = entrySection.VirtualAddress + (uint)entry.Address.Offset;
             ElfFile.EntryPointAddress = entryPoint;
         }
     }

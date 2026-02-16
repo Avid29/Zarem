@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using Zarem.Descriptors;
 using Zarem.Elf.Config;
-using Zarem.Registry.Descriptors;
 
 namespace Zarem.Elf;
 

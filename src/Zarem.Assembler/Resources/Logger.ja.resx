@@ -1,0 +1,357 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="RegisterNumberNotFound" xml:space="preserve">
+    <value>No register of number '{0}' exists.</value>
+  </data>
+  <data name="NoRelocatableMacros" xml:space="preserve">
+    <value>Macros may not be a relocatable expression.</value>
+  </data>
+  <data name="PseudoInstructionsDisabled" xml:space="preserve">
+    <value>Pseudo instructions are disabled.</value>
+  </data>
+  <data name="RegisterNotFound" xml:space="preserve">
+    <value>No register '{0}' exists.</value>
+  </data>
+  <data name="SymbolAlreadyDefined" xml:space="preserve">
+    <value>Symbol '{0}' is already defined.</value>
+  </data>
+  <data name="SymbolCannotContain" xml:space="preserve">
+    <value>'{0}' is not a valid symbol name. Symbol names cannot contain the character '{1}'.</value>
+  </data>
+  <data name="SymbolMissingValue" xml:space="preserve">
+    <value>Symbol '{0}' missing value.</value>
+  </data>
+  <data name="SymbolsCannotBeginWithDigits" xml:space="preserve">
+    <value>'{0}' is not a valid symbol name. Symbol names cannot begin with a digit.</value>
+  </data>
+  <data name="DirectiveTakesNoArguments" xml:space="preserve">
+    <value>'{0}' cannot take any arguments.</value>
+  </data>
+  <data name="DirectiveTakesOneArgument" xml:space="preserve">
+    <value>'{0}' only takes one argument.</value>
+  </data>
+  <data name="DirectiveNonSymbolArgument" xml:space="preserve">
+    <value>'{0}' only take a symbol for an argument. Cannot parse '{1}' as a symbol.</value>
+  </data>
+  <data name="DirectiveNonSymbolArgumentSmall" xml:space="preserve">
+    <value>'{0}' only take a symbol for an argument.</value>
+  </data>
+  <data name="DirectiveNoRelocatableArguments" xml:space="preserve">
+    <value>'{0}' argument cannot be relocatable.</value>
+  </data>
+  <data name="DirectiveLargeAlignWarning" xml:space="preserve">
+    <value>Large alignment of '{0}'. Warning threshold set to '{1}'.</value>
+  </data>
+  <data name="DirectiveLargeAlignMessage" xml:space="preserve">
+    <value>Large alignment of '{0}'. Message threshold set to '{1}'.</value>
+  </data>
+  <data name="DirectiveLargeSpaceMessage" xml:space="preserve">
+    <value>Large spacing of '{0}'. Message threshold set to '{1}'.</value>
+  </data>
+  <data name="DirectiveAllocationNoRelocatableArguments" xml:space="preserve">
+    <value>'{0}' allocations cannot be relocatable.</value>
+  </data>
+  <data name="DirectiveAllocationTruncated" xml:space="preserve">
+    <value>'{0}' was evaluated to '{1}' and subsequently truncated to '{2}'.</value>
+  </data>
+  <data name="ExpressionParsingFailed" xml:space="preserve">
+    <value>Could not parse '{0}' as an expression.</value>
+  </data>
+  <data name="StringsCantWrapLines" xml:space="preserve">
+    <value>Strings may not wrap between lines.</value>
+  </data>
+  <data name="CharactersCantWrapLines" xml:space="preserve">
+    <value>Character literals may not wrap between lines.</value>
+  </data>
+  <data name="EmptyCharacterLiteral" xml:space="preserve">
+    <value>Character literal cannot be empty.</value>
+  </data>
+  <data name="IncompleteReference" xml:space="preserve">
+    <value>Incomplete symbol reference '{0}'.</value>
+  </data>
+  <data name="IncompleteToken" xml:space="preserve">
+    <value>Incomplete token '{0}'.</value>
+  </data>
+  <data name="IncompleteRegister" xml:space="preserve">
+    <value>Incomplete register name '{0}'.</value>
+  </data>
+  <data name="IncompleteImmediate" xml:space="preserve">
+    <value>Incomplete immediate value '{0}'.</value>
+  </data>
+  <data name="CantAddRelocatables" xml:space="preserve">
+    <value>Cannot sum two relocatable symbols.</value>
+  </data>
+  <data name="CantXORRelocatable" xml:space="preserve">
+    <value>Cannot perform XOR operation with a relocatable symbol.</value>
+  </data>
+  <data name="CantNOTRelocatable" xml:space="preserve">
+    <value>Cannot perform NOT operation with a relocatable symbol.</value>
+  </data>
+  <data name="CantORRelocatable" xml:space="preserve">
+    <value>Cannot perform OR operation with a relocatable symbol.</value>
+  </data>
+  <data name="CantANDRelocatable" xml:space="preserve">
+    <value>Cannot perform AND operation with a relocatable symbol.</value>
+  </data>
+  <data name="CantNegateRelocatable" xml:space="preserve">
+    <value>Cannot negate a relocatable symbol.</value>
+  </data>
+  <data name="CantModulusRelocatable" xml:space="preserve">
+    <value>Cannot perform modulus operation with a relocatable symbol.</value>
+  </data>
+  <data name="CantDivideRelocatable" xml:space="preserve">
+    <value>Cannot perform division with a relocatable symbol.</value>
+  </data>
+  <data name="CantMultiplyRelocatable" xml:space="preserve">
+    <value>Cannot perform multiplication operation with a relocatable symbol.</value>
+  </data>
+  <data name="CantSubtractRelocatable" xml:space="preserve">
+    <value>Cannot subtract a relocatable symbol.</value>
+  </data>
+  <data name="ZeroRegisterWriteback" xml:space="preserve">
+    <value>This instruction writes to $zero.</value>
+  </data>
+  <data name="RequiresVersion" xml:space="preserve">
+    <value>The instruction '{0}' requires mips version {1}.</value>
+  </data>
+  <data name="RemovedInVersion" xml:space="preserve">
+    <value>The instruction '{0}' is deprecated. Last supported in mips version {1}.</value>
+  </data>
+  <data name="WrongArgumentCount" xml:space="preserve">
+    <value>Instruction '{0}' cannot take '{1}' arguments.</value>
+  </data>
+  <data name="DoesNotSupportFormatSingle" xml:space="preserve">
+    <value>Instruction '{0}' does not support the format 'Single'.</value>
+  </data>
+  <data name="DoesNotSupportFormatDouble" xml:space="preserve">
+    <value>Instruction '{0}' does not support the format 'Double'.</value>
+  </data>
+  <data name="DoesNotSupportFormatWord" xml:space="preserve">
+    <value>Instruction '{0}' does not support the format 'Word'.</value>
+  </data>
+  <data name="DoesNotSupportFormatLong" xml:space="preserve">
+    <value>Instruction '{0}' does not support the format 'Long'.</value>
+  </data>
+  <data name="DoesNotSupportFormatPairedSingle" xml:space="preserve">
+    <value>Instruction '{0}' does not support the format 'Paired Single'.</value>
+  </data>
+  <data name="NoRelocatableShiftAmount" xml:space="preserve">
+    <value>Shift amount argument cannot reference relocatable symbols.</value>
+  </data>
+  <data name="CantBranchBetweenSections" xml:space="preserve">
+    <value>Cannot branch between sections.</value>
+  </data>
+  <data name="ArgumentNotARegister" xml:space="preserve">
+    <value>'{0}' is not a valid register argument.</value>
+  </data>
+  <data name="RegisterMustBeInGeneralPurposeSet" xml:space="preserve">
+    <value>Invalid register argument '{0}'. Must be in general purpose register set.</value>
+  </data>
+  <data name="RegisterMustBeInCoProc0Set" xml:space="preserve">
+    <value>Invalid register argument '{0}'. Must be in coprocessor0 register set.</value>
+  </data>
+  <data name="RegisterMustBeInFloatingPointsSet" xml:space="preserve">
+    <value>Invalid register argument '{0}'. Must be in floating-point register set.</value>
+  </data>
+  <data name="InvalidAddressOffsetArgument" xml:space="preserve">
+    <value>Argument '{0}' is not a valid address offset.</value>
+  </data>
+  <data name="CastWarningSignChanged" xml:space="preserve">
+    <value>Expression '{0}' evaluated to signed value '{1}' but was cast to an unsigned value, resulting in '{2}'.</value>
+  </data>
+  <data name="CastWarningTruncatedHigh" xml:space="preserve">
+    <value>Expression '{0}' evaluated to {1} but was truncated to {3}-bits, resulting in '{2}'.</value>
+  </data>
+  <data name="CastWarningTruncatedHighAndSignChanged" xml:space="preserve">
+    <value>Expression '{0}' evaluated to {1} but was truncated to an unsigned value with {3}-bits, resulting in {2}.</value>
+  </data>
+  <data name="CastWarningTruncatedLowAndHigh" xml:space="preserve">
+    <value>Expression '{0}' evaluated to {1} but was truncated to {3}-bits with the lower {4} bits dropped, resulting in {2}.</value>
+  </data>
+  <data name="CastWarningTruncatedLow" xml:space="preserve">
+    <value>Expression '{0}' evaluated to {1} but was truncated with the lower {4} bits dropped, resulting in {2}.</value>
+  </data>
+  <data name="CastWarningTruncatedLowAndHighAndSignChanged" xml:space="preserve">
+    <value>Expression '{0}' evaluated to '{1}' but was truncated to an unsigned value with '{3}-bits' and the lower '{4} bits' dropped, resulting in '{2}'.</value>
+  </data>
+  <data name="CastWarningTruncatedLowAndSignChanged" xml:space="preserve">
+    <value>Expression '{0}' evaluated to {1} but was truncated to an unsigned value with the lower {4} bits, resulting in {2}.</value>
+  </data>
+  <data name="MustBeSingleCharacter" xml:space="preserve">
+    <value>Character literal must be a single character.</value>
+  </data>
+  <data name="ExpectedString" xml:space="preserve">
+    <value>Expected a string.</value>
+  </data>
+  <data name="ExpectedChar" xml:space="preserve">
+    <value>Expected a char.</value>
+  </data>
+  <data name="IncompleteEscapeSequence" xml:space="preserve">
+    <value>Incomplete escape sequence.</value>
+  </data>
+  <data name="UnescapedQuoteInString" xml:space="preserve">
+    <value>Unescaped quote inside string.</value>
+  </data>
+  <data name="UnrecognizedEscapeSequence" xml:space="preserve">
+    <value>'{0}' is not a recognized escape sequence.</value>
+  </data>
+  <data name="FailedToLoadModule" xml:space="preserve">
+    <value>Module could not be loaded.</value>
+  </data>
+  <data name="DirectiveRequiresAnArgument" xml:space="preserve">
+    <value>'{0}' requires an argument.</value>
+  </data>
+  <data name="NoInstructionNamed" xml:space="preserve">
+    <value>No instruction named '{0}'.</value>
+  </data>
+  <data name="UnexpectedToken" xml:space="preserve">
+    <value>Unexpected token '{0}'.</value>
+  </data>
+  <data name="EmptyArgument" xml:space="preserve">
+    <value>Argument is empty.</value>
+  </data>
+  <data name="IncompleteString" xml:space="preserve">
+    <value>Incomplete string.</value>
+  </data>
+  <data name="IncompleteChar" xml:space="preserve">
+    <value>Incomplete character immediate.</value>
+  </data>
+  <data name="UnexpectedTokenAfterCompletedExpression" xml:space="preserve">
+    <value>Unexpected token '{0}' after completed expression.</value>
+  </data>
+  <data name="UnparsableImmediate" xml:space="preserve">
+    <value>Unparsable immediate token '{0}'.</value>
+  </data>
+  <data name="ExpectedClosingParenthesis" xml:space="preserve">
+    <value>Expected ')'.</value>
+  </data>
+  <data name="UndeclaredSymbolReferenced" xml:space="preserve">
+    <value>Symbol '{0}' does not exist.</value>
+  </data>
+  <data name="MissingOperand" xml:space="preserve">
+    <value>Expected operand following '{0}' operator.</value>
+  </data>
+  <data name="InstructionDisabled" xml:space="preserve">
+    <value>The instruction '{0}' is disabled by the project configuration.</value>
+  </data>
+  <data name="RelocatableShiftAmount" xml:space="preserve">
+    <value>Shift amount argument cannot reference relocatable symbols.</value>
+  </data>
+</root>

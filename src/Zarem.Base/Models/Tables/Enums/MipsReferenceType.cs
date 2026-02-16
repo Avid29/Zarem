@@ -5,7 +5,7 @@ namespace Zarem.Models.Tables.Enums;
 /// <summary>
 /// An enum for the type of references and relocations.
 /// </summary>
-public enum MipsReferenceType
+public enum MipsReferenceType : uint
 {
     /// <summary>
     /// No relocation.

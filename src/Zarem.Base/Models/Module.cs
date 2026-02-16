@@ -39,6 +39,11 @@ public sealed class Module
     public string? Format { get; set; }
 
     /// <summary>
+    /// Gets or sets the symbol for the entry point.
+    /// </summary>
+    public Symbol? EntryPoint { get; set; }
+
+    /// <summary>
     /// Gets the symbol dictionary.
     /// </summary>
     public IReadOnlyDictionary<string, Symbol> Symbols => _symbols;

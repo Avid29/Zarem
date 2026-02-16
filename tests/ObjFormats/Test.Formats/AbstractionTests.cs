@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Test.MIPS.Helpers;
 using Zarem.Assembler;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Models;
 using Zarem.Config;
 
@@ -32,14 +33,13 @@ public class AbstractionTests<TModule, TConfig>
         assemblerConfig ??= new();
         formatConfig ??= new();
 
-        var assemblyResult = await MIPSAssembler.AssembleAsync(stream, filename, assemblerConfig);
+        var assemblyResult = await Zarembler.AssembleAsync(stream, filename, new MIPSAssmblerHandler(assemblerConfig), assemblerConfig);
         Guard.IsNotNull(assemblyResult.Module);
 
         // Extract
         var module = TModule.Create(assemblyResult.Module, formatConfig);
         Guard.IsNotNull(module);
 
-        // 
         var reconvertedAbstractModule = module.Abstract(formatConfig);
         Guard.IsNotNull(reconvertedAbstractModule);
 
@@ -55,12 +55,17 @@ public class AbstractionTests<TModule, TConfig>
             Assert.AreEqual(value.IsDefined, symbol.IsDefined);
         }
 
-        foreach(var @ref in original.References)
+        var sourceRelocations = original.Sections.Values.SelectMany(x => x.Relocations);
+        var compareRelocations = compare.Sections.Values.SelectMany(x => x.Relocations);
+        foreach(var @ref in sourceRelocations)
         {
-            var matchingRef = compare.References.FirstOrDefault(r => r.Location == @ref.Location && r.Type == @ref.Type);
+            var matchingRef = compareRelocations.FirstOrDefault(r =>
+                r.Location.Section?.Name == @ref.Location.Section?.Name &&
+                r.Location.Offset == @ref.Location.Offset &&
+                r.Type == @ref.Type);
 
             Assert.IsNotNull(matchingRef);
-            Assert.AreEqual(@ref.Symbol, matchingRef.Symbol);
+            Assert.AreEqual(@ref.SymbolName, matchingRef.SymbolName);
         }
     }
 }
