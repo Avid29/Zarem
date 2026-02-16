@@ -185,7 +185,7 @@ public partial class Zarembler
         // Define the symbol or update by adding flags, address or type.
         // NOTE: The type can only be updated if it is currently unknown
         //       and the address can only be updated if it's undeclared/external.
-        if (!_module.Symbols.ContainsKey(name))
+        if (_module.Symbols.ContainsKey(name))
         {
             _logger?.Log(Severity.Error, LogId.DuplicateSymbolDefinition, label, "SymbolAlreadyDefined", name);
             return false;
