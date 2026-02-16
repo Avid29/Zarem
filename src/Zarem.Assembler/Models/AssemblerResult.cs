@@ -15,7 +15,7 @@ public class AssemblerResult
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblerResult"/> class.
     /// </summary>
-    public AssemblerResult(bool failed, IReadOnlyList<LogEntry> logs, IReadOnlyList<Symbol> symbols, Module? module = null)
+    public AssemblerResult(bool failed, IReadOnlyList<LogEntry> logs, IReadOnlyList<Symbol> symbols, Module module)
     {
         Failed = failed;
         Logs = logs;
@@ -41,5 +41,5 @@ public class AssemblerResult
     /// <summary>
     /// Gets the abstract <see cref="Zarem.Models.Module"/> result.
     /// </summary>
-    public Module? Module { get; }
+    public Module Module { get; }
 }

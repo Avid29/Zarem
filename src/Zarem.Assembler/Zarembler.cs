@@ -33,11 +33,13 @@ namespace Zarem.Assembler;
 //
 
 /// <summary>
-/// The Zarem assembler.
+/// The Zarem architecture-agonstic assembler.
 /// </summary>
 /// <remarks>
-/// Not in love with this name, but I want it in the assembler namespace and
-/// I don't want a class that shares a name with its parent's namespace.
+/// Not in love with this class name, but I want it in the "Assembler" namespace and
+/// I don't want to class names to share a name with the parent namespace.
+/// 
+/// Edit: It's growing on me
 /// </remarks>
 public partial class Zarembler
 {

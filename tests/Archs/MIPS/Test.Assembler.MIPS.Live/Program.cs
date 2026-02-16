@@ -4,13 +4,15 @@ using System.Text;
 using Test.Assembler.MIPS.Live.Enums;
 using Zarem.Assembler;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.MIPS.Tokenization;
-using Zarem.Assembler.Models.Instructions;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Disassembler;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
+using Zarem.Assembler.Handlers;
+using Zarem.Assembler.Config;
+using Zarem.Assembler.Tokenization;
+using Zarem.Assembler.Models;
 
 #if DEBUG
 using Zarem.Disassembler.Services;
@@ -68,15 +70,20 @@ public class Program()
     {
         var stream = new MemoryStream(Encoding.Default.GetBytes(line));
 
-        var result = await Assembler..AssembleAsync(stream, null, new());
+        var config = new MIPSAssemblerConfig();
+        var result = await Zarembler.AssembleAsync(stream, null, new MIPSAssmblerHandler(config), config);
 
         if (!result.Failed)
         {
+            var textSect = result.Module.GetOrCreateSection(".text");
+            var textStream = textSect.Stream;
+            textStream.Position = 0;
+
             Console.Write("\nBinary: ");
             uint inst = 0;
-            for (int i = 0; stream.Position != stream.Length; i++)
+            for (int i = 0; textStream.Position != textStream.Length; i++)
             {
-                int x = stream.ReadByte();
+                int x = textStream.ReadByte();
 
                 Console.Write($"{x:X2} ");
                 if (i % 4 is 3)
