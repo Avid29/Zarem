@@ -41,8 +41,8 @@ public class ProjectService : IProjectService
 
         // Populate
         ZaremRegistry.RegisterArchitecture(new MIPSArchitectureDescriptor());
-        ZaremRegistry.Formats.Register(new ElfModuleDescriptor());
-        ZaremRegistry.Formats.Register(new RasmModuleDescriptor());
+        //ZaremRegistry.Formats.Register(new ElfModuleDescriptor());
+        //ZaremRegistry.Formats.Register(new RasmModuleDescriptor());
     }
 
     /// <inheritdoc/>

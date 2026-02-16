@@ -2,8 +2,8 @@
 
 using System.Collections.Generic;
 using Zarem.Assembler.Logging;
-using Zarem.Models.Modules;
-using Zarem.Models.Modules.Tables;
+using Zarem.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Models;
 
@@ -15,7 +15,7 @@ public class AssemblerResult
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblerResult"/> class.
     /// </summary>
-    public AssemblerResult(bool failed, IReadOnlyList<LogEntry> logs, IReadOnlyList<SymbolEntry> symbols, Module? module = null)
+    public AssemblerResult(bool failed, IReadOnlyList<LogEntry> logs, IReadOnlyList<Symbol> symbols, Module? module = null)
     {
         Failed = failed;
         Logs = logs;
@@ -36,10 +36,10 @@ public class AssemblerResult
     /// <summary>
     /// Gets the list of symbols
     /// </summary>
-    public IReadOnlyList<SymbolEntry> Symbols { get;  }
+    public IReadOnlyList<Symbol> Symbols { get;  }
 
     /// <summary>
-    /// Gets the abstract <see cref="Zarem.Models.Modules.Module"/> result.
+    /// Gets the abstract <see cref="Zarem.Models.Module"/> result.
     /// </summary>
     public Module? Module { get; }
 }

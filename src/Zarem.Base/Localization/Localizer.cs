@@ -1,7 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using System.Resources;
 
@@ -21,6 +19,9 @@ public class Localizer : IStringLocalizer
     {
         _resourceManager = new ResourceManager(@namespace, assembly);
     }
+
+    /// <inheritdoc/>
+    public string? Namespace => _resourceManager.BaseName;
 
     /// <summary>
     /// Gets the localized string for the given key.

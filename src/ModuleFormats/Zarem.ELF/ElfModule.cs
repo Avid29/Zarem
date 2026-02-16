@@ -3,7 +3,7 @@
 using LibObjectFile.Elf;
 using System.IO;
 using System.Threading.Tasks;
-using Zarem.Assembler.Models.Modules;
+using Zarem.Assembler.Models;
 using Zarem.Elf.Config;
 using Zarem.Emulator.Models.Modules;
 

@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using Zarem.Descriptors;
 
 namespace Zarem.Registry.Descriptors;
 
@@ -10,7 +11,7 @@ namespace Zarem.Registry.Descriptors;
 public interface IAssemblerDescriptor : IDescriptor
 {
     /// <summary>
-    /// Gets the <see cref="Type"/> of the assembler.
+    /// Gets the <see cref="Type"/> of the assembler's architecture handler.
     /// </summary>
-    Type AssemblerType { get; }
+    Type AssemblerHandlerType { get; }
 }

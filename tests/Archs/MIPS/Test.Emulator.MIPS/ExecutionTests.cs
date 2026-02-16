@@ -10,6 +10,7 @@ using Zarem.Emulator.Machine.CPU.Registers;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Models;
 
 namespace Test.Emulator.MIPS;
 
@@ -389,13 +390,13 @@ public class ExecutionTests
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input);
         var table = new InstructionTable(new());
-        var parser = new InstructionParser(table, null);
-        if (!parser.TryParse(tokenized, out var parsed))
+        var parser = new MIPSInstructionParser(new(), default, null);
+        var parsed = parser.Parse(tokenized);
+        if (parsed is null)
             Assert.Fail();
 
         // TODO: Psuedo instruction support
         var instruction = parsed.Realize()[0];
-
         var emulator = new MIPSEmulator(new());
 
         // Initialize the status register

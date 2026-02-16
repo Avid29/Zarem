@@ -8,7 +8,7 @@ using System.Linq;
 using Zarem.Assembler.Config;
 using Zarem.Elf.Config;
 using Zarem.Extensions.System.IO;
-using Zarem.Models.Modules;
+using Zarem.Models;
 
 namespace Zarem.Elf;
 

@@ -34,7 +34,7 @@ public static class ProjectFactory
         Guard.IsNotNull(formatInfo);
 
         // Create components
-        var assemble = CreateComponent<IAssembleComponent, AssemblerConfig>(typeof(AssembleComponent<,>), archInfo.Assembler.AssemblerType, config.ArchitectureConfig.AssemblerConfig, archInfo.Assembler);
+        var assemble = CreateComponent<IAssembleComponent, AssemblerConfig>(typeof(AssembleComponent<,>), archInfo.Assembler.AssemblerHandlerType, config.ArchitectureConfig.AssemblerConfig, archInfo.Assembler);
         var emulate = CreateComponent<IEmulateComponent, EmulatorConfig>(typeof(EmulateComponent<,>), archInfo.Emulator.EmulatorType, config.ArchitectureConfig.EmulatorConfig, archInfo.Emulator);
         var format = CreateComponent<IFormatComponent, FormatConfig>(typeof(FormatComponent<,>), formatInfo.FormatType, config.FormatConfig, formatInfo);
 

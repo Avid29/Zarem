@@ -6,9 +6,8 @@ using Zarem.Assembler.MIPS.Tokenization;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models.Enums;
-using Zarem.Models.Addressing;
-using Zarem.Models.Modules;
-using Zarem.Models.Modules.Tables.Enums;
+using Zarem.Models;
+using Zarem.Models.Tables.Enums;
 
 namespace Test.Assembler.MIPS.Parsers;
 
@@ -38,7 +37,6 @@ public class ExpressionParserTests
         ["'a'", 'a'],
         [@"'\n'", '\n'],
         ["'a' + 10", 'a' + 10],
-        ["macro + 10", 10 + 10, ("macro", new Address(10, ".text"))],
     ];
 
     public static IEnumerable<object[]> ExpressionFailureTestsList =>
@@ -53,40 +51,26 @@ public class ExpressionParserTests
         ["(4 + 2 * 2"],
         ["'abc'"],
         [@"'\x'"],
-        ["macro + macro", ("macro", new Address(10, ".text"))],
     ];
 
     [DataTestMethod]
     [DynamicData(nameof(ExpressionSuccessTestsList))]
-    public void ExpressionSuccessTests(string input, int expected, params (string name, Address addr)[] macros)
-        => RunTest(input, expected, macros);
+    public void ExpressionSuccessTests(string input, int expected)
+        => RunTest(input, expected);
 
     [DataTestMethod]
     [DynamicData(nameof(ExpressionFailureTestsList))]
-    public void ExpressionFailureTests(string input, params (string name, Address addr)[] macros)
-        => RunTest(input, macros: macros);
+    public void ExpressionFailureTests(string input)
+        => RunTest(input);
 
-    private static void RunTest(string input, long? expected = null, params (string name, Address addr)[] macros)
-    {
-        // NOTE: This assumes symbol realization is not implemented!
-        var obj = new Module();
-        foreach (var (name, addr) in macros)
-        {
-            obj.TryDefineSymbol(name, SymbolType.Macro, addr);
-        }
-
-        var context = new MIPSAssemblerContext(obj);
-        RunTest(input, expected, context);
-    }
-
-    private static void RunTest(string input, long? expected = null, MIPSAssemblerContext? context = null)
+    private static void RunTest(string input, long? expected = null)
     {
         var line = Tokenizer.TokenizeLine(input, nameof(RunTest), TokenizerMode.Expression);
-        bool success = ExpressionParser.TryParse(line.Tokens, out var actual, context);
+        bool success = ExpressionParser.TryParse(line.Tokens, out var actual, null);
         Assert.AreEqual(success, expected.HasValue);
         if (expected.HasValue)
         {
-            Assert.AreEqual(expected.Value, actual.Value.Value);
+            Assert.AreEqual(expected.Value, actual.Value.Offset);
         }
     }
 }

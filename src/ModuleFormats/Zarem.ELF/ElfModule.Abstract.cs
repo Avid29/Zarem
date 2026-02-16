@@ -3,10 +3,8 @@
 using LibObjectFile.Elf;
 using ObjFormats.LibOF.Extensions;
 using Zarem.Elf.Config;
-using Zarem.Models.Addressing;
-using Zarem.Models.Modules;
-using Zarem.Models.Modules.Tables;
-using Zarem.Models.Modules.Tables.Enums;
+using Zarem.Models;
+using Zarem.Models.Tables.Enums;
 
 namespace Zarem.Elf;
 
@@ -27,8 +25,7 @@ public partial class ElfModule
         {
             var sectionName = streamSection.Name.Value;
 
-            Module.AddSection(sectionName, SectionFlags.Default);
-            Module.Append(sectionName, streamSection.Stream, true);
+            var section = Module.GetOrCreateSection(sectionName, stream: streamSection.Stream);
             return true;
         }
 

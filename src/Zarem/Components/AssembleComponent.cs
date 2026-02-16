@@ -16,17 +16,20 @@ namespace Zarem.Components;
 /// <summary>
 /// A component of a <see cref="Project"/> class for assembling assembly code.
 /// </summary>
-/// <typeparam name="TAssembler"></typeparam>
+/// <typeparam name="TAsmHandler"></typeparam>
 /// <typeparam name="TConfig"></typeparam>
-public class AssembleComponent<TAssembler, TConfig> : IAssembleComponent
-    where TAssembler : IAssembler<TConfig>
+public class AssembleComponent<TAsmHandler, TConfig> : IAssembleComponent
+    where TAsmHandler : IArchHandler
     where TConfig : AssemblerConfig
 {
+    private TAsmHandler _asmHandler;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="AssembleComponent{TAssembler, TConfig}"/> class.
     /// </summary>
-    public AssembleComponent(TConfig config, IAssemblerDescriptor descriptor)
+    public AssembleComponent(TAsmHandler asmHandler, TConfig config, IAssemblerDescriptor descriptor)
     {
+        _asmHandler = asmHandler;
         Config = config;
     }
 
@@ -45,7 +48,7 @@ public class AssembleComponent<TAssembler, TConfig> : IAssembleComponent
         Guard.IsNotNull(Config);
 
         using var stream = File.OpenRead(file.FullPath);
-        var result = await TAssembler.AssembleAsync(stream, file.Name, Config, logger);
+        var result = await Assembler.Assembler.AssembleAsync(stream, file.Name, _asmHandler, Config, logger);
         return result;
     }
 }

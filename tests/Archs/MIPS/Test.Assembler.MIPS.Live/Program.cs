@@ -68,7 +68,7 @@ public class Program()
     {
         var stream = new MemoryStream(Encoding.Default.GetBytes(line));
 
-        var result = await MIPSAssembler.AssembleAsync(stream, null, new());
+        var result = await Assembler..AssembleAsync(stream, null, new());
 
         if (!result.Failed)
         {

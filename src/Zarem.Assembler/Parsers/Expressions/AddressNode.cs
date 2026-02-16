@@ -3,7 +3,8 @@
 using Zarem.Assembler.Parsers.Expressions.Abstract;
 using Zarem.Assembler.Parsers.Expressions.Enums;
 using Zarem.Assembler.Tokenization.Models;
-using Zarem.Models.Addressing;
+using Zarem.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Parsers.Expressions;
 
@@ -15,7 +16,7 @@ public class AddressNode : ValueNode<Address>
     /// <summary>
     /// Initializes a new instance of the <see cref="AddressNode"/> class.
     /// </summary>
-    public AddressNode(Token token, long value, string? section = null) : this(token, new Address(value, section))
+    public AddressNode(Token token, long value, Section? section = null) : this(token, new Address(section, value))
     {
     }
 

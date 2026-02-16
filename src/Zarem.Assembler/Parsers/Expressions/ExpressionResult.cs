@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Models.Addressing;
-using Zarem.Models.Modules.Tables;
+using Zarem.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Parsers.Expressions;
 
@@ -13,7 +13,7 @@ public readonly struct ExpressionResult
     /// <summary>
     /// Initializes a new instance of the <see cref="ExpressionResult"/> struct.
     /// </summary>
-    public ExpressionResult(Address value, ReferenceEntry? reference = null)
+    public ExpressionResult(Address value, Symbol? reference = null)
     {
         Value = value;
         Reference = reference;
@@ -22,7 +22,7 @@ public readonly struct ExpressionResult
     /// <summary>
     /// Initializes a new instance of the <see cref="ExpressionResult"/> struct.
     /// </summary>
-    public ExpressionResult(ReferenceEntry reference)
+    public ExpressionResult(Symbol reference)
     {
         Reference = reference;
     }
@@ -35,10 +35,10 @@ public readonly struct ExpressionResult
     /// <summary>
     /// Gets the reference information for any tracked reference made in the in expression.
     /// </summary>
-    public ReferenceEntry? Reference { get; }
+    public Symbol? Reference { get; }
 
     /// <summary>
     /// Gets whether or not the expression is relocatable.
     /// </summary>
-    public bool IsRelocatable => Reference.HasValue;
+    public bool IsRelocatable => Reference is not null;
 }

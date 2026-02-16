@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Test.MIPS.Helpers;
 using Zarem.Assembler;
 using Zarem.Assembler.Config;
-using Zarem.Assembler.Models.Modules;
+using Zarem.Assembler.Models;
 using Zarem.Config;
 
 namespace Test.ObjFormats;

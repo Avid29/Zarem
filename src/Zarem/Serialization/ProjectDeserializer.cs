@@ -8,9 +8,9 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using Zarem.Assembler.Config;
 using Zarem.Config;
+using Zarem.Descriptors;
 using Zarem.Emulator.Config;
 using Zarem.Registry;
-using Zarem.Registry.Descriptors;
 
 namespace Zarem.Serialization;
 

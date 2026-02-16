@@ -3,6 +3,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Zarem.Assembler;
+using Zarem.Assembler.Config;
 using Zarem.Elf;
 using Zarem.Elf.Config;
 using Zarem.Emulator;
@@ -66,15 +67,15 @@ public class DebugService : IDebugService
 
         // Cheat and build the file here
         using var readStream = File.OpenRead(file.FullPath);
-        var result = await MIPSAssembler.AssembleAsync(readStream, file.Name, new());
+        var result = await Assembler.Assembler.AssembleAsync(readStream, file.Name, new MIPSHandler(new()), new MIPSAssemblerConfig());
         if (result.Module is null)
             return;
 
         // Cheat and link here
-        var module = MIPSLinker.Link("entry", result.Module);
-        var elfModule = ElfModule.Create(module, new ElfConfig());
-        if (elfModule is null)
-            return;
+        //var module = MIPSLinker.Link("entry", result.Module);
+        //var elfModule = ElfModule.Create(module, new ElfConfig());
+        //if (elfModule is null)
+        //    return;
 
         // Start a debug session
         var session = _projectService.Project.StartDebug();
@@ -87,7 +88,7 @@ public class DebugService : IDebugService
 
         var trapHandler = new MARSTrapHandler(mipsEmu.Computer);
 
-        session.Emulator.Load(elfModule);
+        //session.Emulator.Load(elfModule);
         session.Emulator.Start();
     }
 

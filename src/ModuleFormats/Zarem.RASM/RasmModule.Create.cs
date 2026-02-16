@@ -3,8 +3,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Zarem.Models.Modules;
-using Zarem.Models.Modules.Tables;
+using Zarem.Models;
+using Zarem.Models.Tables;
 using Zarem.RASM;
 using Zarem.RASM.Config;
 using RasmReference = Zarem.RASM.Tables.ReferenceEntry;
@@ -42,12 +42,12 @@ public partial class RasmModule
 
         public void InitAndAllocHeader()
         {
-            Source.Sections.TryGetValue(".text", out ModuleSection? text);
-            Source.Sections.TryGetValue(".rodata", out ModuleSection? rodata);
-            Source.Sections.TryGetValue(".data", out ModuleSection? data);
-            Source.Sections.TryGetValue(".sdata", out ModuleSection? sdata);
-            Source.Sections.TryGetValue(".sbss", out ModuleSection? sbss);
-            Source.Sections.TryGetValue(".bss", out ModuleSection? bss);
+            Source.Sections.TryGetValue(".text", out Section? text);
+            Source.Sections.TryGetValue(".rodata", out Section? rodata);
+            Source.Sections.TryGetValue(".data", out Section? data);
+            Source.Sections.TryGetValue(".sdata", out Section? sdata);
+            Source.Sections.TryGetValue(".sbss", out Section? sbss);
+            Source.Sections.TryGetValue(".bss", out Section? bss);
 
             var sizes = new uint[]
             {

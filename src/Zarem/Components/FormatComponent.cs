@@ -2,12 +2,12 @@
 
 using System.IO;
 using System.Threading.Tasks;
-using Zarem.Assembler.Models.Modules;
+using Zarem.Assembler.Models;
 using Zarem.Components.Interfaces;
 using Zarem.Config;
 using Zarem.Emulator.Models.Modules;
+using Zarem.Models;
 using Zarem.Models.Files;
-using Zarem.Models.Modules;
 using Zarem.Registry.Descriptors;
 
 namespace Zarem.Components;

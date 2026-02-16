@@ -8,7 +8,7 @@ using Zarem.Assembler.MIPS.Tokenization;
 using Zarem.Assembler.Models.Instructions;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
-using Zarem.Models.Modules.Tables;
+using Zarem.Models.Tables;
 
 namespace Zarem.Windows.Controls.CodeEditor;
 
@@ -75,7 +75,7 @@ public partial class AssemblyEditor
         }
     }
 
-    private void UpdateSymbols(IReadOnlyList<SymbolEntry> symbols)
+    private void UpdateSymbols(IReadOnlyList<Symbol> symbols)
     {
         Symbols = [];
 
