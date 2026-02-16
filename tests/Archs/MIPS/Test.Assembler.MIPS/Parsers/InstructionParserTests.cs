@@ -186,7 +186,7 @@ public class InstructionParserTests
 
         // Initialize parser
         var logger = new Logger();
-        var parser = new MIPSInstructionParser(new MIPSAssemblerConfig(), default);
+        var parser = new MIPSInstructionParser(new MIPSAssemblerConfig(), default, logger: logger);
 
         // Parse instruction
         var line = Tokenizer.TokenizeLine(input, nameof(RunTest));
