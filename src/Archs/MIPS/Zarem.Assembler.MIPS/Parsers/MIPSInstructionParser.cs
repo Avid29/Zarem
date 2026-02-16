@@ -231,7 +231,7 @@ public struct MIPSInstructionParser
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
     /// </summary>
-    private unsafe bool TryParseRegisterArg(ReadOnlySpan<Token> arg, Argument target)
+    private bool TryParseRegisterArg(ReadOnlySpan<Token> arg, Argument target)
     {
         if (arg.Length is not 1)
         {
@@ -291,10 +291,12 @@ public struct MIPSInstructionParser
             return false;
         }
 
-        bool branch = target is Argument.Offset or Argument.LargeOffset;
-
-        if (expResult.Symbol is not null)
+        if (expResult.IsSymbolic)
         {
+            // NOTE: If it were possible to have an undeclared local system reference,
+            // it would be here. However, since there's not forward declaration of local
+            // symbols, that's not a consider
+
             var (type, addend) = target switch
             {
                 Argument.Address => (MipsReferenceType.JumpTarget26, 0),
@@ -305,31 +307,19 @@ public struct MIPSInstructionParser
                 _ => ThrowHelper.ThrowArgumentOutOfRangeException<(MipsReferenceType, long)>($"Argument of type '{target}' cannot reference relocatable symbols."),
             };
 
-            if (branch)
-            {
-                // Warn about branching safety
-                var section = expResult.Symbol.Address.Section;
-                if (section is null)
-                {
-                    _logger?.Log(Severity.Warning, LogId.ExternalBranching, arg, "ExternalBranching");
-                }
-                else if (section != _currentAddress.Section)
-                {
-                    _logger?.Log(Severity.Warning, LogId.BranchBetweenSections, arg, "BranchBetweenSections");
-                }
-            }
-
             // Create the relocation
             var reference = expResult.Symbol;
-            relocation = new RelocationEntry(reference.Name, _currentAddress, (int)type, addend);
-            return true;
+            relocation = new RelocationEntry(reference.Name, _currentAddress, (int)type, addend + expResult.Addend);
         }
 
         // NOTE: Casting might truncate the value to fit the bit size.
         // This is the desired behavior, but when logging errors this
         // should be handled explicitly and drop an assembler warning.
+        //
+        // ALSO NOTE: The linker will fill in the added if the value
+        // is symbolic (not absolute)
 
-        long value = expResult.Addend;
+        long value = expResult.IsAbsolute ? expResult.Addend : 0;
 
         // Truncates the value to fit the target argument
         CleanInteger(ref value, arg, target);
