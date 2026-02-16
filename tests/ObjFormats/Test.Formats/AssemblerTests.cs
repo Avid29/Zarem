@@ -47,7 +47,7 @@ public class AssemblerTests
         {
             foreach (var (code, line) in expected)
             {
-                var logEntry = result.Logs.FirstOrDefault(x => x.Code.Id == (uint)code && x.Location.Line == line);
+                var logEntry = result.Logs.FirstOrDefault(x => x.Code.Id == (uint)code && x.Location?.Line == line);
                 Assert.IsNotNull(logEntry, $"Could not find matching {code} error on line {line}");
             }
         }

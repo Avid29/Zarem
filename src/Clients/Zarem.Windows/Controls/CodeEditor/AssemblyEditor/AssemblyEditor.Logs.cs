@@ -33,8 +33,11 @@ public partial class AssemblyEditor
 
         foreach (var log in logs)
         {
+            if (log.Location is null)
+                continue;
+
             // Get the token's start location in utf8
-            if (!_locationMapper.TryGetValue(log.Location.Index, out var utf8Location))
+            if (!_locationMapper.TryGetValue(log.Location.Value.Index, out var utf8Location))
                 continue;
 
             // Get the token's string

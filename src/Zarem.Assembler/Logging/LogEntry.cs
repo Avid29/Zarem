@@ -15,12 +15,25 @@ public class LogEntry : ILog
     /// <summary>
     /// Initializes a new instance of the <see cref="LogEntry"/> class.
     /// </summary>
+    internal LogEntry(Severity severity, LogCode code, string? filePath, string message)
+    {
+        Code = code;
+        Severity = severity;
+        FilePath = filePath;
+        Message = message;
+        Tokens = [];
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LogEntry"/> class.
+    /// </summary>
     internal LogEntry(Severity severity, LogCode code, string message, Token[] tokens)
     {
         Code = code;
         Severity = severity;
         Message = message;
         Tokens = tokens;
+        FilePath = tokens[0].FilePath;
     }
 
     /// <inheritdoc/>
@@ -36,16 +49,22 @@ public class LogEntry : ILog
     public string? FileName => Path.GetFileName(FilePath);
     
     /// <inheritdoc/>
-    public string? FilePath => Tokens[0].FilePath;
+    public string? FilePath { get; }
 
     /// <summary>
     /// Gets the tokens that caused the log.
     /// </summary>
     public Token[] Tokens { get; }
-    
+
     /// <inheritdoc/>
-    public SourceLocation Location => Tokens[0].Location;
-    
-    /// <inheritdoc/>
-    SourceLocation? ILog.Location => Location;
+    public SourceLocation? Location
+    {
+        get
+        {
+            if (Tokens.Length is 0)
+                return null;
+
+            return Tokens[0].Location;
+        }
+    }
 }

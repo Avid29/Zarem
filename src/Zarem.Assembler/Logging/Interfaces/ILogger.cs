@@ -25,11 +25,11 @@ public interface ILogger
     /// </remarks>
     /// <param name="severity">The severity of the log.</param>
     /// <param name="code">The id of the log.</param>
-    /// <param name="file">The file where the log occurred.</param>
+    /// <param name="filePath">The file where the log occurred.</param>
     /// <param name="messageKey">The log resource key for the log message.</param>
     /// <param name="args">The arguments to format the message with.</param>
     /// <returns>False if the severity is an error. True otherwise.</returns>
-    bool Log(Severity severity, LogCode code, string file, string messageKey, params object?[] args);
+    bool Log(Severity severity, LogCode code, string filePath, string messageKey, params object?[] args);
 
     /// <inheritdoc cref="Log(Severity, LogCode, ReadOnlySpan{Token}, string, object?[])"/>
     bool Log(Severity severity, LogCode code, Token token, string messageKey, params object?[] args);

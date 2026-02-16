@@ -9,6 +9,7 @@ using Zarem.Linker.Enums;
 using Zarem.Linker.Extensions;
 using Zarem.Linker.Handlers;
 using Zarem.Models;
+using Zarem.Models.Tables;
 using Zarem.Models.Tables.Enums;
 
 namespace Zarem.Linker;
@@ -131,8 +132,6 @@ public sealed class ZaLinker
 
                 foreach (var relocation in section.Relocations)
                 {
-                    // Adjust relocation address
-
                     if (!Module.Symbols.TryGetValue(relocation.SymbolName, out var symbol))
                     {
                         if (_config.LinkMode is LinkMode.Executable)
