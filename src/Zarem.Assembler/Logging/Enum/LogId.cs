@@ -28,6 +28,7 @@ public enum LogId : uint
     InvalidAddressOffsetArgument,
     InvalidFloatFormat,
     BranchBetweenSections,
+    ExternalBranching,
     IntegerTruncated,
     RelocatableReferenceInShift,
     ZeroRegWriteback,

@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Registry.Descriptors;
+using Zarem.Descriptors;
 
 namespace Zarem.Registry;
 

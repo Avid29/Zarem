@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Components.Interfaces;
+using Zarem.Descriptors;
 using Zarem.Emulator;
 using Zarem.Emulator.Config;
-using Zarem.Registry.Descriptors;
 
 namespace Zarem.Components;
 

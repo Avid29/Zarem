@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
@@ -10,13 +9,12 @@ using System.IO;
 using System.Threading.Tasks;
 using Zarem.Assembler.Config;
 using Zarem.Config;
-using Zarem.Elf.Config;
+using Zarem.Descriptors;
 using Zarem.Emulator.Config;
 using Zarem.Messages.Navigation;
 using Zarem.MIPS;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Registry;
-using Zarem.Registry.Descriptors;
 using Zarem.Serialization;
 using Zarem.Services;
 using Zarem.Services.Files;

@@ -2,15 +2,15 @@
 
 using System.Collections.Generic;
 using Zarem.Extensions.System.IO;
-using Zarem.Models.Modules;
-using Zarem.Models.Modules.Tables;
-using Zarem.Models.Modules.Tables.Enums;
+using Zarem.Models;
+using Zarem.Models.Tables;
+using Zarem.Models.Tables.Enums;
 using Zarem.RASM.Config;
 using RasmReference = Zarem.RASM.Tables.ReferenceEntry;
 using RasmRelocation = Zarem.RASM.Tables.RelocationEntry;
 using RasmSymbol = Zarem.RASM.Tables.SymbolEntry;
-using ReferenceEntry = Zarem.Models.Modules.Tables.ReferenceEntry;
-using SymbolEntry = Zarem.Models.Modules.Tables.SymbolEntry;
+using ReferenceEntry = Zarem.Models.Tables.ReferenceEntry;
+using Symbol = Zarem.Models.Tables.Symbol;
 
 namespace ObjFormats.RASM;
 
@@ -38,12 +38,12 @@ public partial class RasmModule
         };
 
         // Copy sections
-        var sections = new Dictionary<string, ModuleSection>();
+        var sections = new Dictionary<string, Section>();
         for (int i = 0; i < SectionNames.Length; i++)
         {
             var sectionName = SectionNames[i];
             var size = (int)sizes[i];
-            sections.Add(sectionName, new ModuleSection(sectionName, SectionFlags.Default));
+            sections.Add(sectionName, new Section(sectionName, SectionFlags.Default));
             var section = sections[sectionName];
             if (size is not 0)
             {
@@ -67,7 +67,7 @@ public partial class RasmModule
 
         // Initialize the tables
         var referenceList = new List<ReferenceEntry>();
-        var symbolTable = new Dictionary<string, SymbolEntry>();
+        var symbolTable = new Dictionary<string, Symbol>();
 
         // Convert relocations
         foreach (var rel in relocations)

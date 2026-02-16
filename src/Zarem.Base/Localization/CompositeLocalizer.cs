@@ -20,6 +20,9 @@ public class CompositeLocalizer : IStringLocalizer
     }
 
     /// <inheritdoc/>
+    public string? Namespace => null;
+
+    /// <inheritdoc/>
     public string? this[string key, params object?[] args]
     {
         get

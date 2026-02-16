@@ -10,8 +10,6 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.MIPS.Tokenization;
-using Zarem.Assembler.Models.Instructions;
 using Zarem.Assembler.Parsers;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
@@ -20,6 +18,10 @@ using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
+using Zarem.Assembler.Models;
+using Zarem.Assembler.Tokenization;
+
+
 
 #if DEBUG
 using Zarem.Disassembler.Services;
@@ -101,7 +103,7 @@ public class InstructionParserTests
         DynamicDataDisplayName = nameof(InstructionParsingTestCaseDisplayName),
         DynamicDataDisplayNameDeclaringType = typeof(InstructionParserTests))]
     public void RawInstructionSuccessTests(InstructionParsingTestCase @case)
-        => RunTest(@case.Input, new ParsedInstruction(@case.Expected!.Value));
+        => RunTest(@case.Input, new MIPSParsedInstruction(@case.Expected!.Value));
 
     [DataTestMethod]
     [DynamicData(nameof(RawInstructionFailureTestsList),
@@ -115,7 +117,7 @@ public class InstructionParserTests
         DynamicDataDisplayName = nameof(InstructionParsingTestCaseDisplayName),
         DynamicDataDisplayNameDeclaringType = typeof(InstructionParserTests))]
     public void RawInstructionWarningTests(InstructionParsingTestCase @case)
-        => RunTest(@case.Input, new ParsedInstruction(@case.Expected!.Value), @case.Code);
+        => RunTest(@case.Input, new MIPSParsedInstruction(@case.Expected!.Value), @case.Code);
 
     private const string LoadImmediate = "li $t0, 0x10001";
     
@@ -123,7 +125,7 @@ public class InstructionParserTests
     public void LoadImmediateTest()
     {
         PseudoInstruction expected = new(PseudoOp.LoadImmediate) { RT = GPRegister.Temporary0, Immediate = 0x10001 };
-        RunTest(LoadImmediate, new ParsedInstruction(expected));
+        RunTest(LoadImmediate, new MIPSParsedInstruction(expected));
     }
 
     [TestMethod("MIPS I")]
@@ -164,13 +166,13 @@ public class InstructionParserTests
 #endif
 
         var table = new InstructionTable(config);
-        var parser = new InstructionParser(table, null);
+        var parser = new MIPSInstructionParser(config, default);
 
         var tokenized = Tokenizer.TokenizeLine(input, nameof(RunTest));
-        var succeeded = parser.TryParse(tokenized, out var actual);
+        var actual = parser.Parse(tokenized);
 
         // Validate execution
-        Assert.IsTrue(succeeded);
+        Assert.IsNotNull(actual);
 
         var result = actual?.Realize()[0];
         Assert.IsTrue(result.HasValue);
@@ -180,20 +182,20 @@ public class InstructionParserTests
 #endif
     }
 
-    private static void RunTest(string input, ParsedInstruction? expected = null, LogId? logCode = null)
+    private static void RunTest(string input, MIPSParsedInstruction? expected = null, LogId? logCode = null)
     {
         bool succeeds = expected is not null;
 
         // Initialize parser
         var logger = new Logger();
-        var parser = new InstructionParser(new InstructionTable(new()), logger);
+        var parser = new MIPSInstructionParser(new MIPSAssemblerConfig(), default, logger: logger);
 
         // Parse instruction
         var line = Tokenizer.TokenizeLine(input, nameof(RunTest));
-        var succeeded = parser.TryParse(line, out var actual);
+        var actual = parser.Parse(line);
 
         // Validate results
-        Assert.AreEqual(succeeds, succeeded);
+        Assert.AreEqual(succeeds, actual is not null);
         if (succeeds)
         {
             Assert.IsNotNull(expected);

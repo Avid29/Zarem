@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Zarem.Registry.Descriptors;
+using Zarem.Descriptors;
 
 namespace Zarem.Registry;
 

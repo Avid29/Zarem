@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Models.Addressing;
-using Zarem.Models.Modules.Tables;
+using System.Diagnostics.CodeAnalysis;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Parsers.Expressions;
 
@@ -13,32 +13,40 @@ public readonly struct ExpressionResult
     /// <summary>
     /// Initializes a new instance of the <see cref="ExpressionResult"/> struct.
     /// </summary>
-    public ExpressionResult(Address value, ReferenceEntry? reference = null)
+    public ExpressionResult(long value, Symbol? reference = null)
     {
-        Value = value;
-        Reference = reference;
+        Addend = value;
+        Symbol = reference;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ExpressionResult"/> struct.
     /// </summary>
-    public ExpressionResult(ReferenceEntry reference)
+    public ExpressionResult(Symbol reference)
     {
-        Reference = reference;
+        Symbol = reference;
+        Addend = default;
     }
 
     /// <summary>
     /// Gets the value of the parsed expression.
     /// </summary>
-    public Address Value { get; }
+    public long Addend { get; }
 
     /// <summary>
-    /// Gets the reference information for any tracked reference made in the in expression.
+    /// Gets the symbol referenced in the expression.
     /// </summary>
-    public ReferenceEntry? Reference { get; }
+    public Symbol? Symbol { get; }
 
     /// <summary>
-    /// Gets whether or not the expression is relocatable.
+    /// Gets whether or not the expression is absolute.
     /// </summary>
-    public bool IsRelocatable => Reference.HasValue;
+    [MemberNotNullWhen(false, nameof(Symbol))]
+    public bool IsAbsolute => Symbol is null;
+
+    /// <summary>
+    /// Gets whether or not the expression is symbolic.
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(Symbol))]
+    public bool IsSymbolic => Symbol is not null;
 }

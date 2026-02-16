@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using System.IO;
-using Zarem.Models.Modules.Interface;
+using Zarem.Models.Interface;
 
 namespace Zarem.Emulator.Models.Modules;
 

@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Assembler;
 using Zarem.Assembler.Config;
-using Zarem.Registry.Attributes;
-using Zarem.Registry.Descriptors;
+using Zarem.Assembler.Handlers;
+using Zarem.Descriptors;
+using Zarem.Attributes;
 
 namespace Zarem.MIPS;
 
@@ -18,7 +18,7 @@ public class MIPSAssemblerDescriptor : IAssemblerDescriptor
     public string Identifier => "MIPS";
 
     /// <inheritdoc/>
-    public Type AssemblerType => typeof(MIPSAssembler);
+    public Type AssemblerHandlerType => typeof(MIPSAssmblerHandler);
 
     /// <inheritdoc/>
     public Type ConfigType => typeof(MIPSAssemblerConfig);

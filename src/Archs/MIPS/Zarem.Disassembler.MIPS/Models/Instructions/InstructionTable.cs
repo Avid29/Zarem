@@ -1,8 +1,8 @@
 ﻿// Adam Dernis 2025
 
 using Zarem.Assembler.Config;
-using Zarem.Assembler.Models.Instructions;
-using Zarem.Assembler.Models.Instructions.Abstract;
+using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Abstract;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;

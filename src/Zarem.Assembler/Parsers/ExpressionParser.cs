@@ -14,7 +14,7 @@ using Zarem.Assembler.Parsers.Expressions.Abstract;
 using Zarem.Assembler.Parsers.Expressions.Enums;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
-using Zarem.Models.Modules.Tables;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Parsers;
 
@@ -24,13 +24,13 @@ namespace Zarem.Assembler.Parsers;
 public readonly ref struct ExpressionParser
 {
     private readonly ILogger? _logger;
-    private readonly AssemblerContext? _context;
-    private readonly List<SymbolEntry> _references; 
+    private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
+    private readonly List<Symbol> _references; 
 
-    private ExpressionParser(AssemblerContext? context, ILogger? logger)
+    private ExpressionParser(IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
     {
         _logger = logger;
-        _context = context;
+        _symbols = symbols;
         _references = [];
     }
 
@@ -39,15 +39,15 @@ public readonly ref struct ExpressionParser
     /// </summary>
     /// <param name="expression">The tokens to parse as an expression.</param>
     /// <param name="result">The expression parsing results.</param>
-    /// <param name="context">The assembler context containing declared symbols, if desired.</param>
+    /// <param name="symbols">The assembler context containing declared symbols, if desired.</param>
     /// <param name="logger">The logger to log errors or warnings, if desired.</param>
     /// <returns>Whether or not the expression could be parsed.</returns>
-    public static bool TryParse(ReadOnlySpan<Token> expression, out ExpressionResult result, AssemblerContext? context = null, ILogger? logger = null)
+    public static bool TryParse(ReadOnlySpan<Token> expression, out ExpressionResult result, IReadOnlyDictionary<string, Symbol>? symbols = null, ILogger? logger = null)
     {
         result = default;
 
         // Parse expression tree
-        var parser = new ExpressionParser(context, logger);
+        var parser = new ExpressionParser(symbols, logger);
         var node = parser.ParsePrecedence(ref expression, 0);
 
         // Expression tree could not be parsed
@@ -62,7 +62,7 @@ public readonly ref struct ExpressionParser
         }
 
         // Evaluate the address
-        var eval = new Evaluator(context, logger);
+        var eval = new Evaluator(symbols, logger);
         if (!node.TryEvaluate(eval, out result))
             return false;
 
@@ -166,7 +166,7 @@ public readonly ref struct ExpressionParser
             return _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token) ?? false;
         }
 
-        result = new AddressNode(token, value);
+        result = new AbsoluteNode(token, value);
         return true;
     }
 
@@ -174,7 +174,7 @@ public readonly ref struct ExpressionParser
     {
         result = null;
 
-        if (_context is null || !_context.TryGetSymbol(token.Source, out var symbol))
+        if (_symbols?.TryGetValue(token.Source, out var symbol) is not true)
             return _logger?.Log(Severity.Error, LogId.UndeclaredSymbolReferenced, token, "UndeclaredSymbolReferenced", token) ?? false;
 
         _references.Add(symbol);

@@ -15,6 +15,7 @@ namespace Zarem.Assembler.Logging;
 /// </summary>
 public class Logger : ILogger
 {
+    private readonly HashSet<string> _localizers = [];
     private readonly CompositeLocalizer _localizer;
     private readonly List<LogEntry> _currentLogs;
     private readonly List<LogEntry> _flushedLogs;
@@ -62,7 +63,14 @@ public class Logger : ILogger
     /// Registers a string source with the logger.
     /// </summary>
     /// <param name="localizer"></param>
-    public void Register(IStringLocalizer localizer) => _localizer.Register(localizer);
+    public void Register(IStringLocalizer localizer)
+    {
+        if (localizer.Namespace is null || _localizers.Contains(localizer.Namespace))
+            return;
+
+        _localizers.Add(localizer.Namespace);
+        _localizer.Register(localizer);
+    }
 
     /// <inheritdoc/>
     public bool Log(Severity severity, LogCode code, string? file, string messageKey, params object[] args)

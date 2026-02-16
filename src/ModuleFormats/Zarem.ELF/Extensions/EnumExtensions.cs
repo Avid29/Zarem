@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using LibObjectFile.Elf;
-using Zarem.Models.Modules.Tables.Enums;
+using Zarem.Models.Tables.Enums;
 
 namespace ObjFormats.LibOF.Extensions;
 

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Zarem.Assembler.Models.Modules;
+using Zarem.Assembler.Models;
 using Zarem.Emulator.Models.Modules;
 using Zarem.RASM;
 using Zarem.RASM.Config;

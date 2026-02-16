@@ -3,8 +3,8 @@
 using System.Threading.Tasks;
 using Zarem.Config;
 using Zarem.Emulator.Models.Modules;
+using Zarem.Models;
 using Zarem.Models.Files;
-using Zarem.Models.Modules;
 
 namespace Zarem.Components.Interfaces;
 

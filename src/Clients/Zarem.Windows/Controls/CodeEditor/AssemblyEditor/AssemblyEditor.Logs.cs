@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WinUIEditor;
 using Zarem.Assembler;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Models.Instructions.Enums;
@@ -110,7 +111,7 @@ public partial class AssemblyEditor
         try
         {
             var config = AssemblerConfig ?? new MIPSAssemblerConfig(MipsVersion.MipsIII);
-            var result = await MIPSAssembler.AssembleAsync(Text, null, config);
+            var result = await Zarembler.AssembleAsync(Text, null, new MIPSAssmblerHandler(config), config);
             ApplyLogHighlights(result.Logs);
             UpdateSymbols(result.Symbols);
         }

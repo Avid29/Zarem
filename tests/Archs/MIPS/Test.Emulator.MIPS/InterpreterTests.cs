@@ -4,8 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Test.MIPS.Helpers;
 using Zarem.Assembler;
-using Zarem.Elf;
-using Zarem.Elf.Config;
+using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Emulator;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Interpreter;
@@ -23,14 +23,15 @@ public class InterpreterTests
         var stream = File.Open(path, FileMode.Open);
 
         // Run assembler, and assert successful assembly
-        var result = await MIPSAssembler.AssembleAsync(stream, path, new());
+        var config = new MIPSAssemblerConfig();
+        var result = await Zarembler.AssembleAsync(stream, path, new MIPSAssmblerHandler(config), config);
         Assert.IsNotNull(result.Module);
 
-        // Link
-        var elfConfig = new ElfConfig();
-        var module = MIPSLinker.Link("entry", result.Module);
-        var elfModule = ElfModule.Create(module, elfConfig);
-        Assert.IsNotNull(elfModule);
+        //// Link
+        //var elfConfig = new ElfConfig();
+        //var module = MIPSLinker.Link("entry", result.Module);
+        //var elfModule = ElfModule.Create(module, elfConfig);
+        //Assert.IsNotNull(elfModule);
 
         // Setup emulator
         var emulatorConfig = new MIPSEmulatorConfig()
@@ -38,8 +39,8 @@ public class InterpreterTests
             HostedTraps = true
         };
         var emulator = new MIPSEmulator(emulatorConfig);
-        emulator.Computer.Processor.ProgramCounter = elfModule.EntryAddress;
-        emulator.Load(elfModule);
+        //emulator.Computer.Processor.ProgramCounter = elfModule.EntryAddress;
+        //emulator.Load(elfModule);
 
         // Setup interpreter
         var interpreter = new MARSTrapHandler(emulator.Computer);

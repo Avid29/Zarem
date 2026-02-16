@@ -2,13 +2,13 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
-using Zarem.Assembler.Models.Modules.Tables;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Extensions.System.IO;
 using Zarem.Helpers;
 using Zarem.Models.Addressing;
 using Zarem.RASM.Tables.Enums;
-using CommonEntry = Zarem.Models.Modules.Tables.ReferenceEntry;
-using CommonType = Zarem.Models.Modules.Tables.Enums.MipsReferenceType;
+using CommonEntry = Zarem.Models.Tables.ReferenceEntry;
+using CommonType = Zarem.Models.Tables.Enums.MipsReferenceType;
 
 namespace Zarem.RASM.Tables;
 

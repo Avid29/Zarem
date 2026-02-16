@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Test.MIPS.Helpers;
 using Zarem.Assembler;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Enum;
 
 namespace Test.ObjFormats;
@@ -38,7 +39,8 @@ public class AssemblerTests
         //Stream result = File.Open(output, FileMode.OpenOrCreate);
 
         // Run assembler
-        var result = await MIPSAssembler.AssembleAsync(stream, filename, config ?? new());
+        config ??= new();
+        var result = await Zarembler.AssembleAsync(stream, filename, new MIPSAssmblerHandler(config), config);
 
         // Find expected errors, warnings, and messages
         if (expected.Length == result.Logs.Count)

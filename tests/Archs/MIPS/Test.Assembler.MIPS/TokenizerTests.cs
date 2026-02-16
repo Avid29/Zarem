@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Test.MIPS.Helpers;
 using System.IO;
 using System.Threading.Tasks;
-using Zarem.Assembler.MIPS.Tokenization;
+using Zarem.Assembler.Tokenization;
 
 namespace Test.Assembler.MIPS;
 
