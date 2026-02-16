@@ -59,10 +59,7 @@ public class Logger : ILogger
     /// </summary>
     public bool Failed { get; private set; }
 
-    /// <summary>
-    /// Registers a string source with the logger.
-    /// </summary>
-    /// <param name="localizer"></param>
+    /// <inheritdoc/>
     public void Register(IStringLocalizer localizer)
     {
         if (localizer.Namespace is null || _localizers.Contains(localizer.Namespace))
@@ -73,7 +70,7 @@ public class Logger : ILogger
     }
 
     /// <inheritdoc/>
-    public bool Log(Severity severity, LogCode code, string? file, string messageKey, params object[] args)
+    public bool Log(Severity severity, LogCode code, string? file, string messageKey, params object?[] args)
     {
         throw new NotImplementedException();
     }

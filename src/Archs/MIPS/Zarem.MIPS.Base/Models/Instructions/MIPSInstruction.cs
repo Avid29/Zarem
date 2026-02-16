@@ -368,7 +368,7 @@ public struct MIPSInstruction
     public OperationCode OpCode
     { 
         readonly get => (OperationCode)UintMasking.GetShiftMask(_inst, OPCODE_BIT_SIZE, OPCODE_BIT_OFFSET);
-        internal set => UintMasking.SetShiftMask(ref _inst, OPCODE_BIT_SIZE, OPCODE_BIT_OFFSET, (uint)value);
+        set => UintMasking.SetShiftMask(ref _inst, OPCODE_BIT_SIZE, OPCODE_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
@@ -377,7 +377,7 @@ public struct MIPSInstruction
     public GPRegister RS
     { 
         readonly get => (GPRegister)UintMasking.GetShiftMask(_inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET);
-        internal set => UintMasking.SetShiftMask(ref _inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET, (uint)value);
+        set => UintMasking.SetShiftMask(ref _inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET, (uint)value);
     }
     
     /// <summary>
@@ -386,7 +386,7 @@ public struct MIPSInstruction
     public GPRegister RT
     { 
         readonly get => (GPRegister)UintMasking.GetShiftMask(_inst, REGISTER_BIT_SIZE, RT_BIT_OFFSET);
-        internal set => UintMasking.SetShiftMask(ref _inst, REGISTER_BIT_SIZE, RT_BIT_OFFSET, (uint)value);
+        set => UintMasking.SetShiftMask(ref _inst, REGISTER_BIT_SIZE, RT_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
@@ -399,7 +399,7 @@ public struct MIPSInstruction
     public RegImmFuncCode RTFuncCode
     {
         readonly get => (RegImmFuncCode)RT;
-        internal set => RT = (GPRegister)value;
+        set => RT = (GPRegister)value;
     }
 
     /// <summary>
@@ -408,7 +408,7 @@ public struct MIPSInstruction
     public GPRegister RD
     { 
         readonly get => (GPRegister)UintMasking.GetShiftMask(_inst, REGISTER_BIT_SIZE, RD_BIT_OFFSET);
-        internal set => UintMasking.SetShiftMask(ref _inst, REGISTER_BIT_SIZE, RD_BIT_OFFSET, (uint)value);
+        set => UintMasking.SetShiftMask(ref _inst, REGISTER_BIT_SIZE, RD_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
@@ -417,7 +417,7 @@ public struct MIPSInstruction
     public byte ShiftAmount
     { 
         readonly get => (byte)UintMasking.GetShiftMask(_inst, SHIFT_AMOUNT_BIT_SIZE, SHIFT_AMOUNT_BIT_OFFSET);
-        internal set => UintMasking.SetShiftMask(ref _inst, SHIFT_AMOUNT_BIT_SIZE, SHIFT_AMOUNT_BIT_OFFSET, (uint)value);
+        set => UintMasking.SetShiftMask(ref _inst, SHIFT_AMOUNT_BIT_SIZE, SHIFT_AMOUNT_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
@@ -429,7 +429,7 @@ public struct MIPSInstruction
     public FunctionCode FuncCode
     { 
         readonly get => (FunctionCode)UintMasking.GetShiftMask(_inst, FUNCTION_BIT_SIZE, FUNCTION_BIT_OFFSET);
-        internal set => UintMasking.SetShiftMask(ref _inst, FUNCTION_BIT_SIZE, FUNCTION_BIT_OFFSET, (uint)value);
+        set => UintMasking.SetShiftMask(ref _inst, FUNCTION_BIT_SIZE, FUNCTION_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
@@ -441,7 +441,7 @@ public struct MIPSInstruction
     public Func2Code Func2Code
     {
         readonly get => (Func2Code)FuncCode;
-        internal set => FuncCode = (FunctionCode)value;
+        set => FuncCode = (FunctionCode)value;
     }
 
     /// <summary>
@@ -453,7 +453,7 @@ public struct MIPSInstruction
     public Func3Code Func3Code
     {
         readonly get => (Func3Code)FuncCode;
-        internal set => FuncCode = (FunctionCode)value;
+        set => FuncCode = (FunctionCode)value;
     }
 
     /// <summary>
@@ -462,7 +462,7 @@ public struct MIPSInstruction
     public short ImmediateValue
     { 
         readonly get => (short)UintMasking.GetShiftMask(_inst, IMMEDIATE_BIT_SIZE, IMMEDIATE_BIT_OFFSET);
-        internal set => UintMasking.SetShiftMask(ref _inst, IMMEDIATE_BIT_SIZE, IMMEDIATE_BIT_OFFSET, (ushort)value);
+        set => UintMasking.SetShiftMask(ref _inst, IMMEDIATE_BIT_SIZE, IMMEDIATE_BIT_OFFSET, (ushort)value);
     }
 
     /// <summary>
@@ -471,7 +471,7 @@ public struct MIPSInstruction
     public int Offset
     {
         readonly get => ImmediateValue << 2;
-        internal set => ImmediateValue = (short)(value >> 2);
+        set => ImmediateValue = (short)(value >> 2);
     }
 
     /// <summary>
@@ -480,7 +480,7 @@ public struct MIPSInstruction
     public uint Address
     { 
         readonly get => UintMasking.GetShiftMask(_inst, ADDRESS_BIT_SIZE, ADDRESS_BIT_OFFSET) << 2;
-        internal set => UintMasking.SetShiftMask(ref _inst, ADDRESS_BIT_SIZE, ADDRESS_BIT_OFFSET, value >> 2);
+        set => UintMasking.SetShiftMask(ref _inst, ADDRESS_BIT_SIZE, ADDRESS_BIT_OFFSET, value >> 2);
     }
     
     #if DEBUG
@@ -495,10 +495,10 @@ public struct MIPSInstruction
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="MIPSInstruction"/>.
     /// </summary>
-    public static unsafe explicit operator MIPSInstruction(uint value) => Unsafe.As<uint, MIPSInstruction>(ref value);
+    public static explicit operator MIPSInstruction(uint value) => Unsafe.As<uint, MIPSInstruction>(ref value);
 
     /// <summary>
     /// Casts a <see cref="MIPSInstruction"/> to a <see cref="uint"/>.
     /// </summary>
-    public static unsafe explicit operator uint(MIPSInstruction value) => Unsafe.As<MIPSInstruction, uint>(ref value);
+    public static explicit operator uint(MIPSInstruction value) => Unsafe.As<MIPSInstruction, uint>(ref value);
 }
