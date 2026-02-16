@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Zarem.Assembler.Config;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization.Models;

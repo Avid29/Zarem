@@ -8,6 +8,7 @@ using Zarem.Assembler.Logging;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Config;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
@@ -16,26 +17,29 @@ namespace Zarem.Assembler.Handlers;
 /// <summary>
 /// An <see cref="IAssemblerHandler"/> for the mips architecture.
 /// </summary>
-public class MIPSAssmblerHandler : IAssemblerHandler
+public class MIPSAssmblerHandler : IAssemblerHandler<MIPSAssemblerConfig>
 {
-    private readonly MIPSAssemblerConfig _config;
-    private readonly InstructionTable _instructionTable;
+    private InstructionTable _instructionTable;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSAssmblerHandler"/> class.
     /// </summary>
     public MIPSAssmblerHandler(MIPSAssemblerConfig config)
     {
-        _config = config;
-        _instructionTable = new InstructionTable(config);
+        _instructionTable = new(config);
+        Config = config;
     }
 
     /// <inheritdoc/>
     public string GetArchitectureName() => "MIPS";
 
     /// <inheritdoc/>
+    public MIPSAssemblerConfig Config { get; }
+
+    /// <inheritdoc/>
     public int GetInstructionSize(AssemblyLine line)
     {
+        Guard.IsNotNull(_instructionTable);
         Guard.IsNotNull(line.Instruction);
 
         if (_instructionTable.TryGetInstruction(line.Instruction.Source, line.Args.Count, out var meta, out _, out _))
@@ -55,7 +59,7 @@ public class MIPSAssmblerHandler : IAssemblerHandler
     /// <inheritdoc/>
     public IParsedInstruction? ParseInstruction(AssemblyLine line, Address address, IReadOnlyDictionary<string, Symbol> symbols, Logger logger)
     {
-        var parser = new MIPSInstructionParser(_config, address, symbols, logger);
+        var parser = new MIPSInstructionParser(Config, address, symbols, logger);
         return parser.Parse(line);
     }
 }

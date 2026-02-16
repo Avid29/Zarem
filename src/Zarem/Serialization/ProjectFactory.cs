@@ -34,7 +34,7 @@ public static class ProjectFactory
         Guard.IsNotNull(formatInfo);
 
         // Create components
-        var assemble = CreateComponent<IAssembleComponent, AssemblerConfig>(typeof(AssembleComponent<,>), archInfo.Assembler.AssemblerHandlerType, config.ArchitectureConfig.AssemblerConfig, archInfo.Assembler);
+        var assemble = CreateAssembler<IAssembleComponent, AssemblerConfig>(typeof(AssembleComponent<,>), archInfo.Assembler.AssemblerHandlerType, config.ArchitectureConfig.AssemblerConfig, archInfo.Assembler);
         var emulate = CreateComponent<IEmulateComponent, EmulatorConfig>(typeof(EmulateComponent<,>), archInfo.Emulator.EmulatorType, config.ArchitectureConfig.EmulatorConfig, archInfo.Emulator);
         var format = CreateComponent<IFormatComponent, FormatConfig>(typeof(FormatComponent<,>), formatInfo.FormatType, config.FormatConfig, formatInfo);
 
@@ -53,6 +53,21 @@ public static class ProjectFactory
     {
         var config = ProjectSerializer.Deserialize(path);
         return Create(config);
+    }
+
+    private static T CreateAssembler<T, TConfig>(Type openType, Type primaryType, TConfig config, object descripter)
+        where T : IAssembleComponent
+        where TConfig : notnull
+    {
+        // Form a closed-type format component
+        var closedType = openType.MakeGenericType(primaryType, config.GetType());
+
+        // Instantiate
+        var handler = Activator.CreateInstance(primaryType, config);
+        var component = (T?)Activator.CreateInstance(closedType, handler, config, descripter);
+        Guard.IsNotNull(component);
+
+        return component;
     }
 
     private static T CreateComponent<T, TConfig>(Type openType, Type primaryType, TConfig config, object descripter)
