@@ -79,8 +79,9 @@ public readonly struct Evaluator
                 return false;
             }
 
-            // Symbolic in different sections
-            if (left.Symbol.Address.Section != right.Symbol.Address.Section)
+            // Symbolic in different sections, or undefined
+            if (left.Symbol.Address.Section != right.Symbol.Address.Section &&
+                left.Symbol.IsDefined && right.Symbol.IsDefined)
             {
                 // TODO: Improve error message
                 _logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantSubtractRelocatable");
