@@ -1,10 +1,12 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Instructions;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models;
@@ -18,6 +20,7 @@ namespace Zarem.Assembler;
 public class MIPSHandler : IArchHandler
 {
     private readonly MIPSAssemblerConfig _config;
+    private readonly InstructionTable _instructionTable;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSHandler"/> class.
@@ -25,6 +28,7 @@ public class MIPSHandler : IArchHandler
     public MIPSHandler(MIPSAssemblerConfig config)
     {
         _config = config;
+        _instructionTable = new InstructionTable(config);
     }
 
     /// <inheritdoc/>
@@ -33,7 +37,16 @@ public class MIPSHandler : IArchHandler
     /// <inheritdoc/>
     public int GetInstructionSize(AssemblyLine line)
     {
-        // TODO: pseudo-instructions
+        Guard.IsNotNull(line.Instruction);
+
+        if (_instructionTable.TryGetInstruction(line.Instruction.Source, line.Args.Count, out var meta, out _, out _))
+        {
+            var count = meta.RealizedInstructionCount ?? 1;
+            return count * 4;
+        }
+
+        // Instruction note found.
+        // Add a nop and less the second pass handle the error
         return 4;
     }
 

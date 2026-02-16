@@ -16,7 +16,7 @@ namespace Zarem.Assembler.Parsers.Expressions;
 /// <summary>
 /// A struct for applying operations.
 /// </summary>
-public struct Evaluator
+public readonly struct Evaluator
 {
     private readonly ILogger? _logger;
 
@@ -42,20 +42,19 @@ public struct Evaluator
     /// <param name="right">The right-hand child.</param>
     /// <param name="result">The sum of <paramref name="left"/> and <paramref name="right"/>.</param>
     /// <returns>Whether or not the sum of the items could be taken.</returns>
-    public bool TryAdd(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
+    public readonly bool TryAdd(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
     {
         result = default;
 
         // If both address are relocatable
-        if (!Address.TryAdd(left.Value, right.Value, out var value))
+        if (left.IsSymbolic && right.IsSymbolic)
         {
             _logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantAddRelocatables");
             return false;
         }
 
-        var reference = left.Reference ?? right.Reference;
-        result = new(value, reference);
-        result = new ExpressionResult(value, reference);
+        var symbol = left.Symbol ?? right.Symbol;
+        result = new(left.Addend + right.Addend, symbol);
         return true;
     }
 
@@ -67,19 +66,37 @@ public struct Evaluator
     /// <param name="right">The right-hand child.</param>
     /// <param name="result">The difference between <paramref name="left"/> and <paramref name="right"/></param>
     /// <returns>Whether or not the difference of the items could be taken.</returns>
-    public bool TrySubtract(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
+    public readonly bool TrySubtract(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
     {
         result = default;
 
-        // If right hand address is relocatable
-        if (!Address.TrySubtract(left.Value, right.Value, out var value))
+        if (right.IsSymbolic)
         {
-            _logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantSubtractRelocatable");
-            return false;
+            // Absolute - Symbolic
+            if (left.IsAbsolute)
+            {
+                _logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantSubtractRelocatable");
+                return false;
+            }
+
+            // Symbolic in different sections
+            if (left.Symbol.Address.Section != right.Symbol.Address.Section)
+            {
+                // TODO: Improve error message
+                _logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantSubtractRelocatable");
+                return false;
+            }
+
+            // Symbolic - Symbolic in the same section
+            // The result is an absolute
+            result = new ExpressionResult(left.Addend - right.Addend);
+            return true;
         }
 
-        var reference = left.Reference ?? right.Reference;
-        result = new(value, reference);
+        // This works for both
+        // Symbolic - Constant
+        // Constant - Constant
+        result = new ExpressionResult(left.Addend - right.Addend, left.Symbol);
         return true;
     }
 
@@ -91,7 +108,7 @@ public struct Evaluator
     /// <param name="right">The right-hand child.</param>
     /// <param name="result">The product of <paramref name="left"/> and <paramref name="right"/>.</param>
     /// <returns>Whether or not the product of the items could be taken.</returns>
-    public bool TryMultiply(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
+    public readonly bool TryMultiply(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
     {
         result = default;
 
@@ -99,7 +116,7 @@ public struct Evaluator
         if (CheckRelocatable(node, left, right, "Multiply"))
             return false;
 
-        result = new(new Address(left.Value.Offset * right.Value.Offset));
+        result = new(left.Addend * right.Addend);
         return true;
     }
 
@@ -111,7 +128,7 @@ public struct Evaluator
     /// <param name="right">The right-hand child.</param>
     /// <param name="result">The quotient of <paramref name="left"/> divided by <paramref name="right"/>.</param>
     /// <returns>Whether or not the quotient of the items could be taken.</returns>
-    public bool TryDivide(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
+    public readonly bool TryDivide(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
     {
         result = default;
 
@@ -119,7 +136,7 @@ public struct Evaluator
         if (CheckRelocatable(node, left, right, "Divide"))
             return false;
 
-        result = new(new Address(left.Value.Offset / right.Value.Offset));
+        result = new(left.Addend / right.Addend);
         return true;
     }
 
@@ -131,7 +148,7 @@ public struct Evaluator
     /// <param name="right">The right-hand child.</param>
     /// <param name="result">The remainder of <paramref name="left"/> divided by <paramref name="right"/>.</param>
     /// <returns>Whether or not the remainder of dividing the items could be taken.</returns>
-    public bool TryMod(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
+    public readonly bool TryMod(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
     {
         result = default;
 
@@ -139,7 +156,7 @@ public struct Evaluator
         if (CheckRelocatable(node, left, right, "Modulus"))
             return false;
 
-        result = new(new Address(left.Value.Offset % right.Value.Offset));
+        result = new(left.Addend % right.Addend);
         return true;
     }
 
@@ -150,7 +167,7 @@ public struct Evaluator
     /// <param name="value">The child.</param>
     /// <param name="result">The result of a unary plus on <paramref name="value"/>.</param>
     /// <returns>Whether or not a unary plus of the child could be taken </returns>
-    public bool TryUnaryPlus(UnaryOperNode node, ExpressionResult value, out ExpressionResult result)
+    public readonly bool TryUnaryPlus(UnaryOperNode node, ExpressionResult value, out ExpressionResult result)
     {
         result = value;
         return true;
@@ -163,7 +180,7 @@ public struct Evaluator
     /// <param name="value">The child.</param>
     /// <param name="result">Negation of <paramref name="value"/>.</param>
     /// <returns>Whether or not the negation of the child could be taken.</returns>
-    public bool TryNegate(UnaryOperNode node, ExpressionResult value, out ExpressionResult result)
+    public readonly bool TryNegate(UnaryOperNode node, ExpressionResult value, out ExpressionResult result)
     {
         result = default;
 
@@ -171,7 +188,7 @@ public struct Evaluator
         if (CheckRelocatable(node, value, "Negate"))
             return false;
 
-        result = new(new Address(-value.Value.Offset));
+        result = new(-value.Addend);
         return true;
     }
 
@@ -183,7 +200,7 @@ public struct Evaluator
     /// <param name="right">The right-hand child.</param>
     /// <param name="result">Logical AND of <paramref name="left"/> and <paramref name="right"/>.</param>
     /// <returns>Whether or not the Logical AND of the items could be taken.</returns>
-    public bool TryAnd(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
+    public readonly bool TryAnd(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
     {
         result = default;
 
@@ -191,7 +208,7 @@ public struct Evaluator
         if (CheckRelocatable(node, left, right, "AND"))
             return false;
 
-        result = new(new Address(left.Value.Offset & right.Value.Offset));
+        result = new(left.Addend & right.Addend);
         return true;
     }
 
@@ -203,7 +220,7 @@ public struct Evaluator
     /// <param name="right">The right-hand child.</param>
     /// <param name="result">Logical OR of <paramref name="left"/> and <paramref name="right"/>.</param>
     /// <returns>Whether or not the Logical OR of the items could be taken.</returns>
-    public bool TryOr(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
+    public readonly bool TryOr(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
     {
         result = default;
 
@@ -211,7 +228,7 @@ public struct Evaluator
         if (CheckRelocatable(node, left, right, "OR"))
             return false;
 
-        result = new(new Address(left.Value.Offset | right.Value.Offset));
+        result = new(left.Addend | right.Addend);
         return true;
     }
 
@@ -223,7 +240,7 @@ public struct Evaluator
     /// <param name="right">The right-hand child.</param>
     /// <param name="result">Logical XOR of <paramref name="left"/> and <paramref name="right"/>.</param>
     /// <returns>Whether or not the Logical XOR of the items could be taken.</returns>
-    public bool TryXor(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
+    public readonly bool TryXor(BinaryOperNode node, ExpressionResult left, ExpressionResult right, out ExpressionResult result)
     {
         result = default;
 
@@ -231,7 +248,7 @@ public struct Evaluator
         if (CheckRelocatable(node, left, right, "XOR"))
             return false;
 
-        result = new(new Address(left.Value.Offset ^ right.Value.Offset));
+        result = new(left.Addend ^ right.Addend);
         return true;
     }
 
@@ -242,7 +259,7 @@ public struct Evaluator
     /// <param name="value">The child.</param>
     /// <param name="result">Logical NOT of <paramref name="value"/>.</param>
     /// <returns>Whether or not the logical NOT of the child could be taken.</returns>
-    public bool TryNot(UnaryOperNode node, ExpressionResult value, out ExpressionResult result)
+    public readonly bool TryNot(UnaryOperNode node, ExpressionResult value, out ExpressionResult result)
     {
         result = default;
 
@@ -250,24 +267,25 @@ public struct Evaluator
         if (CheckRelocatable(node, value, "NOT"))
             return false;
 
-        result = new(new Address(~value.Value.Offset));
+        result = new(~value.Addend);
         return true;
+    }
+
+    private readonly bool CheckRelocatable(BinaryOperNode node, ExpressionResult left, ExpressionResult right, string operation)
+    {
+        return CheckRelocatable(node.LeftChild, left, operation) || CheckRelocatable(node.RightChild, right, operation);
     }
 
     private readonly bool CheckRelocatable(ExpNode? node, ExpressionResult value, string operation)
     {
         Guard.IsNotNull(node);
 
-        if (value.IsRelocatable)
+        if (value.IsSymbolic)
         {
             _logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, $"Cant{operation}Relocatable");
             return true;
         }
-        return false;
-    }
 
-    private readonly bool CheckRelocatable(BinaryOperNode node, ExpressionResult left, ExpressionResult right, string operation)
-    {
-        return CheckRelocatable(node.LeftChild, left, operation) || CheckRelocatable(node.RightChild, right, operation);
+        return false;
     }
 }

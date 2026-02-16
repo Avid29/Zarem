@@ -110,7 +110,7 @@ public partial class AssemblyEditor
         try
         {
             var config = AssemblerConfig ?? new MIPSAssemblerConfig(MipsVersion.MipsIII);
-            var result = await Assembler.Assembler.AssembleAsync(Text, null, new MIPSHandler(config), config);
+            var result = await Zarembler.AssembleAsync(Text, null, new MIPSHandler(config), config);
             ApplyLogHighlights(result.Logs);
             UpdateSymbols(result.Symbols);
         }

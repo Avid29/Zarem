@@ -156,16 +156,16 @@ public readonly struct DirectiveParser
             return false;
 
         // Argument must not be relocatable
-        if (result.IsRelocatable)
+        if (result.IsSymbolic)
         {
             _logger?.Log(Severity.Error, LogId.InvalidDirectiveArg, args[0].Tokens, "DirectiveNoRelocatableArguments", directiveName);
             return false;
         }
 
         // Result should not be null
-        Guard.IsNotNull(result.Value);
+        Guard.IsNotNull(result.Addend);
 
-        var value = result.Value.Offset;
+        var value = result.Addend;
 
         if (align)
         {
@@ -219,21 +219,21 @@ public readonly struct DirectiveParser
             if (!ExpressionParser.TryParse(arg.Tokens, out var result, _symbols, _logger))
                 return false;
 
-            if (result.IsRelocatable)
+            if (result.IsSymbolic)
             {
                 // TODO: Can data be a reference to a relocatable address?
                 _logger?.Log(Severity.Error, LogId.InvalidDirectiveDataArg, args[0].Tokens, "DirectiveAllocationNoRelocatableArguments", name);
                 return false;
             }
 
-            Guard.IsNotNull(result.Value);
-            var resultValue = result.Value.Offset;
+            Guard.IsNotNull(result.Addend);
+            var resultValue = result.Addend;
             
             // TODO: Double check the logic here. Does this always detect the error?
             value = T.CreateTruncating(resultValue);
             if (value != T.CreateSaturating(resultValue))
             {
-                _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg.Tokens, "DirectiveAllocationTruncated",  arg.Tokens.Print(), result.Value, value);
+                _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg.Tokens, "DirectiveAllocationTruncated",  arg.Tokens.Print(), result.Addend, value);
             }
 
             value.WriteBigEndian(bytes, pos);

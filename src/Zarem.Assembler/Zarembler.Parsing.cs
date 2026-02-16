@@ -14,7 +14,7 @@ using Zarem.Models.Tables.Enums;
 
 namespace Zarem.Assembler;
 
-public partial class Assembler
+public partial class Zarembler
 {
     private void AlignmentPass(AssemblyLine line)
     {
@@ -94,14 +94,16 @@ public partial class Assembler
         if (!ExpressionParser.TryParse(expression, out var result, _module.Symbols, _logger))
             return;
         
-        if (result.IsRelocatable)
+        if (result.IsSymbolic)
         {
             _logger.Log(Severity.Error, LogId.MacroCannotBeRelocatable, expression[0], "NoRelocatableMacros");
             return;
         }
-        
-        // TODO: Macro flags
-        DefineSymbol(name, result.Value, SymbolType.Macro);
+
+        // TODO: Macros
+
+        //var macroSym = new MacroSymbol(name, )
+        //DefineSymbol(name, result.Addend, SymbolType.Macro);
     }
 
     private void RealizeInstruction(AssemblyLine line)
@@ -110,7 +112,8 @@ public partial class Assembler
         var instruction = _archHandler.ParseInstruction(line, CurrentAddress, _module.Symbols, _logger);
         if (instruction is null)
         {
-            // TODO: Handle parse failure.
+            // Instruction parsing failed. Append a NOP, and get on it with it
+            _activeSection.Append(_archHandler.GetNOP());
             return;
         }
 

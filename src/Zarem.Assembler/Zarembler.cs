@@ -35,9 +35,13 @@ namespace Zarem.Assembler;
 //
 
 /// <summary>
-/// A MIPS assembler.
+/// The Zarem assembler.
 /// </summary>
-public partial class Assembler
+/// <remarks>
+/// Not in love with this name, but I want it in the assembler namespace and
+/// I don't want a class that shares a name with its parent's namespace.
+/// </remarks>
+public partial class Zarembler
 {
     private readonly Logger _logger;
     private readonly Module _module;
@@ -45,12 +49,12 @@ public partial class Assembler
     private Section _activeSection;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Assembler"/> class.
+    /// Initializes a new instance of the <see cref="Zarembler"/> class.
     /// </summary>
-    private Assembler(IArchHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    private Zarembler(IArchHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         _logger = logger ?? new Logger();
-        _logger.Register(new Localizer("Zarem.Assembler.Resources.Logger", typeof(Assembler).Assembly));
+        _logger.Register(new Localizer("Zarem.Assembler.Resources.Logger", typeof(Zarembler).Assembly));
         Config = config;
 
         _archHandler = archHandler;
@@ -104,11 +108,11 @@ public partial class Assembler
     /// <summary>
     /// Assembles an object module from a stream of assembly.
     /// </summary>
-    private static async Task<Assembler> AssembleAsync(TextReader reader, string? filename, IArchHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    private static async Task<Zarembler> AssembleAsync(TextReader reader, string? filename, IArchHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         logger?.Flush();
 
-        var assembler = new Assembler(archHandler, config, logger);
+        var assembler = new Zarembler(archHandler, config, logger);
         var tokens = await Tokenizer.TokenizeAsync(reader, filename);
 
         // Run the alignment pass on each line

@@ -22,7 +22,7 @@ public class InterpreterTests
         var stream = File.Open(path, FileMode.Open);
 
         // Run assembler, and assert successful assembly
-        var result = await Assembler.AssembleAsync(stream, path, new MIPSHandler(new()), new MIPSAssemblerConfig());
+        var result = await Zarembler.AssembleAsync(stream, path, new MIPSHandler(new()), new MIPSAssemblerConfig());
         Assert.IsNotNull(result.Module);
 
         //// Link

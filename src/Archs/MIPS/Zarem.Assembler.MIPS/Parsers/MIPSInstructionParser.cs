@@ -285,35 +285,52 @@ public struct MIPSInstructionParser
         if (!ExpressionParser.TryParse(arg, out var expResult, _symbols, _logger))
             return false;
 
-        if (expResult.IsRelocatable && target is Argument.Shift)
+        if (expResult.IsSymbolic && target is Argument.Shift)
         {
             // TODO: Consider tracking ref symbol token
             _logger?.Log(Severity.Error, LogId.RelocatableReferenceInShift, arg, "RelocatableShiftAmount");
             return false;
         }
 
-        // TODO: Can branches make external references?
         bool branch = target is Argument.Offset or Argument.LargeOffset;
-        if (expResult.Reference is not null && !branch && _config is not null)
+
+        if (expResult.Symbol is not null)
         {
-            var type = target switch
+            var (type, addend) = target switch
             {
-                Argument.Address => MipsReferenceType.JumpTarget26,
-                Argument.Immediate => MipsReferenceType.Low16,
-                Argument.FullImmediate => MipsReferenceType.Low16, // TODO: Handle high addresses
-                _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
+                Argument.Address => (MipsReferenceType.JumpTarget26, 0),
+                Argument.Immediate => (MipsReferenceType.Low16, 0),
+                Argument.Offset => (MipsReferenceType.PCRelative16, -4),
+                Argument.LargeOffset => (MipsReferenceType.PCRelative26, -4),
+                Argument.FullImmediate => (MipsReferenceType.Low16, 0), // TODO: Handle high addresses
+                _ => ThrowHelper.ThrowArgumentOutOfRangeException<(MipsReferenceType, long)>($"Argument of type '{target}' cannot reference relocatable symbols."),
             };
 
+            if (branch)
+            {
+                // Warn about branching safety
+                var section = expResult.Symbol.Address.Section;
+                if (section is null)
+                {
+                    _logger?.Log(Severity.Warning, LogId.ExternalBranching, arg, "ExternalBranching");
+                }
+                else if (section != _currentAddress.Section)
+                {
+                    _logger?.Log(Severity.Warning, LogId.BranchBetweenSections, arg, "BranchBetweenSections");
+                }
+            }
+
             // Create the relocation
-            var reloc = expResult.Reference;
-            relocation = new RelocationEntry(reloc.Name, reloc.Address, (int)type);
+            var reference = expResult.Symbol;
+            relocation = new RelocationEntry(reference.Name, _currentAddress, (int)type, addend);
+            return true;
         }
 
         // NOTE: Casting might truncate the value to fit the bit size.
         // This is the desired behavior, but when logging errors this
         // should be handled explicitly and drop an assembler warning.
 
-        long value = expResult.Value.Offset;
+        long value = expResult.Addend;
 
         // Truncates the value to fit the target argument
         CleanInteger(ref value, arg, target);
@@ -335,21 +352,6 @@ public struct MIPSInstructionParser
                 return true;
             case Argument.Offset:
             case Argument.LargeOffset:
-                if (expResult.IsRelocatable)
-                {
-                    Guard.IsNotNull(_config);
-
-                    var @base = _currentAddress + 4;
-                    if (@base.Section != expResult.Value.Section)
-                    {
-                        _logger?.Log(Severity.Error, LogId.BranchBetweenSections, arg, "CantBranchBetweenSections");
-                        return false;
-                    }
-
-                    // Adjust relative to current position
-                    value -= @base.Offset;
-                }
-                
                 _immediate = (int)value;
                 return true;
 

@@ -166,7 +166,7 @@ public readonly ref struct ExpressionParser
             return _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token) ?? false;
         }
 
-        result = new AddressNode(token, value);
+        result = new AbsoluteNode(token, value);
         return true;
     }
 

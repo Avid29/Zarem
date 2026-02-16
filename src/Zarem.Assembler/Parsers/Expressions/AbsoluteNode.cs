@@ -3,27 +3,18 @@
 using Zarem.Assembler.Parsers.Expressions.Abstract;
 using Zarem.Assembler.Parsers.Expressions.Enums;
 using Zarem.Assembler.Tokenization.Models;
-using Zarem.Models;
-using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Parsers.Expressions;
 
 /// <summary>
 /// A class for an integer node on an expression tree.
 /// </summary>
-public class AddressNode : ValueNode<Address>
+public class AbsoluteNode : ValueNode<long>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="AddressNode"/> class.
+    /// Initializes a new instance of the <see cref="AbsoluteNode"/> class.
     /// </summary>
-    public AddressNode(Token token, long value, Section? section = null) : this(token, new Address(section, value))
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AddressNode"/> class.
-    /// </summary>
-    public AddressNode(Token token, Address value) : base(token, value)
+    public AbsoluteNode(Token token, long value) : base(token, value)
     {
     }
 

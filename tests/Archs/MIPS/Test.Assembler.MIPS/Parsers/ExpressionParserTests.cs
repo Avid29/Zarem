@@ -70,7 +70,7 @@ public class ExpressionParserTests
         Assert.AreEqual(success, expected.HasValue);
         if (expected.HasValue)
         {
-            Assert.AreEqual(expected.Value, actual.Value.Offset);
+            Assert.AreEqual(expected.Value, actual.Addend);
         }
     }
 }

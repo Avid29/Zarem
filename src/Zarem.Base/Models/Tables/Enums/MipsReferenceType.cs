@@ -71,4 +71,9 @@ public enum MipsReferenceType
     /// 32-bit offset relative to the global pointer register.
     /// </summary>
     GlobalRelative32 = 12,
+
+    /// <summary>
+    /// 26-bit PC-relative reference for brances.
+    /// </summary>
+    PCRelative26 = 10,
 }

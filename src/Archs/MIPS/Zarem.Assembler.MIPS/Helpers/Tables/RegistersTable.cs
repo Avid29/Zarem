@@ -32,7 +32,7 @@ public static class RegistersTable
             return false;
 
         // Check for float register
-        // TODO: Checking "fp" explicitly is a bit of a hack, but it works (at least for now).
+        // NOTE: Checking "fp" explicitly is a bit of a hack, but it works (at least for now).
         if (name[0] == 'f' && name != "fp")
         {
             // Assign set as floating point then fall-through to numerical

@@ -1,5 +1,7 @@
 ﻿// Adam Dernis 2024
 
+using System;
+using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using Zarem.Assembler.Parsers;
 using Zarem.Models.Instructions;
@@ -59,7 +61,15 @@ public class MIPSParsedInstruction : IParsedInstruction
     /// <inheritdoc/>
     public byte[] RealizeBytes()
     {
-        // TODO: Realize bytes properly
-        return [];
+        var instructions = Realize();
+        byte[] bytes = new byte[instructions.Length * sizeof(uint)];
+        Span<byte> destination = bytes;
+
+        for (int i = 0; i < instructions.Length; i++)
+        {
+            BinaryPrimitives.WriteUInt32BigEndian(destination[(i * 4)..], (uint)instructions[i]);
+        }
+
+        return bytes;
     }
 }
