@@ -5,10 +5,14 @@ using System.Threading.Tasks;
 using Zarem.Assembler;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Handlers;
+using Zarem.Assembler.Logging;
 using Zarem.Elf;
 using Zarem.Elf.Config;
 using Zarem.Emulator;
 using Zarem.Emulator.Interpreter;
+using Zarem.Linker;
+using Zarem.Linker.Config;
+using Zarem.Linker.Handler;
 using Zarem.Models.Files;
 using Zarem.Services.Popup;
 using Zarem.Services.Popup.Enums;
@@ -74,10 +78,13 @@ public class DebugService : IDebugService
             return;
 
         // Cheat and link here
-        //var module = MIPSLinker.Link("entry", result.Module);
-        //var elfModule = ElfModule.Create(module, new ElfConfig());
-        //if (elfModule is null)
-        //    return;
+        var module = ZaLinker.Link(new LinkerConfig(), new MIPSLinkerHandler(), new Logger(), result.Module);
+        module.EntryPoint = module.GetOrCreateSymbol("entry");
+
+        // Cheat and abstract here
+        var elfModule = ElfModule.Create(module, new ElfConfig());
+        if (elfModule is null)
+            return;
 
         // Start a debug session
         var session = _projectService.Project.StartDebug();
@@ -90,7 +97,7 @@ public class DebugService : IDebugService
 
         var trapHandler = new MARSTrapHandler(mipsEmu.Computer);
 
-        //session.Emulator.Load(elfModule);
+        session.Emulator.Load(elfModule);
         session.Emulator.Start();
     }
 
