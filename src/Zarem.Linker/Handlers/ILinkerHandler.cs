@@ -15,9 +15,10 @@ public interface ILinkerHandler
     /// </summary>
     /// <param name="section">The section to patch.</param>
     /// <param name="relocation">The relocation to apply.</param>
-    /// <param name="symbolAddress">The address of the symbol within the referenced.</param>
-    /// <param name="place">The address to apply the relocation.</param>
-    /// <param name="logger">The .</param>
+    /// <param name="offset">The location of the patch within the section's stream.</param>
+    /// <param name="symbolVirtual">The virtual address of the referenced symbol.</param>
+    /// <param name="patchVirtual">The virtual address of the patch.</param>
+    /// <param name="logger">The logger to track failures.</param>
     /// <returns><see langword="true"/> if the relocation succeeds, <see langword="false"/> otherwise.</returns>
-    bool PatchRelocation(Section section, RelocationEntry relocation, ulong symbolAddress, ulong place, ILogger? logger = null);
+    bool PatchRelocation(Section section, RelocationEntry relocation, ulong offset, ulong symbolVirtual, ulong patchVirtual, ILogger? logger = null);
 }

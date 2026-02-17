@@ -19,6 +19,8 @@ namespace Zarem.Linker;
 /// </summary>
 public sealed class ZaLinker
 {
+    private readonly Dictionary<Module, Dictionary<string, ulong>> _moduleSectionOffsets = [];
+
     private readonly LinkerConfig _config;
     private readonly ILogger _logger;
     private readonly ILinkerHandler _handler;
@@ -69,11 +71,19 @@ public sealed class ZaLinker
     {
         foreach (var module in modules)
         {
+            var offsets = new Dictionary<string, ulong>();
             foreach (var section in module.Sections.Values)
             {
                 var linkedSection = Module.GetOrCreateSection(section.Name);
+
+                // TODO: Get alignment info from config
+                linkedSection.Align(4);
+
+                offsets[section.Name] = (ulong)linkedSection.Size;
                 linkedSection.Append(section.Stream);
             }
+
+            _moduleSectionOffsets.Add(module, offsets);
         }
 
         // TODO: Support non-zero base address
@@ -92,31 +102,36 @@ public sealed class ZaLinker
         {
             foreach (var symbol in module.Symbols.Values)
             {
-                // Drop local symbols
-                if (symbol.Binding is SymbolBinding.Local)
-                    continue;
+                //// TODO: Manage local symbols vs global symbols
+                //if (symbol.Binding is SymbolBinding.Local)
+                //    continue;
 
                 if (Module.Symbols.TryGetValue(symbol.Name, out var existing))
                 {
                     // TODO: Weak symbols
-
                     // TODO: Track and log source defining modules
                     _logger?.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.Name ?? "", "ConflictingSymbolDefinitions", symbol.Name);
                     continue;
                 }
 
-                // Note sure how we got here
-                Guard.IsNotNull(symbol.Address.Section);
-
-                // Translate the symbol address within the section
-                var linkedSection = Module.GetOrCreateSection(symbol.Address.Section.Name);
-                ulong sectionDelta = linkedSection.VirtualAddress - symbol.Address.Section.VirtualAddress;
-                long finalAddress = (long)sectionDelta + symbol.Address.Offset;
-
                 var newSymbol = Module.GetOrCreateSymbol(symbol.Name);
-                newSymbol.Address = new Address(linkedSection, finalAddress);
                 newSymbol.Binding = symbol.Binding;
                 newSymbol.Type = symbol.Type;
+
+                if (symbol.IsDefined)
+                {
+                    Guard.IsNotNull(symbol.Address.Section);
+
+                    // Translate the symbol address within the section
+                    var sectionName = symbol.Address.Section.Name;
+                    var linkedSection = Module.GetOrCreateSection(sectionName);
+                    long finalAddress = (long)(linkedSection.VirtualAddress + _moduleSectionOffsets[module][sectionName]) + symbol.Address.Offset;
+                    newSymbol.Address = new Address(linkedSection, finalAddress);
+                }
+                else if (_config.LinkMode is LinkMode.Executable)
+                {
+                    // TODO: Log declared symbol never defined
+                }
             }
         }
     }
@@ -129,6 +144,7 @@ public sealed class ZaLinker
             {
                 // Get delta between section and linked section
                 var linkedSection = Module.GetOrCreateSection(section.Name);
+                ulong sectionBaseInLinked = _moduleSectionOffsets[module][section.Name];
 
                 foreach (var relocation in section.Relocations)
                 {
@@ -143,10 +159,18 @@ public sealed class ZaLinker
                         continue;
                     }
 
-                    ulong symbolAddress = (ulong)symbol.Address.Offset;
-                    ulong place = section.VirtualAddress + (ulong)relocation.Location.Offset;
+                    Guard.IsNotNull(symbol.Address.Section);
 
-                    _handler.PatchRelocation(linkedSection, relocation, symbolAddress, place);
+                    // The absolute virtual address of the symbol
+                    ulong symbolVirtual = Module.GetOrCreateSection(symbol.Address.Section.Name).VirtualAddress + sectionBaseInLinked;
+
+                    // The virtual address of the instruction being patched
+                    ulong patchVirtual = linkedSection.VirtualAddress + sectionBaseInLinked + (ulong)relocation.Location.Offset;
+
+                    // The offset of the instruction within the stream
+                    ulong streamPatchOffset = section.VirtualAddress + (ulong)relocation.Location.Offset;
+
+                    _handler.PatchRelocation(linkedSection, relocation, streamPatchOffset, symbolVirtual, patchVirtual, _logger);
                 }
             } 
         }
