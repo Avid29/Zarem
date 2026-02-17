@@ -8,9 +8,8 @@ using Zarem.Linker.Config;
 using Zarem.Linker.Enums;
 using Zarem.Linker.Extensions;
 using Zarem.Linker.Handlers;
+using Zarem.Localization;
 using Zarem.Models;
-using Zarem.Models.Tables;
-using Zarem.Models.Tables.Enums;
 
 namespace Zarem.Linker;
 
@@ -34,7 +33,8 @@ public sealed class ZaLinker
         _handler = handler;
         _logger = logger;
 
-        Module = new Module("MIPS"); // TODO: Determine architecture.
+        _logger.Register(new Localizer("Zarem.Linker.Resources.Logger", typeof(ZaLinker).Assembly));
+        Module = new Module(_handler.GetArchitectureName());
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ public sealed class ZaLinker
                 {
                     // TODO: Weak symbols
                     // TODO: Track and log source defining modules
-                    _logger?.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.Name ?? "", "ConflictingSymbolDefinitions", symbol.Name);
+                    _logger?.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.Name ?? "", "ConflictingSymbolDefinitions", symbol.Name, module.Name);
                     continue;
                 }
 

@@ -69,7 +69,7 @@ public class MIPSLinkerHandler : ILinkerHandler
     {
         if (((ulong)target & 0xF0000000UL) != (patchVirtual & 0xF0000000UL))
         {
-            // TODO: Log error, jump out of range. 
+            // TODO: Log error, jump out of range.
             logger?.Log(Severity.Error, LogId.JumpOutOfRange, "TODO: Get file name", "JumpOutOfRange", relocation.SymbolName);
         }
 
