@@ -288,7 +288,8 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator/>
                 <MenuFlyoutItem x:Uid="/TitleBar/StartFileWithoutDebuggingMFI" Text="Start File Without Debugging"
-                                Command="{x:Bind ViewModel.StartFileWithoutDebuggingCommand, Mode=OneWay}">
+                                Command="{x:Bind ViewModel.StartFileWithoutDebuggingCommand, Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.PanelViewModel.CurrentPage.CanAssemble, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartWithoutDebuggingIcon}"/>
                     </MenuFlyoutItem.Icon>

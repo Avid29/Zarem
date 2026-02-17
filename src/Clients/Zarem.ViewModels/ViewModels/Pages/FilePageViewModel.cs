@@ -115,7 +115,7 @@ public partial class FilePageViewModel : PageViewModel
     public override bool IsDirty => Content != OriginalContent;
 
     /// <inheritdoc/>
-    public override bool CanAssemble => true; // TODO: Check file type
+    public override bool CanAssemble => File?.SourceFile is not null;
 
     /// <inheritdoc/>
     protected override void OnActivated()

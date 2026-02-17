@@ -22,6 +22,8 @@ public partial class MainViewModel
         RegisterFileMessages();
         RegisterEditMessages();
         RegisterNavigationMessages();
+
+        //_messenger.Register<MainViewModel, ProjectOpenedMessage>(this, (r, m) )
     }
 
     private void RegisterFileMessages()
