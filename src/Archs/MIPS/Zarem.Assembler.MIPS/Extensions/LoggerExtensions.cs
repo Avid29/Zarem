@@ -11,8 +11,8 @@ namespace Zarem.Assembler.Extensions;
 internal static class LoggerExtensions
 {
     public static bool Log(this ILogger logger, Severity severity, LogId id, ReadOnlySpan<Token> tokens, string messageKey, params object?[] args)
-        => logger.Log(severity, new LogCode("MPS", (uint)id), tokens, messageKey, args);
+        => logger.Log(severity, new LogCode("MPS_ASM", (uint)id), tokens, messageKey, args);
 
     public static bool Log(this ILogger logger, Severity severity, LogId id, Token token, string messageKey, params object?[] args)
-        => logger.Log(severity, new LogCode("MPS", (uint)id), [token], messageKey, args);
+        => logger.Log(severity, new LogCode("MPS_ASM", (uint)id), [token], messageKey, args);
 }

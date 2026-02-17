@@ -70,7 +70,10 @@ public partial class ElfModule
                 Link = new(new ElfStringTable()),
             };
 
-            foreach (var symbol in Module.Symbols.Values)
+            // Local symbols first
+            var symbols = Module.Symbols.Values;
+            symbols = symbols.OrderBy(x => x.Binding);
+            foreach (var symbol in symbols)
             {
                 var sectionName = symbol.Address.Section?.Name;
 

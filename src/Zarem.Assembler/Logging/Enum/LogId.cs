@@ -55,6 +55,8 @@ public enum LogId : uint
 
     // Linker Errors
     FailedToLoadModule,
+    UndefinedSymbol,
+    JumpOutOfRange,
 
 #pragma warning restore CS1591
 }

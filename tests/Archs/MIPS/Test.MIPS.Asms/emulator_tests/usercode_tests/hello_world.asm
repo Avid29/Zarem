@@ -2,6 +2,8 @@
 
 # Prints "Hello World" using a syscall
 
+.globl entry
+
 .text
 entry:
 	xori		$a0,	$zero,	hello_world

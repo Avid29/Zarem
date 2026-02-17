@@ -76,6 +76,23 @@ public class Section
     public void Append(ReadOnlySpan<byte> bytes) => Stream.Write(bytes);
 
     /// <summary>
+    /// Appends a stream of data to the end of the section
+    /// </summary>
+    /// <param name="stream">The stream to append.</param>
+    /// <param name="seek">Whether or not seek to the end before appending.</param>
+    public void Append(Stream stream, bool seek = true)
+    {
+        if (seek)
+        {
+            // Seek streams
+            stream.Seek(0, SeekOrigin.Begin);   // Read from the front of source
+            Stream.Seek(0, SeekOrigin.End);     // Write to the back of destination
+        }
+
+        stream.CopyTo(Stream);
+    }
+
+    /// <summary>
     /// Reserves a number of bytes in the section.
     /// </summary>
     public void Reserve(int size) => WriteZeroes(size);

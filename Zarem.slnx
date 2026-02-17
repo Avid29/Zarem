@@ -28,6 +28,9 @@
     <Project Path="src/Archs/MIPS/Zarem.Assembler.MIPS/Zarem.Assembler.MIPS.csproj" />
     <Project Path="src/Archs/MIPS/Zarem.Disassembler.MIPS/Zarem.Disassembler.MIPS.csproj" />
     <Project Path="src/Archs/MIPS/Zarem.Emulator.MIPS/Zarem.Emulator.MIPS.csproj" />
+    <Project Path="src/Archs/MIPS/Zarem.Linker.MIPS/Zarem.Linker.MIPS.csproj" Id="024c439e-9ffc-44ee-aa70-737b7f9c2a23">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
     <Project Path="src/Archs/MIPS/Zarem.MIPS.Base/Zarem.MIPS.Base.csproj" />
     <Project Path="src/Archs/MIPS/Zarem.MIPS/Zarem.MIPS.csproj" />
   </Folder>
@@ -113,5 +116,8 @@
   <Project Path="src/Zarem.Base/Zarem.Base.csproj" />
   <Project Path="src/Zarem.Disassembler/Zarem.Disassembler.csproj" Id="cfe7fc00-2550-4bc7-aae5-9484270fa566" />
   <Project Path="src/Zarem.Emulator/Zarem.Emulator.csproj" Id="89e90d7f-f7ba-4b83-be1d-16e3c7e8efb0" />
+  <Project Path="src/Zarem.Linker/Zarem.Linker.csproj">
+    <BuildType Solution="Alpha|*" Project="Debug" />
+  </Project>
   <Project Path="src/Zarem/Zarem.csproj" />
 </Solution>

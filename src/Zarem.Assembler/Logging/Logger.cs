@@ -3,9 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Localization;
 
 namespace Zarem.Assembler.Logging;
@@ -59,10 +61,7 @@ public class Logger : ILogger
     /// </summary>
     public bool Failed { get; private set; }
 
-    /// <summary>
-    /// Registers a string source with the logger.
-    /// </summary>
-    /// <param name="localizer"></param>
+    /// <inheritdoc/>
     public void Register(IStringLocalizer localizer)
     {
         if (localizer.Namespace is null || _localizers.Contains(localizer.Namespace))
@@ -73,9 +72,19 @@ public class Logger : ILogger
     }
 
     /// <inheritdoc/>
-    public bool Log(Severity severity, LogCode code, string? file, string messageKey, params object[] args)
+    public bool Log(Severity severity, LogCode code, string? filePath, string messageKey, params object?[] args)
     {
-        throw new NotImplementedException();
+        var formattedMessage = _localizer[messageKey, args];
+        formattedMessage ??= messageKey;
+
+        var log = new LogEntry(severity, code, filePath, formattedMessage);
+        _currentLogs.Add(log);
+        EntryLogged?.Invoke(this, log);
+
+        if (severity is Severity.Error)
+            CurrentFailed = true;
+
+        return severity is not Severity.Error;
     }
 
     /// <inheritdoc/>
