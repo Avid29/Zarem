@@ -4,11 +4,11 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Zarem.Assembler.Extensions;
+using System.Security.AccessControl;
 using Zarem.Assembler.Extensions.System;
+using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
-using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers.Expressions;
 using Zarem.Assembler.Parsers.Expressions.Abstract;
 using Zarem.Assembler.Parsers.Expressions.Enums;
@@ -23,15 +23,19 @@ namespace Zarem.Assembler.Parsers;
 /// </summary>
 public readonly ref struct ExpressionParser
 {
-    private readonly ILogger? _logger;
+    private readonly AssemblerLogger? _logger;
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly List<Symbol> _references; 
 
     private ExpressionParser(IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
     {
-        _logger = logger;
         _symbols = symbols;
         _references = [];
+
+        if (logger is not null)
+        {
+            _logger = new AssemblerLogger(logger);
+        }
     }
 
     /// <summary>
@@ -42,7 +46,7 @@ public readonly ref struct ExpressionParser
     /// <param name="symbols">The assembler context containing declared symbols, if desired.</param>
     /// <param name="logger">The logger to log errors or warnings, if desired.</param>
     /// <returns>Whether or not the expression could be parsed.</returns>
-    public static bool TryParse(ReadOnlySpan<Token> expression, out ExpressionResult result, IReadOnlyDictionary<string, Symbol>? symbols = null, ILogger? logger = null)
+    public static bool TryParse(ReadOnlySpan<Token> expression, out ExpressionResult result, IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
     {
         result = default;
 
@@ -57,7 +61,7 @@ public readonly ref struct ExpressionParser
 
         if (!expression.IsEmpty)
         {
-            logger?.Log(Severity.Error, LogId.UnexpectedToken, expression, "UnexpectedToken", expression[0]);
+            parser._logger?.Log(Severity.Error, LogId.UnexpectedToken, expression, "UnexpectedToken", expression[0]);
             return false;
         }
 
@@ -135,8 +139,11 @@ public readonly ref struct ExpressionParser
         if (token.Source.Length > 0 && token.Source[0] is '\'')
         {
             // Character literal
-            if (!StringParser.TryParseChar(token, out char c, _logger))
-                return _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token) ?? false;
+            if (!StringParser.TryParseChar(token, out char c, _logger?.Parent))
+            {
+                _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token);
+                return false;
+            }
 
             value = c;
         }
@@ -158,12 +165,14 @@ public readonly ref struct ExpressionParser
             }
             catch
             {
-                return _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token) ?? false;
+                _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token);
+                return false;
             }
         }
         else if (!long.TryParse(token.Source, out value))
         {
-            return _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token) ?? false;
+            _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token);
+            return false;
         }
 
         result = new AbsoluteNode(token, value);
@@ -175,7 +184,11 @@ public readonly ref struct ExpressionParser
         result = null;
 
         if (_symbols?.TryGetValue(token.Source, out var symbol) is not true)
-            return _logger?.Log(Severity.Error, LogId.UndeclaredSymbolReferenced, token, "UndeclaredSymbolReferenced", token) ?? false;
+        {
+
+            _logger?.Log(Severity.Error, LogId.UndeclaredSymbolReferenced, token, "UndeclaredSymbolReferenced", token);
+            return false;
+        }
 
         _references.Add(symbol);
         result = new SymbolNode(token, symbol);
@@ -196,7 +209,8 @@ public readonly ref struct ExpressionParser
         // Check for a closing parenthesis
         if (tokens.IsEmpty || tokens[0].Type != TokenType.CloseParenthesis)
         {
-            return _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "ExpectedClosingParenthesis") ?? false;
+            _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "ExpectedClosingParenthesis");
+            return false;
         }
 
         // Consume the closing parenthesis

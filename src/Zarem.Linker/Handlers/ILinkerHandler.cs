@@ -25,5 +25,5 @@ public interface ILinkerHandler
     /// <param name="patchVirtual">The virtual address of the patch.</param>
     /// <param name="logger">The logger to track failures.</param>
     /// <returns><see langword="true"/> if the relocation succeeds, <see langword="false"/> otherwise.</returns>
-    bool PatchRelocation(Section section, RelocationEntry relocation, ulong offset, ulong symbolVirtual, ulong patchVirtual, ILogger? logger = null);
+    bool PatchRelocation(Section section, RelocationEntry relocation, ulong offset, ulong symbolVirtual, ulong patchVirtual, ILogger logger);
 }

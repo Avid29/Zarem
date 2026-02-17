@@ -5,6 +5,7 @@ using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Logging.Interfaces;
+using Zarem.Assembler.Logging;
 
 namespace Zarem.Assembler.Parsers;
 
@@ -13,15 +14,19 @@ namespace Zarem.Assembler.Parsers;
 /// </summary>
 public ref struct StringParser
 {
-    private readonly ILogger? _logger;
+    private readonly AssemblerLogger? _logger;
     private readonly Token _token;
     private bool _escapeState;
 
     private StringParser(Token token, ILogger? logger)
     {
         _token = token;
-        _logger = logger;
         _escapeState = false;
+
+        if (logger is not null)
+        {
+            _logger = new AssemblerLogger(logger);
+        }
     }
 
     /// <summary>
@@ -31,7 +36,7 @@ public ref struct StringParser
     /// <param name="literal">The resulting string literal</param>
     /// <param name="logger">The logger to use when tracking errors.</param>
     /// <returns><see cref="true"/> if the string was successfully parsed. <see cref="false"/> otherwise.</returns>
-    public static bool TryParseString(Token token, out string literal, ILogger? logger = null)
+    public static bool TryParseString(Token token, out string literal, ILogger? logger)
     {
         var parser = new StringParser(token, logger);
         return parser.TryParse(token, '"', out literal);
@@ -44,7 +49,7 @@ public ref struct StringParser
     /// <param name="c">The char literal.</param>
     /// <param name="logger">The logger to use when tracking errors.</param>
     /// <returns>Whether or not a character was successfully parsed.</returns>
-    public static bool TryParseChar(Token token, out char c, ILogger? logger = null)
+    public static bool TryParseChar(Token token, out char c, ILogger? logger)
     {
         c = default;
         var parser = new StringParser(token, logger);
@@ -54,7 +59,7 @@ public ref struct StringParser
 
         if (literal.Length != 1)
         {
-            logger?.Log(Severity.Error, LogId.InvalidCharLiteral, token, "MustBeSingleCharacter");
+            parser._logger?.Log(Severity.Error, LogId.InvalidCharLiteral, token, "MustBeSingleCharacter");
             return false;
         }
 

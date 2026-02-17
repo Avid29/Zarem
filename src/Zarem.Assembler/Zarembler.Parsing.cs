@@ -91,7 +91,7 @@ public partial class Zarembler
             return;
         }
         
-        if (!ExpressionParser.TryParse(expression, out var result, _module.Symbols, _logger))
+        if (!ExpressionParser.TryParse(expression, out var result, _module.Symbols, _logger.Parent))
             return;
         
         if (result.IsSymbolic)
@@ -109,7 +109,7 @@ public partial class Zarembler
     private void RealizeInstruction(AssemblyLine line)
     {
         // Try to parse the line
-        var instruction = _archHandler.ParseInstruction(line, CurrentAddress, _module.Symbols, _logger);
+        var instruction = _archHandler.ParseInstruction(line, CurrentAddress, _module.Symbols, _logger?.Parent);
         if (instruction is null)
         {
             // Instruction parsing failed. Append a NOP, and get on it with it
@@ -129,7 +129,7 @@ public partial class Zarembler
 
     private void HandleDirective(AssemblyLine line, bool log = true)
     {
-        var parser = new DirectiveParser(_module.Symbols, Config, log ? _logger : null);
+        var parser = new DirectiveParser(_module.Symbols, Config, log ? _logger.Parent : null);
 
         var name = line.Directive;
         if (name is null || !parser.TryParseDirective(line, out var directive))

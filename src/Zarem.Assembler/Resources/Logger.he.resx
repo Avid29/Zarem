@@ -210,12 +210,6 @@
   <data name="CantSubtractRelocatable" xml:space="preserve">
     <value>לא ניתן לחסר סימבול בר־הזזה.</value>
   </data>
-  <data name="ZeroRegisterWriteback" xml:space="preserve">
-    <value>הוראה זו כותבת לאוגר ‎$zero‎.</value>
-  </data>
-  <data name="WrongArgumentCount" xml:space="preserve">
-    <value>ההוראה ‎'{0}'‎ אינה יכולה לקבל ‎{1}‎ ארגומנטים.</value>
-  </data>
   <data name="CantBranchBetweenSections" xml:space="preserve">
     <value>לא ניתן לבצע הסתעפות בין מקטעים.</value>
   </data>

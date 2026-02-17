@@ -210,12 +210,6 @@
   <data name="CantSubtractRelocatable" xml:space="preserve">
     <value>Cannot subtract a relocatable symbol.</value>
   </data>
-  <data name="ZeroRegisterWriteback" xml:space="preserve">
-    <value>This instruction writes to $zero.</value>
-  </data>
-  <data name="WrongArgumentCount" xml:space="preserve">
-    <value>Instruction '{0}' cannot take '{1}' arguments.</value>
-  </data>
   <data name="CantBranchBetweenSections" xml:space="preserve">
     <value>Cannot branch between sections.</value>
   </data>

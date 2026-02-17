@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Logging;
+using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
@@ -57,7 +58,7 @@ public class MIPSAssmblerHandler : IAssemblerHandler<MIPSAssemblerConfig>
     public ReadOnlySpan<byte> GetNOP() => new byte[4];
 
     /// <inheritdoc/>
-    public IParsedInstruction? ParseInstruction(AssemblyLine line, Address address, IReadOnlyDictionary<string, Symbol> symbols, Logger logger)
+    public IParsedInstruction? ParseInstruction(AssemblyLine line, Address address, IReadOnlyDictionary<string, Symbol> symbols, ILogger? logger)
     {
         var parser = new MIPSInstructionParser(Config, address, symbols, logger);
         return parser.Parse(line);

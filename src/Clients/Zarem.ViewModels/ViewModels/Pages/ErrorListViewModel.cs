@@ -64,7 +64,7 @@ public class ErrorListViewModel : PageViewModel
         _logger = null;
     }
 
-    private void OnEntryLogged(object? sender, LogEntry e)
+    private void OnEntryLogged(object? sender, ILog e)
     {
         _dispatcherService.RunOnUIThread(() =>
         {

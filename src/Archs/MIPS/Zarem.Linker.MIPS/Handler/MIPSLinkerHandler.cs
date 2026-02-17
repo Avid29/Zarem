@@ -1,10 +1,11 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Extensions.System.IO;
-using Zarem.Linker.Extensions;
 using Zarem.Linker.Handlers;
+using Zarem.Linker.Logging;
 using Zarem.Models.Instructions;
 using Zarem.Models.Tables;
 using Zarem.Models.Tables.Enums;
@@ -20,8 +21,10 @@ public class MIPSLinkerHandler : ILinkerHandler
     public string GetArchitectureName() => "MIPS";
 
     /// <inheritdoc/>
-    public bool PatchRelocation(Section section, RelocationEntry relocation, ulong offset, ulong symbolVirtual, ulong patchVirtual, ILogger? logger = null)
+    public bool PatchRelocation(Section section, RelocationEntry relocation, ulong offset, ulong symbolVirtual, ulong patchVirtual, ILogger logger)
     {
+        var localLogger = new LinkerLogger(logger);
+
         section.Position = (long)offset;
         section.Stream.TryRead<uint>(out var value);
 
@@ -35,9 +38,9 @@ public class MIPSLinkerHandler : ILinkerHandler
             MipsReferenceType.Low16 => MIPS_Low16(instruction, target),
             MipsReferenceType.High16 => MIPS_High16(instruction, target),
             MipsReferenceType.PCRelative16 => MIPS_PC16(instruction, pcTarget),
-            MipsReferenceType.JumpTarget26 => MIPS_Jump26(instruction, target, patchVirtual, relocation, logger),
+            MipsReferenceType.JumpTarget26 => MIPS_Jump26(instruction, target, patchVirtual, relocation, localLogger),
             MipsReferenceType.Absolute32 => (uint)target,
-            _ => Invalid_Type(value, relocation.Type, logger)
+            _ => Invalid_Type(value, relocation.Type, localLogger)
         };
 
         section.Position -= sizeof(uint);
@@ -65,19 +68,19 @@ public class MIPSLinkerHandler : ILinkerHandler
         return (uint)instruction;
     }
 
-    private static uint MIPS_Jump26(MIPSInstruction instruction, long target, ulong patchVirtual, RelocationEntry relocation, ILogger? logger = null)
+    private static uint MIPS_Jump26(MIPSInstruction instruction, long target, ulong patchVirtual, RelocationEntry relocation, LinkerLogger logger)
     {
         if (((ulong)target & 0xF0000000UL) != (patchVirtual & 0xF0000000UL))
         {
             // TODO: Log error, jump out of range.
-            logger?.Log(Severity.Error, LogId.JumpOutOfRange, "TODO: Get file name", "JumpOutOfRange", relocation.SymbolName);
+            logger.Log(Severity.Error, LogId.JumpOutOfRange, "TODO: Get file name", "JumpOutOfRange", relocation.SymbolName);
         }
 
         instruction.Address = (uint)target;
         return (uint)instruction;
     }
 
-    private static uint Invalid_Type(uint value, uint type, ILogger? logger = null)
+    private static uint Invalid_Type(uint value, uint type, LocalLogger logger)
     {
         // TODO: Log error
         return value;

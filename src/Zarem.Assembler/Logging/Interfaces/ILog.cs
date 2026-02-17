@@ -11,14 +11,14 @@ namespace Zarem.Assembler.Logging.Interfaces;
 public interface ILog
 {
     /// <summary>
-    /// Get the log's code.
-    /// </summary>
-    public LogCode Code { get; }
-    
-    /// <summary>
     /// Gets the log's severity.
     /// </summary>
     public Severity Severity { get; }
+
+    /// <summary>
+    /// Get the log's code.
+    /// </summary>
+    public LogCode Code { get; }
     
     /// <summary>
     /// Gets the log's message.

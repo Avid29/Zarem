@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Zarem.Assembler.Config;
-using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Extensions.System;
+using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models.Directives;
@@ -27,16 +27,20 @@ public readonly struct DirectiveParser
 {
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly AssemblerConfig _config;
-    private readonly ILogger? _logger;
+    private readonly AssemblerLogger? _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DirectiveParser"/> struct.
     /// </summary>
-    public DirectiveParser(IReadOnlyDictionary<string, Symbol>? symbols, AssemblerConfig config, ILogger? logger = null)
+    public DirectiveParser(IReadOnlyDictionary<string, Symbol>? symbols, AssemblerConfig config, ILogger? logger)
     {
         _symbols = symbols;
         _config = config;
-        _logger = logger;
+
+        if (logger is not null)
+        {
+            _logger = new AssemblerLogger(logger);
+        }
     }
 
     /// <summary>
@@ -152,7 +156,7 @@ public readonly struct DirectiveParser
         }
 
         // Parse argument
-        if (!ExpressionParser.TryParse(args[0].Tokens, out var result, _symbols, _logger))
+        if (!ExpressionParser.TryParse(args[0].Tokens, out var result, _symbols, _logger?.Parent))
             return false;
 
         // Argument must not be relocatable
@@ -216,7 +220,7 @@ public readonly struct DirectiveParser
         {
             var arg = args[i];
 
-            if (!ExpressionParser.TryParse(arg.Tokens, out var result, _symbols, _logger))
+            if (!ExpressionParser.TryParse(arg.Tokens, out var result, _symbols, _logger?.Parent))
                 return false;
 
             if (result.IsSymbolic)
@@ -256,7 +260,7 @@ public readonly struct DirectiveParser
 
             // TODO: Evaluate expressions
             // Parse string statement to string literal
-            if (!StringParser.TryParseString(arg[0], out var value, _logger))
+            if (!StringParser.TryParseString(arg[0], out var value, _logger?.Parent))
                 return false;
 
             // Copy to byte list

@@ -10,6 +10,7 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Helpers.Tables;
+using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
@@ -38,7 +39,7 @@ public struct MIPSInstructionParser
     private readonly Address _currentAddress;
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly InstructionTable _instructionTable;
-    private readonly ILogger? _logger;
+    private readonly AssemblerLogger? _logger;
 
     private InstructionMetadata _meta;
 
@@ -53,15 +54,19 @@ public struct MIPSInstructionParser
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSInstructionParser"/> struct.
     /// </summary>
-    public MIPSInstructionParser(MIPSAssemblerConfig config, Address address, IReadOnlyDictionary<string, Symbol>? symbols = null,  ILogger? logger = null)
+    public MIPSInstructionParser(MIPSAssemblerConfig config, Address address, IReadOnlyDictionary<string, Symbol>? symbols,  ILogger? logger)
     {
         _config = config;
         _currentAddress = address;
         _symbols = symbols;
-        _logger = logger;
 
         // Pre-Create?
         _instructionTable = new InstructionTable(config);
+
+        if (logger is not null)
+        {
+            _logger = new AssemblerLogger(logger);
+        }
     }
 
     /// <summary>
@@ -281,7 +286,7 @@ public struct MIPSInstructionParser
         relocation = null;
 
         // Attempt to parse expression
-        if (!ExpressionParser.TryParse(arg, out var expResult, _symbols, _logger))
+        if (!ExpressionParser.TryParse(arg, out var expResult, _symbols, _logger?.Parent))
             return false;
 
         if (expResult.IsSymbolic && target is Argument.Shift)
