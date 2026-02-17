@@ -11,6 +11,11 @@ namespace Zarem.Linker.Handlers;
 public interface ILinkerHandler
 {
     /// <summary>
+    /// Gets the name of the architecture.
+    /// </summary>
+    string GetArchitectureName();
+
+    /// <summary>
     /// Patches a relocation into a section.
     /// </summary>
     /// <param name="section">The section to patch.</param>

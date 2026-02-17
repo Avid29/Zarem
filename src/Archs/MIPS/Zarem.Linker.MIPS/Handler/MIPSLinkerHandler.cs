@@ -17,6 +17,9 @@ namespace Zarem.Linker.Handler;
 public class MIPSLinkerHandler : ILinkerHandler
 {
     /// <inheritdoc/>
+    public string GetArchitectureName() => "MIPS";
+
+    /// <inheritdoc/>
     public bool PatchRelocation(Section section, RelocationEntry relocation, ulong offset, ulong symbolVirtual, ulong patchVirtual, ILogger? logger = null)
     {
         section.Position = (long)offset;
@@ -79,4 +82,5 @@ public class MIPSLinkerHandler : ILinkerHandler
         // TODO: Log error
         return value;
     }
+
 }
