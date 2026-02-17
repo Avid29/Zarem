@@ -1,9 +1,6 @@
 ﻿// Adam Dernis 2024
 
-using System;
-using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.Tokenization.Models;
-using Zarem.Localization;
+using System.Collections.Generic;
 
 namespace Zarem.Assembler.Logging.Interfaces;
 
@@ -13,42 +10,27 @@ namespace Zarem.Assembler.Logging.Interfaces;
 public interface ILogger
 {
     /// <summary>
-    /// Registers a string source with the logger.
+    /// Logs an event
     /// </summary>
-    void Register(IStringLocalizer localizer);
-
-    /// <summary>
-    /// Creates a new log.
-    /// </summary>
-    /// <remarks>
-    /// Logged as a linker log.
-    /// </remarks>
-    /// <param name="severity">The severity of the log.</param>
-    /// <param name="code">The id of the log.</param>
-    /// <param name="filePath">The file where the log occurred.</param>
-    /// <param name="messageKey">The log resource key for the log message.</param>
-    /// <param name="args">The arguments to format the message with.</param>
-    /// <returns>False if the severity is an error. True otherwise.</returns>
-    bool Log(Severity severity, LogCode code, string filePath, string messageKey, params object?[] args);
-
-    /// <inheritdoc cref="Log(Severity, LogCode, ReadOnlySpan{Token}, string, object?[])"/>
-    bool Log(Severity severity, LogCode code, Token token, string messageKey, params object?[] args);
-
-    /// <summary>
-    /// Creates a new log.
-    /// </summary>
-    /// <remarks>
-    /// Logged as an assembler log.
-    /// </remarks>
-    /// <param name="severity">The severity of the log.</param>
-    /// <param name="code">The id of the log.</param>
-    /// <param name="tokens">The token(s) where the log occurred.</param>
-    /// <param name="messageKey">The log resource key for the log message.</param>
-    /// <param name="args">The arguments to format the message with.</param>
-    bool Log(Severity severity, LogCode code, ReadOnlySpan<Token> tokens, string messageKey, params object?[] args);
+    public bool Log(ILog log);
 
     /// <summary>
     /// Flushes the current log status.
     /// </summary>
     void Flush();
+
+    /// <summary>
+    /// Gets a value indicating whether or not assembly failed.
+    /// </summary>
+    bool CurrentFailed { get; }
+
+    /// <summary>
+    /// Gets a readonly list of logs for the current file.
+    /// </summary>
+    IReadOnlyList<ILog> CurrentLog { get; }
+
+    /// <summary>
+    /// Gets a readonly list of logs.
+    /// </summary>
+    IEnumerable<ILog> Logs { get; }
 }

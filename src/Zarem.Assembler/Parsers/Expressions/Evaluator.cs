@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System.Collections.Generic;
 using Zarem.Assembler.Extensions;
+using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
@@ -18,15 +19,19 @@ namespace Zarem.Assembler.Parsers.Expressions;
 /// </summary>
 public readonly struct Evaluator
 {
-    private readonly ILogger? _logger;
+    private readonly AssemblerLogger? _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Evaluator"/> struct.
     /// </summary>
     public Evaluator(IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
     {
-        _logger = logger;
         Symbols = symbols;
+
+        if (logger is not null)
+        {
+            _logger = new AssemblerLogger(logger);
+        }
     }
 
     /// <summary>

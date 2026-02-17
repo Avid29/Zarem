@@ -20,6 +20,8 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
+using Microsoft.Extensions.Logging.Abstractions;
+
 
 
 
@@ -166,7 +168,7 @@ public class InstructionParserTests
 #endif
 
         var table = new InstructionTable(config);
-        var parser = new MIPSInstructionParser(config, default);
+        var parser = new MIPSInstructionParser(config, default, null, null);
 
         var tokenized = Tokenizer.TokenizeLine(input, nameof(RunTest));
         var actual = parser.Parse(tokenized);
@@ -188,7 +190,7 @@ public class InstructionParserTests
 
         // Initialize parser
         var logger = new Logger();
-        var parser = new MIPSInstructionParser(new MIPSAssemblerConfig(), default, logger: logger);
+        var parser = new MIPSInstructionParser(new MIPSAssemblerConfig(), default, null, logger);
 
         // Parse instruction
         var line = Tokenizer.TokenizeLine(input, nameof(RunTest));

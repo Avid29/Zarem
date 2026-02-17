@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Logging;
+using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models;
@@ -31,7 +32,7 @@ public interface IAssemblerHandler
     /// <summary>
     /// Parse an instruction for the architecture.
     /// </summary>
-    IParsedInstruction? ParseInstruction(AssemblyLine line, Address address, IReadOnlyDictionary<string, Symbol> symbols, Logger logger);
+    IParsedInstruction? ParseInstruction(AssemblyLine line, Address address, IReadOnlyDictionary<string, Symbol> symbols, ILogger? logger);
 
     /// <summary>
     /// Gets a nop instruction for the architecture.

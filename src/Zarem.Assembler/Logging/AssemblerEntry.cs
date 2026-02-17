@@ -8,26 +8,14 @@ using Zarem.Assembler.Tokenization.Models;
 namespace Zarem.Assembler.Logging;
 
 /// <summary>
-/// An <see cref="ILog"/> that occurred in the assembler stage.
+/// An <see cref="ILog"/> that occurred in the assembler.
 /// </summary>
-public class LogEntry : ILog
+public class AssemblerEntry : ILog
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="LogEntry"/> class.
+    /// Initializes a new instance of the <see cref="AssemblerEntry"/> class.
     /// </summary>
-    internal LogEntry(Severity severity, LogCode code, string? filePath, string message)
-    {
-        Code = code;
-        Severity = severity;
-        FilePath = filePath;
-        Message = message;
-        Tokens = [];
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LogEntry"/> class.
-    /// </summary>
-    internal LogEntry(Severity severity, LogCode code, string message, Token[] tokens)
+    public AssemblerEntry(Severity severity, LogCode code, string message, Token[] tokens)
     {
         Code = code;
         Severity = severity;

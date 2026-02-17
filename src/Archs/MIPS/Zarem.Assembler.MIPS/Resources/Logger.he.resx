@@ -171,4 +171,34 @@
   <data name="RelocatableShiftAmount" xml:space="preserve">
     <value>ארגומנט כמות ההזזה אינו יכול להפנות לסמלים ניתנים לרילוקציה.</value>
   </data>
+  <data name="WrongArgumentCount" xml:space="preserve">
+    <value>ההוראה ‎'{0}'‎ אינה יכולה לקבל ‎{1}‎ ארגומנטים.</value>
+  </data>
+  <data name="ZeroRegisterWriteback" xml:space="preserve">
+    <value>הוראה זו כותבת לאוגר ‎$zero‎.</value>
+  </data>
+  <data name="CastWarningSignChanged" xml:space="preserve">
+    <value>הביטוי ‎'{0}'‎ הוערך לערך חתום ‎'{1}'‎ אך הומר לערך בלתי־חתום, והתוצאה היא ‎'{2}'‎.</value>
+  </data>
+  <data name="CastWarningTruncatedHighAndSignChanged" xml:space="preserve">
+    <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך לערך בלתי־חתום של ‎{3}‎ סיביות, והתוצאה היא ‎{2}‎.</value>
+  </data>
+  <data name="CastWarningTruncatedLow" xml:space="preserve">
+    <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך לאחר שהוסרו {4}‎ הסיביות הנמוכות, והתוצאה היא ‎{2}‎.</value>
+  </data>
+  <data name="CastWarningTruncatedLowAndHigh" xml:space="preserve">
+    <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך ל־{3}‎ סיביות לאחר שהוסרו {4}‎ הסיביות הנמוכות, והתוצאה היא ‎{2}‎.</value>
+  </data>
+  <data name="CastWarningTruncatedLowAndHighAndSignChanged" xml:space="preserve">
+    <value>הביטוי ‎'{0}'‎ הוערך ל־‎'{1}'‎ אך נחתך לערך בלתי־חתום של ‎'{3}‎ סיביות' לאחר שהוסרו ‎'{4}‎ הסיביות הנמוכות, והתוצאה היא ‎'{2}'‎.</value>
+  </data>
+  <data name="CastWarningTruncatedLowAndSignChanged" xml:space="preserve">
+    <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך לערך בלתי־חתום לאחר הסרת {4}‎ הסיביות הנמוכות, והתוצאה היא ‎{2}‎.</value>
+  </data>
+  <data name="CastWarningTruncatedHigh" xml:space="preserve">
+    <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך ל־{3}‎ סיביות, והתוצאה היא ‎'{2}'‎.</value>
+  </data>
+  <data name="EmptyArgument" xml:space="preserve">
+    <value>הארגומנט ריק.</value>
+  </data>
 </root>

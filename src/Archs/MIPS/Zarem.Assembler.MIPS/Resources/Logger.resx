@@ -171,4 +171,34 @@
   <data name="RelocatableShiftAmount" xml:space="preserve">
     <value>Shift amount argument cannot reference relocatable symbols.</value>
   </data>
+  <data name="WrongArgumentCount" xml:space="preserve">
+    <value>Instruction '{0}' cannot take '{1}' arguments.</value>
+  </data>
+  <data name="ZeroRegisterWriteback" xml:space="preserve">
+    <value>This instruction writes to $zero.</value>
+  </data>
+  <data name="CastWarningSignChanged" xml:space="preserve">
+    <value>Expression '{0}' evaluated to signed value '{1}' but was cast to an unsigned value, resulting in '{2}'.</value>
+  </data>
+  <data name="CastWarningTruncatedHighAndSignChanged" xml:space="preserve">
+    <value>Expression '{0}' evaluated to {1} but was truncated to an unsigned value with {3}-bits, resulting in {2}.</value>
+  </data>
+  <data name="CastWarningTruncatedLow" xml:space="preserve">
+    <value>Expression '{0}' evaluated to {1} but was truncated with the lower {4} bits dropped, resulting in {2}.</value>
+  </data>
+  <data name="CastWarningTruncatedLowAndHigh" xml:space="preserve">
+    <value>Expression '{0}' evaluated to {1} but was truncated to {3}-bits with the lower {4} bits dropped, resulting in {2}.</value>
+  </data>
+  <data name="CastWarningTruncatedLowAndHighAndSignChanged" xml:space="preserve">
+    <value>Expression '{0}' evaluated to '{1}' but was truncated to an unsigned value with '{3}-bits' and the lower '{4} bits' dropped, resulting in '{2}'.</value>
+  </data>
+  <data name="CastWarningTruncatedLowAndSignChanged" xml:space="preserve">
+    <value>Expression '{0}' evaluated to {1} but was truncated to an unsigned value with the lower {4} bits, resulting in {2}.</value>
+  </data>
+  <data name="CastWarningTruncatedHigh" xml:space="preserve">
+    <value>Expression '{0}' evaluated to {1} but was truncated to {3}-bits, resulting in '{2}'.</value>
+  </data>
+  <data name="EmptyArgument" xml:space="preserve">
+    <value>Argument is empty.</value>
+  </data>
 </root>

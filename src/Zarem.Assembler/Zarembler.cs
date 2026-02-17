@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging;
+using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Localization;
@@ -43,7 +44,7 @@ namespace Zarem.Assembler;
 /// </remarks>
 public partial class Zarembler
 {
-    private readonly Logger _logger;
+    private readonly AssemblerLogger _logger;
     private readonly Module _module;
     private readonly IAssemblerHandler _archHandler;
     private Section _activeSection;
@@ -51,10 +52,9 @@ public partial class Zarembler
     /// <summary>
     /// Initializes a new instance of the <see cref="Zarembler"/> class.
     /// </summary>
-    private Zarembler(IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    private Zarembler(IAssemblerHandler archHandler, AssemblerConfig config, ILogger? logger = null)
     {
-        _logger = logger ?? new Logger();
-        _logger.Register(new Localizer("Zarem.Assembler.Resources.Logger", typeof(Zarembler).Assembly));
+        _logger = new AssemblerLogger(logger ?? new Logger());
         Config = config;
 
         _archHandler = archHandler;
@@ -73,7 +73,7 @@ public partial class Zarembler
     /// <summary>
     /// Gets the assembler's logs.
     /// </summary>
-    public IReadOnlyList<LogEntry> Logs => [.._logger.CurrentLog.OfType<LogEntry>()];
+    public IReadOnlyList<AssemblerEntry> Logs => [.._logger.Parent.CurrentLog.OfType<AssemblerEntry>()];
 
     /// <summary>
     /// Gets the symbols found by the assembler.
@@ -83,7 +83,7 @@ public partial class Zarembler
     /// <summary>
     /// Gets whether or not the assembler failed to assemble a valid module.
     /// </summary>
-    public bool Failed => _logger.CurrentFailed;
+    public bool Failed => _logger.Parent.CurrentFailed;
 
     /// <summary>
     /// Assembles a string.

@@ -6,9 +6,8 @@ using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Linker.Config;
 using Zarem.Linker.Enums;
-using Zarem.Linker.Extensions;
 using Zarem.Linker.Handlers;
-using Zarem.Localization;
+using Zarem.Linker.Logging;
 using Zarem.Models;
 
 namespace Zarem.Linker;
@@ -21,7 +20,7 @@ public sealed class ZaLinker
     private readonly Dictionary<Module, Dictionary<string, ulong>> _moduleSectionOffsets = [];
 
     private readonly LinkerConfig _config;
-    private readonly ILogger _logger;
+    private readonly LinkerLogger _logger;
     private readonly ILinkerHandler _handler;
 
     /// <summary>
@@ -31,9 +30,8 @@ public sealed class ZaLinker
     {
         _config = config;
         _handler = handler;
-        _logger = logger;
+        _logger = new LinkerLogger(logger);
 
-        _logger.Register(new Localizer("Zarem.Linker.Resources.Logger", typeof(ZaLinker).Assembly));
         Module = new Module(_handler.GetArchitectureName());
     }
 
@@ -52,8 +50,7 @@ public sealed class ZaLinker
     /// <returns>A linked module.</returns>
     public static Module Link(LinkerConfig config, ILinkerHandler handler, ILogger? logger = null, params Module[] modules)
     {
-        logger ??= new Logger();
-        var linker = new ZaLinker(config, handler, logger);
+        var linker = new ZaLinker(config, handler, logger ?? new Logger());
         linker.Link(modules);
         return linker.Module;
     }
@@ -170,7 +167,7 @@ public sealed class ZaLinker
                     // The offset of the instruction within the stream
                     ulong streamPatchOffset = section.VirtualAddress + (ulong)relocation.Location.Offset;
 
-                    _handler.PatchRelocation(linkedSection, relocation, streamPatchOffset, symbolVirtual, patchVirtual, _logger);
+                    _handler.PatchRelocation(linkedSection, relocation, streamPatchOffset, symbolVirtual, patchVirtual, _logger.Parent);
                 }
             } 
         }
