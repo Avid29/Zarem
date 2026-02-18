@@ -116,6 +116,9 @@ public class FileService : IFileService
         return TrackFile(file);
     }
 
+    /// <inheritdoc/>
+    public void ClearTracking() => _openItems.Clear();
+
     internal BindableFolder TrackFolder(IFolder folder)
     {
         // Check if the folder is already tracked, 

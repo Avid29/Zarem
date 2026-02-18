@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Messages;
+namespace Zarem.Messages.Project;
 
 /// <summary>
-/// A message sent a project is opened (or closed).
+/// A message sent a project is opened.
 /// </summary>
 public class ProjectOpenedMessage
 {

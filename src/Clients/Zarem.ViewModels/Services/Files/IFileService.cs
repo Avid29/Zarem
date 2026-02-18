@@ -15,35 +15,40 @@ public interface IFileService
     /// Gets a file from a path.
     /// </summary>
     /// <param name="path">The path of the file.</param>
-    public Task<BindableFile?> GetFileAsync(string path);
+    Task<BindableFile?> GetFileAsync(string path);
 
     /// <summary>
     /// Gets a project file from a path.
     /// </summary>
     /// <param name="path">The path of the project file.</param>
-    public Task<BindableProjectFile?> GetProjectFileAsync(string path);
+    Task<BindableProjectFile?> GetProjectFileAsync(string path);
 
     /// <summary>
     /// Gets a folder from a path.
     /// </summary>
     /// <param name="path">The path of the folder.</param>
-    public Task<BindableFolder?> GetFolderAsync(string path);
+    Task<BindableFolder?> GetFolderAsync(string path);
 
     /// <summary>
     /// Gets a file item from a path.
     /// </summary>
     /// <param name="path">The path of the file item.</param>
-    public Task<IBindableFileItem?> GetFileItemAsync(string path);
+    Task<IBindableFileItem?> GetFileItemAsync(string path);
 
     /// <summary>
     /// Opens a file picker to select an <see cref="BindableFile"/>.
     /// </summary>
     /// <returns>The selected <see cref="BindableFile"/>.</returns>
-    public Task<BindableFile?> PickFileAsync(params string[] types);
+    Task<BindableFile?> PickFileAsync(params string[] types);
 
     /// <summary>
     /// Opens a file picker to select an <see cref="BindableFolder"/>.
     /// </summary>
     /// <returns>The selected <see cref="BindableFolder"/>.</returns>
-    public Task<BindableFolder?> PickFolderAsync();
+    Task<BindableFolder?> PickFolderAsync();
+
+    /// <summary>
+    /// Clears all tracked files.
+    /// </summary>
+    void ClearTracking();
 }

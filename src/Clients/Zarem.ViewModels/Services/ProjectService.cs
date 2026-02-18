@@ -8,6 +8,7 @@ using Zarem.Config;
 using Zarem.Elf;
 using Zarem.Messages;
 using Zarem.Messages.Files;
+using Zarem.Messages.Project;
 using Zarem.MIPS;
 using Zarem.Models;
 using Zarem.Models.Files;
@@ -105,6 +106,12 @@ public class ProjectService : IProjectService
     /// <inheritdoc/>
     public async Task OpenProjectAsync(IProjectConfig config, bool cacheState = true)
     {
+        if (Project is not null)
+        {
+            // Notify that the project was closed.
+            _messenger.Send(new ProjectClosedMessage(Project));
+        }
+
         Project = ProjectFactory.Create(config);
         if (Project?.Config?.RootFolderPath is null)
             return;
@@ -137,8 +144,17 @@ public class ProjectService : IProjectService
     /// <inheritdoc/>
     public async Task CloseProjectAsync()
     {
+        var project = Project;
+
+        // Close the project
         Project = null;
         OpenFolder(null, false);
+
+        if (project is not null)
+        {
+            // Notify that the project was closed.
+            _messenger.Send(new ProjectClosedMessage(project));
+        }
     }
 
     private async Task CacheOpenProjectAsync(bool folder = false)

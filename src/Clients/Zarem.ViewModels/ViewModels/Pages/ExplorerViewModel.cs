@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Diagnostics;
 using Zarem.Bindables.Files.Interfaces;
+using Zarem.Messages.Project;
 
 namespace Zarem.ViewModels.Pages;
 
@@ -100,6 +101,11 @@ public partial class ExplorerViewModel : PageViewModel
             Guard.IsNotNull(path);
            
             r.RootItem = await _fileService.GetProjectFileAsync(path);
+        });
+
+        _messenger.Register<ExplorerViewModel, ProjectClosedMessage>(this, (r, m) =>
+        {
+            _fileService.ClearTracking();
         });
 
         _messenger.Register<ExplorerViewModel, CacheChangedMessage<RecentFileItemsCache>>(this, async (r, m) => await r.LoadRecentCacheAsync());
