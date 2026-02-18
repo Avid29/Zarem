@@ -120,10 +120,51 @@
                 </StackPanel>
             </TreeViewItem>
         </DataTemplate>
+        
+        <DataTemplate x:Key="ProjectTemplate" x:DataType="files:BindableProjectFile">
+            <TreeViewItem AutomationProperties.Name="{x:Bind Name, Mode=OneWay}"
+                          ItemsSource="{x:Bind Children, Mode=OneWay}"
+                          HasUnrealizedChildren="{x:Bind ChildrenNotLoaded, Mode=OneWay}"
+                          DoubleTapped="FileDoubleTapped">
+                <TreeViewItem.ContextFlyout>
+                    <MenuFlyout>
+                        <!--  Open  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/OpenMFI" Icon="OpenFile" Text="Open"
+                                        Command="{x:Bind OpenCommand, Mode=OneWay}" />
+                        <MenuFlyoutSubItem x:Uid="/Explorer/Flyout/OpenWithMFSI" Text="Open With" IsEnabled="False"/>
+                        <MenuFlyoutSeparator/>
+
+                        <!--  Modify  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CutMFI" Text="Cut" Icon="Cut" IsEnabled="False"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyMFI" Text="Copy" Icon="Copy"
+                                        Command="{x:Bind CopyFileCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/DeleteMFI" Text="Delete" Icon="Delete"
+                                        Command="{x:Bind DeleteCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/RenameMFI" Text="Rename" Icon="Rename" Click="RenameClicked"/>
+                        <MenuFlyoutSeparator/>
+
+                        <!--  Copy Path  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyNameMFI" Text="Copy Name"
+                                        Command="{x:Bind CopyFileNameCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyFullPathMFI" Text="Copy Full Path"
+                                        Command="{x:Bind CopyFilePathCommand, Mode=OneWay}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE62F;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </TreeViewItem.ContextFlyout>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ImageIcon Source="{x:Bind Name, Converter={StaticResource FileTypeIconConverter}, Mode=OneWay}" Height="20"/>
+                    <ctrls:EditableTextBlock Text="{x:Bind Name, Mode=TwoWay}"/>
+                </StackPanel>
+            </TreeViewItem>
+        </DataTemplate>
 
         <selector:FileItemTemplateSelector x:Key="FileItemTemplateSelector"
                                            FolderTemplate="{StaticResource FolderTemplate}"
-                                           FileTemplate="{StaticResource FileTemplate}"/>
+                                           FileTemplate="{StaticResource FileTemplate}"
+                                           ProjectTemplate="{StaticResource ProjectTemplate}"/>
         
     </UserControl.Resources>
 

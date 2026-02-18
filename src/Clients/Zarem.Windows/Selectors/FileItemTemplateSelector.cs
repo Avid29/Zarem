@@ -20,6 +20,11 @@ public partial class FileItemTemplateSelector : DataTemplateSelector
     /// Gets the <see cref="DataTemplate"/> for a <see cref="BindableFolder"/>.
     /// </summary>
     public DataTemplate? FolderTemplate { get; set; }
+
+    /// <summary>
+    /// Gets the <see cref="DataTemplate"/> for a <see cref="BindableProjectFile"/>.
+    /// </summary>
+    public DataTemplate? ProjectTemplate { get; set; }
     
     /// <inheritdoc/>
     protected override DataTemplate? SelectTemplateCore(object item)
@@ -28,6 +33,7 @@ public partial class FileItemTemplateSelector : DataTemplateSelector
         {
             BindableFile => FileTemplate,
             BindableFolder => FolderTemplate,
+            BindableProjectFile => ProjectTemplate,
             _ => null,
         };
     }

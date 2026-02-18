@@ -1,12 +1,13 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Diagnostics;
-using Zarem.Bindables.Files;
-using Zarem.Services.Files.Models;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
+using Zarem.Bindables.Files;
+using Zarem.Bindables.Files.Interfaces;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.Services.Files;
 
@@ -16,20 +17,24 @@ namespace Zarem.Services.Files;
 public class FileService : IFileService
 {
     // TODO: Untracking out of use files
-    private readonly IFileSystemService _fileSystemService;
     private readonly IProjectService _projectService;
-    private readonly Dictionary<string, BindableFileItem> _openItems;
+    private readonly Dictionary<string, IBindableFileItem> _openItems;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FileService"/> class.
     /// </summary>
     public FileService(IFileSystemService fileSystemService, IProjectService projectService)
     {
-        _fileSystemService = fileSystemService;
+        FileSystemService = fileSystemService;
         _projectService = projectService;
         
         _openItems = [];
     }
+
+    /// <summary>
+    /// Gets the <see cref="IFileSystemService"/>.
+    /// </summary>
+    public IFileSystemService FileSystemService { get; }
 
     /// <inheritdoc/>
     public async Task<BindableFolder?> GetFolderAsync(string path)
@@ -39,7 +44,7 @@ public class FileService : IFileService
         if (TryGetItem(path, out BindableFolder? value))
             return value;
 
-        var folder = await _fileSystemService.GetFolderAsync(path);
+        var folder = await FileSystemService.GetFolderAsync(path);
         if (folder is null)
             return null;
 
@@ -47,15 +52,15 @@ public class FileService : IFileService
     }
 
     /// <inheritdoc/>
-    public async Task<BindableFile?> GetFileAsync(string path)
+    public async Task<IBindableFile?> GetFileAsync(string path)
     {
         // Check if the file is already tracked, 
         // and retrieve it if so.
-        if (TryGetItem(path, out BindableFile? value))
+        if (TryGetItem(path, out IBindableFile? value))
             return value;
 
         // Get basic file
-        var file = await _fileSystemService.GetFileAsync(path);
+        var file = await FileSystemService.GetFileAsync(path);
         if (file is null)
             return null;
 
@@ -64,7 +69,7 @@ public class FileService : IFileService
     }
 
     /// <inheritdoc/>
-    public async Task<BindableFileItem?> GetFileItemAsync(string path)
+    public async Task<IBindableFileItem?> GetFileItemAsync(string path)
     {
         return Path.HasExtension(path) switch
         {
@@ -76,7 +81,7 @@ public class FileService : IFileService
     /// <inheritdoc/>
     public async Task<BindableFolder?> PickFolderAsync()
     {
-        var folder = await _fileSystemService.PickFolderAsync();
+        var folder = await FileSystemService.PickFolderAsync();
         if (folder is null)
             return null;
 
@@ -84,9 +89,9 @@ public class FileService : IFileService
     }
 
     /// <inheritdoc/>
-    public async Task<BindableFile?> PickFileAsync(params string[] types)
+    public async Task<IBindableFile?> PickFileAsync(params string[] types)
     {
-        var file = await _fileSystemService.PickFileAsync(types);
+        var file = await FileSystemService.PickFileAsync(types);
         if (file is null)
             return null;
 
@@ -107,7 +112,7 @@ public class FileService : IFileService
         return bindable;
     }
 
-    internal BindableFile TrackFile(IFile file)
+    internal IBindableFile TrackFile(IFile file)
     {
         // Check if the file is already tracked, 
         // and retrieve it if so.
@@ -115,14 +120,16 @@ public class FileService : IFileService
         if (TryGetItem(key, out BindableFile? value))
             return value;
 
-        // Get source file
-        var sourceFile = _projectService.GetSourceFile(key);
-
         // Create and track new bindable
-        var bindable = new BindableFile(this, file)
+        IBindableFile bindable = Path.GetExtension(key) switch
         {
-            SourceFile = sourceFile,
+            ".zrmp" => new BindableProjectFile(this, file),
+            _ => new BindableFile(this, file)
+            {
+                SourceFile = _projectService.GetSourceFile(key),
+            },
         };
+
         _openItems.Add(key, bindable);
         return bindable;
     }
@@ -137,7 +144,7 @@ public class FileService : IFileService
         };
     }
 
-    internal void UntrackFileItem(BindableFileItem item)
+    internal void UntrackFileItem(IBindableFileItem item)
     {
         var key = item.Path;
         if (key is null || !_openItems.Remove(key))
@@ -157,7 +164,7 @@ public class FileService : IFileService
         {
             // Get new folder item child
             case BindableFolder folder:
-                var childFolder = await _fileSystemService.GetFolderAsync(newPath);
+                var childFolder = await FileSystemService.GetFolderAsync(newPath);
                 if (childFolder is null)
                     return;
 
@@ -166,7 +173,7 @@ public class FileService : IFileService
                 
             // Get new file item child
             case BindableFile file:
-                var childFile = await _fileSystemService.GetFileAsync(newPath);
+                var childFile = await FileSystemService.GetFileAsync(newPath);
                 if (childFile is null)
                     return;
 
@@ -179,7 +186,7 @@ public class FileService : IFileService
     }
 
     private bool TryGetItem<T>(string path, [NotNullWhen(true)] out T? item)
-        where T : BindableFileItem
+        where T : class, IBindableFileItem
     {
         item = null;
 

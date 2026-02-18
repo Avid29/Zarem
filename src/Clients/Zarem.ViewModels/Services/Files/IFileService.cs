@@ -2,6 +2,7 @@
 
 using Zarem.Bindables.Files;
 using System.Threading.Tasks;
+using Zarem.Bindables.Files.Interfaces;
 
 namespace Zarem.Services.Files;
 
@@ -14,7 +15,7 @@ public interface IFileService
     /// Gets a file from a path.
     /// </summary>
     /// <param name="path">The path of the file.</param>
-    public Task<BindableFile?> GetFileAsync(string path);
+    public Task<IBindableFile?> GetFileAsync(string path);
 
     /// <summary>
     /// Gets a folder from a path.
@@ -26,13 +27,13 @@ public interface IFileService
     /// Gets a file item from a path.
     /// </summary>
     /// <param name="path">The path of the file item.</param>
-    public Task<BindableFileItem?> GetFileItemAsync(string path);
+    public Task<IBindableFileItem?> GetFileItemAsync(string path);
 
     /// <summary>
     /// Opens a file picker to select an <see cref="BindableFile"/>.
     /// </summary>
     /// <returns>The selected <see cref="BindableFile"/>.</returns>
-    public Task<BindableFile?> PickFileAsync(params string[] types);
+    public Task<IBindableFile?> PickFileAsync(params string[] types);
 
     /// <summary>
     /// Opens a file picker to select an <see cref="BindableFolder"/>.

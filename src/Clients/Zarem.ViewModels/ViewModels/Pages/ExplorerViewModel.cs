@@ -14,6 +14,8 @@ using Zarem.ViewModels.Pages.Abstract;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using CommunityToolkit.Diagnostics;
+using Zarem.Bindables.Files.Interfaces;
 
 namespace Zarem.ViewModels.Pages;
 
@@ -50,7 +52,7 @@ public partial class ExplorerViewModel : PageViewModel
     /// <summary>
     /// Gets or sets the currently selected file.
     /// </summary>
-    public BindableFileItem? RootItem
+    public IBindableFileItem? RootItem
     {
         get;
         set
@@ -63,7 +65,7 @@ public partial class ExplorerViewModel : PageViewModel
     /// <summary>
     /// Gets the list of root nodes.
     /// </summary>
-    public IEnumerable<BindableFileItem?> RootNode => [RootItem];
+    public IEnumerable<IBindableFileItem?> RootNode => [RootItem];
 
     /// <summary>
     /// Gets a list of the recently opened projects and folders.
@@ -84,6 +86,21 @@ public partial class ExplorerViewModel : PageViewModel
 
             r.RootItem = await _fileService.GetFolderAsync(folder.Path);
         });
+        _messenger.Register<ExplorerViewModel, ProjectOpenedMessage>(this, async (r, m) =>
+        {
+            var project = m.Project;
+            if (project is null)
+            {
+                RootItem = null;
+                return;
+            }
+
+            var path = project.Config.ConfigPath;
+            Guard.IsNotNull(path);
+           
+            r.RootItem = await _fileService.GetFileAsync(path);
+        });
+
         _messenger.Register<ExplorerViewModel, CacheChangedMessage<RecentFileItemsCache>>(this, async (r, m) => await r.LoadRecentCacheAsync());
     }
 

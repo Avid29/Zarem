@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Zarem.Config;
 using Zarem.Elf;
+using Zarem.Messages;
 using Zarem.Messages.Files;
 using Zarem.MIPS;
 using Zarem.Models;
@@ -109,6 +110,9 @@ public class ProjectService : IProjectService
             return;
 
         await OpenFolderAsync(Project.Config.RootFolderPath, false);
+
+        // Notify that the project was opened.
+        _messenger.Send(new ProjectOpenedMessage(Project));
 
         if (cacheState)
         {

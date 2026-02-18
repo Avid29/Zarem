@@ -4,11 +4,13 @@ using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using System.IO;
 using Zarem.Bindables.Files;
+using Zarem.Bindables.Files.Abstract;
+using Zarem.Bindables.Files.Interfaces;
 using Zarem.Services;
 using Zarem.ViewModels.Pages;
 using Zarem.Windows.Controls;
-using System.IO;
 
 namespace Zarem.Windows.Views.Pages;
 
@@ -62,11 +64,11 @@ public sealed partial class Explorer : UserControl
 
     private async void TreeView_Expanding(TreeView sender, TreeViewExpandingEventArgs args)
     {
-        if (args.Item is not BindableFolder folder || !folder.ChildrenNotLoaded)
+        if (args.Item is not IBindableFileItem item || !item.ChildrenNotLoaded)
             return;
 
         // Load children and ensure expansion
-        await folder.LoadChildrenAsync();
+        await item.LoadChildrenAsync();
         args.Node.IsExpanded = true;
     }
 

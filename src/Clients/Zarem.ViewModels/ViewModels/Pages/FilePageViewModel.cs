@@ -6,6 +6,7 @@ using System.ComponentModel;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Bindables.Files;
+using Zarem.Bindables.Files.Interfaces;
 using Zarem.Messages;
 using Zarem.Messages.Editor.Enums;
 using Zarem.MIPS;
@@ -55,7 +56,7 @@ public partial class FilePageViewModel : PageViewModel
     /// <summary>
     /// Gets the bindable file for this page.
     /// </summary>
-    public BindableFile? File
+    public IBindableFile? File
     {
         get;
         set

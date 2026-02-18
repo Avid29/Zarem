@@ -11,6 +11,7 @@ using Zarem.ViewModels.Pages;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Zarem.Bindables.Files.Interfaces;
 
 namespace Zarem.ViewModels;
 
@@ -68,7 +69,7 @@ public partial class WindowViewModel : ObservableRecipient
     /// </summary>
     public PanelViewModel PanelViewModel { get; }
 
-    private BindableFile? CurrentFile
+    private IBindableFile? CurrentFile
     {
         get
         {
@@ -80,7 +81,7 @@ public partial class WindowViewModel : ObservableRecipient
         }
     }
 
-    private IEnumerable<BindableFile> OpenFiles
+    private IEnumerable<IBindableFile> OpenFiles
     {
         get
         {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Bindables.Files;
+using Zarem.Bindables.Files.Interfaces;
 using Zarem.Messages.Editor;
 using Zarem.Messages.Editor.Enums;
 using Zarem.Messages.Files;
@@ -95,7 +96,7 @@ public partial class MainViewModel
         await _projectService.OpenProjectAsync(project.Path);
     }
 
-    private FilePageViewModel OpenFile(BindableFile? file, bool reopen = false)
+    private FilePageViewModel OpenFile(IBindableFile? file, bool reopen = false)
     {
         // Create new file if needed
         if (file is null)

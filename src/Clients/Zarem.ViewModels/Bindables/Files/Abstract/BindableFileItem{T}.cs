@@ -1,11 +1,11 @@
 ﻿// Adam Dernis 2024
 
+using System.Threading.Tasks;
 using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Files.Models;
-using System.Threading.Tasks;
 
-namespace Zarem.Bindables.Files;
+namespace Zarem.Bindables.Files.Abstract;
 
 /// <summary>
 /// A <see cref="IFileItem"/> in the explorer.
@@ -23,7 +23,7 @@ public abstract class BindableFileItem<T> : BindableFileItem
     /// <summary>
     /// The wrapped <see cref="IFileItem"/>.
     /// </summary>
-    protected internal abstract T FileItem { get; set; }
+    public abstract T FileItem { get; set; }
 
     /// <inheritdoc/>
     public override string Name
@@ -34,6 +34,12 @@ public abstract class BindableFileItem<T> : BindableFileItem
 
     /// <inheritdoc/>
     public override string Path => FileItem.Path;
+
+    /// <summary>
+    /// Copies the file to the clipboard.
+    /// </summary>
+    /// <returns></returns>
+    public override async Task CopyFileAsync() => await Service.Get<IClipboardService>().CopyFileItemsAsync([FileItem]);
 
     /// <inheritdoc/>
     public override async Task DeleteAsync() => await Service.Get<IFileSystemService>().DeleteFileItemAsync(FileItem);

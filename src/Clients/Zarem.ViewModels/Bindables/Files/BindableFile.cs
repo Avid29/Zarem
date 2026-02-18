@@ -1,16 +1,22 @@
 ﻿// Adam Dernis 2024
 
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
+using Zarem.Bindables.Files.Abstract;
+using Zarem.Bindables.Files.Interfaces;
+using Zarem.Messages.Navigation;
 using Zarem.Models.Files;
+using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Files.Models;
-using System.Collections.ObjectModel;
 
 namespace Zarem.Bindables.Files;
 
 /// <summary>
 /// A file in the content view or explorer.
 /// </summary>
-public partial class BindableFile : BindableFileItem<IFile>
+public partial class BindableFile : BindableFileItem<IFile>, IBindableFile
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BindableFile"/> class.
@@ -18,17 +24,10 @@ public partial class BindableFile : BindableFileItem<IFile>
     internal BindableFile(FileService fileService, IFile file) : base(fileService)
     {
         FileItem = file;
-        Children = [];
     }
 
     /// <inheritdoc/>
-    /// <remarks>
-    /// This usually means 
-    /// </remarks>
-    public override ObservableCollection<BindableFileItem> Children { get; }
-
-    /// <inheritdoc/>
-    protected internal override IFile FileItem
+    public override IFile FileItem
     {
         get;
         set
@@ -41,20 +40,22 @@ public partial class BindableFile : BindableFileItem<IFile>
         }
     }
 
-    /// <summary>
-    /// Gets the associate <see cref="SourceFile"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public SourceFile? SourceFile { get; init; }
 
-    internal void TrackAsChild(BindableFileItem child)
+    internal void TrackAsChild(IBindableFileItem child)
     {
         Children.Add(child);
     }
 
-    internal void UntrackChild(BindableFileItem child)
+    internal void UntrackChild(IBindableFileItem child)
     {
         Children.Remove(child);
     }
+
+    /// <inheritdoc/>
+    [RelayCommand]
+    public void Open() => Service.Get<IMessenger>().Send(new FileOpenRequestMessage(this));
 
     /// <inheritdoc/>
     public override void Dispose()

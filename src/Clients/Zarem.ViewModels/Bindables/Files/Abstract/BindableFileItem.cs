@@ -1,17 +1,18 @@
 ﻿// Adam Dernis 2024
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Zarem.Bindables.Files.Interfaces;
 using Zarem.Services.Files;
 using Zarem.Services.Files.Models;
-using System;
-using System.Collections.ObjectModel;
 
 namespace Zarem.Bindables.Files;
 
 /// <summary>
 /// A <see cref="IFileItem"/> in the explorer.
 /// </summary>
-public abstract partial class BindableFileItem : ObservableObject, IDisposable
+public abstract partial class BindableFileItem : ObservableObject, IBindableFileItem
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BindableFileItem"/> class.
@@ -26,20 +27,26 @@ public abstract partial class BindableFileItem : ObservableObject, IDisposable
     /// </summary>
     protected FileService FileService { get; }
 
-    /// <summary>
-    /// Gets or sets the name of the file.
-    /// </summary>
+    /// <inheritdoc/>
     public abstract string Name { get; set;  }
 
-    /// <summary>
-    /// Gets the file's path.
-    /// </summary>
+    /// <inheritdoc/>
     public abstract string Path { get; }
 
     /// <summary>
-    /// Gets the child items.
+    /// Gets a value indicating whether or not the children have been loaded.
     /// </summary>
-    public abstract ObservableCollection<BindableFileItem> Children { get; }
+    public virtual bool ChildrenNotLoaded => false;
+
+    /// <inheritdoc/>
+    public ObservableCollection<IBindableFileItem> Children { get; } = [];
+
+    /// <summary>
+    /// Loads the node's children.
+    /// </summary>
+    public virtual async Task LoadChildrenAsync(bool recursive = false)
+    {
+    }
 
     /// <inheritdoc/>
     public abstract void Dispose();
