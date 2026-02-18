@@ -20,10 +20,6 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
-using Microsoft.Extensions.Logging.Abstractions;
-
-
-
 
 #if DEBUG
 using Zarem.Disassembler.Services;

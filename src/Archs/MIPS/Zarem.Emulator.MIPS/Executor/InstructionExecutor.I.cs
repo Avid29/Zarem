@@ -15,17 +15,15 @@ public partial class InstructionExecutor
     {
         return Instruction.OpCode switch
         {
-            OperationCode.RegisterImmediate => throw new NotImplementedException(),
-
             // Branch
             OperationCode.BranchOnEquals or
             OperationCode.BranchOnEqualLikely => Branch((rs, rt) => rs == rt),
             OperationCode.BranchOnNotEquals or
             OperationCode.BranchOnNotEqualLikely => Branch((rs, rt) => rs != rt),
             OperationCode.BranchOnLessThanOrEqualToZero or
-            OperationCode.BranchOnLessThanOrEqualToZeroLikely => throw new NotImplementedException(),
+            OperationCode.BranchOnLessThanOrEqualToZeroLikely => Branch((rs, _) => (int)rs <= 0),
             OperationCode.BranchOnGreaterThanZero or
-            OperationCode.BranchOnGreaterThanZeroLikely => throw new NotImplementedException(),
+            OperationCode.BranchOnGreaterThanZeroLikely => Branch((rs, _) => (int)rs > 0),
 
             // Arithmetic
             OperationCode.AddImmediate => BasicI(

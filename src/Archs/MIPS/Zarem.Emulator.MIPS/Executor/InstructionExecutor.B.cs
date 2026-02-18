@@ -17,9 +17,9 @@ public partial class InstructionExecutor
         {
             // Branch
             RegImmFuncCode.BranchOnLessThanZero or
-            RegImmFuncCode.BranchOnLessThanZeroLikely => Branch((rs, _) => rs < 0),
+            RegImmFuncCode.BranchOnLessThanZeroLikely => Branch((rs, _) => (int)rs < 0),
             RegImmFuncCode.BranchOnGreaterThanOrEqualToZero or
-            RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely => Branch((rs, _) => rs >= 0),
+            RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely => Branch((rs, _) => (int)rs >= 0),
 
             // Trap
             RegImmFuncCode.TrapOnGreaterOrEqualImmediate => TrapI((rs, imm) => (int)rs >= imm),

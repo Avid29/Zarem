@@ -84,6 +84,9 @@
       <BuildType Solution="Alpha|x64" Project="Release" />
       <BuildType Solution="Alpha|x86" Project="Debug" />
     </Project>
+    <Project Path="tests/Archs/MIPS/Test.Linker.MIPS/Test.Linker.MIPS.csproj" Id="b0b53632-43f3-4673-97e3-58d4b3dcb3e1">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
     <Project Path="tests/Archs/MIPS/Test.MIPS.Asms/Test.MIPS.Asms.vcxitems" Id="f152d20e-aa8a-4d50-9852-0eb0b4a962c4" />
     <Project Path="tests/Archs/MIPS/Test.MIPS/Test.MIPS.csproj">
       <BuildType Solution="Alpha|ARM" Project="Debug" />

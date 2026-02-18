@@ -21,7 +21,7 @@ public class ExecutionTests
 
     public sealed record ExecutionTestCase
     {
-        private ExecutionTestCase(string input)
+        public ExecutionTestCase(string input)
         {
             Input = input;
 
@@ -95,8 +95,10 @@ public class ExecutionTests
         public string Input { get; }
 
         public MIPSTrap ExpectedTrap { get; init; } = MIPSTrap.None;
-
+ 
         public (GPRegister Regiter, uint? Value)? ExpectedWriteBack { get; init; } = null;
+
+        public uint? ExpectedPC { get; init; } = null;
 
         public SideEffect? ExpectedSideEffect { get; init; }
 
@@ -214,6 +216,54 @@ public class ExecutionTests
         }
     }
 
+    public static IEnumerable<object[]> MemoryInstructionTestsList
+    {
+        get
+        {
+            // Load
+            yield return [new ExecutionTestCase("lb $v0, 0x1000($zero)", 0x12)];
+            yield return [new ExecutionTestCase("lh $v0, 0x1000($zero)", 0x1234)];
+            yield return [new ExecutionTestCase("lw $v0, 0x1000($zero)", 0x1234_5678)];
+
+            // Store
+            yield return [new ExecutionTestCase("sb $at, 0x1000($zero)", (0x1000, [0xef, 0x34, 0x56, 0x78]))];
+            yield return [new ExecutionTestCase("sh $at, 0x1000($zero)", (0x1000, [0xcd, 0xef, 0x56, 0x78]))];
+            yield return [new ExecutionTestCase("sw $at, 0x1000($zero)", (0x1000, [0x89, 0xab, 0xcd, 0xef]))];
+        }
+    }
+
+    public static IEnumerable<object[]> JumpBranchInstructionTestsList
+    {
+        get
+        {
+            // Jump
+            yield return [new ExecutionTestCase("j 1000") { ExpectedPC = 1000 }];
+            yield return [new ExecutionTestCase("jal 1000", GPRegister.ReturnAddress, 4) { ExpectedPC = 1000 }];
+            yield return [new ExecutionTestCase("jr $t4") { ExpectedPC = 40 }];
+            yield return [new ExecutionTestCase("jalr $t4", GPRegister.ReturnAddress, 4) { ExpectedPC = 40 }];
+
+            // Branch Equality
+            yield return [new ExecutionTestCase("beq $t2, $t3, 80") { ExpectedPC = 4 }];
+            yield return [new ExecutionTestCase("beq $t1, $t1, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("bne $t1, $t1, 80") { ExpectedPC = 4 }];
+            yield return [new ExecutionTestCase("bne $t3, $t2, 80") { ExpectedPC = 80 }];
+
+            // Branch Compare
+            yield return [new ExecutionTestCase("blez $s1, 80") { ExpectedPC = 4 }];
+            yield return [new ExecutionTestCase("blez $s0, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("blez $s5, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("bgtz $s1, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("bgtz $s0, 80") { ExpectedPC = 4 }];
+            yield return [new ExecutionTestCase("bgtz $s5, 80") { ExpectedPC = 4 }];
+            yield return [new ExecutionTestCase("bltz $s1, 80") { ExpectedPC = 4 }];
+            yield return [new ExecutionTestCase("bltz $s0, 80") { ExpectedPC = 4 }];
+            yield return [new ExecutionTestCase("bltz $s5, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("bgez $s1, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("bgez $s0, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("bgez $s5, 80") { ExpectedPC = 4 }];
+        }
+    }
+
     public static IEnumerable<object[]> CompareInstructionTestsList
     {
         get
@@ -274,31 +324,12 @@ public class ExecutionTests
             yield return [new ExecutionTestCase("tge $t1, $t1", MIPSTrap.Trap)];
 
             // Signed (with signs)
-            unchecked
-            {
-                yield return [new ExecutionTestCase("tlt $t6, $t7", MIPSTrap.None)];
-                yield return [new ExecutionTestCase("tlt $t7, $t6", MIPSTrap.Trap)];
-                yield return [new ExecutionTestCase("tlt $t5, $t5", MIPSTrap.None)];
-                yield return [new ExecutionTestCase("tge $t7, $t6", MIPSTrap.None)];
-                yield return [new ExecutionTestCase("tge $t6, $t7", MIPSTrap.Trap)];
-                yield return [new ExecutionTestCase("tge $t5, $t5", MIPSTrap.Trap)];
-            }
-        }
-    }
-
-    public static IEnumerable<object[]> MemoryInstructionTestsList
-    {
-        get
-        {
-            // Load
-            yield return [new ExecutionTestCase("lb $v0, 0x1000($zero)", 0x12)];
-            yield return [new ExecutionTestCase("lh $v0, 0x1000($zero)", 0x1234)];
-            yield return [new ExecutionTestCase("lw $v0, 0x1000($zero)", 0x1234_5678)];
-
-            // Store
-            yield return [new ExecutionTestCase("sb $at, 0x1000($zero)", (0x1000, [0xef, 0x34, 0x56, 0x78]))];
-            yield return [new ExecutionTestCase("sh $at, 0x1000($zero)", (0x1000, [0xcd, 0xef, 0x56, 0x78]))];
-            yield return [new ExecutionTestCase("sw $at, 0x1000($zero)", (0x1000, [0x89, 0xab, 0xcd, 0xef]))];
+            yield return [new ExecutionTestCase("tlt $t6, $t7", MIPSTrap.None)];
+            yield return [new ExecutionTestCase("tlt $t7, $t6", MIPSTrap.Trap)];
+            yield return [new ExecutionTestCase("tlt $t5, $t5", MIPSTrap.None)];
+            yield return [new ExecutionTestCase("tge $t7, $t6", MIPSTrap.None)];
+            yield return [new ExecutionTestCase("tge $t6, $t7", MIPSTrap.Trap)];
+            yield return [new ExecutionTestCase("tge $t5, $t5", MIPSTrap.Trap)];
         }
     }
 
@@ -365,17 +396,20 @@ public class ExecutionTests
     public void LogicalInstructionTests(ExecutionTestCase @case) => RunTest(@case);
 
     [DataTestMethod]
+    [DynamicData(nameof(MemoryInstructionTestsList))]
+    public void MemoryInstructionTests(ExecutionTestCase @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [DynamicData(nameof(JumpBranchInstructionTestsList))]
+    public void JumpBranchInstructionTests(ExecutionTestCase @case) => RunTest(@case);
+
+    [DataTestMethod]
     [DynamicData(nameof(CompareInstructionTestsList))]
     public void CompareInstructionTests(ExecutionTestCase @case) => RunTest(@case);
 
     [DataTestMethod]
     [DynamicData(nameof(TrapInstructionTestsList))]
     public void TrapInstructionTests(ExecutionTestCase @case) => RunTest(@case);
-
-    [DataTestMethod]
-    [DynamicData(nameof(MemoryInstructionTestsList))]
-    public void MemoryInstructionTests(ExecutionTestCase @case) => RunTest(@case);
-
     [DataTestMethod]
     [DynamicData(nameof(UncategorizedRegisterOnlyInstructionTestsList))]
     public void UncategorizedRegisterOnlyInstructionTests(ExecutionTestCase @case) => RunTest(@case);
@@ -452,6 +486,12 @@ public class ExecutionTests
             var buffer = new byte[expectedMemory.Value.Data.Length];
             emulator.Computer.Memory.Read(expectedMemory.Value.Address, buffer);
             CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
+        }
+
+        var expectedPC = @case.ExpectedPC;
+        if (expectedPC is not null)
+        {
+            Assert.AreEqual(expectedPC.Value, emulator.Computer.Processor.ProgramCounter);
         }
     }
 }
