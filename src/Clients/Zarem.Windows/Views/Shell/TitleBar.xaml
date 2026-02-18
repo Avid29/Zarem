@@ -6,6 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:Zarem.Windows.Views.Shell"
+    xmlns:vm="using:Zarem.ViewModels"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     mc:Ignorable="d">
 
@@ -71,10 +72,9 @@
                 <MenuFlyoutSeparator/>
 
                 <!--  Save  -->
-                <MenuFlyoutItem Text="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.Title, Mode=OneWay,
-                                Converter={StaticResource StringLocalizeConverter}, ConverterParameter='/TitleBar/SaveSpecificFile'}"
+                <MenuFlyoutItem x:Uid="/TitleBar/SaveFileMFI" Text="Save File"
                                 Icon="Save" Command="{x:Bind ViewModel.SaveFileCommand, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanSave, FallbackValue=Collapsed, Mode=OneWay}">
+                                IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanSave, FallbackValue=False, Mode=OneWay}">
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="S"/>
                     </MenuFlyoutItem.KeyboardAccelerators>
@@ -91,8 +91,7 @@
                 <MenuFlyoutSeparator/>
 
                 <!--  Close  -->
-                <MenuFlyoutItem Text="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.Title, Mode=OneWay,
-                                Converter={StaticResource StringLocalizeConverter}, ConverterParameter='/TitleBar/CloseSpecificPage'}"
+                <MenuFlyoutItem x:Uid="/TitleBar/ClosePageMFI" Text="Close Page"
                                 Command="{x:Bind ViewModel.ClosePageCommand, Mode=OneWay}"
                                 IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.IsPageOpen, FallbackValue=False, Mode=OneWay}">
                     <MenuFlyoutItem.KeyboardAccelerators>

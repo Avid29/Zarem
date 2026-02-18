@@ -147,8 +147,8 @@
   <data name="CleanProjectMFI.Text" xml:space="preserve">
     <value>נקה פרויקט</value>
   </data>
-  <data name="CloseFileMFI.Text" xml:space="preserve">
-    <value>סגור קובץ</value>
+  <data name="ClosePage" xml:space="preserve">
+    <value>סגור דף</value>
   </data>
   <data name="CloseProjectMFI.Text" xml:space="preserve">
     <value>סגור פרויקט</value>
@@ -229,16 +229,13 @@
     <value>בצע שוב</value>
   </data>
   <data name="SaveAllMFI.Text" xml:space="preserve">
-    <value>שמור הכל</value>
+    <value>שמור את הכול</value>
   </data>
-  <data name="SaveCurrentFileMFI.Text" xml:space="preserve">
-    <value>שמור את הקובץ הנוכחי</value>
-  </data>
-  <data name="SaveMFI.Text" xml:space="preserve">
-    <value>שמור</value>
+  <data name="SaveFile" xml:space="preserve">
+    <value>שמור קובץ</value>
   </data>
   <data name="SelectAllMFI.Text" xml:space="preserve">
-    <value>בחר הכול</value>
+    <value>בחר את הכול</value>
   </data>
   <data name="SettingsMFI.Text" xml:space="preserve">
     <value>הגדרות זרם</value>
@@ -277,9 +274,15 @@
     <value>הפעל קובץ ללא ניפוי שגיאות</value>
   </data>
   <data name="SaveSpecificFile" xml:space="preserve">
-    <value>שמור {0}</value>
+    <value>שמור את {0}</value>
   </data>
   <data name="CloseSpecificPage" xml:space="preserve">
-    <value>סגירה: {0}</value>
+    <value>סגור את {0}</value>
+  </data>
+  <data name="SaveFIleMFI.Text" xml:space="preserve">
+    <value>שמור קובץ</value>
+  </data>
+  <data name="ClosePageMFI.Text" xml:space="preserve">
+    <value>סגור דף</value>
   </data>
 </root>
