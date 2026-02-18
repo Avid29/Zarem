@@ -86,6 +86,7 @@ public partial class ExplorerViewModel : PageViewModel
 
             r.RootItem = await _fileService.GetFolderAsync(folder.Path);
         });
+
         _messenger.Register<ExplorerViewModel, ProjectOpenedMessage>(this, async (r, m) =>
         {
             var project = m.Project;
@@ -98,7 +99,7 @@ public partial class ExplorerViewModel : PageViewModel
             var path = project.Config.ConfigPath;
             Guard.IsNotNull(path);
            
-            r.RootItem = await _fileService.GetFileAsync(path);
+            r.RootItem = await _fileService.GetProjectFileAsync(path);
         });
 
         _messenger.Register<ExplorerViewModel, CacheChangedMessage<RecentFileItemsCache>>(this, async (r, m) => await r.LoadRecentCacheAsync());

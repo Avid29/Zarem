@@ -15,7 +15,13 @@ public interface IFileService
     /// Gets a file from a path.
     /// </summary>
     /// <param name="path">The path of the file.</param>
-    public Task<IBindableFile?> GetFileAsync(string path);
+    public Task<BindableFile?> GetFileAsync(string path);
+
+    /// <summary>
+    /// Gets a project file from a path.
+    /// </summary>
+    /// <param name="path">The path of the project file.</param>
+    public Task<BindableProjectFile?> GetProjectFileAsync(string path);
 
     /// <summary>
     /// Gets a folder from a path.
@@ -33,7 +39,7 @@ public interface IFileService
     /// Opens a file picker to select an <see cref="BindableFile"/>.
     /// </summary>
     /// <returns>The selected <see cref="BindableFile"/>.</returns>
-    public Task<IBindableFile?> PickFileAsync(params string[] types);
+    public Task<BindableFile?> PickFileAsync(params string[] types);
 
     /// <summary>
     /// Opens a file picker to select an <see cref="BindableFolder"/>.

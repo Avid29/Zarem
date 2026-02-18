@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -52,11 +53,11 @@ public class FileService : IFileService
     }
 
     /// <inheritdoc/>
-    public async Task<IBindableFile?> GetFileAsync(string path)
+    public async Task<BindableFile?> GetFileAsync(string path)
     {
         // Check if the file is already tracked, 
         // and retrieve it if so.
-        if (TryGetItem(path, out IBindableFile? value))
+        if (TryGetItem(path, out BindableFile? value))
             return value;
 
         // Get basic file
@@ -66,6 +67,23 @@ public class FileService : IFileService
 
         // Create and track new bindable
         return TrackFile(file);
+    }
+
+    /// <inheritdoc/>
+    public async Task<BindableProjectFile?> GetProjectFileAsync(string path)
+    {
+        // Check if the file is already tracked, 
+        // and retrieve it if so.
+        if (TryGetItem(path, out BindableProjectFile? value))
+            return value;
+
+        // Get basic file
+        var file = await FileSystemService.GetFileAsync(path);
+        if (file is null)
+            return null;
+
+        // Create and track new bindable
+        return TrackProjectFile(file);
     }
 
     /// <inheritdoc/>
@@ -89,7 +107,7 @@ public class FileService : IFileService
     }
 
     /// <inheritdoc/>
-    public async Task<IBindableFile?> PickFileAsync(params string[] types)
+    public async Task<BindableFile?> PickFileAsync(params string[] types)
     {
         var file = await FileSystemService.PickFileAsync(types);
         if (file is null)
@@ -112,23 +130,46 @@ public class FileService : IFileService
         return bindable;
     }
 
-    internal IBindableFile TrackFile(IFile file)
+    internal BindableFile TrackFile(IFile file)
     {
+        var key = file.Path;
+
+        // If the project file was previously tracked as
+        // a project file, untrack the item
+        if (TryGetItem(key, out BindableProjectFile? old))
+            UntrackFileItem(old);
+
         // Check if the file is already tracked, 
         // and retrieve it if so.
-        var key = file.Path;
         if (TryGetItem(key, out BindableFile? value))
             return value;
 
         // Create and track new bindable
-        IBindableFile bindable = Path.GetExtension(key) switch
+        var bindable = new BindableFile(this, file)
         {
-            ".zrmp" => new BindableProjectFile(this, file),
-            _ => new BindableFile(this, file)
-            {
-                SourceFile = _projectService.GetSourceFile(key),
-            },
+            SourceFile = _projectService.GetSourceFile(key),
         };
+
+        _openItems.Add(key, bindable);
+        return bindable;
+    }
+
+    internal BindableProjectFile TrackProjectFile(IFile file)
+    {
+        var key = file.Path;
+
+        // If the project file was previously tracked as
+        // a regular file, untrack the item
+        if (TryGetItem(key, out BindableFile? old))
+            UntrackFileItem(old);
+
+        // Check if the file is already tracked, 
+        // and retrieve it if so.
+        if (TryGetItem(key, out BindableProjectFile? value))
+            return value;
+
+        // Create and track new bindable
+        var bindable = new BindableProjectFile(this, file);
 
         _openItems.Add(key, bindable);
         return bindable;
