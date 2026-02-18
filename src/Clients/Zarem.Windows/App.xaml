@@ -3,6 +3,7 @@
     x:Class="Zarem.Windows.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:convert="using:Zarem.Windows.Converters"
     xmlns:local="using:Zarem.Windows">
     <Application.Resources>
         <ResourceDictionary>
@@ -18,6 +19,8 @@
                 <ResourceDictionary Source="/Controls/CodeEditor/AssemblyEditor/AssemblyEditor.xaml"/>
                 <ResourceDictionary Source="Controls/HexViewer/HexViewer.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <convert:StringLocalizeConverter x:Key="StringLocalizeConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

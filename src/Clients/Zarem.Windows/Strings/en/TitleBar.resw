@@ -276,4 +276,10 @@
   <data name="StartFileWithoutDebuggingMFI.Text" xml:space="preserve">
     <value>Start File Without Debugging</value>
   </data>
+  <data name="SaveSpecificFile" xml:space="preserve">
+    <value>Save {0}</value>
+  </data>
+  <data name="CloseSpecificPage" xml:space="preserve">
+    <value>Close {0}</value>
+  </data>
 </root>

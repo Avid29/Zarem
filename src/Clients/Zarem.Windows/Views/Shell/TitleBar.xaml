@@ -71,9 +71,10 @@
                 <MenuFlyoutSeparator/>
 
                 <!--  Save  -->
-                <MenuFlyoutItem x:Uid="/TitleBar/SaveCurrentFileMFI" Icon="Save" Text="Save Current File"
-                                Command="{x:Bind ViewModel.SaveFileCommand, Mode=OneWay}"
-                                IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanSave, FallbackValue=False, Mode=OneWay}">
+                <MenuFlyoutItem Text="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.Title, Mode=OneWay,
+                                Converter={StaticResource StringLocalizeConverter}, ConverterParameter='/TitleBar/SaveSpecificFile'}"
+                                Icon="Save" Command="{x:Bind ViewModel.SaveFileCommand, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanSave, FallbackValue=Collapsed, Mode=OneWay}">
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="S"/>
                     </MenuFlyoutItem.KeyboardAccelerators>
@@ -90,7 +91,8 @@
                 <MenuFlyoutSeparator/>
 
                 <!--  Close  -->
-                <MenuFlyoutItem x:Uid="/TitleBar/CloseFileMFI" Text="Close File"
+                <MenuFlyoutItem Text="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.Title, Mode=OneWay,
+                                Converter={StaticResource StringLocalizeConverter}, ConverterParameter='/TitleBar/CloseSpecificPage'}"
                                 Command="{x:Bind ViewModel.ClosePageCommand, Mode=OneWay}"
                                 IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.IsPageOpen, FallbackValue=False, Mode=OneWay}">
                     <MenuFlyoutItem.KeyboardAccelerators>

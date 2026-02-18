@@ -276,4 +276,10 @@
   <data name="StartFileWithoutDebuggingMFI.Text" xml:space="preserve">
     <value>הפעל קובץ ללא ניפוי שגיאות</value>
   </data>
+  <data name="SaveSpecificFile" xml:space="preserve">
+    <value>שמור {0}</value>
+  </data>
+  <data name="CloseSpecificPage" xml:space="preserve">
+    <value>סגירה: {0}</value>
+  </data>
 </root>
