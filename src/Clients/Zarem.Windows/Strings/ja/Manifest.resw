@@ -129,6 +129,12 @@
   <data name="Description" xml:space="preserve">
     <value>Zarem is an IDE, Assembler, and Interpreter for the MIPS assembly language and architecture.</value>
   </data>
+  <data name="FileType/AssemblyFile" xml:space="preserve">
+    <value>Assembly File</value>
+  </data>
+  <data name="FileType/ZaremProject" xml:space="preserve">
+    <value>Zarem Project</value>
+  </data>
   <data name="PublisherDisplayName" xml:space="preserve">
     <value>Avishai Dernis</value>
   </data>
