@@ -18,7 +18,7 @@
 	<Properties>
 		<DisplayName>ms-resource:/Manifest/AppDisplayName</DisplayName>
 		<PublisherDisplayName>Avishai Dernis</PublisherDisplayName>
-		<Logo>Assets\AppIcons\Release\StoreLogo.png</Logo>
+		<Logo>Assets\AppIcons\Store\StoreLogo.png</Logo>
 	</Properties>
 
 	<Dependencies>
@@ -36,9 +36,9 @@
 		  EntryPoint="$targetentrypoint$" uap18:TrustLevel="appContainer">
 			<uap:VisualElements
 			  DisplayName="ms-resource:/Manifest/AppDisplayName"
-			  Square150x150Logo="Assets\AppIcons\Release\Square150x150Logo.png"
-			  Square44x44Logo="Assets\AppIcons\Release\Square44x44Logo.png" Description="ms-resource:/Manifest/Description" BackgroundColor="transparent">
-				<uap:DefaultTile Wide310x150Logo="Assets\AppIcons\Store\Wide310x150Logo.png"  Square71x71Logo="Assets\AppIcons\Release\SmallTile.png" ShortName="ms-resource:Manifest/AppDisplayName" Square310x310Logo="Assets\AppIcons\Release\LargeTile.png">
+			  Square150x150Logo="Assets\AppIcons\Store\Square150x150Logo.png"
+			  Square44x44Logo="Assets\AppIcons\Store\Square44x44Logo.png" Description="ms-resource:/Manifest/Description" BackgroundColor="transparent">
+				<uap:DefaultTile Wide310x150Logo="Assets\AppIcons\Store\Wide310x150Logo.png"  Square71x71Logo="Assets\AppIcons\Store\SmallTile.png" ShortName="ms-resource:Manifest/AppDisplayName" Square310x310Logo="Assets\AppIcons\Store\LargeTile.png">
 					<uap:ShowNameOnTiles>
 						<uap:ShowOn Tile="square150x150Logo"/>
 						<uap:ShowOn Tile="wide310x150Logo"/>

@@ -16,6 +16,7 @@
         <convert:FileTypeIconConverter x:Key="FileTypeIconConverter"
                                        Assembly="{StaticResource AsmFileIcon}"
                                        Object="{StaticResource ObjFileIcon}"
+                                       Project="{StaticResource AppIconSmall}"
                                        Default="{StaticResource FileIcon}"/>
 
         <DataTemplate x:Key="FolderTemplate" x:DataType="files:BindableFolder">

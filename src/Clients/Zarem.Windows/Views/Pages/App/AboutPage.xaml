@@ -21,6 +21,7 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="LeftGutter" Width="auto"/>

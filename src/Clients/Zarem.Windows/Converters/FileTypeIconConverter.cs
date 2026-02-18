@@ -23,6 +23,11 @@ public partial class FileTypeIconConverter : IValueConverter
     public ImageSource? Object { get; set; }
 
     /// <summary>
+    /// Gets the <see cref="ImageSource"/> to use for a *.obj file.
+    /// </summary>
+    public ImageSource? Project { get; set; }
+
+    /// <summary>
     /// Gets the default image source to use for an unknown file type.
     /// </summary>
     public ImageSource? Default { get; set; }
@@ -39,6 +44,7 @@ public partial class FileTypeIconConverter : IValueConverter
         {
             ".asm" => Assembly,
             ".obj" => Object,
+            ".zrmp" => Project,
             _ => Default,
         };
     }
