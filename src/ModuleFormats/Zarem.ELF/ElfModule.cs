@@ -36,6 +36,7 @@ public partial class ElfModule : ModuleBase, IBuildModule<ElfModule, ElfConfig>,
     /// <inheritdoc/>
     public async Task SaveAsync(Stream stream)
     {
+        var diagnostics = _elfFile.Verify();
         _elfFile.Write(stream);
     }
 }

@@ -62,10 +62,18 @@ public partial class ElfModule
 
         public void CreateSymTable()
         {
+            // Add string table
+            var strtable = new ElfStringTable();
+            ElfFile.Add(strtable);
+
+            // Create symbol table
             _symtab = new ElfSymbolTable()
             {
-                Link = new(new ElfStringTable()),
+                Link = new(strtable),
             };
+
+            // Add the null symbol entry
+            _symtab.Entries.Add(new ElfSymbol());
 
             // Local symbols first
             var symbols = Module.Symbols.Values;

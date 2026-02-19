@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Diagnostics;
+using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,9 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Models;
 using Zarem.Config;
+using Zarem.Linker;
+using Zarem.Linker.Config;
+using Zarem.Linker.Handler;
 
 namespace Test.ObjFormats;
 
@@ -36,15 +40,26 @@ public class AbstractionTests<TModule, TConfig>
         var assemblyResult = await Zarembler.AssembleAsync(stream, filePath, new MIPSAssmblerHandler(assemblerConfig), assemblerConfig);
         Guard.IsNotNull(assemblyResult.Module);
 
-        // Extract
-        var module = TModule.Create(assemblyResult.Module, formatConfig);
+        // Link
+        var module = assemblyResult.Module;
+        var linkConfig = new MIPSLinkerConfig();
+        var linkHandler = new MIPSLinkerHandler(linkConfig);
+        module = ZaLinker.Link(linkConfig, linkHandler, null, module);
         Guard.IsNotNull(module);
 
+        // Extract
+        var elfModule = TModule.Create(module, formatConfig);
+        Guard.IsNotNull(elfModule);
+
         // Save (to nothing)
-        await module.SaveAsync(new MemoryStream());
+        var elfStream = new MemoryStream();
+        await elfModule.SaveAsync(elfStream);
+        elfStream.Position = 0;
+        elfModule = TModule.Open("Anonymous", elfStream);
+        Guard.IsNotNull(elfModule);
 
         // Unextract
-        var reconvertedAbstractModule = module.Abstract(formatConfig);
+        var reconvertedAbstractModule = elfModule.Abstract(formatConfig);
         Guard.IsNotNull(reconvertedAbstractModule);
 
         // Compare original and compare
