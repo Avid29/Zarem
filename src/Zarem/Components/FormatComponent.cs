@@ -41,6 +41,13 @@ public class FormatComponent<TModule, TConfig> : IFormatComponent
         if (export is null)
             return false;
 
+        var dir = Path.GetDirectoryName(@object.FullPath);
+        if (dir is null)
+        {
+            return false;
+        }
+
+        Directory.CreateDirectory(dir);
         using var outstream = File.Open(@object.FullPath, FileMode.OpenOrCreate);
         await export.SaveAsync(outstream);
         return true;

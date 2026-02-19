@@ -4,7 +4,6 @@ using CommunityToolkit.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Models;
@@ -37,12 +36,10 @@ public partial class Project
         result.OutputModule.EntryPoint = entrySymbol;
 
         // Export the resulting file
-        var folder = Config.RootFolderPath;
-        var filename = Path.GetFileNameWithoutExtension(Config.ConfigPath);
-        Guard.IsNotNull(folder);
+        var filename = Path.GetFileNameWithoutExtension(Config.Name);
+        Guard.IsNotNull(Config.RootFolderPath);
         Guard.IsNotNull(filename);
-
-        var path = Path.Combine(folder, filename);
+        var path = Path.Combine(Config.RootFolderPath, "obj", filename);
         await Format.TryExportAsync(result.OutputModule, new ObjectFile(this, path));
 
         return result;
