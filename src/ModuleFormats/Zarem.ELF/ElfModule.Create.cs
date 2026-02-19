@@ -165,6 +165,6 @@ public partial class ElfModule
         context.CreateRelTables();
         context.SetEntry();
 
-        return new ElfModule(context.Module.Name, context.ElfFile);
+        return new ElfModule(context.Module.FileName, context.ElfFile);
     }
 }

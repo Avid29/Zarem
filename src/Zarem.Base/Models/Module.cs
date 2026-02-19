@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Zarem.Localization;
+using Zarem.Models.Abstract;
+using Zarem.Models.Interface;
 using Zarem.Models.Tables;
 
 namespace Zarem.Models;
@@ -11,7 +13,7 @@ namespace Zarem.Models;
 /// <summary>
 /// A modifiable object module.
 /// </summary>
-public sealed class Module
+public sealed class Module : ModuleBase
 {
     private readonly Dictionary<string, Section> _sections = [];
     private readonly Dictionary<string, Symbol> _symbols = [];
@@ -25,14 +27,13 @@ public sealed class Module
     }
 
     /// <summary>
-    /// Gets the module name.
+    /// Initializes a new instance of the <see cref="Module"/> class.
     /// </summary>
-    public string? Name { get; }
-
-    /// <summary>
-    /// Gets the display name of the module
-    /// </summary>
-    public string DisplayName => Name ?? Localizer.Resources["UnnamedModule"] ?? string.Empty;
+    public Module(string? filePath, string architecture)
+    {
+        Architecture = architecture;
+        FilePath = filePath;
+    }
 
     /// <summary>
     /// Gets the module architecture.

@@ -6,24 +6,22 @@ using System.Threading.Tasks;
 using Zarem.Assembler.Models;
 using Zarem.Elf.Config;
 using Zarem.Emulator.Models.Modules;
+using Zarem.Models.Abstract;
 
 namespace Zarem.Elf;
 
 /// <summary>
 /// An object module in ELF format.
 /// </summary>
-public partial class ElfModule : IBuildModule<ElfModule, ElfConfig>, IExecutableModule
+public partial class ElfModule : ModuleBase, IBuildModule<ElfModule, ElfConfig>, IExecutableModule
 {
     private readonly ElfFile _elfFile;
 
     private ElfModule(string? name,  ElfFile elfFile)
     {
-        Name = name;
+        FilePath = name;
         _elfFile = elfFile;
     }
-    
-    /// <inheritdoc/>
-    public string? Name { get; }
 
     /// <inheritdoc/>
     public uint EntryAddress => (uint)_elfFile.EntryPointAddress;

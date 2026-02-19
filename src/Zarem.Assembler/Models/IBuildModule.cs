@@ -12,12 +12,7 @@ namespace Zarem.Assembler.Models;
 public interface IBuildModule : IModule
 {
     /// <summary>
-    /// Gets the name of the <see cref="IBuildModule"/>.
-    /// </summary>
-    public string? Name { get; }
-
-    /// <summary>
     /// Save the module to a stream (likely as a file).
     /// </summary>
-    public Task SaveAsync(Stream stream);
+    Task SaveAsync(Stream stream);
 }

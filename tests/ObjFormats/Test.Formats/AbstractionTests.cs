@@ -25,15 +25,15 @@ public class AbstractionTests<TModule, TConfig>
         var stream = File.Open(path, FileMode.Open);
 
         // Run the test
-        await RunTest(stream, fileName, config);
+        await RunTest(stream, path, config);
     }
 
-    protected static async Task RunTest(Stream stream, string? filename = null, MIPSAssemblerConfig? assemblerConfig = null, TConfig? formatConfig = null)
+    protected static async Task RunTest(Stream stream, string? filePath = null, MIPSAssemblerConfig? assemblerConfig = null, TConfig? formatConfig = null)
     {
         assemblerConfig ??= new();
         formatConfig ??= new();
 
-        var assemblyResult = await Zarembler.AssembleAsync(stream, filename, new MIPSAssmblerHandler(assemblerConfig), assemblerConfig);
+        var assemblyResult = await Zarembler.AssembleAsync(stream, filePath, new MIPSAssmblerHandler(assemblerConfig), assemblerConfig);
         Guard.IsNotNull(assemblyResult.Module);
 
         // Extract

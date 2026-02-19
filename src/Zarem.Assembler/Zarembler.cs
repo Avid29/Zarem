@@ -52,13 +52,13 @@ public partial class Zarembler
     /// <summary>
     /// Initializes a new instance of the <see cref="Zarembler"/> class.
     /// </summary>
-    private Zarembler(IAssemblerHandler archHandler, AssemblerConfig config, ILogger? logger = null)
+    private Zarembler(IAssemblerHandler archHandler, AssemblerConfig config, string? filePath, ILogger? logger = null)
     {
         _logger = new AssemblerLogger(logger ?? new Logger());
         Config = config;
 
         _archHandler = archHandler;
-        _module = new Module(_archHandler.GetArchitectureName());
+        _module = new Module(filePath, _archHandler.GetArchitectureName());
         _activeSection = _module.GetOrCreateSection(".text");
     }
 
@@ -88,32 +88,41 @@ public partial class Zarembler
     /// <summary>
     /// Assembles a string.
     /// </summary>
-    public static async Task<AssemblerResult> AssembleAsync(string str, string? filename, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    public static async Task<AssemblerResult> AssembleAsync(string str, string? filePath, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         using var reader = new StringReader(str);
-        var assembler = await AssembleAsync(reader, filename, archHandler, config, logger);
+        var assembler = await AssembleAsync(reader, filePath, archHandler, config, logger);
         return new AssemblerResult(assembler.Failed, assembler.Logs, assembler.Symbols, assembler._module);
+    }
+
+    /// <summary>
+    /// Assembles a file.
+    /// </summary>
+    public static async Task<AssemblerResult> AssembleAsync(string filePath, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    {
+        using var stream = File.OpenRead(filePath);
+        return await AssembleAsync(stream, filePath, archHandler, config, logger);
     }
 
     /// <summary>
     /// Assembles a stream.
     /// </summary>
-    public static async Task<AssemblerResult> AssembleAsync(Stream stream, string? filename, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    public static async Task<AssemblerResult> AssembleAsync(Stream stream, string? filePath, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         using var reader = new StreamReader(stream);
-        var assembler = await AssembleAsync(reader, filename, archHandler, config, logger);
+        var assembler = await AssembleAsync(reader, filePath, archHandler, config, logger);
         return new AssemblerResult(assembler.Failed, assembler.Logs, assembler.Symbols, assembler._module);
     }
 
     /// <summary>
     /// Assembles an object module from a stream of assembly.
     /// </summary>
-    private static async Task<Zarembler> AssembleAsync(TextReader reader, string? filename, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    private static async Task<Zarembler> AssembleAsync(TextReader reader, string? filePath, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         logger?.Flush();
 
-        var assembler = new Zarembler(archHandler, config, logger);
-        var tokens = await Tokenizer.TokenizeAsync(reader, filename);
+        var assembler = new Zarembler(archHandler, config, filePath, logger);
+        var tokens = await Tokenizer.TokenizeAsync(reader, filePath);
 
         // Run the alignment pass on each line
         for (int i = 1; i <= tokens.LineCount; i++)

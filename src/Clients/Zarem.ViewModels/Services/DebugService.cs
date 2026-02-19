@@ -73,7 +73,7 @@ public class DebugService : IDebugService
         // Cheat and build the file here
         using var readStream = File.OpenRead(file.FullPath);
         var config = new MIPSAssemblerConfig();
-        var result = await Zarembler.AssembleAsync(readStream, file.Name, new MIPSAssmblerHandler(config), config);
+        var result = await Zarembler.AssembleAsync(readStream, file.FullPath, new MIPSAssmblerHandler(config), config);
         if (result.Module is null)
             return;
 

@@ -32,7 +32,7 @@ public class AssemblerTests
         await RunTest(stream, null, config, [.. expected.Select((x) => (x, 1L))]);
     }
 
-    protected static async Task RunTest(Stream stream, string? filename = null, MIPSAssemblerConfig? config = null, params (LogId, long)[] expected)
+    protected static async Task RunTest(Stream stream, string? filePath = null, MIPSAssemblerConfig? config = null, params (LogId, long)[] expected)
     {
         // Load output file
         //var output = TestFilePathing.GetMatchingObjectFilePath(filename);
@@ -40,7 +40,7 @@ public class AssemblerTests
 
         // Run assembler
         config ??= new();
-        var result = await Zarembler.AssembleAsync(stream, filename, new MIPSAssmblerHandler(config), config);
+        var result = await Zarembler.AssembleAsync(stream, filePath, new MIPSAssmblerHandler(config), config);
 
         // Find expected errors, warnings, and messages
         if (expected.Length == result.Logs.Count)
@@ -53,7 +53,7 @@ public class AssemblerTests
         }
 
         // Don't run output validation for fileless tests
-        if (filename is null)
+        if (filePath is null)
             return;
 
         // Assembly failed. No expected output

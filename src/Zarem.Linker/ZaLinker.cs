@@ -74,7 +74,7 @@ public sealed class ZaLinker
             {
                 // TODO: Decide. Is this a warning or an error?
                 // Currently this is a warning and the linker will attempt to link without the target file.
-                _logger.Log(Severity.Warning, LogId.WrongArchitecture, module.Name ?? "TODO: Module paths", "ModuleHasWrongArchitecture", module.DisplayName, module.Architecture);
+                _logger.Log(Severity.Warning, LogId.WrongArchitecture, module.FilePath, "ModuleHasWrongArchitecture", module.DisplayName, module.Architecture);
                 continue;
             }
 
@@ -121,7 +121,7 @@ public sealed class ZaLinker
                 {
                     // TODO: Weak symbols
                     // TODO: Track and log source defining modules
-                    _logger?.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.Name ?? "", "ConflictingSymbolDefinitions", symbol.Name, module.Name);
+                    _logger?.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.FileName ?? "", "ConflictingSymbolDefinitions", symbol.Name, module.FileName);
                     continue;
                 }
 
@@ -167,7 +167,7 @@ public sealed class ZaLinker
                     {
                         if (_config.LinkMode is LinkMode.Executable)
                         {
-                            _logger.Log(Severity.Error, LogId.UndefinedSymbol, module.Name ?? "", "SymbolNeverDefined", relocation.SymbolName);
+                            _logger.Log(Severity.Error, LogId.UndefinedSymbol, module.FileName ?? "", "SymbolNeverDefined", relocation.SymbolName);
                         }
 
                         linkedSection.AddRelocation(relocation);
