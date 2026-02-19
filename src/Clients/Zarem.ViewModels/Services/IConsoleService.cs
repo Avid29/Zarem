@@ -17,4 +17,9 @@ public interface IConsoleService
     /// Hides the console window.
     /// </summary>
     void HideConsoleWindow();
+
+    /// <summary>
+    /// Displays a message in the console, followed by an "Any key to close" message.
+    /// </summary>
+    void HideConsoleWindow(string message);
 }

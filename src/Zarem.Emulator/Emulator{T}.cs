@@ -22,7 +22,7 @@ public abstract class Emulator<TConfig> : IEmulator
     /// <summary>
     /// An event invoked when the emulator state changes.
     /// </summary>
-    public EventHandler<EmulatorState>? StateChanged;
+    public event EventHandler<EmulatorState>? StateChanged;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Emulator{TConfig}"/> class.
@@ -108,10 +108,11 @@ public abstract class Emulator<TConfig> : IEmulator
         // Schedule the shutdown
         State = EmulatorState.Stopping;
         _runGate.Set(); // The thread must run to exit
-        _thread?.Join();
 
         // Shutdown complete
         State = EmulatorState.Stopped;
+        _thread?.Join();
+
     }
 
     /// <summary>

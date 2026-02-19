@@ -216,4 +216,10 @@
   <data name="BuildStatus/OneFailed" xml:space="preserve">
     <value>1 Failed</value>
   </data>
+  <data name="PressAnyKeyCloseConsole" xml:space="preserve">
+    <value>Press any key to close the Console</value>
+  </data>
+  <data name="DebugSessionEnded" xml:space="preserve">
+    <value>Debug Session Ended</value>
+  </data>
 </root>

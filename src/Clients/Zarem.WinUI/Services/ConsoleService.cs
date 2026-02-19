@@ -11,8 +11,19 @@ namespace Zarem.WinUI.Services;
 /// </summary>
 public class ConsoleService : IConsoleService
 {
+    private readonly ILocalizationService _localizationService;
+
     const int SwHide = 0;
     const int SwShow = 5;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConsoleService"/> class.
+    /// </summary>
+    /// <param name="localizationService"></param>
+    public ConsoleService(ILocalizationService localizationService)
+    {
+        _localizationService = localizationService;
+    }
 
     [DllImport(@"kernel32.dll", SetLastError = true)]
     static extern bool AllocConsole();
@@ -34,6 +45,7 @@ public class ConsoleService : IConsoleService
         }
         else
         {
+            Console.Clear();
             return ShowWindow(handle, SwShow);
         }
     }
@@ -43,5 +55,17 @@ public class ConsoleService : IConsoleService
     {
         var handle = GetConsoleWindow();
         ShowWindow(handle, SwHide);
+    }
+
+    /// <inheritdoc/>
+    public void HideConsoleWindow(string message)
+    {
+        // Write the message, followed by closing instructions
+        Console.WriteLine(message);
+        Console.WriteLine(_localizationService["PressAnyKeyCloseConsole"]);
+
+        // Wait for input and hide the console.
+        Console.ReadKey();
+        HideConsoleWindow();
     }
 }

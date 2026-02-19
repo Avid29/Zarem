@@ -3,6 +3,7 @@
 using System.Threading.Tasks;
 using Zarem.Emulator;
 using Zarem.Emulator.Interpreter;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Files;
 using Zarem.Services.Popup;
 using Zarem.Services.Popup.Enums;
@@ -56,6 +57,7 @@ public class DebugService : IDebugService
         _consoleService.ShowConsoleWindow();
 
         _ = new MARSTrapHandler(mipsEmu.Computer);
+        mipsEmu.StateChanged += MipsEmu_StateChanged;
 
         session.Emulator.Start();
     }
@@ -130,5 +132,13 @@ public class DebugService : IDebugService
         }
 
         return true;
+    }
+
+    private void MipsEmu_StateChanged(object? sender, EmulatorState e)
+    {
+        if (e is EmulatorState.Stopped)
+        {
+            _consoleService.HideConsoleWindow(_localizationService["DebugSessionEnded"]);
+        }
     }
 }
