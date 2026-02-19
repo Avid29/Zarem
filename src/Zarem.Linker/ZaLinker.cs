@@ -136,7 +136,7 @@ public sealed class ZaLinker
                     // Translate the symbol address within the section
                     var sectionName = symbol.Address.Section.Name;
                     var linkedSection = Module.GetOrCreateSection(sectionName);
-                    long finalAddress = (long)(linkedSection.VirtualAddress + _moduleSectionOffsets[module][sectionName]) + symbol.Address.Offset;
+                    long finalAddress = (long)(_moduleSectionOffsets[module][sectionName]) + symbol.Address.Offset;
                     newSymbol.Address = new Address(linkedSection, finalAddress);
                 }
             }
@@ -186,7 +186,7 @@ public sealed class ZaLinker
                     Guard.IsNotNull(symbol.Address.Section);
 
                     // The absolute virtual address of the symbol
-                    ulong symbolVirtual = Module.GetOrCreateSection(symbol.Address.Section.Name).VirtualAddress + sectionBaseInLinked;
+                    ulong symbolVirtual = Module.GetOrCreateSection(symbol.Address.Section.Name).VirtualAddress + (ulong)symbol.Address.Offset;
 
                     // The virtual address of the instruction being patched
                     ulong patchVirtual = linkedSection.VirtualAddress + sectionBaseInLinked + (ulong)relocation.Location.Offset;

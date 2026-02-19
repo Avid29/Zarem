@@ -42,7 +42,7 @@ public class MARSTrapHandler : MIPSTrapHandler
 
             // Print string
             case 4:
-                Console.WriteLine(Computer.Memory.ReadString(A0));
+                Console.Write(Computer.Memory.ReadString(A0));
                 break;
 
             // Read integer

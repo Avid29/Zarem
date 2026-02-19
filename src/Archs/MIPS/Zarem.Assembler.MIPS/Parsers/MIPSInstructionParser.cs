@@ -300,19 +300,19 @@ public struct MIPSInstructionParser
             // it would be here. However, since there's not forward declaration of local
             // symbols, that's not a consider
 
-            var (type, addend) = target switch
+            var type = target switch
             {
-                Argument.Address => (MipsReferenceType.JumpTarget26, 0),
-                Argument.Immediate => (MipsReferenceType.Low16, 0),
-                Argument.Offset => (MipsReferenceType.PCRelative16, -4),
-                Argument.LargeOffset => (MipsReferenceType.PCRelative26, -4),
-                Argument.FullImmediate => (MipsReferenceType.Low16, 0), // TODO: Handle high addresses
-                _ => ThrowHelper.ThrowArgumentOutOfRangeException<(MipsReferenceType, long)>($"Argument of type '{target}' cannot reference relocatable symbols."),
+                Argument.Address => MipsReferenceType.JumpTarget26,
+                Argument.Immediate => MipsReferenceType.Low16,
+                Argument.Offset => MipsReferenceType.PCRelative16,
+                Argument.LargeOffset => MipsReferenceType.PCRelative26,
+                Argument.FullImmediate => MipsReferenceType.Low16, // TODO: Handle high addresses
+                _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
             };
 
             // Create the relocation
             var reference = expResult.Symbol;
-            relocation = new RelocationEntry(reference.Name, _currentAddress, (uint)type, addend + expResult.Addend);
+            relocation = new RelocationEntry(reference.Name, _currentAddress, (uint)type, 0 + expResult.Addend);
         }
 
         // NOTE: Casting might truncate the value to fit the bit size.

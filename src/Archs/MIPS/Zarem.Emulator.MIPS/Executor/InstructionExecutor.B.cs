@@ -37,7 +37,9 @@ public partial class InstructionExecutor
     {
         if (func(RS, RT))
         {
-            return new Execution((uint)(Processor.ProgramCounter + Instruction.Offset));
+            // TODO: Branch delays
+
+            return new Execution((uint)(Processor.ProgramCounter + Instruction.Offset + 4));
         }
 
         return default;
