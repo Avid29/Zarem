@@ -46,10 +46,20 @@ public class DebugService : IDebugService
         if (_projectService.Project is null)
             return;
 
+        var buildResult = await _buildService.BuildProjectAsync(true);
+        if (buildResult?.OutputModule is null)
+            return;
+
         // Start a debug session
-        var session = _projectService.Project.StartDebug();
+        var session = _projectService.Project.StartDebug(buildResult.OutputModule);
         if (session is null)
             return;
+
+        // Cheat and grab the mips emulator
+        if (session?.Emulator is not MIPSEmulator mipsEmu)
+            return;
+
+        _ = new MARSTrapHandler(mipsEmu.Computer);
 
         session.Emulator.Start();
     }
@@ -84,10 +94,12 @@ public class DebugService : IDebugService
         //    return true;
 
         // Rebuild the file
-        await _buildService.AssembleFilesAsync([file]);
+        var buildResult = await _buildService.AssembleFilesAsync([file]);
+        if (buildResult is null)
+            return false;
 
-        // If the file is still dirty, build failed
-        if (file.IsDirty)
+        // If build failed, give a notice
+        if (buildResult.FailedFiles.Count is not 0)
         {
             if (file.ObjectFile.Exists)
             {
@@ -108,7 +120,7 @@ public class DebugService : IDebugService
             }
             else
             {
-                // Assembly failedd and no old build exists
+                // Assembly failed and no old build exists
                 var title = _localizationService["/Popups/FileAssemblyFailed", file.Name];
                 var popup = new PopupDetails(title)
                 {

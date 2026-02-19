@@ -76,5 +76,8 @@ public abstract class MIPSTrapHandler : TrapHandlerBase
         {
             HandleSyscall(sender.RegisterFile[GPRegister.ReturnValue0]);
         }
+
+        // Resume the emulation
+        e.Resume();
     }
 }

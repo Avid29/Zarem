@@ -2,6 +2,7 @@
 
 using System.Threading.Tasks;
 using Zarem.DebugSessions;
+using Zarem.Models;
 using Zarem.Models.Files;
 
 namespace Zarem;
@@ -9,12 +10,13 @@ namespace Zarem;
 public partial class Project
 {
     /// <inheritdoc/>
-    public DebugSession? StartDebug()
+    public DebugSession? StartDebug(Module module)
     {
         var emulator = Emulate.CreateEmulator();
         if (emulator is null)
             return null;
 
+        emulator.Load(module);
         return new DebugSession(emulator);
     }
 

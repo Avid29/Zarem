@@ -44,7 +44,15 @@ public class MARSTrapHandler : MIPSTrapHandler
             case 4:
                 Console.WriteLine(Computer.Memory.ReadString(A0));
                 break;
+
+            // Stop execution
+            case 10:
+                Computer.Emulator.ShutDown();
+                break;
         }
+
+        // Increment the PC
+        Computer.Processor.ProgramCounter += 4;
     }
 
     /// <inheritdoc/>

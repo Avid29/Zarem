@@ -14,9 +14,11 @@ public class MIPSComputer : IComputer
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSComputer"/> class.
     /// </summary>
-    public MIPSComputer(MIPSEmulatorConfig config)
+    public MIPSComputer(MIPSEmulator emulator, MIPSEmulatorConfig config)
     {
         Config = config;
+        Emulator = emulator;
+
         Processor = new MIPSCpu(this);
         Memory = new SystemMemory();
     }
@@ -35,6 +37,14 @@ public class MIPSComputer : IComputer
     /// Gets the emulation configuration to follow for computing.
     /// </summary>
     public MIPSEmulatorConfig Config { get; }
+
+    /// <summary>
+    /// Gets the emulator that owns the computer.
+    /// </summary>
+    /// <remarks>
+    /// Currently used for shutdown. Is this an instance of bad coupling?
+    /// </remarks>
+    internal MIPSEmulator Emulator { get; }
 
     /// <inheritdoc/>
     public void Tick()

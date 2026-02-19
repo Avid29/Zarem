@@ -17,7 +17,7 @@ public class MIPSEmulator : Emulator<MIPSEmulatorConfig>
     /// </summary>
     public MIPSEmulator(MIPSEmulatorConfig config) : base(config)
     {
-        Computer = new MIPSComputer(config);
+        Computer = new MIPSComputer(this, config);
     }
 
     /// <summary>
