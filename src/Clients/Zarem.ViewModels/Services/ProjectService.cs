@@ -148,7 +148,6 @@ public class ProjectService : IProjectService
 
         // Close the project
         Project = null;
-        OpenFolder(null, false);
 
         if (project is not null)
         {

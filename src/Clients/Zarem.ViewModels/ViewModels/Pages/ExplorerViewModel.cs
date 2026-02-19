@@ -76,7 +76,7 @@ public partial class ExplorerViewModel : PageViewModel
         get;
         set
         {
-            if (SetProperty(ref field, value) && value is not null)
+            if (SetProperty(ref field, value))
             {
                 if (value is not null)
                     RootFolder = null;
@@ -116,7 +116,8 @@ public partial class ExplorerViewModel : PageViewModel
             var folder = m.Folder;
             if (folder is null)
             {
-                RootFolder = null;
+                r.Project = null;
+                r.RootFolder = null;
                 return;
             }
 
@@ -128,7 +129,8 @@ public partial class ExplorerViewModel : PageViewModel
             var project = m.Project;
             if (project is null)
             {
-                RootFolder = null;
+                r.Project = null;
+                r.RootFolder = null;
                 return;
             }
 
@@ -140,6 +142,9 @@ public partial class ExplorerViewModel : PageViewModel
 
         _messenger.Register<ExplorerViewModel, ProjectClosedMessage>(this, (r, m) =>
         {
+            r.Project = null;
+            r.RootFolder = null;
+
             _fileService.ClearTracking();
         });
 
