@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Zarem.Localization;
 using Zarem.Models.Tables;
 
 namespace Zarem.Models;
@@ -31,7 +32,7 @@ public sealed class Module
     /// <summary>
     /// Gets the display name of the module
     /// </summary>
-    public string DisplayName => Name ?? "Unnamed Module"; // TODO: Localize
+    public string DisplayName => Name ?? Localizer.Resources["UnnamedModule"] ?? string.Empty;
 
     /// <summary>
     /// Gets the module architecture.
