@@ -1,7 +1,10 @@
 ﻿// Avishai Dernis 2025
 
+using CommunityToolkit.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Models;
@@ -13,17 +16,40 @@ namespace Zarem;
 public partial class Project
 {
     /// <inheritdoc/>
-    public async Task<BuildResult?> BuildProjectAsync(bool rebuild = false, Logger? logger = null)
+    public async Task<BuildResult> BuildProjectAsync(bool rebuild = false, Logger? logger = null)
     {
         var result = await AssembleFilesAsync(SourceFiles, rebuild, logger);
 
-        // TODO: Link
+        if (result.FailedFiles.Any())
+            return result;
+
+        var skippedModules = (await Task.WhenAll(result.SkippedFiles.Select(async x => await Format.ImportAsync(x.ObjectFile))));
+        var successfulModules = result.SucessfullyAssembledFiles.Select(x => x.Item2.Module);
+
+        // TODO: Check, is empty null in this context?
+        var modules = successfulModules.Concat(skippedModules).ToArray();
+        if (modules is null)
+            return result;
+
+        // Link and select entry point
+        result.OutputModule = Linker.Link(logger, modules!);
+        result.OutputModule.TryGetSymbol("entry", out var entrySymbol);
+        result.OutputModule.EntryPoint = entrySymbol;
+
+        // Export the resulting file
+        var folder = Config.RootFolderPath;
+        var filename = Path.GetFileNameWithoutExtension(Config.ConfigPath);
+        Guard.IsNotNull(folder);
+        Guard.IsNotNull(filename);
+
+        var path = Path.Combine(folder, filename);
+        await Format.TryExportAsync(result.OutputModule, new ObjectFile(this, path));
 
         return result;
     }
 
     /// <inheritdoc/>
-    public async Task<BuildResult?> AssembleFilesAsync(IEnumerable<SourceFile> files, bool rebuild = true, Logger? logger = null)
+    public async Task<BuildResult> AssembleFilesAsync(IEnumerable<SourceFile> files, bool rebuild = true, Logger? logger = null)
     {
         var result = new BuildResult();
         foreach (var file in files)

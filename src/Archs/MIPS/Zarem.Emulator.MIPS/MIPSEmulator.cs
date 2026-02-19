@@ -3,7 +3,7 @@
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Emulator.Models.Modules;
+using Zarem.Models;
 
 namespace Zarem.Emulator;
 
@@ -26,12 +26,31 @@ public class MIPSEmulator : Emulator<MIPSEmulatorConfig>
     public MIPSComputer Computer { get; }
 
     /// <summary>
-    /// Loads an <see cref="IExecutableModule"/> to the interpreter's memory.
+    /// Loads a <see cref="Module"/> to the interpreter's memory.
     /// </summary>
     /// <param name="module">The module to load.</param>
-    public override void Load(IExecutableModule module)
+    public override void Load(Module module)
     {
-        module.Load(Computer.Memory.AsStream());
+        var destination = Computer.Memory.AsStream();
+
+        foreach (var section in module.Sections.Values)
+        {
+            var vAddr = (long)section.VirtualAddress;
+            if (destination.Length < vAddr)
+            {
+                destination.SetLength(vAddr);
+            }
+
+            destination.Position = vAddr;
+            section.Stream.Position = 0;
+            section.Stream.CopyTo(destination);
+        }
+
+        if (module.EntryAddress is not null)
+        {
+            Computer.Processor.ProgramCounter = (uint)module.EntryAddress;
+        }
+
         State = EmulatorState.Ready;
     }
 

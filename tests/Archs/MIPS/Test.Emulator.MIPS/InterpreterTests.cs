@@ -38,19 +38,14 @@ public class InterpreterTests
         var module = ZaLinker.Link(linkConfig, linkHandler, null, result.Module);
         module.EntryPoint = module.GetOrCreateSymbol("entry");
 
-        // Format
-        var elfConfig = new ElfConfig();
-        var elfModule = ElfModule.Create(module, elfConfig);
-        Assert.IsNotNull(elfModule);
-
         // Setup emulator
         var emulatorConfig = new MIPSEmulatorConfig()
         {
             HostedTraps = true
         };
         var emulator = new MIPSEmulator(emulatorConfig);
-        emulator.Computer.Processor.ProgramCounter = elfModule.EntryAddress;
-        emulator.Load(elfModule);
+
+        emulator.Load(module);
 
         // Setup interpreter
         var interpreter = new MARSTrapHandler(emulator.Computer);

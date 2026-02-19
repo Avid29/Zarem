@@ -25,8 +25,8 @@ public static class ProjectFactory
     public static IProject Create(IProjectConfig config)
     {
         Guard.IsNotNull(config.ArchitectureConfig?.AssemblerConfig);
-        Guard.IsNotNull(config.ArchitectureConfig?.LinkerConfig);
         Guard.IsNotNull(config.ArchitectureConfig?.EmulatorConfig);
+        Guard.IsNotNull(config.ArchitectureConfig?.LinkerConfig);
         Guard.IsNotNull(config.FormatConfig);
 
         // Retrieve type info

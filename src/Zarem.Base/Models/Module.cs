@@ -1,5 +1,6 @@
 ﻿// Adam Dernis 2024
 
+using CommunityToolkit.Diagnostics;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -49,6 +50,23 @@ public sealed class Module : ModuleBase
     /// Gets or sets the symbol for the entry point.
     /// </summary>
     public Symbol? EntryPoint { get; set; }
+
+    /// <summary>
+    /// Gets the entry address for loading this module.
+    /// </summary>
+    public ulong? EntryAddress
+    {
+        get
+        {
+            if (EntryPoint is null)
+                return null;
+
+            var section = EntryPoint.Address.Section;
+            Guard.IsNotNull(section);
+
+            return section.VirtualAddress + (ulong)EntryPoint.Address.Offset;
+        }
+    }
 
     /// <summary>
     /// Gets the symbol dictionary.

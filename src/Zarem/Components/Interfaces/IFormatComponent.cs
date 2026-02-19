@@ -2,7 +2,6 @@
 
 using System.Threading.Tasks;
 using Zarem.Config;
-using Zarem.Emulator.Models.Modules;
 using Zarem.Models;
 using Zarem.Models.Files;
 
@@ -31,5 +30,5 @@ public interface IFormatComponent : IProjectComponent
     /// </summary>
     /// <param name="object">The object file to import.</param>
     /// <returns>The file imported, or null if unsuccessful.</returns>
-    Task<IExecutableModule?> ImportAsync(ObjectFile @object);
+    Task<Module?> ImportAsync(ObjectFile @object);
 }

@@ -54,9 +54,6 @@ public partial class ElfModule
                 var elfSec = new ElfStreamSection(type, section.Stream);
                 ElfFile.Add(elfSec);
 
-                section.Stream.Position = 0;
-                elfSec.Stream.CopyFrom(section.Stream, (int)section.Stream.Length);
-
                 elfSec.VirtualAddress = section.VirtualAddress;
                 pos += (ulong)section.Stream.Length;
                 pos += 4096 - (pos % 4096);

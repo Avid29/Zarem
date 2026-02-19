@@ -47,9 +47,10 @@ public class FormatComponent<TModule, TConfig> : IFormatComponent
     }
 
     /// <inheritdoc/>
-    public async Task<IExecutableModule?> ImportAsync(ObjectFile @object)
+    public async Task<Module?> ImportAsync(ObjectFile @object)
     {
         using var instream = File.OpenRead(@object.FullPath);
-        return TModule.Open(@object.Name, instream);
+        var module = TModule.Open(@object.Name, instream);
+        return module?.Abstract(Config);
     }
 }

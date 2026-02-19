@@ -2,6 +2,7 @@
 
 using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.Models.Modules;
+using Zarem.Models;
 
 namespace Zarem.Emulator;
 
@@ -18,8 +19,11 @@ public interface IEmulator
     /// <summary>
     /// Loads an <see cref="IExecutableModule"/> to the interpreter's memory.
     /// </summary>
+    /// <remarks>
+    /// Also sets the program counter.
+    /// </remarks>
     /// <param name="module">The module to load.</param>
-    void Load(IExecutableModule module);
+    void Load(Module module);
 
     /// <summary>
     /// Starts the execution loop for the emulator.

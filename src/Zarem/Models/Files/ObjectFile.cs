@@ -11,9 +11,16 @@ namespace Zarem.Models.Files;
 public class ObjectFile : FileBase
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="SourceFile"/> class.
+    /// Initializes a new instance of the <see cref="ObjectFile"/> class.
     /// </summary>
-    public ObjectFile(SourceFile sourceFile, string fullPath) : base(sourceFile.Project, fullPath)
+    internal ObjectFile(SourceFile sourceFile, string fullPath) : base(sourceFile.Project, fullPath)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObjectFile"/> class.
+    /// </summary>
+    internal ObjectFile(IProject project, string fullPath) : base(project, fullPath)
     {
     }
 

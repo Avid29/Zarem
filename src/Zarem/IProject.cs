@@ -39,12 +39,12 @@ public interface IProject
     /// <summary>
     /// Builds the project.
     /// </summary>
-    Task<BuildResult?> BuildProjectAsync(bool rebuild = false, Logger? logger = null);
+    Task<BuildResult> BuildProjectAsync(bool rebuild = false, Logger? logger = null);
 
     /// <summary>
     /// Assembles a list of files.
     /// </summary>
-    Task<BuildResult?> AssembleFilesAsync(IEnumerable<SourceFile> files, bool rebuild = true, Logger? logger = null);
+    Task<BuildResult> AssembleFilesAsync(IEnumerable<SourceFile> files, bool rebuild = true, Logger? logger = null);
 
     /// <summary>
     /// Cleans all files in the project.

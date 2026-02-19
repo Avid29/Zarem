@@ -6,8 +6,6 @@ using Zarem.Assembler;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging;
-using Zarem.Elf;
-using Zarem.Elf.Config;
 using Zarem.Emulator;
 using Zarem.Emulator.Interpreter;
 using Zarem.Linker;
@@ -64,57 +62,29 @@ public class DebugService : IDebugService
             return;
 
         // Run checks for if the file should/can run
-        //bool shouldRun = await PreRunChecks(file);
-        //if (!shouldRun)
-        //    return;
-
-        // TODO: Have the project build it based on the config
-
-        // Cheat and build the file here
-        using var readStream = File.OpenRead(file.FullPath);
-        var config = new MIPSAssemblerConfig();
-        var result = await Zarembler.AssembleAsync(readStream, file.FullPath, new MIPSAssmblerHandler(config), config);
-        if (result.Module is null)
+        bool shouldRun = await PreRunChecks(file);
+        if (!shouldRun)
             return;
 
-        // Cheat and link here
-        var linkConfig = new MIPSLinkerConfig();
-        var linkHandler = new MIPSLinkerHandler(linkConfig);
-        var module = ZaLinker.Link(linkConfig, linkHandler, new Logger(), result.Module);
-        module.EntryPoint = module.GetOrCreateSymbol("entry");
-
-        // Cheat and abstract here
-        var elfModule = ElfModule.Create(module, new ElfConfig());
-        if (elfModule is null)
-            return;
-
-        // Start a debug session
-        var session = _projectService.Project.StartDebug();
-        if (session is null)
-            return;
+        var session = await _projectService.Project.StartDebugAsync(file.ObjectFile);
 
         // Cheat and grab the mips emulator
-        if (session.Emulator is not MIPSEmulator mipsEmu)
+        if (session?.Emulator is not MIPSEmulator mipsEmu)
             return;
 
         var trapHandler = new MARSTrapHandler(mipsEmu.Computer);
 
-        session.Emulator.Load(elfModule);
         session.Emulator.Start();
     }
 
     private async Task<bool> PreRunChecks(SourceFile file)
     {
         // Clean files can simply execute
-        if (!file.IsDirty)
-            return true;
+        //if (!file.IsDirty)
+        //    return true;
 
-        // Check if the file needs to be reassembled
-        if (file.IsDirty)
-        {
-            // Rebuild the file
-            await _buildService.AssembleFilesAsync([file]);
-        }
+        // Rebuild the file
+        await _buildService.AssembleFilesAsync([file]);
 
         // If the file is still dirty, build failed
         if (file.IsDirty)

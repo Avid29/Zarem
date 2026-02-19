@@ -48,4 +48,9 @@ public class BuildResult
     /// Gets the skipped files.
     /// </summary>
     public IReadOnlyList<SourceFile> SkippedFiles => _skipped;
+
+    /// <summary>
+    /// Gets the output module.
+    /// </summary>
+    public Module? OutputModule { get; internal set; }
 }

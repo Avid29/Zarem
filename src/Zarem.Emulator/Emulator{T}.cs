@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Emulator.Models.Modules;
+using Zarem.Models;
 
 namespace Zarem.Emulator;
 
@@ -49,7 +49,7 @@ public abstract class Emulator<TConfig> : IEmulator
     } = EmulatorState.Stopped;
 
     /// <inheritdoc/>
-    public abstract void Load(IExecutableModule module);
+    public abstract void Load(Module module);
 
     /// <inheritdoc/>
     public virtual void Start()
