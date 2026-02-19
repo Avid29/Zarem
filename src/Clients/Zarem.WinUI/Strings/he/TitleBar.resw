@@ -241,7 +241,7 @@
     <value>הגדרות זרם</value>
   </data>
   <data name="StartDebuggingMFI.Text" xml:space="preserve">
-    <value>הפעל ניפוי שגיאות</value>
+    <value>הפעל וניפוי שגיאות</value>
   </data>
   <data name="StartWithoutDebuggingMFI.Text" xml:space="preserve">
     <value>הפעל ללא ניפוי שגיאות</value>
@@ -284,5 +284,8 @@
   </data>
   <data name="ClosePageMFI.Text" xml:space="preserve">
     <value>סגור דף</value>
+  </data>
+  <data name="StartDebuggingFileMFI.Text" xml:space="preserve">
+    <value>הפעלת קובץ וניפוי שגיאות</value>
   </data>
 </root>

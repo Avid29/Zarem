@@ -38,7 +38,7 @@
 			  DisplayName="ms-resource:/Manifest/AppDisplayName-Dev"
 			  Square150x150Logo="Assets\AppIcons\Dev\Square150x150Logo.png"
 			  Square44x44Logo="Assets\AppIcons\Dev\Square44x44Logo.png" Description="ms-resource:/Manifest/Description" BackgroundColor="transparent">
-				<uap:DefaultTile Wide310x150Logo="Assets\AppIcons\Dev\Wide310x150Logo.png"  Square71x71Logo="Assets\AppIcons\Dev\SmallTile.png" ShortName="ms-resource:Manifest/AppDisplayName" Square310x310Logo="Assets\AppIcons\Dev\LargeTile.png">
+				<uap:DefaultTile Wide310x150Logo="Assets\AppIcons\Dev\Wide310x150Logo.png"  Square71x71Logo="Assets\AppIcons\Dev\SmallTile.png" ShortName="ms-resource:Manifest/AppDisplayName-Dev" Square310x310Logo="Assets\AppIcons\Dev\LargeTile.png">
 					<uap:ShowNameOnTiles>
 						<uap:ShowOn Tile="square150x150Logo"/>
 						<uap:ShowOn Tile="wide310x150Logo"/>

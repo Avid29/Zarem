@@ -53,20 +53,55 @@ public partial class ExplorerViewModel : PageViewModel
     /// <summary>
     /// Gets or sets the currently selected file.
     /// </summary>
-    public IBindableFileItem? RootItem
+    public BindableFolder? RootFolder
     {
         get;
         set
         {
             if (SetProperty(ref field, value))
+            {
+                if (value is not null)
+                    Project = null;
+
                 OnPropertyChanged(nameof(RootNode));
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Gets or sets the currently selected project.
+    /// </summary>
+    public BindableProjectFile? Project
+    {
+        get;
+        set
+        {
+            if (SetProperty(ref field, value) && value is not null)
+            {
+                if (value is not null)
+                    RootFolder = null;
+
+                OnPropertyChanged(nameof(RootNode));
+            }
         }
     }
 
     /// <summary>
-    /// Gets the list of root nodes.
+    /// Gets the root node. The TreeView requires this to be an array, but we only have one.
     /// </summary>
-    public IEnumerable<IBindableFileItem?> RootNode => [RootItem];
+    public IEnumerable<IBindableFileItem>? RootNode
+    {
+        get
+        {
+            if (Project is not null)
+                return [Project];
+
+            if (RootFolder is not null)
+                return [RootFolder];
+
+            return null;
+        }
+    }
 
     /// <summary>
     /// Gets a list of the recently opened projects and folders.
@@ -81,11 +116,11 @@ public partial class ExplorerViewModel : PageViewModel
             var folder = m.Folder;
             if (folder is null)
             {
-                RootItem = null;
+                RootFolder = null;
                 return;
             }
 
-            r.RootItem = await _fileService.GetFolderAsync(folder.Path);
+            r.RootFolder = await _fileService.GetFolderAsync(folder.Path);
         });
 
         _messenger.Register<ExplorerViewModel, ProjectOpenedMessage>(this, async (r, m) =>
@@ -93,14 +128,14 @@ public partial class ExplorerViewModel : PageViewModel
             var project = m.Project;
             if (project is null)
             {
-                RootItem = null;
+                RootFolder = null;
                 return;
             }
 
             var path = project.Config.ConfigPath;
             Guard.IsNotNull(path);
            
-            r.RootItem = await _fileService.GetProjectFileAsync(path);
+            r.Project = await _fileService.GetProjectFileAsync(path);
         });
 
         _messenger.Register<ExplorerViewModel, ProjectClosedMessage>(this, (r, m) =>

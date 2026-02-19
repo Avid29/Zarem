@@ -100,7 +100,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Uid="/TitleBar/CloseProjectMFI" Text="Close Project"
                                 Command="{x:Bind ViewModel.CloseProjectCommand, Mode=OneWay}"
-                                IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.RootItem), FallbackValue=False, Mode=OneWay}"/>
+                                IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.RootNode), FallbackValue=False, Mode=OneWay}"/>
             </MenuBarItem>
 
             <!--  Edit  -->
@@ -228,7 +228,8 @@
             <MenuBarItem x:Uid="/TitleBar/BuildMBI" Title="Build">
                 <!-- Build/Rebuild -->
                 <MenuFlyoutItem x:Uid="/TitleBar/BuildProjectMFI" Text="Build Project"
-                                Command="{x:Bind ViewModel.BuildProjectCommand, Mode=OneWay}">
+                                Command="{x:Bind ViewModel.BuildProjectCommand, Mode=OneWay}"
+                                IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.Project), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource BuildIcon}"/>
                     </MenuFlyoutItem.Icon>
@@ -238,7 +239,8 @@
                     </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Uid="/TitleBar/RebuildProjectMFI" Text="Rebuild Project"
-                                Command="{x:Bind ViewModel.RebuildProjectCommand, Mode=OneWay}">
+                                Command="{x:Bind ViewModel.RebuildProjectCommand, Mode=OneWay}"
+                                IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.Project), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource ReBuildIcon}"/>
                     </MenuFlyoutItem.Icon>
@@ -246,8 +248,6 @@
                 <MenuFlyoutSeparator/>
 
                 <!--  Assemble  -->
-                <MenuFlyoutItem x:Uid="/TitleBar/AssembleOpenFilesMFI" Text="Assemble Open Files"
-                                Command="{x:Bind ViewModel.AssembleOpenFilesCommand, Mode=OneWay}"/>
                 <MenuFlyoutItem x:Uid="/TitleBar/AssembleFileMFI" Text="Assemble File"
                                 IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanAssemble, FallbackValue=False, Mode=OneWay}"
                                 Command="{x:Bind ViewModel.AssembleFileCommand, Mode=OneWay}">
@@ -260,13 +260,12 @@
 
                 <!--  Clean  -->
                 <MenuFlyoutItem x:Uid="/TitleBar/CleanProjectMFI" Text="Clean Project"
-                                Command="{x:Bind ViewModel.CleanProjectCommand, Mode=OneWay}">
+                                Command="{x:Bind ViewModel.CleanProjectCommand, Mode=OneWay}"
+                                IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.Project), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource CleanIcon}"/>
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
-                <MenuFlyoutItem x:Uid="/TitleBar/CleanOpenFilesMFI" Text="Clean Open Files"
-                                Command="{x:Bind ViewModel.CleanOpenFilesCommand, Mode=OneWay}"/>
                 <MenuFlyoutItem x:Uid="/TitleBar/CleanFileMFI" Text="Clean File"
                                 IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanAssemble, FallbackValue=False, Mode=OneWay}"
                                 Command="{x:Bind ViewModel.CleanFileCommand, Mode=OneWay}"/>
@@ -282,12 +281,22 @@
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Uid="/TitleBar/StartWithoutDebuggingMFI" Text="Start Without Debugging"
-                                Command="{x:Bind ViewModel.StartWithoutDebuggingCommand, Mode=OneWay}" IsEnabled="False">
+                                Command="{x:Bind ViewModel.StartWithoutDebuggingCommand, Mode=OneWay}"
+                                IsEnabled="False">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartWithoutDebuggingIcon}"/>
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator/>
+                
+                <!--  Run File  -->
+                <MenuFlyoutItem x:Uid="/TitleBar/StartDebuggingFileMFI" Text="Start Debugging File"
+                                Command="{x:Bind ViewModel.StartFileWithoutDebuggingCommand, Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.PanelViewModel.CurrentPage.CanAssemble, Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <ImageIcon Source="{StaticResource StartDebuggingIcon}"/>
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
                 <MenuFlyoutItem x:Uid="/TitleBar/StartFileWithoutDebuggingMFI" Text="Start File Without Debugging"
                                 Command="{x:Bind ViewModel.StartFileWithoutDebuggingCommand, Mode=OneWay}"
                                 IsEnabled="{x:Bind ViewModel.PanelViewModel.CurrentPage.CanAssemble, Mode=OneWay}">

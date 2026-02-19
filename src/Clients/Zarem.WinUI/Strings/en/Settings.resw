@@ -194,7 +194,8 @@ bar:
     add     $zero, $s0, $s1 # Message
 .data
 foo:  
-    .asciiz "Hello World!"</value>
+    .asciiz "Hello World!"
+</value>
   </data>
   <data name="SelectSchemeFileBTN.Content" xml:space="preserve">
     <value>Select File</value>

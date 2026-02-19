@@ -130,7 +130,7 @@
     <value>זרם הוא סביבת פיתוח משולבת, אסמבלר, ומפרש עבור שפת ההרכבה וארכיטקורת MIPS.</value>
   </data>
   <data name="FileType/AssemblyFile" xml:space="preserve">
-    <value>קבוץ אסמבלי</value>
+    <value>קובץ אסמבלי</value>
   </data>
   <data name="FileType/ZaremProject" xml:space="preserve">
     <value>פרויקט זרם</value>

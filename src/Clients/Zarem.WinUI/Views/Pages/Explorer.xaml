@@ -180,7 +180,7 @@
                         Margin="16,0,16,12"
                         IsEnabled="False"/>-->
         <TreeView x:Name="FilesTreeViewRoot"
-                  x:Load="{x:Bind local:Explorer.IsNotNull(ViewModel.RootItem), FallbackValue=False, Mode=OneWay}"
+                  x:Load="{x:Bind local:Explorer.IsNotNull(ViewModel.RootNode), FallbackValue=False, Mode=OneWay}"
                   ItemsSource="{x:Bind ViewModel.RootNode, Mode=OneWay}"
                   ItemTemplateSelector="{StaticResource FileItemTemplateSelector}"
                   Expanding="TreeView_Expanding"
@@ -193,7 +193,7 @@
         </TreeView>
 
         <StackPanel x:Name="RecentFileListView"
-                    x:Load="{x:Bind local:Explorer.IsNull(ViewModel.RootItem), FallbackValue=True, Mode=OneWay}">
+                    x:Load="{x:Bind local:Explorer.IsNull(ViewModel.RootNode), FallbackValue=True, Mode=OneWay}">
             <TextBlock x:Uid="/Pages/Explorer/RecentProjectsAndFoldersTB" Text="Recent Projects and Folders"
                        FontSize="22" TextTrimming="CharacterEllipsis"/>
             <ItemsRepeater ItemsSource="{x:Bind ViewModel.RecentProjects, Mode=OneWay}"
