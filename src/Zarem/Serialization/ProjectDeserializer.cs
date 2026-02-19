@@ -10,6 +10,7 @@ using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Descriptors;
 using Zarem.Emulator.Config;
+using Zarem.Linker.Config;
 using Zarem.Registry;
 
 namespace Zarem.Serialization;
@@ -54,6 +55,7 @@ public static partial class ProjectSerializer
                 _ when typeof(IArchitectureConfig).IsAssignableFrom(prop.PropertyType) => (obj, child, prop) => DeserializeConfig(ZaremRegistry.Architectures, obj, child, prop),
                 _ when typeof(AssemblerConfig).IsAssignableFrom(prop.PropertyType) => (obj, child, prop) => DeserializeConfig(ZaremRegistry.Assemblers, obj, child, prop),
                 _ when typeof(EmulatorConfig).IsAssignableFrom(prop.PropertyType) => (obj, child, prop) => DeserializeConfig(ZaremRegistry.Emulators, obj, child, prop),
+                _ when typeof(LinkerConfig).IsAssignableFrom(prop.PropertyType) => (obj, child, prop) => DeserializeConfig(ZaremRegistry.Linkers, obj, child, prop),
                 _ when typeof(FormatConfig).IsAssignableFrom(prop.PropertyType) => (obj, child, prop) => DeserializeConfig(ZaremRegistry.Formats, obj, child, prop),
                 _ when prop.PropertyType.IsEnum => DeserializeEnum,
                 _ when IsSimple(prop.PropertyType) => DeserializeSimple,

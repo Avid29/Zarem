@@ -10,6 +10,7 @@ using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Descriptors;
 using Zarem.Emulator.Config;
+using Zarem.Linker.Config;
 using Zarem.Registry;
 
 namespace Zarem.Serialization;
@@ -58,6 +59,7 @@ public static partial class ProjectSerializer
                 _ when value is IArchitectureConfig => (parent, prop, value) => SerializeConfig(ZaremRegistry.Architectures, parent, prop, value),
                 _ when value is AssemblerConfig => (parent, prop, value) => SerializeConfig(ZaremRegistry.Assemblers, parent, prop, value),
                 _ when value is EmulatorConfig => (parent, prop, value) => SerializeConfig(ZaremRegistry.Emulators, parent, prop, value),
+                _ when value is LinkerConfig => (parent, prop, value) => SerializeConfig(ZaremRegistry.Linkers, parent, prop, value),
                 _ when value is FormatConfig => (parent, prop, value) => SerializeConfig(ZaremRegistry.Formats, parent, prop, value),
                 _ when prop.PropertyType.IsEnum => SerializeEnum,
                 _ when IsSimple(prop.PropertyType) => SerializeSimple,

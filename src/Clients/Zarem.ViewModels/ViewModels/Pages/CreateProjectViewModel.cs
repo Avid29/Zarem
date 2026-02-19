@@ -11,6 +11,7 @@ using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Descriptors;
 using Zarem.Emulator.Config;
+using Zarem.Linker.Config;
 using Zarem.Messages.Navigation;
 using Zarem.MIPS;
 using Zarem.Models.Instructions.Enums;
@@ -145,6 +146,7 @@ public partial class CreateProjectViewModel : PageViewModel
                 MipsVersion = MipsVersion,
                 AssemblerConfig = new MIPSAssemblerConfig(),
                 EmulatorConfig = new MIPSEmulatorConfig(),
+                LinkerConfig = new MIPSLinkerConfig(),
             },
             FormatConfig = formatConfig,
         };

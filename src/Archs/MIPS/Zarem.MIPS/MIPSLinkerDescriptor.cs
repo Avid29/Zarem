@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Assembler.Handlers;
 using Zarem.Attributes;
 using Zarem.Descriptors;
 using Zarem.Linker.Config;
+using Zarem.Linker.Handler;
 
 namespace Zarem.MIPS;
 
@@ -18,7 +18,7 @@ public class MIPSLinkerDescriptor : ILinkerDescriptor
     public string Identifier => "MIPS";
 
     /// <inheritdoc/>
-    public Type LinkerHandlerType => typeof(MIPSAssmblerHandler);
+    public Type LinkerHandlerType => typeof(MIPSLinkerHandler);
 
     /// <inheritdoc/>
     public Type ConfigType => typeof(MIPSLinkerConfig);

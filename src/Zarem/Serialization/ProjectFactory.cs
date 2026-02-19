@@ -7,6 +7,7 @@ using Zarem.Components;
 using Zarem.Components.Interfaces;
 using Zarem.Config;
 using Zarem.Emulator.Config;
+using Zarem.Linker.Config;
 using Zarem.Registry;
 
 namespace Zarem.Serialization;
@@ -24,6 +25,7 @@ public static class ProjectFactory
     public static IProject Create(IProjectConfig config)
     {
         Guard.IsNotNull(config.ArchitectureConfig?.AssemblerConfig);
+        Guard.IsNotNull(config.ArchitectureConfig?.LinkerConfig);
         Guard.IsNotNull(config.ArchitectureConfig?.EmulatorConfig);
         Guard.IsNotNull(config.FormatConfig);
 
@@ -34,11 +36,12 @@ public static class ProjectFactory
         Guard.IsNotNull(formatInfo);
 
         // Create components
-        var assemble = CreateAssembler<IAssembleComponent, AssemblerConfig>(typeof(AssembleComponent<,>), archInfo.Assembler.AssemblerHandlerType, config.ArchitectureConfig.AssemblerConfig, archInfo.Assembler);
+        var assemble = CreateHandledComponent<IAssembleComponent, AssemblerConfig>(typeof(AssembleComponent<,>), archInfo.Assembler.AssemblerHandlerType, config.ArchitectureConfig.AssemblerConfig, archInfo.Assembler);
+        var linker = CreateHandledComponent<ILinkerComponent, LinkerConfig>(typeof(LinkerComponent<,>), archInfo.Linker.LinkerHandlerType, config.ArchitectureConfig.LinkerConfig, archInfo.Linker);
         var emulate = CreateComponent<IEmulateComponent, EmulatorConfig>(typeof(EmulateComponent<,>), archInfo.Emulator.EmulatorType, config.ArchitectureConfig.EmulatorConfig, archInfo.Emulator);
         var format = CreateComponent<IFormatComponent, FormatConfig>(typeof(FormatComponent<,>), formatInfo.FormatType, config.FormatConfig, formatInfo);
 
-        var project = new Project(config, assemble, emulate, format);
+        var project = new Project(config, assemble, emulate, linker, format);
         Guard.IsNotNull(project);
         
         return project;
@@ -55,8 +58,8 @@ public static class ProjectFactory
         return Create(config);
     }
 
-    private static T CreateAssembler<T, TConfig>(Type openType, Type primaryType, TConfig config, object descripter)
-        where T : IAssembleComponent
+    private static T CreateHandledComponent<T, TConfig>(Type openType, Type primaryType, TConfig config, object descripter)
+        where T : IProjectComponent
         where TConfig : notnull
     {
         // Form a closed-type format component
