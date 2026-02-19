@@ -45,6 +45,11 @@ public class MARSTrapHandler : MIPSTrapHandler
                 Console.WriteLine(Computer.Memory.ReadString(A0));
                 break;
 
+            // Read integer
+            case 5:
+                V0 = (uint)int.Parse(Console.ReadLine() ?? "");
+                break;
+
             // Stop execution
             case 10:
                 Computer.Emulator.ShutDown();

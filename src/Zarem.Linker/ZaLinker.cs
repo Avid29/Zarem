@@ -117,11 +117,11 @@ public sealed class ZaLinker
                 //if (symbol.Binding is SymbolBinding.Local)
                 //    continue;
 
-                if (Module.Symbols.TryGetValue(symbol.Name, out var existing))
+                if (Module.Symbols.TryGetValue(symbol.Name, out var existing) && symbol.IsDefined && existing.IsDefined)
                 {
                     // TODO: Weak symbols
                     // TODO: Track and log source defining modules
-                    _logger?.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.FileName ?? "", "ConflictingSymbolDefinitions", symbol.Name, module.FileName);
+                    _logger.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.FileName ?? "", "ConflictingSymbolDefinitions", symbol.Name, module.FileName);
                     continue;
                 }
 
@@ -139,9 +139,16 @@ public sealed class ZaLinker
                     long finalAddress = (long)(linkedSection.VirtualAddress + _moduleSectionOffsets[module][sectionName]) + symbol.Address.Offset;
                     newSymbol.Address = new Address(linkedSection, finalAddress);
                 }
-                else if (_config.LinkMode is LinkMode.Executable)
+            }
+        }
+
+        if (_config.LinkMode is LinkMode.Executable)
+        {
+            foreach (var symbol in Module.Symbols.Values)
+            {
+                if (!symbol.IsDefined)
                 {
-                    // TODO: Log declared symbol never defined
+                    _logger.Log(Severity.Error, LogId.UndefinedSymbol, Module.FileName, "SymbolNeverDefined", symbol.Name);
                 }
             }
         }
@@ -165,15 +172,17 @@ public sealed class ZaLinker
                 {
                     if (!Module.Symbols.TryGetValue(relocation.SymbolName, out var symbol))
                     {
-                        if (_config.LinkMode is LinkMode.Executable)
-                        {
-                            _logger.Log(Severity.Error, LogId.UndefinedSymbol, module.FileName ?? "", "SymbolNeverDefined", relocation.SymbolName);
-                        }
-
+                        _logger.Log(Severity.Error, LogId.UndeclaredSymbolReferenced, module.FileName ?? "", "RelocationSymbolDoesNotExist", relocation.SymbolName);
+                        continue;
+                    }
+                    
+                    if (!symbol.IsDefined)
+                    {
                         linkedSection.AddRelocation(relocation);
                         continue;
                     }
 
+                    // The symbol is defined, so it should have a section
                     Guard.IsNotNull(symbol.Address.Section);
 
                     // The absolute virtual address of the symbol

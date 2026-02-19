@@ -60,6 +60,15 @@ public abstract class MIPSTrapHandler : TrapHandlerBase
     protected uint A3 => Computer.Processor[GPRegister.Argument3];
 
     /// <summary>
+    /// Gets or sets the value of first return value register.
+    /// </summary>
+    protected uint V0
+    {
+        get => Computer.Processor[GPRegister.ReturnValue0];
+        set => Computer.Processor[GPRegister.ReturnValue0] = value;
+    }
+
+    /// <summary>
     /// A method to direct trap handling.
     /// </summary>
     /// <param name="trap">The type of trap that occurred.</param>

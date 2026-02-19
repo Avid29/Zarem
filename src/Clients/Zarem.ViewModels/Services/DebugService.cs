@@ -1,16 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-using System.IO;
 using System.Threading.Tasks;
-using Zarem.Assembler;
-using Zarem.Assembler.Config;
-using Zarem.Assembler.Handlers;
-using Zarem.Assembler.Logging;
 using Zarem.Emulator;
 using Zarem.Emulator.Interpreter;
-using Zarem.Linker;
-using Zarem.Linker.Config;
-using Zarem.Linker.Handler;
 using Zarem.Models.Files;
 using Zarem.Services.Popup;
 using Zarem.Services.Popup.Enums;
@@ -23,6 +15,7 @@ namespace Zarem.Services;
 /// </summary>
 public class DebugService : IDebugService
 {
+    private readonly IConsoleService _consoleService;
     private readonly IBuildService _buildService;
     private readonly ILocalizationService _localizationService;
     private readonly IPopupService _popupService;
@@ -31,8 +24,9 @@ public class DebugService : IDebugService
     /// <summary>
     /// Initializes a new instance of the <see cref="DebugService"/> class.
     /// </summary>
-    public DebugService(IBuildService buildService, ILocalizationService localizationService, IPopupService popupService, IProjectService projectService)
+    public DebugService(IConsoleService consoleService, IBuildService buildService, ILocalizationService localizationService, IPopupService popupService, IProjectService projectService)
     {
+        _consoleService = consoleService;
         _buildService = buildService;
         _localizationService = localizationService;
         _popupService = popupService;
@@ -58,6 +52,8 @@ public class DebugService : IDebugService
         // Cheat and grab the mips emulator
         if (session?.Emulator is not MIPSEmulator mipsEmu)
             return;
+
+        _consoleService.ShowConsoleWindow();
 
         _ = new MARSTrapHandler(mipsEmu.Computer);
 
@@ -90,8 +86,8 @@ public class DebugService : IDebugService
     private async Task<bool> PreRunChecks(SourceFile file)
     {
         // Clean files can simply execute
-        //if (!file.IsDirty)
-        //    return true;
+        if (!file.IsDirty)
+            return true;
 
         // Rebuild the file
         var buildResult = await _buildService.AssembleFilesAsync([file]);

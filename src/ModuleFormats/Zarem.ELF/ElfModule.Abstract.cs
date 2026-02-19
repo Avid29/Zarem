@@ -44,7 +44,7 @@ public partial class ElfModule
             foreach (var elfSymbol in symbolTable.Entries)
             {
                 var name = elfSymbol.Name.Value;
-                if (name is null)
+                if (string.IsNullOrEmpty(name))
                     continue;
 
                 var sectionName = elfSymbol.SectionLink.Section?.Name.Value;

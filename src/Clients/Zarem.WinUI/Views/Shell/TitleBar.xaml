@@ -211,8 +211,8 @@
             </MenuBarItem>
 
             <!--  View  -->
-            <MenuBarItem x:Uid="/TitleBar/ViewMBI" Title="View">
-                <!--<MenuFlyoutItem x:Uid="/TitleBar/ToggleFullScreenMFI" Text="Toggle Full Screen"
+            <!--<MenuBarItem x:Uid="/TitleBar/ViewMBI" Title="View">
+                --><!--<MenuFlyoutItem x:Uid="/TitleBar/ToggleFullScreenMFI" Text="Toggle Full Screen"
                                 Command="{x:Bind ViewModel.ToggleFullScreenModeCommand, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE72B;" />
@@ -220,9 +220,9 @@
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control,Shift" Key="F12"/>
                     </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>-->
+                </MenuFlyoutItem>--><!--
                 <MenuFlyoutItem Text="Show Console" Command="{x:Bind ViewModel.ShowConsoleCommand, Mode=OneWay}"/>
-            </MenuBarItem>
+            </MenuBarItem>-->
 
             <!--  Build  -->
             <MenuBarItem x:Uid="/TitleBar/BuildMBI" Title="Build">
@@ -290,7 +290,7 @@
                 <MenuFlyoutSeparator/>
                 
                 <!--  Run File  -->
-                <MenuFlyoutItem x:Uid="/TitleBar/StartDebuggingFileMFI" Text="Start Debugging File"
+                <!--<MenuFlyoutItem x:Uid="/TitleBar/StartDebuggingFileMFI" Text="Start Debugging File"
                                 Command="{x:Bind ViewModel.StartFileWithoutDebuggingCommand, Mode=OneWay}"
                                 IsEnabled="{x:Bind ViewModel.PanelViewModel.CurrentPage.CanAssemble, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
@@ -304,7 +304,7 @@
                         <ImageIcon Source="{StaticResource StartWithoutDebuggingIcon}"/>
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
-                <MenuFlyoutSeparator/>
+                <MenuFlyoutSeparator/>-->
 
                 <!--Step-->
                 <MenuFlyoutItem x:Uid="/TitleBar/StepOverMFI" Text="Step Over"
