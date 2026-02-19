@@ -4,6 +4,7 @@ using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Extensions.System.IO;
+using Zarem.Linker.Config;
 using Zarem.Linker.Handlers;
 using Zarem.Linker.Logging;
 using Zarem.Models.Instructions;
@@ -15,10 +16,21 @@ namespace Zarem.Linker.Handler;
 /// <summary>
 /// A linker handler for the MIPS architecture.
 /// </summary>
-public class MIPSLinkerHandler : ILinkerHandler
+public class MIPSLinkerHandler : ILinkerHandler<MIPSLinkerConfig>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MIPSLinkerHandler"/> class.
+    /// </summary>
+    public MIPSLinkerHandler(MIPSLinkerConfig config)
+    {
+        Config = config;
+    }
+
     /// <inheritdoc/>
     public string GetArchitectureName() => "MIPS";
+
+    /// <inheritdoc/>
+    public MIPSLinkerConfig Config { get; }
 
     /// <inheritdoc/>
     public bool PatchRelocation(Section section, RelocationEntry relocation, ulong offset, ulong symbolVirtual, ulong patchVirtual, ILogger logger)

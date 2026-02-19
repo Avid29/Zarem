@@ -3,6 +3,7 @@
 using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Emulator.Config;
+using Zarem.Linker.Config;
 using Zarem.Models.Instructions.Enums;
 
 namespace Zarem.MIPS;
@@ -33,7 +34,12 @@ public sealed class MIPSArchitectureConfig : IArchitectureConfig
     /// <inheritdoc cref="IArchitectureConfig.EmulatorConfig"/>
     public MIPSEmulatorConfig? EmulatorConfig { get; init; }
 
+    /// <inheritdoc cref="IArchitectureConfig.LinkerConfig"/>
+    public MIPSLinkerConfig? LinkerConfig { get; init; }
+
     AssemblerConfig? IArchitectureConfig.AssemblerConfig => AssemblerConfig;
 
     EmulatorConfig? IArchitectureConfig.EmulatorConfig => EmulatorConfig;
+
+    LinkerConfig? IArchitectureConfig.LinkerConfig => LinkerConfig;
 }

@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-
-// Avishai Dernis 2026
-
 namespace Zarem.Descriptors;
 
 /// <summary>
@@ -14,6 +11,11 @@ public interface IArchitectureDescriptor : IDisplayDescriptor
     /// Gets the <see cref="IAssemblerDescriptor"/> for the architecture's assembler.
     /// </summary>
     IAssemblerDescriptor Assembler { get; }
+
+    /// <summary>
+    /// Gets the <see cref="ILinkerDescriptor"/> for the architecture's assembler.
+    /// </summary>
+    ILinkerDescriptor Linker { get; }
 
     /// <summary>
     /// Gets the <see cref="IEmulatorDescriptor"/> for the architecture's emulator.

@@ -21,7 +21,9 @@ public class LinkerTests
         var riscvModule = new Module("RiscvModule", "RISC-V");
 
         var logger = new Logger();
-        ZaLinker.Link(new LinkerConfig(), new MIPSLinkerHandler(), logger, mipsModule, riscvModule);
+        var config = new MIPSLinkerConfig();
+        var handler = new MIPSLinkerHandler(config);
+        ZaLinker.Link(config, handler, logger, mipsModule, riscvModule);
 
         var log = logger.CurrentLog.FirstOrDefault(x => x.Code.Id is (uint)LogId.WrongArchitecture);
 

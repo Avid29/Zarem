@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Zarem.Assembler.Config;
-using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
@@ -54,14 +53,13 @@ public struct MIPSInstructionParser
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSInstructionParser"/> struct.
     /// </summary>
-    public MIPSInstructionParser(MIPSAssemblerConfig config, Address address, IReadOnlyDictionary<string, Symbol>? symbols,  ILogger? logger)
+    public MIPSInstructionParser(MIPSAssemblerConfig config, InstructionTable? table, Address address, IReadOnlyDictionary<string, Symbol>? symbols,  ILogger? logger)
     {
         _config = config;
         _currentAddress = address;
         _symbols = symbols;
 
-        // Pre-Create?
-        _instructionTable = new InstructionTable(config);
+        _instructionTable = table ?? new InstructionTable(config);
 
         if (logger is not null)
         {

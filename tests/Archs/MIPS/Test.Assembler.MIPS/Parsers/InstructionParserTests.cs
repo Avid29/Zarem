@@ -164,7 +164,7 @@ public class InstructionParserTests
 #endif
 
         var table = new InstructionTable(config);
-        var parser = new MIPSInstructionParser(config, default, null, null);
+        var parser = new MIPSInstructionParser(config, null, default, null, null);
 
         var tokenized = Tokenizer.TokenizeLine(input, nameof(RunTest));
         var actual = parser.Parse(tokenized);
@@ -186,7 +186,7 @@ public class InstructionParserTests
 
         // Initialize parser
         var logger = new Logger();
-        var parser = new MIPSInstructionParser(new MIPSAssemblerConfig(), default, null, logger);
+        var parser = new MIPSInstructionParser(new MIPSAssemblerConfig(), null, default, null, logger);
 
         // Parse instruction
         var line = Tokenizer.TokenizeLine(input, nameof(RunTest));

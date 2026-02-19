@@ -28,12 +28,14 @@ public class InterpreterTests
         var stream = File.Open(path, FileMode.Open);
 
         // Run assembler, and assert successful assembly
-        var config = new MIPSAssemblerConfig();
-        var result = await Zarembler.AssembleAsync(stream, path, new MIPSAssmblerHandler(config), config);
+        var asmConfig = new MIPSAssemblerConfig();
+        var asmHandler = new MIPSAssmblerHandler(asmConfig);
+        var result = await Zarembler.AssembleAsync(stream, path, asmHandler, asmConfig);
 
         // Link
-        var linkConfig = new LinkerConfig();
-        var module = ZaLinker.Link(linkConfig, new MIPSLinkerHandler(), null, result.Module);
+        var linkConfig = new MIPSLinkerConfig();
+        var linkHandler = new MIPSLinkerHandler(linkConfig);
+        var module = ZaLinker.Link(linkConfig, linkHandler, null, result.Module);
         module.EntryPoint = module.GetOrCreateSymbol("entry");
 
         // Format

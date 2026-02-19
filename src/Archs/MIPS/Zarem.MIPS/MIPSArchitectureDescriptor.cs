@@ -28,5 +28,8 @@ public class MIPSArchitectureDescriptor : LocalizedDescriptor<MIPSArchitectureDe
     public IAssemblerDescriptor Assembler => new MIPSAssemblerDescriptor();
 
     /// <inheritdoc/>
+    public ILinkerDescriptor Linker => new MIPSLinkerDescriptor();
+
+    /// <inheritdoc/>
     public IEmulatorDescriptor Emulator => new MIPSEmulatorDescriptor();
 }

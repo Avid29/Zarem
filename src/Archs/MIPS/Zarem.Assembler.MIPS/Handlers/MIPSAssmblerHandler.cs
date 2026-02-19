@@ -20,7 +20,7 @@ namespace Zarem.Assembler.Handlers;
 /// </summary>
 public class MIPSAssmblerHandler : IAssemblerHandler<MIPSAssemblerConfig>
 {
-    private InstructionTable _instructionTable;
+    private readonly InstructionTable _instructionTable;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSAssmblerHandler"/> class.
@@ -60,7 +60,7 @@ public class MIPSAssmblerHandler : IAssemblerHandler<MIPSAssemblerConfig>
     /// <inheritdoc/>
     public IParsedInstruction? ParseInstruction(AssemblyLine line, Address address, IReadOnlyDictionary<string, Symbol> symbols, ILogger? logger)
     {
-        var parser = new MIPSInstructionParser(Config, address, symbols, logger);
+        var parser = new MIPSInstructionParser(Config, _instructionTable, address, symbols, logger);
         return parser.Parse(line);
     }
 }

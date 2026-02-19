@@ -78,7 +78,9 @@ public class DebugService : IDebugService
             return;
 
         // Cheat and link here
-        var module = ZaLinker.Link(new LinkerConfig(), new MIPSLinkerHandler(), new Logger(), result.Module);
+        var linkConfig = new MIPSLinkerConfig();
+        var linkHandler = new MIPSLinkerHandler(linkConfig);
+        var module = ZaLinker.Link(linkConfig, linkHandler, new Logger(), result.Module);
         module.EntryPoint = module.GetOrCreateSymbol("entry");
 
         // Cheat and abstract here

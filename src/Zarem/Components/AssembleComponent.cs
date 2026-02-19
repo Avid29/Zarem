@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using Zarem.Assembler;
 using Zarem.Assembler.Config;
@@ -21,14 +20,14 @@ public class AssembleComponent<TAssemblerHandler, TConfig> : IAssembleComponent
     where TAssemblerHandler : IAssemblerHandler<TConfig>
     where TConfig : AssemblerConfig
 {
-    private TAssemblerHandler _asmHandler;
+    private TAssemblerHandler _handler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssembleComponent{TAssembler, TConfig}"/> class.
     /// </summary>
     public AssembleComponent(TAssemblerHandler handler, TConfig config, IAssemblerDescriptor descriptor)
     {
-        _asmHandler = handler;
+        _handler = handler;
         Config = config;
     }
 
@@ -46,7 +45,7 @@ public class AssembleComponent<TAssemblerHandler, TConfig> : IAssembleComponent
 
         Guard.IsNotNull(Config);
 
-        var result = await Zarembler.AssembleAsync(file.FullPath, _asmHandler, Config, logger);
+        var result = await Zarembler.AssembleAsync(file.FullPath, _handler, Config, logger);
         return result;
     }
 }

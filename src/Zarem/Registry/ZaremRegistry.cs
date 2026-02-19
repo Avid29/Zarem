@@ -15,17 +15,22 @@ public static class ZaremRegistry
     public static DescriptorRegistry<IArchitectureDescriptor> Architectures { get; } = new();
 
     /// <summary>
-    /// Gets the architecture registry.
+    /// Gets the assembler registry.
     /// </summary>
     public static DescriptorRegistry<IAssemblerDescriptor> Assemblers { get; } = new();
 
     /// <summary>
-    /// Gets the architecture registry.
+    /// Gets the linker registry.
+    /// </summary>
+    public static DescriptorRegistry<ILinkerDescriptor> Linkers { get; } = new();
+
+    /// <summary>
+    /// Gets the emulator registry.
     /// </summary>
     public static DescriptorRegistry<IEmulatorDescriptor> Emulators { get; } = new();
 
     /// <summary>
-    /// Gets the architecture registry.
+    /// Gets the format registry.
     /// </summary>
     public static DescriptorRegistry<IModuleFormatDescriptor> Formats { get; } = new();
 
@@ -37,5 +42,6 @@ public static class ZaremRegistry
         Architectures.Register(descriptor);
         Assemblers.Register(descriptor.Assembler);
         Emulators.Register(descriptor.Emulator);
+        Linkers.Register(descriptor.Linker);
     }
 }
