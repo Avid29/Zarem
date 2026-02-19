@@ -54,7 +54,7 @@ public enum LogId : uint
     UnescapedQuoteInString,
 
     // Linker Errors
-    FailedToLoadModule,
+    WrongArchitecture,
     UndefinedSymbol,
     JumpOutOfRange,
 

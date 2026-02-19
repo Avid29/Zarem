@@ -30,9 +30,11 @@ public class Localizer : IStringLocalizer
     {
         get
         {
-            var localized = _resourceManager.GetString(key);
-            if (!string.IsNullOrEmpty(localized))
-                return localized;
+            var format = _resourceManager.GetString(key);
+            if (!string.IsNullOrEmpty(format))
+            {
+                return string.Format(format, args);
+            }
 
             return null;
         }

@@ -29,6 +29,11 @@ public sealed class Module
     public string? Name { get; }
 
     /// <summary>
+    /// Gets the display name of the module
+    /// </summary>
+    public string DisplayName => Name ?? "Unnamed Module"; // TODO: Localize
+
+    /// <summary>
     /// Gets the module architecture.
     /// </summary>
     public string Architecture { get; }

@@ -50,6 +50,8 @@ public sealed class ZaLinker
     /// <returns>A linked module.</returns>
     public static Module Link(LinkerConfig config, ILinkerHandler handler, ILogger? logger = null, params Module[] modules)
     {
+        logger?.Flush();
+
         var linker = new ZaLinker(config, handler, logger ?? new Logger());
         linker.Link(modules);
         return linker.Module;
@@ -68,6 +70,14 @@ public sealed class ZaLinker
     {
         foreach (var module in modules)
         {
+            if (module.Architecture != _handler.GetArchitectureName())
+            {
+                // TODO: Decide. Is this a warning or an error?
+                // Currently this is a warning and the linker will attempt to link without the target file.
+                _logger.Log(Severity.Warning, LogId.WrongArchitecture, module.Name ?? "TODO: Module paths", "ModuleHasWrongArchitecture", module.DisplayName, module.Architecture);
+                continue;
+            }
+
             var offsets = new Dictionary<string, ulong>();
             foreach (var section in module.Sections.Values)
             {
@@ -97,6 +107,10 @@ public sealed class ZaLinker
     {
         foreach(var module in modules)
         {
+            // Skip wrong-architecture modules (log already handled)
+            if (module.Architecture != _handler.GetArchitectureName())
+                continue;
+
             foreach (var symbol in module.Symbols.Values)
             {
                 //// TODO: Manage local symbols vs global symbols
@@ -137,6 +151,10 @@ public sealed class ZaLinker
     {
         foreach (var module in modules)
         {
+            // Skip wrong-architecture modules (log already handled)
+            if (module.Architecture != _handler.GetArchitectureName())
+                continue;
+
             foreach (var section in module.Sections.Values)
             {
                 // Get delta between section and linked section
