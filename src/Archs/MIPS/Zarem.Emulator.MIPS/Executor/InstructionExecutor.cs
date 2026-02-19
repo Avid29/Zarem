@@ -7,6 +7,7 @@ using Zarem.Emulator.Executor.Enum;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Emulator.Config;
 
 namespace Zarem.Emulator.Executor;
 
@@ -42,6 +43,8 @@ public partial class InstructionExecutor
     private uint RT => Processor[Instruction.RT];
 
     private CoProc0Instruction CoProc0Instruction => (CoProc0Instruction)Instruction;
+
+    private MIPSEmulatorConfig Config => Processor.Computer.Config;
 
     private InstructionExecutor(MIPSInstruction instruction, MIPSCpu processor)
     {

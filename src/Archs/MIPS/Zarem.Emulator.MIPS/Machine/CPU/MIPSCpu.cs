@@ -17,8 +17,6 @@ namespace Zarem.Emulator.Machine.CPU;
 /// </summary>
 public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
 {
-    private readonly MIPSComputer _computer;
-
     /// <inheritdoc/>
     public event EventHandler<MIPSCpu, TrapOccurringEventArgs<MIPSTrap>>? TrapOccurring;
 
@@ -27,13 +25,15 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
     /// </summary>
     public MIPSCpu(MIPSComputer computer)
     {
-        _computer = computer;
+        Computer = computer;
 
         RegisterFile = new RegisterFile(true);
         CoProcessor0 = new CoProcessor0();
     }
 
     internal RegisterFile RegisterFile { get; }
+
+    internal MIPSComputer Computer { get; }
 
     /// <summary>
     /// Gets or sets the value in the program counter register.
@@ -94,7 +94,7 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
             return MIPSTrap.AddressErrorLoad;
         }
 
-        instruction = (MIPSInstruction)_computer.Memory.Read<uint>(ProgramCounter);
+        instruction = (MIPSInstruction)Computer.Memory.Read<uint>(ProgramCounter);
         return MIPSTrap.None;
     }
 
@@ -143,12 +143,12 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
             read = size switch
             {
                 1 => signed
-                    ? (uint)_computer.Memory.Read<sbyte>(addr)
-                    : _computer.Memory.Read<byte>(addr),
+                    ? (uint)Computer.Memory.Read<sbyte>(addr)
+                    : Computer.Memory.Read<byte>(addr),
                 2 => signed
-                    ? (uint)_computer.Memory.Read<short>(addr)
-                    : _computer.Memory.Read<ushort>(addr),
-                4 => _computer.Memory.Read<uint>(addr),
+                    ? (uint)Computer.Memory.Read<short>(addr)
+                    : Computer.Memory.Read<ushort>(addr),
+                4 => Computer.Memory.Read<uint>(addr),
                 _ => ThrowHelper.ThrowInvalidOperationException<uint>($"Invalid memory read size: {size}"),
             };
         }
@@ -157,15 +157,15 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
             switch (size)
             {
                 case 1:
-                    _computer.Memory.Write(addr, (byte)execution.WriteBack);
+                    Computer.Memory.Write(addr, (byte)execution.WriteBack);
                     break;
 
                 case 2:
-                    _computer.Memory.Write(addr, (ushort)execution.WriteBack);
+                    Computer.Memory.Write(addr, (ushort)execution.WriteBack);
                     break;
 
                 case 4:
-                    _computer.Memory.Write(addr, execution.WriteBack);
+                    Computer.Memory.Write(addr, execution.WriteBack);
                     break;
 
                 default:
@@ -227,7 +227,7 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
 
         // Breakpoints are handled by the debugger upon the trap occurring event
         // The host also handles every kind of trap if that's what the config specifies
-        var hostTrap = trap is MIPSTrap.Breakpoint || _computer.Config.HostedTraps;
+        var hostTrap = trap is MIPSTrap.Breakpoint || Computer.Config.HostedTraps;
         var args = new TrapOccurringEventArgs<MIPSTrap>(trap, hostTrap);
         TrapOccurring?.Invoke(this, args);
 

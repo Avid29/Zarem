@@ -3,6 +3,7 @@
 using System;
 using System.Numerics;
 using Zarem.Emulator.Executor.Enum;
+using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
@@ -89,7 +90,7 @@ public partial class InstructionExecutor
             },
 
             // Special 2 (R-Type)
-            OperationCode.Special2 => Instruction.Func2Code switch
+            OperationCode.Special2 when Config.MipsVersion is <= MipsVersion.MipsV => Instruction.Func2Code switch
             {
                 // Multiply
                 Func2Code.MultiplyToGPR => BasicR((rs, rt) => (uint)((long)(int)rs * (int)rt)),
