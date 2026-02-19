@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="EncodingPattern/RTypeInstructions" xml:space="preserve">
+    <value>Register (R) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/ITypeInstructions" xml:space="preserve">
+    <value>Immediate (I) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/JTypeInstructions" xml:space="preserve">
+    <value>Jump (J) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/BTypeInstructions" xml:space="preserve">
+    <value>Branch/Trap (B) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/C0Instructions" xml:space="preserve">
+    <value>C0 Instructions</value>
+  </data>
+  <data name="EncodingPattern/CoProc0MoveInstructions" xml:space="preserve">
+    <value>CoProcessor0 Move Instructions</value>
+  </data>
+  <data name="EncodingPattern/FloatingPointInstructions" xml:space="preserve">
+    <value>Floating-Point Instructions</value>
+  </data>
+  <data name="EncodingPattern/CoProc1MoveInstructions" xml:space="preserve">
+    <value>CoProcessor1 Move Instructions</value>
+  </data>
+  <data name="EncodingPattern/CoProc1XInstructions" xml:space="preserve">
+    <value>CoProcessor1X Instructions</value>
+  </data>
+  <data name="EncodingPattern/SyscallBreakSdbbp" xml:space="preserve">
+    <value>SYSCALL / BREAK / SDBBP</value>
+  </data>
+  <data name="EncodingPattern/Sync" xml:space="preserve">
+    <value>SYNC</value>
+  </data>
+  <data name="EncodingPattern/CachePref" xml:space="preserve">
+    <value>CACHE / PREF</value>
+  </data>
+  <data name="EncodingPattern/ExecutionHazardBarrier" xml:space="preserve">
+    <value>Execution Hazard Barrier</value>
+  </data>
+  <data name="CommonInstructionsTB.Text" xml:space="preserve">
+    <value>Common Instructions</value>
+  </data>
+  <data name="InstructionUsageTablesTB.Text" xml:space="preserve">
+    <value>Instruction Usage Tables</value>
+  </data>
+  <data name="CoProc0InstructionsTB.Text" xml:space="preserve">
+    <value>CoProcessor0 Instruction</value>
+  </data>
+  <data name="CoProc0InstructionTypePatternsTB.Text" xml:space="preserve">
+    <value>CoProcessor0 Instruction Types Encoding Patterns</value>
+  </data>
+  <data name="CoProc1InstructionTypePatternsTB.Text" xml:space="preserve">
+    <value>Floating-Point CoProcessor Instruction Types Encoding Patterns</value>
+  </data>
+  <data name="FloatInstructionsTB.Text" xml:space="preserve">
+    <value>Floating-Point Instructions</value>
+  </data>
+  <data name="SpecializedInstructionsTB.Text" xml:space="preserve">
+    <value>Specialized Instructions</value>
+  </data>
+  <data name="InstructionEncodingPatternsTB.Text" xml:space="preserve">
+    <value>Instruction Encoding Patterns</value>
+  </data>
+  <data name="PrimaryInstructionTypePatternsTB.Text" xml:space="preserve">
+    <value>Primary Instruction Types Encoding Patterns</value>
+  </data>
+  <data name="EncodingTablesTB.Text" xml:space="preserve">
+    <value>Encoding Tables</value>
+  </data>
+  <data name="UniqueInstructionPatternsTB.Text" xml:space="preserve">
+    <value>Unique Instruction Encoding Patterns</value>
+  </data>
+  <data name="GeneralPurposeRegisterEncodingTB.Text" xml:space="preserve">
+    <value>General Purpose Register Encoding</value>
+  </data>
+  <data name="InstructionGroup/SignedArithmetic" xml:space="preserve">
+    <value>Arithmetic (Signed)</value>
+  </data>
+  <data name="InstructionGroup/UnsignedArithmetic" xml:space="preserve">
+    <value>Arithmetic (Unsigned)</value>
+  </data>
+  <data name="InstructionGroup/Logical" xml:space="preserve">
+    <value>Logical</value>
+  </data>
+  <data name="InstructionGroup/Memory" xml:space="preserve">
+    <value>Memory</value>
+  </data>
+  <data name="InstructionGroup/Jump" xml:space="preserve">
+    <value>Jump</value>
+  </data>
+  <data name="InstructionGroup/Data" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="InstructionGroup/Branch" xml:space="preserve">
+    <value>Branch</value>
+  </data>
+  <data name="InstructionGroup/Compare" xml:space="preserve">
+    <value>Compare</value>
+  </data>
+  <data name="InstructionGroup/System" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="InstructionGroup/Move" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="InstructionGroup/Interrupts" xml:space="preserve">
+    <value>Interrupts</value>
+  </data>
+  <data name="InstructionGroup/TLB" xml:space="preserve">
+    <value>Translation Lookaside Buffer</value>
+  </data>
+  <data name="InstructionGroup/Debug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="InstructionGroup/FPArithmetic" xml:space="preserve">
+    <value>Floating-Point Arithmetic</value>
+  </data>
+  <data name="InstructionGroup/FPRounding" xml:space="preserve">
+    <value>Floating-Point Rounding</value>
+  </data>
+  <data name="InstructionGroup/FPConversion" xml:space="preserve">
+    <value>Floating-Point Conversion</value>
+  </data>
+  <data name="InstructionGroup/FPConditionalMove" xml:space="preserve">
+    <value>Conditional Move</value>
+  </data>
+  <data name="InstructionGroup/Trap" xml:space="preserve">
+    <value>Trap</value>
+  </data>
+  <data name="Usage/address" xml:space="preserve">
+    <value>address</value>
+  </data>
+  <data name="Usage/immediate" xml:space="preserve">
+    <value>immediate</value>
+  </data>
+  <data name="Usage/offset" xml:space="preserve">
+    <value>offset</value>
+  </data>
+  <data name="Usage/shift" xml:space="preserve">
+    <value>shift</value>
+  </data>
+</root>

@@ -1,6 +1,6 @@
 files:
-  - source: /src/Clients/Zarem.Windows/Strings/en/*.resw
-    translation: /src/Clients/Zarem.Windows/Strings/%two_letters_code%/%original_file_name%
+  - source: /src/Clients/Zarem.WinUI/Strings/en/*.resw
+    translation: /src/Clients/Zarem.WinUI/Strings/%two_letters_code%/%original_file_name%
   - source: /**/*.resx
     ignore:
       - /**/*.*.resx

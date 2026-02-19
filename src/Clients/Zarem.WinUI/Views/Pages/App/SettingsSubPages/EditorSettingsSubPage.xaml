@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Zarem.WinUI.Views.Pages.App.SettingsSubPages.EditorSettingsSubPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:Zarem.WinUI.Views.Pages.App.SettingsSubPages"
+    xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
+    xmlns:helpers="using:Zarem.WinUI.Helpers"
+    xmlns:senums="using:Zarem.Services.Settings.Enums"
+    xmlns:clrschm="using:Zarem.Models.EditorConfig.ColorScheme"
+    xmlns:editor="using:Zarem.WinUI.Controls.CodeEditor"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <editor:AssemblySyntaxHighlightingTheme x:Name="SyntaxHighlighting"/>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <StackPanel.ChildrenTransitions>
+            <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True" />
+        </StackPanel.ChildrenTransitions>
+
+        <editor:AssemblyEditor Text="{x:Bind DemoText}"
+                              RealTimeAssembly="{x:Bind ViewModel.RealTimeAssembly, Mode=OneWay}"
+                              AnnotationThreshold="{x:Bind ViewModel.AnnotationThreshold, Mode=OneWay}"
+                              SyntaxHighlightingTheme="{StaticResource SyntaxHighlighting}"
+                              FlowDirection="LeftToRight"
+                              CornerRadius="4"
+                              Height="250"/>
+
+        <ctc:SettingsCard x:Uid="/Settings/RealTimeAssemblySC"
+                              Header="Real-Time Assembly"
+                              Description="Should the editor continuously assemble the open file to show errors in real-time?">
+            <ToggleSwitch IsOn="{x:Bind ViewModel.RealTimeAssembly, Mode=TwoWay}"/>
+        </ctc:SettingsCard>
+
+        <ctc:SettingsCard x:Uid="/Settings/AnnotationThresholdSC"
+                                  Header="Annotations Threshold"
+                                  Description="When should the editor show log messages as an annotation below the log."
+                                  IsEnabled="{x:Bind ViewModel.RealTimeAssembly, Mode=OneWay}">
+            <ComboBox SelectedItem="{x:Bind ViewModel.AnnotationThreshold, Mode=TwoWay}"
+                      ItemsSource="{x:Bind ViewModel.AnnotationThresholdOptions, Mode=OneWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="senums:AnnotationThreshold">
+                        <TextBlock Text="{x:Bind helpers:LocalizationHelper.Localize((senums:AnnotationThreshold)), Mode=OneWay}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </ctc:SettingsCard>
+
+        <ctc:SettingsExpander x:Uid="/Settings/EditorColorSchemeSE"
+                          Header="Color Scheme"
+                          Description="Fully customize the color scheme of the text editor.">
+            <ctc:SettingsExpander.HeaderIcon>
+                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE2B1;" />
+            </ctc:SettingsExpander.HeaderIcon>
+            <ComboBox SelectedItem="{x:Bind ViewModel.EditorColorScheme, Mode=TwoWay}"
+                          ItemsSource="{x:Bind ViewModel.EditorColorSchemeOptions, Mode=OneWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="clrschm:EditorColorScheme">
+                        <TextBlock Text="{x:Bind Name, Mode=OneWay}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ctc:SettingsExpander.Items>
+                <ctc:SettingsCard x:Uid="/Settings/LoadSchemeFromFileSC"
+                                  Header="Load from File"
+                                  Description="Load an editor Color Scheme from a json file.">
+                    <Button x:Uid="/Settings/SelectSchemeFileBTN"
+                        Content="Select File"
+                        Command="{x:Bind ViewModel.LoadSchemeFromFileCommand, Mode=OneWay}"/>
+                </ctc:SettingsCard>
+            </ctc:SettingsExpander.Items>
+        </ctc:SettingsExpander>
+    </StackPanel>
+</UserControl>

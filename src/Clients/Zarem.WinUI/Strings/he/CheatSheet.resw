@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="EncodingPattern/RTypeInstructions" xml:space="preserve">
+    <value>פקודות מסוג אוגר (R)</value>
+  </data>
+  <data name="EncodingPattern/ITypeInstructions" xml:space="preserve">
+    <value>פקודות מסוג מיידי ‏ (I)</value>
+  </data>
+  <data name="EncodingPattern/JTypeInstructions" xml:space="preserve">
+    <value>פקודות מסוג קפיצה (J)</value>
+  </data>
+  <data name="EncodingPattern/BTypeInstructions" xml:space="preserve">
+    <value>פקודות מסוג הסתעפות/לכידה ‏(B)</value>
+  </data>
+  <data name="EncodingPattern/C0Instructions" xml:space="preserve">
+    <value>פקודות C0</value>
+  </data>
+  <data name="EncodingPattern/CoProc0MoveInstructions" xml:space="preserve">
+    <value>פקודות העברה של מעבד-משנה ‏0</value>
+  </data>
+  <data name="EncodingPattern/FloatingPointInstructions" xml:space="preserve">
+    <value>פקודות נקודה צפה</value>
+  </data>
+  <data name="EncodingPattern/CoProc1MoveInstructions" xml:space="preserve">
+    <value>פקודות העברה של מעבד-משנה ‏1</value>
+  </data>
+  <data name="EncodingPattern/CoProc1XInstructions" xml:space="preserve">
+    <value>פקודות  מעבד-משנה 1X</value>
+  </data>
+  <data name="EncodingPattern/SyscallBreakSdbbp" xml:space="preserve">
+    <value>SYSCALL / BREAK / SDBBP</value>
+  </data>
+  <data name="EncodingPattern/Sync" xml:space="preserve">
+    <value>SYNC</value>
+  </data>
+  <data name="EncodingPattern/CachePref" xml:space="preserve">
+    <value>CACHE / PREF</value>
+  </data>
+  <data name="EncodingPattern/ExecutionHazardBarrier" xml:space="preserve">
+    <value>Execution Hazard Barrier</value>
+  </data>
+  <data name="CommonInstructionsTB.Text" xml:space="preserve">
+    <value>פקודות נפוצות</value>
+  </data>
+  <data name="InstructionUsageTablesTB.Text" xml:space="preserve">
+    <value>טבלאות שימוש בפקודות</value>
+  </data>
+  <data name="CoProc0InstructionsTB.Text" xml:space="preserve">
+    <value>פקודות מעבד-משנה 0</value>
+  </data>
+  <data name="CoProc0InstructionTypePatternsTB.Text" xml:space="preserve">
+    <value>תבניות קידוד של סוגי פקודות מעבד-משנה 0</value>
+  </data>
+  <data name="CoProc1InstructionTypePatternsTB.Text" xml:space="preserve">
+    <value>תבניות קידוד של סוגי פקודות מעבד-משנה לנקודה צפה</value>
+  </data>
+  <data name="FloatInstructionsTB.Text" xml:space="preserve">
+    <value>פקודות נקודה צפה</value>
+  </data>
+  <data name="SpecializedInstructionsTB.Text" xml:space="preserve">
+    <value>פקודות ייעודיות</value>
+  </data>
+  <data name="InstructionEncodingPatternsTB.Text" xml:space="preserve">
+    <value>תבניות קידוד פקודות</value>
+  </data>
+  <data name="PrimaryInstructionTypePatternsTB.Text" xml:space="preserve">
+    <value>תבניות קידוד של סוגי הפקודות הראשיים</value>
+  </data>
+  <data name="EncodingTablesTB.Text" xml:space="preserve">
+    <value>טבלאות קידוד</value>
+  </data>
+  <data name="UniqueInstructionPatternsTB.Text" xml:space="preserve">
+    <value>תבניות קידוד ייחודיות לפקודות</value>
+  </data>
+  <data name="GeneralPurposeRegisterEncodingTB.Text" xml:space="preserve">
+    <value>קידוד אוגרים כלליים</value>
+  </data>
+  <data name="InstructionGroup/SignedArithmetic" xml:space="preserve">
+    <value>חשבון (עם סימן)</value>
+  </data>
+  <data name="InstructionGroup/UnsignedArithmetic" xml:space="preserve">
+    <value>חשבון (ללא סימן)</value>
+  </data>
+  <data name="InstructionGroup/Logical" xml:space="preserve">
+    <value>לוגית</value>
+  </data>
+  <data name="InstructionGroup/Memory" xml:space="preserve">
+    <value>זיכרון</value>
+  </data>
+  <data name="InstructionGroup/Jump" xml:space="preserve">
+    <value>קיפוץ</value>
+  </data>
+  <data name="InstructionGroup/Data" xml:space="preserve">
+    <value>נתונים</value>
+  </data>
+  <data name="InstructionGroup/Branch" xml:space="preserve">
+    <value>הסתעפות</value>
+  </data>
+  <data name="InstructionGroup/Compare" xml:space="preserve">
+    <value>השוואה</value>
+  </data>
+  <data name="InstructionGroup/System" xml:space="preserve">
+    <value>מערכת</value>
+  </data>
+  <data name="InstructionGroup/Move" xml:space="preserve">
+    <value>העברה</value>
+  </data>
+  <data name="InstructionGroup/Interrupts" xml:space="preserve">
+    <value>פסיקות</value>
+  </data>
+  <data name="InstructionGroup/TLB" xml:space="preserve">
+    <value>מטמון תרגום כתובות (TLB)</value>
+  </data>
+  <data name="InstructionGroup/Debug" xml:space="preserve">
+    <value>ניפוי שגיאות</value>
+  </data>
+  <data name="InstructionGroup/FPArithmetic" xml:space="preserve">
+    <value>חשבון נקודה צפה</value>
+  </data>
+  <data name="InstructionGroup/FPRounding" xml:space="preserve">
+    <value>עיגול נקודה צפה</value>
+  </data>
+  <data name="InstructionGroup/FPConversion" xml:space="preserve">
+    <value>המרת נקודה צפה</value>
+  </data>
+  <data name="InstructionGroup/FPConditionalMove" xml:space="preserve">
+    <value>העברה מותנית</value>
+  </data>
+  <data name="InstructionGroup/Trap" xml:space="preserve">
+    <value>מלכודת</value>
+  </data>
+  <data name="Usage/address" xml:space="preserve">
+    <value>כתובת</value>
+  </data>
+  <data name="Usage/immediate" xml:space="preserve">
+    <value>מיידי</value>
+  </data>
+  <data name="Usage/offset" xml:space="preserve">
+    <value>היסט</value>
+  </data>
+  <data name="Usage/shift" xml:space="preserve">
+    <value>הזזה</value>
+  </data>
+</root>

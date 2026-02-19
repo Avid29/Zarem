@@ -11,10 +11,7 @@
   <Folder Name="/Clients/">
     <Project Path="src/Clients/Zarem.Console/Zarem.Console.csproj" />
     <Project Path="src/Clients/Zarem.ViewModels/Zarem.ViewModels.csproj" />
-    <Project Path="src/Clients/Zarem.Windows/Zarem.Windows.csproj">
-      <BuildType Solution="Alpha|ARM" Project="Debug" />
-      <BuildType Solution="Alpha|arm64" Project="Debug" />
-      <BuildType Solution="Alpha|x86" Project="Debug" />
+    <Project Path="src/Clients/Zarem.WinUI/Zarem.WinUI.csproj">
       <Platform Solution="*|ARM" Project="x64" />
       <Platform Solution="*|arm64" Project="ARM64" />
       <Platform Solution="*|x64" Project="x64" />
