@@ -83,7 +83,7 @@ public class FileService : IFileService
             return null;
 
         // Create and track new bindable
-        return TrackProjectFile(file);
+        return await TrackProjectFile(file);
     }
 
     /// <inheritdoc/>
@@ -157,7 +157,7 @@ public class FileService : IFileService
         return bindable;
     }
 
-    internal BindableProjectFile TrackProjectFile(IFile file)
+    internal async Task<BindableProjectFile> TrackProjectFile(IFile file)
     {
         var key = file.Path;
 
@@ -172,7 +172,10 @@ public class FileService : IFileService
             return value;
 
         // Create and track new bindable
-        var bindable = new BindableProjectFile(this, file);
+        var directory = Path.GetDirectoryName(file.Path);
+        Guard.IsNotNull(directory);
+        IFolder? parent = await FileSystemService.GetFolderAsync(directory); 
+        var bindable = new BindableProjectFile(this, file, parent);
 
         _openItems.Add(key, bindable);
         return bindable;

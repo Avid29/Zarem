@@ -22,11 +22,10 @@ public partial class BindableProjectFile : BindableFileTrackingFileItem<IFile>, 
     /// <summary>
     /// Initializes a new instance of the <see cref="BindableProjectFile"/> class.
     /// </summary>
-    public BindableProjectFile(FileService fileService, IFile file) : base(fileService)
+    public BindableProjectFile(FileService fileService, IFile file, IFolder? parent) : base(fileService)
     {
         FileItem = file;
-
-        _ = SetTrackingFolderAsync();
+        TrackingFolder = parent;
     }
 
     /// <inheritdoc/>
@@ -41,12 +40,4 @@ public partial class BindableProjectFile : BindableFileTrackingFileItem<IFile>, 
     /// <inheritdoc/>
     [RelayCommand]
     public void Open() => Service.Get<IMessenger>().Send(new FileOpenRequestMessage(this));
-
-    private async Task SetTrackingFolderAsync()
-    {
-        var directory = System.IO.Path.GetDirectoryName(FileItem.Path);
-        Guard.IsNotNull(directory);
-
-        TrackingFolder = await FileService.FileSystemService.GetFolderAsync(directory);
-    }
 }
