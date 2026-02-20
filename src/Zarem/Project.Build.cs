@@ -59,7 +59,15 @@ public partial class Project
     }
 
     /// <inheritdoc/>
-    public void CleanProject() => CleanFiles(SourceFiles);
+    public void CleanProject()
+    {
+        CleanFiles(SourceFiles);
+
+        // Delete obj folder
+        Guard.IsNotNull(Config.RootFolderPath);
+        var objPath = Path.Combine(Config.RootFolderPath, "obj");
+        Directory.Delete(objPath, true);
+    }
 
     /// <inheritdoc/>
     public void CleanFiles(IEnumerable<SourceFile> files)
