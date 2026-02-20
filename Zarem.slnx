@@ -60,7 +60,11 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/" />
-  <Folder Name="/Tests/Plugins/" />
+  <Folder Name="/Tests/Plugins/">
+    <Project Path="tests/Test.Zarem/Test.Zarem.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Tests/Plugins/Archs/" />
   <Folder Name="/Tests/Plugins/Archs/MIPS/">
     <Project Path="tests/Archs/MIPS/Test.Assembler.MIPS.Live/Test.Assembler.MIPS.Live.csproj">
