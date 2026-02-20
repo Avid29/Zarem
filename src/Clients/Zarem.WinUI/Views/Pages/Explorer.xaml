@@ -126,7 +126,8 @@
             <TreeViewItem AutomationProperties.Name="{x:Bind Name, Mode=OneWay}"
                           ItemsSource="{x:Bind Children, Mode=OneWay}"
                           HasUnrealizedChildren="{x:Bind ChildrenNotLoaded, Mode=OneWay}"
-                          DoubleTapped="FileDoubleTapped">
+                          DoubleTapped="FileDoubleTapped"
+                          Loaded="TreeViewItem_Loaded">
                 <TreeViewItem.ContextFlyout>
                     <MenuFlyout>
                         <!--  Open  -->
