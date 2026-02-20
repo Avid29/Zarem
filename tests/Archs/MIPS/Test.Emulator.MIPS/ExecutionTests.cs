@@ -244,22 +244,22 @@ public class ExecutionTests
 
             // Branch Equality
             yield return [new ExecutionTestCase("beq $t2, $t3, 80") { ExpectedPC = 4 }];
-            yield return [new ExecutionTestCase("beq $t1, $t1, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("beq $t1, $t1, 80") { ExpectedPC = 84 }];
             yield return [new ExecutionTestCase("bne $t1, $t1, 80") { ExpectedPC = 4 }];
-            yield return [new ExecutionTestCase("bne $t3, $t2, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("bne $t3, $t2, 80") { ExpectedPC = 84 }];
 
             // Branch Compare
             yield return [new ExecutionTestCase("blez $s1, 80") { ExpectedPC = 4 }];
-            yield return [new ExecutionTestCase("blez $s0, 80") { ExpectedPC = 80 }];
-            yield return [new ExecutionTestCase("blez $s5, 80") { ExpectedPC = 80 }];
-            yield return [new ExecutionTestCase("bgtz $s1, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("blez $s0, 80") { ExpectedPC = 84 }];
+            yield return [new ExecutionTestCase("blez $s5, 80") { ExpectedPC = 84 }];
+            yield return [new ExecutionTestCase("bgtz $s1, 80") { ExpectedPC = 84 }];
             yield return [new ExecutionTestCase("bgtz $s0, 80") { ExpectedPC = 4 }];
             yield return [new ExecutionTestCase("bgtz $s5, 80") { ExpectedPC = 4 }];
             yield return [new ExecutionTestCase("bltz $s1, 80") { ExpectedPC = 4 }];
             yield return [new ExecutionTestCase("bltz $s0, 80") { ExpectedPC = 4 }];
-            yield return [new ExecutionTestCase("bltz $s5, 80") { ExpectedPC = 80 }];
-            yield return [new ExecutionTestCase("bgez $s1, 80") { ExpectedPC = 80 }];
-            yield return [new ExecutionTestCase("bgez $s0, 80") { ExpectedPC = 80 }];
+            yield return [new ExecutionTestCase("bltz $s5, 80") { ExpectedPC = 84 }];
+            yield return [new ExecutionTestCase("bgez $s1, 80") { ExpectedPC = 84 }];
+            yield return [new ExecutionTestCase("bgez $s0, 80") { ExpectedPC = 84 }];
             yield return [new ExecutionTestCase("bgez $s5, 80") { ExpectedPC = 4 }];
         }
     }
