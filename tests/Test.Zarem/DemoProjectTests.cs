@@ -35,7 +35,7 @@ public sealed class DemoProjectTests
     [TestMethod]
     public async Task FizzBuzz() => await RunAndCompare(Path.Combine(DemoFilesPathBase, "FizzBuzz", "FizzBuzz.zrmp"), FizzBuzzText);
 
-    private string FizzBuzzText
+    private static string FizzBuzzText
     {
         get
         {

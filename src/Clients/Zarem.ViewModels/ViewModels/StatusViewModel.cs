@@ -22,7 +22,7 @@ public class StatusViewModel : ObservableRecipient
     {
         _messenger = messenger;
 
-        BuildStatus = buildService.Status;
+        State = buildService.Status;
         StatusMessage = string.Empty;
 
         IsActive = true;
@@ -31,9 +31,9 @@ public class StatusViewModel : ObservableRecipient
     /// <inheritdoc/>
     protected override void OnActivated()
     {
-        _messenger.Register<StatusViewModel, BuildStatusMessage>(this, (r, m) =>
+        _messenger.Register<StatusViewModel, StateChangedMessage>(this, (r, m) =>
         {
-            r.BuildStatus = m.Status;
+            r.State = m.State;
             r.StatusMessage = m.Message;
         });
     }
@@ -41,7 +41,7 @@ public class StatusViewModel : ObservableRecipient
     /// <summary>
     /// Gets the current build status.
     /// </summary>
-    public BuildStatus BuildStatus
+    public IdeState State
     {
         get => field;
         private set => SetProperty(ref field, value);

@@ -10,6 +10,7 @@
             <Color x:Key="TitleBarBackgroundColor">#222024</Color>
             <Color x:Key="TabViewBackgroundColor">#131215</Color>
             <Color x:Key="PrimaryBackgroundColor">#131215</Color>
+            
             <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{ThemeResource PrimaryBackgroundColor}"/>
             <AcrylicBrush x:Key="TitleBarBackgroundBrush" TintColor="{ThemeResource TitleBarBackgroundColor}" TintOpacity="0.8"/>
             <AcrylicBrush x:Key="TabViewBackgroundBrush" TintColor="{ThemeResource TabViewBackgroundColor}" TintOpacity="0.8"/>
@@ -30,13 +31,15 @@
             <Color x:Key="ErrorUnderlineColor">#FF0000</Color>
             <Color x:Key="WarningUnderlineColor">#FFAA00</Color>
             <Color x:Key="MessageUnderlineColor">#00AAFF</Color>
-            
-            <!--  Status Bar Background Colors  -->
-            <!--<Color x:Key="NotReadyStatusBarBackgroundColor">#747F8D</Color>
-            <Color x:Key="ReadyStatusBarBackgroundColor">#1f4d7a</Color>
-            <Color x:Key="RunningStatusBarBackgroundColor">#966003</Color>
-            <Color x:Key="DoneStatusBarBackgroundColor">#297050</Color>
-            <Color x:Key="FailedStatusBarBackgroundColor">#950404</Color>-->
+
+
+            <!-- Status Bar -->
+            <Color x:Key="NotReadyStatusBarBackgroundColor">#2E3238</Color>
+            <Color x:Key="ReadyStatusBarBackgroundColor">#004D99</Color>
+            <Color x:Key="BuildingStatusBarBackgroundColor">#996100</Color>
+            <Color x:Key="DoneStatusBarBackgroundColor">#009954</Color>
+            <Color x:Key="FailedStatusBarBackgroundColor">#990000</Color>
+            <Color x:Key="RunningStatusBarBackgroundColor">#4C00E5</Color>
 
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
@@ -66,21 +69,19 @@
             <Color x:Key="WarningUnderlineColor">#FFAA00</Color>
             <Color x:Key="MessageUnderlineColor">#00AAFF</Color>
 
-            <!--  Status Bar Background Colors  -->
-            <!--<Color x:Key="NotReadyStatusBarBackgroundColor">#747F8D</Color>
-            <Color x:Key="ReadyStatusBarBackgroundColor">#85b3e0</Color>
-            <Color x:Key="RunningStatusBarBackgroundColor">#fcc669</Color>
-            <Color x:Key="DoneStatusBarBackgroundColor">#8fd6b6</Color>
-            <Color x:Key="FailedStatusBarBackgroundColor">#fb6a6a</Color>-->
+            <!-- Status Bar -->
+            <Color x:Key="NotReadyStatusBarBackgroundColor">#B9BEC6</Color>
+            <Color x:Key="ReadyStatusBarBackgroundColor">#66B3FF</Color>
+            <Color x:Key="BuildingStatusBarBackgroundColor">#FFA100</Color>
+            <Color x:Key="DoneStatusBarBackgroundColor">#1AFF98</Color>
+            <Color x:Key="FailedStatusBarBackgroundColor">#FA5151</Color>
+            <Color x:Key="RunningStatusBarBackgroundColor">#AF8FEF</Color>
 
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
-    <!-- Status Bar -->
-    <Color x:Key="NotReadyStatusBarBackgroundColor">#747F8D</Color>
-    <Color x:Key="ReadyStatusBarBackgroundColor">#1f4d7a</Color>
-    <Color x:Key="RunningStatusBarBackgroundColor">#966003</Color>
-    <Color x:Key="DoneStatusBarBackgroundColor">#297050</Color>
-    <Color x:Key="FailedStatusBarBackgroundColor">#950404</Color>
+    <!--  Zarem Colors  -->
+    <Color x:Key="ZaremBlueColor">#034AC9</Color>
+    <Color x:Key="ZaremPurpleColor">#5838FA</Color>
 
 </ResourceDictionary>

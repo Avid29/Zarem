@@ -3,19 +3,17 @@
 namespace Zarem.Models.Enums;
 
 /// <summary>
-/// An enum indicating the build status.
+/// An enum indicating the ide state.
 /// </summary>
-public enum BuildStatus
+public enum IdeState
 {
     #pragma warning disable CS1591
     
     NotReady,
     Ready,
-    Preparing,
-    Assembling,
-    Failing,        // Still assembling, but we know it failed
-    Linking,
-    Completed,
+    Building,
+    BuildComplete,
+    Runnning,
     Failed,
     
     # pragma warning restore CS1591

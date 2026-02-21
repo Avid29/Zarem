@@ -10,30 +10,34 @@
     xmlns:cth="using:CommunityToolkit.WinUI.Helpers"
     xmlns:convert="using:Zarem.WinUI.Converters"
     xmlns:helpers="using:Zarem.WinUI.Helpers"
+    xmlns:controls="using:Zarem.WinUI.Controls"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <convert:BuildStatusColorConverter x:Key="BuildStatusColorConverter"
-                                           NotReady="{ThemeResource NotReadyStatusBarBackgroundColor}"
-                                           Ready="{ThemeResource ReadyStatusBarBackgroundColor}"
-                                           Running="{ThemeResource RunningStatusBarBackgroundColor}"
-                                           Done="{ThemeResource DoneStatusBarBackgroundColor}"
-                                           Failed="{ThemeResource FailedStatusBarBackgroundColor}"/>
+        <convert:AppStatusColorConverter x:Key="AppStatusColorConverter"
+                                         NotReady="{ThemeResource NotReadyStatusBarBackgroundColor}"
+                                         Ready="{ThemeResource ReadyStatusBarBackgroundColor}"
+                                         Building="{ThemeResource BuildingStatusBarBackgroundColor}"
+                                         Done="{ThemeResource DoneStatusBarBackgroundColor}"
+                                         Failed="{ThemeResource FailedStatusBarBackgroundColor}"/>
     </UserControl.Resources>
 
-    <Grid Padding="8,0,8,2">
-        <Grid.Background>
-            <SolidColorBrush x:Name="BackgroundBrush" Color="{x:Bind ViewModel.BuildStatus, Converter={StaticResource BuildStatusColorConverter}, Mode=OneWay}"/>
-        </Grid.Background>
+    <Grid>
+        <!--<controls:RunningIndicator Margin="0,-36,0,0"/>-->
+        <Grid Padding="8,0,8,2">
+            <Grid.Background>
+                <SolidColorBrush x:Name="BackgroundBrush" Color="{x:Bind ViewModel.State, Converter={StaticResource AppStatusColorConverter}, Mode=OneWay}"/>
+            </Grid.Background>
 
-        <StackPanel Orientation="Horizontal" Spacing="12">
-            <TextBlock Text="{x:Bind helpers:LocalizationHelper.Localize(ViewModel.BuildStatus), Mode=OneWay}"
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <TextBlock Text="{x:Bind helpers:LocalizationHelper.Localize(ViewModel.State), Mode=OneWay}"
                        cth:ContrastHelper.Opponent="{x:Bind BackgroundBrush.Color, Mode=OneWay}"
                        HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-            <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
                        cth:ContrastHelper.Opponent="{x:Bind BackgroundBrush.Color, Mode=OneWay}"
                        HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12" Margin="0,2,0,0"/>
-        </StackPanel>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

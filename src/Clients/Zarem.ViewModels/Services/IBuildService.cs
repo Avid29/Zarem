@@ -16,7 +16,7 @@ public interface IBuildService
     /// <summary>
     /// Gets the build status
     /// </summary>
-    BuildStatus Status { get; }
+    IdeState Status { get; }
 
     /// <summary>
     /// Builds the project.

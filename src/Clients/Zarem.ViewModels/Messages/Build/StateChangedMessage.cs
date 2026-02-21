@@ -7,21 +7,21 @@ namespace Zarem.Messages.Build;
 /// <summary>
 /// A message sent when the build status changes.
 /// </summary>
-public class BuildStatusMessage
+public class StateChangedMessage
 {
     /// <summary>
-    /// Initialzes a new instance of the <see cref="BuildStatusMessage"/> class.
+    /// Initialzes a new instance of the <see cref="StateChangedMessage"/> class.
     /// </summary>
-    public BuildStatusMessage(BuildStatus status, string? message = null)
+    public StateChangedMessage(IdeState status, string? message = null)
     {
-        Status = status;
+        State = status;
         Message = message;
     }
 
     /// <summary>
     /// Gets the new build status.
     /// </summary>
-    public BuildStatus Status { get; }
+    public IdeState State { get; }
 
     /// <summary>
     /// Gets the build status message.

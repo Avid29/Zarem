@@ -10,24 +10,27 @@ using Windows.UI;
 namespace Zarem.WinUI.Converters;
 
 /// <summary>
-/// A converter that converts an <see cref="BuildStatus"/> into a <see cref="Color"/>.
+/// A converter that converts an <see cref="IdeState"/> into a <see cref="Color"/>.
 /// </summary>
-public partial class BuildStatusColorConverter : DependencyObject, IValueConverter
+public partial class AppStatusColorConverter : DependencyObject, IValueConverter
 {
     public static readonly DependencyProperty NotReadyProperty =
-        DependencyProperty.Register(nameof(NotReady), typeof(Color), typeof(BuildStatusColorConverter), new PropertyMetadata(Colors.Transparent));
+        DependencyProperty.Register(nameof(NotReady), typeof(Color), typeof(AppStatusColorConverter), new PropertyMetadata(Colors.Transparent));
     
     public static readonly DependencyProperty ReadyProperty =
-        DependencyProperty.Register(nameof(Ready), typeof(Color), typeof(BuildStatusColorConverter), new PropertyMetadata(Colors.Transparent));
+        DependencyProperty.Register(nameof(Ready), typeof(Color), typeof(AppStatusColorConverter), new PropertyMetadata(Colors.Transparent));
     
-    public static readonly DependencyProperty RunningProperty =
-        DependencyProperty.Register(nameof(Running), typeof(Color), typeof(BuildStatusColorConverter), new PropertyMetadata(Colors.Transparent));
+    public static readonly DependencyProperty BuildingProperty =
+        DependencyProperty.Register(nameof(Building), typeof(Color), typeof(AppStatusColorConverter), new PropertyMetadata(Colors.Transparent));
     
     public static readonly DependencyProperty DoneProperty =
-        DependencyProperty.Register(nameof(Done), typeof(Color), typeof(BuildStatusColorConverter), new PropertyMetadata(Colors.Transparent));
+        DependencyProperty.Register(nameof(Done), typeof(Color), typeof(AppStatusColorConverter), new PropertyMetadata(Colors.Transparent));
     
     public static readonly DependencyProperty FailedProperty =
-        DependencyProperty.Register(nameof(Failed), typeof(Color), typeof(BuildStatusColorConverter), new PropertyMetadata(Colors.Transparent));
+        DependencyProperty.Register(nameof(Failed), typeof(Color), typeof(AppStatusColorConverter), new PropertyMetadata(Colors.Transparent));
+    
+    public static readonly DependencyProperty RunningProperty =
+        DependencyProperty.Register(nameof(Running), typeof(Color), typeof(AppStatusColorConverter), new PropertyMetadata(Colors.Transparent));
     
     public Color NotReady
     {
@@ -41,7 +44,7 @@ public partial class BuildStatusColorConverter : DependencyObject, IValueConvert
         set => SetValue(ReadyProperty, value);
     }
 
-    public Color Running
+    public Color Building
     {
         get => (Color)GetValue(RunningProperty);
         set => SetValue(RunningProperty, value);
@@ -59,26 +62,29 @@ public partial class BuildStatusColorConverter : DependencyObject, IValueConvert
         set => SetValue(FailedProperty, value);
     }
 
+    public Color Running
+    {
+        get => (Color)GetValue(RunningProperty);
+        set => SetValue(RunningProperty, value);
+    }
+
     /// <inheritdoc/>
     public object? Convert(object? value, Type targetType, object parameter, string language)
     {
         if (value is null)
             return null;
 
-        if (value is not BuildStatus type)
+        if (value is not IdeState type)
             throw new ArgumentException("Value must be of type InstructionType", nameof(value));
 
         return type switch
         {
-            BuildStatus.NotReady => NotReady,
-            BuildStatus.Ready => Ready,
-
-            BuildStatus.Preparing or
-            BuildStatus.Assembling or
-            BuildStatus.Linking => Running,
-
-            BuildStatus.Completed => Done,
-            BuildStatus.Failed => Failed,
+            IdeState.NotReady => NotReady,
+            IdeState.Ready => Ready,
+            IdeState.Building => Building,
+            IdeState.BuildComplete => Done,
+            IdeState.Failed => Failed,
+            IdeState.Runnning => Running,
 
             _ => NotReady,
         };

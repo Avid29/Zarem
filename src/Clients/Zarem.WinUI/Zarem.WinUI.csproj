@@ -15,6 +15,9 @@
 		<Configurations>Debug;Release;Alpha</Configurations>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Controls\RunningIndicator.xaml" />
+	</ItemGroup>
+	<ItemGroup>
 	  <AppxManifest Include="Package.appxmanifest" Condition="'$(Configuration)' == 'Release'">
 	    <SubType>Designer</SubType>
 	  </AppxManifest>
@@ -80,5 +83,11 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\submodules\WinUIEdit\WinUIEditor\WinUIEditor.vcxproj" />
 		<ProjectReference Include="..\Zarem.ViewModels\Zarem.ViewModels.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Controls\RunningIndicator.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 </Project>

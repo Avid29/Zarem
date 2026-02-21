@@ -39,13 +39,13 @@ public class BuildService : IBuildService
         _settingsService = settingsService;
         _projectService = projectService;
 
-        SetStatus(BuildStatus.Ready);
+        SetStatus(IdeState.Ready);
     }
 
     /// <inheritdoc/>
-    public BuildStatus Status { get; private set; }
+    public IdeState Status { get; private set; }
 
-    private bool Ready => Status is BuildStatus.Ready or BuildStatus.Completed or BuildStatus.Failed;
+    private bool Ready => Status is IdeState.Ready or IdeState.BuildComplete or IdeState.Failed;
 
     /// <inheritdoc/>
     public async Task<BuildResult?> BuildProjectAsync(bool rebuild = false)
@@ -102,7 +102,7 @@ public class BuildService : IBuildService
         if (!PreBuildChecks())
             return null;
 
-        SetStatus(BuildStatus.Assembling);
+        SetStatus(IdeState.Building);
 
         // Culminate results
         _messenger.Send(new BuildStartedMessage(logger));
@@ -124,7 +124,7 @@ public class BuildService : IBuildService
 
         // Send a message with the build results.
         var message = ConstructMessage(result);
-        var status = logger.Failed ? BuildStatus.Failed : BuildStatus.Completed;
+        var status = logger.Failed ? IdeState.Failed : IdeState.BuildComplete;
         SetStatus(status, message);
 
         _messenger.Send(new BuildFinishedMessage(result));
@@ -148,7 +148,7 @@ public class BuildService : IBuildService
         return true;
     }
 
-    private void SetStatus(BuildStatus value, string? message = null)
+    private void SetStatus(IdeState value, string? message = null)
     {
         // Update value and cache old value
         var old = Status;
@@ -157,7 +157,7 @@ public class BuildService : IBuildService
         // Check if the value actually changed.
         if (old != value)
         {
-            _messenger.Send(new BuildStatusMessage(value, message));
+            _messenger.Send(new StateChangedMessage(value, message));
         }
     }
 
@@ -170,7 +170,7 @@ public class BuildService : IBuildService
         if (token.IsCancellationRequested)
             return;
 
-        SetStatus(BuildStatus.Ready);
+        SetStatus(IdeState.Ready);
     }
 
     private string? ConstructMessage(BuildResult? result)

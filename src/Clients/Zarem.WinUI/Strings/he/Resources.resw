@@ -117,25 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BuildStatus_NotReady" xml:space="preserve">
+  <data name="IdeState_NotReady" xml:space="preserve">
     <value>לא מוכן</value>
   </data>
-  <data name="BuildStatus_Ready" xml:space="preserve">
+  <data name="IdeState_Ready" xml:space="preserve">
     <value>מוכן</value>
   </data>
-  <data name="BuildStatus_Preparing" xml:space="preserve">
+  <data name="IdeState_Preparing" xml:space="preserve">
     <value>מתכונן</value>
   </data>
-  <data name="BuildStatus_Assembling" xml:space="preserve">
+  <data name="IdeState_Assembling" xml:space="preserve">
     <value>מרכיב</value>
   </data>
-  <data name="BuildStatus_Linking" xml:space="preserve">
+  <data name="IdeState_Linking" xml:space="preserve">
     <value>מקשר</value>
   </data>
-  <data name="BuildStatus_Completed" xml:space="preserve">
+  <data name="IdeState_Completed" xml:space="preserve">
     <value>הבנייה הושלם</value>
   </data>
-  <data name="BuildStatus_Failed" xml:space="preserve">
+  <data name="IdeState_Failed" xml:space="preserve">
     <value>הבנייה נכשלה</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
