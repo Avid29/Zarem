@@ -76,7 +76,6 @@ loop_check:
     # increment in the delay slot.
     
 loop_end:
-    
 
     # Shutdown
     xori    $v0,    $zero,  10

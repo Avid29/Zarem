@@ -112,12 +112,6 @@ public class DebugService : IDebugService
     /// <inheritdoc/>
     public void StopDebugging()
     {
-        // Unbind state changed event
-        if (_session?.Emulator is MIPSEmulator mipsEmu)
-        {
-            mipsEmu.StateChanged -= MipsEmu_StateChanged;
-        }
-
         if (_session?.Emulator.State is not (EmulatorState.Stopped or EmulatorState.Stopping))
             _session?.Emulator.ShutDown();
     }
