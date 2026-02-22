@@ -120,11 +120,6 @@ public class DebugService : IDebugService
 
         if (_session?.Emulator.State is not (EmulatorState.Stopped or EmulatorState.Stopping))
             _session?.Emulator.ShutDown();
-
-        // Handle shutdown without console window hide step
-        _consoleService.HideConsoleWindow();
-        _dispatcher.RunOnUIThread(() => _stateService.SetState(IdeState.Ready));
-        _session = null;
     }
 
     private async Task<bool> PreRunChecks(SourceFile file)

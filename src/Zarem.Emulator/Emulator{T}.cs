@@ -108,11 +108,6 @@ public abstract class Emulator<TConfig> : IEmulator
         // Schedule the shutdown
         State = EmulatorState.Stopping;
         _runGate.Set(); // The thread must run to exit
-
-        // Shutdown complete
-        State = EmulatorState.Stopped;
-        _thread?.Join();
-
     }
 
     /// <summary>
@@ -138,5 +133,9 @@ public abstract class Emulator<TConfig> : IEmulator
             if (State is EmulatorState.Pausing)
                 State = EmulatorState.Paused;
         }
+
+        // Complete the shutdown 
+        State = EmulatorState.Stopped;
+        _thread?.Join();
     }
 }
