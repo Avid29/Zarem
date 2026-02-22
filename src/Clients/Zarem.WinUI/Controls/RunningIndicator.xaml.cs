@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Microsoft.UI;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
@@ -14,10 +15,16 @@ namespace Zarem.WinUI.Controls;
 /// </summary>
 public sealed partial class RunningIndicator : UserControl
 {
+    private readonly Color _color1;
+    private readonly Color _color2;
+
     public RunningIndicator()
     {
         this.InitializeComponent();
 
+
+        _color1 = Color.FromArgb(255, 0x03, 0x4A, 0xC9);
+        _color2 = Color.FromArgb(255, 0x58, 0x38, 0xFA);
     }
 
     private void Create2DGradient()
@@ -30,8 +37,10 @@ public sealed partial class RunningIndicator : UserControl
         var colorBrush = compositor.CreateLinearGradientBrush();
         colorBrush.StartPoint = new Vector2(0, 0.5f);
         colorBrush.EndPoint = new Vector2(1, 0.5f);
-        colorBrush.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, Color.FromArgb(255, 0x03, 0x4A, 0xC9)));
-        colorBrush.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, Color.FromArgb(255, 0x58, 0x38, 0xFA)));
+        colorBrush.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, _color1));
+        colorBrush.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, _color2));
+        colorBrush.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, _color1));
+        colorBrush.ExtendMode = CompositionGradientExtendMode.Wrap;
 
         // Create the Mask (Vertical Opacity)
         var maskBrush = compositor.CreateLinearGradientBrush();

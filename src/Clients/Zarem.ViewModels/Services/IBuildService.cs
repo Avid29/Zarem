@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Zarem.Models;
-using Zarem.Models.Enums;
 using Zarem.Models.Files;
 
 namespace Zarem.Services;
@@ -13,11 +12,6 @@ namespace Zarem.Services;
 /// </summary>
 public interface IBuildService
 {
-    /// <summary>
-    /// Gets the build status
-    /// </summary>
-    IdeState Status { get; }
-
     /// <summary>
     /// Builds the project.
     /// </summary>

@@ -14,15 +14,16 @@ namespace Zarem.ViewModels;
 public class StatusViewModel : ObservableRecipient
 {
     private readonly IMessenger _messenger;
+    private readonly IStateService _stateService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StatusViewModel"/> class.
     /// </summary>
-    public StatusViewModel(IMessenger messenger, IBuildService buildService)
+    public StatusViewModel(IMessenger messenger, IStateService stateService)
     {
         _messenger = messenger;
+        _stateService = stateService;
 
-        State = buildService.Status;
         StatusMessage = string.Empty;
 
         IsActive = true;
@@ -33,7 +34,7 @@ public class StatusViewModel : ObservableRecipient
     {
         _messenger.Register<StatusViewModel, StateChangedMessage>(this, (r, m) =>
         {
-            r.State = m.State;
+            OnPropertyChanged(nameof(State));
             r.StatusMessage = m.Message;
         });
     }
@@ -41,11 +42,7 @@ public class StatusViewModel : ObservableRecipient
     /// <summary>
     /// Gets the current build status.
     /// </summary>
-    public IdeState State
-    {
-        get => field;
-        private set => SetProperty(ref field, value);
-    }
+    public IdeState State => _stateService.State;
 
     /// <summary>
     /// Gets the build status message.

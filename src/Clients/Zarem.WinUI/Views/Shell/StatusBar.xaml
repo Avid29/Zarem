@@ -19,7 +19,8 @@
                                          Ready="{ThemeResource ReadyStatusBarBackgroundColor}"
                                          Building="{ThemeResource BuildingStatusBarBackgroundColor}"
                                          Done="{ThemeResource DoneStatusBarBackgroundColor}"
-                                         Failed="{ThemeResource FailedStatusBarBackgroundColor}"/>
+                                         Failed="{ThemeResource FailedStatusBarBackgroundColor}"
+                                         Running="{ThemeResource RunningStatusBarBackgroundColor}"/>
     </UserControl.Resources>
 
     <Grid>

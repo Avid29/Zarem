@@ -46,8 +46,8 @@ public partial class AppStatusColorConverter : DependencyObject, IValueConverter
 
     public Color Building
     {
-        get => (Color)GetValue(RunningProperty);
-        set => SetValue(RunningProperty, value);
+        get => (Color)GetValue(BuildingProperty);
+        set => SetValue(BuildingProperty, value);
     }
 
     public Color Done
@@ -82,8 +82,8 @@ public partial class AppStatusColorConverter : DependencyObject, IValueConverter
             IdeState.NotReady => NotReady,
             IdeState.Ready => Ready,
             IdeState.Building => Building,
-            IdeState.BuildComplete => Done,
-            IdeState.Failed => Failed,
+            IdeState.BuildCompleted => Done,
+            IdeState.BuildFailed => Failed,
             IdeState.Runnning => Running,
 
             _ => NotReady,

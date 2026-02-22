@@ -1,9 +1,13 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Mvvm.Messaging;
 using System.Threading.Tasks;
+using Zarem.DebugSessions;
 using Zarem.Emulator;
 using Zarem.Emulator.Interpreter;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Messages.DebugSession;
+using Zarem.Models.Enums;
 using Zarem.Models.Files;
 using Zarem.Services.Popup;
 using Zarem.Services.Popup.Enums;
@@ -16,28 +20,46 @@ namespace Zarem.Services;
 /// </summary>
 public class DebugService : IDebugService
 {
-    private readonly IConsoleService _consoleService;
+    private readonly IMessenger _messenger;
     private readonly IBuildService _buildService;
+    private readonly IConsoleService _consoleService;
+    private readonly IDispatcherService _dispatcher;
     private readonly ILocalizationService _localizationService;
     private readonly IPopupService _popupService;
     private readonly IProjectService _projectService;
+    private readonly IStateService _stateService;
+
+    private DebugSession? _session;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DebugService"/> class.
     /// </summary>
-    public DebugService(IConsoleService consoleService, IBuildService buildService, ILocalizationService localizationService, IPopupService popupService, IProjectService projectService)
+    public DebugService(
+        IMessenger messenger,
+        IBuildService buildService,
+        IConsoleService consoleService,
+        IDispatcherService dispatcher,
+        ILocalizationService localizationService,
+        IPopupService popupService,
+        IProjectService projectService,
+        IStateService stateService)
     {
-        _consoleService = consoleService;
+        _messenger = messenger;
         _buildService = buildService;
+        _consoleService = consoleService;
+        _dispatcher = dispatcher;
         _localizationService = localizationService;
         _popupService = popupService;
         _projectService = projectService;
+        _stateService = stateService;
     }
 
     /// <inheritdoc/>
     public async Task RunAsync(bool debug = true)
     {
-        // TODO: Report issue
+        if (!_stateService.Ready)
+            return;
+
         if (_projectService.Project is null)
             return;
 
@@ -46,12 +68,12 @@ public class DebugService : IDebugService
             return;
 
         // Start a debug session
-        var session = _projectService.Project.StartDebug(buildResult.OutputModule);
-        if (session is null)
+        _session = _projectService.Project.StartDebug(buildResult.OutputModule);
+        if (_session is null)
             return;
 
         // Cheat and grab the mips emulator
-        if (session?.Emulator is not MIPSEmulator mipsEmu)
+        if (_session?.Emulator is not MIPSEmulator mipsEmu)
             return;
 
         _consoleService.ShowConsoleWindow();
@@ -59,7 +81,9 @@ public class DebugService : IDebugService
         _ = new MARSTrapHandler(mipsEmu.Computer);
         mipsEmu.StateChanged += MipsEmu_StateChanged;
 
-        session.Emulator.Start();
+        _stateService.SetState(IdeState.Runnning);
+        _messenger.Send(new DebugSessionStartedMessage());
+        _session.Emulator.Start();
     }
 
     /// <inheritdoc/>
@@ -139,6 +163,9 @@ public class DebugService : IDebugService
         if (e is EmulatorState.Stopped)
         {
             _consoleService.HideConsoleWindow(_localizationService["DebugSessionEnded"]);
+
+            _dispatcher.RunOnUIThread(() => _stateService.SetState(IdeState.Ready));
+            _session = null;
         }
     }
 }

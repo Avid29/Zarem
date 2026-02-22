@@ -24,29 +24,30 @@ public class BuildService : IBuildService
 {
     private readonly IMessenger _messenger;
     private readonly ILocalizationService _localizationService;
-    private readonly ISettingsService _settingsService;
     private readonly IProjectService _projectService;
+    private readonly ISettingsService _settingsService;
+    private readonly IStateService _stateService;
 
     private CancellationTokenSource? _resetToken;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BuildService"/> class.
     /// </summary>
-    public BuildService(IMessenger messenger, ILocalizationService localizationService, ISettingsService settingsService, IProjectService projectService)
+    public BuildService(
+        IMessenger messenger,
+        ILocalizationService localizationService,
+        IProjectService projectService,
+        ISettingsService settingsService,
+        IStateService stateService)
     {
         _messenger = messenger;
         _localizationService = localizationService;
-        _settingsService = settingsService;
         _projectService = projectService;
+        _settingsService = settingsService;
+        _stateService = stateService;
 
-        SetStatus(IdeState.Ready);
+        _stateService.SetState(IdeState.Ready);
     }
-
-    /// <inheritdoc/>
-    public IdeState Status { get; private set; }
-
-    private bool Ready => Status is IdeState.Ready or IdeState.BuildComplete or IdeState.Failed;
-
     /// <inheritdoc/>
     public async Task<BuildResult?> BuildProjectAsync(bool rebuild = false)
     {
@@ -102,7 +103,7 @@ public class BuildService : IBuildService
         if (!PreBuildChecks())
             return null;
 
-        SetStatus(IdeState.Building);
+        _stateService.SetState(IdeState.Building);
 
         // Culminate results
         _messenger.Send(new BuildStartedMessage(logger));
@@ -124,8 +125,8 @@ public class BuildService : IBuildService
 
         // Send a message with the build results.
         var message = ConstructMessage(result);
-        var status = logger.Failed ? IdeState.Failed : IdeState.BuildComplete;
-        SetStatus(status, message);
+        var status = logger.Failed ? IdeState.BuildFailed : IdeState.BuildCompleted;
+        _stateService.SetState(status, message);
 
         _messenger.Send(new BuildFinishedMessage(result));
 
@@ -138,7 +139,7 @@ public class BuildService : IBuildService
     private bool PreBuildChecks()
     {
         // Ensure the build service is ready to build
-        if (!Ready)
+        if (!_stateService.Ready)
         {
             return false;
         }
@@ -146,19 +147,6 @@ public class BuildService : IBuildService
         // Cancel any scheduled status resets
         _resetToken?.Cancel();
         return true;
-    }
-
-    private void SetStatus(IdeState value, string? message = null)
-    {
-        // Update value and cache old value
-        var old = Status;
-        Status = value;
-
-        // Check if the value actually changed.
-        if (old != value)
-        {
-            _messenger.Send(new StateChangedMessage(value, message));
-        }
     }
 
     private async Task WaitAndClearStatusAsync()
@@ -170,7 +158,7 @@ public class BuildService : IBuildService
         if (token.IsCancellationRequested)
             return;
 
-        SetStatus(IdeState.Ready);
+        _stateService.SetState(IdeState.Ready);
     }
 
     private string? ConstructMessage(BuildResult? result)

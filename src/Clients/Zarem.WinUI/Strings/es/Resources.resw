@@ -132,10 +132,10 @@
   <data name="IdeState_Linking" xml:space="preserve">
     <value>Linking</value>
   </data>
-  <data name="IdeState_Completed" xml:space="preserve">
+  <data name="IdeState_BuildCompleted" xml:space="preserve">
     <value>Build Complete</value>
   </data>
-  <data name="IdeState_Failed" xml:space="preserve">
+  <data name="IdeState_BuildFailed" xml:space="preserve">
     <value>Build Failed</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">

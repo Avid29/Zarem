@@ -12,9 +12,9 @@ public enum IdeState
     NotReady,
     Ready,
     Building,
-    BuildComplete,
+    BuildCompleted,
+    BuildFailed,
     Runnning,
-    Failed,
     
     # pragma warning restore CS1591
 }
