@@ -43,6 +43,9 @@ public partial class BindableFile : BindableFileItem<IFile>, IBindableFile
     /// <inheritdoc/>
     public SourceFile? SourceFile { get; init; }
 
+    /// <inheritdoc/>
+    public override bool IsFolder => false;
+
     internal void TrackAsChild(IBindableFileItem child)
     {
         Children.Add(child);

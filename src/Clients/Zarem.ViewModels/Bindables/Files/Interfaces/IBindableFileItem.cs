@@ -29,9 +29,14 @@ public interface IBindableFileItem : INotifyPropertyChanged, IDisposable
     public bool ChildrenNotLoaded { get; }
 
     /// <summary>
+    /// Gets whether or not the file item is a folder.
+    /// </summary>
+    public bool IsFolder { get; }
+
+    /// <summary>
     /// Gets the child items.
     /// </summary>
-    ObservableCollection <IBindableFileItem> Children { get; }
+    BindableFileItemCollection Children { get; }
 
     /// <summary>
     /// Loads the node's children.

@@ -33,13 +33,16 @@ public abstract partial class BindableFileItem : ObservableObject, IBindableFile
     /// <inheritdoc/>
     public abstract string Path { get; }
 
+    /// <inheritdoc/>
+    public abstract bool IsFolder { get; }
+
     /// <summary>
     /// Gets a value indicating whether or not the children have been loaded.
     /// </summary>
     public virtual bool ChildrenNotLoaded => false;
 
     /// <inheritdoc/>
-    public ObservableCollection<IBindableFileItem> Children { get; } = [];
+    public BindableFileItemCollection Children { get; } = [];
 
     /// <summary>
     /// Loads the node's children.

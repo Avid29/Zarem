@@ -1,9 +1,7 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using System.Threading.Tasks;
 using Zarem.Bindables.Files.Abstract;
 using Zarem.Bindables.Files.Interfaces;
 using Zarem.Messages.Navigation;
@@ -36,6 +34,9 @@ public partial class BindableProjectFile : BindableFileTrackingFileItem<IFile>, 
 
     /// <inheritdoc/>
     public override IFile FileItem { get; set; }
+
+    /// <inheritdoc/>
+    public override bool IsFolder => false;
 
     /// <inheritdoc/>
     [RelayCommand]

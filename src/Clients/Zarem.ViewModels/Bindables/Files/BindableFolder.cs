@@ -41,6 +41,9 @@ public partial class BindableFolder : BindableFileTrackingFileItem<IFolder>, IBi
     /// <inheritdoc/>
     protected override IFolder? TrackingFolder { get; set; }
 
+    /// <inheritdoc/>
+    public override bool IsFolder => true;
+
     /// <summary>
     /// Open the windows file explorer to the folder.
     /// </summary>
