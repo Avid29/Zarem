@@ -41,11 +41,11 @@ public partial class App
             .AddSingleton<IWindowingService, WindowingService>()
 
             // Dependent Services
+            .AddSingleton<IStateService, StateService>()
             .AddSingleton<IFileSystemService, FileSystemService>()
             .AddSingleton<ISettingsService, SettingsService>()
             .AddSingleton<IProjectService, ProjectService>()
             .AddSingleton<IFileService, FileService>()
-            .AddSingleton<IStateService, StateService>()
             .AddSingleton<IBuildService, BuildService>()
             .AddSingleton<IDebugService, DebugService>()
 

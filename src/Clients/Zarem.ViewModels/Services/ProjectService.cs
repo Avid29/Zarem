@@ -11,6 +11,7 @@ using Zarem.Messages.Files;
 using Zarem.Messages.Project;
 using Zarem.MIPS;
 using Zarem.Models;
+using Zarem.Models.Enums;
 using Zarem.Models.Files;
 using Zarem.RASM;
 using Zarem.Registry;
@@ -31,15 +32,21 @@ public class ProjectService : IProjectService
     private readonly IMessenger _messenger;
     private readonly ICacheService _cacheService;
     private readonly IFileSystemService _fileSystemService;
+    private readonly IStateService _stateService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectService"/> class.
     /// </summary>
-    public ProjectService(IMessenger messenger, ISettingsService settingsService, ICacheService cacheService, IFileSystemService fileSystemService)
+    public ProjectService(
+        IMessenger messenger,
+        ICacheService cacheService,
+        IFileSystemService fileSystemService,
+        IStateService stateService)
     {
         _messenger = messenger;
         _cacheService = cacheService;
         _fileSystemService = fileSystemService;
+        _stateService = stateService;
 
         // Populate
         ZaremRegistry.RegisterArchitecture(new MIPSArchitectureDescriptor());
@@ -48,7 +55,15 @@ public class ProjectService : IProjectService
     }
 
     /// <inheritdoc/>
-    public IProject? Project { get; private set; }
+    public IProject? Project
+    {
+        get => field;
+        set
+        {
+            field = value;
+            _stateService.SetState(value is not null ? IdeState.Ready : IdeState.NotReady);
+        }
+    }
 
     /// <inheritdoc/>
     public IFolder? ProjectRootFolder { get; private set; }

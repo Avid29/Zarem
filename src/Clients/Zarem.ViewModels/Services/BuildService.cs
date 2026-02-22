@@ -45,9 +45,8 @@ public class BuildService : IBuildService
         _projectService = projectService;
         _settingsService = settingsService;
         _stateService = stateService;
-
-        _stateService.SetState(IdeState.Ready);
     }
+
     /// <inheritdoc/>
     public async Task<BuildResult?> BuildProjectAsync(bool rebuild = false)
     {
