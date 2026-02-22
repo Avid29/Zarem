@@ -191,6 +191,12 @@ public partial class WindowViewModel
         await _debugService.RunFileAsync(sourceFile, false);
     }
 
+    [RelayCommand]
+    private async Task StopDebugging()
+    {
+        _debugService.StopDebugging();
+    }
+
     #endregion
 
     #region Help

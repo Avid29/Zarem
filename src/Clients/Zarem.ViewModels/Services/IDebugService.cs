@@ -22,4 +22,9 @@ public interface IDebugService
     /// <param name="file">The source file to execute.</param>
     /// <param name="debug">Whether or not to attach a debugger.</param>
     Task RunFileAsync(SourceFile file, bool debug = true);
+
+    /// <summary>
+    /// Stops the current debug session.
+    /// </summary>
+    void StopDebugging();
 }

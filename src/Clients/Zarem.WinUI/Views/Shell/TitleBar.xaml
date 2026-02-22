@@ -229,7 +229,7 @@
                 <!-- Build/Rebuild -->
                 <MenuFlyoutItem x:Uid="/TitleBar/BuildProjectMFI" Text="Build Project"
                                 Command="{x:Bind ViewModel.BuildProjectCommand, Mode=OneWay}"
-                                IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.Project), Mode=OneWay}">
+                                IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource BuildIcon}"/>
                     </MenuFlyoutItem.Icon>
@@ -240,7 +240,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Uid="/TitleBar/RebuildProjectMFI" Text="Rebuild Project"
                                 Command="{x:Bind ViewModel.RebuildProjectCommand, Mode=OneWay}"
-                                IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.Project), Mode=OneWay}">
+                                IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource ReBuildIcon}"/>
                     </MenuFlyoutItem.Icon>
@@ -261,7 +261,7 @@
                 <!--  Clean  -->
                 <MenuFlyoutItem x:Uid="/TitleBar/CleanProjectMFI" Text="Clean Project"
                                 Command="{x:Bind ViewModel.CleanProjectCommand, Mode=OneWay}"
-                                IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.Project), Mode=OneWay}">
+                                IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource CleanIcon}"/>
                     </MenuFlyoutItem.Icon>
@@ -282,9 +282,16 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Uid="/TitleBar/StartWithoutDebuggingMFI" Text="Start Without Debugging"
                                 Command="{x:Bind ViewModel.StartWithoutDebuggingCommand, Mode=OneWay}"
-                                IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.Project), Mode=OneWay}">
+                                IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartWithoutDebuggingIcon}"/>
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem x:Uid="/TitleBar/StopDebuggingMFI" Text="Stop Debugging"
+                                Command="{x:Bind ViewModel.StopDebuggingCommand, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <ImageIcon Source="{StaticResource StopDebuggingIcon}"/>
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator/>

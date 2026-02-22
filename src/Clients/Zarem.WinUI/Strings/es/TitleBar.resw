@@ -288,4 +288,7 @@
   <data name="StartDebuggingFileMFI.Text" xml:space="preserve">
     <value>Start Debugging File</value>
   </data>
+  <data name="StopDebuggingMFI.Text" xml:space="preserve">
+    <value>Stop Debugging</value>
+  </data>
 </root>

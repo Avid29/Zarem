@@ -241,10 +241,10 @@
     <value>הגדרות זרם</value>
   </data>
   <data name="StartDebuggingMFI.Text" xml:space="preserve">
-    <value>הפעל וניפוי שגיאות</value>
+    <value>התחל ניפוי שגיאות</value>
   </data>
   <data name="StartWithoutDebuggingMFI.Text" xml:space="preserve">
-    <value>הפעל ללא ניפוי שגיאות</value>
+    <value>התחל ללא ניפוי שגיאות</value>
   </data>
   <data name="StepIntoMFI.Text" xml:space="preserve">
     <value>צעד לתוך</value>
@@ -271,7 +271,7 @@
     <value>פתח ויקי</value>
   </data>
   <data name="StartFileWithoutDebuggingMFI.Text" xml:space="preserve">
-    <value>הפעל קובץ ללא ניפוי שגיאות</value>
+    <value>התחל קובץ ללא ניפוי שגיאות</value>
   </data>
   <data name="SaveSpecificFile" xml:space="preserve">
     <value>שמור את {0}</value>
@@ -286,6 +286,9 @@
     <value>סגור דף</value>
   </data>
   <data name="StartDebuggingFileMFI.Text" xml:space="preserve">
-    <value>הפעלת קובץ וניפוי שגיאות</value>
+    <value>התחל ניפוי שגיאות לקובץ</value>
+  </data>
+  <data name="StopDebuggingMFI.Text" xml:space="preserve">
+    <value>עצור ניפוי שגיאות</value>
   </data>
 </root>

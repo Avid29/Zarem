@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System.IO;
 using Zarem.Models.Enums;
 
 namespace Zarem.Services;
@@ -18,7 +17,12 @@ public interface IStateService
     /// <summary>
     /// Gets whether or not the IDE state is ready for an action.
     /// </summary>
-    bool Ready { get; }
+    bool IsReady { get; }
+
+    /// <summary>
+    /// Gets whether or not the IDE state is in a running state.
+    /// </summary>
+    bool IsRunning { get; }
 
     /// <summary>
     /// Sets the IDE state with a message.

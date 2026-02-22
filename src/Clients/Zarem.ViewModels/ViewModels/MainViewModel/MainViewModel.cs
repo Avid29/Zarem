@@ -24,7 +24,14 @@ public partial class MainViewModel : ObservableRecipient
     /// <summary>
     /// Initializes a new instance of the <see cref="MainViewModel"/> class.
     /// </summary>
-    public MainViewModel(IMessenger messenger, IProjectService projectService, IBuildService buildService, IFileService fileService, IFileSystemService fileSystemService, ExplorerViewModel explorerViewModel)
+    public MainViewModel(
+        IMessenger messenger,
+        IBuildService buildService,
+        IFileService fileService,
+        IFileSystemService fileSystemService,
+        IProjectService projectService,
+        StatusViewModel statusViewModel,
+        ExplorerViewModel explorerViewModel)
     {
         _messenger = messenger;
         _projectService = projectService;
@@ -32,6 +39,7 @@ public partial class MainViewModel : ObservableRecipient
         _fileService = fileService;
         _fileSystemService = fileSystemService;
 
+        StatusViewModel = statusViewModel;
         ExplorerViewModel = explorerViewModel;
         Panels = [];
 
@@ -51,6 +59,11 @@ public partial class MainViewModel : ObservableRecipient
     /// Gets a list of all panels.
     /// </summary>
     public List<PanelViewModel> Panels { get; }
+
+    /// <summary>
+    /// Gets the <see cref="StatusViewModel"/>.
+    /// </summary>
+    public StatusViewModel StatusViewModel { get; }
 
     /// <summary>
     /// Gets the <see cref="ExplorerViewModel"/>.

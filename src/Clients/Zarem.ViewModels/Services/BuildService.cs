@@ -28,8 +28,6 @@ public class BuildService : IBuildService
     private readonly ISettingsService _settingsService;
     private readonly IStateService _stateService;
 
-    private CancellationTokenSource? _resetToken;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="BuildService"/> class.
     /// </summary>
@@ -99,7 +97,7 @@ public class BuildService : IBuildService
     private async Task<BuildResult?> BuildAsync(Func<Task<BuildResult?>> buildFunction, Logger logger)
     {
         // Run pre-build checks
-        if (!PreBuildChecks())
+        if (!_stateService.IsReady)
             return null;
 
         _stateService.SetState(IdeState.Building);
@@ -128,36 +126,7 @@ public class BuildService : IBuildService
         _stateService.SetState(status, message);
 
         _messenger.Send(new BuildFinishedMessage(result));
-
-        // Clear status after some time
-        _ = WaitAndClearStatusAsync();
-
         return result;
-    }
-
-    private bool PreBuildChecks()
-    {
-        // Ensure the build service is ready to build
-        if (!_stateService.Ready)
-        {
-            return false;
-        }
-
-        // Cancel any scheduled status resets
-        _resetToken?.Cancel();
-        return true;
-    }
-
-    private async Task WaitAndClearStatusAsync()
-    {
-        // Wait 5 seconds, then clear the status (unless cancelled)
-        _resetToken = new CancellationTokenSource();
-        var token = _resetToken.Token;
-        await Task.Delay(TimeSpan.FromSeconds(5));
-        if (token.IsCancellationRequested)
-            return;
-
-        _stateService.SetState(IdeState.Ready);
     }
 
     private string? ConstructMessage(BuildResult? result)

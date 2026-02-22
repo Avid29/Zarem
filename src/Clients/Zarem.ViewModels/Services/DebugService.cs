@@ -57,7 +57,7 @@ public class DebugService : IDebugService
     /// <inheritdoc/>
     public async Task RunAsync(bool debug = true)
     {
-        if (!_stateService.Ready)
+        if (!_stateService.IsReady)
             return;
 
         if (_projectService.Project is null)
@@ -81,7 +81,7 @@ public class DebugService : IDebugService
         _ = new MARSTrapHandler(mipsEmu.Computer);
         mipsEmu.StateChanged += MipsEmu_StateChanged;
 
-        _stateService.SetState(IdeState.Runnning);
+        _stateService.SetState(IdeState.Running);
         _messenger.Send(new DebugSessionStartedMessage());
         _session.Emulator.Start();
     }
@@ -107,6 +107,24 @@ public class DebugService : IDebugService
         var trapHandler = new MARSTrapHandler(mipsEmu.Computer);
 
         session.Emulator.Start();
+    }
+
+    /// <inheritdoc/>
+    public void StopDebugging()
+    {
+        // Unbind state changed event
+        if (_session?.Emulator is MIPSEmulator mipsEmu)
+        {
+            mipsEmu.StateChanged -= MipsEmu_StateChanged;
+        }
+
+        if (_session?.Emulator.State is not (EmulatorState.Stopped or EmulatorState.Stopping))
+            _session?.Emulator.ShutDown();
+
+        // Handle shutdown without console window hide step
+        _consoleService.HideConsoleWindow();
+        _dispatcher.RunOnUIThread(() => _stateService.SetState(IdeState.Ready));
+        _session = null;
     }
 
     private async Task<bool> PreRunChecks(SourceFile file)

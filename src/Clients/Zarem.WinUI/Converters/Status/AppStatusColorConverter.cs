@@ -84,7 +84,7 @@ public partial class AppStatusColorConverter : DependencyObject, IValueConverter
             IdeState.Building => Building,
             IdeState.BuildCompleted => Done,
             IdeState.BuildFailed => Failed,
-            IdeState.Runnning => Running,
+            IdeState.Running or IdeState.Debugging => Running,
 
             _ => NotReady,
         };

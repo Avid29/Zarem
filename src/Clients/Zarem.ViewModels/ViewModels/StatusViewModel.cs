@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using System.Diagnostics.Contracts;
 using Zarem.Messages.Build;
 using Zarem.Models.Enums;
 using Zarem.Services;
@@ -25,7 +26,6 @@ public class StatusViewModel : ObservableRecipient
         _stateService = stateService;
 
         StatusMessage = string.Empty;
-
         IsActive = true;
     }
 
@@ -34,15 +34,27 @@ public class StatusViewModel : ObservableRecipient
     {
         _messenger.Register<StatusViewModel, StateChangedMessage>(this, (r, m) =>
         {
-            OnPropertyChanged(nameof(State));
             r.StatusMessage = m.Message;
+            OnPropertyChanged(nameof(State));
+            OnPropertyChanged(nameof(IsReady));
+            OnPropertyChanged(nameof(IsRunning));
         });
     }
 
     /// <summary>
-    /// Gets the current build status.
+    /// Gets the current IDE state.
     /// </summary>
     public IdeState State => _stateService.State;
+
+    /// <summary>
+    /// Gets whether or not the current state is a ready state.
+    /// </summary>
+    public bool IsReady => _stateService.IsReady;
+
+    /// <summary>
+    /// Gets whether or not the current state is a running state.
+    /// </summary>
+    public bool IsRunning => _stateService.IsRunning;
 
     /// <summary>
     /// Gets the build status message.
