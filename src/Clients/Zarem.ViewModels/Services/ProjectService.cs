@@ -131,8 +131,6 @@ public class ProjectService : IProjectService
         if (Project?.Config?.RootFolderPath is null)
             return;
 
-        await OpenFolderAsync(Project.Config.RootFolderPath, false);
-
         // Notify that the project was opened.
         _messenger.Send(new ProjectOpenedMessage(Project));
 
