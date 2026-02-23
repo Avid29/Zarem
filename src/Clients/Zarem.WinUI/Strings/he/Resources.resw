@@ -126,14 +126,8 @@
   <data name="IdeState_Preparing" xml:space="preserve">
     <value>מתכונן</value>
   </data>
-  <data name="IdeState_Assembling" xml:space="preserve">
-    <value>מרכיב</value>
-  </data>
-  <data name="IdeState_Linking" xml:space="preserve">
-    <value>מקשר</value>
-  </data>
   <data name="IdeState_BuildCompleted" xml:space="preserve">
-    <value>הבנייה הושלם</value>
+    <value>הבנייה הושלמה</value>
   </data>
   <data name="IdeState_BuildFailed" xml:space="preserve">
     <value>הבנייה נכשלה</value>
@@ -221,5 +215,14 @@
   </data>
   <data name="DebugSessionEnded" xml:space="preserve">
     <value>ניפוי השגיאות הסתיים</value>
+  </data>
+  <data name="IdeState_Running" xml:space="preserve">
+    <value>בהרצה</value>
+  </data>
+  <data name="IdeState_Debugging" xml:space="preserve">
+    <value>בניפוי שגיאות</value>
+  </data>
+  <data name="IdeState_Building" xml:space="preserve">
+    <value>בבנייה...</value>
   </data>
 </root>

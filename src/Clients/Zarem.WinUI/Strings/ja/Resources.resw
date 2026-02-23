@@ -126,12 +126,6 @@
   <data name="IdeState_Preparing" xml:space="preserve">
     <value>Preparing</value>
   </data>
-  <data name="IdeState_Assembling" xml:space="preserve">
-    <value>Assembling</value>
-  </data>
-  <data name="IdeState_Linking" xml:space="preserve">
-    <value>Linking</value>
-  </data>
   <data name="IdeState_BuildCompleted" xml:space="preserve">
     <value>Build Complete</value>
   </data>
@@ -221,5 +215,14 @@
   </data>
   <data name="DebugSessionEnded" xml:space="preserve">
     <value>Debug Session Ended</value>
+  </data>
+  <data name="IdeState_Running" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="IdeState_Debugging" xml:space="preserve">
+    <value>Debugging</value>
+  </data>
+  <data name="IdeState_Building" xml:space="preserve">
+    <value>Building...</value>
   </data>
 </root>
