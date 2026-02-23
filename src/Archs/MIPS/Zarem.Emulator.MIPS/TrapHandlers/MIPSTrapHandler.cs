@@ -4,7 +4,6 @@ using Zarem.Emulator.Events;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.CPU;
-using Zarem.Emulator.TrapHandler;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.TrapHandlers;

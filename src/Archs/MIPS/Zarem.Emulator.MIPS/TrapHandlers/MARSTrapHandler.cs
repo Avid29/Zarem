@@ -4,9 +4,8 @@ using CommunityToolkit.Diagnostics;
 using System;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.TrapHandlers;
 
-namespace Zarem.Emulator.Interpreter;
+namespace Zarem.Emulator.TrapHandlers;
 
 /// <summary>
 /// An interpreter mimicking the MARS syscall pattern.

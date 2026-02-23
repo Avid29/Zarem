@@ -71,7 +71,7 @@ public class InstructionTable : InstructionTableBase<string>
             if (metadatas is null)
                 return false;
 
-            if (!metadatas.Any(x => x.ArgumentPattern.Length != argCount))
+            if (!metadatas.Any(x => x.ArgumentPattern.Length == argCount))
                 return false;
 
             metadata = metadatas.FirstOrDefault(x => x.ArgumentPattern.Length == argCount);

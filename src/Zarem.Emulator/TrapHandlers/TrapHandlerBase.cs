@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Emulator.TrapHandler;
+namespace Zarem.Emulator.TrapHandlers;
 
 /// <summary>
 /// A base class for a class that handles traps on behalf of the emulator.

@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Threading.Tasks;
 using Zarem.DebugSessions;
 using Zarem.Emulator;
-using Zarem.Emulator.Interpreter;
+using Zarem.Emulator.TrapHandlers;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Messages.DebugSession;
 using Zarem.Models.Enums;
