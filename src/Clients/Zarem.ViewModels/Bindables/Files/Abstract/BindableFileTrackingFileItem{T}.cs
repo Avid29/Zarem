@@ -86,6 +86,15 @@ public abstract partial class BindableFileTrackingFileItem<T> : BindableFileItem
         await FileService.FileSystemService.CreateFileByPopupAsync(TrackingFolder.Path);
     }
 
+    [RelayCommand]
+    private async Task CreateChildFolderAsync()
+    {
+        if (TrackingFolder is null)
+            return;
+
+        await FileService.FileSystemService.CreateFolderAsync(TrackingFolder.Path);
+    }
+
     internal void TrackChild(IBindableFileItem item)
     {
         var nameAsAsm = $"{System.IO.Path.GetFileNameWithoutExtension(item.Name)}.asm";

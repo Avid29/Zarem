@@ -165,4 +165,7 @@
   <data name="CreateNewFileTitle" xml:space="preserve">
     <value>Create New File</value>
   </data>
+  <data name="CreateNewFolderTitle" xml:space="preserve">
+    <value>Create New Folder</value>
+  </data>
 </root>

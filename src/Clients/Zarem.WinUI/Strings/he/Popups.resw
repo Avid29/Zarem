@@ -165,4 +165,7 @@
   <data name="CreateNewFileTitle" xml:space="preserve">
     <value>צור קובץ חדש</value>
   </data>
+  <data name="CreateNewFolderTitle" xml:space="preserve">
+    <value>צור תיקיה חדשה</value>
+  </data>
 </root>

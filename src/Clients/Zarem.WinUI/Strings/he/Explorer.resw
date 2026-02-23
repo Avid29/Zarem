@@ -129,9 +129,6 @@
   <data name="Flyout/CopyNameMFI.Text" xml:space="preserve">
     <value>העתק את השם</value>
   </data>
-  <data name="Flyout/CreateNewFile.Text" xml:space="preserve">
-    <value>צור קובץ חדש</value>
-  </data>
   <data name="Flyout/CutMFI.Text" xml:space="preserve">
     <value>גזור</value>
   </data>

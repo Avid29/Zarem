@@ -12,6 +12,7 @@ using Zarem.Services.Files.Models;
 using Zarem.Services.Popup;
 using Zarem.Services.Popup.Enums;
 using Zarem.Services.Popup.Models;
+using Zarem.WinUI.Services.Files.Models;
 using File = Zarem.WinUI.Services.Files.Models.File;
 using Folder = Zarem.WinUI.Services.Files.Models.Folder;
 
@@ -22,6 +23,8 @@ namespace Zarem.WinUI.Services.Files;
 /// </summary>
 public class FileSystemService : IFileSystemService
 {
+    private const string FolderNameRegex = "^[^\\s^\\x00-\\x1f\\\\?*:\"\";<>|\\/.][^\\x00-\\x1f\\\\?*:\"\";<>|\\/]*[^\\s^\\x00-\\x1f\\\\?*:\"\";<>|\\/.]+$";
+
     private readonly ILocalizationService _localizationService;
     private readonly IPopupService _popupService;
 
@@ -51,7 +54,7 @@ public class FileSystemService : IFileSystemService
         {
             PrimaryButtonText = _localizationService["/Popups/Create"],
             CloseButtonText = _localizationService["/Popups/Cancel"],
-            ValidationRegex = "^[\\w\\-\\._\\(\\)\\[\\] ]+$",
+            ValidationRegex = regex,
         };
 
         var fileName = await _popupService.ShowPopupAsync(popup);
@@ -61,7 +64,7 @@ public class FileSystemService : IFileSystemService
         return await CreateFileAsync(folder, fileName);
     }
 
-    private async Task<IFile?> CreateFileAsync(string? folderPath, string fileName)
+    private static async Task<IFile?> CreateFileAsync(string? folderPath, string fileName)
     {
         try
         {
@@ -79,15 +82,37 @@ public class FileSystemService : IFileSystemService
     /// <inheritdoc/>
     public async Task<IFolder?> CreateFolderAsync(string path)
     {
+        // Split the path
+        var folderPath = Path.GetDirectoryName(path);
+        var folderName = Path.GetFileName(path);
+
+        return await CreateFolderAsync(folderPath, folderName);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IFolder?> CreateFolderByPopupAsync(string parent)
+    {
+        var popup = new TextInputPopupDetails(_localizationService["/Popups/CreateNewFolderTitle"])
+        {
+            PrimaryButtonText = _localizationService["/Popups/Create"],
+            CloseButtonText = _localizationService["/Popups/Cancel"],
+            ValidationRegex = FolderNameRegex,
+        };
+
+        var folderName = await _popupService.ShowPopupAsync(popup);
+        if (folderName is null)
+            return null;
+
+        return await CreateFolderAsync(parent, folderName);
+    }
+
+    private static async Task<IFolder?> CreateFolderAsync(string? folderPath, string folderName)
+    {
         try
         {
-            // Split the path
-            var folderPath = Path.GetDirectoryName(path);
-            var fileName = Path.GetFileName(path);
-
             // Create the file in the parent folder.
             var parent = await StorageFolder.GetFolderFromPathAsync(folderPath);
-            var folder = await parent.CreateFolderAsync(fileName);
+            var folder = await parent.CreateFolderAsync(folderName);
             return new Folder(folder);
         }
         catch
