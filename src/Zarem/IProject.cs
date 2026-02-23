@@ -49,13 +49,13 @@ public interface IProject
     /// <summary>
     /// Cleans all files in the project.
     /// </summary>
-    void CleanProject() => CleanFiles(SourceFiles);
+    bool CleanProject();
 
     /// <summary>
     /// Cleans a list of source files.
     /// </summary>
     /// <param name="files">The files to clean.</param>
-    void CleanFiles(IEnumerable<SourceFile> files);
+    bool CleanFiles(IEnumerable<SourceFile> files);
 
     /// <summary>
     /// Saves the project configuration.

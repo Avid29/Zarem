@@ -59,21 +59,33 @@ public partial class Project
     }
 
     /// <inheritdoc/>
-    public void CleanProject()
+    public bool CleanProject()
     {
-        CleanFiles(SourceFiles);
+        var success = CleanFiles(SourceFiles);
 
         // Delete obj folder
         Guard.IsNotNull(Config.RootFolderPath);
         var objPath = Path.Combine(Config.RootFolderPath, "obj");
-        Directory.Delete(objPath, true);
+        try
+        {
+            Directory.Delete(objPath, true);
+            return success;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     /// <inheritdoc/>
-    public void CleanFiles(IEnumerable<SourceFile> files)
+    public bool CleanFiles(IEnumerable<SourceFile> files)
     {
+        bool success = true;
         foreach (var file in files)
-            CleanFile(file);
+        {
+            success = CleanFile(file) && success;
+        }
+        return success;
     }
 
     private async Task<AssemblerResult?> AssembleFileAsync(SourceFile file, bool rebuild = true, Logger? logger = null)

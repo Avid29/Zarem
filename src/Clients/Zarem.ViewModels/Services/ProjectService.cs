@@ -10,7 +10,7 @@ using Zarem.Messages;
 using Zarem.Messages.Files;
 using Zarem.Messages.Project;
 using Zarem.MIPS;
-using Zarem.Models;
+using Zarem.Models.Cache;
 using Zarem.Models.Enums;
 using Zarem.Models.Files;
 using Zarem.RASM;
@@ -94,32 +94,36 @@ public class ProjectService : IProjectService
     }
 
     /// <inheritdoc/>
-    public async Task OpenFolderAsync(string path, bool cacheState = true)
+    public async Task<bool> OpenFolderAsync(string path, bool cacheState = true)
     {
         // Load the folder
         var folder = await _fileSystemService.GetFolderAsync(path);
         if (folder is null)
-            return;
+            return false;
 
         // Open the folder
         OpenFolder(folder, cacheState);
+        return true;
     }
 
     /// <inheritdoc/>
-    public async Task OpenPathAsyc(string path, bool cacheState = true)
+    public async Task<bool> OpenPathAsync(string path, bool cacheState = true)
     {
+        if(!File.Exists(path))
+            return false;
+
         if (File.GetAttributes(path).HasFlag(FileAttributes.Directory))
         {
-            await OpenFolderAsync(path);
+            return await OpenFolderAsync(path);
         }
         else
         {
-            await OpenProjectAsync(path);
+            return await OpenProjectAsync(path);
         }
     }
 
     /// <inheritdoc/>
-    public async Task OpenProjectAsync(IProjectConfig config, bool cacheState = true)
+    public async Task<bool> OpenProjectAsync(IProjectConfig config, bool cacheState = true)
     {
         if (Project is not null)
         {
@@ -129,7 +133,7 @@ public class ProjectService : IProjectService
 
         Project = ProjectFactory.Create(config);
         if (Project?.Config?.RootFolderPath is null)
-            return;
+            return false;
 
         // Notify that the project was opened.
         _messenger.Send(new ProjectOpenedMessage(Project));
@@ -138,20 +142,22 @@ public class ProjectService : IProjectService
         {
             await CacheOpenProjectAsync();
         }
+
+        return true;
     }
 
     /// <inheritdoc/>
-    public async Task OpenProjectAsync(string path, bool cacheState = true)
+    public async Task<bool> OpenProjectAsync(string path, bool cacheState = true)
     {
         // Attempt to load the file
         var file = await _fileSystemService.GetFileAsync(path);
         if (file is null)
-            return;
+            return false;
 
         var project = ProjectFactory.Load(path);
 
         // Open the project
-        await OpenProjectAsync(project.Config, cacheState);
+        return await OpenProjectAsync(project.Config, cacheState);
     }
 
     /// <inheritdoc/>

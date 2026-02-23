@@ -37,22 +37,22 @@ public interface IProjectService
     /// <summary>
     /// Opens a folder or project by path.
     /// </summary>
-    public Task OpenPathAsyc(string path, bool cacheState = true);
+    public Task<bool> OpenPathAsync(string path, bool cacheState = true);
 
     /// <summary>
     /// Opens a folder as the new project folder by path.
     /// </summary>
-    public Task OpenFolderAsync(string path, bool cacheState = true);
+    public Task<bool> OpenFolderAsync(string path, bool cacheState = true);
 
     /// <summary>
     /// Opens a project by config.
     /// </summary>
-    public Task OpenProjectAsync(IProjectConfig config, bool cacheState = true);
+    public Task<bool> OpenProjectAsync(IProjectConfig config, bool cacheState = true);
 
     /// <summary>
     /// Opens a project by config path.
     /// </summary>
-    public Task OpenProjectAsync(string filePath, bool cacheState = true);
+    public Task<bool> OpenProjectAsync(string filePath, bool cacheState = true);
 
     /// <summary>
     /// Closes the currently open project/folder.

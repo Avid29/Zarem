@@ -79,7 +79,12 @@ public sealed partial class Explorer : UserControl
         if (btn.Tag is not string path)
             return;
 
-        await Service.Get<IProjectService>().OpenPathAsyc(path);
+        var success = await Service.Get<IProjectService>().OpenPathAsync(path);
+
+        if (!success)
+        {
+            await ViewModel.RemoveRecentProjectItem(path);
+        }
     }
 
     private static bool IsNull(object? obj) => obj is null;

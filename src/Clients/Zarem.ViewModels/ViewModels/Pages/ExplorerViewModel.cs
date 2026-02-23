@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Zarem.Bindables.Files;
 using Zarem.Messages;
 using Zarem.Messages.Files;
-using Zarem.Models;
 using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Files.Models;
@@ -17,6 +16,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Diagnostics;
 using Zarem.Bindables.Files.Interfaces;
 using Zarem.Messages.Project;
+using Zarem.Models.Cache;
 
 namespace Zarem.ViewModels.Pages;
 
@@ -107,6 +107,30 @@ public partial class ExplorerViewModel : PageViewModel
     /// Gets a list of the recently opened projects and folders.
     /// </summary>
     public ObservableCollection<string> RecentProjects { get; private set; }
+
+    /// <summary>
+    /// Removes an item from the recent projects list.
+    /// </summary>
+    [RelayCommand]
+    public async Task RemoveRecentProjectItem(string item)
+    {
+        // Remove from collection
+        RecentProjects.Remove(item);
+
+        // Get current cache
+        var recent = await _cacheService.RetrieveCacheAsync<RecentFileItemsCache>(RecentProjectsCacheKey);
+        if (recent is null)
+            return;
+
+        // Attempt to find the node
+        var node = recent.Paths.Find(item);
+        if (node is null)
+            return;
+
+        // Remove the node and update the cache
+        recent.Paths.Remove(node);
+        await _cacheService.CacheAsync(RecentProjectsCacheKey, recent);
+    }
 
     /// <inheritdoc/>
     protected override void OnActivated()
