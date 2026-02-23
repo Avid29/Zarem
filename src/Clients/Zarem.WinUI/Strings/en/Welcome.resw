@@ -126,10 +126,19 @@
   <data name="GettingReadyTB.Text" xml:space="preserve">
     <value>We're still getting ready...</value>
   </data>
+  <data name="GettingStartedDescriptionTB.Text" xml:space="preserve">
+    <value>Checkout the wiki to learn how to create a new Zarem project and write your first "Hello World" program in MIPS.</value>
+  </data>
+  <data name="GettingStartedTitleTB.Text" xml:space="preserve">
+    <value>Not sure where to start?</value>
+  </data>
   <data name="GitHubLinkHB.Content" xml:space="preserve">
     <value>GitHub Link</value>
   </data>
   <data name="WelcomeToZaremTB.Text" xml:space="preserve">
     <value>Welcome to Zarem</value>
+  </data>
+  <data name="WikiGettingStartedLinkHB.Content" xml:space="preserve">
+    <value>Zarem Wiki: Getting Started</value>
   </data>
 </root>

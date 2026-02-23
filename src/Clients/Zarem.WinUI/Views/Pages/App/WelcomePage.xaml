@@ -9,7 +9,7 @@
 
     <Grid VerticalAlignment="Top"
           HorizontalAlignment="Center"
-          Margin="36,64">
+          Margin="36,64,36,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
@@ -18,40 +18,75 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <Image Source="{StaticResource AppIconLarge}"
+        <Grid HorizontalAlignment="Center"
+              Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Image Source="{StaticResource AppIconLarge}"
                Height="150"
                Margin="16,8"
                VerticalAlignment="Center"/>
 
-        <StackPanel VerticalAlignment="Top"
+            <StackPanel VerticalAlignment="Top"
                     Margin="0,24"
                     Grid.Column="1"
                     Grid.ColumnSpan="2">
-            <TextBlock x:Uid="/Welcome/WelcomeToZaremTB"
+                <TextBlock x:Uid="/Welcome/WelcomeToZaremTB"
                        Text="Welcome to Zarem"
                        FontSize="56"
                        FontFamily="{StaticResource ShareTech}"
                        TextWrapping="WrapWholeWords"/>
-            <TextBlock x:Uid="/Welcome/AlphaTB"
+                <TextBlock x:Uid="/Welcome/AlphaTB"
                        Text="Alpha"
                        FontSize="48"
                        FontFamily="{StaticResource ShareTech}"
                        FontStyle="Italic"
                        TextWrapping="WrapWholeWords">
-                <TextBlock.Foreground>
-                    <LinearGradientBrush>
-                        <GradientStop Color="#5838FA" Offset="0"/>
-                        <GradientStop Color="#034AC9" Offset="1"/>
-                    </LinearGradientBrush>
-                </TextBlock.Foreground>
-            </TextBlock>
+                    <TextBlock.Foreground>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#5838FA" Offset="0"/>
+                            <GradientStop Color="#034AC9" Offset="1"/>
+                        </LinearGradientBrush>
+                    </TextBlock.Foreground>
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Margin="0,32"
+                VerticalAlignment="Top">
+            <TextBlock
+                x:Uid="/Welcome/GettingStartedTitleTB"
+                    FontSize="22"
+                    Text="Not sure where to start?"
+                    TextWrapping="WrapWholeWords" />
+            <TextBlock
+                x:Uid="/Welcome/GettingStartedDescriptionTB"
+                    FontSize="12"
+                    Opacity=".8"
+                    Text="Checkout the wiki to learn how to create a new Zarem project and write your first 'Hello World' program in MIPS."
+                    TextWrapping="WrapWholeWords" />
+            <HyperlinkButton
+                    x:Uid="/Welcome/WikiGettingStartedLinkHB"
+                    Margin="0"
+                    Padding="0,4"
+                    Content="Zarem Wiki: Getting Started"
+                    FontSize="12"
+                    NavigateUri="https://github.com/Avid29/Zarem/wiki/Gettings-Started" />
         </StackPanel>
 
         <StackPanel VerticalAlignment="Top"
-                    Margin="0,64"
+                    Margin="0,32"
                     Grid.Row="2"
+                    Grid.Column="1"
                     Grid.ColumnSpan="2">
             <TextBlock x:Uid="/Welcome/GettingReadyTB"
                        Text="We're still getting ready..."
@@ -74,7 +109,8 @@
         <Image Source="{ThemeResource TrafficConeIcon}"
                VerticalAlignment="Center"
                Height="64"
-               Grid.Column="2"
-               Grid.Row="1"/>
+               Grid.Column="0"
+               Grid.Row="2"
+               Margin="0,0,32,0"/>
     </Grid>
 </UserControl>
