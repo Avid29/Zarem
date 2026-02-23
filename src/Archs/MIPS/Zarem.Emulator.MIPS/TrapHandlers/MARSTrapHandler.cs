@@ -28,18 +28,18 @@ public class MARSTrapHandler : MIPSTrapHandler
         {
             // Print integer
             case 1:
-                Console.WriteLine($"{A0}");
+                Console.Write($"{A0}");
                 break;
 
             // Print float
-            case 2:
-                // TODO: Print float
-                break;
+            //case 2:
+            //    // TODO: Print float
+            //    break;
 
             // Print double
-            case 3:
-                // TODO: Print double
-                break;
+            //case 3:
+            //    // TODO: Print double
+            //    break;
 
             // Print string
             case 4:
@@ -72,6 +72,9 @@ public class MARSTrapHandler : MIPSTrapHandler
             case 10:
                 Computer.Emulator.ShutDown();
                 break;
+
+            default:
+                throw new NotImplementedException();
         }
 
         // Increment the PC
