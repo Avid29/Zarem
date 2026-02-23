@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine;
@@ -48,6 +49,23 @@ public class MARSTrapHandler : MIPSTrapHandler
             // Read integer
             case 5:
                 V0 = (uint)int.Parse(Console.ReadLine() ?? "");
+                break;
+
+            // Read string
+            case 8:
+                var str = Console.ReadLine();
+                Guard.IsNotNull(str);
+
+                // TODO: Cap A1?
+                int i;
+                var bytes = new byte[A1];
+                for (i = 0; i < str.Length && i < (bytes.Length - 1); i++)
+                    bytes[i] = Convert.ToByte(str[i]);
+                
+                bytes[i] = 0; // Null terminate
+
+                // Write to memory
+                Computer.Memory.Write(A0, bytes, false);
                 break;
 
             // Stop execution
