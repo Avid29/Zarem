@@ -234,7 +234,6 @@
                         <ImageIcon Source="{StaticResource BuildIcon}"/>
                     </MenuFlyoutItem.Icon>
                     <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="F5"/>
                         <KeyboardAccelerator Modifiers="Control" Key="B"/>
                     </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
@@ -252,7 +251,6 @@
                                 IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanAssemble, FallbackValue=False, Mode=OneWay}"
                                 Command="{x:Bind ViewModel.AssembleFileCommand, Mode=OneWay}">
                     <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Shift" Key="F5"/>
                         <KeyboardAccelerator Modifiers="Control,Shift" Key="B"/>
                     </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
@@ -279,6 +277,9 @@
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartDebuggingIcon}"/>
                     </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F5"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Uid="/TitleBar/StartWithoutDebuggingMFI" Text="Start Without Debugging"
                                 Command="{x:Bind ViewModel.StartWithoutDebuggingCommand, Mode=OneWay}"
@@ -286,6 +287,9 @@
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartWithoutDebuggingIcon}"/>
                     </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="F5"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Uid="/TitleBar/StopDebuggingMFI" Text="Stop Debugging"
                                 Command="{x:Bind ViewModel.StopDebuggingCommand, Mode=OneWay}"
