@@ -77,8 +77,8 @@ public readonly struct PseudoInstruction
             ],
             PseudoOp.LoadImmediate =>
             [
-                MIPSInstruction.Create(OperationCode.LoadUpperImmediate, GPRegister.AssemblerTemporary, (short)(Immediate >> 16)),
-                MIPSInstruction.Create(OperationCode.OrImmediate, RT, GPRegister.AssemblerTemporary, (short)Immediate)
+                MIPSInstruction.Create(OperationCode.LoadUpperImmediate, RT, (short)(Immediate >> 16)),
+                MIPSInstruction.Create(OperationCode.OrImmediate, RT, RT, (short)Immediate)
             ],
             PseudoOp.AbsoluteValue =>
             [
@@ -92,8 +92,8 @@ public readonly struct PseudoInstruction
             ],
             PseudoOp.LoadAddress =>
             [
-                MIPSInstruction.Create(OperationCode.LoadUpperImmediate, GPRegister.AssemblerTemporary, (short)(Address >> 16)),
-                MIPSInstruction.Create(OperationCode.OrImmediate, RT, GPRegister.AssemblerTemporary, (short)Address)
+                MIPSInstruction.Create(OperationCode.LoadUpperImmediate, RT, (short)(Immediate >> 16)),
+                MIPSInstruction.Create(OperationCode.OrImmediate, RT, RT, (short)Immediate)
             ],
             PseudoOp.SetGreaterThanOrEqual =>
             [

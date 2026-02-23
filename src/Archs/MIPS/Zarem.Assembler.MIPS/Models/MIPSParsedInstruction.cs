@@ -2,6 +2,7 @@
 
 using System;
 using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Zarem.Assembler.Parsers;
 using Zarem.Models.Instructions;
@@ -20,25 +21,23 @@ public class MIPSParsedInstruction : IParsedInstruction
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSParsedInstruction"/> class.
     /// </summary>
-    public MIPSParsedInstruction(MIPSInstruction instruction, RelocationEntry? reference = null)
+    public MIPSParsedInstruction(MIPSInstruction instruction, List<RelocationEntry>? references)
     {
         _real = instruction;
-        Reference = reference;
+        References = references;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSParsedInstruction"/> class.
     /// </summary>
-    public MIPSParsedInstruction(PseudoInstruction instruction, RelocationEntry? reference = null)
+    public MIPSParsedInstruction(PseudoInstruction instruction, List<RelocationEntry>? references)
     {
         _pseudo = instruction;
-        Reference = reference;
+        References = references;
     }
 
-    /// <summary>
-    /// Gets the symbol referenced, or null if none.
-    /// </summary>
-    public RelocationEntry? Reference { get; }
+    /// <inheritdoc/>
+    public List<RelocationEntry>? References { get; }
 
     /// <summary>
     /// Gets whether or not the parsed instruction was a pseudo instruction.

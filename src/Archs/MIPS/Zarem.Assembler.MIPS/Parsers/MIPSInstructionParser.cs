@@ -49,6 +49,7 @@ public struct MIPSInstructionParser
     private byte _shift;
     private int _immediate;
     private uint _address;
+    private List<RelocationEntry>? _references;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSInstructionParser"/> struct.
@@ -58,6 +59,7 @@ public struct MIPSInstructionParser
         _config = config;
         _currentAddress = address;
         _symbols = symbols;
+        _references = [];
 
         _instructionTable = table ?? new InstructionTable(config);
 
@@ -74,8 +76,6 @@ public struct MIPSInstructionParser
     /// <returns>The parser instruction.</returns>
     public MIPSParsedInstruction? Parse(AssemblyLine line)
     {
-        RelocationEntry? reference = null;
-
         // Attempt to load the instruction
         // If successful, this will set the _meta and _format
         if (!TryParseInstruction(line, out var name))
@@ -102,7 +102,7 @@ public struct MIPSInstructionParser
                 continue;
             }
 
-            TryParseArg(arg.Tokens, pattern[i], out reference);
+            TryParseArg(arg.Tokens, pattern[i]);
         }
 
         // It's a pseudo instruction.
@@ -122,7 +122,7 @@ public struct MIPSInstructionParser
                 Address = _address,
             };
 
-            return new MIPSParsedInstruction(pseudo, reference);
+            return new MIPSParsedInstruction(pseudo, _references);
         }
 
         // Build an instruction using the information from
@@ -144,7 +144,7 @@ public struct MIPSInstructionParser
 
         }
 
-        return new MIPSParsedInstruction(instruction, reference);
+        return new MIPSParsedInstruction(instruction, _references);
     }
 
     private bool TryParseInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
@@ -209,10 +209,8 @@ public struct MIPSInstructionParser
         return true;
     }
 
-    private bool TryParseArg(ReadOnlySpan<Token> arg, Argument type, out RelocationEntry? reference)
+    private bool TryParseArg(ReadOnlySpan<Token> arg, Argument type)
     {
-        reference = null;
-
         return type switch
         {
             // Register arguments
@@ -222,10 +220,10 @@ public struct MIPSInstructionParser
 
             // Expression arguments
             Argument.Shift or Argument.Immediate or Argument.FullImmediate
-            or Argument.Offset or Argument.LargeOffset or Argument.Address => TryParseExpressionArg(arg, type, out reference),
+            or Argument.Offset or Argument.LargeOffset or Argument.Address => TryParseExpressionArg(arg, type),
 
             // Address offset arguments
-            Argument.AddressBase => TryParseAddressOffsetArg(arg, out reference),
+            Argument.AddressBase => TryParseAddressOffsetArg(arg),
 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
@@ -279,10 +277,8 @@ public struct MIPSInstructionParser
     /// <summary>
     /// Parses an argument as an expression and assigns it to the target component
     /// </summary>
-    private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, Argument target, out RelocationEntry? relocation)
+    private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, Argument target)
     {
-        relocation = null;
-
         // Attempt to parse expression
         if (!ExpressionParser.TryParse(arg, out var expResult, _symbols, _logger?.Parent))
             return false;
@@ -306,13 +302,25 @@ public struct MIPSInstructionParser
                 Argument.Immediate => MipsReferenceType.Low16,
                 Argument.Offset => MipsReferenceType.PCRelative16,
                 Argument.LargeOffset => MipsReferenceType.PCRelative26,
-                Argument.FullImmediate => MipsReferenceType.Low16, // TODO: Handle high addresses
+                // FullImmediate triggers a HI/LO pair
+                Argument.FullImmediate => MipsReferenceType.High16,
                 _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
             };
 
-            // Create the relocation
-            var reference = expResult.Symbol;
-            relocation = new RelocationEntry(reference.Name, _currentAddress, (uint)type, 0 + expResult.Addend);
+            _references ??= [];
+            var symbol = expResult.Symbol;
+            var addend = (uint)expResult.Addend;
+
+            if (target is Argument.FullImmediate)
+            {
+                _references.Add(new RelocationEntry(symbol.Name, _currentAddress, (uint)MipsReferenceType.High16, addend));
+                _references.Add(new RelocationEntry(symbol.Name, _currentAddress + 4, (uint)MipsReferenceType.Low16, addend));
+            }
+            else
+            {
+                // Standard single relocation
+                _references.Add(new RelocationEntry(symbol.Name, _currentAddress, (uint)type, addend));
+            }
         }
 
         // NOTE: Casting might truncate the value to fit the bit size.
@@ -356,10 +364,8 @@ public struct MIPSInstructionParser
     /// <summary>
     /// Parses an argument as an address offset, assigning its components to immediate and $rs.
     /// </summary>
-    private bool TryParseAddressOffsetArg(ReadOnlySpan<Token> arg, out RelocationEntry? relSymbol)
+    private bool TryParseAddressOffsetArg(ReadOnlySpan<Token> arg)
     {
-        relSymbol = null;
-
         // NOTE: Be careful about forwards to other parse functions with regards to 
         // error logging. Address offset argument errors might be inappropriately logged.
 
@@ -368,7 +374,7 @@ public struct MIPSInstructionParser
             return false;
 
         // Try parse offset component into immediate, return false if failed
-        if (!TryParseExpressionArg(offsetStr, Argument.Immediate, out relSymbol))
+        if (!TryParseExpressionArg(offsetStr, Argument.Immediate))
             return false;
 
         // Parse register component into $rs, return false if failed

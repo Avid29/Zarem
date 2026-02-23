@@ -117,10 +117,11 @@ public partial class Zarembler
             return;
         }
 
-        // Track relocatable reference
-        if (instruction.Reference is not null)
+        // Track relocatable references
+        if (instruction.References is not null)
         {
-            _activeSection.AddRelocation(instruction.Reference);
+            foreach (var reference in instruction.References)
+                _activeSection.AddRelocation(reference);
         }
 
         // Append instruction to active segment

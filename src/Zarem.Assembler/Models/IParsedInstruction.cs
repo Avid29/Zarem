@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System.Collections.Generic;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Models;
@@ -15,7 +16,7 @@ public interface IParsedInstruction
     byte[] RealizeBytes();
 
     /// <summary>
-    /// Gets the reference info, if the instruction made a reference.
+    /// Gets the reference info, if the instruction made any references.
     /// </summary>
-    RelocationEntry? Reference { get; }
+    List<RelocationEntry>? References { get; }
 }
