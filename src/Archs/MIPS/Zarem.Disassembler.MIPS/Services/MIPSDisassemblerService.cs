@@ -1,4 +1,4 @@
-﻿// Adam Dernis 2025
+﻿// Avishai Dernis 2025
 
 #if DEBUG
 

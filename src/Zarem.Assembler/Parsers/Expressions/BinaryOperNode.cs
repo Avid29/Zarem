@@ -1,4 +1,4 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Diagnostics;
 using Zarem.Assembler.Parsers.Expressions.Abstract;

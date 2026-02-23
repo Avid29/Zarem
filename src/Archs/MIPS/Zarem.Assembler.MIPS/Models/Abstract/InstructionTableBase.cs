@@ -1,4 +1,4 @@
-﻿// Adam Dernis 2025
+﻿// Avishai Dernis 2025
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;

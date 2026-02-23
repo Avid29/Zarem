@@ -1,7 +1,6 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Zarem.Bindables.Files.Abstract;
 using Zarem.Bindables.Files.Interfaces;

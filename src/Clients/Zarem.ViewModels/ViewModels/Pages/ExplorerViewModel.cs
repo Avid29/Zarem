@@ -1,22 +1,20 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Zarem.Bindables.Files;
-using Zarem.Messages;
-using Zarem.Messages.Files;
-using Zarem.Services;
-using Zarem.Services.Files;
-using Zarem.Services.Files.Models;
-using Zarem.Services.Settings;
-using Zarem.ViewModels.Pages.Abstract;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using CommunityToolkit.Diagnostics;
+using Zarem.Bindables.Files;
 using Zarem.Bindables.Files.Interfaces;
+using Zarem.Messages;
+using Zarem.Messages.Files;
 using Zarem.Messages.Project;
 using Zarem.Models.Cache;
+using Zarem.Services;
+using Zarem.Services.Files;
+using Zarem.ViewModels.Pages.Abstract;
 
 namespace Zarem.ViewModels.Pages;
 

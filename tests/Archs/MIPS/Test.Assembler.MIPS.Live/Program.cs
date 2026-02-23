@@ -1,4 +1,4 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 using System.Text;
 using Test.Assembler.MIPS.Live.Enums;

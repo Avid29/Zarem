@@ -1,4 +1,4 @@
-// Adam Dernis 2024
+// Avishai Dernis 2024
 
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;

@@ -1,4 +1,4 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;

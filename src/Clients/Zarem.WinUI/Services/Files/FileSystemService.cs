@@ -1,4 +1,4 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 using System;
 using System.IO;
@@ -12,7 +12,6 @@ using Zarem.Services.Files.Models;
 using Zarem.Services.Popup;
 using Zarem.Services.Popup.Enums;
 using Zarem.Services.Popup.Models;
-using Zarem.WinUI.Services.Files.Models;
 using File = Zarem.WinUI.Services.Files.Models.File;
 using Folder = Zarem.WinUI.Services.Files.Models.Folder;
 

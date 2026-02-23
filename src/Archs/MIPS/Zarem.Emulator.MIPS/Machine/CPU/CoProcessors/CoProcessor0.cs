@@ -1,4 +1,4 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 using Zarem.Emulator.Machine.CPU.Registers;
 using Zarem.Emulator.Machine.Enums;

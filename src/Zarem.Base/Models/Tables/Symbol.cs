@@ -1,6 +1,5 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
-using System.Diagnostics.CodeAnalysis;
 using Zarem.Models.Tables.Enums;
 
 namespace Zarem.Models.Tables;

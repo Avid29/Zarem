@@ -1,10 +1,9 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
-using Zarem.Services.Files.Models;
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.WinUI.Services.Files.Models;
 

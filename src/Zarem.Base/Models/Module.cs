@@ -1,12 +1,10 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Diagnostics;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Zarem.Localization;
 using Zarem.Models.Abstract;
-using Zarem.Models.Interface;
 using Zarem.Models.Tables;
 
 namespace Zarem.Models;

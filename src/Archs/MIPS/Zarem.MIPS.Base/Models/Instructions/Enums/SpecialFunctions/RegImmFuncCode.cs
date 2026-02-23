@@ -1,7 +1,5 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 

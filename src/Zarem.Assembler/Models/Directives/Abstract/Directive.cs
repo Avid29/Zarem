@@ -1,6 +1,4 @@
-﻿// Adam Dernis 2024
-
-using Zarem.Assembler.Tokenization.Models;
+﻿// Avishai Dernis 2024
 
 namespace Zarem.Assembler.Models.Directives.Abstract;
 

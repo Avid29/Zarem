@@ -1,8 +1,7 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 namespace Zarem.Assembler.Tokenization.Models;
 
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.HighPerformance;
 using System;
 using System.Collections.Generic;

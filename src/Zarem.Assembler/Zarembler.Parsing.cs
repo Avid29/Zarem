@@ -1,7 +1,6 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Diagnostics;
-using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Models.Directives;

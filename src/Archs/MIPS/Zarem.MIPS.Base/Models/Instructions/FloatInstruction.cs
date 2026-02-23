@@ -1,4 +1,4 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 using System.Runtime.CompilerServices;
 using Zarem.Models.Instructions.Enums.Operations;

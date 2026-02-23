@@ -1,4 +1,4 @@
-﻿// Adam Dernis 2024
+﻿// Avishai Dernis 2024
 
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,6 @@ using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
-using Zarem.Localization;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
