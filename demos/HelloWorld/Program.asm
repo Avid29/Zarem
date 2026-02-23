@@ -6,7 +6,7 @@
 entry:
     
     # Print "Hello World"
-	xori 	$a0,	$zero,  hello_world
+	la      $a0,    hello_world
 	xori	$v0,	$zero,	4
 	syscall
 
@@ -16,4 +16,4 @@ entry:
 
 .data
 hello_world:
-	.asciiz "Hello World!"
+	.asciiz "Hello World!\n"

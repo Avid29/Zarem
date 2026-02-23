@@ -20,7 +20,7 @@ loop:
     nop
     
     # Print fizz
-    xori    $a0,    $zero,  fizz_str
+    la      $a0,    fizz_str
     xori    $v0,    $zero,  4
     syscall
     
@@ -36,7 +36,7 @@ skip_fizz:
     nop
     
     # Print buzz
-    xori    $a0,    $zero,  buzz_str
+    la      $a0,    buzz_str
     xori    $v0,    $zero,  4
     syscall
     
@@ -54,13 +54,10 @@ skip_buzz:
     xori    $v0,    $zero,  1
     syscall
     
-    # Jump past new-line (implicit in print-int)
-    j       loop_check
-    
 newline:
 
     # Explicitly print new line if either fizz or buzz
-    xori    $a0,    $zero,  newline_str
+    la      $a0,    newline_str
     xori    $v0,    $zero,  4
     syscall
     

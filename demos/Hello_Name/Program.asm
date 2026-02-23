@@ -2,23 +2,23 @@
     entry:
     
     # Prompt the user for their name
-    xori    $a0,    $zero,  name_prompt
+    la      $a0,    name_prompt
     xori    $v0,    $zero,  4
     syscall
     
     # Read user input (36 char limit)
-    xori    $a0,    $zero, name_str
+    la      $a0,    name_str
     xori    $a1,    $zero, 36
     xori    $v0,    $zero, 8
     syscall
     
     # Say "Hello <name>"
-    xori    $a0,    $zero, hello_str
+    la      $a0,    hello_str
     xori    $v0,    $zero, 4
     syscall
     
     # Print newline
-    xori    $a0,    $zero, newline_str
+    la      $a0,    newline_str
     xori    $v0,    $zero, 4
     syscall
     
