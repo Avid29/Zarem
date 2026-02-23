@@ -23,8 +23,8 @@ public partial class AssemblyEditor
 
     private async void Editor_StyleNeeded(Editor sender, StyleNeededEventArgs args)
     {
-        UpdateSyntaxHighlighting();
         await RunAssemblerAsync();
+        UpdateSyntaxHighlighting();
     }
 
     private void CodeEditor_SyntaxHighlightingApplied(object? sender, ElementTheme e)
