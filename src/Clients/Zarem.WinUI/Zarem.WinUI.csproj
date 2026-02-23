@@ -15,6 +15,13 @@
 		<Configurations>Debug;Release;Alpha</Configurations>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Content Remove="Assets\AppIcons\Alpha\LargeTile.scale-100.png" />
+	  <Content Remove="Assets\AppIcons\Alpha\LargeTile.scale-125.png" />
+	  <Content Remove="Assets\AppIcons\Alpha\LargeTile.scale-150.png" />
+	  <Content Remove="Assets\AppIcons\Alpha\LargeTile.scale-200.png" />
+	  <Content Remove="Assets\AppIcons\Alpha\LargeTile.scale-400.png" />
+	</ItemGroup>
+	<ItemGroup>
 	  <None Remove="Controls\RunningIndicator.xaml" />
 	  <None Remove="Services\Popup\TextInputPopup.xaml" />
 	</ItemGroup>
