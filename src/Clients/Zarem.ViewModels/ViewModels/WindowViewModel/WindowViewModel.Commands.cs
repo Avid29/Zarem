@@ -17,9 +17,6 @@ public partial class WindowViewModel
     #region File
 
     [RelayCommand]
-    private void CreateNewFile() => _messenger.Send(new FileCreateNewRequestMessage());
-
-    [RelayCommand]
     private void OpenCreateProject() => MainViewModel.GoToPageByType<CreateProjectViewModel>();
 
     [RelayCommand]

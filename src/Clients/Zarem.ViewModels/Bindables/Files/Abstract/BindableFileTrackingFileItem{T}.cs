@@ -77,17 +77,28 @@ public abstract partial class BindableFileTrackingFileItem<T> : BindableFileItem
         }
     }
 
+    /// <summary>
+    /// Creates a new child file beneath the bindable file item.
+    /// </summary>
     [RelayCommand]
-    private async Task CreateChildFileAsync()
+    public async Task CreateChildFileAsync()
     {
         if (TrackingFolder is null)
             return;
 
-        await FileService.FileSystemService.CreateFileByPopupAsync(TrackingFolder.Path);
+        var file = await FileService.FileSystemService.CreateFileByPopupAsync(TrackingFolder.Path);
+        if (file is null)
+            return;
+
+        var bindableFile = FileService.TrackFile(file);
+        bindableFile?.Open();
     }
 
+    /// <summary>
+    /// Creates a new child folder beneath the bindable file item.
+    /// </summary>
     [RelayCommand]
-    private async Task CreateChildFolderAsync()
+    public async Task CreateChildFolderAsync()
     {
         if (TrackingFolder is null)
             return;

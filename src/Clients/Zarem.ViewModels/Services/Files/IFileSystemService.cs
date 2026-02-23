@@ -24,6 +24,7 @@ public interface IFileSystemService
     /// Attempts to create a folder.
     /// </summary>
     Task<IFolder?> CreateFolderAsync(string path);
+
     /// <summary>
     /// Attempts to get a file.
     /// </summary>

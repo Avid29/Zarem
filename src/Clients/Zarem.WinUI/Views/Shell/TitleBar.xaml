@@ -35,8 +35,8 @@
                     </MenuFlyoutItem>
                     <MenuFlyoutSeparator/>
                     <MenuFlyoutItem x:Uid="/TitleBar/NewFileMFI" Text="New File"
-                                    IsEnabled="False"
-                                    Command="{x:Bind ViewModel.CreateNewFileCommand, Mode=OneWay}">
+                                    IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.RootNode), FallbackValue=False, Mode=OneWay}"
+                                    Command="{x:Bind ViewModel.MainViewModel.ExplorerViewModel.CreateNewFileCommand, Mode=OneWay}">
                         <MenuFlyoutItem.Icon>
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE130;" />
                         </MenuFlyoutItem.Icon>

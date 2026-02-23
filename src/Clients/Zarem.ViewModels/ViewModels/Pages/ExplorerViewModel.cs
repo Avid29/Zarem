@@ -168,4 +168,30 @@ public partial class ExplorerViewModel : PageViewModel
     {
         Service.Get<MainViewModel>().GoToPageByType<CreateProjectViewModel>();
     }
+
+    [RelayCommand]
+    private async Task CreateNewFileAsync()
+    {
+        if (Project is not null)
+        {
+            await Project.CreateChildFileAsync();
+        }
+        else if (RootFolder is not null)
+        {
+            await RootFolder.CreateChildFileAsync();
+        }
+    }
+
+    [RelayCommand]
+    private async Task CreateNewFolderAsync()
+    {
+        if (Project is not null)
+        {
+            await Project.CreateChildFolderAsync();
+        }
+        else if (RootFolder is not null)
+        {
+            await RootFolder.CreateChildFolderAsync();
+        }
+    }
 }
