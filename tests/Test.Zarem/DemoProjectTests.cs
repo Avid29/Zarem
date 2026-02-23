@@ -8,8 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Zarem.Elf;
 using Zarem.Emulator;
-using Zarem.Emulator.Interpreter;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.TrapHandlers;
 using Zarem.MIPS;
 using Zarem.Registry;
 using Zarem.Serialization;
@@ -30,7 +30,7 @@ public sealed class DemoProjectTests
     }
 
     [TestMethod]
-    public async Task HelloWorld() => await RunAndCompare(Path.Combine(DemoFilesPathBase, "HelloWorld", "HelloWorld.zrmp"), "Hello World!");
+    public async Task HelloWorld() => await RunAndCompare(Path.Combine(DemoFilesPathBase, "HelloWorld", "HelloWorld.zrmp"), "Hello World!\n");
 
     [TestMethod]
     public async Task FizzBuzz() => await RunAndCompare(Path.Combine(DemoFilesPathBase, "FizzBuzz", "FizzBuzz.zrmp"), FizzBuzzText);
@@ -58,8 +58,6 @@ public sealed class DemoProjectTests
                 else if (!fizz)
                 {
                     sb.Append(i);
-                    sb.AppendLine();
-                    continue;
                 }
 
                 sb.Append('\n');

@@ -21,7 +21,7 @@ public class MIPSParsedInstruction : IParsedInstruction
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSParsedInstruction"/> class.
     /// </summary>
-    public MIPSParsedInstruction(MIPSInstruction instruction, List<RelocationEntry>? references)
+    public MIPSParsedInstruction(MIPSInstruction instruction, List<RelocationEntry>? references = null)
     {
         _real = instruction;
         References = references;
@@ -30,7 +30,7 @@ public class MIPSParsedInstruction : IParsedInstruction
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSParsedInstruction"/> class.
     /// </summary>
-    public MIPSParsedInstruction(PseudoInstruction instruction, List<RelocationEntry>? references)
+    public MIPSParsedInstruction(PseudoInstruction instruction, List<RelocationEntry>? references = null)
     {
         _pseudo = instruction;
         References = references;
