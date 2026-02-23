@@ -2,7 +2,6 @@
 
   <PropertyGroup>
 	  <RootNamespace>Zarem.Assembler</RootNamespace>
-	  <Configurations>Debug;Release;Alpha</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

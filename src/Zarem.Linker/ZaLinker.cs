@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Diagnostics;
+using System.Collections.Generic;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;

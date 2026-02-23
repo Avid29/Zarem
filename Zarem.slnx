@@ -3,37 +3,45 @@
     <BuildType Name="Alpha" />
     <BuildType Name="Debug" />
     <BuildType Name="Release" />
-    <Platform Name="ARM" />
     <Platform Name="arm64" />
     <Platform Name="x64" />
-    <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Clients/">
-    <Project Path="src/Clients/Zarem.Console/Zarem.Console.csproj" />
+    <Project Path="src/Clients/Zarem.Console/Zarem.Console.csproj">
+      <BuildType Solution="Alpha|*" Project="Release" />
+    </Project>
     <Project Path="src/Clients/Zarem.ViewModels/Zarem.ViewModels.csproj" />
     <Project Path="src/Clients/Zarem.WinUI/Zarem.WinUI.csproj">
-      <Platform Solution="*|ARM" Project="x64" />
       <Platform Solution="*|arm64" Project="ARM64" />
       <Platform Solution="*|x64" Project="x64" />
-      <Platform Solution="*|x86" Project="x86" />
       <Deploy />
     </Project>
   </Folder>
   <Folder Name="/Plugins/" />
   <Folder Name="/Plugins/Archs/" />
   <Folder Name="/Plugins/Archs/MIPS/">
-    <Project Path="src/Archs/MIPS/Zarem.Assembler.MIPS/Zarem.Assembler.MIPS.csproj" />
-    <Project Path="src/Archs/MIPS/Zarem.Disassembler.MIPS/Zarem.Disassembler.MIPS.csproj" />
-    <Project Path="src/Archs/MIPS/Zarem.Emulator.MIPS/Zarem.Emulator.MIPS.csproj" />
-    <Project Path="src/Archs/MIPS/Zarem.Linker.MIPS/Zarem.Linker.MIPS.csproj" Id="024c439e-9ffc-44ee-aa70-737b7f9c2a23">
-      <BuildType Solution="Alpha|*" Project="Debug" />
+    <Project Path="src/Archs/MIPS/Zarem.Assembler.MIPS/Zarem.Assembler.MIPS.csproj">
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
-    <Project Path="src/Archs/MIPS/Zarem.MIPS.Base/Zarem.MIPS.Base.csproj" />
-    <Project Path="src/Archs/MIPS/Zarem.MIPS/Zarem.MIPS.csproj" />
+    <Project Path="src/Archs/MIPS/Zarem.Disassembler.MIPS/Zarem.Disassembler.MIPS.csproj">
+      <BuildType Solution="Alpha|*" Project="Release" />
+    </Project>
+    <Project Path="src/Archs/MIPS/Zarem.Emulator.MIPS/Zarem.Emulator.MIPS.csproj">
+      <BuildType Solution="Alpha|*" Project="Release" />
+    </Project>
+    <Project Path="src/Archs/MIPS/Zarem.Linker.MIPS/Zarem.Linker.MIPS.csproj" Id="024c439e-9ffc-44ee-aa70-737b7f9c2a23">
+      <BuildType Solution="Alpha|*" Project="Release" />
+    </Project>
+    <Project Path="src/Archs/MIPS/Zarem.MIPS.Base/Zarem.MIPS.Base.csproj">
+      <BuildType Solution="Alpha|*" Project="Release" />
+    </Project>
+    <Project Path="src/Archs/MIPS/Zarem.MIPS/Zarem.MIPS.csproj">
+      <BuildType Solution="Alpha|*" Project="Release" />
+    </Project>
   </Folder>
   <Folder Name="/Plugins/ModuleFormats/">
     <Project Path="src/ModuleFormats/Zarem.ELF/Zarem.ELF.csproj">
-      <BuildType Solution="Alpha|*" Project="Debug" />
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="src/ModuleFormats/Zarem.RASM/Zarem.RASM.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
@@ -53,75 +61,62 @@
     <File Path="submodules/Directory.Build.props" />
     <File Path="submodules/WinUIEdit/UseWinUI3.txt" />
     <Project Path="submodules/WinUIEdit/WinUIEditor/WinUIEditor.vcxproj" Id="290647e3-d8cb-46b5-87ce-409f721e441a">
-      <BuildType Solution="Alpha|ARM" Project="Debug" />
-      <BuildType Solution="Alpha|arm64" Project="Debug" />
-      <BuildType Solution="Alpha|x64" Project="Release" />
-      <BuildType Solution="Alpha|x86" Project="Debug" />
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Plugins/">
     <Project Path="tests/Test.Zarem/Test.Zarem.csproj">
-      <BuildType Solution="Alpha|*" Project="Debug" />
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Tests/Plugins/Archs/" />
   <Folder Name="/Tests/Plugins/Archs/MIPS/">
     <Project Path="tests/Archs/MIPS/Test.Assembler.MIPS.Live/Test.Assembler.MIPS.Live.csproj">
-      <BuildType Solution="Alpha|ARM" Project="Debug" />
-      <BuildType Solution="Alpha|arm64" Project="Debug" />
-      <BuildType Solution="Alpha|x64" Project="Release" />
-      <BuildType Solution="Alpha|x86" Project="Debug" />
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/Archs/MIPS/Test.Assembler.MIPS/Test.Assembler.MIPS.csproj">
-      <BuildType Solution="Alpha|ARM" Project="Debug" />
-      <BuildType Solution="Alpha|arm64" Project="Debug" />
-      <BuildType Solution="Alpha|x64" Project="Release" />
-      <BuildType Solution="Alpha|x86" Project="Debug" />
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/Archs/MIPS/Test.Emulator.MIPS/Test.Emulator.MIPS.csproj">
-      <BuildType Solution="Alpha|ARM" Project="Debug" />
-      <BuildType Solution="Alpha|arm64" Project="Debug" />
-      <BuildType Solution="Alpha|x64" Project="Release" />
-      <BuildType Solution="Alpha|x86" Project="Debug" />
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/Archs/MIPS/Test.Linker.MIPS/Test.Linker.MIPS.csproj" Id="b0b53632-43f3-4673-97e3-58d4b3dcb3e1">
-      <BuildType Solution="Alpha|*" Project="Debug" />
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/Archs/MIPS/Test.MIPS.Asms/Test.MIPS.Asms.vcxitems" Id="f152d20e-aa8a-4d50-9852-0eb0b4a962c4" />
     <Project Path="tests/Archs/MIPS/Test.MIPS/Test.MIPS.csproj">
-      <BuildType Solution="Alpha|ARM" Project="Debug" />
-      <BuildType Solution="Alpha|arm64" Project="Debug" />
-      <BuildType Solution="Alpha|x64" Project="Release" />
-      <BuildType Solution="Alpha|x86" Project="Debug" />
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Tests/Plugins/ModuleFormats/">
     <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj">
-      <BuildType Solution="Alpha|ARM" Project="Debug" />
-      <BuildType Solution="Alpha|arm64" Project="Debug" />
-      <BuildType Solution="Alpha|x64" Project="Release" />
-      <BuildType Solution="Alpha|x86" Project="Debug" />
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/ObjFormats/Test.Formats/Test.ObjFormats.csproj">
-      <BuildType Solution="Alpha|ARM" Project="Debug" />
-      <BuildType Solution="Alpha|arm64" Project="Debug" />
-      <BuildType Solution="Alpha|x64" Project="Release" />
-      <BuildType Solution="Alpha|x86" Project="Debug" />
+      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/ObjFormats/Test.RASM/Test.RASM.csproj">
-      <BuildType Solution="Alpha|ARM" Project="Debug" />
       <BuildType Solution="Alpha|arm64" Project="Debug" />
       <BuildType Solution="Alpha|x64" Project="Release" />
-      <BuildType Solution="Alpha|x86" Project="Debug" />
     </Project>
   </Folder>
-  <Project Path="src/Zarem.Assembler/Zarem.Assembler.csproj" Id="a4a13c0e-dc3b-4c0d-aa24-5e7e3c2f5500" />
-  <Project Path="src/Zarem.Base/Zarem.Base.csproj" />
-  <Project Path="src/Zarem.Disassembler/Zarem.Disassembler.csproj" Id="cfe7fc00-2550-4bc7-aae5-9484270fa566" />
-  <Project Path="src/Zarem.Emulator/Zarem.Emulator.csproj" Id="89e90d7f-f7ba-4b83-be1d-16e3c7e8efb0" />
-  <Project Path="src/Zarem.Linker/Zarem.Linker.csproj">
-    <BuildType Solution="Alpha|*" Project="Debug" />
+  <Project Path="src/Zarem.Assembler/Zarem.Assembler.csproj" Id="a4a13c0e-dc3b-4c0d-aa24-5e7e3c2f5500">
+    <BuildType Solution="Alpha|*" Project="Release" />
   </Project>
-  <Project Path="src/Zarem/Zarem.csproj" />
+  <Project Path="src/Zarem.Base/Zarem.Base.csproj">
+    <BuildType Solution="Alpha|*" Project="Release" />
+  </Project>
+  <Project Path="src/Zarem.Disassembler/Zarem.Disassembler.csproj" Id="cfe7fc00-2550-4bc7-aae5-9484270fa566">
+    <BuildType Solution="Alpha|*" Project="Release" />
+  </Project>
+  <Project Path="src/Zarem.Emulator/Zarem.Emulator.csproj" Id="89e90d7f-f7ba-4b83-be1d-16e3c7e8efb0">
+    <BuildType Solution="Alpha|*" Project="Release" />
+  </Project>
+  <Project Path="src/Zarem.Linker/Zarem.Linker.csproj">
+    <BuildType Solution="Alpha|*" Project="Release" />
+  </Project>
+  <Project Path="src/Zarem/Zarem.csproj">
+    <BuildType Solution="Alpha|*" Project="Release" />
+  </Project>
 </Solution>

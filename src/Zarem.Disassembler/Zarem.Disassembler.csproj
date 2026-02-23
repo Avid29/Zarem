@@ -2,7 +2,6 @@
 
   <PropertyGroup>
 	  <RootNamespace>Zarem.Disassembler</RootNamespace>
-	  <Configurations>Debug;Release;Alpha</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

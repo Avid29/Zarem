@@ -2,7 +2,6 @@
 
   <PropertyGroup>
 	  <RootNamespace>Zarem.Emulator</RootNamespace>
-	  <Configurations>Debug;Release;Alpha</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
