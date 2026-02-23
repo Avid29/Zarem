@@ -129,6 +129,9 @@
   <data name="Flyout/CopyNameMFI.Text" xml:space="preserve">
     <value>Copy Name</value>
   </data>
+  <data name="Flyout/CreateNewFile.Text" xml:space="preserve">
+    <value>Create New File</value>
+  </data>
   <data name="Flyout/CutMFI.Text" xml:space="preserve">
     <value>Cut</value>
   </data>

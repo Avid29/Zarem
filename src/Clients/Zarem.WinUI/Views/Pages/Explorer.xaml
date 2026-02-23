@@ -130,19 +130,9 @@
                           Loaded="TreeViewItem_Loaded">
                 <TreeViewItem.ContextFlyout>
                     <MenuFlyout>
-                        <!--  Open  -->
-                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/OpenMFI" Icon="OpenFile" Text="Open"
-                                        Command="{x:Bind OpenCommand, Mode=OneWay}" />
-                        <MenuFlyoutSubItem x:Uid="/Explorer/Flyout/OpenWithMFSI" Text="Open With" IsEnabled="False"/>
-                        <MenuFlyoutSeparator/>
-
-                        <!--  Modify  -->
-                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CutMFI" Text="Cut" Icon="Cut" IsEnabled="False"/>
-                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyMFI" Text="Copy" Icon="Copy"
-                                        Command="{x:Bind CopyFileCommand, Mode=OneWay}"/>
-                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/DeleteMFI" Text="Delete" Icon="Delete"
-                                        Command="{x:Bind DeleteCommand, Mode=OneWay}"/>
-                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/RenameMFI" Text="Rename" Icon="Rename" Click="RenameClicked"/>
+                        <!--  Add  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CreateNewFile" Text="Create New File"
+                                        Command="{x:Bind CreateChildFileCommand, Mode=OneWay}"/>
                         <MenuFlyoutSeparator/>
 
                         <!--  Copy Path  -->

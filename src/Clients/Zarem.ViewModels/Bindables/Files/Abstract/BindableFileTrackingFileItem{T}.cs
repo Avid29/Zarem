@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Diagnostics;
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ namespace Zarem.Bindables.Files.Abstract;
 /// <summary>
 /// An <see cref="BindableFileItem{T}"/> that tracks child items.
 /// </summary>
-public abstract class BindableFileTrackingFileItem<T> : BindableFileItem<T>
+public abstract partial class BindableFileTrackingFileItem<T> : BindableFileItem<T>
     where T : IFileItem
 {
     private readonly Dictionary<IBindableFileItem, BindableFile> _virtualParents = [];
@@ -75,6 +75,15 @@ public abstract class BindableFileTrackingFileItem<T> : BindableFileItem<T>
             if (recursive && item is BindableFolder folder)
                 await folder.LoadChildrenAsync(recursive);
         }
+    }
+
+    [RelayCommand]
+    private async Task CreateChildFileAsync()
+    {
+        if (TrackingFolder is null)
+            return;
+
+        await FileService.FileSystemService.CreateFileByPopupAsync(TrackingFolder.Path);
     }
 
     internal void TrackChild(IBindableFileItem item)

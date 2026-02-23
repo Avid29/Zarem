@@ -1,18 +1,17 @@
 ﻿// Adam Dernis 2024
 
-using Zarem.Services;
-using Zarem.Services.Files;
-using Zarem.Services.Files.Models;
-using Zarem.Services.Popup;
-using Zarem.Services.Popup.Enums;
-using Zarem.Services.Popup.Models;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-
+using Zarem.Services;
+using Zarem.Services.Files;
+using Zarem.Services.Files.Models;
+using Zarem.Services.Popup;
+using Zarem.Services.Popup.Enums;
+using Zarem.Services.Popup.Models;
 using File = Zarem.WinUI.Services.Files.Models.File;
 using Folder = Zarem.WinUI.Services.Files.Models.Folder;
 
@@ -23,25 +22,49 @@ namespace Zarem.WinUI.Services.Files;
 /// </summary>
 public class FileSystemService : IFileSystemService
 {
+    private readonly ILocalizationService _localizationService;
     private readonly IPopupService _popupService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FileSystemService"/> class.
     /// </summary>
-    public FileSystemService(IPopupService popupService)
+    public FileSystemService(ILocalizationService localizationService, IPopupService popupService)
     {
+        _localizationService = localizationService;
         _popupService = popupService;
     }
 
     /// <inheritdoc/>
     public async Task<IFile?> CreateFileAsync(string path)
     {
+        // Split the path
+        var folderPath = Path.GetDirectoryName(path);
+        var fileName = Path.GetFileName(path);
+
+        return await CreateFileAsync(folderPath, fileName);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IFile?> CreateFileByPopupAsync(string folder, string regex = "^[\\w\\-\\._\\(\\)\\[\\] ]+$")
+    {
+        var popup = new TextInputPopupDetails(_localizationService["/Popups/CreateNewFileTitle"])
+        {
+            PrimaryButtonText = _localizationService["/Popups/Create"],
+            CloseButtonText = _localizationService["/Popups/Cancel"],
+            ValidationRegex = "^[\\w\\-\\._\\(\\)\\[\\] ]+$",
+        };
+
+        var fileName = await _popupService.ShowPopupAsync(popup);
+        if (fileName is null)
+            return null;
+
+        return await CreateFileAsync(folder, fileName);
+    }
+
+    private async Task<IFile?> CreateFileAsync(string? folderPath, string fileName)
+    {
         try
         {
-            // Split the path
-            var folderPath = Path.GetDirectoryName(path);
-            var fileName = Path.GetFileName(path);
-
             // Create the file in the parent folder.
             var folder = await StorageFolder.GetFolderFromPathAsync(folderPath);
             var file = await folder.CreateFileAsync(fileName);
@@ -52,7 +75,7 @@ public class FileSystemService : IFileSystemService
             return null;
         }
     }
-    
+
     /// <inheritdoc/>
     public async Task<IFolder?> CreateFolderAsync(string path)
     {
@@ -114,17 +137,16 @@ public class FileSystemService : IFileSystemService
             };
 
             // Load the resources
-            var localizer = Service.Get<ILocalizationService>();
-            var title = localizer[titleKey, item.Name];
-            var desc = localizer[descKey, item.Name];
+            var title = _localizationService[titleKey, item.Name];
+            var desc = _localizationService[descKey, item.Name];
 
             var popup = new PopupDetails(title, desc)
             {
-                PrimaryButtonText = localizer["/Popups/Confirm"],
-                CloseButtonText = localizer["/Popups/Cancel"],
+                PrimaryButtonText = _localizationService["/Popups/Confirm"],
+                CloseButtonText = _localizationService["/Popups/Cancel"],
             };
 
-            var confirmation = await _popupService.ShowPopAsync(popup);
+            var confirmation = await _popupService.ShowPopupAsync(popup);
             if (confirmation is not PopupResult.Primary)
                 return false;
         }

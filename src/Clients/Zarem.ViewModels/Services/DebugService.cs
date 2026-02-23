@@ -143,7 +143,7 @@ public class DebugService : IDebugService
 
                 // Show the popup.
                 // Cancel run if closed without primary button click
-                var request = await _popupService.ShowPopAsync(popup);
+                var request = await _popupService.ShowPopupAsync(popup);
                 if (request is PopupResult.Closed)
                     return false;
             }
@@ -157,7 +157,7 @@ public class DebugService : IDebugService
                 };
 
                 // Show the popup and return
-                await _popupService.ShowPopAsync(popup);
+                await _popupService.ShowPopupAsync(popup);
                 return false;
             }
         }

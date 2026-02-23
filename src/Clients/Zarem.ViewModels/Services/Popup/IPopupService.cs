@@ -14,5 +14,10 @@ public interface IPopupService
     /// <summary>
     /// Opens a popup and awaits a selection.
     /// </summary>
-    public Task<PopupResult> ShowPopAsync(PopupDetails popup);
+    Task<PopupResult> ShowPopupAsync(PopupDetails popup);
+
+    /// <summary>
+    /// Opens a popup and awaits a selection.
+    /// </summary>
+    Task<string?> ShowPopupAsync(TextInputPopupDetails popup);
 }

@@ -1,9 +1,11 @@
 ﻿// Adam Dernis 2024
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Zarem.Bindables.Files.Interfaces;
+using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Files.Models;
 
@@ -50,6 +52,32 @@ public abstract partial class BindableFileItem : ObservableObject, IBindableFile
     public virtual async Task LoadChildrenAsync(bool recursive = false)
     {
     }
+
+    /// <summary>
+    /// Copies the file name to the clipboard.
+    /// </summary>
+    /// 
+    [RelayCommand]
+    public void CopyFileName() => Service.Get<IClipboardService>().CopyText(Name);
+
+    /// <summary>
+    /// Copies the file's path to the clipboard.
+    /// </summary>
+    [RelayCommand]
+    public void CopyFilePath() => Service.Get<IClipboardService>().CopyText(Path);
+
+    /// <summary>
+    /// Copies the file to the clipboard.
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    public abstract Task CopyFileAsync();
+
+    /// <summary>
+    /// Deletes the file item.
+    /// </summary>
+    [RelayCommand]
+    public abstract Task DeleteAsync();
 
     /// <inheritdoc/>
     public abstract void Dispose();

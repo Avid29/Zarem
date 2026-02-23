@@ -123,7 +123,7 @@ public class PanelViewModel : ObservableObject
                 CloseButtonText = _localizationService["/Popups/Cancel"],
             };
 
-            confirmation = await _popupService.ShowPopAsync(popup);
+            confirmation = await _popupService.ShowPopupAsync(popup);
         }
 
 

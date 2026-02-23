@@ -1,10 +1,7 @@
 ﻿// Adam Dernis 2024
 
-using Zarem.Services.Files.Models;
-using Zarem.Services.Popup;
-using Zarem.Services.Popup.Enums;
-using Zarem.Services.Popup.Models;
 using System.Threading.Tasks;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.Services.Files;
 
@@ -17,6 +14,11 @@ public interface IFileSystemService
     /// Attempts to create a file.
     /// </summary>
     Task<IFile?> CreateFileAsync(string path);
+
+    /// <summary>
+    /// Attempts to create a file with a popup to determine the name.
+    /// </summary>
+    Task<IFile?> CreateFileByPopupAsync(string folder, string regex = "^[\\w\\-\\._\\(\\)\\[\\] ]+$");
 
     /// <summary>
     /// Attempts to create a folder.

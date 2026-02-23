@@ -159,4 +159,10 @@
   <data name="Okay" xml:space="preserve">
     <value>Okay</value>
   </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="CreateNewFileTitle" xml:space="preserve">
+    <value>Create New File</value>
+  </data>
 </root>

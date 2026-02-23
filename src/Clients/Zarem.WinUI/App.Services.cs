@@ -36,11 +36,11 @@ public partial class App
             .AddSingleton<IDispatcherService, DispatcherService>()
             .AddSingleton<ILocalizationService, LocalizationService>()
             .AddSingleton<IMessenger, WeakReferenceMessenger>()
-            .AddSingleton<IPopupService, PopupService>()
             .AddSingleton<IVersioningService, VersioningService>()
             .AddSingleton<IWindowingService, WindowingService>()
 
             // Dependent Services
+            .AddSingleton<IPopupService, PopupService>()
             .AddSingleton<IStateService, StateService>()
             .AddSingleton<IFileSystemService, FileSystemService>()
             .AddSingleton<ISettingsService, SettingsService>()
