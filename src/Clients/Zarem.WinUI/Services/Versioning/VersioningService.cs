@@ -23,6 +23,7 @@ public class VersioningService : IVersioningService
             MajorVersion = packageVersion.Major,
             MinorVersion = packageVersion.Minor,
             Revision = packageVersion.Revision,
+            Build = packageVersion.Build,
         };
 
         GitVersionInfo = new GitVersionInfo

@@ -81,7 +81,7 @@ public class AppSettingsViewModel : SettingsSubPageViewModel
         _localizationService["/Settings/VersionFormat",
             _versioningService.AppVersion.MajorVersion,
             _versioningService.AppVersion.MinorVersion,
-            _versioningService.AppVersion.Revision];
+            _versioningService.AppVersion.Build];
 
     /// <summary>
     /// Gets the build's git version info.
@@ -98,25 +98,10 @@ public class AppSettingsViewModel : SettingsSubPageViewModel
     /// </summary>
     public IEnumerable<ThirdPartyNotice> ThirdPartyNotices { get; } =
     [
-        new()
-        {
-            DependencyName = "GitInfo",
-            Url = "https://github.com/devlooped/GitInfo",
-        },
-        new()
-        {
-            DependencyName = "LibObjectFile",
-            Url = "https://github.com/xoofx/LibObjectFile",
-        },
-        new()
-        {
-            DependencyName = "Windows Community Toolkit",
-            Url = "https://github.com/CommunityToolkit/Windows",
-        },
-        new()
-        {
-            DependencyName = "WinUIEdit",
-            Url = "https://github.com/BreeceW/WinUIEdit",
-        },
+        new("GitInfo", "https://github.com/devlooped/GitInfo"),
+        new("HexBox.WinUI", "https://github.com/hotkidfamily/HexBox.WinUI"),
+        new("LibObjectFile", "https://github.com/xoofx/LibObjectFile"),
+        new("Windows Community Toolkit", "https://github.com/CommunityToolkit/Windows"),
+        new("WinUIEdit", "https://github.com/BreeceW/WinUIEdit"),
     ];
 }

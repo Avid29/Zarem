@@ -5,15 +5,15 @@ namespace Zarem.Models;
 /// <summary>
 /// A class for containing the compoenents of a dependencies details.
 /// </summary>
-public class ThirdPartyNotice
+public class ThirdPartyNotice(string dependencyName, string url)
 {
     /// <summary>
     /// Gets the name of the dependency.
     /// </summary>
-    public required string DependencyName { get; init; }
+    public string DependencyName { get; init; } = dependencyName;
 
     /// <summary>
     /// Gets the url link to the dependency.
     /// </summary>
-    public required string Url { get; init; }
+    public string Url { get; init; } = url;
 }
