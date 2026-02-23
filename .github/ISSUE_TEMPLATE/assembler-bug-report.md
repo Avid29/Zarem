@@ -1,6 +1,6 @@
 ---
 name: Assembler Bug report
-about: 'Create a bug report regarding '
+about: Create a bug report regarding the assembler
 title: ''
 labels: assembler, bug
 assignees: ''
@@ -25,11 +25,8 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
+**MIPS Version:**
+**Module Format:**
 
 **Additional context**
 Add any other context about the problem here.
