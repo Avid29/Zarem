@@ -77,7 +77,7 @@ public readonly struct DirectiveParser
             ".asciiz" => TryParseAscii(line.Args, true, out directive),
 
             // Invalid directive
-            _ => false
+            _ => _logger?.Log(Severity.Error, LogId.InvalidDirectiveName, token, "DirectiveDoesNotExist", token.Source) ?? false,
         };
     }
 

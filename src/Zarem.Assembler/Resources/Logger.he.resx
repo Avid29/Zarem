@@ -285,4 +285,7 @@
   <data name="MissingOperand" xml:space="preserve">
     <value>נדרש אופראנד אחרי האופרטור '{0}'.</value>
   </data>
+  <data name="DirectiveDoesNotExist" xml:space="preserve">
+    <value>'{0}' אינה הנחיה תקפה.</value>
+  </data>
 </root>

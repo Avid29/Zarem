@@ -39,6 +39,7 @@ public enum LogId : uint
     UndeclaredSymbolReferenced,
 
     // Directive parser
+    InvalidDirectiveName,
     InvalidDirectiveDataArg,
     InvalidDirectiveArg,
     InvalidDirectiveArgCount,

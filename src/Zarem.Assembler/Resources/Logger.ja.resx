@@ -285,4 +285,7 @@
   <data name="MissingOperand" xml:space="preserve">
     <value>Expected operand following '{0}' operator.</value>
   </data>
+  <data name="DirectiveDoesNotExist" xml:space="preserve">
+    <value>'{0}' is not a valid directive.</value>
+  </data>
 </root>
