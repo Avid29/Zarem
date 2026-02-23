@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Localization;
 using Zarem.Models;
 
 namespace Zarem.Emulator;
@@ -120,21 +121,30 @@ public abstract class Emulator<TConfig> : IEmulator
     /// </summary>
     protected virtual void ExecutionLoop()
     {
-        while (State is not EmulatorState.Stopping)
+        try
         {
-            // Wait here if paused
-            _runGate.Wait();
+            while (State is not EmulatorState.Stopping)
+            {
+                // Wait here if paused
+                _runGate.Wait();
 
-            // Loop ticks while running
-            while (State is EmulatorState.Running)
-                Tick();
+                // Loop ticks while running
+                while (State is EmulatorState.Running)
+                    Tick();
 
-            // Complete pausing transition
-            if (State is EmulatorState.Pausing)
-                State = EmulatorState.Paused;
+                // Complete pausing transition
+                if (State is EmulatorState.Pausing)
+                    State = EmulatorState.Paused;
+            }
+        }
+        catch
+        {
+            var localizer = new Localizer("Zarem.Emulator.Resources.Messages", typeof(Emulator<>).Assembly);
+            Console.WriteLine(localizer["ExceptionOccurred"]);
         }
 
-        // Complete the shutdown 
+        // Complete the shutdown,
+        // or handle exception
         State = EmulatorState.Stopped;
         _thread?.Join();
     }
