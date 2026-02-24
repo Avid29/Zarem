@@ -60,6 +60,12 @@
   <Folder Name="/Submodules/">
     <File Path="submodules/Directory.Build.props" />
     <File Path="submodules/WinUIEdit/UseWinUI3.txt" />
+    <Project Path="submodules/GitHub-API/src/API/GitHub.API.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="submodules/GitHub-API/src/GitHubAccreditation.ViewModel/GitHubAccreditation.ViewModel.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
     <Project Path="submodules/WinUIEdit/WinUIEditor/WinUIEditor.vcxproj" Id="290647e3-d8cb-46b5-87ce-409f721e441a">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>

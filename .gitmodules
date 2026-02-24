@@ -1,6 +1,6 @@
 [submodule "submodules/WinUIEdit"]
 	path = submodules/WinUIEdit
 	url = https://github.com/Avid29/WinUIEdit
-[submodule "submodules/LibObjectFile"]
-	path = submodules/LibObjectFile
-	url = https://github.com/Avid29/LibObjectFile.git
+[submodule "submodules/GitHub-API"]
+	path = submodules/GitHub-API
+	url = https://github.com/Avid29/GitHub-API.git
