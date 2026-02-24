@@ -1,11 +1,15 @@
 {
   "profiles": {
-    "Zarem.WinUI (Package)": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "Zarem.IDE.WinUI (Package)": {
       "commandName": "MsixPackage",
       "nativeDebugging": false,
       "alwaysReinstallApp": false
     },
-    "Zarem.WinUI (Unpackaged)": {
+    "Zarem.IDE.WinUI (Unpackaged)": {
       "commandName": "Project"
     },
     "Mixed Mode Debug": {

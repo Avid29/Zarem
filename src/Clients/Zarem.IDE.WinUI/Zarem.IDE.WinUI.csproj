@@ -97,4 +97,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
+
+	<Import Project="..\Zarem.IDE.Shared\Zarem.IDE.Shared.projitems" Label="Shared" />
 </Project>
