@@ -15,10 +15,6 @@
 		<Configurations>Debug;Release;Alpha</Configurations>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="Controls\RunningIndicator.xaml" />
-	  <None Remove="Services\Popup\TextInputPopup.xaml" />
-	</ItemGroup>
-	<ItemGroup>
 	  <AppxManifest Include="Package.appxmanifest" Condition="'$(Configuration)' == 'Release'">
 	    <SubType>Designer</SubType>
 	  </AppxManifest>
@@ -81,22 +77,11 @@
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 
+	<Import Project="..\Zarem.IDE.Shared\Zarem.IDE.Shared.projitems" Label="Shared" />
+
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\submodules\WinUIEdit\WinUIEditor\WinUIEditor.vcxproj" />
 		<ProjectReference Include="..\Zarem.IDE.ViewModels\Zarem.IDE.ViewModels.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Page Update="Services\Popup\TextInputPopup.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Update="Controls\RunningIndicator.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-
-	<Import Project="..\Zarem.IDE.Shared\Zarem.IDE.Shared.projitems" Label="Shared" />
 </Project>
