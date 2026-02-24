@@ -272,190 +272,164 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\EncodingTableDisplay.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\UsagePatternDisplay.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\AssemblyEditor\AssemblyEditor.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\CodeEditor.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Controls\HexViewer\HexViewer.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Controls\RunningIndicator.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Resources\Brushes.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Resources\Fonts.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Resources\Icons.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Resources\Styles.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Services\Popup\TextInputPopup.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Themes\Generic.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\AboutPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\AppSettingsSubPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\AssemblerSettingsSubPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\EditorSettingsSubPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\WelcomePage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\CreateProject.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\HexEditorPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\TextEditorPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\ErrorList.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Explorer.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\FileViewer.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Shell\PanelView.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Shell\StatusBar.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Shell\TitleBar.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Windows\MainWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Windows\PanelWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Visible>False</Visible>
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)App.Properties.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)App.Services.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\EncodingPatternDisplay.xaml.cs">
       <DependentUpon>EncodingPatternDisplay.xaml</DependentUpon>
     </Compile>
@@ -572,5 +546,12 @@
       <DependentUpon>PanelWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Windows\ZaremWindow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
   </ItemGroup>
 </Project>
