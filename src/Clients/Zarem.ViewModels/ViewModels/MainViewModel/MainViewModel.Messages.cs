@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Linq;
 using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization.Models;
-using Zarem.Bindables.Files;
 using Zarem.Bindables.Files.Interfaces;
 using Zarem.Messages.Editor;
 using Zarem.Messages.Editor.Enums;

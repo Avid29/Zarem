@@ -49,21 +49,12 @@
                     </StackPanel>
                 </StackPanel>
                 
-                <!--  Premier Sponsors  -->
-                <TextBlock x:Uid="/About/PremierSponsorsTB" Text="Premier Sponsors" FontSize="20" FontWeight="SemiBold" Margin="0,24,0,0"/>
+                <!--  Sponsors  -->
+                <!--<TextBlock x:Uid="/About/SponsorsTB" Text="Sponsors" FontSize="20" FontWeight="SemiBold" Margin="0,24,0,0"/>
                 <Grid Height="200" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="12">
-                    <TextBlock Text="Premier Sponsors will go here" FontSize="12" FontWeight="SemiBold" Opacity=".5"
+                    <TextBlock Text="Sponsors will go here" FontSize="12" FontWeight="SemiBold" Opacity=".5"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Grid>
-
-                <!--  Sponsor Wall  -->
-                <TextBlock x:Uid="/About/SponsorWallTB" Text="Sponsor Wall" FontSize="20" Margin="0,24,0,0" FontWeight="SemiBold"/>
-                <Grid Height="140" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="12">
-                    <TextBlock Text="GitHub Sponsors will go here" FontSize="12" FontWeight="SemiBold" Opacity=".5"
-                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Grid>
-                <HyperlinkButton x:Uid="/About/JoinSponsorWallHLB" Content="Join" HorizontalAlignment="Right"
-                                 NavigateUri="https://github.com/sponsors/Avid29"/>
+                </Grid>-->
 
                 <!--  Third-Party Credit  -->
                 <TextBlock x:Uid="/About/ThirdPartyDependenciesTB" Text="Third-Party Dependencies" FontSize="20" FontWeight="SemiBold" Margin="0,24,0,0"/>
@@ -102,6 +93,12 @@
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <ImageIcon Height="20" Source="{StaticResource RedditIcon}" />
                                 <TextBlock x:Uid="/About/DiscussOnRedditTB" Text="Discuss on Reddit" />
+                            </StackPanel>
+                        </HyperlinkButton>
+                        <HyperlinkButton NavigateUri="https://crowdin.com/project/zarem">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <ImageIcon Height="20" Source="{ThemeResource CrowdinIcon}" />
+                                <TextBlock x:Uid="/About/TranslateOnCrowdinTB" Text="Help Translate" />
                             </StackPanel>
                         </HyperlinkButton>
                     </tk:WrapPanel>

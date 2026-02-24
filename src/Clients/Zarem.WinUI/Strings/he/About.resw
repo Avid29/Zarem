@@ -138,20 +138,17 @@
   <data name="HelloFromTelAvivTB.Text" xml:space="preserve">
     <value>שלום מגבעתיים</value>
   </data>
-  <data name="JoinSponsorWallHLB.Content" xml:space="preserve">
-    <value>הצטרפות</value>
-  </data>
   <data name="MadeInIsraelTB.Text" xml:space="preserve">
     <value>תוצרת הארץ</value>
   </data>
-  <data name="PremierSponsorsTB.Text" xml:space="preserve">
-    <value>חסויות פרימיום</value>
-  </data>
-  <data name="SponsorWallTB.Text" xml:space="preserve">
-    <value>קיר נותני חסות</value>
+  <data name="SponsorsTB.Text" xml:space="preserve">
+    <value>חסויות</value>
   </data>
   <data name="ThirdPartyDependenciesTB.Text" xml:space="preserve">
     <value>תלויות של צד שלישי</value>
+  </data>
+  <data name="TranslateOnCrowdinTB.Text" xml:space="preserve">
+    <value>עזרו בתרגום</value>
   </data>
   <data name="VersionRUN.Text" xml:space="preserve">
     <value>גרסה:</value>

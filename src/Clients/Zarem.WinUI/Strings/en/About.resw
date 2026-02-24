@@ -138,20 +138,17 @@
   <data name="HelloFromTelAvivTB.Text" xml:space="preserve">
     <value>Hello from Tel Aviv</value>
   </data>
-  <data name="JoinSponsorWallHLB.Content" xml:space="preserve">
-    <value>Join</value>
-  </data>
   <data name="MadeInIsraelTB.Text" xml:space="preserve">
     <value>Made in Israel</value>
   </data>
-  <data name="PremierSponsorsTB.Text" xml:space="preserve">
-    <value>Premier Sponsors</value>
-  </data>
-  <data name="SponsorWallTB.Text" xml:space="preserve">
-    <value>Sponsor Wall</value>
+  <data name="SponsorsTB.Text" xml:space="preserve">
+    <value>Sponsors</value>
   </data>
   <data name="ThirdPartyDependenciesTB.Text" xml:space="preserve">
     <value>Third-Party Dependencies</value>
+  </data>
+  <data name="TranslateOnCrowdinTB.Text" xml:space="preserve">
+    <value>Help Translate</value>
   </data>
   <data name="VersionRUN.Text" xml:space="preserve">
     <value>Version:</value>

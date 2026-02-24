@@ -9,6 +9,7 @@
             <ImageSource x:Key="TrafficConeIcon">ms-appx:///Assets/Icons/TrafficCone-Dark.svg</ImageSource>
 
             <!--  Services  -->
+            <ImageSource x:Key="CrowdinIcon">ms-appx:///Assets/Icons/Services/Crowdin-Dark.svg</ImageSource>
             <ImageSource x:Key="GitHubIcon">ms-appx:///Assets/Icons/Services/GitHub-Dark.svg</ImageSource>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
@@ -16,6 +17,7 @@
             <ImageSource x:Key="TrafficConeIcon">ms-appx:///Assets/Icons/TrafficCone-Light.svg</ImageSource>
 
             <!--  Services  -->
+            <ImageSource x:Key="CrowdinIcon">ms-appx:///Assets/Icons/Services/Crowdin-Light.svg</ImageSource>
             <ImageSource x:Key="GitHubIcon">ms-appx:///Assets/Icons/Services/GitHub-Light.svg</ImageSource>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
