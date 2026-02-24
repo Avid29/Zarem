@@ -118,101 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutHeaderTB.Text" xml:space="preserve">
-    <value>אודות</value>
+    <value>About</value>
   </data>
-  <data name="AboutSE.Description" xml:space="preserve">
-    <value>© אבישי דרניס</value>
+  <data name="AppNameTB.Text" xml:space="preserve">
+    <value>Zarem</value>
   </data>
-  <data name="AboutSE.Header" xml:space="preserve">
-    <value>אודות זרם</value>
+  <data name="BuildInfoRUN.Text" xml:space="preserve">
+    <value>Build Info:</value>
   </data>
-  <data name="AnnotationThresholdSC.Description" xml:space="preserve">
-    <value>מתי על העורך להציג הודעות יומן כהערות מתחת ליומן.</value>
+  <data name="CopyrightRUN.Text" xml:space="preserve">
+    <value>© Avishai Dernis</value>
   </data>
-  <data name="AnnotationThresholdSC.Header" xml:space="preserve">
-    <value>סף הערות</value>
+  <data name="DiscussOnDiscordTB.Text" xml:space="preserve">
+    <value>Discuss on Discord</value>
   </data>
-  <data name="AppLanguageSC.Description" xml:space="preserve">
-    <value>בחר את שפת התצוגה של היישום. (נדרשת הפעלה מחדש כדי שהשינוי ייכנס לתוקף).</value>
+  <data name="DiscussOnRedditTB.Text" xml:space="preserve">
+    <value>Discuss on Reddit</value>
   </data>
-  <data name="AppLanguageSC.Header" xml:space="preserve">
-    <value>שפת האפליקציה</value>
+  <data name="HelloFromTelAvivTB.Text" xml:space="preserve">
+    <value>Hello from Tel Aviv</value>
   </data>
-  <data name="AppSettingsTitle" xml:space="preserve">
-    <value>הגדרות אפליקציה</value>
+  <data name="MadeInIsraelTB.Text" xml:space="preserve">
+    <value>Made in Israel</value>
   </data>
-  <data name="AppThemeSC.Description" xml:space="preserve">
-    <value>שנה את הצבעים המופעים של היישום.</value>
+  <data name="PremierSponsorsTB.Text" xml:space="preserve">
+    <value>Premier Sponsors</value>
   </data>
-  <data name="AppThemeSC.Header" xml:space="preserve">
-    <value>בחרית מצב</value>
+  <data name="SponsorWallTB.Text" xml:space="preserve">
+    <value>Sponsor Wall</value>
   </data>
-  <data name="AssemblerLanguageSC.Description" xml:space="preserve">
-    <value>בחר את השפה המשמשת ליומן האסמבלר.</value>
+  <data name="ThirdPartyDependenciesTB.Text" xml:space="preserve">
+    <value>Third-Party Dependencies</value>
   </data>
-  <data name="AssemblerLanguageSC.Header" xml:space="preserve">
-    <value>שפת אסמבלר</value>
+  <data name="VersionRUN.Text" xml:space="preserve">
+    <value>Version:</value>
   </data>
-  <data name="AssemblerSettingsTitle" xml:space="preserve">
-    <value>הגדרות אסמבלר</value>
-  </data>
-  <data name="EditorSettingsHeaderTB.Text" xml:space="preserve">
-    <value>הגדרות עורך</value>
-  </data>
-  <data name="EditorSettingsTitle" xml:space="preserve">
-    <value>הגדרות עורך</value>
-  </data>
-  <data name="LocalizationSettingsHeaderTB.Text" xml:space="preserve">
-    <value>הגדרות שפה</value>
-  </data>
-  <data name="RealTimeAssemblySC.Description" xml:space="preserve">
-    <value>האם העורך צריך להרכיב את הקובץ הפתוח באופן רציף כדי להציג שגיאות בזמן אמת?</value>
-  </data>
-  <data name="RealTimeAssemblySC.Header" xml:space="preserve">
-    <value>הרכבה בזמן אמת</value>
-  </data>
-  <data name="ThemeSettingsHeaderTB.Text" xml:space="preserve">
-    <value>הגדרות נושא</value>
-  </data>
-  <data name="UseAppLanguage" xml:space="preserve">
-    <value>שימוש בשפת היישום</value>
-  </data>
-  <data name="UseSystemLanguage" xml:space="preserve">
-    <value>שימוש בשפת המערכת</value>
-  </data>
-  <data name="VersionFormat" xml:space="preserve">
-    <value>{0}.{1}.{2}</value>
-  </data>
-  <data name="EditorDemoText" xml:space="preserve">
-    <value># דגמת עורך
-bar:  
-    addi    $s0, 10         # שגיאה  
-    sll     $s1, $s0, 33    # אזהרה  
-    add     $zero, $s0, $s1 # הודעה  
-.data
-foo:  
-    .asciiz "שלום עולם"
-</value>
-  </data>
-  <data name="SelectSchemeFileBTN.Content" xml:space="preserve">
-    <value>בחר קובץ</value>
-  </data>
-  <data name="LoadSchemeFromFileSC.Header" xml:space="preserve">
-    <value>טען מקובץ</value>
-  </data>
-  <data name="LoadSchemeFromFileSC.Description" xml:space="preserve">
-    <value>טען ערכת צבעים של העורך מקובץ JSON.</value>
-  </data>
-  <data name="EditorColorSchemeSE.Header" xml:space="preserve">
-    <value>ערכת צבעים</value>
-  </data>
-  <data name="EditorColorSchemeSE.Description" xml:space="preserve">
-    <value>התאם באופן מלא את ערכת הצבעים של עורך הטקסט.</value>
-  </data>
-  <data name="RestoreOpenProjectSC.Header" xml:space="preserve">
-    <value>שחזר פרויקט/תיקייה פתוחים</value>
-  </data>
-  <data name="RestoreOpenProjectSC.Description" xml:space="preserve">
-    <value>קבע האם היישום ישמור במטמון וישחזר את הפרויקט/התיקיה הפתוחים בעת ההפעלה.</value>
+  <data name="ViewOnGitHubTB.Text" xml:space="preserve">
+    <value>View on GitHub</value>
   </data>
 </root>

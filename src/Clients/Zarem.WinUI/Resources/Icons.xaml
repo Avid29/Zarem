@@ -49,7 +49,9 @@
     <ImageSource x:Key="ObjFileIcon">ms-appx:///Assets/Icons/Files/obj.svg</ImageSource>
 
     <!--  Services  -->
+    <ImageSource x:Key="DiscordIcon">ms-appx:///Assets/Icons/Services/Discord.svg</ImageSource>
     <ImageSource x:Key="GitServiceIcon">ms-appx:///Assets/Icons/Services/Git.svg</ImageSource>
+    <ImageSource x:Key="RedditIcon">ms-appx:///Assets/Icons/Services/Reddit.svg</ImageSource>
     
     <!--  Misc  -->
     <ImageSource x:Key="IsraelFlagIcon">ms-appx:///Assets/Icons/Flags/Simple/IL.svg</ImageSource>

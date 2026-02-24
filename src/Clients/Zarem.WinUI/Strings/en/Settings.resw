@@ -183,9 +183,6 @@
   <data name="VersionFormat" xml:space="preserve">
     <value>{0}.{1}.{2}</value>
   </data>
-  <data name="ViewOnGitHubTB.Text" xml:space="preserve">
-    <value>View on GitHub</value>
-  </data>
   <data name="EditorDemoText" xml:space="preserve">
     <value># Editor Demo
 bar:  
@@ -217,14 +214,5 @@ foo:
   </data>
   <data name="RestoreOpenProjectSC.Description" xml:space="preserve">
     <value>Set whether or not the app should cache and restore the open the project/folder when opened.</value>
-  </data>
-  <data name="ThirdPartyDependenciesTB.Text" xml:space="preserve">
-    <value>Third-Party Dependencies</value>
-  </data>
-  <data name="MadeInIsraelSC.Header" xml:space="preserve">
-    <value>Hello from Tel Aviv</value>
-  </data>
-  <data name="MadeInIsraelSC.Description" xml:space="preserve">
-    <value>Made in Israel</value>
   </data>
 </root>

@@ -56,63 +56,19 @@
             </ComboBox>
         </ctc:SettingsCard>
 
-        <ctc:SettingsExpander x:Uid="/Settings/AboutSE"
-                              Header="Zarem"
-                              Description="© Avishai Dernis">
-            <ctc:SettingsExpander.HeaderIcon>
+        <ctc:SettingsCard x:Uid="/Settings/AboutSE"
+                          Header="Zarem"
+                          Description="© Avishai Dernis"
+                          IsClickEnabled="True"
+                          Command="{x:Bind ViewModel.OpenAboutCommand, Mode=OneWay}">
+            <ctc:SettingsCard.HeaderIcon>
                 <ImageIcon Source="{StaticResource AppIconSmall}"/>
-            </ctc:SettingsExpander.HeaderIcon>
-            <ctc:SettingsExpander.Content>
+            </ctc:SettingsCard.HeaderIcon>
+            <ctc:SettingsCard.Content>
                 <TextBlock Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            IsTextSelectionEnabled="True"/>
-            </ctc:SettingsExpander.Content>
-            <ctc:SettingsExpander.Items>
-                <ctc:SettingsCard HorizontalContentAlignment="Left"
-                                  ContentAlignment="Left">
-                    <StackPanel Margin="-24,0,0,0" Orientation="Horizontal" Spacing="8">
-                        <HyperlinkButton NavigateUri="https://github.com/Avid29/Zarem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <ImageIcon Source="{ThemeResource GitHubIcon}" Height="20"/>
-                                <TextBlock x:Uid="/Settings/ViewOnGitHubTB" Text="View on GitHub"/>
-                            </StackPanel>
-                        </HyperlinkButton>
-
-                        <HyperlinkButton NavigateUri="{x:Bind ViewModel.CommitGitHubLink, Mode=OneWay}">
-                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                <ImageIcon Source="{StaticResource GitServiceIcon}" Height="20"/>
-                                <RichTextBlock IsTextSelectionEnabled="False">
-                                    <Paragraph>
-                                        <Run Text="{x:Bind ViewModel.GitInfo.Branch}"/>
-                                        <Run Text="/"/>
-                                        <Run Text="{x:Bind ViewModel.GitInfo.Commit}"/>
-                                    </Paragraph>
-                                </RichTextBlock>
-                            </StackPanel>
-                        </HyperlinkButton>
-                    </StackPanel>
-                </ctc:SettingsCard>
-                <ctc:SettingsCard HorizontalContentAlignment="Left"
-                                  ContentAlignment="Left">
-                    <StackPanel Spacing="8">
-                        <TextBlock x:Uid="/Settings/ThirdPartyDependenciesTB" Text="Third-Party Dependencies" FontSize="18"/>
-                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.ThirdPartyNotices, Mode=OneWay}">
-                            <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="models:ThirdPartyNotice">
-                                    <HyperlinkButton Content="{x:Bind DependencyName, Mode=OneWay}" NavigateUri="{x:Bind Url, Mode=OneWay}"/>
-                                </DataTemplate>
-                            </ItemsRepeater.ItemTemplate>
-                        </ItemsRepeater>
-                    </StackPanel>
-                </ctc:SettingsCard>
-                <ctc:SettingsCard x:Uid="/Settings/MadeInIsraelSC"
-                                  Header="Hello from Tel Aviv"
-                                  Description="Made in Israel">
-                    <ctc:SettingsCard.HeaderIcon>
-                        <ImageIcon Source="{StaticResource IsraelFlagIcon}"/>
-                    </ctc:SettingsCard.HeaderIcon>
-                </ctc:SettingsCard>
-            </ctc:SettingsExpander.Items>
-        </ctc:SettingsExpander>
+            </ctc:SettingsCard.Content>
+        </ctc:SettingsCard>
     </StackPanel>
 </UserControl>

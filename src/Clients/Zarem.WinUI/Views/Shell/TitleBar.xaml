@@ -356,12 +356,12 @@
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE713;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
-                <!--<MenuFlyoutItem x:Uid="/TitleBar/AboutMFI" Text="About Zarem"
+                <MenuFlyoutItem x:Uid="/TitleBar/AboutMFI" Text="About Zarem"
                                 Command="{x:Bind ViewModel.OpenAboutCommand, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE946;" />
                     </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>-->
+                </MenuFlyoutItem>
             </MenuBarItem>
         </MenuBar>
 

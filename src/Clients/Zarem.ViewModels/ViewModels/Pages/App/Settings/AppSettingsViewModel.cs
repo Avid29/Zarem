@@ -1,21 +1,20 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Models;
+using CommunityToolkit.Mvvm.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Zarem.Services;
 using Zarem.Services.Settings;
 using Zarem.Services.Settings.Enums;
 using Zarem.Services.Versioning;
-using Zarem.Services.Versioning.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Zarem.ViewModels.Pages.App.Settings;
 
 /// <summary>
 /// A view model for the app settings sub-page.
 /// </summary>
-public class AppSettingsViewModel : SettingsSubPageViewModel
+public partial class AppSettingsViewModel : SettingsSubPageViewModel
 {
     private readonly ILocalizationService _localizationService;
     private readonly ISettingsService _settingsService;
@@ -83,25 +82,6 @@ public class AppSettingsViewModel : SettingsSubPageViewModel
             _versioningService.AppVersion.MinorVersion,
             _versioningService.AppVersion.Build];
 
-    /// <summary>
-    /// Gets the build's git version info.
-    /// </summary>
-    public GitVersionInfo GitInfo => _versioningService.GitVersionInfo;
-
-    /// <summary>
-    /// Gets a link to the build's commit on github.
-    /// </summary>
-    public string CommitGitHubLink => $"https://github.com/Avid29/Zarem/tree/{GitInfo.Sha}";
-
-    /// <summary>
-    /// Gets a list of third-party dependencies used in Zarem.
-    /// </summary>
-    public IEnumerable<ThirdPartyNotice> ThirdPartyNotices { get; } =
-    [
-        new("GitInfo", "https://github.com/devlooped/GitInfo"),
-        new("HexBox.WinUI", "https://github.com/hotkidfamily/HexBox.WinUI"),
-        new("LibObjectFile", "https://github.com/xoofx/LibObjectFile"),
-        new("Windows Community Toolkit", "https://github.com/CommunityToolkit/Windows"),
-        new("WinUIEdit", "https://github.com/BreeceW/WinUIEdit"),
-    ];
+    [RelayCommand]
+    private void OpenAbout() => Service.Get<MainViewModel>().GoToPageByType<AboutPageViewModel>();
 }
