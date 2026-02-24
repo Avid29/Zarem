@@ -83,7 +83,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\submodules\WinUIEdit\WinUIEditor\WinUIEditor.vcxproj" />
-		<ProjectReference Include="..\Zarem.ViewModels\Zarem.ViewModels.csproj" />
+		<ProjectReference Include="..\Zarem.IDE.ViewModels\Zarem.IDE.ViewModels.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

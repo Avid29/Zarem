@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "Zarem.IDE.Uno",
+  "display": "standalone",
+  "name": "Zarem.IDE.Uno",
+  "short_name": "Zarem.IDE.Uno",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}
