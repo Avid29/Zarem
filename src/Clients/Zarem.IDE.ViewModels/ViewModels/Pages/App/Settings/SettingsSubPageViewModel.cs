@@ -2,7 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Zarem.ViewModels.Pages.App.Settings;
+namespace Zarem.IDE.ViewModels.Pages.App.Settings;
 
 /// <summary>
 /// A base class for settings sub-page view models.

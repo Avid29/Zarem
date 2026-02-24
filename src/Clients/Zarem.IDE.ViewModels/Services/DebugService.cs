@@ -4,16 +4,16 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Threading.Tasks;
 using Zarem.DebugSessions;
 using Zarem.Emulator;
-using Zarem.Emulator.TrapHandlers;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Messages.DebugSession;
-using Zarem.Models.Enums;
+using Zarem.Emulator.TrapHandlers;
+using Zarem.IDE.Messages.DebugSession;
+using Zarem.IDE.Models.Enums;
+using Zarem.IDE.Services.Popup;
+using Zarem.IDE.Services.Popup.Enums;
+using Zarem.IDE.Services.Popup.Models;
 using Zarem.Models.Files;
-using Zarem.Services.Popup;
-using Zarem.Services.Popup.Enums;
-using Zarem.Services.Popup.Models;
 
-namespace Zarem.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// A service for handling emulation.

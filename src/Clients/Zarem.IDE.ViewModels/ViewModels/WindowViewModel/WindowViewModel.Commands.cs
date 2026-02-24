@@ -4,13 +4,13 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Linq;
 using System.Threading.Tasks;
-using Zarem.Messages.Editor;
-using Zarem.Messages.Editor.Enums;
-using Zarem.Messages.Files;
-using Zarem.ViewModels.Pages;
-using Zarem.ViewModels.Pages.App;
+using Zarem.IDE.Messages.Editor;
+using Zarem.IDE.Messages.Editor.Enums;
+using Zarem.IDE.Messages.Files;
+using Zarem.IDE.ViewModels.Pages;
+using Zarem.IDE.ViewModels.Pages.App;
 
-namespace Zarem.ViewModels;
+namespace Zarem.IDE.ViewModels;
 
 public partial class WindowViewModel
 {

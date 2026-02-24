@@ -2,9 +2,9 @@
 
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using Zarem.Models.CheatSheet.Enums;
 using System;
 using Zarem.Models.Instructions.Enums;
+using Zarem.IDE.Models.CheatSheet.Enums;
 
 namespace Zarem.IDE.Converters;
 

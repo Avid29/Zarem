@@ -1,14 +1,14 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services;
-using Zarem.Services.Files;
-using Zarem.Services.Settings;
-using Zarem.Services.Versioning;
-using Zarem.ViewModels.Pages.Abstract;
-using Zarem.ViewModels.Pages.App.Settings;
 using System.Collections.ObjectModel;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Files;
+using Zarem.IDE.Services.Settings;
+using Zarem.IDE.Services.Versioning;
+using Zarem.IDE.ViewModels.Pages.Abstract;
+using Zarem.IDE.ViewModels.Pages.App.Settings;
 
-namespace Zarem.ViewModels.Pages.App;
+namespace Zarem.IDE.ViewModels.Pages.App;
 
 /// <summary>
 /// A view model for the settings page.

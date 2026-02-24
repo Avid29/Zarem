@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Models.Enums;
+namespace Zarem.IDE.Models.Enums;
 
 /// <summary>
 /// An enum indicating the ide state.

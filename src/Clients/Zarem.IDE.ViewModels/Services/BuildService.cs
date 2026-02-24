@@ -5,17 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Zarem.Assembler.Logging;
-using Zarem.Messages.Build;
+using Zarem.IDE.Messages.Build;
+using Zarem.IDE.Models.Enums;
+using Zarem.IDE.Services.Settings;
+using Zarem.IDE.ViewModels;
 using Zarem.Models;
-using Zarem.Models.Enums;
 using Zarem.Models.Files;
-using Zarem.Services.Settings;
-using Zarem.ViewModels;
 
-namespace Zarem.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// A service for managing the build status.

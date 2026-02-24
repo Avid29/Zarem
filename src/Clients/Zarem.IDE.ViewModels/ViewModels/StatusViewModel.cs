@@ -3,11 +3,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Diagnostics.Contracts;
-using Zarem.Messages.Build;
-using Zarem.Models.Enums;
-using Zarem.Services;
+using Zarem.IDE.Messages.Build;
+using Zarem.IDE.Models.Enums;
+using Zarem.IDE.Services;
 
-namespace Zarem.ViewModels;
+namespace Zarem.IDE.ViewModels;
 
 /// <summary>
 /// A view model for the status bar.

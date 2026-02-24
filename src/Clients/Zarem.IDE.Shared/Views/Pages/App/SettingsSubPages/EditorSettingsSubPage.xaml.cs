@@ -3,11 +3,11 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
-using Zarem.Messages;
-using Zarem.Models.EditorConfig.ColorScheme;
-using Zarem.Services;
-using Zarem.Services.Settings.Enums;
-using Zarem.ViewModels.Pages.App.Settings;
+using Zarem.IDE.Messages;
+using Zarem.IDE.Models.EditorConfig.ColorScheme;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Settings.Enums;
+using Zarem.IDE.ViewModels.Pages.App.Settings;
 
 namespace Zarem.IDE.Views.Pages.App.SettingsSubPages;
 

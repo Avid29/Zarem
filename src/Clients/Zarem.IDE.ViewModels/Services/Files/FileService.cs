@@ -7,10 +7,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Zarem.Bindables.Files;
-using Zarem.Bindables.Files.Interfaces;
-using Zarem.Services.Files.Models;
+using Zarem.IDE.Bindables.Files.Interfaces;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Files.Models;
 
-namespace Zarem.Services.Files;
+namespace Zarem.IDE.Services.Files;
 
 /// <summary>
 /// A wrapper for the <see cref="IFileSystemService"/> which also tracks open files.

@@ -7,10 +7,9 @@
     xmlns:editctrl="using:Zarem.IDE.Controls.CodeEditor"
     xmlns:editor="using:Zarem.IDE.Views.Pages.Editor"
     xmlns:hexbox="using:HexBox.WinUI"
-    xmlns:hexview="using:Zarem.Editors.HexViewer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:selectors="using:Zarem.IDE.Selectors"
-    xmlns:vm="using:Zarem.ViewModels.Pages"
+    xmlns:vm="using:Zarem.IDE.ViewModels.Pages"
     mc:Ignorable="d">
 
     <UserControl.Resources>

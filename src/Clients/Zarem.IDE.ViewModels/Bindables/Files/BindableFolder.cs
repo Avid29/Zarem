@@ -3,9 +3,9 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Diagnostics;
 using Zarem.Bindables.Files.Abstract;
-using Zarem.Bindables.Files.Interfaces;
-using Zarem.Services.Files;
-using Zarem.Services.Files.Models;
+using Zarem.IDE.Bindables.Files.Interfaces;
+using Zarem.IDE.Services.Files;
+using Zarem.IDE.Services.Files.Models;
 
 namespace Zarem.Bindables.Files;
 

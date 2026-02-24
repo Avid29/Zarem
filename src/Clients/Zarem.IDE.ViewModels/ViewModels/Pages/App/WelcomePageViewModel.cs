@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services;
-using Zarem.ViewModels.Pages.Abstract;
+using Zarem.IDE.Services;
+using Zarem.IDE.ViewModels.Pages.Abstract;
 
-namespace Zarem.ViewModels.Pages.App;
+namespace Zarem.IDE.ViewModels.Pages.App;
 
 /// <summary>
 /// A view model for the welcome page.

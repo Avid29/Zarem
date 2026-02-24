@@ -2,22 +2,17 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-using Zarem.Services;
-using Zarem.Services.Files;
-using Zarem.Services.Popup;
-using Zarem.Services.Settings;
-using Zarem.Services.Versioning;
-using Zarem.Services.Windowing;
-using Zarem.ViewModels;
-using Zarem.ViewModels.Pages;
-using Zarem.ViewModels.Pages.App;
+using System;
 using Zarem.IDE.Services;
+using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Versioning;
 using Zarem.IDE.Services.Windowing;
-using System;
-using Zarem.IDE.Services.Files;
+using Zarem.IDE.ViewModels;
+using Zarem.IDE.ViewModels.Pages;
+using Zarem.IDE.ViewModels.Pages.App;
+using Zarem.ViewModels.Pages;
 using ServiceCollection = Microsoft.Extensions.DependencyInjection.ServiceCollection;
 
 namespace Zarem.IDE;

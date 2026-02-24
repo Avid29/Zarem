@@ -4,9 +4,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using Zarem.Services.Files.Models;
+using Zarem.IDE.Services.Files.Models;
 
-namespace Zarem.Bindables.Files.Interfaces;
+namespace Zarem.IDE.Bindables.Files.Interfaces;
 
 /// <summary>
 /// An interface for an <see cref="IFileItem"/> in the explorer.

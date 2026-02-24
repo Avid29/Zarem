@@ -8,8 +8,8 @@
     xmlns:local="using:Zarem.IDE.Views.Pages.App.SettingsSubPages"
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     xmlns:helpers="using:Zarem.IDE.Helpers"
-    xmlns:senums="using:Zarem.Services.Settings.Enums"
-    xmlns:clrschm="using:Zarem.Models.EditorConfig.ColorScheme"
+    xmlns:senums="using:Zarem.IDE.Services.Settings.Enums"
+    xmlns:clrschm="using:Zarem.IDE.Models.EditorConfig.ColorScheme"
     xmlns:editor="using:Zarem.IDE.Controls.CodeEditor"
     mc:Ignorable="d">
 

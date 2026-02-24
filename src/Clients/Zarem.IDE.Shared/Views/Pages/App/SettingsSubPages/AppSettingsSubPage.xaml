@@ -10,7 +10,7 @@
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     xmlns:models="using:Zarem.Models"
     xmlns:helpers="using:Zarem.IDE.Helpers"
-    xmlns:senums="using:Zarem.Services.Settings.Enums"
+    xmlns:senums="using:Zarem.IDE.Services.Settings.Enums"
     mc:Ignorable="d">
 
     <StackPanel>

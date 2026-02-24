@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2025
 
+
+// Avishai Dernis 2025
+
 using Zarem.Assembler.Tokenization.Models;
 
-namespace Zarem.Messages.Navigation;
+namespace Zarem.IDE.Messages.Navigation;
 
 /// <summary>
 /// A message sent requesting to go to a token in a file.

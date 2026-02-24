@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2024
 
-using Zarem.ViewModels.Pages.Abstract;
 
-namespace Zarem.Messages.Navigation;
+// Avishai Dernis 2024
+
+using Zarem.IDE.ViewModels.Pages.Abstract;
+
+namespace Zarem.IDE.Messages.Navigation;
 
 /// <summary>
 /// A message sent to close a page.

@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="using:Zarem.IDE.Helpers"
-    xmlns:models="using:Zarem.Models"
+    xmlns:models="using:Zarem.IDE.Models"
     xmlns:tk="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 

@@ -2,9 +2,9 @@
 
 using System;
 using System.Collections.ObjectModel;
-using Zarem.Bindables.Files.Interfaces;
+using Zarem.IDE.Bindables.Files.Interfaces;
 
-namespace Zarem.Bindables.Files;
+namespace Zarem.IDE.Bindables.Files;
 
 /// <summary>
 /// A <see cref="ObservableCollection{T}"/> for <see cref="IBindableFileItem"/>s.

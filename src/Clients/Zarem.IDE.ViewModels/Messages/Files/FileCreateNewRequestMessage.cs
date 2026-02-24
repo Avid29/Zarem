@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2024
 
-namespace Zarem.Messages.Files;
+namespace Zarem.IDE.Messages.Files;
 
 /// <summary>
 /// A message sent to request creating a new file.

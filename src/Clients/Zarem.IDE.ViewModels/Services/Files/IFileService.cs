@@ -2,9 +2,9 @@
 
 using Zarem.Bindables.Files;
 using System.Threading.Tasks;
-using Zarem.Bindables.Files.Interfaces;
+using Zarem.IDE.Bindables.Files.Interfaces;
 
-namespace Zarem.Services.Files;
+namespace Zarem.IDE.Services.Files;
 
 /// <summary>
 /// An interface for a service to manager files in use.

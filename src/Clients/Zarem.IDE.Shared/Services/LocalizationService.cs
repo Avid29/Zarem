@@ -5,7 +5,6 @@ using System.Globalization;
 using Windows.ApplicationModel.Resources;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Globalization;
-using Zarem.Services;
 
 namespace Zarem.IDE.Services;
 

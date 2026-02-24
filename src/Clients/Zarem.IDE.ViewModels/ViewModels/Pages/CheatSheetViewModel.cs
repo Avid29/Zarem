@@ -8,12 +8,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using Zarem.Assembler.Models;
-using Zarem.Models.CheatSheet;
+using Zarem.IDE.Models.CheatSheet;
+using Zarem.IDE.Services;
+using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Services;
-using Zarem.ViewModels.Pages.Abstract;
 
-namespace Zarem.ViewModels.Pages;
+namespace Zarem.IDE.ViewModels.Pages;
 
 /// <summary>
 /// A view model for the cheatsheet.

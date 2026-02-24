@@ -6,10 +6,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System.IO;
 using Zarem.Bindables.Files;
-using Zarem.Bindables.Files.Interfaces;
-using Zarem.Services;
 using Zarem.ViewModels.Pages;
 using Zarem.IDE.Controls;
+using Zarem.IDE.Services;
+using Zarem.IDE.Bindables.Files.Interfaces;
 
 namespace Zarem.IDE.Views.Pages;
 

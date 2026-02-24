@@ -1,14 +1,10 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services;
-using Zarem.Services.Files.Models;
-using Zarem.IDE.Services.Files.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage;
+using Zarem.IDE.Services.Files.Models;
 
 namespace Zarem.IDE.Services;
 

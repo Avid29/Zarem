@@ -2,7 +2,7 @@
 
 using CommunityToolkit.Mvvm.DependencyInjection;
 
-namespace Zarem.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// A static class for quickly grabbing services through the Ioc.

@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Threading.Tasks;
 
-namespace Zarem.ViewModels.Pages.Abstract;
+namespace Zarem.IDE.ViewModels.Pages.Abstract;
 
 /// <summary>
 /// A base class for page view models.

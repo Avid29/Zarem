@@ -4,11 +4,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Text;
-using Zarem.Messages.Navigation;
-using Zarem.Services;
-using Zarem.ViewModels;
-using Zarem.ViewModels.Pages.Abstract;
 using Zarem.IDE.Helpers;
+using Zarem.IDE.Messages.Navigation;
+using Zarem.IDE.Services;
+using Zarem.IDE.ViewModels;
+using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.IDE.Windows;
 
 namespace Zarem.IDE.Views.Shell;

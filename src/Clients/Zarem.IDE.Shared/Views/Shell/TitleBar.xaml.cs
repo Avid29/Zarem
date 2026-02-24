@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using Windows.Graphics;
 using Windows.System;
-using Zarem.ViewModels;
+using Zarem.IDE.ViewModels;
 
 namespace Zarem.IDE.Views.Shell;
 

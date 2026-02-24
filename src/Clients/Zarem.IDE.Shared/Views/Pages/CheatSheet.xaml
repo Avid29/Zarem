@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:collections="using:CommunityToolkit.Mvvm.Collections"
     xmlns:data="using:Zarem.Assembler.Models"
-    xmlns:models="using:Zarem.Models.CheatSheet"
+    xmlns:models="using:Zarem.IDE.Models.CheatSheet"
     xmlns:reg="using:Zarem.Models.Instructions.Enums.Registers"
     xmlns:convert="using:Zarem.IDE.Converters"
     xmlns:palette="using:Zarem.IDE.Controls.CheatSheet.Palettes"

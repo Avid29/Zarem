@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services.Settings.Enums;
 using System.Text.Json.Serialization;
+using Zarem.IDE.Services.Settings.Enums;
 
-namespace Zarem.Models.EditorConfig.ColorScheme;
+namespace Zarem.IDE.Models.EditorConfig.ColorScheme;
 
 /// <summary>
 /// A color scheme for the code editor.

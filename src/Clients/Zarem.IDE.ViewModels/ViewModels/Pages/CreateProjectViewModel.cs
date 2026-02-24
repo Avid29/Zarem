@@ -11,17 +11,18 @@ using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Descriptors;
 using Zarem.Emulator.Config;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Files;
+using Zarem.IDE.ViewModels.Pages;
+using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.Linker.Config;
-using Zarem.Messages.Navigation;
+using Zarem.IDE.Messages.Navigation;
 using Zarem.MIPS;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Registry;
 using Zarem.Serialization;
-using Zarem.Services;
-using Zarem.Services.Files;
-using Zarem.ViewModels.Pages.Abstract;
 
-namespace Zarem.ViewModels.Pages;
+namespace Zarem.IDE.ViewModels.Pages;
 
 /// <summary>
 /// A view model for a page to create a new project.

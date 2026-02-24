@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services.Settings.Enums;
+using Zarem.IDE.Services.Settings.Enums;
 
-namespace Zarem.Services.Settings;
+namespace Zarem.IDE.Services.Settings;
 
 /// <summary>
 /// An interface for a service that handles loading and storing app settings.

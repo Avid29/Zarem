@@ -4,15 +4,15 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Linq;
 using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization.Models;
-using Zarem.Bindables.Files.Interfaces;
-using Zarem.Messages.Editor;
-using Zarem.Messages.Editor.Enums;
-using Zarem.Messages.Files;
-using Zarem.Messages.Navigation;
-using Zarem.Services;
-using Zarem.ViewModels.Pages;
+using Zarem.IDE.Bindables.Files.Interfaces;
+using Zarem.IDE.Messages.Editor;
+using Zarem.IDE.Messages.Editor.Enums;
+using Zarem.IDE.Messages.Files;
+using Zarem.IDE.Messages.Navigation;
+using Zarem.IDE.Services;
+using Zarem.IDE.ViewModels.Pages;
 
-namespace Zarem.ViewModels;
+namespace Zarem.IDE.ViewModels;
 
 public partial class MainViewModel
 {

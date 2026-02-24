@@ -3,7 +3,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Zarem.Services.Files.Models;
+namespace Zarem.IDE.Services.Files.Models;
 
 /// <summary>
 /// An interface for a file.

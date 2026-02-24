@@ -2,9 +2,9 @@
 
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
-using Zarem.Services;
-using Zarem.ViewModels.Pages.App;
 using System.Globalization;
+using Zarem.IDE.Services;
+using Zarem.IDE.ViewModels.Pages.App;
 
 namespace Zarem.IDE.Views.Pages.App;
 

@@ -3,7 +3,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Zarem.ViewModels.Pages;
+namespace Zarem.IDE.ViewModels.Pages;
 
 public partial class FilePageViewModel
 {

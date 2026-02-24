@@ -1,8 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Mvvm.Messaging;
-using Zarem.Messages;
-using Zarem.Services;
+using Zarem.IDE.Messages;
 using System;
 using System.Text.Json;
 using System.Threading;

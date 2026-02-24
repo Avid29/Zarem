@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Messages.Editor.Enums;
 
-namespace Zarem.Messages.Editor;
+// Avishai Dernis 2025
+
+using Zarem.IDE.Messages.Editor.Enums;
+
+namespace Zarem.IDE.Messages.Editor;
 
 /// <summary>
 /// A message sent to request an editor operation.

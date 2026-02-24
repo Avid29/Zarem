@@ -1,11 +1,12 @@
 ﻿// Avishai Dernis 2024
 
 using System.Threading.Tasks;
-using Zarem.Services;
-using Zarem.Services.Files;
-using Zarem.Services.Files.Models;
+using Zarem.Bindables.Files;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Files;
+using Zarem.IDE.Services.Files.Models;
 
-namespace Zarem.Bindables.Files.Abstract;
+namespace Zarem.IDE.Bindables.Files.Abstract;
 
 /// <summary>
 /// A <see cref="IFileItem"/> in the explorer.

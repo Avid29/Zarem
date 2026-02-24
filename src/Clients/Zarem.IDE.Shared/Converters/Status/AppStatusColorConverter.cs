@@ -3,9 +3,9 @@
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
-using Zarem.Models.Enums;
 using System;
 using Windows.UI;
+using Zarem.IDE.Models.Enums;
 
 namespace Zarem.IDE.Converters;
 

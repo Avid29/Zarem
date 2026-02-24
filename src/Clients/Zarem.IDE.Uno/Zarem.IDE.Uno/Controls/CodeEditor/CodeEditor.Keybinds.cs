@@ -1,7 +1,7 @@
 // Avishai Dernis 2025
 
-using Zarem.Messages.Editor.Enums;
 using System;
+using Zarem.IDE.Messages.Editor.Enums;
 
 namespace Zarem.IDE.Controls.CodeEditor;
 

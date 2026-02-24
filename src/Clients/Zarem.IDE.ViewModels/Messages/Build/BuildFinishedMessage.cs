@@ -2,7 +2,7 @@
 
 using Zarem.Models;
 
-namespace Zarem.Messages.Build;
+namespace Zarem.IDE.Messages.Build;
 
 /// <summary>
 /// A message sent when the build finished, containing status info.

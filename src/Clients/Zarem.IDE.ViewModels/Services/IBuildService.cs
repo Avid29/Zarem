@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Zarem.Models;
 using Zarem.Models.Files;
 
-namespace Zarem.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// An interface for a service to manage the build status.

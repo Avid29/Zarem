@@ -2,13 +2,13 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Zarem.Services;
-using Zarem.Services.Files;
 using Zarem.ViewModels.Pages;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Files;
 
-namespace Zarem.ViewModels;
+namespace Zarem.IDE.ViewModels;
 
 /// <summary>
 /// The main view model for the application.

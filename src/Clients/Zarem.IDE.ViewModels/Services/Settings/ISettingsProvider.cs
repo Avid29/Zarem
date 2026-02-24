@@ -3,7 +3,7 @@
 using System;
 using System.Numerics;
 
-namespace Zarem.Services.Settings;
+namespace Zarem.IDE.Services.Settings;
 
 /// <summary>
 /// An interface for a settings collection.

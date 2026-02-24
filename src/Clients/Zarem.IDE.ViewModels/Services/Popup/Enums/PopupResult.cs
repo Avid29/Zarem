@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Services.Popup.Enums;
+namespace Zarem.IDE.Services.Popup.Enums;
 
 /// <summary>
 /// An enum describing the result of a popup request.

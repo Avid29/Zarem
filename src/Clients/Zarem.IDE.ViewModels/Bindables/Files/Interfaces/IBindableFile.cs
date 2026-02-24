@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.Input;
+using Zarem.IDE.Services.Files.Models;
 using Zarem.Models.Files;
-using Zarem.Services.Files.Models;
 
-namespace Zarem.Bindables.Files.Interfaces;
+namespace Zarem.IDE.Bindables.Files.Interfaces;
 
 /// <summary>
 /// An <see cref="IBindableFileItem"/> for an <see cref="IFile"/>

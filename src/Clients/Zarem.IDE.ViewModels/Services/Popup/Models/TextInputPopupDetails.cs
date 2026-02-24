@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Services.Popup.Models;
+namespace Zarem.IDE.Services.Popup.Models;
 
 /// <summary>
 /// Details for a text input popup to display.

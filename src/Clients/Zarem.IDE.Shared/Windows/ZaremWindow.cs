@@ -2,10 +2,10 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using Zarem.Services;
-using Zarem.ViewModels;
 using System;
 using System.Runtime.InteropServices;
+using Zarem.IDE.Services;
+using Zarem.IDE.ViewModels;
 
 namespace Zarem.IDE.Windows;
 

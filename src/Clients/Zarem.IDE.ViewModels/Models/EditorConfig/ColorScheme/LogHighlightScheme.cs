@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Zarem.Models.EditorConfig.ColorScheme;
+namespace Zarem.IDE.Models.EditorConfig.ColorScheme;
 
 /// <summary>
 /// A color scheme for editor log highlighting.

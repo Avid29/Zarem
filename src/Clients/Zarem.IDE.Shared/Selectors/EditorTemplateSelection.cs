@@ -2,8 +2,8 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Zarem.ViewModels.Pages;
 using System.IO;
+using Zarem.IDE.ViewModels.Pages;
 
 namespace Zarem.IDE.Selectors;
 

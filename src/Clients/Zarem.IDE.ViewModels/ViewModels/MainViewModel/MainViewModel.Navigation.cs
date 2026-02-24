@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services;
-using Zarem.ViewModels.Pages.Abstract;
 using System.Linq;
+using Zarem.IDE.Services;
+using Zarem.IDE.ViewModels.Pages.Abstract;
 
-namespace Zarem.ViewModels;
+namespace Zarem.IDE.ViewModels;
 
 public partial class MainViewModel
 {

@@ -4,12 +4,12 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Zarem.Services;
-using Zarem.Services.Settings;
-using Zarem.Services.Settings.Enums;
-using Zarem.Services.Versioning;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Settings;
+using Zarem.IDE.Services.Settings.Enums;
+using Zarem.IDE.Services.Versioning;
 
-namespace Zarem.ViewModels.Pages.App.Settings;
+namespace Zarem.IDE.ViewModels.Pages.App.Settings;
 
 /// <summary>
 /// A view model for the app settings sub-page.

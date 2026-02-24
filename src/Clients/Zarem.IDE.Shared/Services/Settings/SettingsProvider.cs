@@ -2,13 +2,10 @@
 
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.Messaging;
-using Zarem.Messages;
-using Zarem.Services.Settings;
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
 using System.Text.Json;
 using Windows.Foundation.Collections;
+using Zarem.IDE.Messages;
 
 namespace Zarem.IDE.Services.Settings;
 

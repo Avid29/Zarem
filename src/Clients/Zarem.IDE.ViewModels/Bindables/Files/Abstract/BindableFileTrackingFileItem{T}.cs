@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Zarem.Bindables.Files.Interfaces;
-using Zarem.Services;
-using Zarem.Services.Files;
-using Zarem.Services.Files.Models;
+using Zarem.IDE.Bindables.Files.Abstract;
+using Zarem.IDE.Bindables.Files.Interfaces;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Files;
+using Zarem.IDE.Services.Files.Models;
 
 namespace Zarem.Bindables.Files.Abstract;
 

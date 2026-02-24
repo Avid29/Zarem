@@ -6,7 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:Zarem.IDE.Controls.CheatSheet"
-    xmlns:data="using:Zarem.Models.CheatSheet"
+    xmlns:data="using:Zarem.IDE.Models.CheatSheet"
     xmlns:convert="using:Zarem.IDE.Converters"
     xmlns:selector="using:Zarem.IDE.Selectors"
     xmlns:c="using:CommunityToolkit.WinUI.Converters"

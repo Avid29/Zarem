@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services;
-using Zarem.Services.Settings;
 using System.Collections.Generic;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Settings;
 
-namespace Zarem.ViewModels.Pages.App.Settings;
+namespace Zarem.IDE.ViewModels.Pages.App.Settings;
 
 /// <summary>
 /// A view model for the assembler settings sub-page.

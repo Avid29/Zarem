@@ -7,14 +7,16 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Zarem.Bindables.Files;
-using Zarem.Bindables.Files.Interfaces;
-using Zarem.Messages;
-using Zarem.Messages.Files;
-using Zarem.Messages.Project;
-using Zarem.Models.Cache;
-using Zarem.Services;
-using Zarem.Services.Files;
-using Zarem.ViewModels.Pages.Abstract;
+using Zarem.IDE.Bindables.Files.Interfaces;
+using Zarem.IDE.Messages;
+using Zarem.IDE.Messages.Files;
+using Zarem.IDE.Messages.Project;
+using Zarem.IDE.Models.Cache;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Files;
+using Zarem.IDE.ViewModels;
+using Zarem.IDE.ViewModels.Pages;
+using Zarem.IDE.ViewModels.Pages.Abstract;
 
 namespace Zarem.ViewModels.Pages;
 

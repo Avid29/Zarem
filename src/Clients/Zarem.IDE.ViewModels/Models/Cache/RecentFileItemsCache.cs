@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Zarem.Models.Cache;
+namespace Zarem.IDE.Models.Cache;
 
 /// <summary>
 /// A model containing caches for recently open files, folders, or projects.

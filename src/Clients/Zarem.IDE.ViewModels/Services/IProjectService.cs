@@ -2,10 +2,10 @@
 
 using Zarem.Config;
 using Zarem.Models.Files;
-using Zarem.Services.Files.Models;
 using System.Threading.Tasks;
+using Zarem.IDE.Services.Files.Models;
 
-namespace Zarem.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// An interface for a service that manages project layout.

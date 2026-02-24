@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
 using Zarem.Assembler.Config;
-using Zarem.Services.Settings.Enums;
+using Zarem.IDE.Services.Settings.Enums;
 
 namespace Zarem.IDE.Controls.CodeEditor;
 

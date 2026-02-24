@@ -2,12 +2,10 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Zarem.Services.Popup;
-using Zarem.Services.Popup.Enums;
-using Zarem.Services.Popup.Models;
 using System;
 using System.Threading.Tasks;
-using Zarem.Services;
+using Zarem.IDE.Services.Popup.Enums;
+using Zarem.IDE.Services.Popup.Models;
 
 namespace Zarem.IDE.Services.Popup;
 

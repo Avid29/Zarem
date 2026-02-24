@@ -4,13 +4,13 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml.Controls;
 using Zarem.Assembler.Tokenization.Models;
-using Zarem.Messages;
-using Zarem.Messages.Editor.Enums;
-using Zarem.Models.EditorConfig.ColorScheme;
-using Zarem.Services;
-using Zarem.Services.Settings.Enums;
-using Zarem.ViewModels.Pages;
 using Zarem.IDE.Controls.CodeEditor;
+using Zarem.IDE.Messages;
+using Zarem.IDE.Messages.Editor.Enums;
+using Zarem.IDE.Models.EditorConfig.ColorScheme;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Settings.Enums;
+using Zarem.IDE.ViewModels.Pages;
 
 namespace Zarem.IDE.Views.Pages.Editor;
 

@@ -1,26 +1,22 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Mvvm.Messaging;
-using ObjFormats.RASM;
 using System.IO;
 using System.Threading.Tasks;
 using Zarem.Config;
 using Zarem.Elf;
-using Zarem.Messages;
-using Zarem.Messages.Files;
-using Zarem.Messages.Project;
+using Zarem.IDE.Messages.Files;
+using Zarem.IDE.Messages.Project;
+using Zarem.IDE.Models.Cache;
+using Zarem.IDE.Models.Enums;
+using Zarem.IDE.Services.Files;
+using Zarem.IDE.Services.Files.Models;
 using Zarem.MIPS;
-using Zarem.Models.Cache;
-using Zarem.Models.Enums;
 using Zarem.Models.Files;
-using Zarem.RASM;
 using Zarem.Registry;
 using Zarem.Serialization;
-using Zarem.Services.Files;
-using Zarem.Services.Files.Models;
-using Zarem.Services.Settings;
 
-namespace Zarem.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// An implementation of the <see cref="IProjectService"/> interface.

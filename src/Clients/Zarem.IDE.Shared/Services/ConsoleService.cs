@@ -2,7 +2,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Zarem.Services;
 
 namespace Zarem.IDE.Services;
 

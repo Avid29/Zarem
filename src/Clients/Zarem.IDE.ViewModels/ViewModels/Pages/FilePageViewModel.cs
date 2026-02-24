@@ -5,17 +5,16 @@ using System;
 using System.ComponentModel;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Tokenization.Models;
-using Zarem.Bindables.Files;
-using Zarem.Bindables.Files.Interfaces;
-using Zarem.Messages;
-using Zarem.Messages.Editor.Enums;
+using Zarem.IDE.Bindables.Files.Interfaces;
+using Zarem.IDE.Messages;
+using Zarem.IDE.Messages.Editor.Enums;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Settings;
+using Zarem.IDE.Services.Settings.Enums;
+using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.MIPS;
-using Zarem.Services;
-using Zarem.Services.Settings;
-using Zarem.Services.Settings.Enums;
-using Zarem.ViewModels.Pages.Abstract;
 
-namespace Zarem.ViewModels.Pages;
+namespace Zarem.IDE.ViewModels.Pages;
 
 /// <summary>
 /// A view model for a file page.

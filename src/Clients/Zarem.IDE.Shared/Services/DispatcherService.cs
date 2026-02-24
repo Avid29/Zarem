@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2024
 
 using Microsoft.UI.Dispatching;
-using Zarem.Services;
 using System;
 
 namespace Zarem.IDE.Services;

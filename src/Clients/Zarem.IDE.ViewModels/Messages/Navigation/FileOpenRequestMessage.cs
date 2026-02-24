@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Bindables.Files.Interfaces;
 
-namespace Zarem.Messages.Navigation;
+// Avishai Dernis 2025
+
+using Zarem.IDE.Bindables.Files.Interfaces;
+
+namespace Zarem.IDE.Messages.Navigation;
 
 /// <summary>
 /// A message sent requesting to open a file.

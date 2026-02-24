@@ -2,8 +2,7 @@
 
 using Microsoft.UI.Xaml.Controls;
 using System.IO;
-using Zarem.ViewModels.Pages;
-
+using Zarem.IDE.ViewModels.Pages;
 
 namespace Zarem.IDE.Views.Pages.Editor;
 

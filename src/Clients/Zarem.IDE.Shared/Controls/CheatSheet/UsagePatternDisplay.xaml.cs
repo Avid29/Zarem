@@ -12,8 +12,8 @@ using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Models.Instructions.Enums;
-using Zarem.Services;
 using Zarem.IDE.Controls.CheatSheet.Palettes;
+using Zarem.IDE.Services;
 
 namespace Zarem.IDE.Controls.CheatSheet;
 

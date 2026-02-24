@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services.Files.Models;
 
-namespace Zarem.Messages.Files;
+// Avishai Dernis 2025
+
+using Zarem.IDE.Services.Files.Models;
+
+namespace Zarem.IDE.Messages.Files;
 
 /// <summary>
 /// A message sent when a folder is opened.

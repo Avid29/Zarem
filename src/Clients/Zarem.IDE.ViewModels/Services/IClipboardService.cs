@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services.Files.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Zarem.IDE.Services.Files.Models;
 
-namespace Zarem.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// An interface for a service to manage the clipboard.

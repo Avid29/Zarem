@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Messages.Project;
+namespace Zarem.IDE.Messages.Project;
 
 /// <summary>
 /// A message sent a project is opened.

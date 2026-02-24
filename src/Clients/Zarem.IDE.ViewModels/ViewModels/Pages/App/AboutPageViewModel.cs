@@ -1,14 +1,14 @@
 ﻿// Avishai Dernis 2025
 
 using System.Collections.Generic;
-using Zarem.Models;
-using Zarem.Models.Enums;
-using Zarem.Services;
-using Zarem.Services.Versioning;
-using Zarem.Services.Versioning.Models;
-using Zarem.ViewModels.Pages.Abstract;
+using Zarem.IDE.Models;
+using Zarem.IDE.Models.Enums;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Versioning;
+using Zarem.IDE.Services.Versioning.Models;
+using Zarem.IDE.ViewModels.Pages.Abstract;
 
-namespace Zarem.ViewModels.Pages.App;
+namespace Zarem.IDE.ViewModels.Pages.App;
 
 /// <summary>
 /// A view model for the about page.

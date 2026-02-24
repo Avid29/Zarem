@@ -3,7 +3,7 @@
 using System.Threading.Tasks;
 using Zarem.Models.Files;
 
-namespace Zarem.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// An interface for a service that manages debug sessions.

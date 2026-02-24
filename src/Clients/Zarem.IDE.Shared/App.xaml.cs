@@ -11,12 +11,12 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.StartScreen;
-using Zarem.Messages;
-using Zarem.Services;
-using Zarem.Services.Settings;
-using Zarem.Services.Settings.Enums;
 using Zarem.IDE.Helpers;
 using Zarem.IDE.Windows;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Settings;
+using Zarem.IDE.Services.Settings.Enums;
+using Zarem.IDE.Messages;
 
 
 namespace Zarem.IDE;

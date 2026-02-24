@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Models.Enums;
 
-namespace Zarem.Services;
+// Avishai Dernis 2026
+
+using Zarem.IDE.Models.Enums;
+
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// A service for managing the app state.

@@ -3,12 +3,12 @@
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
-using Zarem.Models.EditorConfig.ColorScheme;
-using Zarem.Services;
-using Zarem.Services.Settings;
-using Zarem.IDE.Extensions;
 using System;
 using Windows.UI;
+using Zarem.IDE.Extensions;
+using Zarem.IDE.Models.EditorConfig.ColorScheme;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Settings;
 
 namespace Zarem.IDE.Controls.CodeEditor;
 

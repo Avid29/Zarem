@@ -1,7 +1,7 @@
 // Avishai Dernis 2025
 
 using Microsoft.UI.Xaml.Controls;
-using Zarem.ViewModels.Pages.App;
+using Zarem.IDE.ViewModels.Pages.App;
 
 namespace Zarem.IDE.Views.Pages.App;
 

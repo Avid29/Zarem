@@ -1,11 +1,6 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Mvvm.Input;
-using Zarem.Models.EditorConfig.ColorScheme;
-using Zarem.Services;
-using Zarem.Services.Files;
-using Zarem.Services.Settings;
-using Zarem.Services.Settings.Enums;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,8 +9,14 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Settings;
+using Zarem.IDE.Models.EditorConfig.ColorScheme;
+using Zarem.IDE.Services.Files;
+using Zarem.IDE.ViewModels.Pages.App.Settings;
+using Zarem.IDE.Services.Settings.Enums;
 
-namespace Zarem.ViewModels.Pages.App.Settings;
+namespace Zarem.IDE.ViewModels.Pages.App.Settings;
 
 /// <summary>
 /// A view model for the editor settings sub-page.

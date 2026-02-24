@@ -9,9 +9,9 @@
     xmlns:apppages="using:Zarem.IDE.Views.Pages.App"
     xmlns:pages="using:Zarem.IDE.Views.Pages"
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
-    xmlns:avmv="using:Zarem.ViewModels.Pages.App"
-    xmlns:vmv="using:Zarem.ViewModels.Pages"
-    xmlns:vmva="using:Zarem.ViewModels.Pages.Abstract"
+    xmlns:avmv="using:Zarem.IDE.ViewModels.Pages.App"
+    xmlns:vmv="using:Zarem.IDE.ViewModels.Pages"
+    xmlns:vmva="using:Zarem.IDE.ViewModels.Pages.Abstract"
     xmlns:selectors="using:Zarem.IDE.Selectors"
     GotFocus="UserControl_GotFocus"
     mc:Ignorable="d">

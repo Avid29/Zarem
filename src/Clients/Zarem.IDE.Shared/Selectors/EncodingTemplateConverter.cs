@@ -2,7 +2,7 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Zarem.Models.CheatSheet;
+using Zarem.IDE.Models.CheatSheet;
 
 namespace Zarem.IDE.Selectors;
 

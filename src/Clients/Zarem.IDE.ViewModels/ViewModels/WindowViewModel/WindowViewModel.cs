@@ -5,13 +5,14 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Zarem.Bindables.Files.Interfaces;
-using Zarem.Messages.Navigation;
-using Zarem.Services;
-using Zarem.Services.Windowing;
+using Zarem.IDE.Bindables.Files.Interfaces;
+using Zarem.IDE.Messages.Navigation;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Windowing;
+using Zarem.IDE.ViewModels.Pages;
 using Zarem.ViewModels.Pages;
 
-namespace Zarem.ViewModels;
+namespace Zarem.IDE.ViewModels;
 
 /// <summary>
 /// The view model for the root window.

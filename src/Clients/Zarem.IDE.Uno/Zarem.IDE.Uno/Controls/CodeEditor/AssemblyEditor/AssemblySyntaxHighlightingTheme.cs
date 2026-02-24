@@ -2,11 +2,11 @@
 
 using Microsoft.UI;
 using Windows.UI;
-using Zarem.Models.EditorConfig.ColorScheme;
 using Zarem.Services;
-using Zarem.Services.Settings;
 using Zarem.IDE.Extensions;
 using CommunityToolkit.WinUI.Helpers;
+using Zarem.IDE.Services.Settings;
+using Zarem.IDE.Models.EditorConfig.ColorScheme;
 
 namespace Zarem.IDE.Controls.CodeEditor;
 

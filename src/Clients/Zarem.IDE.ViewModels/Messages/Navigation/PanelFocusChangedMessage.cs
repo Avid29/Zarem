@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.ViewModels;
+using Zarem.IDE.ViewModels;
 
-namespace Zarem.Messages.Navigation;
+namespace Zarem.IDE.Messages.Navigation;
 
 /// <summary>
 /// A message indicating that the focused panel has changed.

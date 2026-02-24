@@ -2,7 +2,7 @@
 
 using Zarem.Assembler.Logging;
 
-namespace Zarem.Messages.Build;
+namespace Zarem.IDE.Messages.Build;
 
 /// <summary>
 /// A message sent when the build started, containing the logger.

@@ -9,8 +9,8 @@
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     xmlns:helpers="using:Zarem.IDE.Helpers"
     xmlns:selectors="using:Zarem.IDE.Selectors"
-    xmlns:senums="using:Zarem.Services.Settings.Enums"
-    xmlns:subvms="using:Zarem.ViewModels.Pages.App.Settings"
+    xmlns:senums="using:Zarem.IDE.Services.Settings.Enums"
+    xmlns:subvms="using:Zarem.IDE.ViewModels.Pages.App.Settings"
     xmlns:subs="using:Zarem.IDE.Views.Pages.App.SettingsSubPages"
     mc:Ignorable="d">
 

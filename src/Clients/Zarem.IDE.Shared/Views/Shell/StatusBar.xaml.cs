@@ -1,8 +1,8 @@
 // Avishai Dernis 2025
 
 using Microsoft.UI.Xaml.Controls;
-using Zarem.Services;
-using Zarem.ViewModels;
+using Zarem.IDE.Services;
+using Zarem.IDE.ViewModels;
 
 namespace Zarem.IDE.Views.Shell;
 

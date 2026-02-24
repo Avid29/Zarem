@@ -2,9 +2,8 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
-using Zarem.Services.Settings;
-using Zarem.Services.Settings.Enums;
 using Windows.Storage;
+using Zarem.IDE.Services.Settings.Enums;
 
 namespace Zarem.IDE.Services.Settings;
 

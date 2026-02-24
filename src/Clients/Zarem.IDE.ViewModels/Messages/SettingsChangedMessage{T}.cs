@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Messages;
+namespace Zarem.IDE.Messages;
 
 /// <summary>
 /// A message sent when a setting value changes.

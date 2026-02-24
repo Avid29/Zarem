@@ -6,11 +6,11 @@ using Microsoft.UI.Xaml.Controls;
 using System.Globalization;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Tokenization.Models;
-using Zarem.Messages.Build;
-using Zarem.Messages.Navigation;
-using Zarem.Services;
-using Zarem.Services.Settings;
-using Zarem.ViewModels.Pages;
+using Zarem.IDE.Messages.Build;
+using Zarem.IDE.Messages.Navigation;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Settings;
+using Zarem.IDE.ViewModels.Pages;
 
 namespace Zarem.IDE.Views.Pages;
 

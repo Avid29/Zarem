@@ -1,13 +1,13 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Zarem.Models.EditorConfig.ColorScheme;
-using Zarem.Services.Settings.Enums;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
+using Zarem.IDE.Models.EditorConfig.ColorScheme;
+using Zarem.IDE.Services.Settings.Enums;
 
-namespace Zarem.Services.Settings;
+namespace Zarem.IDE.Services.Settings;
 
 /// <summary>
 /// A collection of keys used for settings.

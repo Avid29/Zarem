@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Models.Enums;
+using Zarem.IDE.Models.Enums;
 
-namespace Zarem.Messages.Build;
+namespace Zarem.IDE.Messages.Build;
 
 /// <summary>
 /// A message sent when the build status changes.

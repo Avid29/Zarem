@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Messages.Editor.Enums;
+namespace Zarem.IDE.Messages.Editor.Enums;
 
 /// <summary>
 /// An enum for editor opertion requests.

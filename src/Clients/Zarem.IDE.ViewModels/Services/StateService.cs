@@ -4,10 +4,10 @@ using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Zarem.Messages.Build;
-using Zarem.Models.Enums;
+using Zarem.IDE.Messages.Build;
+using Zarem.IDE.Models.Enums;
 
-namespace Zarem.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// An implementation of the <see cref="IStateService"/>.

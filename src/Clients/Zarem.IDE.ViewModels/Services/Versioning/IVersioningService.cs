@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services.Versioning.Models;
+using Zarem.IDE.Services.Versioning.Models;
 
-namespace Zarem.Services.Versioning;
+namespace Zarem.IDE.Services.Versioning;
 
 /// <summary>
 /// An <see langword="interface"/> for a service that retrieves version info about the app.

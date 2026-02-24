@@ -2,7 +2,7 @@
 
 using Microsoft.UI.Xaml.Data;
 using System;
-using Zarem.Services;
+using Zarem.IDE.Services;
 
 namespace Zarem.IDE.Converters;
 

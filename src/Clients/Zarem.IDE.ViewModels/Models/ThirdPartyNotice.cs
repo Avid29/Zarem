@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Models.Enums;
 
-namespace Zarem.Models;
+// Avishai Dernis 2025
+
+using Zarem.IDE.Models.Enums;
+
+namespace Zarem.IDE.Models;
 
 /// <summary>
 /// A record containing the compoenents of a dependencies details.
