@@ -1,4 +1,4 @@
-﻿// Avishai Dernis 2025
+// Avishai Dernis 2025
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
@@ -6,7 +6,7 @@ using System;
 using Zarem.Assembler.Config;
 using Zarem.Services.Settings.Enums;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class AssemblyEditor
 {

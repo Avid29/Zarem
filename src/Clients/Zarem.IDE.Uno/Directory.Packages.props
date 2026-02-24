@@ -6,9 +6,15 @@
     See https://aka.platform.uno/using-uno-sdk#implicit-packages for more information regarding the Implicit Packages.
   -->
   <ItemGroup>
+    <PackageVersion Include="CommunityToolkit.WinUI.Behaviors" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Helpers" Version="8.2.251219" />
+    <PackageVersion Include="GitInfo" Version="3.6.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
-
   <ItemGroup Condition="$(UsingUnoSdk) != 'true'">
     <PackageVersion Include="Uno.Wasm.Bootstrap.Server" Version="10.0.34" />
   </ItemGroup>

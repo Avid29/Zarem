@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Text;
 
-namespace Zarem.WinUI.Controls.HexViewer;
+namespace Zarem.IDE.Controls.HexViewer;
 
 /// <summary>
 /// A hex viewer.

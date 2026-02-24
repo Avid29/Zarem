@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net10.0-browserwasm;net10.0-desktop</TargetFrameworks>
+    <!--<TargetFrameworks>net10.0-browserwasm;net10.0-desktop</TargetFrameworks>-->
+    <TargetFrameworks>net10.0-desktop</TargetFrameworks>
 
     <OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
@@ -36,6 +37,20 @@
   </PropertyGroup>
     
   <Import Project="..\..\Zarem.IDE.Shared\Zarem.IDE.Shared.projitems" Label="Shared" />
+    
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.Behaviors" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" />
+    <PackageReference Include="CommunityToolkit.WinUI.Helpers" />
+    <PackageReference Include="GitInfo">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+    
   <ItemGroup>
     <ProjectReference Include="..\..\Zarem.IDE.ViewModels\Zarem.IDE.ViewModels.csproj" />
   </ItemGroup>

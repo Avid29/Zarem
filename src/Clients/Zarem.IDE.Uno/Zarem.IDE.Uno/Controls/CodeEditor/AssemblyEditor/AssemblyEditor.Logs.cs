@@ -8,7 +8,7 @@ using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Models.Instructions.Enums;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class AssemblyEditor
 {

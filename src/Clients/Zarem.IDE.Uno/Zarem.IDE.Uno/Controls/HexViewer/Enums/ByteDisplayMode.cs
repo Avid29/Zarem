@@ -1,6 +1,6 @@
-﻿// Avishai Dernis 2025
+// Avishai Dernis 2025
 
-namespace Zarem.WinUI.Controls.HexViewer.Enums;
+namespace Zarem.IDE.Controls.HexViewer.Enums;
 
 /// <summary>
 /// Gets the mode to use to display the byte data.

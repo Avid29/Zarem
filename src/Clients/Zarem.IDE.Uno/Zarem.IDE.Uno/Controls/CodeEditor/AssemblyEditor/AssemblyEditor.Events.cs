@@ -1,6 +1,6 @@
 // Avishai Dernis 2025
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class AssemblyEditor
 {

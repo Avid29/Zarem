@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services.Versioning;
-using Zarem.Services.Versioning.Models;
 using System;
 using Windows.ApplicationModel;
+using Zarem.Services.Versioning;
+using Zarem.Services.Versioning.Models;
 
 namespace Zarem.IDE.Services.Versioning;
 

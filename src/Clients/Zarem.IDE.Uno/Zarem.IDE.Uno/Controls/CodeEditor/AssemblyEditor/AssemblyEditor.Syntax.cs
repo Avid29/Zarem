@@ -8,7 +8,7 @@ using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Models.Tables;
 using Symbol = Zarem.Models.Tables.Symbol;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class AssemblyEditor
 {

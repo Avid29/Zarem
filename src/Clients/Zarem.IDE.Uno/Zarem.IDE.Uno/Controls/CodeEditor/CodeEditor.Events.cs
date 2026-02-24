@@ -2,7 +2,7 @@
 
 using Microsoft.UI.Xaml;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class CodeEditor
 {

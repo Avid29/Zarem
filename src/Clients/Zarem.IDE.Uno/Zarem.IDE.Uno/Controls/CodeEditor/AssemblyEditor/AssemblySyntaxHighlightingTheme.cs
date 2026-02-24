@@ -5,9 +5,10 @@ using Windows.UI;
 using Zarem.Models.EditorConfig.ColorScheme;
 using Zarem.Services;
 using Zarem.Services.Settings;
-using Zarem.WinUI.Extensions;
+using Zarem.IDE.Extensions;
+using CommunityToolkit.WinUI.Helpers;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 /// <summary>
 /// A collection of colors to use for syntax highlighting.
@@ -137,23 +138,23 @@ public partial class AssemblySyntaxHighlightingTheme : DependencyObject
 
     public void LoadFromScheme(EditorColorScheme scheme)
     {
-        //BackgroundColor = scheme.Background.ToColor();
+        BackgroundColor = scheme.Background.ToColor();
 
-        //var syntax = scheme.SyntaxHighlighting;
-        //InstructionHighlightColor = syntax.Instruction.ToColor();
-        //RegisterHighlightColor = syntax.Register.ToColor();
-        //ImmediateHighlightColor = syntax.Immediate.ToColor();
-        //ReferenceHighlightColor = syntax.Reference.ToColor();
-        //OperatorHighlightColor = syntax.Operator.ToColor();
-        //DirectiveHighlightColor = syntax.Directive.ToColor();
-        //StringHighlightColor = syntax.String.ToColor();
-        //CommentHighlightColor = syntax.Comment.ToColor();
-        //MacroHighlightColor = syntax.Macro.ToColor();
+        var syntax = scheme.SyntaxHighlighting;
+        InstructionHighlightColor = syntax.Instruction.ToColor();
+        RegisterHighlightColor = syntax.Register.ToColor();
+        ImmediateHighlightColor = syntax.Immediate.ToColor();
+        ReferenceHighlightColor = syntax.Reference.ToColor();
+        OperatorHighlightColor = syntax.Operator.ToColor();
+        DirectiveHighlightColor = syntax.Directive.ToColor();
+        StringHighlightColor = syntax.String.ToColor();
+        CommentHighlightColor = syntax.Comment.ToColor();
+        MacroHighlightColor = syntax.Macro.ToColor();
 
-        //var logColors = scheme.LogColors;
-        //ErrorUnderlineColor = logColors.Error.ToColor();
-        //WarningUnderlineColor = logColors.Warning.ToColor();
-        //MessageUnderlineColor = logColors.Message.ToColor();
+        var logColors = scheme.LogColors;
+        ErrorUnderlineColor = logColors.Error.ToColor();
+        WarningUnderlineColor = logColors.Warning.ToColor();
+        MessageUnderlineColor = logColors.Message.ToColor();
 
         Updated?.Invoke(this, EventArgs.Empty);
     }

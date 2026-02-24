@@ -3,7 +3,7 @@
 using Zarem.Messages.Editor.Enums;
 using System;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class CodeEditor
 {

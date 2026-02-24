@@ -1,11 +1,8 @@
 // Avishai Dernis 2025
 
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using System;
-using Zarem.WinUI.Controls.HexViewer.Enums;
+using Zarem.IDE.Controls.HexViewer.Enums;
 
-namespace Zarem.WinUI.Controls.HexViewer;
+namespace Zarem.IDE.Controls.HexViewer;
 
 /// <summary>
 /// A control that displays a single byte
