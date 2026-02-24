@@ -7,7 +7,7 @@ using Zarem.ViewModels;
 using System;
 using System.Runtime.InteropServices;
 
-namespace Zarem.WinUI.Windows;
+namespace Zarem.IDE.Windows;
 
 public abstract partial class ZaremWindow : Window
 {

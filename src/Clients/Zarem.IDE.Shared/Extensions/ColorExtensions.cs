@@ -3,7 +3,7 @@
 using System;
 using Windows.UI;
 
-namespace Zarem.WinUI.Extensions;
+namespace Zarem.IDE.Extensions;
 
 public static class ColorExtensions
 {

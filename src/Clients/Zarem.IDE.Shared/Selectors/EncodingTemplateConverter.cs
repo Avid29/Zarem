@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Zarem.Models.CheatSheet;
 
-namespace Zarem.WinUI.Selectors;
+namespace Zarem.IDE.Selectors;
 
 public partial class EncodingTemplateSelector : DataTemplateSelector
 {

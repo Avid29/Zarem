@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Zarem.Services.Files.Models;
 
-namespace Zarem.WinUI.Services.Files.Models;
+namespace Zarem.IDE.Services.Files.Models;
 
 /// <summary>
 /// An <see cref="IFile"/> implementation wrapping <see cref="StorageFile"/>.

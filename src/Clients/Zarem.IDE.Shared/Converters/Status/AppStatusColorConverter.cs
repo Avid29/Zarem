@@ -7,7 +7,7 @@ using Zarem.Models.Enums;
 using System;
 using Windows.UI;
 
-namespace Zarem.WinUI.Converters;
+namespace Zarem.IDE.Converters;
 
 /// <summary>
 /// A converter that converts an <see cref="IdeState"/> into a <see cref="Color"/>.

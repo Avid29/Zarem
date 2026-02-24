@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Data;
 using System;
 using Zarem.Services;
 
-namespace Zarem.WinUI.Converters;
+namespace Zarem.IDE.Converters;
 
 /// <summary>
 /// An <see cref="IValueConverter"/> that localizes and formats strings.

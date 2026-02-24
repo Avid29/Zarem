@@ -4,7 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using Zarem.Services;
 
-namespace Zarem.WinUI.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// 

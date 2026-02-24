@@ -7,7 +7,7 @@ using Windows.System;
 using Zarem.Models;
 using Zarem.ViewModels.Pages.App;
 
-namespace Zarem.WinUI.Views.Pages.App;
+namespace Zarem.IDE.Views.Pages.App;
 
 /// <summary>
 /// A viewer for files.

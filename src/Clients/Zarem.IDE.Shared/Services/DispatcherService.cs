@@ -4,7 +4,7 @@ using Microsoft.UI.Dispatching;
 using Zarem.Services;
 using System;
 
-namespace Zarem.WinUI.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// A <see cref="IDispatcherService"/> implementation for the windows client.

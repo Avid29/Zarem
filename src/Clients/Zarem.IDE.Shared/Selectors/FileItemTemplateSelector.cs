@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Zarem.Bindables.Files;
 
-namespace Zarem.WinUI.Selectors;
+namespace Zarem.IDE.Selectors;
 
 /// <summary>
 /// A <see cref="DataTemplateSelector"/> for 

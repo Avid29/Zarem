@@ -6,7 +6,7 @@ using System;
 using Zarem.Assembler.Config;
 using Zarem.Services.Settings.Enums;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class AssemblyEditor
 {

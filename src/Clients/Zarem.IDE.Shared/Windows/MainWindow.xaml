@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <local:ZaremWindow
-    x:Class="Zarem.WinUI.Windows.MainWindow"
+    x:Class="Zarem.IDE.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:Zarem.WinUI.Windows"
-    xmlns:pages="using:Zarem.WinUI.Views.Pages"
-    xmlns:shell="using:Zarem.WinUI.Views.Shell"
+    xmlns:local="using:Zarem.IDE.Windows"
+    xmlns:pages="using:Zarem.IDE.Views.Pages"
+    xmlns:shell="using:Zarem.IDE.Views.Shell"
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 

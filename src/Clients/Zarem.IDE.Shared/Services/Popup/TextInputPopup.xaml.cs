@@ -3,7 +3,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace Zarem.WinUI.Services.Popup;
+namespace Zarem.IDE.Services.Popup;
 
 /// <summary>
 /// A <see cref="ContentDialog"/> popup 

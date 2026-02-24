@@ -5,10 +5,10 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Zarem.Models.CheatSheet.Enums;
 using System;
-using Zarem.WinUI.Controls.CheatSheet.Palettes;
+using Zarem.IDE.Controls.CheatSheet.Palettes;
 using Zarem.Models.Instructions.Enums;
 
-namespace Zarem.WinUI.Converters;
+namespace Zarem.IDE.Converters;
 
 /// <summary>
 /// A converter that converts an <see cref="InstructionType"/> into a <see cref="SolidColorBrush"/>.

@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.IO;
 
-namespace Zarem.WinUI.Converters;
+namespace Zarem.IDE.Converters;
 
 /// <summary>
 /// A converter that gets an <see cref="ImageSource"/> icon for a given file by name.

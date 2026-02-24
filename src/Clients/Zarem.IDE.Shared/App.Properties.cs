@@ -3,7 +3,7 @@
 using Microsoft.UI.Xaml;
 using System;
 
-namespace Zarem.WinUI;
+namespace Zarem.IDE;
 
 public partial class App
 {

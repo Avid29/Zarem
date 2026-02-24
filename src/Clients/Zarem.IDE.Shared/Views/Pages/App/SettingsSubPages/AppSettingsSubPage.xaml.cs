@@ -3,7 +3,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Zarem.ViewModels.Pages.App.Settings;
 
-namespace Zarem.WinUI.Views.Pages.App.SettingsSubPages;
+namespace Zarem.IDE.Views.Pages.App.SettingsSubPages;
 
 /// <summary>
 /// The app settings subpage.

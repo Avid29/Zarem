@@ -10,7 +10,7 @@ using System.Numerics;
 using System.Text.Json;
 using Windows.Foundation.Collections;
 
-namespace Zarem.WinUI.Services.Settings;
+namespace Zarem.IDE.Services.Settings;
 
 /// <summary>
 /// An implementation of the <see cref="ISettingsProvider"/> that handles storing settings in a given folder.

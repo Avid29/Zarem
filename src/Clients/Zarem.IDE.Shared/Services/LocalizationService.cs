@@ -7,7 +7,7 @@ using Windows.ApplicationModel.Resources.Core;
 using Windows.Globalization;
 using Zarem.Services;
 
-namespace Zarem.WinUI.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// A service that retrieves localization details.

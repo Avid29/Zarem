@@ -3,7 +3,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace Zarem.WinUI.Controls;
+namespace Zarem.IDE.Controls;
 
 public sealed partial class EditableTextBlock : Control
 {

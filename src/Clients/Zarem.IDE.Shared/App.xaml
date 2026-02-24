@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Application
-    x:Class="Zarem.WinUI.App"
+    x:Class="Zarem.IDE.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:convert="using:Zarem.WinUI.Converters"
-    xmlns:local="using:Zarem.WinUI">
+    xmlns:convert="using:Zarem.IDE.Converters"
+    xmlns:local="using:Zarem.IDE">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

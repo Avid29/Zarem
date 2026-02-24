@@ -3,7 +3,7 @@
 using Zarem.Services;
 using System;
 
-namespace Zarem.WinUI.Helpers;
+namespace Zarem.IDE.Helpers;
 
 public static class LocalizationHelper
 {

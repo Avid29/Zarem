@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Zarem.ViewModels.Pages;
 using System.Linq;
 
-namespace Zarem.WinUI.Views.Pages;
+namespace Zarem.IDE.Views.Pages;
 
 public sealed partial class CheatSheet : UserControl
 {

@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.WinUI.Converters;
+namespace Zarem.IDE.Converters;
 
 public partial class RegisterEncodingColorConverter : IValueConverter
 {

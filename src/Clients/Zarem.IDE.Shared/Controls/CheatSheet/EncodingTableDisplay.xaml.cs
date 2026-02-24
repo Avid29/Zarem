@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Numerics;
 
-namespace Zarem.WinUI.Controls.CheatSheet;
+namespace Zarem.IDE.Controls.CheatSheet;
 
 public sealed partial class EncodingTableDisplay : UserControl
 {

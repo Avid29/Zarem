@@ -11,16 +11,16 @@ using Zarem.Services.Windowing;
 using Zarem.ViewModels;
 using Zarem.ViewModels.Pages;
 using Zarem.ViewModels.Pages.App;
-using Zarem.WinUI.Services;
-using Zarem.WinUI.Services.Popup;
-using Zarem.WinUI.Services.Settings;
-using Zarem.WinUI.Services.Versioning;
-using Zarem.WinUI.Services.Windowing;
+using Zarem.IDE.Services;
+using Zarem.IDE.Services.Popup;
+using Zarem.IDE.Services.Settings;
+using Zarem.IDE.Services.Versioning;
+using Zarem.IDE.Services.Windowing;
 using System;
-using Zarem.WinUI.Services.Files;
+using Zarem.IDE.Services.Files;
 using ServiceCollection = Microsoft.Extensions.DependencyInjection.ServiceCollection;
 
-namespace Zarem.WinUI;
+namespace Zarem.IDE;
 
 public partial class App
 {

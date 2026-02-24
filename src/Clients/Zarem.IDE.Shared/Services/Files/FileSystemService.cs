@@ -12,10 +12,10 @@ using Zarem.Services.Files.Models;
 using Zarem.Services.Popup;
 using Zarem.Services.Popup.Enums;
 using Zarem.Services.Popup.Models;
-using File = Zarem.WinUI.Services.Files.Models.File;
-using Folder = Zarem.WinUI.Services.Files.Models.Folder;
+using File = Zarem.IDE.Services.Files.Models.File;
+using Folder = Zarem.IDE.Services.Files.Models.Folder;
 
-namespace Zarem.WinUI.Services.Files;
+namespace Zarem.IDE.Services.Files;
 
 /// <summary>
 /// An <see cref="IFileSystemService"/> implementation wrapping <see cref="StorageFile"/>.

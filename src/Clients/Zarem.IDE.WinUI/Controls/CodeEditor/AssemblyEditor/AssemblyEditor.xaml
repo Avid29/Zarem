@@ -2,7 +2,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Zarem.WinUI.Controls.CodeEditor"
+    xmlns:local="using:Zarem.IDE.Controls.CodeEditor"
     xmlns:editor="using:WinUIEditor">
 
     <Style TargetType="local:AssemblyEditor">

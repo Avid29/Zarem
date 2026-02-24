@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace Zarem.WinUI.Services.Files.Models;
+namespace Zarem.IDE.Services.Files.Models;
 
 public abstract class FileItemBase : IFileItem
 {

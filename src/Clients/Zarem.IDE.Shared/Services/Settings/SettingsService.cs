@@ -6,7 +6,7 @@ using Zarem.Services.Settings;
 using Zarem.Services.Settings.Enums;
 using Windows.Storage;
 
-namespace Zarem.WinUI.Services.Settings;
+namespace Zarem.IDE.Services.Settings;
 
 /// <summary>
 /// An implementation of the <see cref="ISettingsService"/>

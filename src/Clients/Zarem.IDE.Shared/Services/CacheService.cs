@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace Zarem.WinUI.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// An implementation of the <see cref="ICacheService"/>.

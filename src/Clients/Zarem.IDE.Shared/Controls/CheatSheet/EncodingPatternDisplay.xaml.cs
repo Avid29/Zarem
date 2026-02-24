@@ -3,9 +3,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Zarem.Models.CheatSheet;
-using Zarem.WinUI.Controls.CheatSheet.Palettes;
+using Zarem.IDE.Controls.CheatSheet.Palettes;
 
-namespace Zarem.WinUI.Controls.CheatSheet;
+namespace Zarem.IDE.Controls.CheatSheet;
 
 public sealed partial class EncodingPatternDisplay : UserControl
 {

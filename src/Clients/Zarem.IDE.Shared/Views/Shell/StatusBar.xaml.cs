@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Zarem.Services;
 using Zarem.ViewModels;
 
-namespace Zarem.WinUI.Views.Shell;
+namespace Zarem.IDE.Views.Shell;
 
 /// <summary>
 /// The status bar.

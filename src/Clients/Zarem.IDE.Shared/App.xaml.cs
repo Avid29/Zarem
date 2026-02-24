@@ -15,11 +15,11 @@ using Zarem.Messages;
 using Zarem.Services;
 using Zarem.Services.Settings;
 using Zarem.Services.Settings.Enums;
-using Zarem.WinUI.Helpers;
-using Zarem.WinUI.Windows;
+using Zarem.IDE.Helpers;
+using Zarem.IDE.Windows;
 
 
-namespace Zarem.WinUI;
+namespace Zarem.IDE;
 
 /// <summary>
 /// Provides application-specific behavior to supplement the default Application class.

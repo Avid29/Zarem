@@ -6,7 +6,7 @@ using Zarem.Services;
 using Zarem.ViewModels.Pages.App;
 using System.Globalization;
 
-namespace Zarem.WinUI.Views.Pages.App;
+namespace Zarem.IDE.Views.Pages.App;
 
 /// <summary>
 /// The settings page.

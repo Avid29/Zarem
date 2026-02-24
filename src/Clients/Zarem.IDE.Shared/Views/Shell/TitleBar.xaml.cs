@@ -8,7 +8,7 @@ using Windows.Graphics;
 using Windows.System;
 using Zarem.ViewModels;
 
-namespace Zarem.WinUI.Views.Shell;
+namespace Zarem.IDE.Views.Shell;
 
 /// <summary>
 /// The title bar contents.

@@ -9,7 +9,7 @@ using System;
 using System.Threading.Tasks;
 using Zarem.Services;
 
-namespace Zarem.WinUI.Services.Popup;
+namespace Zarem.IDE.Services.Popup;
 
 public class PopupService : IPopupService
 {

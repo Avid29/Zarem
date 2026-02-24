@@ -10,9 +10,9 @@ using Zarem.Models.EditorConfig.ColorScheme;
 using Zarem.Services;
 using Zarem.Services.Settings.Enums;
 using Zarem.ViewModels.Pages;
-using Zarem.WinUI.Controls.CodeEditor;
+using Zarem.IDE.Controls.CodeEditor;
 
-namespace Zarem.WinUI.Views.Pages.Editor;
+namespace Zarem.IDE.Views.Pages.Editor;
 
 public sealed partial class TextEditorPage : UserControl
 {

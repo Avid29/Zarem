@@ -9,9 +9,9 @@ using Zarem.Bindables.Files;
 using Zarem.Bindables.Files.Interfaces;
 using Zarem.Services;
 using Zarem.ViewModels.Pages;
-using Zarem.WinUI.Controls;
+using Zarem.IDE.Controls;
 
-namespace Zarem.WinUI.Views.Pages;
+namespace Zarem.IDE.Views.Pages;
 
 /// <summary>
 /// The explorer view.

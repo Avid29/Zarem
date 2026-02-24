@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Zarem.Services.Files.Models;
 
-namespace Zarem.WinUI.Services.Files.Models;
+namespace Zarem.IDE.Services.Files.Models;
 
 /// <summary>
 /// An <see cref="IFolder"/> implementation wrapping a <see cref="StorageFolder"/>.

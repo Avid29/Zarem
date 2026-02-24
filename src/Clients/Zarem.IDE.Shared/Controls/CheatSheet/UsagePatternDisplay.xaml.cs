@@ -13,9 +13,9 @@ using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Services;
-using Zarem.WinUI.Controls.CheatSheet.Palettes;
+using Zarem.IDE.Controls.CheatSheet.Palettes;
 
-namespace Zarem.WinUI.Controls.CheatSheet;
+namespace Zarem.IDE.Controls.CheatSheet;
 
 /// <summary>
 /// A control for displaying usage patterns with colored .

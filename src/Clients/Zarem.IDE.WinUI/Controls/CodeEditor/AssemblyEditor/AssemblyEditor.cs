@@ -6,7 +6,7 @@ using System.Text;
 using Windows.UI;
 using Zarem.Assembler.Tokenization.Models;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 /// <summary>
 /// A modified <see cref="CodeEditor"/> to add assembly syntax-highlighting and other features.

@@ -1,6 +1,6 @@
 // Avishai Dernis 2025
 
-namespace Zarem.WinUI.Windows;
+namespace Zarem.IDE.Windows;
 
 /// <summary>
 /// An empty window that can be used on its own or navigated to within a Frame.

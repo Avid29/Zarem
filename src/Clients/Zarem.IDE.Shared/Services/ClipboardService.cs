@@ -2,7 +2,7 @@
 
 using Zarem.Services;
 using Zarem.Services.Files.Models;
-using Zarem.WinUI.Services.Files.Models;
+using Zarem.IDE.Services.Files.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 
-namespace Zarem.WinUI.Services;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// An implementation of the <see cref="IClipboardService"/>

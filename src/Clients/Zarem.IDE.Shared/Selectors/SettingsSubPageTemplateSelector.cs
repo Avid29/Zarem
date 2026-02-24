@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Zarem.ViewModels.Pages.App.Settings;
 
-namespace Zarem.WinUI.Selectors;
+namespace Zarem.IDE.Selectors;
 
 public partial class SettingsSubPageTemplateSelector : DataTemplateSelector
 {

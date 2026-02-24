@@ -6,7 +6,7 @@ using Zarem.Models.CheatSheet.Enums;
 using System;
 using Zarem.Models.Instructions.Enums;
 
-namespace Zarem.WinUI.Converters;
+namespace Zarem.IDE.Converters;
 
 /// <summary>
 /// A converter that converts an <see cref="InstructionType"/> into a <see cref="SolidColorBrush"/>.

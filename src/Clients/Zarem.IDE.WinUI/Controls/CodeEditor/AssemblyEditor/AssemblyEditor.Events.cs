@@ -3,7 +3,7 @@
 using Microsoft.UI.Xaml;
 using WinUIEditor;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class AssemblyEditor
 {

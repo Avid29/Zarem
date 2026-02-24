@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Hosting;
 using System.Numerics;
 using Windows.UI;
 
-namespace Zarem.WinUI.Controls;
+namespace Zarem.IDE.Controls;
 
 /// <summary>
 /// A control for a running indication.

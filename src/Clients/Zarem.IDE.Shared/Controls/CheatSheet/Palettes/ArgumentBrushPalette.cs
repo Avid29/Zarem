@@ -2,7 +2,7 @@
 
 using Microsoft.UI.Xaml.Media;
 
-namespace Zarem.WinUI.Controls.CheatSheet.Palettes;
+namespace Zarem.IDE.Controls.CheatSheet.Palettes;
 
 public record ArgumentBrushPalette
 {

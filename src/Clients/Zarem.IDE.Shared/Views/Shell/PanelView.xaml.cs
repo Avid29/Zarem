@@ -8,10 +8,10 @@ using Zarem.Messages.Navigation;
 using Zarem.Services;
 using Zarem.ViewModels;
 using Zarem.ViewModels.Pages.Abstract;
-using Zarem.WinUI.Helpers;
-using Zarem.WinUI.Windows;
+using Zarem.IDE.Helpers;
+using Zarem.IDE.Windows;
 
-namespace Zarem.WinUI.Views.Shell;
+namespace Zarem.IDE.Views.Shell;
 
 /// <summary>
 /// The main content tab view.

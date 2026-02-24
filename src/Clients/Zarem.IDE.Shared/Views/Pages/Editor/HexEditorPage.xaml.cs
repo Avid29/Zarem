@@ -5,7 +5,7 @@ using System.IO;
 using Zarem.ViewModels.Pages;
 
 
-namespace Zarem.WinUI.Views.Pages.Editor;
+namespace Zarem.IDE.Views.Pages.Editor;
 
 public sealed partial class HexEditorPage : UserControl
 {

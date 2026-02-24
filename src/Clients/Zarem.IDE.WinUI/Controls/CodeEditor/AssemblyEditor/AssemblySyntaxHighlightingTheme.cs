@@ -6,11 +6,11 @@ using Microsoft.UI.Xaml;
 using Zarem.Models.EditorConfig.ColorScheme;
 using Zarem.Services;
 using Zarem.Services.Settings;
-using Zarem.WinUI.Extensions;
+using Zarem.IDE.Extensions;
 using System;
 using Windows.UI;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 /// <summary>
 /// A collection of colors to use for syntax highlighting.

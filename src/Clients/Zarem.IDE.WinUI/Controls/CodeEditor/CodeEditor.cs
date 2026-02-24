@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using WinUIEditor;
 
-namespace Zarem.WinUI.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor;
 
 /// <summary>
 /// A wrapper of the <see cref="CodeEditorControl"/> to handle Zarem events.

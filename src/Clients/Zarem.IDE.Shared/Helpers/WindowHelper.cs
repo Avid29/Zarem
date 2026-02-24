@@ -2,9 +2,9 @@
 
 using Microsoft.UI.Xaml;
 using System.Collections.Generic;
-using Zarem.WinUI.Windows;
+using Zarem.IDE.Windows;
 
-namespace Zarem.WinUI.Helpers;
+namespace Zarem.IDE.Helpers;
 
 public static class WindowHelper
 {
