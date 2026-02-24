@@ -217,4 +217,54 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\TrafficCone-Dark.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\TrafficCone-Light.svg" />
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\About.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\CheatSheet.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\ErrorList.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Explorer.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Manifest.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Pages.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\PageTitles.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Settings.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\TitleBar.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Welcome.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\About.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\CheatSheet.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\ErrorList.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Explorer.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Manifest.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Pages.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\PageTitles.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Settings.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\TitleBar.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Welcome.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\About.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\CheatSheet.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\ErrorList.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Explorer.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Manifest.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Pages.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\PageTitles.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Settings.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\TitleBar.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Welcome.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\About.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\CheatSheet.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\ErrorList.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Explorer.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Manifest.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Pages.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\PageTitles.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Settings.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\TitleBar.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Welcome.resw" />
+  </ItemGroup>
 </Project>
