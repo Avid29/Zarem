@@ -283,21 +283,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\AssemblyEditor\AssemblyEditor.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\CodeEditor.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Controls\HexViewer\HexViewer.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Controls\RunningIndicator.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -442,20 +427,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\UsagePatternDisplay.xaml.cs">
       <DependentUpon>UsagePatternDisplay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\AssemblyEditor\AssemblyEditor.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\AssemblyEditor\AssemblyEditor.Events.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\AssemblyEditor\AssemblyEditor.Logs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\AssemblyEditor\AssemblyEditor.Properties.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\AssemblyEditor\AssemblyEditor.Syntax.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\AssemblyEditor\AssemblySyntaxHighlightingTheme.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\CodeEditor.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\CodeEditor.Events.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\CodeEditor.Keybinds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\CodeEditor.Properties.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\EditableTextBlock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\HexViewer\ByteView.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\HexViewer\Enums\ByteDisplayMode.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\HexViewer\HexViewer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\RunningIndicator.xaml.cs">
       <DependentUpon>RunningIndicator.xaml</DependentUpon>
     </Compile>

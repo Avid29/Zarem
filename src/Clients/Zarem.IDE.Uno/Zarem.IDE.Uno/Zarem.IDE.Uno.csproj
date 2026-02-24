@@ -29,12 +29,12 @@
       Logging;
       Mvvm;
       Configuration;
-      Localization;
       Navigation;
       ThemeService;
       SkiaRenderer;
     </UnoFeatures>
   </PropertyGroup>
+    
   <Import Project="..\..\Zarem.IDE.Shared\Zarem.IDE.Shared.projitems" Label="Shared" />
   <ItemGroup>
     <ProjectReference Include="..\..\Zarem.IDE.ViewModels\Zarem.IDE.ViewModels.csproj" />

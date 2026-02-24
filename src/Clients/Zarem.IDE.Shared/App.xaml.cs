@@ -17,7 +17,6 @@ using Zarem.Services.Settings;
 using Zarem.Services.Settings.Enums;
 using Zarem.WinUI.Helpers;
 using Zarem.WinUI.Windows;
-using ILocalizationService = Zarem.Services.ILocalizationService;
 
 
 namespace Zarem.WinUI;

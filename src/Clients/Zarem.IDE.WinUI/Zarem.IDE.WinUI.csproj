@@ -84,4 +84,16 @@
 		<ProjectReference Include="..\Zarem.IDE.ViewModels\Zarem.IDE.ViewModels.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Page Update="Controls\CodeEditor\AssemblyEditor\AssemblyEditor.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Controls\CodeEditor\CodeEditor.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Controls\HexViewer\HexViewer.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	</ItemGroup>
+
 </Project>
