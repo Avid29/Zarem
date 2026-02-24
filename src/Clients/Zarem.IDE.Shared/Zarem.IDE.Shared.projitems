@@ -1,0 +1,529 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>d6e0cea0-101e-44ea-b842-6a32433cbac0</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Zarem.IDE.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha176.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha24x24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha284.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha300.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha48x48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha50x50.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha88x88.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev176.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev24x24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev284.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev300.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev48x48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev50x50.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev88x88.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store176.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store24x24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store284.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store300.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store48x48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store50x50.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store88x88.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\LargeTile.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\LargeTile.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\LargeTile.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\LargeTile.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\LargeTile.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\SmallTile.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\SmallTile.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\SmallTile.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\SmallTile.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\SmallTile.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\SplashScreen.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\SplashScreen.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\SplashScreen.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\SplashScreen.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\SplashScreen.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square150x150Logo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square150x150Logo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square150x150Logo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square150x150Logo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square150x150Logo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.targetsize-16.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.targetsize-24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.targetsize-256.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.targetsize-32.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Square44x44Logo.targetsize-48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\StoreLogo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\StoreLogo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\StoreLogo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\StoreLogo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\StoreLogo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Wide310x150Logo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Wide310x150Logo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Wide310x150Logo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Wide310x150Logo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\Wide310x150Logo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\LargeTile.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\LargeTile.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\LargeTile.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\LargeTile.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\LargeTile.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\SmallTile.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\SmallTile.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\SmallTile.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\SmallTile.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\SmallTile.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\SplashScreen.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\SplashScreen.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\SplashScreen.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\SplashScreen.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\SplashScreen.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square150x150Logo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square150x150Logo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square150x150Logo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square150x150Logo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square150x150Logo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.targetsize-16.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.targetsize-24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.targetsize-256.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.targetsize-32.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Square44x44Logo.targetsize-48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\StoreLogo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\StoreLogo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\StoreLogo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\StoreLogo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\StoreLogo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Wide310x150Logo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Wide310x150Logo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Wide310x150Logo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Wide310x150Logo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Dev\Wide310x150Logo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Blank.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\LargeTile.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\LargeTile.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\LargeTile.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\LargeTile.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\LargeTile.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\SmallTile.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\SmallTile.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\SmallTile.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\SmallTile.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\SmallTile.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\SplashScreen.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\SplashScreen.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\SplashScreen.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\SplashScreen.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\SplashScreen.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square150x150Logo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square150x150Logo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square150x150Logo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square150x150Logo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square150x150Logo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.targetsize-16.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.targetsize-24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.targetsize-256.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.targetsize-32.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Square44x44Logo.targetsize-48.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\StoreLogo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\StoreLogo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\StoreLogo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\StoreLogo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\StoreLogo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Wide310x150Logo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Wide310x150Logo.scale-125.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Wide310x150Logo.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Wide310x150Logo.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Store\Wide310x150Logo.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Fonts\HappyMonkey-Regular.ttf" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Fonts\ShareTech-Regular.ttf" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\BuildIcons\Build.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\BuildIcons\Clean.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\BuildIcons\ReBuild.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\StartDebugging.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\StartWithoutDebugging.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\StepInto.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\StepOut.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\StepOver.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\StopDebugging.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Files\asm.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Files\File.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Files\Folder.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Files\obj.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Flags\Simple\IL.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Flags\Stylized\IL.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Services\Crowdin-Dark.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Services\Crowdin-Light.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Services\Discord.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Services\Git.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Services\GitHub-Dark.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Services\GitHub-Light.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Services\Reddit.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Severity\Error.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Severity\Message.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Severity\Warning.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\TrafficCone-Dark.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\TrafficCone-Light.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\About.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\CheatSheet.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\ErrorList.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Explorer.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Manifest.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Pages.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\PageTitles.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Settings.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\TitleBar.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Welcome.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\About.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\CheatSheet.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\ErrorList.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Explorer.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Manifest.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Pages.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\PageTitles.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Settings.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\TitleBar.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Welcome.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\About.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\CheatSheet.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\ErrorList.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Explorer.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Manifest.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Pages.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\PageTitles.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Settings.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\TitleBar.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Welcome.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\About.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\CheatSheet.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\ErrorList.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Explorer.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Manifest.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Pages.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\PageTitles.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Settings.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\TitleBar.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Welcome.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\EncodingPatternDisplay.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\EncodingTableDisplay.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\UsagePatternDisplay.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\RunningIndicator.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Resources\Brushes.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Resources\Fonts.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Resources\Icons.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Resources\Styles.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Services\Popup\TextInputPopup.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Themes\Generic.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\AboutPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\AppSettingsSubPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\AssemblerSettingsSubPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\EditorSettingsSubPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\WelcomePage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\CreateProject.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\HexEditorPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\TextEditorPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\ErrorList.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Explorer.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\FileViewer.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Shell\PanelView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Shell\StatusBar.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Shell\TitleBar.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Windows\MainWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Windows\PanelWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)App.Properties.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)App.Services.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\EncodingPatternDisplay.xaml.cs">
+      <DependentUpon>EncodingPatternDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\EncodingTableDisplay.xaml.cs">
+      <DependentUpon>EncodingTableDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\Palettes\ArgumentBrushPalette.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\Palettes\EncodingPatternSectionBrushPalette.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\Palettes\InstructionTypeBrushPalette.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\UsagePatternDisplay.xaml.cs">
+      <DependentUpon>UsagePatternDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\EditableTextBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\RunningIndicator.xaml.cs">
+      <DependentUpon>RunningIndicator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\CheatSheet\EncodingPatternForegroundConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\CheatSheet\EncodingPatternSectionColorConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\CheatSheet\InstructionTypeColorConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\CheatSheet\RegisterEncodingColorConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\FileTypeIconConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\Status\AppStatusColorConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\StringLocalizeConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\LocalizationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\WindowHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Selectors\EditorTemplateSelection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Selectors\EncodingTemplateConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Selectors\FileItemTemplateSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Selectors\PageTemplateSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Selectors\SettingsSubPageTemplateSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\CacheService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ClipboardService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ConsoleService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\DispatcherService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Files\FileSystemService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Files\Models\File.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Files\Models\FileItemBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Files\Models\Folder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\LocalizationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Popup\PopupService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Popup\TextInputPopup.xaml.cs">
+      <DependentUpon>TextInputPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Settings\SettingsProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Settings\SettingsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Versioning\VersioningService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Windowing\WindowingService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\AppSettingsSubPage.xaml.cs">
+      <DependentUpon>AppSettingsSubPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\AssemblerSettingsSubPage.xaml.cs">
+      <DependentUpon>AssemblerSettingsSubPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\EditorSettingsSubPage.xaml.cs">
+      <DependentUpon>EditorSettingsSubPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\WelcomePage.xaml.cs">
+      <DependentUpon>WelcomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet.xaml.cs">
+      <DependentUpon>CheatSheet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CreateProject.xaml.cs">
+      <DependentUpon>CreateProject.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\HexEditorPage.xaml.cs">
+      <DependentUpon>HexEditorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\TextEditorPage.xaml.cs">
+      <DependentUpon>TextEditorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\ErrorList.xaml.cs">
+      <DependentUpon>ErrorList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Explorer.xaml.cs">
+      <DependentUpon>Explorer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\FileViewer.xaml.cs">
+      <DependentUpon>FileViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Shell\PanelView.xaml.cs">
+      <DependentUpon>PanelView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Shell\StatusBar.xaml.cs">
+      <DependentUpon>StatusBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Shell\TitleBar.xaml.cs">
+      <DependentUpon>TitleBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Windows\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Windows\PanelWindow.xaml.cs">
+      <DependentUpon>PanelWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Windows\ZaremWindow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+</Project>

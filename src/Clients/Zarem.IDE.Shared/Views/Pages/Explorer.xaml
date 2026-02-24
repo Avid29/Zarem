@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Zarem.IDE.Views.Pages.Explorer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:Zarem.IDE.Views.Pages"
+    xmlns:convert="using:Zarem.IDE.Converters"
+    xmlns:selector="using:Zarem.IDE.Selectors"
+    xmlns:files="using:Zarem.Bindables.Files"
+    xmlns:ctrls="using:Zarem.IDE.Controls"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <convert:FileTypeIconConverter x:Key="FileTypeIconConverter"
+                                       Assembly="{StaticResource AsmFileIcon}"
+                                       Object="{StaticResource ObjFileIcon}"
+                                       Project="{StaticResource AppIconSmall}"
+                                       Default="{StaticResource FileIcon}"/>
+
+        <DataTemplate x:Key="FolderTemplate" x:DataType="files:BindableFolder">
+            <TreeViewItem ItemsSource="{x:Bind Children, Mode=OneWay}"
+                          HasUnrealizedChildren="{x:Bind ChildrenNotLoaded, Mode=OneWay}"
+                          AutomationProperties.Name="{x:Bind Name, Mode=OneWay}"
+                          DoubleTapped="FolderDoubleTapped"
+                          Loaded="TreeViewItem_Loaded">
+                <TreeViewItem.ContextFlyout>
+                    <MenuFlyout>
+                        <!--  Add  -->
+                        <MenuFlyoutSubItem x:Uid="/Explorer/Flyout/AddMFSI" Text="Add">
+                            <!--  File -->
+                            <MenuFlyoutItem x:Uid="/Explorer/Flyout/NewFileMFI" Text="New File"
+                                            Command="{x:Bind CreateChildFileCommand, Mode=OneWay}"/>
+                            <MenuFlyoutItem x:Uid="/Explorer/Flyout/ExistingFileMFI" Text="Existing File" IsEnabled="False"/>
+                            <MenuFlyoutSeparator/>
+
+                            <!--  Folder  -->
+                            <MenuFlyoutItem x:Uid="/Explorer/Flyout/NewFolderMFI" Text="New Folder" Icon="NewFolder"
+                                            Command="{x:Bind CreateChildFolderCommand, Mode=OneWay}"/>
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutSeparator/>
+
+                        <!--  Modify  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CutMFI" Text="Cut" Icon="Cut" IsEnabled="False"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyMFI" Text="Copy" Icon="Copy"
+                                        Command="{x:Bind CopyFileCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/PasteMFI" Text="Paste" Icon="Paste" IsEnabled="False"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/DeleteMFI" Text="Delete" Icon="Delete"
+                                        Command="{x:Bind DeleteCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/RenameMFI" Text="Rename" Icon="Rename" Click="RenameClicked"/>
+                        <MenuFlyoutSeparator/>
+                        
+                        <!--  Open  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/OpenInFileExplorerMFI" Text="Open in File Explorer"
+                                        Command="{x:Bind OpenInExplorerCommand, Mode=OneWay}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xED25;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <!--<MenuFlyoutItem x:Uid="/Explorer/Flyout/OpenInTerminal" Text="Open in Terminal" IsEnabled="False"/>-->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/OpenInWindowsTerminal" Text="Open in Windows Terminal"
+                                        Command="{x:Bind OpenInWindowsTerminalCommand, Mode=OneWay}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE756;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator/>
+
+                        <!--  Copy Path  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyNameMFI" Text="Copy Name"
+                                        Command="{x:Bind CopyFileNameCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyFullPathMFI" Text="Copy Full Path"
+                                        Command="{x:Bind CopyFilePathCommand, Mode=OneWay}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE62F;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </TreeViewItem.ContextFlyout>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ImageIcon Source="{StaticResource FolderIcon}" Height="20"/>
+                    <ctrls:EditableTextBlock Text="{x:Bind Name, Mode=TwoWay}"/>
+                </StackPanel>
+            </TreeViewItem>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="FileTemplate" x:DataType="files:BindableFile">
+            <TreeViewItem AutomationProperties.Name="{x:Bind Name, Mode=OneWay}"
+                          ItemsSource="{x:Bind Children, Mode=OneWay}"
+                          DoubleTapped="FileDoubleTapped">
+                <TreeViewItem.ContextFlyout>
+                    <MenuFlyout>
+                        <!--  Open  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/OpenMFI" Icon="OpenFile" Text="Open"
+                                        Command="{x:Bind OpenCommand, Mode=OneWay}" />
+                        <MenuFlyoutSubItem x:Uid="/Explorer/Flyout/OpenWithMFSI" Text="Open With" IsEnabled="False"/>
+                        <MenuFlyoutSeparator/>
+
+                        <!--  Modify  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CutMFI" Text="Cut" Icon="Cut" IsEnabled="False"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyMFI" Text="Copy" Icon="Copy"
+                                        Command="{x:Bind CopyFileCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/DeleteMFI" Text="Delete" Icon="Delete"
+                                        Command="{x:Bind DeleteCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/RenameMFI" Text="Rename" Icon="Rename" Click="RenameClicked"/>
+                        <MenuFlyoutSeparator/>
+
+                        <!--  Copy Path  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyNameMFI" Text="Copy Name"
+                                        Command="{x:Bind CopyFileNameCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyFullPathMFI" Text="Copy Full Path"
+                                        Command="{x:Bind CopyFilePathCommand, Mode=OneWay}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE62F;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </TreeViewItem.ContextFlyout>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ImageIcon Source="{x:Bind Name, Converter={StaticResource FileTypeIconConverter}, Mode=OneWay}" Height="20"/>
+                    <ctrls:EditableTextBlock Text="{x:Bind Name, Mode=TwoWay}"/>
+                </StackPanel>
+            </TreeViewItem>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="ProjectTemplate" x:DataType="files:BindableProjectFile">
+            <TreeViewItem ItemsSource="{x:Bind Children, Mode=OneWay}"
+                          HasUnrealizedChildren="{x:Bind ChildrenNotLoaded, Mode=OneWay}"
+                          AutomationProperties.Name="{x:Bind Name, Mode=OneWay}"
+                          DoubleTapped="FolderDoubleTapped"
+                          Loaded="TreeViewItem_Loaded">
+                <TreeViewItem.ContextFlyout>
+                    <MenuFlyout>
+                        <!--  Add  -->
+                        <MenuFlyoutSubItem x:Uid="/Explorer/Flyout/AddMFSI" Text="Add">
+                            <!--  File -->
+                            <MenuFlyoutItem x:Uid="/Explorer/Flyout/NewFileMFI" Text="New File"
+                                            Command="{x:Bind CreateChildFileCommand, Mode=OneWay}"/>
+                            <MenuFlyoutItem x:Uid="/Explorer/Flyout/ExistingFileMFI" Text="Existing File" IsEnabled="False"/>
+                            <MenuFlyoutSeparator/>
+
+                            <!--  Folder  -->
+                            <MenuFlyoutItem x:Uid="/Explorer/Flyout/NewFolderMFI" Text="New Folder" Icon="NewFolder"
+                                            Command="{x:Bind CreateChildFolderCommand, Mode=OneWay}"/>
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutSeparator/>
+
+                        <!--  Copy Path  -->
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyNameMFI" Text="Copy Name"
+                                        Command="{x:Bind CopyFileNameCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Uid="/Explorer/Flyout/CopyFullPathMFI" Text="Copy Full Path"
+                                        Command="{x:Bind CopyFilePathCommand, Mode=OneWay}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE62F;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </TreeViewItem.ContextFlyout>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ImageIcon Source="{x:Bind Name, Converter={StaticResource FileTypeIconConverter}, Mode=OneWay}" Height="20"/>
+                    <ctrls:EditableTextBlock Text="{x:Bind Name, Mode=TwoWay}"/>
+                </StackPanel>
+            </TreeViewItem>
+        </DataTemplate>
+
+        <selector:FileItemTemplateSelector x:Key="FileItemTemplateSelector"
+                                           FolderTemplate="{StaticResource FolderTemplate}"
+                                           FileTemplate="{StaticResource FileTemplate}"
+                                           ProjectTemplate="{StaticResource ProjectTemplate}"/>
+        
+    </UserControl.Resources>
+
+    <Grid Margin="4,0,8,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <!--<AutoSuggestBox x:Uid="SearchFilesASB"
+                        PlaceholderText="Search Files"
+                        Margin="16,0,16,12"
+                        IsEnabled="False"/>-->
+        <TreeView x:Name="FilesTreeViewRoot"
+                  x:Load="{x:Bind local:Explorer.IsNotNull(ViewModel.RootNode), FallbackValue=False, Mode=OneWay}"
+                  ItemsSource="{x:Bind ViewModel.RootNode, Mode=OneWay}"
+                  ItemTemplateSelector="{StaticResource FileItemTemplateSelector}"
+                  Expanding="TreeView_Expanding"
+                  Grid.Row="1">
+            <TreeView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <RepositionThemeTransition/>
+                </TransitionCollection>
+            </TreeView.ItemContainerTransitions>
+        </TreeView>
+
+        <StackPanel x:Name="RecentFileListView"
+                    x:Load="{x:Bind local:Explorer.IsNull(ViewModel.RootNode), FallbackValue=True, Mode=OneWay}">
+            <TextBlock x:Uid="/Pages/Explorer/RecentProjectsAndFoldersTB" Text="Recent Projects and Folders"
+                       FontSize="22" TextTrimming="CharacterEllipsis"/>
+            <ItemsRepeater ItemsSource="{x:Bind ViewModel.RecentProjects, Mode=OneWay}"
+                      Grid.Row="1" Margin="0,8,0,16">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <HyperlinkButton Tag="{x:Bind}" ToolTipService.ToolTip="{x:Bind}" Padding="8"
+                                         HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                         MinHeight="20" Click="RecentFileClicked">
+                            <TextBlock Text="{x:Bind local:Explorer.FormatPath((x:String)), Mode=OneWay}"
+                                       FontSize="12" TextTrimming="None"/>
+                        </HyperlinkButton>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+
+            <Button x:Uid="/Pages/Explorer/CreateNewProjectBTN"
+                    Content="Create New Project"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ViewModel.CreateNewProjectCommand, Mode=OneWay}"/>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

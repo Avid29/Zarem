@@ -365,4 +365,5 @@ FodyWeavers.xsd
 # Don't include the rasm reference information
 # TODO: Consult Prof. Carithers about copyright and permissions
 /rasm-info
-/src/Clients/Zarem.WinUI/Assets/AppIconSources/
+/src/Clients/Zarem.IDE.WinUI/Assets/AppIconSources/
+/src/Clients/Zarem.IDE.Shared/Assets/AppIconSources/

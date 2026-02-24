@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Zarem.IDE.Views.Pages.App.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helpers="using:Zarem.IDE.Helpers"
+    xmlns:models="using:Zarem.IDE.Models"
+    xmlns:tk="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <Grid Margin="0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftGutter" Width="20" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="RightGutter" Width="20" />
+            </Grid.ColumnDefinitions>
+            <StackPanel
+                x:Name="RootPanel"
+                Grid.Column="1"
+                Spacing="8">
+
+                <TextBlock x:Uid="/About/AboutHeaderTB" Text="About" FontSize="28" FontWeight="SemiBold"/>
+
+                <!--  Version Info  -->
+                <StackPanel Orientation="Horizontal" Spacing="16" HorizontalAlignment="Left">
+                    <ImageIcon Source="{StaticResource AppIconLarge}" Height="80" VerticalAlignment="Center"/>
+                    <StackPanel Margin="0,4,0,0">
+                        <TextBlock x:Uid="/About/AppNameTB" Text="Zarem" FontWeight="SemiBold" FontSize="18"/>
+                        <RichTextBlock FontSize="12" IsTextSelectionEnabled="False">
+                            <Paragraph>
+                                <Run x:Uid="/About/CopyrightRUN" Text="© Avishai Dernis"/>
+                            </Paragraph>
+                            <Paragraph FontWeight="SemiLight">
+                                <Run x:Uid="/About/VersionRUN" Text="Version:" FontWeight="SemiBold"/>
+                                <Run Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}"/>
+                            </Paragraph>
+                            <Paragraph FontWeight="SemiLight">
+                                <Run x:Uid="/About/BuildInfoRUN" Text="Build Info:" FontWeight="SemiBold"/>
+                                <Hyperlink NavigateUri="{x:Bind ViewModel.CommitGitHubLink, Mode=OneWay}">
+                                    <Run Text="{x:Bind ViewModel.GitInfo.Branch}" />
+                                    <Run Text="/" />
+                                    <Run Text="{x:Bind ViewModel.GitInfo.Commit}" />
+                                </Hyperlink>
+                            </Paragraph>
+                        </RichTextBlock>
+                    </StackPanel>
+                </StackPanel>
+                
+                <!--  Sponsors  -->
+                <!--<TextBlock x:Uid="/About/SponsorsTB" Text="Sponsors" FontSize="20" FontWeight="SemiBold" Margin="0,24,0,0"/>
+                <Grid Height="200" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="12">
+                    <TextBlock Text="Sponsors will go here" FontSize="12" FontWeight="SemiBold" Opacity=".5"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>-->
+
+                <!--  Third-Party Credit  -->
+                <TextBlock x:Uid="/About/ThirdPartyDependenciesTB" Text="Third-Party Dependencies" FontSize="20" FontWeight="SemiBold" Margin="0,24,0,0"/>
+                <ItemsRepeater ItemsSource="{x:Bind ViewModel.ThirdPartyNotices, Mode=OneWay}"
+                               HorizontalAlignment="Stretch" Margin="8,12,8,12">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="models:ThirdPartyNotice">
+                            <tk:SettingsCard Header="{x:Bind DependencyName, Mode=OneWay}"
+                                             Description="{x:Bind helpers:LocalizationHelper.Localize(LicenseType), Mode=OneWay}"
+                                             IsClickEnabled="True"
+                                             DataContext="{x:Bind}"
+                                             MinHeight="36"
+                                             Padding="16,10"
+                                             Margin="0,1"
+                                             Click="SettingsCard_Click"/>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+
+                <!--  Footer  -->
+                <StackPanel Margin="0,12">
+                    <tk:WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <HyperlinkButton NavigateUri="https://github.com/Avid29/Zarem">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <ImageIcon Height="20" Source="{ThemeResource GitHubIcon}" />
+                                <TextBlock x:Uid="/About/ViewOnGitHubTB" Text="View on GitHub" />
+                            </StackPanel>
+                        </HyperlinkButton>
+                        <HyperlinkButton NavigateUri="https://discord.gg/xZdFJYfSUu">
+                            <StackPanel Orientation="Horizontal" Spacing="8" >
+                                <ImageIcon Height="20" Source="{StaticResource DiscordIcon}"/>
+                                <TextBlock x:Uid="/About/DiscussOnDiscordTB" Text="Discuss on Discord" />
+                            </StackPanel>
+                        </HyperlinkButton>
+                        <HyperlinkButton NavigateUri="https://www.reddit.com/r/Zarem/">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <ImageIcon Height="20" Source="{StaticResource RedditIcon}" />
+                                <TextBlock x:Uid="/About/DiscussOnRedditTB" Text="Discuss on Reddit" />
+                            </StackPanel>
+                        </HyperlinkButton>
+                        <HyperlinkButton NavigateUri="https://crowdin.com/project/zarem">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <ImageIcon Height="20" Source="{ThemeResource CrowdinIcon}" />
+                                <TextBlock x:Uid="/About/TranslateOnCrowdinTB" Text="Help Translate" />
+                            </StackPanel>
+                        </HyperlinkButton>
+                    </tk:WrapPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" Margin="0,8,0,0">
+                        <ImageIcon Source="{StaticResource IsraelFlagIcon}" Height="28" VerticalAlignment="Center" Margin="0,4,0,0"/>
+                        <StackPanel>
+                            <TextBlock x:Uid="/About/HelloFromTelAvivTB" Text="Hello from Tel Aviv" FontWeight="SemiBold" FontSize="14"/>
+                            <TextBlock x:Uid="/About/MadeInIsraelTB" Text="Made in Israel" FontSize="11" Opacity=".8"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1240" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="LeftGutter.Width" Value="0.5*" />
+                        <Setter Target="RightGutter.Width" Value="0.5*" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </ScrollViewer>
+</UserControl>

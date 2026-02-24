@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Zarem.IDE.Controls.HexViewer">
+    
+    <Style TargetType="local:ByteView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ByteView">
+                    <TextBlock Text="{TemplateBinding DisplayText}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:HexViewer">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:HexViewer">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <GridView x:Name="ByteGrid"
+                                  SelectionMode="None"
+                                  FlowDirection="LeftToRight"
+                                  ItemsSource="{TemplateBinding Data}">
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <local:ByteView DisplayMode="Hex"/>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                        <GridView x:Name="CharGrid"
+                                  SelectionMode="None"
+                                  Grid.Column="1"
+                                  FlowDirection="LeftToRight"
+                                  ItemsSource="{TemplateBinding Data}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
