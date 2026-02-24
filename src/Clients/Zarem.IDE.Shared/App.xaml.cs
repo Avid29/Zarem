@@ -17,6 +17,8 @@ using Zarem.Services.Settings;
 using Zarem.Services.Settings.Enums;
 using Zarem.WinUI.Helpers;
 using Zarem.WinUI.Windows;
+using ILocalizationService = Zarem.Services.ILocalizationService;
+
 
 namespace Zarem.WinUI;
 
@@ -70,6 +72,8 @@ public partial class App : Application
         // Initiaize dispatcher on UI thread.
         Services.GetRequiredService<IDispatcherService>().Init();
 
+# if !HAS_UNO
+
         // Handle activiation arguments
         var activationArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
         bool success = activationArgs.Kind switch
@@ -77,6 +81,7 @@ public partial class App : Application
             ExtendedActivationKind.File => await HandleFileArgAsync(activationArgs),
             _ => false,
         };
+#endif
     }
 
     private void LoadRequestedTheme()
@@ -87,6 +92,7 @@ public partial class App : Application
 
     private void ApplyRequestedTheme(Theme theme = default)
     {
+#if !HAS_UNO
         // Find root item
         var root = Window?.Content.FindDescendantOrSelf<FrameworkElement>();
         if (root is null)
@@ -99,17 +105,22 @@ public partial class App : Application
             Theme.Light => ElementTheme.Light,
             Theme.Default or _ => ElementTheme.Default,
         };
+#endif
     }
 
     private static async Task SetupJumpList()
     {
+#if !HAS_UNO
         var jumpList = await JumpList.LoadCurrentAsync();
         jumpList.SystemGroupKind = JumpListSystemGroupKind.Recent;
         await jumpList.SaveAsync();
+#endif
     }
 
     private static async Task<bool> HandleFileArgAsync(AppActivationArguments args)
     {
+
+#if !HAS_UNO
         if (args.Data is not IFileActivatedEventArgs fileArgs)
             return false;
 
@@ -127,6 +138,7 @@ public partial class App : Application
                 await projectService.OpenProjectAsync(file.Path);
                 break;
         }
+#endif
 
         return true;
     }
