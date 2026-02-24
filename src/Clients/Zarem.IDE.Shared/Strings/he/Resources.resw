@@ -211,10 +211,10 @@
     <value>1 נכשל</value>
   </data>
   <data name="PressAnyKeyCloseConsole" xml:space="preserve">
-    <value>לחץ על מקש כלשהו כדי לסגור את המסוף.</value>
+    <value>לחץ על מקש כלשהו כדי לסגור את המסוף...</value>
   </data>
   <data name="DebugSessionEnded" xml:space="preserve">
-    <value>ניפוי השגיאות הסתיים</value>
+    <value>ניפוי השגיאות הסתיים.</value>
   </data>
   <data name="IdeState_Running" xml:space="preserve">
     <value>בהרצה</value>
