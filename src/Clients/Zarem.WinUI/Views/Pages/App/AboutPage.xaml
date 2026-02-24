@@ -5,6 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helpers="using:Zarem.WinUI.Helpers"
+    xmlns:models="using:Zarem.Models"
     xmlns:tk="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
@@ -54,21 +56,34 @@
                     <TextBlock Text="Premier Sponsors will go here" FontSize="12" FontWeight="SemiBold" Opacity=".5"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
-                
+
                 <!--  Sponsor Wall  -->
-                <TextBlock x:Uid="/About/SponsorWallTB" Text="Sponsor Wall" FontSize="20" FontWeight="SemiBold" Margin="0,24,0,0"/>
+                <TextBlock x:Uid="/About/SponsorWallTB" Text="Sponsor Wall" FontSize="20" Margin="0,24,0,0" FontWeight="SemiBold"/>
                 <Grid Height="140" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="12">
                     <TextBlock Text="GitHub Sponsors will go here" FontSize="12" FontWeight="SemiBold" Opacity=".5"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
-                
+                <HyperlinkButton x:Uid="/About/JoinSponsorWallHLB" Content="Join" HorizontalAlignment="Right"
+                                 NavigateUri="https://github.com/sponsors/Avid29"/>
+
                 <!--  Third-Party Credit  -->
                 <TextBlock x:Uid="/About/ThirdPartyDependenciesTB" Text="Third-Party Dependencies" FontSize="20" FontWeight="SemiBold" Margin="0,24,0,0"/>
-                <Grid Height="200" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="12">
-                    <TextBlock Text="Third-Party Acknowledgements will go here" FontSize="12" FontWeight="SemiBold" Opacity=".5"
-                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Grid>
-                
+                <ItemsRepeater ItemsSource="{x:Bind ViewModel.ThirdPartyNotices, Mode=OneWay}"
+                               HorizontalAlignment="Stretch" Margin="8,12,8,12">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="models:ThirdPartyNotice">
+                            <tk:SettingsCard Header="{x:Bind DependencyName, Mode=OneWay}"
+                                             Description="{x:Bind helpers:LocalizationHelper.Localize(LicenseType), Mode=OneWay}"
+                                             IsClickEnabled="True"
+                                             DataContext="{x:Bind}"
+                                             MinHeight="36"
+                                             Padding="16,10"
+                                             Margin="0,1"
+                                             Click="SettingsCard_Click"/>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+
                 <!--  Footer  -->
                 <StackPanel Margin="0,36,0,0">
                     <tk:WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">

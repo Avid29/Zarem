@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Zarem.Models;
+using Zarem.Models.Enums;
 using Zarem.Services;
 using Zarem.Services.Versioning;
 using Zarem.Services.Versioning.Models;
@@ -53,10 +54,10 @@ public class AboutPageViewModel : PageViewModel
     /// </summary>
     public IEnumerable<ThirdPartyNotice> ThirdPartyNotices { get; } =
     [
-        new("GitInfo", "https://github.com/devlooped/GitInfo"),
-        new("HexBox.WinUI", "https://github.com/hotkidfamily/HexBox.WinUI"),
-        new("LibObjectFile", "https://github.com/xoofx/LibObjectFile"),
-        new("Windows Community Toolkit", "https://github.com/CommunityToolkit/Windows"),
-        new("WinUIEdit", "https://github.com/BreeceW/WinUIEdit"),
+        new("GitInfo", "https://github.com/devlooped/GitInfo", LicenseType.MIT),
+        new("HexBox.WinUI", "https://github.com/hotkidfamily/HexBox.WinUI", LicenseType.MIT),
+        new("LibObjectFile", "https://github.com/xoofx/LibObjectFile", LicenseType.MIT),
+        new("Windows Community Toolkit", "https://github.com/CommunityToolkit/Windows", LicenseType.MIT),
+        new("WinUIEdit", "https://github.com/BreeceW/WinUIEdit", LicenseType.Other),
     ];
 }

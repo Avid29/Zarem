@@ -138,6 +138,9 @@
   <data name="HelloFromTelAvivTB.Text" xml:space="preserve">
     <value>Hello from Tel Aviv</value>
   </data>
+  <data name="JoinSponsorWallHLB.Content" xml:space="preserve">
+    <value>Join</value>
+  </data>
   <data name="MadeInIsraelTB.Text" xml:space="preserve">
     <value>Made in Israel</value>
   </data>

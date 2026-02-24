@@ -225,4 +225,13 @@
   <data name="IdeState_Building" xml:space="preserve">
     <value>Building...</value>
   </data>
+  <data name="LicenseType_Other" xml:space="preserve">
+    <value>Other License</value>
+  </data>
+  <data name="LicenseType_MIT" xml:space="preserve">
+    <value>MIT</value>
+  </data>
+  <data name="LicenseType_BSD2" xml:space="preserve">
+    <value>BSD-2 Clause</value>
+  </data>
 </root>

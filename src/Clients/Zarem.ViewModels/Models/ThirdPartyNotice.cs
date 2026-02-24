@@ -1,19 +1,14 @@
 ﻿// Avishai Dernis 2025
 
+using Zarem.Models.Enums;
+
 namespace Zarem.Models;
 
 /// <summary>
-/// A class for containing the compoenents of a dependencies details.
+/// A record containing the compoenents of a dependencies details.
 /// </summary>
-public class ThirdPartyNotice(string dependencyName, string url)
-{
-    /// <summary>
-    /// Gets the name of the dependency.
-    /// </summary>
-    public string DependencyName { get; init; } = dependencyName;
-
-    /// <summary>
-    /// Gets the url link to the dependency.
-    /// </summary>
-    public string Url { get; init; } = url;
-}
+public record ThirdPartyNotice(
+    string DependencyName,
+    string Url,
+    LicenseType LicenseType,
+    string? IconUrl = null);

@@ -138,6 +138,9 @@
   <data name="HelloFromTelAvivTB.Text" xml:space="preserve">
     <value>שלום מגבעתיים</value>
   </data>
+  <data name="JoinSponsorWallHLB.Content" xml:space="preserve">
+    <value>הצטרפות</value>
+  </data>
   <data name="MadeInIsraelTB.Text" xml:space="preserve">
     <value>תוצרת הארץ</value>
   </data>
