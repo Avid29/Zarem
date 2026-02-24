@@ -68,6 +68,10 @@
 		<DefaultLanguage>en</DefaultLanguage>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)'=='Alpha'">
+	  <Optimize>True</Optimize>
+	</PropertyGroup>
+
 	<!-- 
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
     Tools extension to be activated for this project even if the Windows App SDK Nuget
