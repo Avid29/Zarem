@@ -1,6 +1,9 @@
 <p align="center">
   <img height="200" align="center" src="https://github.com/user-attachments/assets/fecd6c5f-0afd-4e37-a46a-5335dbc38b21"/>
 </p>
+<a href="https://get.microsoft.com/installer/download/9ng185jd1rfd?referrer=appbadge" target="_self">
+	<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200" align="right"/>
+</a>
 
 # Introduction
 
