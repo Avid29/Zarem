@@ -1,9 +1,9 @@
 // Avishai Dernis 2025
 
 using Microsoft.UI.Xaml.Controls;
-using Zarem.IDE.ViewModels.Pages.App.Settings;
+using Zarem.IDE.ViewModels.Pages.Settings;
 
-namespace Zarem.IDE.Views.Pages.App.SettingsSubPages;
+namespace Zarem.IDE.Views.Pages.Settings;
 
 /// <summary>
 /// The app settings subpage

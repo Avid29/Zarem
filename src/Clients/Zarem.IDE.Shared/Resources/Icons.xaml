@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
@@ -35,7 +33,7 @@
     <ImageSource x:Key="BuildIcon">ms-appx:///Assets/Icons/BuildIcons/Build.svg</ImageSource>
     <ImageSource x:Key="ReBuildIcon">ms-appx:///Assets/Icons/BuildIcons/ReBuild.svg</ImageSource>
     <ImageSource x:Key="CleanIcon">ms-appx:///Assets/Icons/BuildIcons/Clean.svg</ImageSource>
-    
+
     <!--  Debug  -->
     <ImageSource x:Key="StartDebuggingIcon">ms-appx:///Assets/Icons/DebugIcons/StartDebugging.svg</ImageSource>
     <ImageSource x:Key="StartWithoutDebuggingIcon">ms-appx:///Assets/Icons/DebugIcons/StartWithoutDebugging.svg</ImageSource>
@@ -43,7 +41,7 @@
     <ImageSource x:Key="StepOverIcon">ms-appx:///Assets/Icons/DebugIcons/StepOver.svg</ImageSource>
     <ImageSource x:Key="StepIntoIcon">ms-appx:///Assets/Icons/DebugIcons/StepInto.svg</ImageSource>
     <ImageSource x:Key="StepOutIcon">ms-appx:///Assets/Icons/DebugIcons/StepOut.svg</ImageSource>
-    
+
     <!--  Files  -->
     <ImageSource x:Key="FileIcon">ms-appx:///Assets/Icons/Files/File.svg</ImageSource>
     <ImageSource x:Key="FolderIcon">ms-appx:///Assets/Icons/Files/Folder.svg</ImageSource>
@@ -54,7 +52,7 @@
     <ImageSource x:Key="DiscordIcon">ms-appx:///Assets/Icons/Services/Discord.svg</ImageSource>
     <ImageSource x:Key="GitServiceIcon">ms-appx:///Assets/Icons/Services/Git.svg</ImageSource>
     <ImageSource x:Key="RedditIcon">ms-appx:///Assets/Icons/Services/Reddit.svg</ImageSource>
-    
+
     <!--  Misc  -->
     <ImageSource x:Key="IsraelFlagIcon">ms-appx:///Assets/Icons/Flags/Simple/IL.svg</ImageSource>
 </ResourceDictionary>

@@ -13,7 +13,7 @@ using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.IDE.ViewModels.Pages;
+namespace Zarem.IDE.ViewModels.Pages.CheatSheet;
 
 /// <summary>
 /// A view model for the cheatsheet.
@@ -51,7 +51,7 @@ public class CheatSheetViewModel : PageViewModel
     /// <inheritdoc/>
     public override string Title => _localizationService["/PageTitles/MIPSCheatSheet"];
 
-    private IEnumerable<EncodingPattern>? LoadEncodingPatterns(string filename)
+    private EncodingPattern[]? LoadEncodingPatterns(string filename)
     {
         // Get resources
         var assembly = Assembly.GetExecutingAssembly();

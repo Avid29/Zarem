@@ -11,7 +11,8 @@ using Zarem.IDE.Services.Versioning;
 using Zarem.IDE.Services.Windowing;
 using Zarem.IDE.ViewModels;
 using Zarem.IDE.ViewModels.Pages;
-using Zarem.IDE.ViewModels.Pages.App;
+using Zarem.IDE.ViewModels.Pages.CheatSheet;
+using Zarem.IDE.ViewModels.Pages.Settings;
 using Zarem.ViewModels.Pages;
 using ServiceCollection = Microsoft.Extensions.DependencyInjection.ServiceCollection;
 

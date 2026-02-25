@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -14,6 +14,23 @@
                         <Grid.BackgroundTransition>
                             <BrushTransition Duration="0:0:0.083" />
                         </Grid.BackgroundTransition>
+
+                        <Border
+                            Height="2"
+                            VerticalAlignment="Center"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}" />
+                        <Rectangle
+                            x:Name="PART_Thumb"
+                            Width="2"
+                            Height="8"
+                            Margin="{TemplateBinding Padding}"
+                            Fill="{TemplateBinding Foreground}"
+                            Opacity=".8"
+                            RadiusX="1"
+                            RadiusY="1" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -51,21 +68,6 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-
-                        <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                VerticalAlignment="Center"
-                                Height="2"/>
-                        <Rectangle x:Name="PART_Thumb"
-                                   Width="2"
-                                   Height="8"
-                                   Opacity=".8"
-                                   Margin="{TemplateBinding Padding}"
-                                   Fill="{TemplateBinding Foreground}"
-                                   RadiusX="1"
-                                   RadiusY="1"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

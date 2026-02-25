@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
@@ -10,14 +8,23 @@
             <Color x:Key="TitleBarBackgroundColor">#222024</Color>
             <Color x:Key="TabViewBackgroundColor">#131215</Color>
             <Color x:Key="PrimaryBackgroundColor">#131215</Color>
-            
-            <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{ThemeResource PrimaryBackgroundColor}"/>
-            <AcrylicBrush x:Key="TitleBarBackgroundBrush" TintColor="{ThemeResource TitleBarBackgroundColor}" TintOpacity="0.8"/>
-            <AcrylicBrush x:Key="TabViewBackgroundBrush" TintColor="{ThemeResource TabViewBackgroundColor}" TintOpacity="0.8"/>
-            <AcrylicBrush x:Key="SideBarBackgroundBrush" TintColor="#161518" TintOpacity="0.5"/>
-            <SolidColorBrush x:Key="FooterBackgroundBrush" Color="#222024"/>
 
-            <!--  Syntax Highlighting -->
+            <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{ThemeResource PrimaryBackgroundColor}" />
+            <AcrylicBrush
+                x:Key="TitleBarBackgroundBrush"
+                TintColor="{ThemeResource TitleBarBackgroundColor}"
+                TintOpacity="0.8" />
+            <AcrylicBrush
+                x:Key="TabViewBackgroundBrush"
+                TintColor="{ThemeResource TabViewBackgroundColor}"
+                TintOpacity="0.8" />
+            <AcrylicBrush
+                x:Key="SideBarBackgroundBrush"
+                TintColor="#161518"
+                TintOpacity="0.5" />
+            <SolidColorBrush x:Key="FooterBackgroundBrush" Color="#222024" />
+
+            <!--  Syntax Highlighting  -->
             <Color x:Key="InstructionHighlightColor">#A7FA95</Color>
             <Color x:Key="RegisterHighlightColor">#FE8482</Color>
             <Color x:Key="ImmediateHighlightColor">#F8FC8B</Color>
@@ -34,7 +41,7 @@
             <Color x:Key="MessageUnderlineColor">#00AAFF</Color>
 
 
-            <!-- Status Bar -->
+            <!--  Status Bar  -->
             <Color x:Key="NotReadyStatusBarBackgroundColor">#2E3238</Color>
             <Color x:Key="ReadyStatusBarBackgroundColor">#004D99</Color>
             <Color x:Key="BuildingStatusBarBackgroundColor">#996100</Color>
@@ -49,13 +56,25 @@
             <Color x:Key="TitleBarBackgroundColor">#E2E1E0</Color>
             <Color x:Key="TabViewBackgroundColor">#E7E6E4</Color>
             <Color x:Key="PrimaryBackgroundColor">#F5F3F2</Color>
-            <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{ThemeResource PrimaryBackgroundColor}"/>
-            <AcrylicBrush x:Key="TitleBarBackgroundBrush" TintColor="{ThemeResource TitleBarBackgroundColor}" TintOpacity="0.8"/>
-            <AcrylicBrush x:Key="TabViewBackgroundBrush" TintColor="{ThemeResource TabViewBackgroundColor}" TintOpacity="0.8"/>
-            <AcrylicBrush x:Key="SideBarBackgroundBrush" TintColor="#F0F0F0" TintOpacity="0.75"/>
-            <AcrylicBrush x:Key="FooterBackgroundBrush" TintColor="#F0F0F0" TintOpacity="0.75"/>
+            <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{ThemeResource PrimaryBackgroundColor}" />
+            <AcrylicBrush
+                x:Key="TitleBarBackgroundBrush"
+                TintColor="{ThemeResource TitleBarBackgroundColor}"
+                TintOpacity="0.8" />
+            <AcrylicBrush
+                x:Key="TabViewBackgroundBrush"
+                TintColor="{ThemeResource TabViewBackgroundColor}"
+                TintOpacity="0.8" />
+            <AcrylicBrush
+                x:Key="SideBarBackgroundBrush"
+                TintColor="#F0F0F0"
+                TintOpacity="0.75" />
+            <AcrylicBrush
+                x:Key="FooterBackgroundBrush"
+                TintColor="#F0F0F0"
+                TintOpacity="0.75" />
 
-            <!--  Syntax Highlighting -->
+            <!--  Syntax Highlighting  -->
             <Color x:Key="InstructionHighlightColor">#166105</Color>
             <Color x:Key="RegisterHighlightColor">#7e0301</Color>
             <Color x:Key="ImmediateHighlightColor">#909504</Color>
@@ -71,7 +90,7 @@
             <Color x:Key="WarningUnderlineColor">#FFAA00</Color>
             <Color x:Key="MessageUnderlineColor">#00AAFF</Color>
 
-            <!-- Status Bar -->
+            <!--  Status Bar  -->
             <Color x:Key="NotReadyStatusBarBackgroundColor">#B9BEC6</Color>
             <Color x:Key="ReadyStatusBarBackgroundColor">#66B3FF</Color>
             <Color x:Key="BuildingStatusBarBackgroundColor">#FFA100</Color>

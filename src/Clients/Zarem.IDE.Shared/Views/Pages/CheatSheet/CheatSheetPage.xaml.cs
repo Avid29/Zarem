@@ -2,13 +2,13 @@
 
 using Microsoft.UI.Xaml.Controls;
 using System.Linq;
-using Zarem.IDE.ViewModels.Pages;
+using Zarem.IDE.ViewModels.Pages.CheatSheet;
 
-namespace Zarem.IDE.Views.Pages;
+namespace Zarem.IDE.Views.Pages.CheatSheet;
 
-public sealed partial class CheatSheet : UserControl
+public sealed partial class CheatSheetPage : UserControl
 {
-    public CheatSheet()
+    public CheatSheetPage()
     {
         InitializeComponent();
     }

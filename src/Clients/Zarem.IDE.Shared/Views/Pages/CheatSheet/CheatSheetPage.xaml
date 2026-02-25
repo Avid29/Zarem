@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Zarem.IDE.Views.Pages.CheatSheet.CheatSheetPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cheat="using:Zarem.IDE.Controls.CheatSheet"
+    xmlns:collections="using:CommunityToolkit.Mvvm.Collections"
+    xmlns:convert="using:Zarem.IDE.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:data="using:Zarem.Assembler.Models"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Zarem.IDE.Models.CheatSheet"
+    xmlns:palette="using:Zarem.IDE.Controls.CheatSheet.Palettes"
+    xmlns:reg="using:Zarem.Models.Instructions.Enums.Registers"
+    xmlns:tables="using:Zarem.Assembler.Helpers.Tables"
+    Loaded="UserControl_Loaded"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="CheatSheetBackgroundBrush" Color="#101010" />
+                    <SolidColorBrush x:Key="CheatSheetPanelBackgroundBrush" Color="#1A1A1A" />
+                    <SolidColorBrush x:Key="HeaderForegroundBrush" Color="#A6A6A6" />
+
+                    <!--  Colors  -->
+                    <Color x:Key="Color1">#FE8482</Color>
+                    <Color x:Key="Color2">#FFC47A</Color>
+                    <Color x:Key="Color3">#F8FC8B</Color>
+                    <Color x:Key="Color4">#A7FA95</Color>
+                    <Color x:Key="Color5">#73EEFD</Color>
+                    <Color x:Key="Color6">#77A7FD</Color>
+                    <Color x:Key="Color7">#9B88FC</Color>
+                    <Color x:Key="Color8">#FA9EF6</Color>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="CheatSheetBackgroundBrush" Color="#E5E5E5" />
+                    <SolidColorBrush x:Key="CheatSheetPanelBackgroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="HeaderForegroundBrush" Color="#595959" />
+
+                    <!--  Colors  -->
+                    <Color x:Key="Color1">#7e0301</Color>
+                    <Color x:Key="Color2">#804600</Color>
+                    <Color x:Key="Color3">#909504</Color>
+                    <Color x:Key="Color4">#166105</Color>
+                    <Color x:Key="Color5">#028597</Color>
+                    <Color x:Key="Color6">#022d7e</Color>
+                    <Color x:Key="Color7">#17037c</Color>
+                    <Color x:Key="Color8">#61055c</Color>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
+            <!--  Colors  -->
+            <Color x:Key="Color1Bright">#FE8482</Color>
+            <Color x:Key="Color2Bright">#FFC47A</Color>
+            <Color x:Key="Color3Bright">#F8FC8B</Color>
+            <Color x:Key="Color4Bright">#A7FA95</Color>
+            <Color x:Key="Color5Bright">#73EEFD</Color>
+            <Color x:Key="Color6Bright">#77A7FD</Color>
+            <Color x:Key="Color7Bright">#9B88FC</Color>
+            <Color x:Key="Color8Bright">#FA9EF6</Color>
+
+            <!--  Instruction Types  -->
+            <SolidColorBrush x:Key="RInst" Color="{ThemeResource Color1}" />
+            <SolidColorBrush x:Key="R2Inst" Color="{ThemeResource Color2}" />
+            <SolidColorBrush x:Key="IInst" Color="{ThemeResource Color5}" />
+            <SolidColorBrush x:Key="JInst" Color="{ThemeResource Color4}" />
+            <SolidColorBrush x:Key="RegImmInst" Color="{ThemeResource Color8}" />
+            <SolidColorBrush x:Key="CoProc0Inst" Color="{ThemeResource Color3}" />
+            <SolidColorBrush x:Key="CoProc1Inst" Color="{ThemeResource Color3}" />
+            <SolidColorBrush x:Key="CoProc1XInst" Color="{ThemeResource Color7}" />
+            <SolidColorBrush x:Key="CoProcIInst" Color="{ThemeResource Color6}" />
+
+            <!--  Argument Types  -->
+            <SolidColorBrush x:Key="GPRArg" Color="{ThemeResource Color1}" />
+            <SolidColorBrush x:Key="CPRArg" Color="{ThemeResource Color2}" />
+            <SolidColorBrush x:Key="ImmArg" Color="{ThemeResource Color3}" />
+            <SolidColorBrush x:Key="FormatArg" Color="{ThemeResource Color8}" />
+            <SolidColorBrush x:Key="MiscArg" Color="{ThemeResource Color7}" />
+
+            <!--  Sections Types  -->
+            <SolidColorBrush x:Key="OpCodeSection" Color="{ThemeResource Color4Bright}" />
+            <SolidColorBrush x:Key="FuncCodeSection" Color="{ThemeResource Color5Bright}" />
+            <SolidColorBrush x:Key="RegFuncCodeSection" Color="{ThemeResource Color8Bright}" />
+            <SolidColorBrush x:Key="GPRSection" Color="{ThemeResource Color1Bright}" />
+            <SolidColorBrush x:Key="CPRSection" Color="{ThemeResource Color2Bright}" />
+            <SolidColorBrush x:Key="ImmSection" Color="{ThemeResource Color3Bright}" />
+            <SolidColorBrush x:Key="FormatSection" Color="{ThemeResource Color7Bright}" />
+
+            <!--  Register Encoding Types  -->
+            <SolidColorBrush x:Key="SavedRegister" Color="{ThemeResource Color5}" />
+            <SolidColorBrush x:Key="TempRegister" Color="{ThemeResource Color1}" />
+            <SolidColorBrush x:Key="ArgRegister" Color="{ThemeResource Color8}" />
+            <SolidColorBrush x:Key="ReturnValueRegister" Color="{ThemeResource Color4}" />
+            <SolidColorBrush x:Key="ReturnAddressRegister" Color="{ThemeResource Color2}" />
+            <SolidColorBrush x:Key="EnvironmentRegister" Color="{ThemeResource Color6}" />
+            <SolidColorBrush x:Key="KernelRegister" Color="{ThemeResource Color3}" />
+            <SolidColorBrush x:Key="OtherRegister" Color="{ThemeResource Color7}" />
+
+            <LinearGradientBrush x:Key="GeneralOrCoRegisterSection" StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStopCollection>
+                    <GradientStop Offset="0" Color="{ThemeResource Color1Bright}" />
+                    <GradientStop Offset="1" Color="{ThemeResource Color2Bright}" />
+                </GradientStopCollection>
+            </LinearGradientBrush>
+
+            <palette:InstructionTypeBrushPalette
+                x:Key="InstructionBrushPalette"
+                CoProcessor0="{StaticResource CoProc0Inst}"
+                CoProcessor1="{StaticResource CoProc1Inst}"
+                IType="{StaticResource IInst}"
+                JType="{StaticResource JInst}"
+                R2Type="{StaticResource R2Inst}"
+                RType="{StaticResource RInst}"
+                RegImmediate="{StaticResource RegImmInst}" />
+
+            <palette:ArgumentBrushPalette
+                x:Key="ArgumentBrushPalette"
+                CPRegisterBrush="{StaticResource CPRArg}"
+                FormatBrush="{StaticResource FormatArg}"
+                GPRegisterBrush="{StaticResource GPRArg}"
+                ImmediateValueBrush="{StaticResource ImmArg}"
+                MiscArgBrush="{StaticResource MiscArg}" />
+
+            <palette:EncodingPatternSectionBrushPalette
+                x:Key="SectionBrushPalette"
+                CPRegisterBrush="{StaticResource CPRSection}"
+                FormatBrush="{StaticResource FormatSection}"
+                FuncCodeBrush="{StaticResource FuncCodeSection}"
+                GPRegisterBrush="{StaticResource GPRSection}"
+                GeneralOrCoRegisterBrush="{StaticResource GeneralOrCoRegisterSection}"
+                ImmediateValueBrush="{StaticResource ImmSection}"
+                OpCodeBrush="{StaticResource OpCodeSection}"
+                RegisterFuncCodeBrush="{StaticResource RegFuncCodeSection}" />
+
+            <convert:RegisterEncodingColorConverter
+                x:Key="RegisterEncodingColorConverter"
+                ArgBrush="{StaticResource ArgRegister}"
+                EnvironmentBrush="{StaticResource EnvironmentRegister}"
+                KernelBrush="{StaticResource KernelRegister}"
+                OtherBrush="{StaticResource OtherRegister}"
+                ReturnAddressBrush="{StaticResource ReturnAddressRegister}"
+                ReturnValueBrush="{StaticResource ReturnValueRegister}"
+                SavedBrush="{StaticResource SavedRegister}"
+                TempBrush="{StaticResource TempRegister}" />
+
+            <DataTemplate x:Key="InstructionGroupHeaderTemplate" x:DataType="collections:IReadOnlyObservableGroup">
+                <TextBlock
+                    FontFamily="{StaticResource HappyMonkey}"
+                    FontSize="16"
+                    Foreground="{ThemeResource HeaderForegroundBrush}"
+                    Text="{x:Bind Key}" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="InstructionEntryTemplate" x:DataType="data:InstructionMetadata">
+                <cheat:UsagePatternDisplay
+                    ArgumentBrushPalette="{StaticResource ArgumentBrushPalette}"
+                    FontFamily="Cascadia Code"
+                    FontSize="14"
+                    InstructionBrushPalette="{StaticResource InstructionBrushPalette}"
+                    Metadata="{x:Bind}" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="EncodingPatternDisplayTemplate" x:DataType="models:EncodingPattern">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,2"
+                        FontFamily="{StaticResource HappyMonkey}"
+                        Foreground="{ThemeResource HeaderForegroundBrush}"
+                        Text="{x:Bind Name}" />
+                    <cheat:EncodingPatternDisplay
+                        EncodingPattern="{x:Bind}"
+                        FontFamily="{StaticResource HappyMonkey}"
+                        SectionBrushPalette="{StaticResource SectionBrushPalette}" />
+                </StackPanel>
+            </DataTemplate>
+
+            <DataTemplate x:Key="RegisterEncodingCellTemplate" x:DataType="reg:GPRegister">
+                <Border
+                    Margin="1"
+                    Background="{x:Bind (reg:GPRegister), Converter={StaticResource RegisterEncodingColorConverter}}"
+                    CornerRadius="4">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource HappyMonkey}"
+                        FontSize="18"
+                        Foreground="Black"
+                        Text="{x:Bind tables:RegistersTable.GetRegisterString((reg:GPRegister), reg:RegisterSet.GeneralPurpose)}" />
+                </Border>
+            </DataTemplate>
+
+            <Style x:Key="SectionBorderStyle" TargetType="Border">
+                <Setter Property="Margin" Value="8" />
+                <Setter Property="Padding" Value="10,8" />
+                <Setter Property="BorderThickness" Value="2" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Background" Value="{ThemeResource CheatSheetPanelBackgroundBrush}" />
+            </Style>
+
+            <Style TargetType="ListViewHeaderItem">
+                <Setter Property="MinHeight" Value="0" />
+                <Setter Property="Padding" Value="8,12,8,4" />
+                <Setter Property="Margin" Value="0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListViewHeaderItem">
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="ListViewItem">
+                <Setter Property="MinHeight" Value="0" />
+                <Setter Property="Padding" Value="8,1" />
+                <Setter Property="FlowDirection" Value="LeftToRight" />
+            </Style>
+
+            <CollectionViewSource
+                x:Name="CommonInstructionsViewSource"
+                IsSourceGrouped="True"
+                Source="{x:Bind ViewModel.CommonInstructions, Mode=OneWay}" />
+            <CollectionViewSource
+                x:Name="FloatInstructionsViewSource"
+                IsSourceGrouped="True"
+                Source="{x:Bind ViewModel.FloatInstructions, Mode=OneWay}" />
+            <CollectionViewSource
+                x:Name="CoProc0InstructionsViewSource"
+                IsSourceGrouped="True"
+                Source="{x:Bind ViewModel.CoProc0Instructions, Mode=OneWay}" />
+            <CollectionViewSource
+                x:Name="SpecializedInstructionsViewSource"
+                IsSourceGrouped="True"
+                Source="{x:Bind ViewModel.Specialized0Instructions, Mode=OneWay}" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <ScrollViewer>
+        <StackPanel
+            Margin="48,16"
+            HorizontalAlignment="Stretch"
+            Spacing="4">
+            <StackPanel.ChildrenTransitions>
+                <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True" />
+            </StackPanel.ChildrenTransitions>
+            <TextBlock
+                x:Uid="/CheatSheet/InstructionUsageTablesTB"
+                Margin="0,4"
+                Text="Instruction Usage Tables" />
+            <Expander HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <TextBlock
+                        x:Uid="/CheatSheet/CommonInstructionsTB"
+                        Margin="8,0"
+                        Text="Common Instructions"
+                        TextTrimming="CharacterEllipsis" />
+                </Expander.Header>
+                <ListView
+                    ItemTemplate="{StaticResource InstructionEntryTemplate}"
+                    ItemsSource="{x:Bind CommonInstructionsViewSource.View, Mode=OneWay}"
+                    ScrollViewer.IsHorizontalRailEnabled="False"
+                    ScrollViewer.IsVerticalRailEnabled="False"
+                    SelectionMode="None">
+                    <ListView.GroupStyle>
+                        <GroupStyle HeaderTemplate="{StaticResource InstructionGroupHeaderTemplate}" HidesIfEmpty="True" />
+                    </ListView.GroupStyle>
+                </ListView>
+            </Expander>
+            <Expander HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <TextBlock
+                        x:Uid="/CheatSheet/CoProc0InstructionsTB"
+                        Margin="8,0"
+                        Text="CoProcessor0 Instructions"
+                        TextTrimming="CharacterEllipsis" />
+                </Expander.Header>
+                <ListView
+                    ItemTemplate="{StaticResource InstructionEntryTemplate}"
+                    ItemsSource="{x:Bind CoProc0InstructionsViewSource.View, Mode=OneWay}"
+                    SelectionMode="None">
+                    <ListView.GroupStyle>
+                        <GroupStyle HeaderTemplate="{StaticResource InstructionGroupHeaderTemplate}" HidesIfEmpty="True" />
+                    </ListView.GroupStyle>
+                </ListView>
+            </Expander>
+            <Expander HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <TextBlock
+                        x:Uid="/CheatSheet/FloatInstructionsTB"
+                        Margin="8,0"
+                        Text="Floating-Point Instructions"
+                        TextTrimming="CharacterEllipsis" />
+                </Expander.Header>
+                <ListView
+                    ItemTemplate="{StaticResource InstructionEntryTemplate}"
+                    ItemsSource="{x:Bind FloatInstructionsViewSource.View, Mode=OneWay}"
+                    SelectionMode="None">
+                    <ListView.GroupStyle>
+                        <GroupStyle HeaderTemplate="{StaticResource InstructionGroupHeaderTemplate}" HidesIfEmpty="True" />
+                    </ListView.GroupStyle>
+                </ListView>
+            </Expander>
+            <Expander HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <TextBlock
+                        x:Uid="/CheatSheet/SpecializedInstructionsTB"
+                        Margin="8,0"
+                        Text="Specialized Instructions"
+                        TextTrimming="CharacterEllipsis" />
+                </Expander.Header>
+                <ListView
+                    ItemTemplate="{StaticResource InstructionEntryTemplate}"
+                    ItemsSource="{x:Bind SpecializedInstructionsViewSource.View, Mode=OneWay}"
+                    SelectionMode="None">
+                    <ListView.GroupStyle>
+                        <GroupStyle HeaderTemplate="{StaticResource InstructionGroupHeaderTemplate}" HidesIfEmpty="True" />
+                    </ListView.GroupStyle>
+                </ListView>
+            </Expander>
+
+            <TextBlock
+                x:Uid="/CheatSheet/InstructionEncodingPatternsTB"
+                Margin="0,12,0,4"
+                Text="Instruction Encoding Patterns" />
+            <Expander HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <TextBlock
+                        x:Uid="/CheatSheet/PrimaryInstructionTypePatternsTB"
+                        Margin="8,0"
+                        Text="Primary Instruction Types Encoding Patterns"
+                        TextTrimming="CharacterEllipsis" />
+                </Expander.Header>
+                <ItemsRepeater
+                    Margin="24,0"
+                    ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
+                    ItemsSource="{x:Bind ViewModel.PrimaryEncodingPatterns, Mode=OneWay}" />
+            </Expander>
+            <Expander HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <TextBlock
+                        x:Uid="/CheatSheet/CoProc0InstructionTypePatternsTB"
+                        Margin="8,0"
+                        Text="CoProcessor0 Instruction Types Encoding Patterns"
+                        TextTrimming="CharacterEllipsis" />
+                </Expander.Header>
+                <ItemsRepeater
+                    Margin="24,0"
+                    ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
+                    ItemsSource="{x:Bind ViewModel.CoProcessor0Patterns, Mode=OneWay}" />
+            </Expander>
+            <Expander HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <TextBlock
+                        x:Uid="/CheatSheet/CoProc1InstructionTypePatternsTB"
+                        Margin="8,0"
+                        Text="Floating-Point CoProcessor Instruction Types Encoding Patterns"
+                        TextTrimming="CharacterEllipsis" />
+                </Expander.Header>
+                <ItemsRepeater
+                    Margin="24,0"
+                    ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
+                    ItemsSource="{x:Bind ViewModel.CoProcessor1Patterns, Mode=OneWay}" />
+            </Expander>
+            <Expander HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <TextBlock
+                        x:Uid="/CheatSheet/UniqueInstructionPatternsTB"
+                        Margin="8,0"
+                        Text="Unique Instruction Encoding Patterns"
+                        TextTrimming="CharacterEllipsis" />
+                </Expander.Header>
+                <ItemsRepeater
+                    Margin="24,0"
+                    ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
+                    ItemsSource="{x:Bind ViewModel.UniquePatterns, Mode=OneWay}" />
+            </Expander>
+
+            <TextBlock
+                x:Uid="/CheatSheet/EncodingTablesTB"
+                Margin="0,12,0,4"
+                Text="Encoding Tables" />
+            <Expander HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <TextBlock
+                        x:Uid="/CheatSheet/GeneralPurposeRegisterEncodingTB"
+                        Margin="8,0"
+                        Text="General Purpose Register Encoding"
+                        TextTrimming="CharacterEllipsis" />
+                </Expander.Header>
+                <cheat:EncodingTableDisplay
+                    x:Name="RegisterEncodingTable"
+                    HorizontalAlignment="Center"
+                    CellTemplate="{StaticResource RegisterEncodingCellTemplate}"
+                    Columns="4"
+                    FontFamily="{StaticResource HappyMonkey}"
+                    Rows="8" />
+            </Expander>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,9 +1,9 @@
 // Avishai Dernis 2025
 
 using Microsoft.UI.Xaml.Controls;
-using Zarem.IDE.ViewModels.Pages.App;
+using Zarem.IDE.ViewModels.Pages;
 
-namespace Zarem.IDE.Views.Pages.App;
+namespace Zarem.IDE.Views.Pages;
 
 /// <summary>
 /// A viewer for files.
