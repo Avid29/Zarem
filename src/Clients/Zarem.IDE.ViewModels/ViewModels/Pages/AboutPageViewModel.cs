@@ -8,7 +8,7 @@ using Zarem.IDE.Services.Versioning;
 using Zarem.IDE.Services.Versioning.Models;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 
-namespace Zarem.IDE.ViewModels.Pages.App;
+namespace Zarem.IDE.ViewModels.Pages;
 
 /// <summary>
 /// A view model for the about page.

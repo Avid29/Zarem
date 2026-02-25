@@ -6,9 +6,8 @@ using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Versioning;
 using Zarem.IDE.ViewModels.Pages.Abstract;
-using Zarem.IDE.ViewModels.Pages.App.Settings;
 
-namespace Zarem.IDE.ViewModels.Pages.App;
+namespace Zarem.IDE.ViewModels.Pages.Settings;
 
 /// <summary>
 /// A view model for the settings page.

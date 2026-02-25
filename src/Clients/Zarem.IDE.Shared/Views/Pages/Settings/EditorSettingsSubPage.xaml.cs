@@ -1,15 +1,14 @@
 // Avishai Dernis 2025
 
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using Zarem.IDE.Messages;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings.Enums;
-using Zarem.IDE.ViewModels.Pages.App.Settings;
+using Zarem.IDE.ViewModels.Pages.Settings;
 
-namespace Zarem.IDE.Views.Pages.App.SettingsSubPages;
+namespace Zarem.IDE.Views.Pages.Settings;
 
 /// <summary>
 /// The app settings subpage

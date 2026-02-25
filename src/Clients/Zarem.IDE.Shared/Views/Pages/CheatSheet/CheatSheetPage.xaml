@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Zarem.IDE.Views.Pages.CheatSheet.CheatSheetPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cheat="using:Zarem.IDE.Controls.CheatSheet"
+    xmlns:collections="using:CommunityToolkit.Mvvm.Collections"
+    xmlns:convert="using:Zarem.IDE.Converters"
+    xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
+    xmlns:cvms="using:Zarem.IDE.ViewModels.Pages.CheatSheet"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:data="using:Zarem.Assembler.Models"
+    xmlns:local="using:Zarem.IDE.Views.Pages.CheatSheet"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Zarem.IDE.Models.CheatSheet"
+    xmlns:palette="using:Zarem.IDE.Controls.CheatSheet.Palettes"
+    xmlns:reg="using:Zarem.Models.Instructions.Enums.Registers"
+    xmlns:selectors="using:Zarem.IDE.Selectors"
+    xmlns:tables="using:Zarem.Assembler.Helpers.Tables"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <ctc:Segmented
+                x:Name="SegmentedPageSelector"
+                Margin="8,8,8,32"
+                HorizontalAlignment="Center"
+                ItemsSource="{x:Bind ViewModel.SubPages}"
+                SelectedIndex="0">
+                <ctc:Segmented.ItemTemplate>
+                    <DataTemplate x:DataType="cvms:CheatSheetSubPageViewModel">
+                        <TextBlock Text="{x:Bind Title}" />
+                    </DataTemplate>
+                </ctc:Segmented.ItemTemplate>
+            </ctc:Segmented>
+
+            <ContentControl
+                x:Name="ContentDisplay"
+                Grid.Row="1"
+                Grid.Column="1"
+                MaxWidth="800"
+                HorizontalContentAlignment="Stretch"
+                Content="{x:Bind SegmentedPageSelector.SelectedItem, Mode=OneWay}">
+                <ContentControl.ContentTemplateSelector>
+                    <selectors:CheatSheetSubPageTemplateSelector>
+                        <selectors:CheatSheetSubPageTemplateSelector.UsagePatternPageTemplate>
+                            <DataTemplate x:DataType="cvms:UsagePatternsViewModel">
+                                <local:UsagePatternsSubPage ViewModel="{x:Bind}" />
+                            </DataTemplate>
+                        </selectors:CheatSheetSubPageTemplateSelector.UsagePatternPageTemplate>
+                        <selectors:CheatSheetSubPageTemplateSelector.EncodingPatternsPageTemplate>
+                            <DataTemplate x:DataType="cvms:EncodingPatternsViewModel">
+                                <local:EncodingPatternsSubPage ViewModel="{x:Bind}" />
+                            </DataTemplate>
+                        </selectors:CheatSheetSubPageTemplateSelector.EncodingPatternsPageTemplate>
+                        <selectors:CheatSheetSubPageTemplateSelector.EncodingTablesPageTemplate>
+                            <DataTemplate x:DataType="cvms:EncodingTablesViewModel">
+                                <local:EncodingTablesSubPage ViewModel="{x:Bind}" />
+                            </DataTemplate>
+                        </selectors:CheatSheetSubPageTemplateSelector.EncodingTablesPageTemplate>
+                    </selectors:CheatSheetSubPageTemplateSelector>
+                </ContentControl.ContentTemplateSelector>
+            </ContentControl>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <FontFamily x:Key="HappyMonkey">ms-appx:///Assets/Fonts/HappyMonkey-Regular.ttf#Happy Monkey</FontFamily>
     <FontFamily x:Key="ShareTech">ms-appx:///Assets/Fonts/ShareTech-Regular.ttf#Share Tech</FontFamily>

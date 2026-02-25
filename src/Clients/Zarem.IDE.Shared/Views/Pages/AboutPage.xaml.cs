@@ -5,9 +5,9 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using Windows.System;
 using Zarem.IDE.Models;
-using Zarem.IDE.ViewModels.Pages.App;
+using Zarem.IDE.ViewModels.Pages;
 
-namespace Zarem.IDE.Views.Pages.App;
+namespace Zarem.IDE.Views.Pages;
 
 /// <summary>
 /// A viewer for files.

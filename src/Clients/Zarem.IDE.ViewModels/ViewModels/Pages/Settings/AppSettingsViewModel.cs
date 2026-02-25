@@ -9,7 +9,7 @@ using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.Services.Versioning;
 
-namespace Zarem.IDE.ViewModels.Pages.App.Settings;
+namespace Zarem.IDE.ViewModels.Pages.Settings;
 
 /// <summary>
 /// A view model for the app settings sub-page.

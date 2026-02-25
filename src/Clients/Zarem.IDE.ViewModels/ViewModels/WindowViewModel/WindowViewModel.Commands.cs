@@ -8,7 +8,8 @@ using Zarem.IDE.Messages.Editor;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Messages.Files;
 using Zarem.IDE.ViewModels.Pages;
-using Zarem.IDE.ViewModels.Pages.App;
+using Zarem.IDE.ViewModels.Pages.CheatSheet;
+using Zarem.IDE.ViewModels.Pages.Settings;
 
 namespace Zarem.IDE.ViewModels;
 

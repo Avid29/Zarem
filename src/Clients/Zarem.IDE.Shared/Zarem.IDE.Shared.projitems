@@ -6,7 +6,7 @@
     <SharedGUID>d6e0cea0-101e-44ea-b842-6a32433cbac0</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Zarem.IDE.Shared</Import_RootNamespace>
+    <Import_RootNamespace>Zarem.IDE</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha.svg" />
@@ -318,37 +318,49 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\AboutPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\AboutPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\EncodingPatternsSubPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\EncodingTablesSubPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\UsagePatternsSubPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\SettingsPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\AppSettingsSubPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\AppSettingsSubPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\AssemblerSettingsSubPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\AssemblerSettingsSubPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\EditorSettingsSubPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\EditorSettingsSubPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\App\WelcomePage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\WelcomePage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\CheatSheetPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -445,6 +457,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Selectors\EncodingTemplateConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Selectors\FileItemTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Selectors\PageTemplateSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Selectors\CheatSheetSubPageTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Selectors\SettingsSubPageTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\CacheService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ClipboardService.cs" />
@@ -463,26 +476,35 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Settings\SettingsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Versioning\VersioningService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Windowing\WindowingService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\AboutPage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsPage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\EncodingPatternsSubPage.xaml.cs">
+      <DependentUpon>EncodingPatternsSubPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\EncodingTablesSubPage.xaml.cs">
+      <DependentUpon>EncodingTablesSubPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\UsagePatternsSubPage.xaml.cs">
+      <DependentUpon>UsagePatternsSubPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\AppSettingsSubPage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\AppSettingsSubPage.xaml.cs">
       <DependentUpon>AppSettingsSubPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\AssemblerSettingsSubPage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\AssemblerSettingsSubPage.xaml.cs">
       <DependentUpon>AssemblerSettingsSubPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\SettingsSubPages\EditorSettingsSubPage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\EditorSettingsSubPage.xaml.cs">
       <DependentUpon>EditorSettingsSubPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\App\WelcomePage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet.xaml.cs">
-      <DependentUpon>CheatSheet.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\CheatSheetPage.xaml.cs">
+      <DependentUpon>CheatSheetPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CreateProject.xaml.cs">
       <DependentUpon>CreateProject.xaml</DependentUpon>
@@ -525,5 +547,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\" />
   </ItemGroup>
 </Project>

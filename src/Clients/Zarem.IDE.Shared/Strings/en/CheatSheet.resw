@@ -258,4 +258,13 @@
   <data name="Usage/shift" xml:space="preserve">
     <value>shift</value>
   </data>
+  <data name="InstructionUsagePatternsTitle" xml:space="preserve">
+    <value>Instruction Usage Patterns</value>
+  </data>
+  <data name="InstructionEncodingPatternsTitle" xml:space="preserve">
+    <value>Instruction Encoding Patterns</value>
+  </data>
+  <data name="EncodingTablesTitle" xml:space="preserve">
+    <value>Encoding Tables</value>
+  </data>
 </root>

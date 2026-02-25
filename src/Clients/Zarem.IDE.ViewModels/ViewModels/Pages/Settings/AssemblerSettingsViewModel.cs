@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings;
 
-namespace Zarem.IDE.ViewModels.Pages.App.Settings;
+namespace Zarem.IDE.ViewModels.Pages.Settings;
 
 /// <summary>
 /// A view model for the assembler settings sub-page.

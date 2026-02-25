@@ -1,12 +1,11 @@
 // Avishai Dernis 2025
 
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using System.Globalization;
 using Zarem.IDE.Services;
-using Zarem.IDE.ViewModels.Pages.App;
+using Zarem.IDE.ViewModels.Pages.Settings;
 
-namespace Zarem.IDE.Views.Pages.App;
+namespace Zarem.IDE.Views.Pages.Settings;
 
 /// <summary>
 /// The settings page.
