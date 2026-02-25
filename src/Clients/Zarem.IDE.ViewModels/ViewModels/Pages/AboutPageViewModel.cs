@@ -15,7 +15,7 @@ namespace Zarem.IDE.ViewModels.Pages;
 /// </summary>
 public class AboutPageViewModel : PageViewModel
 {
-    private ILocalizationService _localizationService;
+    private readonly ILocalizationService _localizationService;
     private readonly IVersioningService _versioningService;
 
     /// <summary>

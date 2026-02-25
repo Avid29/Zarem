@@ -10,7 +10,7 @@ namespace Zarem.IDE.ViewModels.Pages;
 /// </summary>
 public class WelcomePageViewModel : PageViewModel
 {
-    private ILocalizationService _localizationService;
+    private readonly ILocalizationService _localizationService;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="WelcomePageViewModel"/> class.
