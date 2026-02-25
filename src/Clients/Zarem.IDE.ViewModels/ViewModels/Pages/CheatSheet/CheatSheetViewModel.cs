@@ -21,9 +21,9 @@ public class CheatSheetViewModel : PageViewModel
         _localizationService = localizationService;
 
         SubPages = [
-                new UsagePatternPageViewModel(localizationService),
-                new EncodingPatternsPageViewModel(localizationService),
-                new EncodingTablesPageViewModel(localizationService)
+                new UsagePatternsViewModel(localizationService),
+                new EncodingPatternsViewModel(localizationService),
+                new EncodingTablesViewModel(localizationService)
             ];
     }
     

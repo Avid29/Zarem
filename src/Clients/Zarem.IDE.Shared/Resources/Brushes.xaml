@@ -3,7 +3,6 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
-
             <!--  Background Colors  -->
             <Color x:Key="TitleBarBackgroundColor">#222024</Color>
             <Color x:Key="TabViewBackgroundColor">#131215</Color>
@@ -49,9 +48,22 @@
             <Color x:Key="FailedStatusBarBackgroundColor">#990000</Color>
             <Color x:Key="RunningStatusBarBackgroundColor">#4C00E5</Color>
 
+            <SolidColorBrush x:Key="CheatSheetBackgroundBrush" Color="#101010" />
+            <SolidColorBrush x:Key="CheatSheetPanelBackgroundBrush" Color="#1A1A1A" />
+            <SolidColorBrush x:Key="HeaderForegroundBrush" Color="#A6A6A6" />
+
+            <!--  Colors  -->
+            <Color x:Key="Color1">#FE8482</Color>
+            <Color x:Key="Color2">#FFC47A</Color>
+            <Color x:Key="Color3">#F8FC8B</Color>
+            <Color x:Key="Color4">#A7FA95</Color>
+            <Color x:Key="Color5">#73EEFD</Color>
+            <Color x:Key="Color6">#77A7FD</Color>
+            <Color x:Key="Color7">#9B88FC</Color>
+            <Color x:Key="Color8">#FA9EF6</Color>
+
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
-
             <!--  Background Colors  -->
             <Color x:Key="TitleBarBackgroundColor">#E2E1E0</Color>
             <Color x:Key="TabViewBackgroundColor">#E7E6E4</Color>
@@ -98,8 +110,31 @@
             <Color x:Key="FailedStatusBarBackgroundColor">#FA5151</Color>
             <Color x:Key="RunningStatusBarBackgroundColor">#AF8FEF</Color>
 
+            <SolidColorBrush x:Key="CheatSheetBackgroundBrush" Color="#E5E5E5" />
+            <SolidColorBrush x:Key="CheatSheetPanelBackgroundBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="HeaderForegroundBrush" Color="#595959" />
+
+            <!--  Colors  -->
+            <Color x:Key="Color1">#7e0301</Color>
+            <Color x:Key="Color2">#804600</Color>
+            <Color x:Key="Color3">#909504</Color>
+            <Color x:Key="Color4">#166105</Color>
+            <Color x:Key="Color5">#028597</Color>
+            <Color x:Key="Color6">#022d7e</Color>
+            <Color x:Key="Color7">#17037c</Color>
+            <Color x:Key="Color8">#61055c</Color>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+
+    <!--  Colors  -->
+    <Color x:Key="Color1Bright">#FE8482</Color>
+    <Color x:Key="Color2Bright">#FFC47A</Color>
+    <Color x:Key="Color3Bright">#F8FC8B</Color>
+    <Color x:Key="Color4Bright">#A7FA95</Color>
+    <Color x:Key="Color5Bright">#73EEFD</Color>
+    <Color x:Key="Color6Bright">#77A7FD</Color>
+    <Color x:Key="Color7Bright">#9B88FC</Color>
+    <Color x:Key="Color8Bright">#FA9EF6</Color>
 
     <!--  Zarem Colors  -->
     <Color x:Key="ZaremBlueColor">#034AC9</Color>

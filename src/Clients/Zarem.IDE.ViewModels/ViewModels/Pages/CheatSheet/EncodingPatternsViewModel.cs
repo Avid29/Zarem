@@ -13,14 +13,14 @@ namespace Zarem.IDE.ViewModels.Pages.CheatSheet;
 /// <summary>
 /// A view model for the encoding pattern page.
 /// </summary>
-public class EncodingPatternsPageViewModel : CheatSheetSubPageViewModel
+public class EncodingPatternsViewModel : CheatSheetSubPageViewModel
 {
     private readonly ILocalizationService _localizationService;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EncodingPatternsPageViewModel"/> class.
+    /// Initializes a new instance of the <see cref="EncodingPatternsViewModel"/> class.
     /// </summary>
-    public EncodingPatternsPageViewModel(ILocalizationService localizationService)
+    public EncodingPatternsViewModel(ILocalizationService localizationService)
     {
         _localizationService = localizationService;
 

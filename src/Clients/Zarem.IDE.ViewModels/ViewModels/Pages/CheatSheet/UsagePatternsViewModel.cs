@@ -13,16 +13,16 @@ using Zarem.IDE.Services;
 namespace Zarem.IDE.ViewModels.Pages.CheatSheet;
 
 /// <summary>
-/// A view model for the usage pattern cheatsheet page.
+/// A view model for the usage patterns cheatsheet page.
 /// </summary>
-public class UsagePatternPageViewModel : CheatSheetSubPageViewModel
+public class UsagePatternsViewModel : CheatSheetSubPageViewModel
 {
     private readonly ILocalizationService _localizationService;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UsagePatternPageViewModel"/> class.
+    /// Initializes a new instance of the <see cref="UsagePatternsViewModel"/> class.
     /// </summary>
-    public UsagePatternPageViewModel(ILocalizationService localizationService)
+    public UsagePatternsViewModel(ILocalizationService localizationService)
     {
         _localizationService = localizationService;
 

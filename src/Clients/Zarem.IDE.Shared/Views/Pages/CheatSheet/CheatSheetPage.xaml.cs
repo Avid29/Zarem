@@ -13,13 +13,4 @@ public sealed partial class CheatSheetPage : UserControl
     }
 
     public CheatSheetViewModel? ViewModel { get; set; }
-
-    private void UserControl_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        if (ViewModel is null)
-            return;
-
-        // This is stupid, but whatever for now
-        //RegisterEncodingTable.CellData = ViewModel.GPRegisters.Select(x => (object)x).ToArray();
-    }
 }
