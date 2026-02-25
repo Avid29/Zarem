@@ -6,6 +6,8 @@
     xmlns:cheat="using:Zarem.IDE.Controls.CheatSheet"
     xmlns:collections="using:CommunityToolkit.Mvvm.Collections"
     xmlns:convert="using:Zarem.IDE.Converters"
+    xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
+    xmlns:cvms="using:Zarem.IDE.ViewModels.Pages.CheatSheet"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:data="using:Zarem.Assembler.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -225,7 +227,7 @@
                 <Setter Property="FlowDirection" Value="LeftToRight" />
             </Style>
 
-            <CollectionViewSource
+            <!--<CollectionViewSource
                 x:Name="CommonInstructionsViewSource"
                 IsSourceGrouped="True"
                 Source="{x:Bind ViewModel.CommonInstructions, Mode=OneWay}" />
@@ -240,12 +242,33 @@
             <CollectionViewSource
                 x:Name="SpecializedInstructionsViewSource"
                 IsSourceGrouped="True"
-                Source="{x:Bind ViewModel.Specialized0Instructions, Mode=OneWay}" />
+                Source="{x:Bind ViewModel.Specialized0Instructions, Mode=OneWay}" />-->
         </ResourceDictionary>
     </UserControl.Resources>
 
     <ScrollViewer>
-        <StackPanel
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <ctc:Segmented
+                x:Name="SegmentedPageSelector"
+                Margin="8,8,8,32"
+                HorizontalAlignment="Center"
+                ItemsSource="{x:Bind ViewModel.SubPages}"
+                SelectedIndex="0">
+                <ctc:Segmented.ItemTemplate>
+                    <DataTemplate x:DataType="cvms:CheatSheetSubPageViewModel">
+                        <TextBlock Text="{x:Bind Title}" />
+                    </DataTemplate>
+                </ctc:Segmented.ItemTemplate>
+            </ctc:Segmented>
+
+        </Grid>
+
+        <!--<StackPanel
             Margin="48,16"
             HorizontalAlignment="Stretch"
             Spacing="4">
@@ -404,6 +427,6 @@
                     FontFamily="{StaticResource HappyMonkey}"
                     Rows="8" />
             </Expander>
-        </StackPanel>
+        </StackPanel>-->
     </ScrollViewer>
 </UserControl>

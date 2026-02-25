@@ -1,7 +1,6 @@
 // Avishai Dernis 2025
 
 using Microsoft.UI.Xaml.Controls;
-using System.Linq;
 using Zarem.IDE.ViewModels.Pages.CheatSheet;
 
 namespace Zarem.IDE.Views.Pages.CheatSheet;
@@ -21,6 +20,6 @@ public sealed partial class CheatSheetPage : UserControl
             return;
 
         // This is stupid, but whatever for now
-        RegisterEncodingTable.CellData = ViewModel.GPRegisters.Select(x => (object)x).ToArray();
+        //RegisterEncodingTable.CellData = ViewModel.GPRegisters.Select(x => (object)x).ToArray();
     }
 }
