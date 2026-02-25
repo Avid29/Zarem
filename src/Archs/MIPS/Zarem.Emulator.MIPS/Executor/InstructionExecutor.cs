@@ -76,14 +76,8 @@ public partial class InstructionExecutor
             OperationCode.Special3 => CreateRTypeExecution(),
 
             // Jump (J-Type)
-            OperationCode.Jump => new Execution
-            {
-                ProgramCounter = Instruction.Address,
-            },
-            OperationCode.JumpAndLink => new Execution(GPRegister.ReturnAddress, Processor.ProgramCounter + 4)
-            {
-                ProgramCounter = Instruction.Address,
-            },
+            OperationCode.Jump => Execution.CreateJump(Instruction.Address),
+            OperationCode.JumpAndLink => Execution.CreateJumpAndLink(Instruction.Address, Processor.ProgramCounter + 4),
             OperationCode.JumpAndLinkX => throw new NotImplementedException(),
 
             // Branch/Trap type (B-Type)

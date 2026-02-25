@@ -67,16 +67,10 @@ public partial class InstructionExecutor
                 FunctionCode.Break => CreateTrap(MIPSTrap.Breakpoint),
                 FunctionCode.Sync => throw new NotImplementedException(),
 
-                FunctionCode.MoveFromHigh => new Execution(Instruction.RD, Processor.High),
-                FunctionCode.MoveToHigh => new Execution
-                {
-                    High = RS,
-                },
-                FunctionCode.MoveFromLow => new Execution(Instruction.RD, Processor.Low),
-                FunctionCode.MoveToLow => new Execution
-                {
-                    Low = RS,
-                },
+                FunctionCode.MoveFromHigh => Execution.CreateWriteback(Instruction.RD, Processor.High),
+                FunctionCode.MoveToHigh => Execution.CreateHigh(RS),
+                FunctionCode.MoveFromLow => Execution.CreateWriteback(Instruction.RD, Processor.Low),
+                FunctionCode.MoveToLow => Execution.CreateLow(RS),
 
                 // Trap
                 FunctionCode.TrapOnGreaterOrEqual => TrapR((rs, rt) => (int)rs >= (int)rt),
@@ -146,26 +140,26 @@ public partial class InstructionExecutor
 
         // No overflow detected
         // Return the execution with the computed value and destination
-        return new Execution(Instruction.RD, value);
+        return Execution.CreateWriteback(Instruction.RD, value);
     }
 
     private Execution ShiftR(ShiftRDelegate func)
     {
         uint value = func(RT, Instruction.ShiftAmount);
-        return new Execution(Instruction.RD, value);
+        return Execution.CreateWriteback(Instruction.RD, value);
     }
 
     private Execution MultR(MultRDelegate func)
     {
         ulong value = func(RS, RT);
-        return new Execution(value);
+        return Execution.CreateHighLow(value);
     }
 
     private Execution DivR(BasicRDelegate divFunc, BasicRDelegate remFunc)
     {
         uint div = divFunc(RS, RT);
         uint rem = remFunc(RS, RT);
-        return new Execution((rem, div));
+        return Execution.CreateHighLow((rem, div));
     }
 
     private Execution TrapR(BranchDelegate func)
@@ -176,15 +170,12 @@ public partial class InstructionExecutor
         if (link is null)
         {
             // No link register specified, just jump to the target address
-            return new Execution(RS);
+            return Execution.CreateJump(RS);
         }
 
         // A link register was provided
         // Write the return address to the specified link register
         // and set the program counter to the jump address
-        return new Execution(link.Value, Processor.ProgramCounter + 4)
-        {
-            ProgramCounter = RS,
-        };
+        return Execution.CreateJumpAndLink(RS, Processor.ProgramCounter + 4, link.Value);
     }
 }

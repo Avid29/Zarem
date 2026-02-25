@@ -6,9 +6,11 @@ using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator;
+using Zarem.Emulator.Config;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine.CPU.Registers;
 using Zarem.Emulator.Machine.Enums;
+using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Test.Emulator.MIPS;
@@ -404,12 +406,17 @@ public class ExecutionTests
     public void JumpBranchInstructionTests(ExecutionTestCase @case) => RunTest(@case);
 
     [DataTestMethod]
+    [DynamicData(nameof(JumpBranchInstructionTestsList))]
+    public void JumpBranchNoDeplayInstructionTests(ExecutionTestCase @case) => RunTest(@case, false);
+
+    [DataTestMethod]
     [DynamicData(nameof(CompareInstructionTestsList))]
     public void CompareInstructionTests(ExecutionTestCase @case) => RunTest(@case);
 
     [DataTestMethod]
     [DynamicData(nameof(TrapInstructionTestsList))]
     public void TrapInstructionTests(ExecutionTestCase @case) => RunTest(@case);
+
     [DataTestMethod]
     [DynamicData(nameof(UncategorizedRegisterOnlyInstructionTestsList))]
     public void UncategorizedRegisterOnlyInstructionTests(ExecutionTestCase @case) => RunTest(@case);
@@ -418,7 +425,7 @@ public class ExecutionTests
     [DynamicData(nameof(SystemInstructionTestsList))]
     public void SystemInstructionTests(ExecutionTestCase @case) => RunTest(@case);
 
-    private static void RunTest(ExecutionTestCase @case)
+    private static void RunTest(ExecutionTestCase @case , bool branchDelay = true)
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input);
@@ -430,7 +437,11 @@ public class ExecutionTests
 
         // TODO: Psuedo instruction support
         var instruction = parsed.Realize()[0];
-        var emulator = new MIPSEmulator(new());
+        var emulatorConfig = new MIPSEmulatorConfig()
+        {
+            DisableBranchDelays = branchDelay,
+        };
+        var emulator = new MIPSEmulator(emulatorConfig);
 
         // Initialize the status register
         emulator.Computer.Processor.CoProcessor0.StatusRegister = @case.Status;
@@ -470,7 +481,7 @@ public class ExecutionTests
         else
         {
             // If no register check was provided, we at least want to make sure no register was written to (as that would be unexpected)
-            Assert.AreEqual(execution.GPR, GPRegister.Zero);
+            Assert.AreEqual(GPRegister.Zero, execution.GPR);
         }
 
         var highLow = @case.ExpectedHighLow;
@@ -491,6 +502,13 @@ public class ExecutionTests
         var expectedPC = @case.ExpectedPC;
         if (expectedPC is not null)
         {
+            if (branchDelay && execution.SideEffect is SideEffect.BranchProgramCounter)
+            {
+                // Assert the branch has not occured, then execute a NOP to apply the delayed branch
+                Assert.AreEqual((uint)4, emulator.Computer.Processor.ProgramCounter);
+                emulator.Computer.Processor.Insert(MIPSInstruction.NOP, out _);
+            }
+
             Assert.AreEqual(expectedPC.Value, emulator.Computer.Processor.ProgramCounter);
         }
     }

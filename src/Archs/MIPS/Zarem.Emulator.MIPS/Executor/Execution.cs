@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using System;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -23,70 +24,148 @@ public readonly struct Execution
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
     /// </summary>
-    public Execution(GPRegister dest, uint writeBack)
+    public static Execution CreateWriteback(GPRegister dest, uint writeBack)
     {
-        GPR = dest;
-        WriteBack = writeBack;
+        return new Execution
+        {
+            GPR = dest,
+            WriteBack = writeBack,
+        };
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
     /// </summary>
-    public Execution(CP0Registers dest, uint writeBack)
+    public static Execution CreateWriteback(CP0Registers dest, uint writeBack)
     {
-        CoProc0Reg = dest;
-        CoProcWriteBack = writeBack;
+        return new Execution
+        {
+            CoProc0Reg = dest,
+            CoProcWriteBack = writeBack,
+        };
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
     /// </summary>
-    public Execution(GPRegister dest, uint address, int size, bool signed = true)
+    public static Execution CreateMemRead(GPRegister dest, uint address, int size, bool signed = true)
     {
-        GPR = dest;
-        MemAddress = address;
-        SideEffect = SideEffect.ReadMemory;
-
-        size *= signed ? -1 : 1;
-        _secondary2 = (uint)size;
+        return new Execution
+        {
+            GPR = dest,
+            MemAddress = address,
+            MemSize = (uint)size,
+            MemSigned = signed,
+            SideEffect = SideEffect.ReadMemory,
+        };
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
     /// </summary>
-    public Execution(uint writeBack, uint address, int size)
+    public static Execution CreateMemWrite(uint writeBack, uint address, int size)
     {
-        WriteBack = writeBack;
-        MemAddress = address;
-        SideEffect = SideEffect.WriteMemory;
-
-        _secondary2 = (uint)size;
+        return new Execution
+        {
+            WriteBack = writeBack,
+            MemAddress = address,
+            MemSize = (uint)size,
+            SideEffect = SideEffect.WriteMemory,
+        };
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
     /// </summary>
-    public Execution(uint pc)
+    public static Execution CreateJump(uint absolutePC)
     {
-        ProgramCounter = pc;
+        return new Execution
+        {
+            ProgramCounter = absolutePC,
+        };
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
     /// </summary>
-    public Execution(ulong highLow)
+    public static Execution CreateJumpAndLink(uint absolutePC, uint returnAddress, GPRegister raReg = GPRegister.ReturnAddress)
     {
-        High = (uint)(highLow >> 32);
-        Low = (uint)highLow;
+        return new Execution
+        {
+            ProgramCounter = absolutePC,
+            WriteBack = returnAddress,
+            GPR = raReg,
+        };
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
     /// </summary>
-    public Execution((uint High, uint Low) highLow)
+    public static Execution CreateBranch(int relativePC)
     {
-        High = highLow.High;
-        Low = highLow.Low;
+        return new Execution
+        {
+            Branch = relativePC,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Execution"/> struct.
+    /// </summary>
+    public static Execution CreateBranchAndLink(int relativePC, uint returnAddress, GPRegister raReg = GPRegister.ReturnAddress)
+    {
+        return new Execution
+        {
+            Branch = relativePC,
+            WriteBack = returnAddress,
+            GPR = raReg,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Execution"/> struct.
+    /// </summary>
+    public static Execution CreateHighLow(ulong highLow)
+    {
+        return new Execution
+        {
+            High = (uint)(highLow >> 32),
+            Low = (uint)highLow,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Execution"/> struct.
+    /// </summary>
+    public static Execution CreateHighLow((uint High, uint Low) highLow)
+    {
+        return new Execution
+        {
+            High = highLow.High,
+            Low = highLow.Low,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Execution"/> struct.
+    /// </summary>
+    public static Execution CreateLow(uint low)
+    {
+        return new Execution
+        {
+            Low = low,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Execution"/> struct.
+    /// </summary>
+    public static Execution CreateHigh(uint high)
+    {
+        return new Execution
+        {
+            High = high,
+        };
     }
 
     /// <summary>
@@ -142,7 +221,20 @@ public readonly struct Execution
         init
         {
             _secondary1 = value;
-            SideEffect = SideEffect.ProgramCounter;
+            SideEffect = SideEffect.JumpProgramCounter;
+        }
+    }
+
+    /// <summary>
+    /// Gets the branch PC value, if application.
+    /// </summary>
+    public readonly int Branch
+    {
+        get => (int)_secondary1;
+        init
+        {
+            _secondary1 = (uint)value;
+            SideEffect = SideEffect.BranchProgramCounter;
         }
     }
 
@@ -161,12 +253,20 @@ public readonly struct Execution
     /// <remarks>
     /// Number of bytes to read/write.
     /// </remarks>
-    public readonly uint MemSize => (uint)int.Abs((int)_secondary2);
+    public readonly uint MemSize
+    {
+        get => (uint)int.Abs((int)_secondary2);
+        init => _secondary2 = (uint)(value * (MemSigned ? -1 : 1));
+    }
 
     /// <summary>
     /// Gets whether or not the memory operation is singed (should sign-extend)
     /// </summary>
-    public readonly bool MemSigned => (int)_secondary2 < 0;
+    public readonly bool MemSigned
+    {
+        get => (int)_secondary2 < 0;
+        init => _secondary2 = (uint)(value != MemSigned ? -_secondary2 : _secondary2);
+    }
 
     /// <summary>
     /// Gets the register set to writeback to for co-process writeback.
@@ -223,7 +323,7 @@ public readonly struct Execution
     /// <summary>
     /// Gets a value indicating whether or not execution handled the PC changing.
     /// </summary>
-    public readonly bool PCHandled => SideEffect == SideEffect.ProgramCounter;
+    public readonly bool PCHandled => SideEffect == SideEffect.JumpProgramCounter;
 
     private SideEffect MergeHighLow(SideEffect @new)
     {

@@ -63,6 +63,6 @@ public partial class InstructionExecutor
 
         // No overflow detected
         // Return the execution with the computed value and destination
-        return new Execution(dest, value);
+        return Execution.CreateWriteback(dest, value);
     }
 }

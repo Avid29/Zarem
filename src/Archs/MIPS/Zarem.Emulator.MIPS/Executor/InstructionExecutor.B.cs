@@ -35,14 +35,12 @@ public partial class InstructionExecutor
 
     private Execution Branch(BranchDelegate func)
     {
-        if (func(RS, RT))
+        if (!func(RS, RT))
         {
-            // TODO: Branch delays
-
-            return new Execution((uint)(Processor.ProgramCounter + Instruction.Offset + 4));
+            return default;
         }
 
-        return default;
+        return Execution.CreateBranch(Instruction.Offset);
     }
 
     private Execution TrapI(TrapIDelegate func)

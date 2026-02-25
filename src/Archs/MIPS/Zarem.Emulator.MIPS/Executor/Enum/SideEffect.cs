@@ -48,9 +48,14 @@ public enum SideEffect
     WriteMemory,
 
     /// <summary>
-    /// Writes to the program counter.
+    /// Writes an absolute value to the program counter.
     /// </summary>
-    ProgramCounter,
+    JumpProgramCounter,
+
+    /// <summary>
+    /// Writes a relative value to the program counter.
+    /// </summary>
+    BranchProgramCounter,
 
     /// <summary>
     /// Writes to co-processor.

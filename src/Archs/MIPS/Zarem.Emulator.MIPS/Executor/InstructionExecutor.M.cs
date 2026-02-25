@@ -51,7 +51,7 @@ public partial class InstructionExecutor
         }
 
         bool signed = (-T.MultiplicativeIdentity) < T.Zero;
-        return new Execution(Instruction.RT, addr, size, signed);
+        return Execution.CreateMemRead(Instruction.RT, addr, size, signed);
     }
 
     private Execution Store<T>()
@@ -67,6 +67,6 @@ public partial class InstructionExecutor
             return CreateTrap(MIPSTrap.AddressErrorStore);
         }
 
-        return new Execution(RT, addr, size);
+        return Execution.CreateMemWrite(RT, addr, size);
     }
 }

@@ -17,6 +17,8 @@ namespace Zarem.Emulator.Machine.CPU;
 /// </summary>
 public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
 {
+    private int? _branchDelay = null;
+
     /// <inheritdoc/>
     public event EventHandler<MIPSCpu, TrapOccurringEventArgs<MIPSTrap>>? TrapOccurring;
 
@@ -178,9 +180,19 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
 
     private MIPSTrap WriteBack(Execution execution, uint memRead)
     {
-        // Increment the program counter by default
-        // (some instructions will override this)
-        var programCounter = ProgramCounter + 4;
+        var programCounter = ProgramCounter;
+        if (_branchDelay.HasValue)
+        {
+            var newPC = programCounter + _branchDelay.Value;
+            programCounter = (uint)newPC;
+            _branchDelay = null;
+        }
+        else
+        {
+            // Increment the program counter by default
+            // (some instructions will override this)
+            programCounter = ProgramCounter + 4;
+        }
 
         // Handle gpr writeback
         // NOTE: This will clear the register momentarily during load operations.
@@ -198,19 +210,17 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
             case SideEffect.HighLow:
                 (High, Low) = (execution.High, execution.Low);
                 break;
-            case SideEffect.ProgramCounter:
+            case SideEffect.JumpProgramCounter:
                 programCounter = execution.ProgramCounter;
+                break;
+            case SideEffect.BranchProgramCounter:
+                ApplyBranch(execution.Branch, ref programCounter);
                 break;
             case SideEffect.ReadMemory:
                 RegisterFile[execution.GPR] = memRead;
                 break;
             case SideEffect.WriteCoProc:
-                (execution.CoProcRegisterSet switch
-                {
-                    RegisterSet.GeneralPurpose => RegisterFile,
-                    RegisterSet.CoProc0 => CoProcessor0.RegisterFile,
-                    _ => ThrowHelper.ThrowArgumentOutOfRangeException<RegisterFile>(nameof(execution.CoProcRegisterSet)),
-                })[execution.CoProcReg] = execution.CoProcWriteBack;
+                WriteCoProc(execution.CoProcRegisterSet, execution.CoProcReg, execution.CoProcWriteBack);
                 break;
         }
 
@@ -218,6 +228,31 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
         ProgramCounter = programCounter;
 
         return MIPSTrap.None;
+    }
+
+    private void ApplyBranch(int branch, ref uint pc)
+    {
+        // Very simple if branch delays are enabled
+        if (Computer.Config.DisableBranchDelays)
+        {
+            _branchDelay = branch;
+            return;
+        }
+
+        // Otherwise we're gonna do some tom-foolery and adjust the PC
+        pc = (uint)(pc + branch); // +4 because we're gonna pretend it's branching from the next instruction
+    }
+
+    private void WriteCoProc(RegisterSet set, GPRegister register, uint writeback)
+    {
+        var registerSet = set switch
+        {
+            RegisterSet.GeneralPurpose => RegisterFile,
+            RegisterSet.CoProc0 => CoProcessor0.RegisterFile,
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<RegisterFile>(nameof(set)),
+        };
+
+        registerSet[register] = writeback;
     }
 
     private void HandleTrap(MIPSTrap trap)

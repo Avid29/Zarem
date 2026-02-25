@@ -40,8 +40,8 @@ public partial class InstructionExecutor
             },
 
             // Move instructions
-            CoProc0RSCode.MFC0 => new Execution(Instruction.RT, Processor.CoProcessor0[(CP0Registers)Instruction.RD]),
-            CoProc0RSCode.MTC0 => new Execution((CP0Registers)Instruction.RD, RT),
+            CoProc0RSCode.MFC0 => Execution.CreateWriteback(Instruction.RT, Processor.CoProcessor0[(CP0Registers)Instruction.RD]),
+            CoProc0RSCode.MTC0 => Execution.CreateWriteback((CP0Registers)Instruction.RD, RT),
 
             _ => throw new NotImplementedException()
         };
@@ -69,8 +69,10 @@ public partial class InstructionExecutor
 
         // TODO: Explorer special commit phase to avoid setting
         // the status register as a writeback
-        return new Execution(CP0Registers.Status, (uint)status)
+        return new Execution
         {
+            CoProc0Reg = CP0Registers.Status,
+            CoProcWriteBack = (uint)status,
             ProgramCounter = targetPC,
         };
     }
@@ -86,13 +88,15 @@ public partial class InstructionExecutor
         if (Instruction.RT is not GPRegister.Zero)
         {
             // Write the updated status register value back to the specified GPR
-            return new Execution(CP0Registers.Status, (uint)status)
+            return new Execution
             {
+                CoProc0Reg = CP0Registers.Status,
+                CoProcWriteBack = (uint)status,
                 WriteBack = (uint)status,
                 GPR = Instruction.RT,
             };
         }
 
-        return new Execution(CP0Registers.Status, (uint)status);
+        return Execution.CreateWriteback(CP0Registers.Status, (uint)status);
     }
 }
