@@ -1,7 +1,7 @@
 <p align="center">
   <img height="200" align="center" src="https://github.com/user-attachments/assets/fecd6c5f-0afd-4e37-a46a-5335dbc38b21"/>
 </p>
-<a href="https://get.microsoft.com/installer/download/9ng185jd1rfd?referrer=appbadge" target="_self">
+<a href="https://apps.microsoft.com/detail/9ng185jd1rfd?referrer=appbadge&mode=full" target="_blank"  rel="noopener noreferrer">
 	<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200"/>
 </a>
 
