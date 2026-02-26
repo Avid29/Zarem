@@ -62,7 +62,7 @@
     "args": [ 0 ],
     "rd": 31,
     "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "$ra = ret_addr, $pc = $rs"
+    "behavior": "$pc = $rs, $ra = ret_addr"
   },
   {
     "name": "jalr",
@@ -70,7 +70,7 @@
     "func_code": 9,
     "args": [ 0, 2 ],
     "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "$rd = ret_addr, $pc = $rs"
+    "behavior": "$pc = $rs, $rd = ret_addr"
   },
   {
     "name": "movz",
