@@ -29,6 +29,12 @@
     <ImageSource x:Key="WarningIcon">ms-appx:///Assets/Icons/Severity/Warning.svg</ImageSource>
     <ImageSource x:Key="MessageIcon">ms-appx:///Assets/Icons/Severity/Message.svg</ImageSource>
 
+    <!--  Editor  -->
+    <ImageSource x:Key="ExpandCurrentIcon">ms-appx:///Assets/Icons/Editor/ExpandCurrent.svg</ImageSource>
+    <ImageSource x:Key="CollapseCurrentIcon">ms-appx:///Assets/Icons/Editor/CollapseCurrent.svg</ImageSource>
+    <ImageSource x:Key="ExpandAllIcon">ms-appx:///Assets/Icons/Editor/ExpandAll.svg</ImageSource>
+    <ImageSource x:Key="CollapseAllIcon">ms-appx:///Assets/Icons/Editor/CollapseAll.svg</ImageSource>
+
     <!--  Build  -->
     <ImageSource x:Key="BuildIcon">ms-appx:///Assets/Icons/BuildIcons/Build.svg</ImageSource>
     <ImageSource x:Key="ReBuildIcon">ms-appx:///Assets/Icons/BuildIcons/ReBuild.svg</ImageSource>
@@ -41,6 +47,8 @@
     <ImageSource x:Key="StepOverIcon">ms-appx:///Assets/Icons/DebugIcons/StepOver.svg</ImageSource>
     <ImageSource x:Key="StepIntoIcon">ms-appx:///Assets/Icons/DebugIcons/StepInto.svg</ImageSource>
     <ImageSource x:Key="StepOutIcon">ms-appx:///Assets/Icons/DebugIcons/StepOut.svg</ImageSource>
+    <ImageSource x:Key="ToggleBreakpointIcon">ms-appx:///Assets/Icons/DebugIcons/ToggleBreakpoint.svg</ImageSource>
+    <ImageSource x:Key="ClearBreakpointsIcon">ms-appx:///Assets/Icons/DebugIcons/ClearBreakpoints.svg</ImageSource>
 
     <!--  Files  -->
     <ImageSource x:Key="FileIcon">ms-appx:///Assets/Icons/Files/File.svg</ImageSource>

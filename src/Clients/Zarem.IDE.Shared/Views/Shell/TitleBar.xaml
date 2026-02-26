@@ -48,6 +48,9 @@
             VerticalAlignment="Top">
             <!--  File  -->
             <MenuBarItem x:Uid="/TitleBar/FileMBI" Title="File">
+                <MenuBarItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="F" Modifiers="Menu" />
+                </MenuBarItem.KeyboardAccelerators>
                 <!--  New  -->
                 <MenuFlyoutSubItem x:Uid="/TitleBar/NewMFSI" Text="New">
                     <MenuFlyoutSubItem.Icon>
@@ -152,6 +155,9 @@
 
             <!--  Edit  -->
             <MenuBarItem x:Uid="/TitleBar/EditMBI" Title="Edit">
+                <MenuBarItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="E" Modifiers="Menu" />
+                </MenuBarItem.KeyboardAccelerators>
                 <!--  History  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/UndoMFI"
@@ -267,7 +273,7 @@
                         Command="{x:Bind ViewModel.ExpandChildrenCommand, Mode=OneWay}"
                         Text="Expand Current">
                         <MenuFlyoutItem.Icon>
-                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE8C4;" />
+                            <ImageIcon Source="{StaticResource ExpandCurrentIcon}" />
                         </MenuFlyoutItem.Icon>
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="O" Modifiers="Menu" />
@@ -278,7 +284,7 @@
                         Command="{x:Bind ViewModel.CollapseChildrenCommand, Mode=OneWay}"
                         Text="Collapse Current">
                         <MenuFlyoutItem.Icon>
-                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE8C5;" />
+                            <ImageIcon Source="{StaticResource CollapseCurrentIcon}" />
                         </MenuFlyoutItem.Icon>
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="P" Modifiers="Menu" />
@@ -288,6 +294,9 @@
                         x:Uid="/TitleBar/ExpandAllMFI"
                         Command="{x:Bind ViewModel.ExpandAllCommand, Mode=OneWay}"
                         Text="Expand All">
+                        <MenuFlyoutItem.Icon>
+                            <ImageIcon Source="{StaticResource ExpandAllIcon}" />
+                        </MenuFlyoutItem.Icon>
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="O" Modifiers="Shift,Menu" />
                         </MenuFlyoutItem.KeyboardAccelerators>
@@ -296,6 +305,9 @@
                         x:Uid="/TitleBar/CollapseAllMFI"
                         Command="{x:Bind ViewModel.CollapseAllCommand, Mode=OneWay}"
                         Text="Collapse All">
+                        <MenuFlyoutItem.Icon>
+                            <ImageIcon Source="{StaticResource CollapseAllIcon}" />
+                        </MenuFlyoutItem.Icon>
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="P" Modifiers="Shift,Menu" />
                         </MenuFlyoutItem.KeyboardAccelerators>
@@ -321,6 +333,9 @@
 
             <!--  Build  -->
             <MenuBarItem x:Uid="/TitleBar/BuildMBI" Title="Build">
+                <MenuBarItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="B" Modifiers="Menu" />
+                </MenuBarItem.KeyboardAccelerators>
                 <!--  Build/Rebuild  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/BuildProjectMFI"
@@ -376,6 +391,9 @@
 
             <!--  Debug  -->
             <MenuBarItem x:Uid="/TitleBar/DebugMBI" Title="Debug">
+                <MenuBarItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="D" Modifiers="Menu" />
+                </MenuBarItem.KeyboardAccelerators>
                 <!--  Run  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/StartDebuggingMFI"
@@ -436,6 +454,9 @@
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StepOverIcon}" />
                     </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F10" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/StepIntoMFI"
@@ -444,6 +465,9 @@
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StepIntoIcon}" />
                     </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F11" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/StepOutMFI"
@@ -452,11 +476,42 @@
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StepOutIcon}" />
                     </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F11" Modifiers="Shift" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutSeparator />
+
+                <!--  Breakpoints  -->
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/ToggleBreakpointMFI"
+                    IsEnabled="False"
+                    Text="Toggle Breakpoint">
+                    <MenuFlyoutItem.Icon>
+                        <ImageIcon Source="{StaticResource ToggleBreakpointIcon}" />
+                    </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F9" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/ClearBreakpointsMFI"
+                    IsEnabled="False"
+                    Text="Clear Breakpoints">
+                    <MenuFlyoutItem.Icon>
+                        <ImageIcon Source="{StaticResource ClearBreakpointsIcon}" />
+                    </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F9" Modifiers="Control,Shift" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
             </MenuBarItem>
 
             <!--  Help  -->
             <MenuBarItem x:Uid="/TitleBar/HelpMBI" Title="Help">
+                <MenuBarItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="H" Modifiers="Menu" />
+                </MenuBarItem.KeyboardAccelerators>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/MIPSCheatSheetMFI"
                     Command="{x:Bind ViewModel.OpenMIPSCheatSheetCommand, Mode=OneWay}"

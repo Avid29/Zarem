@@ -198,6 +198,12 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\StepOut.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\StepOver.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\StopDebugging.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\ToggleBreakpoint.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\ClearBreakpoints.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Editor\CollapseAll.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Editor\CollapseCurrent.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Editor\ExpandAll.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Editor\ExpandCurrent.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Files\asm.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Files\File.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Files\Folder.svg" />
