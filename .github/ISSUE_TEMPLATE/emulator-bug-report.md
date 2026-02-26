@@ -2,7 +2,7 @@
 name: Emulator Bug report
 about: Create a bug report regarding the emulator
 title: ''
-labels: bug, emulator
+labels: bug
 assignees: ''
 
 ---
