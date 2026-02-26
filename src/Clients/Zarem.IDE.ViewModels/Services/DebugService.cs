@@ -63,7 +63,7 @@ public class DebugService : IDebugService
         if (_projectService.Project is null)
             return;
 
-        var buildResult = await _buildService.BuildProjectAsync(true);
+        var buildResult = await _buildService.BuildProjectAsync(false);
         if (buildResult?.OutputModule is null)
             return;
 
