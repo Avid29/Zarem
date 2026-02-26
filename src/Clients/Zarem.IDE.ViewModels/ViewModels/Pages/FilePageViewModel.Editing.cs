@@ -54,6 +54,10 @@ public partial class FilePageViewModel
         if (File is null)
             return;
 
+        // No need to save if the file is clean
+        if (!IsDirty)
+            return;
+
         try
         {
             await using var stream = await File.FileItem.OpenStreamForWriteAsync();
