@@ -2,7 +2,7 @@
 name: Assembler Bug report
 about: Create a bug report regarding the assembler
 title: ''
-labels: assembler, bug
+labels: 'area: assembler, bug'
 assignees: ''
 
 ---
