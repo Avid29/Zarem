@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml.Controls;
+using System.Globalization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.IDE.Controls.CodeEditor;
 using Zarem.IDE.Messages;
@@ -92,5 +93,20 @@ public sealed partial class TextEditorPage : UserControl
     {
         // TODO: Localize
         return $"Ln {line}, Col {column}";
+    }
+
+    private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
+    {
+        ApplyZoomText(sender, args.Text);
+        args.Handled = true;
+    }
+
+    private void ApplyZoomText(ComboBox comboBox, string text)
+    {
+        text = text.Trim().Trim('%').Trim();
+        if (int.TryParse(text, out int percent))
+        {
+            ActiveCodeEditor.Zoom = percent;
+        }
     }
 }

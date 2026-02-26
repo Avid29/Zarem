@@ -114,11 +114,11 @@ public partial class CodeEditor
 
         if (Column != col)
         {
-            editor.CurrentPos = editor.FindColumn(line, col);
+            editor.CurrentPos = editor.FindColumn(Line, Column);
         }
         else if (Line != line)
         {
-            editor.GotoLine(line);
+            editor.GotoLine(Line);
         }
     }
 
@@ -134,6 +134,8 @@ public partial class CodeEditor
         var percentage = ZoomFactorToPercentage(BaseFontSize, factor);
 
         if (Zoom != percentage)
-            Zoom = percentage;
+        {
+            editor?.Zoom = ZoomPercentageToFactor(BaseFontSize, Zoom);
+        }
     }
 }
