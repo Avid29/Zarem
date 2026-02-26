@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editor="using:Zarem.IDE.Controls.CodeEditor"
+    xmlns:local="using:Zarem.IDE.Views.Pages.Editor"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
@@ -13,6 +14,12 @@
     </UserControl.Resources>
 
     <Grid FlowDirection="LeftToRight">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="24" />
+        </Grid.RowDefinitions>
+
+        <!--  Editor  -->
         <editor:CodeEditor
             x:Name="CodeEditor"
             x:Load="{x:Bind UseTextEditor, Mode=OneWay}"
@@ -25,5 +32,25 @@
             RealTimeAssembly="{x:Bind ViewModel.AssembleRealTime, Mode=OneWay}"
             SyntaxHighlightingTheme="{StaticResource SyntaxHighlighting}"
             Text="{x:Bind ViewModel.Content, Mode=TwoWay}" />
+
+        <!--  Status Bar  -->
+        <Grid Grid.Row="1" Padding="16,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                FontSize="12"
+                Opacity=".5"
+                Text="{x:Bind local:TextEditorPage.GetPositionText(ActiveCodeEditor.Line, ActiveCodeEditor.Column), Mode=OneWay}" />
+
+            <TextBlock
+                Grid.Column="1"
+                FontSize="12"
+                Opacity=".5"
+                Text="{x:Bind ActiveCodeEditor.Zoom, Mode=OneWay}" />
+            <!--<ComboBox SelectedValue="{x:Bind ActiveCodeEditor.Zoom}" />-->
+        </Grid>
     </Grid>
 </UserControl>

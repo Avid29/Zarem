@@ -41,6 +41,8 @@ public sealed partial class TextEditorPage : UserControl
         }
     }
 
+    public CodeEditor ActiveCodeEditor => UseAssemblyEditor ? AssemblyEditor : CodeEditor;
+
     private bool UseAssemblyEditor => ViewModel?.File?.Name.EndsWith(".asm") ?? false;
 
     private bool UseTextEditor => !UseAssemblyEditor;
@@ -84,5 +86,11 @@ public sealed partial class TextEditorPage : UserControl
     private void UpdateBindings()
     {
         this.Bindings.Update();
+    }
+
+    public static string GetPositionText(long line, long column)
+    {
+        // TODO: Localize
+        return $"Ln {line}, Col {column}";
     }
 }

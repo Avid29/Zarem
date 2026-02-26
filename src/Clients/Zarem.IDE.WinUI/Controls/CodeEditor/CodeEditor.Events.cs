@@ -17,8 +17,14 @@ public partial class CodeEditor
             return;
 
         editor.Modified += Editor_Modified;
-        //editor.ZoomChanged += Editor_ZoomChanged;
+        editor.ZoomChanged += Editor_ZoomChanged;
         editor.UpdateUI += Editor_UpdateUI;
+    }
+
+    private void Editor_ZoomChanged(Editor sender, ZoomChangedEventArgs args)
+    {
+        var factor = sender.Zoom;
+        Zoom = ZoomFactorToPercentage(BaseFontSize, factor);
     }
 
     private void Editor_Modified(Editor sender, ModifiedEventArgs args)
