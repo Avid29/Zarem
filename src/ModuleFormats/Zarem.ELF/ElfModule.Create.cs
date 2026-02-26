@@ -34,7 +34,7 @@ public partial class ElfModule
 
         public ElfFile ElfFile { get; }
 
-        public void CreateSections()
+        public readonly void CreateSections()
         {
             ulong pos = 0;
 
@@ -103,7 +103,7 @@ public partial class ElfModule
             ElfFile.Add(_symtab);
         }
 
-        public void CreateRelTables()
+        public readonly void CreateRelTables()
         {
             Guard.IsNotNull(_symtab);
 
@@ -142,7 +142,7 @@ public partial class ElfModule
             }
         }
 
-        public void SetEntry()
+        public readonly void SetEntry()
         {
             // Ensure there is an entry point
             var entry = Module.EntryPoint;

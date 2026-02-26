@@ -65,7 +65,13 @@ public partial class ElfModule
             if (_symTab is null)
                 return false;
 
-            var sectionName = relocationTable.Info.Section?.Name.Value;
+            var elfSection = relocationTable.Info.Section;
+            if (elfSection is null)
+            {
+                elfSection = relocationTable.Parent?.Sections[relocationTable.Info.SpecialIndex];
+            }
+
+            var sectionName = elfSection?.Name.Value;
             if (sectionName is null)
                 return false;
 
@@ -73,9 +79,14 @@ public partial class ElfModule
 
             foreach (var relEntry in relocationTable.Entries)
             {
-                var symbol = _symTab.Entries[(int)relEntry.SymbolIndex];
+                var elfSymbol = _symTab.Entries[(int)relEntry.SymbolIndex];
+                string symbolName = elfSymbol.Name.Value;
+
+                if (string.IsNullOrEmpty(symbolName) && elfSymbol.SectionLink.Section != null)
+                    symbolName = elfSymbol.SectionLink.Section.Name.Value;
+
                 var address = new Address(section, (long)relEntry.Offset);
-                section.AddRelocation(new RelocationEntry(symbol.Name.Value ?? string.Empty, address, relEntry.Type.Value, relEntry.Addend));
+                section.AddRelocation(new RelocationEntry(symbolName, address, relEntry.Type.Value, relEntry.Addend));
             }
 
             return true;
@@ -87,13 +98,22 @@ public partial class ElfModule
     {
         var context = new ElfAbstractContext(_elfFile);
 
+        // First pass: Symbol table and stream sections
         foreach (var section in _elfFile.Sections)
         {
             _ = section switch
             {
-                // Stream sections
                 ElfStreamSection streamSection => context.AbstractStreamSection(streamSection),
                 ElfSymbolTable symbolTable => context.AbstractSymbolTable(symbolTable),
+                _ => false,
+            };
+        }
+
+        // Second pass: Relocation table
+        foreach (var section in _elfFile.Sections)
+        {
+            _ = section switch
+            {
                 ElfRelocationTable relocationTable => context.AbstractRelocationTable(relocationTable),
                 _ => false,
             };

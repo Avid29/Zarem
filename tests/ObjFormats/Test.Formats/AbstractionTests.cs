@@ -63,7 +63,7 @@ public class AbstractionTests<TModule, TConfig>
         Guard.IsNotNull(reconvertedAbstractModule);
 
         // Compare original and compare
-        var original = assemblyResult.Module;
+        var original = module;
         var compare = reconvertedAbstractModule;
 
         foreach (var (key, value) in original.Symbols)
