@@ -47,7 +47,7 @@
             Text="{x:Bind ViewModel.Content, Mode=TwoWay}" />
 
         <!--  Status Bar  -->
-        <Grid Grid.Row="1" Padding="16,4,0,0">
+        <Grid Grid.Row="1" Padding="16,4,12,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="auto" />
