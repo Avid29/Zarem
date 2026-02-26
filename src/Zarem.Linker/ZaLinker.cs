@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Diagnostics;
+using System;
 using System.Collections.Generic;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
@@ -10,6 +11,8 @@ using Zarem.Linker.Enums;
 using Zarem.Linker.Handlers;
 using Zarem.Linker.Logging;
 using Zarem.Models;
+using Zarem.Models.Tables;
+using Zarem.Models.Tables.Enums;
 
 namespace Zarem.Linker;
 
@@ -19,6 +22,8 @@ namespace Zarem.Linker;
 public sealed class ZaLinker
 {
     private readonly Dictionary<Module, Dictionary<string, ulong>> _moduleSectionOffsets = [];
+    private readonly Dictionary<Symbol, string> _localSymbolLookup = [];        // Lookup the name reassigned to local symbols
+    private readonly Dictionary<string, Module> _symbolOriginLookup = [];       // Lookup the origin module of a defined global symbol
 
     private readonly LinkerConfig _config;
     private readonly LinkerLogger _logger;
@@ -114,19 +119,27 @@ public sealed class ZaLinker
 
             foreach (var symbol in module.Symbols.Values)
             {
-                //// TODO: Manage local symbols vs global symbols
-                //if (symbol.Binding is SymbolBinding.Local)
-                //    continue;
-
                 if (Module.Symbols.TryGetValue(symbol.Name, out var existing) && symbol.IsDefined && existing.IsDefined)
                 {
                     // TODO: Weak symbols
                     // TODO: Track and log source defining modules
-                    _logger.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.FileName ?? "", "ConflictingSymbolDefinitions", symbol.Name, module.FileName);
+                    var originModule = _symbolOriginLookup[symbol.Name];
+                    _logger.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.DisplayName, "ConflictingSymbolDefinitions", symbol.Name, module.FileName, originModule.DisplayName);
                     continue;
                 }
 
-                var newSymbol = Module.GetOrCreateSymbol(symbol.Name);
+                // Adjust local symbol names
+                var symbolName = symbol.Name;
+                if (symbol.Binding is SymbolBinding.Local)
+                {
+                    var id = $"local_{module.FileName}_{symbol.Name}";
+                    _localSymbolLookup[symbol] = id;
+                    symbolName = id;
+                }
+
+                _symbolOriginLookup[symbolName] = module;
+
+                var newSymbol = Module.GetOrCreateSymbol(symbolName);
                 newSymbol.Binding = symbol.Binding;
                 newSymbol.Type = symbol.Type;
 
@@ -171,17 +184,30 @@ public sealed class ZaLinker
 
                 foreach (var relocation in section.Relocations)
                 {
-                    if (!Module.Symbols.TryGetValue(relocation.SymbolName, out var symbol))
+                    if(!module.TryGetSymbol(relocation.SymbolName, out var sourceSymbol))
+                        throw new Exception();
+
+                    // Get the symbol's name, or mapped symbol name if local
+                    var symbolName = sourceSymbol.Name;
+                    if (sourceSymbol.Binding is SymbolBinding.Local)
+                        symbolName = _localSymbolLookup[sourceSymbol];
+
+                    if (!Module.Symbols.TryGetValue(symbolName, out var symbol))
                     {
-                        _logger.Log(Severity.Error, LogId.UndeclaredSymbolReferenced, module.FileName ?? "", "RelocationSymbolDoesNotExist", relocation.SymbolName);
+                        _logger.Log(Severity.Error, LogId.UndeclaredSymbolReferenced, module.DisplayName, "RelocationSymbolDoesNotExist", relocation.SymbolName);
                         continue;
                     }
-                    
+
+                    var newRelocation = relocation;
+                    if (symbol.Binding is SymbolBinding.Local)
+                    {
+                        newRelocation = new RelocationEntry(symbol.Name, relocation.Location, relocation.Type, relocation.Addend);
+                    }
+
+                    linkedSection.AddRelocation(newRelocation);
+
                     if (!symbol.IsDefined)
-                    {
-                        linkedSection.AddRelocation(relocation);
                         continue;
-                    }
 
                     // The symbol is defined, so it should have a section
                     Guard.IsNotNull(symbol.Address.Section);

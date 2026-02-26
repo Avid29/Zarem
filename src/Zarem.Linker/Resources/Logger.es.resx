@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConflictingSymbolDefinitions" xml:space="preserve">
-    <value>Symbol '{0}' is defined in '{1}', but was already defined.</value>
+    <value>Symbol '{0}' is defined in '{1}', but was already defined in '{2}'.</value>
   </data>
   <data name="ModuleHasWrongArchitecture" xml:space="preserve">
     <value>Module '{0}' is the wrong architecture ('{1}'). '{0}' will be skipped.</value>

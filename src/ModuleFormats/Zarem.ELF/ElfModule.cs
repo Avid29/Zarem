@@ -17,9 +17,8 @@ public partial class ElfModule : ModuleBase, IBuildModule<ElfModule, ElfConfig>,
 {
     private readonly ElfFile _elfFile;
 
-    private ElfModule(string? name,  ElfFile elfFile)
+    private ElfModule(string? name,  ElfFile elfFile) : base(name)
     {
-        FilePath = name;
         _elfFile = elfFile;
     }
 
