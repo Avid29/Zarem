@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml.Controls;
+using System.Globalization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.IDE.Controls.CodeEditor;
 using Zarem.IDE.Messages;
@@ -40,6 +41,8 @@ public sealed partial class TextEditorPage : UserControl
             UpdateBindings();
         }
     }
+
+    public CodeEditor ActiveCodeEditor => UseAssemblyEditor ? AssemblyEditor : CodeEditor;
 
     private bool UseAssemblyEditor => ViewModel?.File?.Name.EndsWith(".asm") ?? false;
 
@@ -84,5 +87,26 @@ public sealed partial class TextEditorPage : UserControl
     private void UpdateBindings()
     {
         this.Bindings.Update();
+    }
+
+    public static string GetPositionText(long line, long column)
+    {
+        var localizationService = Service.Get<ILocalizationService>();
+        return localizationService["/Pages/Editor/LineAndColumn", line, column];
+    }
+
+    private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
+    {
+        ApplyZoomText(sender, args.Text);
+        args.Handled = true;
+    }
+
+    private void ApplyZoomText(ComboBox comboBox, string text)
+    {
+        text = text.Trim().Trim('%').Trim();
+        if (int.TryParse(text, out int percent))
+        {
+            ActiveCodeEditor.Zoom = percent;
+        }
     }
 }

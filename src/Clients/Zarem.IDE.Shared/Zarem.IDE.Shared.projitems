@@ -454,6 +454,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converters\CheatSheet\InstructionTypeColorConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\CheatSheet\RegisterEncodingColorConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FileTypeIconConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\PercentageStringConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\Status\AppStatusColorConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\StringLocalizeConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtensions.cs" />

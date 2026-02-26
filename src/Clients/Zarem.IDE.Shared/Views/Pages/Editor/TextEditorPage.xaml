@@ -3,16 +3,36 @@
     x:Class="Zarem.IDE.Views.Pages.Editor.TextEditorPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:convert="using:Zarem.IDE.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editor="using:Zarem.IDE.Controls.CodeEditor"
+    xmlns:local="using:Zarem.IDE.Views.Pages.Editor"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <editor:AssemblySyntaxHighlightingTheme x:Name="SyntaxHighlighting" />
+        <convert:PercentageStringConverter x:Key="PercentConverter" />
+
+        <Style TargetType="ComboBox">
+            <Setter Property="MinHeight" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="8,0,4,0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0.5" />
+        </Style>
     </UserControl.Resources>
 
     <Grid FlowDirection="LeftToRight">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Editor  -->
         <editor:CodeEditor
             x:Name="CodeEditor"
             x:Load="{x:Bind UseTextEditor, Mode=OneWay}"
@@ -25,5 +45,39 @@
             RealTimeAssembly="{x:Bind ViewModel.AssembleRealTime, Mode=OneWay}"
             SyntaxHighlightingTheme="{StaticResource SyntaxHighlighting}"
             Text="{x:Bind ViewModel.Content, Mode=TwoWay}" />
+
+        <!--  Status Bar  -->
+        <Grid Grid.Row="1" Padding="16,4,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="12"
+                Opacity=".5"
+                Text="{x:Bind local:TextEditorPage.GetPositionText(ActiveCodeEditor.Line, ActiveCodeEditor.Column), Mode=OneWay}" />
+
+            <ComboBox
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                IsEditable="True"
+                SelectedItem="{x:Bind ActiveCodeEditor.Zoom, Mode=TwoWay}"
+                Text="{x:Bind ActiveCodeEditor.Zoom, Mode=OneWay, Converter={StaticResource PercentConverter}}"
+                TextSubmitted="ZoomComboBox_TextSubmitted">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="x:Int32">
+                        <TextBlock Text="{x:Bind Converter={StaticResource PercentConverter}, Mode=OneWay}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <x:Int32>50</x:Int32>
+                <x:Int32>75</x:Int32>
+                <x:Int32>100</x:Int32>
+                <x:Int32>120</x:Int32>
+                <x:Int32>150</x:Int32>
+                <x:Int32>200</x:Int32>
+            </ComboBox>
+        </Grid>
     </Grid>
 </UserControl>

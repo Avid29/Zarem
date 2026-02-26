@@ -17,8 +17,14 @@ public partial class CodeEditor
             return;
 
         editor.Modified += Editor_Modified;
-        //editor.ZoomChanged += Editor_ZoomChanged;
+        editor.ZoomChanged += Editor_ZoomChanged;
         editor.UpdateUI += Editor_UpdateUI;
+    }
+
+    private void Editor_ZoomChanged(Editor sender, ZoomChangedEventArgs args)
+    {
+        var factor = sender.Zoom;
+        Zoom = ZoomFactorToPercentage(BaseFontSize, factor);
     }
 
     private void Editor_Modified(Editor sender, ModifiedEventArgs args)
@@ -30,8 +36,8 @@ public partial class CodeEditor
     {
         var pos = sender.CurrentPos;
 
-        Line = sender.LineFromPosition(pos);
-        Column = sender.GetColumn(pos);
+        Line = sender.LineFromPosition(pos) + 1;
+        Column = sender.GetColumn(pos) + 1;
     }
 
 

@@ -19,6 +19,9 @@ public partial class CodeEditor
     public static readonly DependencyProperty ColumnProperty =
         DependencyProperty.Register(nameof(Column), typeof(long), typeof(CodeEditor), new PropertyMetadata(0L, OnPositionPropertyChanged));
 
+    public static readonly DependencyProperty ZoomProperty =
+        DependencyProperty.Register(nameof(Zoom), typeof(int), typeof(CodeEditor), new PropertyMetadata(100, OnZoomPropertyChanged));
+
     /// <summary>
     /// Gets or sets the text contained in the editbox.
     /// </summary>
@@ -46,6 +49,15 @@ public partial class CodeEditor
         set => SetValue(ColumnProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets the current zoom percentage.
+    /// </summary>
+    public int Zoom
+    {
+        get => (int)GetValue(ZoomProperty);
+        set => SetValue(ZoomProperty, value);
+    }
+
     private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
     {
         if (d is not CodeEditor codeEditor)
@@ -60,6 +72,14 @@ public partial class CodeEditor
             return;
 
         codeEditor.UpdatePosition();
+    }
+
+    private static void OnZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
+    {
+        if (d is not CodeEditor codeEditor)
+            return;
+
+        codeEditor.UpdateZoom();
     }
 
     private void UpdateText()
@@ -92,13 +112,30 @@ public partial class CodeEditor
         var line = editor.LineFromPosition(pos);
         var col = editor.GetColumn(pos);
 
-        if (Column != col)
+        if (Column - 1 != col)
         {
-            editor.CurrentPos = editor.FindColumn(line, col);
+            editor.CurrentPos = editor.FindColumn(Line - 1, Column - 1);
         }
-        else if (Line != line)
+        else if (Line - 1 != line)
         {
-            editor.GotoLine(line);
+            editor.GotoLine(Line - 1);
+        }
+    }
+
+    private void UpdateZoom()
+    {
+        // Retrieve the editor
+        var editor = ChildEditor?.Editor;
+        if (editor is null)
+            return;
+
+        // Get current zoom, and check if it matches
+        var factor = editor.Zoom;
+        var percentage = ZoomFactorToPercentage(BaseFontSize, factor);
+
+        if (Zoom != percentage)
+        {
+            editor?.Zoom = ZoomPercentageToFactor(BaseFontSize, Zoom);
         }
     }
 }

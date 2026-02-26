@@ -15,6 +15,7 @@ namespace Zarem.IDE.Controls.CodeEditor;
 public partial class CodeEditor : Control
 {
     private const string CodeEditorPartName = "PART_CodeEditorControl";
+    private const int BaseFontSize = 10;
 
     /// <summary>
     /// An event invoked when the <see cref="Text"/> property changes
@@ -51,5 +52,18 @@ public partial class CodeEditor : Control
     {
         editor = ChildEditor?.Editor;
         return editor is not null;
+    }
+
+    private static int ZoomPercentageToFactor(int baseSize, int percentage)
+    {
+        double size = (percentage * baseSize) / 100d;
+        int factor = (int)Math.Round(size - baseSize);
+        return Math.Clamp(factor, -10, 20);
+    }
+
+    private static int ZoomFactorToPercentage(int baseSize, int factor)
+    {
+        double percentage = ((double)(baseSize + factor) / baseSize) * 100;
+        return (int)Math.Round(percentage);
     }
 }
