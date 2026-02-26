@@ -100,7 +100,7 @@ public partial class EditorSettingsViewModel : SettingsSubPageViewModel
     {
         // Get resources
         var assembly = Assembly.GetExecutingAssembly();
-        var resources = assembly.GetManifestResourceNames().Where(x => x.StartsWith("Zarem.Resources.ColorSchemes"));
+        var resources = assembly.GetManifestResourceNames().Where(x => x.StartsWith("Zarem.IDE.Resources.ColorSchemes"));
 
         // Extract editor schemes
         var editorSchemes = new List<EditorColorScheme>();
