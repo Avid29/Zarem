@@ -50,6 +50,9 @@
             <MenuBarItem x:Uid="/TitleBar/FileMBI" Title="File">
                 <!--  New  -->
                 <MenuFlyoutSubItem x:Uid="/TitleBar/NewMFSI" Text="New">
+                    <MenuFlyoutSubItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE109;" />
+                    </MenuFlyoutSubItem.Icon>
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/NewProjectMFI"
                         Command="{x:Bind ViewModel.OpenCreateProjectCommand, Mode=OneWay}"
@@ -255,11 +258,17 @@
                     x:Uid="/TitleBar/OutliningMFSI"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanTextEdit, FallbackValue=False, Mode=OneWay}"
                     Text="Outlining">
+                    <MenuFlyoutSubItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xF168;" />
+                    </MenuFlyoutSubItem.Icon>
                     <!--<MenuFlyoutItem x:Uid="/TitleBar/ToggleOutliningMFI" Text="Toggle Outlining"/>-->
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/ExpandCurrentMFI"
                         Command="{x:Bind ViewModel.ExpandChildrenCommand, Mode=OneWay}"
                         Text="Expand Current">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE8C4;" />
+                        </MenuFlyoutItem.Icon>
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="O" Modifiers="Menu" />
                         </MenuFlyoutItem.KeyboardAccelerators>
@@ -268,6 +277,9 @@
                         x:Uid="/TitleBar/CollapseCurrentMFI"
                         Command="{x:Bind ViewModel.CollapseChildrenCommand, Mode=OneWay}"
                         Text="Collapse Current">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE8C5;" />
+                        </MenuFlyoutItem.Icon>
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="P" Modifiers="Menu" />
                         </MenuFlyoutItem.KeyboardAccelerators>
@@ -448,12 +460,20 @@
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/MIPSCheatSheetMFI"
                     Command="{x:Bind ViewModel.OpenMIPSCheatSheetCommand, Mode=OneWay}"
-                    Text="Show MIPS Cheatsheet" />
+                    Text="Show MIPS Cheatsheet">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xF7DB;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Name="WikiMFI"
                     x:Uid="/TitleBar/OpenWikiMFI"
                     Click="WikiMFI_Click"
-                    Text="Open Wiki" />
+                    Text="Open Wiki">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xF6FA;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/WelcomeMFI"
