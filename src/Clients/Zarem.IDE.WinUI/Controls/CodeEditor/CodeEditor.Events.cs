@@ -36,8 +36,8 @@ public partial class CodeEditor
     {
         var pos = sender.CurrentPos;
 
-        Line = sender.LineFromPosition(pos);
-        Column = sender.GetColumn(pos);
+        Line = sender.LineFromPosition(pos) + 1;
+        Column = sender.GetColumn(pos) + 1;
     }
 
 

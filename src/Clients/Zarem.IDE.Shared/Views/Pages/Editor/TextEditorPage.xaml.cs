@@ -91,8 +91,8 @@ public sealed partial class TextEditorPage : UserControl
 
     public static string GetPositionText(long line, long column)
     {
-        // TODO: Localize
-        return $"Ln {line}, Col {column}";
+        var localizationService = Service.Get<ILocalizationService>();
+        return localizationService["/Pages/Editor/LineAndColumn", line, column];
     }
 
     private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)

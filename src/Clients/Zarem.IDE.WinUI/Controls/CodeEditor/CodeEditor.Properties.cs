@@ -112,13 +112,13 @@ public partial class CodeEditor
         var line = editor.LineFromPosition(pos);
         var col = editor.GetColumn(pos);
 
-        if (Column != col)
+        if (Column - 1 != col)
         {
-            editor.CurrentPos = editor.FindColumn(Line, Column);
+            editor.CurrentPos = editor.FindColumn(Line - 1, Column - 1);
         }
-        else if (Line != line)
+        else if (Line - 1 != line)
         {
-            editor.GotoLine(Line);
+            editor.GotoLine(Line - 1);
         }
     }
 
