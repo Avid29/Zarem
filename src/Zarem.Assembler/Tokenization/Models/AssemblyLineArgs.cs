@@ -47,7 +47,7 @@ public struct AssemblyLineArgs
         Token? lastComma = null;
         while (tokens.Count > 0)
         {
-            var nextCommaIndex = ((ReadOnlySpan<Token>)tokens.AsSpan()).FindNext(TokenType.Comma, out var comma);
+            var nextCommaIndex = tokens.AsSpan().FindNext(TokenType.Comma, out var comma);
             if (nextCommaIndex is -1)
             {
                 // This is a base case for the final argument

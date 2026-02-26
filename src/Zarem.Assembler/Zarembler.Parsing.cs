@@ -33,6 +33,18 @@ public partial class Zarembler
         {
             Guard.IsNotNull(line.Instruction);
 
+            // Check for an extra comma at the end of the assembly line. זה אסור
+            // Yes, all this just to check that
+            if (line.Args.Count is > 0)
+            {
+                var lastArgIndex = line.Args.Count - 1;
+                var extraComma = line.Args[lastArgIndex].ProceedingComma;
+                if (extraComma is not null)
+                {
+                    _logger.Log(Severity.Error, LogId.UnexpectedToken, extraComma, "UnexpectedToken", extraComma.Source);
+                }
+            }
+
             // On the alignment pass, just reserve space for the instruction
             var size = _archHandler.GetInstructionSize(line);
             _activeSection.Reserve(size);
