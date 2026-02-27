@@ -235,12 +235,12 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
         // Very simple if branch delays are enabled
         if (Computer.Config.DisableBranchDelays)
         {
-            _branchDelay = branch;
+            // Otherwise we're gonna do some tom-foolery and adjust the PC
+            pc = (uint)(pc + branch);
             return;
         }
 
-        // Otherwise we're gonna do some tom-foolery and adjust the PC
-        pc = (uint)(pc + branch); // +4 because we're gonna pretend it's branching from the next instruction
+        _branchDelay = branch;
     }
 
     private void WriteCoProc(RegisterSet set, GPRegister register, uint writeback)

@@ -63,14 +63,11 @@ newline:
     
 loop_check:
     
-    # Increment and loop again if $s0 <= 100
-    addi    $s0,    $s0,    1
-    slti    $t0,    $s0,    101
+    # Loop again if $s0 <= 100
+    # Increment in the delay slot
+    slti    $t0,    $s0,    100
     bgtz    $t0,    loop
-    nop
-    
-    # NOTE: Could be fancy in the future and
-    # increment in the delay slot.
+    addi    $s0,    $s0,    1
     
 loop_end:
 

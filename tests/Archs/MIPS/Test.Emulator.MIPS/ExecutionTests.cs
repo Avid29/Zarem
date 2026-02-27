@@ -439,7 +439,7 @@ public class ExecutionTests
         var instruction = parsed.Realize()[0];
         var emulatorConfig = new MIPSEmulatorConfig()
         {
-            DisableBranchDelays = branchDelay,
+            DisableBranchDelays = !branchDelay,
         };
         var emulator = new MIPSEmulator(emulatorConfig);
 
