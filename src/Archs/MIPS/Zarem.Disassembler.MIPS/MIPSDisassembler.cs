@@ -57,7 +57,6 @@ public class MIPSDisassembler
             InstructionType.RegisterImmediate or
             InstructionType.RegisterImmediateBranch => (byte)instruction.RTFuncCode,
 
-            // TODO: Disassembling CoProc0 instructions
             InstructionType.Coproc0 => (byte)((CoProc0Instruction)instruction).CoProc0RSCode,
 
             InstructionType.Coproc1 => (byte)((FloatInstruction)instruction).CoProc1RSCode,

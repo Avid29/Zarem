@@ -23,6 +23,23 @@ public class PopupService : IPopupService
     }
 
     /// <inheritdoc/>
+    public async Task<PopupResult> ShowPopupAsync(string title, string description, bool localize = true)
+    {
+        if (localize)
+        {
+            title = _localizationService[title];
+            description = _localizationService[description];
+        }
+
+        var dialog = new PopupDetails(title, description)
+        {
+            CloseButtonText = _localizationService["Popups/Close"],
+        };
+
+        return await ShowPopupAsync(dialog);
+    }
+
+    /// <inheritdoc/>
     public async Task<PopupResult> ShowPopupAsync(PopupDetails popup)
     {
         // TODO: Multi-Windowing

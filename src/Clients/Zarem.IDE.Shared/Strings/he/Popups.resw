@@ -168,4 +168,7 @@
   <data name="CreateNewFolderTitle" xml:space="preserve">
     <value>צור תיקיה חדשה</value>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>סגר</value>
+  </data>
 </root>
