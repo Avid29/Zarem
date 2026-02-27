@@ -40,7 +40,6 @@ public partial class CodeEditor
         Column = sender.GetColumn(pos) + 1;
     }
 
-
     private void CodeEditor_Unloaded(object sender, RoutedEventArgs e)
     {
         // Restore the loaded event and detach unloaded event

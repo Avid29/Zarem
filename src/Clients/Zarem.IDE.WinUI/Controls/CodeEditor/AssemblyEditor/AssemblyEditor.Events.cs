@@ -17,12 +17,27 @@ public partial class AssemblyEditor
             return;
 
         editor.StyleNeeded += Editor_StyleNeeded;
+        editor.MarginClick += Editor_MarginClick;
         ChildEditor.SyntaxHighlightingApplied += CodeEditor_SyntaxHighlightingApplied;
         ChildEditor.HighlightingLanguage = "asm";
     }
 
+    private void Editor_MarginClick(Editor sender, MarginClickEventArgs args)
+    {
+        var line = sender.LineFromPosition(args.Position);
+
+        switch (args.Margin)
+        {
+            case 0:
+                SetBreakpoint(line);
+                break;
+        }
+    }
+
     private async void Editor_StyleNeeded(Editor sender, StyleNeededEventArgs args)
     {
+        SetupMargins();
+
         await RunAssemblerAsync();
         UpdateSyntaxHighlighting();
     }
