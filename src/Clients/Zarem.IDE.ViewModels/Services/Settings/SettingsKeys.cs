@@ -58,7 +58,7 @@ public static class SettingsKeys
         var assembly = Assembly.GetExecutingAssembly();
 
         // Load
-        using Stream? stream = assembly.GetManifestResourceStream($"Zarem.Resources.ColorSchemes.{resource}");
+        using Stream? stream = assembly.GetManifestResourceStream($"Zarem.IDE.Resources.ColorSchemes.{resource}");
         if (stream is null)
             return null;
 
