@@ -58,6 +58,8 @@ public partial class CreateProjectViewModel : PageViewModel
         {
             if(SetProperty(ref field, value))
             {
+                OnPropertyChanged(nameof(CreationPath));
+                OnPropertyChanged(nameof(NameConflict));
                 OnPropertyChanged(nameof(ReadyToCreate));
             }
         }
@@ -73,10 +75,31 @@ public partial class CreateProjectViewModel : PageViewModel
         {
             if (SetProperty(ref field, value))
             {
+                OnPropertyChanged(nameof(CreationPath));
+                OnPropertyChanged(nameof(NameConflict));
                 OnPropertyChanged(nameof(ReadyToCreate));
             }
         }
     }
+
+    /// <summary>
+    /// Gets the path where the project will be created.
+    /// </summary>
+    public string? CreationPath
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(ProjectName) || string.IsNullOrEmpty(FolderPath))
+                return null;
+
+            return Path.Combine(FolderPath, ProjectName);
+        }
+    }
+
+    /// <summary>
+    /// Gets whether or not the 
+    /// </summary>
+    public bool NameConflict => Path.Exists(CreationPath);
 
     /// <summary>
     /// Gets or sets the mips version for the project.
@@ -110,7 +133,7 @@ public partial class CreateProjectViewModel : PageViewModel
     /// Gets whether or not the project can be created.
     /// </summary>
     [MemberNotNullWhen(true, nameof(ProjectName), nameof(FolderPath), nameof(ModuleFormat))]
-    public bool ReadyToCreate => ProjectName is not null && FolderPath is not null;
+    public bool ReadyToCreate => ProjectName is not null && FolderPath is not null && !NameConflict;
 
     [RelayCommand]
     private async Task CreateProjectAsync()
