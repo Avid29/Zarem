@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CreateProject/ConflictingProjectTB.Text" xml:space="preserve">
+    <value>A project with that name already exists in this folder.</value>
+  </data>
   <data name="CreateProject/CreateANewProjectTB.Text" xml:space="preserve">
     <value>Create a new project</value>
+  </data>
+  <data name="CreateProject/CreationPath" xml:space="preserve">
+    <value>Project will be created in '{0}'</value>
   </data>
   <data name="CreateProject/FolderTBox.Header" xml:space="preserve">
     <value>Folder</value>

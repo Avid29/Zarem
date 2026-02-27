@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CreateProject/ConflictingProjectTB.Text" xml:space="preserve">
+    <value>פרויקט בשם זה כבר קיים בתיקייה זו.</value>
+  </data>
   <data name="CreateProject/CreateANewProjectTB.Text" xml:space="preserve">
     <value>צור פרויקט חדש</value>
+  </data>
+  <data name="CreateProject/CreationPath" xml:space="preserve">
+    <value>הפרויקט ייווצר ב-'{0}'</value>
   </data>
   <data name="CreateProject/FolderTBox.Header" xml:space="preserve">
     <value>תיקיה</value>
