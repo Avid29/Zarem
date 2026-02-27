@@ -1,8 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using System.IO;
-using Zarem.Localization;
 using Zarem.Models.Interface;
 
 namespace Zarem.Models.Abstract;
@@ -15,17 +13,11 @@ public abstract class ModuleBase : IModule
     /// <summary>
     /// Initializes a new instance of the <see cref="ModuleBase"/> class.
     /// </summary>
-    public ModuleBase(string? filePath = null)
+    public ModuleBase(string? identity = null)
     {
-        FilePath = filePath ?? $"{Guid.NewGuid()}";
+        Identity = identity ?? $"{Guid.NewGuid()}";
     }
 
     /// <inheritdoc/>
-    public string FilePath { get; protected set; }
-
-    /// <inheritdoc/>
-    public string? FileName => Path.GetFileName(FilePath);
-
-    /// <inheritdoc/>
-    public string DisplayName => FileName ?? Localizer.Resources["AnonymousModule"] ?? "";
+    public string Identity { get; protected set; }
 }

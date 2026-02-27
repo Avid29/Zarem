@@ -80,7 +80,7 @@ public sealed class ZaLinker
             {
                 // TODO: Decide. Is this a warning or an error?
                 // Currently this is a warning and the linker will attempt to link without the target file.
-                _logger.Log(Severity.Warning, LogId.WrongArchitecture, module.FilePath, "ModuleHasWrongArchitecture", module.DisplayName, module.Architecture);
+                _logger.Log(Severity.Warning, LogId.WrongArchitecture, module.Identity, "ModuleHasWrongArchitecture", module.Identity, module.Architecture);
                 continue;
             }
 
@@ -124,7 +124,7 @@ public sealed class ZaLinker
                     // TODO: Weak symbols
                     // TODO: Track and log source defining modules
                     var originModule = _symbolOriginLookup[symbol.Name];
-                    _logger.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.DisplayName, "ConflictingSymbolDefinitions", symbol.Name, module.FileName, originModule.DisplayName);
+                    _logger.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.Identity, "ConflictingSymbolDefinitions", symbol.Name, module.Identity, originModule.Identity);
                     continue;
                 }
 
@@ -132,7 +132,7 @@ public sealed class ZaLinker
                 var symbolName = symbol.Name;
                 if (symbol.Binding is SymbolBinding.Local)
                 {
-                    var id = $"local_{module.FileName}_{symbol.Name}";
+                    var id = $"local:{module.Identity}:{symbol.Name}";
                     _localSymbolLookup[symbol] = id;
                     symbolName = id;
                 }
@@ -162,7 +162,7 @@ public sealed class ZaLinker
             {
                 if (!symbol.IsDefined)
                 {
-                    _logger.Log(Severity.Error, LogId.UndefinedSymbol, Module.FileName, "SymbolNeverDefined", symbol.Name);
+                    _logger.Log(Severity.Error, LogId.UndefinedSymbol, Module.Identity, "SymbolNeverDefined", symbol.Name);
                 }
             }
         }
@@ -194,7 +194,7 @@ public sealed class ZaLinker
 
                     if (!Module.Symbols.TryGetValue(symbolName, out var symbol))
                     {
-                        _logger.Log(Severity.Error, LogId.UndeclaredSymbolReferenced, module.DisplayName, "RelocationSymbolDoesNotExist", relocation.SymbolName);
+                        _logger.Log(Severity.Error, LogId.UndeclaredSymbolReferenced, module.Identity, "RelocationSymbolDoesNotExist", relocation.SymbolName);
                         continue;
                     }
 

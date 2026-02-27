@@ -6,7 +6,6 @@ using ObjFormats.LibOF.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using Zarem.Elf.Config;
-using Zarem.Extensions.System.IO;
 using Zarem.Models;
 
 namespace Zarem.Elf;
@@ -170,6 +169,6 @@ public partial class ElfModule
         context.CreateRelTables();
         context.SetEntry();
 
-        return new ElfModule(context.Module.FileName, context.ElfFile);
+        return new ElfModule(context.Module.Identity, context.ElfFile);
     }
 }

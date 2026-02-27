@@ -28,7 +28,7 @@ public sealed class Module : ModuleBase
     /// <summary>
     /// Initializes a new instance of the <see cref="Module"/> class.
     /// </summary>
-    public Module(string? filePath, string architecture) : base(filePath)
+    public Module(string? identity, string architecture) : base(identity)
     {
         Architecture = architecture;
     }

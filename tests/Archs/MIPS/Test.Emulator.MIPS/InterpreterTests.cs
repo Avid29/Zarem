@@ -23,12 +23,11 @@ public class InterpreterTests
     {
         // Load the file
         var path = TestFilePathing.GetAssemblyFilePath("emulator_tests/usercode_tests/hello_world.asm");
-        var stream = File.Open(path, FileMode.Open);
 
         // Run assembler, and assert successful assembly
         var asmConfig = new MIPSAssemblerConfig();
         var asmHandler = new MIPSAssmblerHandler(asmConfig);
-        var result = await Zarembler.AssembleAsync(stream, path, asmHandler, asmConfig);
+        var result = await Zarembler.AssembleAsync(path, asmHandler, asmConfig);
 
         // Link
         var linkConfig = new MIPSLinkerConfig();

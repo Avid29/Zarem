@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Diagnostics;
-using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
@@ -26,18 +25,17 @@ public class AbstractionTests<TModule, TConfig>
     {
         // Load the file
         var path = TestFilePathing.GetAssemblyFilePath(fileName);
-        var stream = File.Open(path, FileMode.Open);
 
         // Run the test
-        await RunTest(stream, path, config);
+        await RunTest(path, config);
     }
 
-    protected static async Task RunTest(Stream stream, string? filePath = null, MIPSAssemblerConfig? assemblerConfig = null, TConfig? formatConfig = null)
+    protected static async Task RunTest(string filePath, MIPSAssemblerConfig? assemblerConfig = null, TConfig? formatConfig = null)
     {
         assemblerConfig ??= new();
         formatConfig ??= new();
 
-        var assemblyResult = await Zarembler.AssembleAsync(stream, filePath, new MIPSAssmblerHandler(assemblerConfig), assemblerConfig);
+        var assemblyResult = await Zarembler.AssembleAsync(filePath, new MIPSAssmblerHandler(assemblerConfig), assemblerConfig);
         Guard.IsNotNull(assemblyResult.Module);
 
         // Link

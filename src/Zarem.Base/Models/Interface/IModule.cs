@@ -10,15 +10,5 @@ public interface IModule
     /// <summary>
     /// Gets the file path of the <see cref="IModule"/>.
     /// </summary>
-    string? FilePath { get; }
-
-    /// <summary>
-    /// Gets the file name of the <see cref="IModule"/>.
-    /// </summary>
-    string? FileName { get; }
-
-    /// <summary>
-    /// Gets the display name of the module.
-    /// </summary>
-    string DisplayName { get; }
+    string? Identity { get; }
 }

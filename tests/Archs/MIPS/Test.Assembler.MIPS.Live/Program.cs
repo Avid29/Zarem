@@ -71,7 +71,7 @@ public class Program()
         var stream = new MemoryStream(Encoding.Default.GetBytes(line));
 
         var config = new MIPSAssemblerConfig();
-        var result = await Zarembler.AssembleAsync(stream, null, new MIPSAssmblerHandler(config), config);
+        var result = await Zarembler.AssembleAsync(stream, "test", new MIPSAssmblerHandler(config), config);
 
         if (!result.Failed)
         {
