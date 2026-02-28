@@ -10,6 +10,7 @@ using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
+using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
@@ -90,8 +91,8 @@ public partial class Zarembler
     public static async Task<AssemblerResult> AssembleAsync(string str, string? moduleId, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         using var reader = new StringReader(str);
-        var assembler = await AssembleAsync(reader, moduleId, archHandler, config, logger);
-        return new AssemblerResult(assembler.Failed, assembler.Logs, assembler.Symbols, assembler._module);
+        var (assembler, tokens) = await AssembleAsync(reader, moduleId, archHandler, config, logger);
+        return new AssemblerResult(assembler.Failed, tokens, assembler.Logs, assembler.Symbols, assembler._module);
     }
 
     /// <summary>
@@ -110,14 +111,14 @@ public partial class Zarembler
     public static async Task<AssemblerResult> AssembleAsync(Stream stream, string? moduleId, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         using var reader = new StreamReader(stream);
-        var assembler = await AssembleAsync(reader, moduleId, archHandler, config, logger);
-        return new AssemblerResult(assembler.Failed, assembler.Logs, assembler.Symbols, assembler._module);
+        var (assembler, tokens) = await AssembleAsync(reader, moduleId, archHandler, config, logger);
+        return new AssemblerResult(assembler.Failed, tokens, assembler.Logs, assembler.Symbols, assembler._module);
     }
 
     /// <summary>
     /// Assembles an object module from a stream of assembly.
     /// </summary>
-    private static async Task<Zarembler> AssembleAsync(TextReader reader, string? moduleId, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
+    private static async Task<(Zarembler, TokenizedAssembly)> AssembleAsync(TextReader reader, string? moduleId, IAssemblerHandler archHandler, AssemblerConfig config, Logger? logger = null)
     {
         logger?.Flush();
 
@@ -137,6 +138,6 @@ public partial class Zarembler
         for (int i = 1; i <= tokens.LineCount; i++)
             assembler.RealizationPass(tokens[i]);
 
-        return assembler;
+        return (assembler, tokens);
     }
 }

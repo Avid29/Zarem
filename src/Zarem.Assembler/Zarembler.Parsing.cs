@@ -17,6 +17,8 @@ public partial class Zarembler
 {
     private void AlignmentPass(AssemblyLine line)
     {
+        line.Address = CurrentAddress;
+
         // Parse as macro
         if (line.Type is LineType.Macro)
         {
@@ -148,10 +150,10 @@ public partial class Zarembler
             return;
 
         Guard.IsNotNull(directive);
-        ExecuteDirective(directive);
+        ExecuteDirective(directive, line);
     }
 
-    private void ExecuteDirective(Directive directive)
+    private void ExecuteDirective(Directive directive, AssemblyLine line)
     {
         switch (directive)
         {
@@ -161,6 +163,7 @@ public partial class Zarembler
                 break;
             case SectionDirective section:
                 _activeSection = _module.GetOrCreateSection(section.Name);
+                line.Address = CurrentAddress;                              // Override the line address 
                 break;
             case AlignDirective align:
                 _activeSection.Align((uint)(1 << (int)align.Boundary));    // TODO: Sort out typing here

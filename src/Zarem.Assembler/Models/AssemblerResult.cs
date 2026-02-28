@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Zarem.Assembler.Logging;
+using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
@@ -15,9 +16,10 @@ public class AssemblerResult
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblerResult"/> class.
     /// </summary>
-    public AssemblerResult(bool failed, IReadOnlyList<AssemblerEntry> logs, IReadOnlyList<Symbol> symbols, Module module)
+    public AssemblerResult(bool failed, TokenizedAssembly tokens, IReadOnlyList<AssemblerEntry> logs, IReadOnlyList<Symbol> symbols, Module module)
     {
         Failed = failed;
+        Tokens = tokens;
         Logs = logs;
         Symbols = symbols;
         Module = module;
@@ -27,6 +29,11 @@ public class AssemblerResult
     /// Gets whether or not the assembly failed.
     /// </summary>
     public bool Failed { get; }
+
+    /// <summary>
+    /// Gets the tokenized assembly data.
+    /// </summary>
+    public TokenizedAssembly Tokens { get; }
 
     /// <summary>
     /// Gets the assmembly log.
