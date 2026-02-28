@@ -36,7 +36,6 @@ public partial class Tokenizer
         _location = new SourceLocation();
         _cacheLocation = _location;
         _filename = filename;
-        _mode = mode;
     }
 
     private List<AssemblyLine> TokenLines { get; }

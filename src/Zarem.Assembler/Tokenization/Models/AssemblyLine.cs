@@ -2,6 +2,7 @@
 
 using System;
 using Zarem.Assembler.Tokenization.Models.Enums;
+using Zarem.Models;
 
 namespace Zarem.Assembler.Tokenization.Models;
 
@@ -68,6 +69,14 @@ public class AssemblyLine
     /// Gets the args declared on the line.
     /// </summary>
     public AssemblyLineArgs Args { get; private set; }
+
+    /// <summary>
+    /// Gets the address info from the start of the assembly line.
+    /// </summary>
+    /// <remarks>
+    /// Except section directives will say the address after the assembly line.
+    /// </remarks>
+    public Address Address { get; internal set; }
 
     /// <summary>
     /// Extracts the label if present, then determines the type of line

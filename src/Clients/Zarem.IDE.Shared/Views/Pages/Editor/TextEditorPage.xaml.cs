@@ -12,6 +12,7 @@ using Zarem.IDE.Models.EditorConfig.ColorScheme;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages;
+using Zarem.Models;
 
 namespace Zarem.IDE.Views.Pages.Editor;
 
@@ -82,6 +83,16 @@ public sealed partial class TextEditorPage : UserControl
             return;
 
         codeEditor.ApplyOperation(e);
+    }
+
+    public static string FormatAddres(Address? address)
+    {
+        if (!address.HasValue)
+        {
+            return string.Empty;
+        }
+
+        return string.Format($"{address?.Section?.Name}:0x{address?.Offset:X4}");
     }
 
     private void UpdateBindings()

@@ -16,10 +16,23 @@ public partial class AssemblyEditor
         if (!TryGetEditor(out var editor))
             return;
 
+        editor.UpdateUI += Editor_UpdateUI;
         editor.StyleNeeded += Editor_StyleNeeded;
         editor.MarginClick += Editor_MarginClick;
         ChildEditor.SyntaxHighlightingApplied += CodeEditor_SyntaxHighlightingApplied;
         ChildEditor.HighlightingLanguage = "asm";
+    }
+
+    private void Editor_UpdateUI(Editor sender, UpdateUIEventArgs args)
+    {
+        if (_tokenizedAssembly is null)
+            return;
+
+        var pos = sender.CurrentPos;
+        var line = sender.LineFromPosition(pos) + 1;
+        var asmLine = _tokenizedAssembly[(int)line];
+
+        PositionAddress = asmLine.Address;
     }
 
     private void Editor_MarginClick(Editor sender, MarginClickEventArgs args)
@@ -52,5 +65,13 @@ public partial class AssemblyEditor
         // Restore the loaded event and detach unloaded event
         this.Loaded += AssemblyEditor_Loaded;
         this.Unloaded -= AssemblyEditBox_Unloaded;
+
+
+        if (!TryGetEditor(out var editor))
+            return;
+
+        editor.UpdateUI -= Editor_UpdateUI;
+        editor.StyleNeeded -= Editor_StyleNeeded;
+        editor.MarginClick -= Editor_MarginClick;
     }
 }

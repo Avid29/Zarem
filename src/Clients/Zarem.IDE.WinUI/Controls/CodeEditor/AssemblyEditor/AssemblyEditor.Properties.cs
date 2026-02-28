@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using Zarem.Assembler.Config;
 using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Models;
 
 namespace Zarem.IDE.Controls.CodeEditor;
 
@@ -48,6 +49,13 @@ public partial class AssemblyEditor
             typeof(AssemblyEditor),
             new PropertyMetadata(default(AssemblerConfig), OnAssemblerConfigChanged));
 
+    public static readonly DependencyProperty PositionAddressProperty =
+        DependencyProperty.Register(
+            nameof(PositionAddress),
+            typeof(Address?),
+            typeof(AssemblyEditor),
+            new PropertyMetadata(null));
+
     /// <summary>
     /// Gets or sets a value indicating whether or not to check assembly errors in real-time.
     /// </summary>
@@ -82,6 +90,12 @@ public partial class AssemblyEditor
     {
         get => (MIPSAssemblerConfig)GetValue(AssemblerConfigProperty);
         set => SetValue(AssemblerConfigProperty, value);
+    }
+
+    public Address? PositionAddress
+    {
+        get => (Address?)GetValue(PositionAddressProperty);
+        set => SetValue(PositionAddressProperty, value);
     }
 
     private static void OnSyntaxHighlightingThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)

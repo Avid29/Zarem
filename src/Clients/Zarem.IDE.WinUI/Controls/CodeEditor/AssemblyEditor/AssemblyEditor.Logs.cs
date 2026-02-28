@@ -117,6 +117,7 @@ public partial class AssemblyEditor
             var result = await Zarembler.AssembleAsync(Text, "editor", new MIPSAssmblerHandler(config), config);
             ApplyLogHighlights(result.Logs);
             UpdateSymbols(result.Symbols);
+            _tokenizedAssembly = result.Tokens;
         }
         catch (Exception)
         {

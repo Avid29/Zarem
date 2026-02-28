@@ -20,6 +20,7 @@ public partial class AssemblyEditor : CodeEditor
     /// We make this conversion during syntax highlighting. Track the results for log highlights.
     /// </remarks>
     private readonly Dictionary<int, SourceLocation> _locationMapper;
+    private TokenizedAssembly? _tokenizedAssembly;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblyEditor"/> class.
