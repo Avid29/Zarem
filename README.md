@@ -13,13 +13,13 @@
 
 Zarem is currently MIPS only, but support for other architectures is planned.
 
-| Architecture   | Assembling     | Linking      | Emulating       | Disassembly   |
-| -------------- | -------------- | ------------ | --------------- | ------------- |
-| MIPS32         | ✅ Supported  | ✅ Supported | ✅ Supported    | ⚠️  WIP      |
-| MIPS64         | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   |
-| RISC-V         | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   |
-| ARM            | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   |
-| ARM64          | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   |
+| Architecture   | Assembling     | Linking      | Emulating       | Debugging     | Disassembly |
+| -------------- | -------------- | ------------ | --------------- | ------------- | ----------- |
+| MIPS32         | ✅ Supported  | ✅ Supported | ✅ Supported    | ⚠️  WIP      | ⚠️  WIP     |
+| MIPS64         | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
+| RISC-V         | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
+| ARM            | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
+| ARM64          | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
 
 # Cross-Platform Support
 
