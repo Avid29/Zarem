@@ -1,6 +1,0 @@
-<Project>
-	<PropertyGroup>
-		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-		<GenerateDocumentationFile>false</GenerateDocumentationFile>
-	</PropertyGroup>
-</Project>
