@@ -9,33 +9,6 @@
     <Import_RootNamespace>Zarem.IDE</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha.svg" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha176.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha24x24.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha284.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha300.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha400.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha48x48.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha50x50.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Alpha\Alpha88x88.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev.svg" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev176.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev24x24.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev284.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev300.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev400.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev48x48.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev50x50.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Dev\Dev88x88.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store.svg" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store176.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store24x24.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store284.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store300.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store400.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store48x48.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store50x50.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\AppIconSources\Store\Store88x88.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\LargeTile.scale-100.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\LargeTile.scale-125.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppIcons\Alpha\LargeTile.scale-150.png" />
