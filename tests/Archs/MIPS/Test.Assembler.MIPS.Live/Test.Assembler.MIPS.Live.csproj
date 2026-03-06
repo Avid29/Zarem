@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Disassembler.MIPS\Zarem.Disassembler.MIPS.csproj" />
-    <ProjectReference Include="..\..\..\..\src\ModuleFormats\Zarem.RASM\Zarem.RASM.csproj" />
   </ItemGroup>
 
 </Project>
