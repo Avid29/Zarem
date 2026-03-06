@@ -13,24 +13,24 @@
 
 Zarem is currently MIPS only, but support for other architectures is planned.
 
-| Architecture   | Assembling     | Linking      | Emulating       | Disassembly   |
-| -------------- | -------------- | ------------ | --------------- | ------------- |
-| MIPS32         | ✅ Supported  | ✅ Supported | ✅ Supported    | ⚠️  WIP      |
-| MIPS64         | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   |
-| RISC-V         | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   |
-| ARM            | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   |
-| ARM64          | ⌛ Planned    | ⌛ Planned   | ⌛ Planned      | ⌛ Planned   |
+| Architecture   | Assembling     |  Emulating       | Debugging     | Disassembly |
+| -------------- | -------------- | --------------- | ------------- | ----------- |
+| MIPS32         | ✅ Supported  | ✅ Supported    | ⚠️  WIP      | ⚠️  WIP     |
+| MIPS64         | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
+| RISC-V         | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
+| ARM            | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
+| ARM64          | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
 
 # Cross-Platform Support
 
 The Zarem IDE is a WinUI 3 project, and therefore only available on Windows. **However**, the Assembler and Emulator are made in .NET 10 with no windows-only dependendencies, and therefore available on any machine with the .NET runtime.
 
-|         | Assembler      | Emulator        | CLI          | IDE                 |
-| ------- | -------------- | --------------- | ------------ | ------------------- | 
-| Windows | ✅ Yes        | ✅ Yes          | ✅ Yes      | ✅ Native WinUI     |
-| MacOS   | ✅ Yes        | ✅ Yes          | ✅ Yes      | ⚠️ WIP Uno Platform |
-| Linux   | ✅ Yes        | ✅ Yes          | ✅ Yes      | ⚠️ WIP Uno Platform |
-| Wasm    | ⚠️ WIP        | ⚠️ WIP          | ⚠️ WIP      | ⚠️ WIP Uno Platform |
+|         | Assembler      | Emulator        | CLI            | IDE                 |
+| ------- | -------------- | --------------- | -------------- | ------------------- | 
+| Windows | ✅ Yes        | ✅ Yes          | ⚠️ WIP         | ✅ Native WinUI     |
+| MacOS   | ✅ Yes        | ✅ Yes          | ⚠️ WIP         | ⚠️ WIP Uno Platform |
+| Linux   | ✅ Yes        | ✅ Yes          | ⚠️ WIP         | ⚠️ WIP Uno Platform |
+| Wasm    | ⚠️ WIP        | ⚠️ WIP          | ❌ Not Planned | ⚠️ WIP Uno Platform |
 
 # Translation
 
