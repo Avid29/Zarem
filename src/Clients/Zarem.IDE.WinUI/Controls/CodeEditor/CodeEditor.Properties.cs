@@ -82,7 +82,7 @@ public partial class CodeEditor
         codeEditor.UpdateZoom();
     }
 
-    private void UpdateText()
+    private void UpdateText(bool clearHistory = false)
     {
         // Retrieve the editor
         var editor = ChildEditor?.Editor;
@@ -90,13 +90,21 @@ public partial class CodeEditor
             return;
 
         // Get current text, and check if it matches
+        // Nothing to be done if the text is unchanged.
         var text = editor.GetText(editor.Length);
         if (Text == text)
             return;
-
-        // The text was not already update to date. Update it
+        
+        // Set the text and ensure proper line endings
         editor.SetText(Text);
         editor.ConvertEOLs(WinUIEditor.EndOfLine.CrLf);
+
+        // Empty the undo buffer
+        if (clearHistory)
+        {
+            editor.EmptyUndoBuffer();
+        }
+
         TextChanged?.Invoke(this, EventArgs.Empty);
     }
 
