@@ -67,11 +67,11 @@
         </DataTemplate>
 
         <selectors:EditorTemplateSelector x:Key="EditorTemplateSelector">
-            <selectors:EditorTemplateSelector.HexEditorTemplate>
+            <selectors:EditorTemplateSelector.ModuleEditorTemplate>
                 <DataTemplate x:DataType="vm:FilePageViewModel">
                     <editor:ModuleEditorPage ViewModel="{x:Bind}" />
                 </DataTemplate>
-            </selectors:EditorTemplateSelector.HexEditorTemplate>
+            </selectors:EditorTemplateSelector.ModuleEditorTemplate>
             <selectors:EditorTemplateSelector.TextEditorTemplate>
                 <DataTemplate x:DataType="vm:FilePageViewModel">
                     <editor:TextEditorPage ViewModel="{x:Bind}" />
