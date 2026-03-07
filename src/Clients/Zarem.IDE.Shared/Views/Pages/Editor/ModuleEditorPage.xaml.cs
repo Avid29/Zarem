@@ -1,11 +1,13 @@
 // Avishai Dernis 2025
 
 using Microsoft.UI.Xaml.Controls;
+using System.Threading.Tasks;
 using Zarem.IDE.ViewModels.Pages;
+using Zarem.IDE.ViewModels.Pages.Interfaces;
 
 namespace Zarem.IDE.Views.Pages.Editor;
 
-public sealed partial class ModuleEditorPage : UserControl
+public sealed partial class ModuleEditorPage : UserControl, IFileEditorHandler
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ModuleEditorPage"/> class.
@@ -24,10 +26,23 @@ public sealed partial class ModuleEditorPage : UserControl
         set
         {
             field = value;
-
-            var path = value?.File?.Path;
-            if (path is null)
-                return;
+            field?.EditorHandler = this;
+            _ = LoadContentAsync();
         }
+    }
+
+    /// <inheritdoc/>
+    public bool IsDirty => false;
+
+    /// <inheritdoc/>
+    public async Task<bool> SaveAsync()
+    {
+        // TODO: Save module file
+        return false;
+    }
+
+    private async Task LoadContentAsync()
+    {
+        // TODO: Parse and load module file
     }
 }
