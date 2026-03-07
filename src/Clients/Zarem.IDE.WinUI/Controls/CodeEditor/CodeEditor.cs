@@ -44,7 +44,7 @@ public partial class CodeEditor : Control
         SetupKeybinds();
 
         // Apply the current text
-        UpdateText();
+        UpdateText(true);
     }
 
     [MemberNotNullWhen(true, nameof(ChildEditor))]
