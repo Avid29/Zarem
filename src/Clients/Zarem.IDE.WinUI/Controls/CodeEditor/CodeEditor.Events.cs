@@ -16,6 +16,8 @@ public partial class CodeEditor
         if (!TryGetEditor(out var editor))
             return;
 
+        ChildEditor.Focus(FocusState.Keyboard);
+
         editor.Modified += Editor_Modified;
         editor.ZoomChanged += Editor_ZoomChanged;
         editor.UpdateUI += Editor_UpdateUI;

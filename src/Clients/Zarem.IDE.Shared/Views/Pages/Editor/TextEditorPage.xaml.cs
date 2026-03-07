@@ -4,14 +4,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.IDE.Controls.CodeEditor;
 using Zarem.IDE.Messages;
-using Zarem.IDE.Messages.Editor;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
 using Zarem.IDE.Services;
@@ -153,12 +150,16 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
     private async Task LoadContentAsync()
     {
         var file = ViewModel?.File;
-        if (file is null)
-            return;
+        var text = string.Empty;
 
-        await using var stream = await file.FileItem.OpenStreamForReadAsync();
-        using var reader = new StreamReader(stream);
-        OriginalText = await reader.ReadToEndAsync();
+        if (file is not null)
+        {
+            await using var stream = await file.FileItem.OpenStreamForReadAsync();
+            using var reader = new StreamReader(stream);
+            text = await reader.ReadToEndAsync();
+        }
+
+        OriginalText = text;
     }
 
     private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
