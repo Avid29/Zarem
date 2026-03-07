@@ -26,8 +26,15 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftGutter" Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="RightGutter" Width="auto" />
+            </Grid.ColumnDefinitions>
+
             <ctc:Segmented
                 x:Name="SegmentedPageSelector"
+                Grid.ColumnSpan="3"
                 Margin="8,8,8,32"
                 HorizontalAlignment="Center"
                 ItemsSource="{x:Bind ViewModel.SubPages}"
@@ -43,7 +50,7 @@
                 x:Name="ContentDisplay"
                 Grid.Row="1"
                 Grid.Column="1"
-                MaxWidth="800"
+                MaxWidth="1000"
                 HorizontalContentAlignment="Stretch"
                 Content="{x:Bind SegmentedPageSelector.SelectedItem, Mode=OneWay}">
                 <ContentControl.ContentTemplateSelector>
@@ -67,5 +74,20 @@
                 </ContentControl.ContentTemplateSelector>
             </ContentControl>
         </Grid>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1800" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentDisplay.MaxWidth" Value="2000" />
+                        <Setter Target="LeftGutter.Width" Value="0.25*" />
+                        <Setter Target="RightGutter.Width" Value="0.25*" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </ScrollViewer>
 </UserControl>
