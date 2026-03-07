@@ -233,14 +233,14 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
 
     private void ApplyBranch(int branch, ref uint pc)
     {
-        // Very simple if branch delays are enabled
         if (Computer.Config.DisableBranchDelays)
         {
-            // Otherwise we're gonna do some tom-foolery and adjust the PC
+            // Branch delays are disabled. Just change the PC
             pc = (uint)(pc + branch);
             return;
         }
 
+        // Store the branch offset in the delay slot
         _branchDelay = branch;
     }
 
