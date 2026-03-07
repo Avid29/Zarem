@@ -156,4 +156,16 @@
   <data name="Explorer/RecentProjectsAndFoldersTB.Text" xml:space="preserve">
     <value>פרויקטים ותיקיות אחרונים</value>
   </data>
+  <data name="ModuleEditor/SymbolNameDC.Content" xml:space="preserve">
+    <value>שם הסמל</value>
+  </data>
+  <data name="ModuleEditor/SectionDC.Content" xml:space="preserve">
+    <value>מקטע</value>
+  </data>
+  <data name="ModuleEditor/OffsetDC.Content" xml:space="preserve">
+    <value>הסט</value>
+  </data>
+  <data name="ModuleEditor/BindingDC.Content" xml:space="preserve">
+    <value>קישוריות</value>
+  </data>
 </root>
