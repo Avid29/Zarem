@@ -22,7 +22,7 @@ namespace Zarem.Linker;
 public sealed class ZaLinker
 {
     private readonly Dictionary<Module, Dictionary<string, ulong>> _moduleSectionOffsets = [];
-    private readonly Dictionary<Symbol, string> _localSymbolLookup = [];        // Lookup the name reassigned to local symbols
+    private readonly Dictionary<Symbol, string> _symbolMapping = [];        // Lookup the name reassigned to local symbols
     private readonly Dictionary<string, Module> _symbolOriginLookup = [];       // Lookup the origin module of a defined global symbol
 
     private readonly LinkerConfig _config;
@@ -119,27 +119,26 @@ public sealed class ZaLinker
 
             foreach (var symbol in module.Symbols.Values)
             {
-                if (Module.Symbols.TryGetValue(symbol.Name, out var existing) && symbol.IsDefined && existing.IsDefined)
+                // TODO: Handle weak symbols
+
+                // Translate the symbol name into a linked symbol id
+                var symbolId = symbol.Binding switch
                 {
-                    // TODO: Weak symbols
-                    // TODO: Track and log source defining modules
-                    var originModule = _symbolOriginLookup[symbol.Name];
+                    SymbolBinding.Local => $"local:{module.Identity}:{symbol.Name}",
+                    SymbolBinding.Global or _ => symbol.Name,
+                };
+
+                // Track the mapping from the original symbol object
+                _symbolMapping[symbol] = symbolId;
+
+                // Log an error if a conflicting symbol is defined
+                if (symbol.IsDefined && _symbolOriginLookup.TryGetValue(symbolId, out var originModule))
+                {
                     _logger.Log(Severity.Error, LogId.DuplicateSymbolDefinition, module.Identity, "ConflictingSymbolDefinitions", symbol.Name, module.Identity, originModule.Identity);
                     continue;
                 }
 
-                // Adjust local symbol names
-                var symbolName = symbol.Name;
-                if (symbol.Binding is SymbolBinding.Local)
-                {
-                    var id = $"local:{module.Identity}:{symbol.Name}";
-                    _localSymbolLookup[symbol] = id;
-                    symbolName = id;
-                }
-
-                _symbolOriginLookup[symbolName] = module;
-
-                var newSymbol = Module.GetOrCreateSymbol(symbolName);
+                var newSymbol = Module.GetOrCreateSymbol(symbolId);
                 newSymbol.Binding = symbol.Binding;
                 newSymbol.Type = symbol.Type;
 
@@ -150,9 +149,15 @@ public sealed class ZaLinker
                     // Translate the symbol address within the section
                     var sectionName = symbol.Address.Section.Name;
                     var linkedSection = Module.GetOrCreateSection(sectionName);
-                    long finalAddress = (long)(_moduleSectionOffsets[module][sectionName]) + symbol.Address.Offset;
+                    long finalAddress = (long)_moduleSectionOffsets[module][sectionName] + symbol.Address.Offset;
                     newSymbol.Address = new Address(linkedSection, finalAddress);
+
+                    // Track the origin to where the symbol is defined
+                    _symbolOriginLookup[symbolId] = module;
                 }
+
+                // NOTE: Currently there is no check to ensure local symbols are defined. It is currently impossible
+                // for a local symbol to not be defined, but this may change in the future
             }
         }
 
@@ -188,9 +193,7 @@ public sealed class ZaLinker
                         throw new Exception();
 
                     // Get the symbol's name, or mapped symbol name if local
-                    var symbolName = sourceSymbol.Name;
-                    if (sourceSymbol.Binding is SymbolBinding.Local)
-                        symbolName = _localSymbolLookup[sourceSymbol];
+                    var symbolName = _symbolMapping[sourceSymbol];
 
                     if (!Module.Symbols.TryGetValue(symbolName, out var symbol))
                     {
@@ -198,13 +201,7 @@ public sealed class ZaLinker
                         continue;
                     }
 
-                    var newRelocation = relocation;
-                    if (symbol.Binding is SymbolBinding.Local)
-                    {
-                        newRelocation = new RelocationEntry(symbol.Name, relocation.Location, relocation.Type, relocation.Addend);
-                    }
-
-                    linkedSection.AddRelocation(newRelocation);
+                    linkedSection.AddRelocation(new RelocationEntry(symbolName, relocation.Location, relocation.Type, relocation.Addend));
 
                     if (!symbol.IsDefined)
                         continue;
