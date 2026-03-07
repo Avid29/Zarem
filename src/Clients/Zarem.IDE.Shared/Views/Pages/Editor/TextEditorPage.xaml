@@ -36,7 +36,7 @@
         <editor:CodeEditor
             x:Name="CodeEditor"
             x:Load="{x:Bind UseTextEditor, Mode=OneWay}"
-            Text="{x:Bind ViewModel.Content, Mode=TwoWay}" />
+            Text="{x:Bind Text, Mode=TwoWay}" />
         <editor:AssemblyEditor
             x:Name="AssemblyEditor"
             x:Load="{x:Bind UseAssemblyEditor, Mode=OneWay}"
@@ -44,7 +44,7 @@
             AssemblerConfig="{x:Bind ViewModel.AssemblerConfig, Mode=OneWay}"
             RealTimeAssembly="{x:Bind ViewModel.AssembleRealTime, Mode=OneWay}"
             SyntaxHighlightingTheme="{StaticResource SyntaxHighlighting}"
-            Text="{x:Bind ViewModel.Content, Mode=TwoWay}" />
+            Text="{x:Bind Text, Mode=TwoWay}" />
 
         <!--  Status Bar  -->
         <Grid

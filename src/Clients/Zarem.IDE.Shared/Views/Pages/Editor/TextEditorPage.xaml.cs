@@ -2,22 +2,31 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.ComponentModel;
 using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.IDE.Controls.CodeEditor;
 using Zarem.IDE.Messages;
+using Zarem.IDE.Messages.Editor;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages;
+using Zarem.IDE.ViewModels.Pages.Interfaces;
 using Zarem.Models;
 
 namespace Zarem.IDE.Views.Pages.Editor;
 
-public sealed partial class TextEditorPage : UserControl
+public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
 {
+    public static readonly DependencyProperty TextProperty =
+        DependencyProperty.Register(nameof(Text), typeof(string), typeof(TextEditorPage), new PropertyMetadata(string.Empty, OnTextPropertyChanged));
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TextEditorPage"/> class.
     /// </summary>
@@ -39,29 +48,69 @@ public sealed partial class TextEditorPage : UserControl
         {
             UpdateEvents(value, ViewModel);
             field = value;
-            UpdateBindings();
+            field?.EditorHandler = this;
+            _ = LoadContentAsync();
         }
     }
 
     public CodeEditor ActiveCodeEditor => UseAssemblyEditor ? AssemblyEditor : CodeEditor;
 
+    public string Text
+    {
+        get => (string)GetValue(TextProperty);
+        set => SetValue(TextProperty, value);
+    }
+
+    private string? OriginalText
+    {
+        get => field;
+        set
+        {
+            Text = value ?? string.Empty;
+            if (value != field)
+            {
+                field = value;
+                ViewModel?.NotifyStateChanged();
+            }
+        }
+    }
+
     private bool UseAssemblyEditor => ViewModel?.File?.Name.EndsWith(".asm") ?? false;
 
     private bool UseTextEditor => !UseAssemblyEditor;
 
+    /// <inheritdoc/>
+    public bool IsDirty => Text != OriginalText;
+
     private void UpdateEvents(FilePageViewModel? newVM, FilePageViewModel? oldVM)
     {
-        if (oldVM is not null)
+        oldVM?.NavigateToTokenEvent -= ViewModel_NavigateToTokenEvent;
+        oldVM?.EditorOperationRequested -= ViewModel_EditorOperationRequested;
+
+        newVM?.NavigateToTokenEvent += ViewModel_NavigateToTokenEvent;
+        newVM?.EditorOperationRequested += ViewModel_EditorOperationRequested;
+    }
+
+    public async Task<bool> SaveAsync()
+    {
+        try
         {
-            oldVM.NavigateToTokenEvent -= ViewModel_NavigateToTokenEvent;
-            oldVM.EditorOperationRequested -= ViewModel_EditorOperationRequested;
+            var file = ViewModel?.File;
+            if (file is null)
+                return false;
+
+            await using var stream = await file.FileItem.OpenStreamForWriteAsync();
+            using var writer = new StreamWriter(stream);
+            await writer.WriteAsync(Text ?? string.Empty);
+            stream.SetLength(stream.Position);
+            OriginalText = Text;
+        }
+        catch
+        {
+            return false;
         }
 
-        if (newVM is not null)
-        {
-            newVM.NavigateToTokenEvent += ViewModel_NavigateToTokenEvent;
-            newVM.EditorOperationRequested += ViewModel_EditorOperationRequested;
-        }
+        return true;
     }
 
     private void ViewModel_NavigateToTokenEvent(object? sender, SourceLocation e)
@@ -95,15 +144,21 @@ public sealed partial class TextEditorPage : UserControl
         return string.Format($"{address?.Section?.Name}:0x{address?.Offset:X4}");
     }
 
-    private void UpdateBindings()
-    {
-        this.Bindings.Update();
-    }
-
     public static string GetPositionText(long line, long column)
     {
         var localizationService = Service.Get<ILocalizationService>();
         return localizationService["/Pages/Editor/LineAndColumn", line, column];
+    }
+
+    private async Task LoadContentAsync()
+    {
+        var file = ViewModel?.File;
+        if (file is null)
+            return;
+
+        await using var stream = await file.FileItem.OpenStreamForReadAsync();
+        using var reader = new StreamReader(stream);
+        OriginalText = await reader.ReadToEndAsync();
     }
 
     private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
@@ -119,5 +174,13 @@ public sealed partial class TextEditorPage : UserControl
         {
             ActiveCodeEditor.Zoom = percent;
         }
+    }
+
+    private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+    {
+        if (d is not TextEditorPage page)
+            return;
+
+        page.ViewModel?.NotifyStateChanged();
     }
 }

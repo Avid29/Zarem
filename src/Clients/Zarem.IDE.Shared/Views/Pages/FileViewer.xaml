@@ -69,7 +69,7 @@
         <selectors:EditorTemplateSelector x:Key="EditorTemplateSelector">
             <selectors:EditorTemplateSelector.HexEditorTemplate>
                 <DataTemplate x:DataType="vm:FilePageViewModel">
-                    <editor:HexEditorPage ViewModel="{x:Bind}" />
+                    <editor:ModuleEditorPage ViewModel="{x:Bind}" />
                 </DataTemplate>
             </selectors:EditorTemplateSelector.HexEditorTemplate>
             <selectors:EditorTemplateSelector.TextEditorTemplate>

@@ -1,17 +1,16 @@
 // Avishai Dernis 2025
 
 using Microsoft.UI.Xaml.Controls;
-using System.IO;
 using Zarem.IDE.ViewModels.Pages;
 
 namespace Zarem.IDE.Views.Pages.Editor;
 
-public sealed partial class HexEditorPage : UserControl
+public sealed partial class ModuleEditorPage : UserControl
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="HexEditorPage"/> class.
+    /// Initializes a new instance of the <see cref="ModuleEditorPage"/> class.
     /// </summary>
-    public HexEditorPage()
+    public ModuleEditorPage()
     {
         InitializeComponent();
     }
@@ -29,11 +28,6 @@ public sealed partial class HexEditorPage : UserControl
             var path = value?.File?.Path;
             if (path is null)
                 return;
-
-            var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            Reader = new BinaryReader(fileStream);
         }
     }
-
-    private BinaryReader? Reader { get; set; }
 }

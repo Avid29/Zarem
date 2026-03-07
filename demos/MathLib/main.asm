@@ -8,8 +8,8 @@ entry:
     syscall
 
     # Take input squred
-    move    $a0,    $v0         
-    jal     square_func   
+    move    $a0,    $v0
+    jal     square_func
     
     # Print the input squared
     move    $a0,    $v0

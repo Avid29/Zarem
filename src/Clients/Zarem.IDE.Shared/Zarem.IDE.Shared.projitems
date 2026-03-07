@@ -349,7 +349,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\HexEditorPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\ModuleEditorPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -489,8 +489,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CreateProject.xaml.cs">
       <DependentUpon>CreateProject.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\HexEditorPage.xaml.cs">
-      <DependentUpon>HexEditorPage.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\ModuleEditorPage.xaml.cs">
+      <DependentUpon>ModuleEditorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Editor\TextEditorPage.xaml.cs">
       <DependentUpon>TextEditorPage.xaml</DependentUpon>

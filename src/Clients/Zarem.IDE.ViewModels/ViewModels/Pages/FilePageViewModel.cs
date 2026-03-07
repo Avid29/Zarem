@@ -3,15 +3,18 @@
 using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Messages;
+using Zarem.IDE.Messages.Editor;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages.Abstract;
+using Zarem.IDE.ViewModels.Pages.Interfaces;
 using Zarem.MIPS;
 
 namespace Zarem.IDE.ViewModels.Pages;
@@ -63,20 +66,16 @@ public partial class FilePageViewModel : PageViewModel
             var old = field;
             if (SetProperty(ref field, value))
             {
-                if (old is not null)
-                {
-                    old.PropertyChanged -= OnFileUpdate;
-                }
-
-                if (field is not null)
-                {
-                    field.PropertyChanged += OnFileUpdate;
-                }
-
-                _ = LoadContentAsync();
+                old?.PropertyChanged -= OnFileUpdate;
+                field?.PropertyChanged += OnFileUpdate;
             }
         }
     }
+
+    /// <summary>
+    /// Gets or sets the <see cref="IFileEditorHandler"/> for driving UI events.
+    /// </summary>
+    public IFileEditorHandler? EditorHandler { get; set; }
 
     /// <summary>
     /// Gets whether or not the file should be assembled in real-time.
@@ -109,10 +108,10 @@ public partial class FilePageViewModel : PageViewModel
     public override bool CanTextEdit => true;
 
     /// <inheritdoc/>
-    public override bool CanSave => true;
+    public override bool CanSave => IsDirty;
 
     /// <inheritdoc/>
-    public override bool IsDirty => Content != OriginalContent;
+    public override bool IsDirty => EditorHandler?.IsDirty ?? false;
 
     /// <inheritdoc/>
     public override bool CanAssemble => File?.SourceFile is not null;
@@ -131,6 +130,16 @@ public partial class FilePageViewModel : PageViewModel
     }
 
     /// <summary>
+    /// Invokes the property changed event for relevant properties
+    /// </summary>
+    public void NotifyStateChanged()
+    {
+        // Notify the UI that IsDirty and CanSave might have changed
+        OnPropertyChanged(nameof(IsDirty));
+        OnPropertyChanged(nameof(CanSave));
+    }
+
+    /// <summary>
     /// Requests to navigate to a token.
     /// </summary>
     /// <param name="token">The token to navigate to.</param>
@@ -141,6 +150,15 @@ public partial class FilePageViewModel : PageViewModel
     /// </summary>
     /// <param name="operation">The editor operation requested.</param>
     public void ApplyOperation(EditorOperation operation) => EditorOperationRequested?.Invoke(this, operation);
+
+    /// <inheritdoc/>
+    public override async Task SaveAsync()
+    {
+        if (!IsDirty || EditorHandler is null)
+            return;
+
+        await EditorHandler.SaveAsync();
+    }
 
     private void OnFileUpdate(object? sender, PropertyChangedEventArgs args)
     {
