@@ -26,6 +26,10 @@ public partial class InstructionExecutor
             CoProc0RSCode.C0 => CoProc0Instruction.Co0FuncCode switch
             {
                 Co0FuncCode.ExceptionReturn => Eret(),
+                Co0FuncCode.ReadIndexedTLBEntry => Execution.CreateEffect(SideEffect.TLBRead),
+                Co0FuncCode.WriteIndexedTLBEntry => Execution.CreateEffect(SideEffect.TLBWriteIndexed),
+                Co0FuncCode.WriteRandomTLBEntry => Execution.CreateEffect(SideEffect.TLBWriteRandom),
+                Co0FuncCode.ProbeTLBForMatch => Execution.CreateEffect(SideEffect.TLBProbe),
 
                 _ => throw new NotImplementedException()
             },

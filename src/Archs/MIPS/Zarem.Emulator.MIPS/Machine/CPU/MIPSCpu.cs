@@ -222,6 +222,7 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
             case SideEffect.WriteCoProc:
                 WriteCoProc(execution.CoProcRegisterSet, execution.CoProcReg, execution.CoProcWriteBack);
                 break;
+                // TODO: Handle TLB side effects
         }
 
         // Apply the program counter update

@@ -169,6 +169,17 @@ public readonly struct Execution
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="Execution"/> struct.
+    /// </summary>
+    public static Execution CreateEffect(SideEffect sideEffect)
+    {
+        return new Execution
+        {
+            SideEffect = sideEffect,
+        };
+    }
+
+    /// <summary>
     /// Gets the writeback value to the selected GPR register.
     /// </summary>
     public readonly uint WriteBack { get; init; }

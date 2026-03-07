@@ -38,7 +38,7 @@ public enum SideEffect
     HighLow = Low | High,
 
     /// <summary>
-    /// Writes to memory.
+    /// Reads from memory.
     /// </summary>
     ReadMemory,
 
@@ -61,4 +61,24 @@ public enum SideEffect
     /// Writes to co-processor.
     /// </summary>
     WriteCoProc,
+
+    /// <summary>
+    /// Reads a TLB entry into EntryHi/Lo registers.
+    /// </summary>
+    TLBRead,
+
+    /// <summary>
+    /// Writes EntryHi/Lo registers into a specific TLB slot.
+    /// </summary>
+    TLBWriteIndexed,
+
+    /// <summary>
+    /// Writes EntryHi/Lo registers into a random TLB slot.
+    /// </summary>
+    TLBWriteRandom,
+
+    /// <summary>
+    /// Searches TLB for an entry matching EntryHi and updates Index register.
+    /// </summary>
+    TLBProbe,
 }
