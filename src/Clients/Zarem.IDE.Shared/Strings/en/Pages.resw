@@ -144,7 +144,7 @@
   <data name="CreateProject/SelectFolderBTN.Content" xml:space="preserve">
     <value>Select Folder</value>
   </data>
-  <data name="Editor/LineAndColumn" xml:space="preserve">
+  <data name="TextEditor/LineAndColumn" xml:space="preserve">
     <value>Ln {0}, Col {1}</value>
   </data>
   <data name="Explorer/CreateNewProjectBTN.Content" xml:space="preserve">
