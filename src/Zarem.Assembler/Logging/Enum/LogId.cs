@@ -58,6 +58,7 @@ public enum LogId : uint
     WrongArchitecture,
     UndefinedSymbol,
     JumpOutOfRange,
+    MissingEntryPoint,
 
 #pragma warning restore CS1591
 }

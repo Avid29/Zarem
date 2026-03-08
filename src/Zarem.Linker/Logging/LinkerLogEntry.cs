@@ -15,12 +15,12 @@ public class LinkerLogEntry : ILog
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkerLogEntry"/> class.
     /// </summary>
-    public LinkerLogEntry(Severity severity, LogCode code, string message, string? filePath)
+    public LinkerLogEntry(Severity severity, LogCode code, string message, string? module)
     {
         Severity = severity;
         Code = code;
         Message = message;
-        FilePath = filePath;
+        FilePath = module;
     }
 
     /// <inheritdoc/>

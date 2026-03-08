@@ -1,4 +1,5 @@
 .text
+.globl entry         # Declare the entry point
 .globl square_func   # Reference external symbol
 
 entry:

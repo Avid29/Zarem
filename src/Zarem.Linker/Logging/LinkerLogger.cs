@@ -19,11 +19,11 @@ internal class LinkerLogger : LocalLogger
     {
     }
 
-    public bool Log(Severity severity, LogId id, string? filePath, string messageKey, params object?[] args)
+    public bool Log(Severity severity, LogId id, string? module, string messageKey, params object?[] args)
     {
         var message = Localizer[messageKey, args];
         Guard.IsNotNull(message);
 
-        return Parent.Log(new LinkerLogEntry(severity, new LogCode("LNK", (uint)id), message, filePath));
+        return Parent.Log(new LinkerLogEntry(severity, new LogCode("LNK", (uint)id), message, module));
     }
 }
