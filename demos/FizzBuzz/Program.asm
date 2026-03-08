@@ -28,7 +28,7 @@ loop:
     
 skip_fizz:
 
-    # Check Buzz
+    # Check Buz
     xori    $t1,    $zero,  5
     div     $s0,    $t1
     mfhi    $t7             # Cache x % 5 in $t7

@@ -39,21 +39,38 @@
             <ToggleSwitch IsOn="{x:Bind ViewModel.RestoreOpenProject, Mode=TwoWay}"/>
         </ctc:SettingsCard>-->
 
-        <ctc:SettingsCard
-            x:Uid="/Settings/AppLanguageSC"
+        <ctc:SettingsExpander 
+            x:Uid="/Settings/AppLanguageSE"
             Description="Set the app's display language. (Requires a restart to take effect)."
             Header="App Language">
-            <ctc:SettingsCard.HeaderIcon>
+            <ctc:SettingsExpander.HeaderIcon>
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE774;" />
-            </ctc:SettingsCard.HeaderIcon>
-            <ComboBox ItemsSource="{x:Bind ViewModel.AppLanguageOptions, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.LanguageOverride, Mode=TwoWay}">
+            </ctc:SettingsExpander.HeaderIcon>
+
+            <ComboBox ItemsSource="{x:Bind ViewModel.AppLanguageOptions, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.AppLanguage, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="x:String">
                         <TextBlock Text="{x:Bind local:SettingsPage.LanguageDisplayName((x:String)), Mode=OneWay}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-        </ctc:SettingsCard>
+
+            <ctc:SettingsExpander.Items>
+                <ctc:SettingsCard
+                    x:Uid="/Settings/AssemblerLanguageSC"
+                    Description="Set the language used by for assembler log information."
+                    Header="Assembler Language">
+                    <ComboBox ItemsSource="{x:Bind ViewModel.AssemblerLanguageOptions, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.AssemblerLanguageOverride, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <TextBlock Text="{x:Bind local:SettingsPage.LanguageDisplayName((x:String)), Mode=OneWay}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ctc:SettingsCard>
+            </ctc:SettingsExpander.Items>
+        </ctc:SettingsExpander>
+
 
         <ctc:SettingsCard
             x:Uid="/Settings/AboutSE"

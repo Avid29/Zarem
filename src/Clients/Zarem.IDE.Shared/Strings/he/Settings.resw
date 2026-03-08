@@ -132,10 +132,10 @@
   <data name="AnnotationThresholdSC.Header" xml:space="preserve">
     <value>סף הערות</value>
   </data>
-  <data name="AppLanguageSC.Description" xml:space="preserve">
+  <data name="AppLanguageSE.Description" xml:space="preserve">
     <value>בחר את שפת התצוגה של היישום. (נדרשת הפעלה מחדש כדי שהשינוי ייכנס לתוקף).</value>
   </data>
-  <data name="AppLanguageSC.Header" xml:space="preserve">
+  <data name="AppLanguageSE.Header" xml:space="preserve">
     <value>שפת האפליקציה</value>
   </data>
   <data name="AppSettingsTitle" xml:space="preserve">
@@ -214,5 +214,11 @@ foo:
   </data>
   <data name="RestoreOpenProjectSC.Description" xml:space="preserve">
     <value>קבע האם היישום ישמור במטמון וישחזר את הפרויקט/התיקיה הפתוחים בעת ההפעלה.</value>
+  </data>
+  <data name="LanguageOptionsSE.Header" xml:space="preserve">
+    <value>אפשרויות שפה</value>
+  </data>
+  <data name="LanguageOptionsSE.Description" xml:space="preserve">
+    <value>ניהול השפות בשימוש ברחבי האפליקציה.</value>
   </data>
 </root>

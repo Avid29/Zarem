@@ -26,7 +26,7 @@ public class SettingsPageViewModel : PageViewModel
         SubPages = [
                 new AppSettingsViewModel(localizationService, settingsService, versioningService),
                 new EditorSettingsViewModel(localizationService, settingsService, fileSystemService),
-                new AssemblerSettingsViewModel(localizationService, settingsService)
+                //new AssemblerSettingsViewModel(localizationService, settingsService)
             ];
     }
 

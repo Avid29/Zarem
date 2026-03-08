@@ -50,7 +50,7 @@ public partial class AppSettingsViewModel : SettingsSubPageViewModel
     /// <summary>
     /// Gets or sets the app language in settings.
     /// </summary>
-    public string LanguageOverride
+    public string AppLanguage
     {
         get => _settingsService.Local.GetValue<string>(SettingsKeys.LanguageOverride) ?? "system";
         set => _settingsService.Local.SetValue(SettingsKeys.LanguageOverride, value is "system" ? null : value);
@@ -63,6 +63,23 @@ public partial class AppSettingsViewModel : SettingsSubPageViewModel
     /// "system" is a sentinel value since null and empty cannot be used in a ComboBox.
     /// </remarks>
     public IEnumerable<string> AppLanguageOptions => _localizationService.AvailableLanguages.Prepend("system");
+
+    /// <summary>
+    /// Gets or sets the assembler language in settings.
+    /// </summary>
+    public string AssemblerLanguageOverride
+    {
+        get => _settingsService.Local.GetValue<string>(SettingsKeys.AssemblerLanguageOverride) ?? "app";
+        set => _settingsService.Local.SetValue(SettingsKeys.AssemblerLanguageOverride, value is "app" ? null : value);
+    }
+
+    /// <summary>
+    /// Gets the list of available languages for the assembler.
+    /// </summary>
+    /// <remarks>
+    /// "app" is a sentinel value since null and empty cannot be used in a ComboBox.
+    /// </remarks>
+    public IEnumerable<string> AssemblerLanguageOptions => ["app", "en", "he"]; // TODO: Retrieve programmatically
 
     /// <summary>
     /// Gets or sets whether or not the app should restore open projects when opened.
