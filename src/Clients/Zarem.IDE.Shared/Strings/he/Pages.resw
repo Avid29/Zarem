@@ -168,4 +168,16 @@
   <data name="ModuleEditor/BindingDC.Content" xml:space="preserve">
     <value>קישוריות</value>
   </data>
+  <data name="ModuleEditor/SymbolTableTB.Text" xml:space="preserve">
+    <value>טבלת סמל</value>
+  </data>
+  <data name="ModuleEditor/AddendDC.Content" xml:space="preserve">
+    <value>תוספת</value>
+  </data>
+  <data name="ModuleEditor/RelocationTableTB.Text" xml:space="preserve">
+    <value>טבלת רילוקיישן</value>
+  </data>
+  <data name="ModuleEditor/TypeDC.Content" xml:space="preserve">
+    <value>סוג</value>
+  </data>
 </root>

@@ -1,21 +1,20 @@
 // Avishai Dernis 2025
 
-using Microsoft.UI.Xaml;
+using CommunityToolkit.Mvvm.Collections;
 using Microsoft.UI.Xaml.Controls;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Zarem.Elf;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.Interfaces;
 using Zarem.Models;
 using Zarem.Models.Tables;
+using Symbol = Zarem.Models.Tables.Symbol;
 
 namespace Zarem.IDE.Views.Pages.Editor;
 
 public sealed partial class ModuleEditorPage : UserControl, IFileEditorHandler
 {
-    public static readonly DependencyProperty ModuleProperty =
-        DependencyProperty.Register(nameof(Module), typeof(Module), typeof(ModuleEditorPage), new PropertyMetadata(null));
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ModuleEditorPage"/> class.
     /// </summary>
@@ -41,13 +40,19 @@ public sealed partial class ModuleEditorPage : UserControl, IFileEditorHandler
     /// <inheritdoc/>
     public bool IsDirty => false;
 
-    public Module? Module
-    {
-        get => (Module?)GetValue(ModuleProperty);
-        set => SetValue(ModuleProperty, value);
-    }
+    public ObservableCollection<Symbol> Symbols { get; } = [];
 
-    public static string FormatOffset(long offset) => $"0x{offset:X8}";
+    public ObservableCollection<RelocationEntry> Relocations { get; } = [];
+
+    public static string FormatOffset(Address address)
+    {
+        if (address.Section is null)
+        {
+            return string.Empty;
+        }
+
+        return $"0x{address.Offset:X8}";
+    }
 
     /// <inheritdoc/>
     public async Task<bool> SaveAsync()
@@ -66,6 +71,29 @@ public sealed partial class ModuleEditorPage : UserControl, IFileEditorHandler
 
         // TODO: Dynamically identify the module type
         var stream = await file.FileItem.OpenStreamForReadAsync();
-        Module = ElfModule.Open(file.Name, stream)?.Abstract(new());
+        var module = ElfModule.Open(file.Name, stream)?.Abstract(new());
+        LoadModule(module);
+    }
+
+    private void LoadModule(Module? module)
+    {
+        Symbols.Clear();
+        Relocations.Clear();
+
+        if (module is null)
+            return;
+
+        foreach (var symbol in module.Symbols.Values)
+        {
+            Symbols.Add(symbol);
+        }
+
+        foreach (var section in module.Sections.Values)
+        {
+            foreach (var reloc in section.Relocations)
+            {
+                Relocations.Add(reloc);
+            }
+        }
     }
 }

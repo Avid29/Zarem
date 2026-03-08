@@ -18,10 +18,6 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
 
         <!--  Symbol Table  -->
         <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -30,8 +26,8 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Symbol Table" FontSize="24" FontWeight="SemiBold" Margin="10,8"/>
-            <ListView ItemsSource="{x:Bind Module.Symbols.Values, Mode=OneWay}" Grid.Row="1">
+            <TextBlock x:Uid="/Pages/ModuleEditor/SymbolTableTB" Text="Symbol Table" FontSize="24" FontWeight="SemiBold" Margin="10,8"/>
+            <ListView ItemsSource="{x:Bind Symbols, Mode=OneWay}" Grid.Row="1">
                 <ListView.Header>
                     <Border Padding="8,4,8,4" CornerRadius="4">
                         <ctc:DataTable>
@@ -73,10 +69,87 @@
                                 Text="{x:Bind Address.Section.Name, Mode=OneWay}" />
                             <TextBlock
                                 Margin="8,0"
-                                Text="{x:Bind local:ModuleEditorPage.FormatOffset(Address.Offset), Mode=OneWay}" />
+                                Text="{x:Bind local:ModuleEditorPage.FormatOffset(Address), Mode=OneWay}" />
                             <TextBlock
                                 Margin="8,0"
                                 Text="{x:Bind helpers:LocalizationHelper.Localize(Binding), Mode=OneWay}" />
+                        </ctc:DataRow>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
+                        <Setter Property="Padding" Value="8,0" />
+                        <Setter Property="MinHeight" Value="28" />
+                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
+
+        <!--  Relocation Table  -->
+        <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              CornerRadius="8"
+              Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Uid="/Pages/ModuleEditor/RelocationTableTB" Text="Relocation Table" FontSize="24" FontWeight="SemiBold" Margin="10,8"/>
+            <ListView ItemsSource="{x:Bind Relocations, Mode=OneWay}" Grid.Row="1">
+                <ListView.Header>
+                    <Border Padding="8,4,8,4" CornerRadius="4">
+                        <ctc:DataTable>
+                            <ctc:DataColumn
+                                x:Uid="/Pages/ModuleEditor/SymbolNameDC"
+                                Content="Symbol Name"
+                                CanResize="True"
+                                MinWidth="80"
+                                DesiredWidth="240" />
+                            <ctc:DataColumn
+                                x:Uid="/Pages/ModuleEditor/SectionDC"
+                                Content="Section"
+                                CanResize="True"
+                                MinWidth="40"
+                                DesiredWidth="100" />
+                            <ctc:DataColumn
+                                x:Uid="/Pages/ModuleEditor/OffsetDC"
+                                Content="Offset"
+                                CanResize="True"
+                                MinWidth="40"
+                                DesiredWidth="100" />
+                            <ctc:DataColumn
+                                x:Uid="/Pages/ModuleEditor/TypeDC"
+                                Content="Type"
+                                CanResize="True"
+                                MinWidth="40"
+                                DesiredWidth="100" />
+                            <ctc:DataColumn
+                                x:Uid="/Pages/ModuleEditor/AddendDC"
+                                Content="Addend"
+                                CanResize="True"
+                                MinWidth="40"
+                                DesiredWidth="100" />
+                        </ctc:DataTable>
+                    </Border>
+                </ListView.Header>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="tabs:RelocationEntry">
+                        <ctc:DataRow HorizontalAlignment="Left">
+                            <TextBlock
+                                Margin="8,0"
+                                Text="{x:Bind SymbolName, Mode=OneWay}" />
+                            <TextBlock
+                                Margin="8,0"
+                                Text="{x:Bind Location.Section.Name, Mode=OneWay}" />
+                            <TextBlock
+                                Margin="8,0"
+                                Text="{x:Bind local:ModuleEditorPage.FormatOffset(Location), Mode=OneWay}" />
+                            <TextBlock
+                                Margin="8,0"
+                                Text="{x:Bind Type, Mode=OneWay}" />
+                            <TextBlock
+                                Margin="8,0"
+                                Text="{x:Bind Addend, Mode=OneWay}" />
                         </ctc:DataRow>
                     </DataTemplate>
                 </ListView.ItemTemplate>

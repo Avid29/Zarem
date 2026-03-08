@@ -168,4 +168,16 @@
   <data name="ModuleEditor/BindingDC.Content" xml:space="preserve">
     <value>Binding</value>
   </data>
+  <data name="ModuleEditor/SymbolTableTB.Text" xml:space="preserve">
+    <value>Symbol Table</value>
+  </data>
+  <data name="ModuleEditor/AddendDC.Content" xml:space="preserve">
+    <value>Added</value>
+  </data>
+  <data name="ModuleEditor/RelocationTableTB.Text" xml:space="preserve">
+    <value>Relocation Table</value>
+  </data>
+  <data name="ModuleEditor/TypeDC.Content" xml:space="preserve">
+    <value>Type</value>
+  </data>
 </root>
