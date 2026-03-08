@@ -2,6 +2,8 @@
 
 # The classic fizz buzz
 
+.globl entry
+
 .text
 entry:
 

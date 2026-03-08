@@ -33,7 +33,6 @@ public class InterpreterTests
         var linkConfig = new MIPSLinkerConfig();
         var linkHandler = new MIPSLinkerHandler(linkConfig);
         var module = ZaLinker.Link(linkConfig, linkHandler, null, result.Module);
-        module.EntryPoint = module.GetOrCreateSymbol("entry");
 
         // Setup emulator
         var emulatorConfig = new MIPSEmulatorConfig()

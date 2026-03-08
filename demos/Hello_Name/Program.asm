@@ -1,3 +1,6 @@
+
+.globl entry
+
 .text
     entry:
     
