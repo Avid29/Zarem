@@ -10,6 +10,11 @@ namespace Zarem.Linker.Config;
 public class LinkerConfig
 {
     /// <summary>
+    /// Gets or sets the name of the entry point symbol.
+    /// </summary>
+    public string EntryPoint { get; set; } = "entry";
+
+    /// <summary>
     /// Gets or sets the link mode.
     /// </summary>
     public LinkMode LinkMode { get; set; }

@@ -120,6 +120,12 @@
   <data name="ConflictingSymbolDefinitions" xml:space="preserve">
     <value>Symbol '{0}' is defined in '{1}', but was already defined in '{2}'.</value>
   </data>
+  <data name="EntryPointNotFound" xml:space="preserve">
+    <value>Could not find entry point symbol '{0}'.</value>
+  </data>
+  <data name="EntryPointNotGlobal" xml:space="preserve">
+    <value>The entry point symbol '{0}' must be global.</value>
+  </data>
   <data name="ModuleHasWrongArchitecture" xml:space="preserve">
     <value>Module '{0}' is the wrong architecture ('{1}'). '{0}' will be skipped.</value>
   </data>

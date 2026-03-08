@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
@@ -23,7 +24,7 @@ public sealed class ZaLinker
 {
     private readonly Dictionary<Module, Dictionary<string, ulong>> _moduleSectionOffsets = [];
     private readonly Dictionary<Symbol, string> _symbolMapping = [];        // Lookup the name reassigned to local symbols
-    private readonly Dictionary<string, Module> _symbolOriginLookup = [];       // Lookup the origin module of a defined global symbol
+    private readonly Dictionary<string, Module> _symbolOriginLookup = [];   // Lookup the origin module of a defined global symbol
 
     private readonly LinkerConfig _config;
     private readonly LinkerLogger _logger;
@@ -68,6 +69,38 @@ public sealed class ZaLinker
         LayoutSections(modules);
         BuildSymbolTable(modules);
         ResolveRelocations(modules);
+
+        if (_config.LinkMode is LinkMode.Executable)
+        {
+            // The global entry symbol was not found
+            if (!Module.TryGetSymbol(_config.EntryPoint, out var symbol))
+            {
+                // Find all local symbols named entry
+                var entrySymbols = Module.Symbols.Values.Where(x => x.Name.EndsWith($":{_config.EntryPoint}"));
+
+                var count = entrySymbols.Count();
+
+                Module? sourceModule = null;
+                if (count is 1)
+                {
+                    sourceModule = _symbolOriginLookup[entrySymbols.First().Name];
+                }
+
+                _ = count switch
+                {
+                    // No symbol with the entry point name was found
+                    0 => _logger.Log(Severity.Error, LogId.MissingEntryPoint, null, "EntryPointNotFound", _config.EntryPoint),
+
+                    // One local symbol with the entry point name was found, assume that's the intended entry point
+                    1 => _logger.Log(Severity.Error, LogId.MissingEntryPoint, sourceModule?.Identity, "EntryPointNotGlobal", _config.EntryPoint),
+
+                    // Many local symbols with the entry point name were found. Just say the entry needs to be global
+                    _ => _logger.Log(Severity.Error, LogId.MissingEntryPoint, null, "EntryPointNotGlobal", _config.EntryPoint)
+                };
+            }
+
+            Module.EntryPoint = symbol;
+        }
 
         return Module;
     }
