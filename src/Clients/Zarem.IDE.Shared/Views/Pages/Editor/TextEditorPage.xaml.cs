@@ -144,7 +144,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
     public static string GetPositionText(long line, long column)
     {
         var localizationService = Service.Get<ILocalizationService>();
-        return localizationService["/Pages/Editor/LineAndColumn", line, column];
+        return localizationService["/Pages/TextEditor/LineAndColumn", line, column];
     }
 
     private async Task LoadContentAsync()

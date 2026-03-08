@@ -234,4 +234,13 @@
   <data name="LicenseType_BSD2" xml:space="preserve">
     <value>סעיף BSD-2</value>
   </data>
+  <data name="SymbolBinding_Local" xml:space="preserve">
+    <value>מקומי</value>
+  </data>
+  <data name="SymbolBinding_Global" xml:space="preserve">
+    <value>גלובלי</value>
+  </data>
+  <data name="SymbolBinding_Weak" xml:space="preserve">
+    <value>חלשה</value>
+  </data>
 </root>

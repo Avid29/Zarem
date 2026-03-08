@@ -144,7 +144,7 @@
   <data name="CreateProject/SelectFolderBTN.Content" xml:space="preserve">
     <value>בחר תיקיה</value>
   </data>
-  <data name="Editor/LineAndColumn" xml:space="preserve">
+  <data name="TextEditor/LineAndColumn" xml:space="preserve">
     <value>שו' {0}, עמ' {1}</value>
   </data>
   <data name="Explorer/CreateNewProjectBTN.Content" xml:space="preserve">
@@ -155,5 +155,29 @@
   </data>
   <data name="Explorer/RecentProjectsAndFoldersTB.Text" xml:space="preserve">
     <value>פרויקטים ותיקיות אחרונים</value>
+  </data>
+  <data name="ModuleEditor/SymbolNameDC.Content" xml:space="preserve">
+    <value>שם הסמל</value>
+  </data>
+  <data name="ModuleEditor/SectionDC.Content" xml:space="preserve">
+    <value>מקטע</value>
+  </data>
+  <data name="ModuleEditor/OffsetDC.Content" xml:space="preserve">
+    <value>הסט</value>
+  </data>
+  <data name="ModuleEditor/BindingDC.Content" xml:space="preserve">
+    <value>קישוריות</value>
+  </data>
+  <data name="ModuleEditor/SymbolTableTB.Text" xml:space="preserve">
+    <value>טבלת סמל</value>
+  </data>
+  <data name="ModuleEditor/AddendDC.Content" xml:space="preserve">
+    <value>תוספת</value>
+  </data>
+  <data name="ModuleEditor/RelocationTableTB.Text" xml:space="preserve">
+    <value>טבלת רילוקיישן</value>
+  </data>
+  <data name="ModuleEditor/TypeDC.Content" xml:space="preserve">
+    <value>סוג</value>
   </data>
 </root>

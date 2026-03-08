@@ -234,4 +234,13 @@
   <data name="LicenseType_BSD2" xml:space="preserve">
     <value>BSD-2 Clause</value>
   </data>
+  <data name="SymbolBinding_Local" xml:space="preserve">
+    <value>Local</value>
+  </data>
+  <data name="SymbolBinding_Global" xml:space="preserve">
+    <value>Global</value>
+  </data>
+  <data name="SymbolBinding_Weak" xml:space="preserve">
+    <value>Weak</value>
+  </data>
 </root>

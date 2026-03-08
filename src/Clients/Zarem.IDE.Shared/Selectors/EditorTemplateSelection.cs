@@ -15,14 +15,9 @@ public partial class EditorTemplateSelector : DataTemplateSelector
     public DataTemplate? TextEditorTemplate { get; set; }
 
     /// <summary>
-    /// Gets the <see cref="DataTemplate"/> for an assembly editor.
+    /// Gets the <see cref="DataTemplate"/> for the module editor.
     /// </summary>
-    public DataTemplate? AssemblyEditorTemplate { get; set; }
-
-    /// <summary>
-    /// Gets the <see cref="DataTemplate"/> for a hex editor.
-    /// </summary>
-    public DataTemplate? HexEditorTemplate { get; set; }
+    public DataTemplate? ModuleEditorTemplate { get; set; }
     
     /// <inheritdoc/>
     protected override DataTemplate? SelectTemplateCore(object item)
@@ -45,7 +40,7 @@ public partial class EditorTemplateSelector : DataTemplateSelector
         // TODO: Make configurable
         return type switch
         {
-            ".obj" => HexEditorTemplate,
+            ".obj" or "" => ModuleEditorTemplate,
             _ => TextEditorTemplate,
         };
     }
