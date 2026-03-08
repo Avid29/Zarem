@@ -30,10 +30,8 @@ public partial class Project
         if (modules is null)
             return result;
 
-        // Link and select entry point
+        // Link
         result.OutputModule = Linker.Link(logger, modules!);
-        result.OutputModule.TryGetSymbol("entry", out var entrySymbol);
-        result.OutputModule.EntryPoint = entrySymbol;
 
         // Export the resulting file
         var filename = Path.GetFileNameWithoutExtension(Config.Name);
