@@ -7,7 +7,7 @@ using Zarem.Models.Instructions.Enums.Registers;
 namespace Zarem.Emulator.Machine.CPU.CoProcessors;
 
 /// <summary>
-/// A class representing the 0th co-processor unit.
+/// A class representing the status/control coprocessor unit.
 /// </summary>
 public class CoProcessor0
 {
@@ -19,7 +19,7 @@ public class CoProcessor0
     /// </summary>
     public CoProcessor0()
     {
-        RegisterFile = new RegisterFile();
+        RegisterFile = new();
     }
 
     internal RegisterFile RegisterFile { get; }

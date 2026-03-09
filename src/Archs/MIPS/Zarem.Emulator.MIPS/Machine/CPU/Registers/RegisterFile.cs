@@ -56,4 +56,11 @@ public class RegisterFile
         get => this[(int)register];
         set => this[(int)register] = value;
     }
+
+    /// <inheritdoc cref="this[GPRegister]"/>
+    public uint this[FloatRegister register]
+    {
+        get => this[(int)register];
+        set => this[(int)register] = value;
+    }
 }

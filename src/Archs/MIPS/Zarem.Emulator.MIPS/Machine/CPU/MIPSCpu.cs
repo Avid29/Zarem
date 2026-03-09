@@ -29,8 +29,9 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
     {
         Computer = computer;
 
-        RegisterFile = new RegisterFile(true);
-        CoProcessor0 = new CoProcessor0();
+        RegisterFile = new(true);
+        CoProcessor0 = new ();
+        FloatProcessor = new();
     }
 
     internal RegisterFile RegisterFile { get; }
@@ -46,6 +47,11 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
     /// Gets the coprocessor 0 unit of the computer system.
     /// </summary>
     public CoProcessor0 CoProcessor0 { get; }
+
+    /// <summary>
+    /// Gets the floating-point coprocessor of the computer system.
+    /// </summary>
+    public FloatProcessor FloatProcessor { get; }
 
     /// <summary>
     /// Gets or sets the value of a general-purpose register on the processor.
