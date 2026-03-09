@@ -50,7 +50,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
         }
     }
 
-    public CodeEditor ActiveCodeEditor => UseAssemblyEditor ? AssemblyEditor : CodeEditor;
+    public CodeEditor? ActiveCodeEditor => UseAssemblyEditor ? AssemblyEditor : CodeEditor;
 
     public string Text
     {
@@ -160,7 +160,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
         }
 
         OriginalText = text;
-        ActiveCodeEditor.ResetHistory();
+        ActiveCodeEditor?.ResetHistory();
     }
 
     private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
@@ -174,7 +174,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
         text = text.Trim().Trim('%').Trim();
         if (int.TryParse(text, out int percent))
         {
-            ActiveCodeEditor.Zoom = percent;
+            ActiveCodeEditor?.Zoom = percent;
         }
     }
 
