@@ -21,8 +21,9 @@ public readonly struct Execution
 
     // These values are used for secondary effects
     // They can be (low, high), (memAddress, size*(-signed)), (pc, _), (writeback, register|regset)
-    private readonly uint _secondary1; 
+    private readonly uint _secondary1;
     private readonly uint _secondary2;
+    private readonly ulong _floatWriteback;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
@@ -66,8 +67,7 @@ public readonly struct Execution
         return new Execution
         {
             FloatReg = dest,
-            CoLongWriteback = longValue,
-            CoProcRegisterSet = RegisterSet.FloatingPoints,
+            FLongWriteBack = longValue,
         };
     }
 
@@ -371,16 +371,26 @@ public readonly struct Execution
     }
 
     /// <summary>
-    /// Gets the value being written to the co-processor as a <see cref="long"/>.
+    /// Gets the value being written to the float processor as a <see cref="long"/>.
     /// </summary>
-    public readonly ulong CoLongWriteback
+    public readonly uint FWordWriteBack
     {
-        get => (_secondary2 << 32) | _secondary1;
+        get => (uint)FLongWriteBack;
         init
         {
-            // Split the ulong into two uints
-            _secondary1 = (uint)(value & 0xFFFF_FFFF);
-            _secondary2 = (uint)(value >> 32);
+            FLongWriteBack = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets the value being written to the co-processor as a <see cref="long"/>.
+    /// </summary>
+    public readonly ulong FLongWriteBack
+    {
+        get => _floatWriteback;
+        init
+        {
+            _floatWriteback = value;
             SideEffect = SideEffect.WriteCoProc;
         }
     }
@@ -388,19 +398,19 @@ public readonly struct Execution
     /// <summary>
     /// Gets the value being written to the co-processor as a <see cref="float"/>.
     /// </summary>
-    public readonly float CoFloatWriteBack
+    public readonly float FFloatWriteBack
     {
-        get => BitConverter.UInt32BitsToSingle(CoProcWriteBack);
-        init => CoProcWriteBack = BitConverter.SingleToUInt32Bits(value);
+        get => BitConverter.UInt32BitsToSingle(FWordWriteBack);
+        init => FWordWriteBack = BitConverter.SingleToUInt32Bits(value);
     }
 
     /// <summary>
     /// Gets the value being written to the co-processor as a <see cref="double"/>.
     /// </summary>
-    public readonly double CoDoubleWriteBack
+    public readonly double FDoubleWriteBack
     {
-        get => BitConverter.UInt64BitsToDouble(CoLongWriteback);
-        init => CoLongWriteback = BitConverter.DoubleToUInt64Bits(value);
+        get => BitConverter.UInt64BitsToDouble(FLongWriteBack);
+        init => FLongWriteBack = BitConverter.DoubleToUInt64Bits(value);
     }
 
     /// <summary>

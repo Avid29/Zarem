@@ -70,8 +70,8 @@ public class ExecutionTests
                 FPRInitialization =
                     [
                         // F0 - F3: Simple Integers (for CVT.S.W or CVT.D.L tests)
-                        (FloatRegister.F0, 0),
-                        (FloatRegister.F1, 1),
+                        (FloatRegister.F0, 2),
+                        (FloatRegister.F1, 0),      // Note: F0 is 2 as a long or as a word
                         (FloatRegister.F2, 10),
                         (FloatRegister.F3, (uint)-10),
 
@@ -88,8 +88,8 @@ public class ExecutionTests
 
                         // F12 - F19: Double Precision Pairs (f12/13, f14/15, etc.)
                         // f12/f13 = 1.0, f14/f15 = 0.5, f16/f17 = -2.0, f18/f19 = PI (approx)
-                        (FloatRegister.F12, (uint)(BitConverter.DoubleToUInt64Bits(1.0) & 0xFFFFFFFF)),
-                        (FloatRegister.F13, (uint)(BitConverter.DoubleToUInt64Bits(1.0) >> 32)),
+                        (FloatRegister.F12, (uint)(BitConverter.DoubleToUInt64Bits(2.0) & 0xFFFFFFFF)),
+                        (FloatRegister.F13, (uint)(BitConverter.DoubleToUInt64Bits(2.0) >> 32)),
 
                         (FloatRegister.F14, (uint)(BitConverter.DoubleToUInt64Bits(0.5) & 0xFFFFFFFF)),
                         (FloatRegister.F15, (uint)(BitConverter.DoubleToUInt64Bits(0.5) >> 32)),
@@ -139,9 +139,22 @@ public class ExecutionTests
             ExpectedWriteBack = (reg, writeBack);
         }
 
-        public ExecutionTestCase(string input, FloatRegister reg, float writeBack) : this(input)
+        public ExecutionTestCase(string input, FloatRegister reg, float writeBack) : this(input, reg, BitConverter.SingleToInt32Bits(writeBack))
         {
-            // TODO: Check result
+        }
+
+        public ExecutionTestCase(string input, FloatRegister reg, double writeBack) : this(input, reg, BitConverter.DoubleToInt64Bits(writeBack))
+        {
+        }
+
+        public ExecutionTestCase(string input, FloatRegister reg, int writeBack) : this(input)
+        {
+            ExpectedWordFloatWriteBack = (reg, (uint)writeBack);
+        }
+
+        public ExecutionTestCase(string input, FloatRegister reg, long writeBack) : this(input)
+        {
+            ExpectedLongFloatWriteBack = (reg, (ulong)writeBack);
         }
 
         public ExecutionTestCase(string input, (uint, byte[]) memory) : this(input)
@@ -170,7 +183,9 @@ public class ExecutionTests
 
         public (GPRegister Regiter, uint? Value)? ExpectedWriteBack { get; init; } = null;
 
-        public (FloatRegister Register, ulong? Value)? ExpectedFloatWriteBack { get; init; } = null;
+        public (FloatRegister Register, uint Value)? ExpectedWordFloatWriteBack { get; init; } = null;
+
+        public (FloatRegister Register, ulong Value)? ExpectedLongFloatWriteBack { get; init; } = null;
 
         public uint? ExpectedPC { get; init; } = null;
 
@@ -478,6 +493,30 @@ public class ExecutionTests
         }
     }
 
+    public static IEnumerable<object[]> FloatConvertInstructionTestsList
+    {
+        get
+        {
+            // From Single 
+            yield return [new ExecutionTestCase("cvt.D.S $f0, $f5", FloatRegister.F0, 2d)];     // To Double
+            yield return [new ExecutionTestCase("cvt.W.S $f0, $f5", FloatRegister.F0, 2)];      // To Word
+            yield return [new ExecutionTestCase("cvt.L.S $f0, $f5", FloatRegister.F0, 2L)];     // To Long
+
+            // From Double
+            yield return [new ExecutionTestCase("cvt.S.D $f0, $f12", FloatRegister.F0, 2f)];    // To Single
+            yield return [new ExecutionTestCase("cvt.W.D $f0, $f12", FloatRegister.F0, 2)];     // To Word
+            yield return [new ExecutionTestCase("cvt.L.D $f0, $f12", FloatRegister.F0, 2L)];    // To Long
+
+            // From Word 
+            yield return [new ExecutionTestCase("cvt.S.W $f0, $f0", FloatRegister.F0, 2f)];     // To Single
+            yield return [new ExecutionTestCase("cvt.D.W $f0, $f0", FloatRegister.F0, 2d)];     // To Double
+
+            // From Long
+            yield return [new ExecutionTestCase("cvt.S.L $f0, $f0", FloatRegister.F0, 2f)];     // To Single
+            yield return [new ExecutionTestCase("cvt.D.L $f0, $f0", FloatRegister.F0, 2d)];     // To Double
+        }
+    }
+
     [DataTestMethod]
     [DynamicData(nameof(ArithmeticInstructionTestsList))]
     public void ArithmeticInstructionTests(ExecutionTestCase @case) => RunTest(@case);
@@ -517,6 +556,10 @@ public class ExecutionTests
     [DataTestMethod]
     [DynamicData(nameof(FloatArithmeticInstructionTestsList))]
     public void FloatArithmeticInstructionTests(ExecutionTestCase @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [DynamicData(nameof(FloatConvertInstructionTestsList))]
+    public void FloatConvertInstructionTests(ExecutionTestCase @case) => RunTest(@case);
 
     private static void RunTest(ExecutionTestCase @case, bool branchDelay = true)
     {
@@ -595,6 +638,20 @@ public class ExecutionTests
             var buffer = new byte[expectedMemory.Value.Data.Length];
             emulator.Computer.Memory.Read(expectedMemory.Value.Address, buffer);
             CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
+        }
+
+        var expectedFloatWord = @case.ExpectedWordFloatWriteBack;
+        if (expectedFloatWord.HasValue)
+        {
+            Assert.AreEqual(expectedFloatWord.Value.Register, execution.FloatReg);
+            Assert.AreEqual(expectedFloatWord.Value.Value, execution.FWordWriteBack);
+        }
+
+        var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
+        if (expectedFloatLong.HasValue)
+        {
+            Assert.AreEqual(expectedFloatLong.Value.Register, execution.FloatReg);
+            Assert.AreEqual(expectedFloatLong.Value.Value, execution.FLongWriteBack);
         }
 
         var expectedPC = @case.ExpectedPC;
