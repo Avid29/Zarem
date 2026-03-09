@@ -483,13 +483,13 @@ public class ExecutionTests
         get
         {
             // Single
-            yield return [new ExecutionTestCase("add.S $f0, $f8, $f9", FloatRegister.F0, 10.5f + 2.5f)];
-            yield return [new ExecutionTestCase("sub.S $f0, $f8, $f9", FloatRegister.F0, 10.5f - 2.5f)];
-            yield return [new ExecutionTestCase("mul.S $f0, $f8, $f9", FloatRegister.F0, 10.5f * 2.5f)];
-            yield return [new ExecutionTestCase("div.S $f0, $f8, $f9", FloatRegister.F0, 10.5f / 2.5f)];
-            yield return [new ExecutionTestCase("abs.S $f0, $f7", FloatRegister.F0, 2.0f)];
-            yield return [new ExecutionTestCase("neg.S $f0, $f5", FloatRegister.F0, -2.0f)];
-            yield return [new ExecutionTestCase("sqrt.S $f0, $f8", FloatRegister.F0, MathF.Sqrt(10.5f))];
+            yield return [new ExecutionTestCase("add.S $f16, $f8, $f9", FloatRegister.F16, 10.5f + 2.5f)];
+            yield return [new ExecutionTestCase("sub.S $f16, $f8, $f9", FloatRegister.F16, 10.5f - 2.5f)];
+            yield return [new ExecutionTestCase("mul.S $f16, $f8, $f9", FloatRegister.F16, 10.5f * 2.5f)];
+            yield return [new ExecutionTestCase("div.S $f16, $f8, $f9", FloatRegister.F16, 10.5f / 2.5f)];
+            yield return [new ExecutionTestCase("abs.S $f16, $f7", FloatRegister.F16, 2.0f)];
+            yield return [new ExecutionTestCase("neg.S $f16, $f5", FloatRegister.F16, -2.0f)];
+            yield return [new ExecutionTestCase("sqrt.S $f16, $f8", FloatRegister.F16, MathF.Sqrt(10.5f))];
         }
     }
 
@@ -498,22 +498,22 @@ public class ExecutionTests
         get
         {
             // From Single 
-            yield return [new ExecutionTestCase("cvt.D.S $f0, $f5", FloatRegister.F0, 2d)];     // To Double
-            yield return [new ExecutionTestCase("cvt.W.S $f0, $f5", FloatRegister.F0, 2)];      // To Word
-            yield return [new ExecutionTestCase("cvt.L.S $f0, $f5", FloatRegister.F0, 2L)];     // To Long
+            yield return [new ExecutionTestCase("cvt.D.S $f16, $f5", FloatRegister.F16, 2d)];     // To Double
+            yield return [new ExecutionTestCase("cvt.W.S $f16, $f5", FloatRegister.F16, 2)];      // To Word
+            yield return [new ExecutionTestCase("cvt.L.S $f16, $f5", FloatRegister.F16, 2L)];     // To Long
 
             // From Double
-            yield return [new ExecutionTestCase("cvt.S.D $f0, $f12", FloatRegister.F0, 2f)];    // To Single
-            yield return [new ExecutionTestCase("cvt.W.D $f0, $f12", FloatRegister.F0, 2)];     // To Word
-            yield return [new ExecutionTestCase("cvt.L.D $f0, $f12", FloatRegister.F0, 2L)];    // To Long
+            yield return [new ExecutionTestCase("cvt.S.D $f16, $f12", FloatRegister.F16, 2f)];    // To Single
+            yield return [new ExecutionTestCase("cvt.W.D $f16, $f12", FloatRegister.F16, 2)];     // To Word
+            yield return [new ExecutionTestCase("cvt.L.D $f16, $f12", FloatRegister.F16, 2L)];    // To Long
 
             // From Word 
-            yield return [new ExecutionTestCase("cvt.S.W $f0, $f0", FloatRegister.F0, 2f)];     // To Single
-            yield return [new ExecutionTestCase("cvt.D.W $f0, $f0", FloatRegister.F0, 2d)];     // To Double
+            yield return [new ExecutionTestCase("cvt.S.W $f16, $f0", FloatRegister.F16, 2f)];     // To Single
+            yield return [new ExecutionTestCase("cvt.D.W $f16, $f0", FloatRegister.F16, 2d)];     // To Double
 
             // From Long
-            yield return [new ExecutionTestCase("cvt.S.L $f0, $f0", FloatRegister.F0, 2f)];     // To Single
-            yield return [new ExecutionTestCase("cvt.D.L $f0, $f0", FloatRegister.F0, 2d)];     // To Double
+            yield return [new ExecutionTestCase("cvt.S.L $f16, $f0", FloatRegister.F16, 2f)];     // To Single
+            yield return [new ExecutionTestCase("cvt.D.L $f16, $f0", FloatRegister.F16, 2d)];     // To Double
         }
     }
 
