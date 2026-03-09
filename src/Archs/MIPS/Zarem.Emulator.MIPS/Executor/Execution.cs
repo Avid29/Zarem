@@ -1,6 +1,9 @@
 ﻿// Avishai Dernis 2025
 
+using CommunityToolkit.HighPerformance;
 using System;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -165,6 +168,28 @@ public readonly struct Execution
         return new Execution
         {
             High = high,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Execution"/> struct.
+    /// </summary>
+    public static Execution CreateFloatWriteback<T>(FloatRegister dest, T writeBack)
+        where T : INumber<T>
+    {
+        ulong longValue = writeBack switch
+        {
+            uint i => i,
+            ulong l => l,
+            float f => BitConverter.SingleToUInt32Bits(f),
+            double d => BitConverter.DoubleToUInt64Bits(d),
+            _ => ulong.CreateTruncating(writeBack),
+        };
+
+        return new Execution
+        {
+            FloatReg = dest,
+            CoLongWriteback = longValue,
         };
     }
 
@@ -342,6 +367,39 @@ public readonly struct Execution
             _secondary1 = value;
             SideEffect = SideEffect.WriteCoProc;
         }
+    }
+
+    /// <summary>
+    /// Gets the value being written to the co-processor as a <see cref="long"/>.
+    /// </summary>
+    public readonly ulong CoLongWriteback
+    {
+        get => (_secondary2 << 32) | _secondary1;
+        init
+        {
+            // Split the ulong into two uints
+            _secondary1 = (uint)(value & 0xFFFF_FFFF);
+            _secondary2 = (uint)(value >> 32);
+            SideEffect = SideEffect.WriteCoProc;
+        }
+    }
+
+    /// <summary>
+    /// Gets the value being written to the co-processor as a <see cref="float"/>.
+    /// </summary>
+    public readonly float CoFloatWriteBack
+    {
+        get => BitConverter.UInt32BitsToSingle(CoProcWriteBack);
+        init => CoProcWriteBack = BitConverter.SingleToUInt32Bits(value);
+    }
+
+    /// <summary>
+    /// Gets the value being written to the co-processor as a <see cref="double"/>.
+    /// </summary>
+    public readonly double CoDoubleWriteBack
+    {
+        get => BitConverter.UInt64BitsToDouble(CoLongWriteback);
+        init => CoLongWriteback = BitConverter.DoubleToUInt64Bits(value);
     }
 
     /// <summary>

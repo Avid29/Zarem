@@ -19,7 +19,10 @@ public class FloatProcessor
     public FloatProcessor()
     {
         RegisterFile = new();
+        Singles = new(this);
         Doubles = new(this);
+        Words = new(this);
+        Longs = new(this);
     }
 
     internal RegisterFile RegisterFile { get; }
@@ -33,6 +36,16 @@ public class FloatProcessor
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="double"/>.
     /// </summary>
     public DoubleIndexer Doubles { get; }
+
+    /// <summary>
+    /// Gets an indexer for accessing the registers on the coprocessor as an <see cref="int"/>.
+    /// </summary>
+    public WordIndexer Words { get; }
+
+    /// <summary>
+    /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="long"/>.
+    /// </summary>
+    public LongIndexer Longs { get; }
 
     /// <summary>
     /// Gets or sets the value of a register on the coprocessor.
@@ -66,7 +79,7 @@ public class FloatProcessor
         /// <inheritdoc/>
         public float this[FloatRegister reg]
         {
-            get => BitConverter.Int32BitsToSingle((int)_parent[reg]);
+            get => BitConverter.UInt32BitsToSingle(_parent[reg]);
             set => _parent[reg] = BitConverter.SingleToUInt32Bits(value);
         }
     }
@@ -88,8 +101,10 @@ public class FloatProcessor
                     return double.NaN;
 
                 // Convert the register pair to a double
-                ReadOnlySpan<uint> parts = [_parent.RegisterFile[reg], _parent.RegisterFile[reg + 1]];
-                return MemoryMarshal.Cast<uint, double>(parts)[0];
+                uint low = _parent.RegisterFile[reg];
+                uint high = _parent.RegisterFile[reg + 1];
+                ulong combined = ((ulong)high << 32) | low;
+                return BitConverter.UInt64BitsToDouble(combined);
             }
             set
             {
@@ -98,12 +113,58 @@ public class FloatProcessor
                     return;
 
                 // Split the double into two uints
-                Span<uint> parts = stackalloc uint[2];
-                MemoryMarshal.Cast<uint, double>(parts)[0] = value;
+                var integer = BitConverter.DoubleToUInt64Bits(value);
+                _parent.RegisterFile[reg] = (uint)(integer & 0xFFFF_FFFF);
+                _parent.RegisterFile[reg + 1] = (uint)(integer >> 32);
+            }
+        }
+    }
 
-                // Store the parts
-                _parent.RegisterFile[reg] = parts[0];
-                _parent.RegisterFile[reg + 1] = parts[1];
+    /// <summary>
+    /// An wrapper to access floating-point register pairs as doubles.
+    /// </summary>
+    public readonly struct WordIndexer(FloatProcessor parent) : IFloatRegisterIndexer<int>
+    {
+        private readonly FloatProcessor _parent = parent;
+
+        /// <inheritdoc/>
+        public int this[FloatRegister reg]
+        {
+            get => (int)_parent[reg];
+            set => _parent[reg] = (uint)value;
+        }
+    }
+
+    /// <summary>
+    /// An wrapper to access floating-point register pairs as doubles.
+    /// </summary>
+    public readonly struct LongIndexer(FloatProcessor parent) : IFloatRegisterIndexer<long>
+    {
+        private readonly FloatProcessor _parent = parent;
+
+        /// <inheritdoc/>
+        public long this[FloatRegister reg]
+        {
+            get
+            {
+                // Register much be even
+                if ((int)reg % 2 is not 0)
+                    return 0;
+
+                // Convert the register pair to a double
+                uint low = _parent.RegisterFile[reg];
+                uint high = _parent.RegisterFile[reg + 1];
+                return (long)((ulong)high << 32) | low;
+            }
+            set
+            {
+                // Register much be even
+                if ((int)reg % 2 is not 0)
+                    return;
+
+                // Split the double into two uints
+                _parent.RegisterFile[reg] = (uint)(value & 0xFFFF_FFFF);
+                _parent.RegisterFile[reg + 1] = (uint)(value >> 32);
             }
         }
     }

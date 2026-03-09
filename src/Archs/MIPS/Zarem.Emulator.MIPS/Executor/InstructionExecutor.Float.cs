@@ -5,6 +5,7 @@ using System.Buffers;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Windows.Markup;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
@@ -46,6 +47,8 @@ public partial class InstructionExecutor
             {
                 FloatFormat.Single => CreateFloatExecution(Processor.FloatProcessor.Singles),
                 FloatFormat.Double => CreateFloatExecution(Processor.FloatProcessor.Doubles),
+                FloatFormat.Word => CreateFloatIntExecution(Processor.FloatProcessor.Words),
+                FloatFormat.Long => CreateFloatIntExecution(Processor.FloatProcessor.Longs),
                 _ => throw new NotImplementedException(),
             }
         };
@@ -54,6 +57,83 @@ public partial class InstructionExecutor
     private Execution CreateFloatExecution<T>(IFloatRegisterIndexer<T> indexer)
         where T : unmanaged, IFloatingPointIeee754<T>
     {
+        return FloatInstruction.FloatFuncCode switch
+        {
+            FloatFuncCode.ConvertToDouble => CreateConvertExecution<T, double>(indexer),
+            FloatFuncCode.ConvertToSingle => CreateConvertExecution<T, float>(indexer),
+            FloatFuncCode.ConvertToWord => CreateConvertExecution<T, int>(indexer),
+            FloatFuncCode.ConvertToLong => CreateConvertExecution<T, long>(indexer),
+
+            FloatFuncCode.Round_L or FloatFuncCode.Truncate_L or
+            FloatFuncCode.Ceiling_L or FloatFuncCode.Floor_L => CreateFloatRoundExecution<T, long>(indexer),
+
+            FloatFuncCode.Round_W or FloatFuncCode.Truncate_W or
+            FloatFuncCode.Ceiling_W or FloatFuncCode.Floor_W => CreateFloatRoundExecution<T, int>(indexer),
+
+            _ => CreateFloatArithmeticExecution(indexer)
+        };
+    }
+
+    private Execution CreateFloatIntExecution<T>(IFloatRegisterIndexer<T> indexer)
+        where T : unmanaged, INumber<T>
+    {
+        return FloatInstruction.FloatFuncCode switch
+        {
+            FloatFuncCode.ConvertToDouble => CreateConvertExecution<T, double>(indexer),
+            FloatFuncCode.ConvertToSingle => CreateConvertExecution<T, float>(indexer),
+            FloatFuncCode.ConvertToWord => CreateConvertExecution<T, int>(indexer),
+            FloatFuncCode.ConvertToLong => CreateConvertExecution<T, long>(indexer),
+            _ => throw new NotImplementedException(),
+        };
+    }
+
+    private Execution CreateFloatRoundExecution<TFrom, TTo>(IFloatRegisterIndexer<TFrom> indexer)
+        where TFrom : unmanaged, IFloatingPointIeee754<TFrom>
+        where TTo : INumber<TTo>, IMinMaxValue<TTo>
+    {
+        var destination = FloatInstruction.FD;
+
+        // Retrieve the values from the register file
+        var fs = indexer[FloatInstruction.FS];
+
+        var rounded = FloatInstruction.FloatFuncCode switch
+        {
+            FloatFuncCode.Round_L or FloatFuncCode.Round_W => TFrom.Round(fs, MidpointRounding.ToEven),
+            FloatFuncCode.Truncate_L or FloatFuncCode.Truncate_W => TFrom.Truncate(fs),
+            FloatFuncCode.Ceiling_L or FloatFuncCode.Ceiling_W => TFrom.Ceiling(fs),
+            FloatFuncCode.Floor_L or FloatFuncCode.Floor_W => TFrom.Floor(fs),
+
+            _ => throw new NotImplementedException($"FPU instruction {FloatInstruction.FloatFuncCode} not implemented."),
+        };
+
+        // MIPS behavior: Handle out-of-range values before they hit the RegisterFile
+        TTo finalResult;
+
+        // Check if the rounded value fits in the target integer type
+        if (rounded > TFrom.CreateTruncating(TTo.MaxValue) ||
+            rounded < TFrom.CreateTruncating(TTo.MinValue) ||
+            TFrom.IsNaN(rounded))
+        {
+            // TODO: Log overflow
+
+            // MIPS typically writes the most significant bits or a default 
+            // for out-of-range conversions.
+            finalResult = TTo.Zero;
+        }
+        else
+        {
+            finalResult = TTo.CreateTruncating(rounded);
+        }
+
+
+        return Execution.CreateFloatWriteback(destination, finalResult);
+    }
+
+    private Execution CreateFloatArithmeticExecution<T>(IFloatRegisterIndexer<T> indexer)
+        where T : unmanaged, IFloatingPointIeee754<T>
+    {
+        var destination = FloatInstruction.FD;
+
         // Retrieve the values from the register file
         var fs = indexer[FloatInstruction.FS];
         var ft = indexer[FloatInstruction.FT];
@@ -69,47 +149,20 @@ public partial class InstructionExecutor
             FloatFuncCode.Move => fs,
             FloatFuncCode.Negate => -fs,
 
-            // Approximation
-            FloatFuncCode.Reciprical => T.One / fs,
-
-            // Rounding to Long (64-bit integer)
-            FloatFuncCode.Round_L => T.CreateTruncating(T.Round(fs, MidpointRounding.ToEven)),
-            FloatFuncCode.Truncate_L => T.CreateTruncating(T.Truncate(fs)),
-            FloatFuncCode.Ceiling_L => T.CreateTruncating(T.Ceiling(fs)),
-            FloatFuncCode.Floor_L => T.CreateTruncating(T.Floor(fs)),
-
-            // Rounding to Word (32-bit integer)
-            FloatFuncCode.Round_W => T.CreateTruncating(T.Round(fs, MidpointRounding.ToEven)),
-            FloatFuncCode.Truncate_W => T.CreateTruncating(T.Truncate(fs)),
-            FloatFuncCode.Ceiling_W => T.CreateTruncating(T.Ceiling(fs)),
-            FloatFuncCode.Floor_W => T.CreateTruncating(T.Floor(fs)),
-
-            // Type Conversions
-            // Note: These usually involve switching the 'Format' in the switch above this one.
-            // If the instruction is CVT.S.D, 'T' is float, and we convert 'fs' (which is double).
-            // For simplicity in a generic method, we cast from the input to T.
-            //FloatFuncCode.ConvertToSingle => T.CreateTruncating(fs),
-            //FloatFuncCode.ConvertToDouble => T.CreateTruncating(fs),
-            //FloatFuncCode.ConvertToWord => T.CreateTruncating(fs),
-            //FloatFuncCode.ConvertToLong => T.CreateTruncating(fs),
+            FloatFuncCode.Reciprical => T.ReciprocalEstimate(fs),
 
             _ => throw new NotImplementedException($"FPU instruction {FloatInstruction.FloatFuncCode} not implemented."),
         };
 
-        var destination = FloatInstruction.FD;
+        return Execution.CreateFloatWriteback(destination, value);
+    }
 
-        Span<byte> buffer = stackalloc byte[8];
-        buffer.Clear(); // Ensure high bits are 0 for 32-bit floats
-        MemoryMarshal.Write(buffer, in value);
-        ulong longValue = MemoryMarshal.Read<ulong>(buffer);
-
-        // TODO: Add execution constructor for double coproc writebacks
-        return new Execution
-        {
-            FloatReg = destination,
-            Low = (uint)(longValue & 0xFFFF_FFFF),
-            High = (uint)(longValue >> 32),
-            SideEffect = SideEffect.WriteCoProc,
-        };
+    private Execution CreateConvertExecution<TFrom, TTo>(IFloatRegisterIndexer<TFrom> indexer)
+        where TFrom : INumber<TFrom>
+        where TTo : INumber<TTo>
+    {
+        var source = indexer[FloatInstruction.FS];
+        var result = TTo.CreateTruncating(source);
+        return Execution.CreateFloatWriteback(FloatInstruction.FD, result);
     }
 }
