@@ -15,7 +15,7 @@ namespace Zarem.IDE.Controls.CodeEditor;
 public partial class CodeEditor : Control
 {
     private const string CodeEditorPartName = "PART_CodeEditorControl";
-    private const int BaseFontSize = 10;
+    private const int BaseFontSize = 11;
 
     /// <summary>
     /// An event invoked when the <see cref="Text"/> property changes
