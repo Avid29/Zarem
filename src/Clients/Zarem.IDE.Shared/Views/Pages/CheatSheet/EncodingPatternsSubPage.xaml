@@ -65,7 +65,7 @@
             <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True" />
         </StackPanel.ChildrenTransitions>
 
-        <Expander HorizontalAlignment="Stretch">
+        <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
             <Expander.Header>
                 <TextBlock
                     x:Uid="/CheatSheet/PrimaryInstructionTypePatternsTB"
@@ -78,7 +78,7 @@
                 ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
                 ItemsSource="{x:Bind ViewModel.PrimaryEncodingPatterns, Mode=OneWay}" />
         </Expander>
-        <Expander HorizontalAlignment="Stretch">
+        <Expander HorizontalAlignment="Stretch"  HorizontalContentAlignment="Stretch">
             <Expander.Header>
                 <TextBlock
                     x:Uid="/CheatSheet/CoProc0InstructionTypePatternsTB"
@@ -91,7 +91,7 @@
                 ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
                 ItemsSource="{x:Bind ViewModel.CoProcessor0Patterns, Mode=OneWay}" />
         </Expander>
-        <Expander HorizontalAlignment="Stretch">
+        <Expander HorizontalAlignment="Stretch"  HorizontalContentAlignment="Stretch">
             <Expander.Header>
                 <TextBlock
                     x:Uid="/CheatSheet/CoProc1InstructionTypePatternsTB"
@@ -104,7 +104,7 @@
                 ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
                 ItemsSource="{x:Bind ViewModel.CoProcessor1Patterns, Mode=OneWay}" />
         </Expander>
-        <Expander HorizontalAlignment="Stretch">
+        <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
             <Expander.Header>
                 <TextBlock
                     x:Uid="/CheatSheet/UniqueInstructionPatternsTB"
