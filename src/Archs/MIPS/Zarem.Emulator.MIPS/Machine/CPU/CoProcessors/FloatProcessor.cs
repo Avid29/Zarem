@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Zarem.Emulator.Machine.CPU.Registers;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -44,18 +45,25 @@ public class FloatProcessor
         set => RegisterFile[reg] = value;
     }
 
-    /// <summary>
-    /// An wrapper to access floating-point register pairs as doubles.
-    /// </summary>
-    public readonly struct SingleIndexer(FloatProcessor parent)
+    internal interface IFloatRegisterIndexer<T>
+        where T : INumber<T>
     {
-        private readonly FloatProcessor _parent = parent;
-
         /// <summary>
-        /// Gets or sets the value of a register on the coprocessor as a <see cref="float"/>.
+        /// Gets or sets the value of a register on the coprocessor as a <typeparamref name="T"/>.
         /// </summary>
         /// <param name="reg">The register to get or set.</param>
         /// <returns>The value of the register.</returns>
+        T this[FloatRegister reg] { get; set; }
+    }
+
+    /// <summary>
+    /// An wrapper to access floating-point register pairs as doubles.
+    /// </summary>
+    public readonly struct SingleIndexer(FloatProcessor parent) : IFloatRegisterIndexer<float>
+    {
+        private readonly FloatProcessor _parent = parent;
+
+        /// <inheritdoc/>
         public float this[FloatRegister reg]
         {
             get => BitConverter.Int32BitsToSingle((int)_parent[reg]);
@@ -66,15 +74,11 @@ public class FloatProcessor
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.
     /// </summary>
-    public readonly struct DoubleIndexer(FloatProcessor parent)
+    public readonly struct DoubleIndexer(FloatProcessor parent) : IFloatRegisterIndexer<double>
     {
         private readonly FloatProcessor _parent = parent;
 
-        /// <summary>
-        /// Gets or sets the value of a register on the coprocessor as a <see cref="double"/>.
-        /// </summary>
-        /// <param name="reg">The register to get or set.</param>
-        /// <returns>The value of the register.</returns>
+        /// <inheritdoc/>
         public double this[FloatRegister reg]
         {
             get

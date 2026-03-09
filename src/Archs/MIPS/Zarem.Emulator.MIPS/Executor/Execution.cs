@@ -306,6 +306,19 @@ public readonly struct Execution
     }
 
     /// <summary>
+    /// Gets the coproc1 register for a co-process writeback.
+    /// </summary>
+    public readonly FloatRegister FloatReg
+    {
+        get => (FloatRegister)UintMasking.GetShiftMask(_secondary2, REG_BITCOUNT, 0);
+        init
+        {
+            UintMasking.SetShiftMask(ref _secondary2, REG_BITCOUNT, 0, (uint)value);
+            CoProcRegisterSet = RegisterSet.FloatingPoints;
+        }
+    }
+
+    /// <summary>
     /// Gets the register set to writeback to for co-process writeback.
     /// </summary>
     public readonly RegisterSet CoProcRegisterSet
