@@ -51,6 +51,29 @@ public readonly struct Execution
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
     /// </summary>
+    public static Execution CreateFloatWriteback<T>(FloatRegister dest, T writeBack)
+        where T : INumber<T>
+    {
+        ulong longValue = writeBack switch
+        {
+            uint i => i,
+            ulong l => l,
+            float f => BitConverter.SingleToUInt32Bits(f),
+            double d => BitConverter.DoubleToUInt64Bits(d),
+            _ => ulong.CreateTruncating(writeBack),
+        };
+
+        return new Execution
+        {
+            FloatReg = dest,
+            CoLongWriteback = longValue,
+            CoProcRegisterSet = RegisterSet.FloatingPoints,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Execution"/> struct.
+    /// </summary>
     public static Execution CreateMemRead(GPRegister dest, uint address, int size, bool signed = true)
     {
         return new Execution
@@ -168,28 +191,6 @@ public readonly struct Execution
         return new Execution
         {
             High = high,
-        };
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Execution"/> struct.
-    /// </summary>
-    public static Execution CreateFloatWriteback<T>(FloatRegister dest, T writeBack)
-        where T : INumber<T>
-    {
-        ulong longValue = writeBack switch
-        {
-            uint i => i,
-            ulong l => l,
-            float f => BitConverter.SingleToUInt32Bits(f),
-            double d => BitConverter.DoubleToUInt64Bits(d),
-            _ => ulong.CreateTruncating(writeBack),
-        };
-
-        return new Execution
-        {
-            FloatReg = dest,
-            CoLongWriteback = longValue,
         };
     }
 

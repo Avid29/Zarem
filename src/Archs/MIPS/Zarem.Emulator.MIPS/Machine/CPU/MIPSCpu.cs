@@ -256,6 +256,7 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
         {
             RegisterSet.GeneralPurpose => RegisterFile,
             RegisterSet.CoProc0 => CoProcessor0.RegisterFile,
+            RegisterSet.FloatingPoints => FloatProcessor.RegisterFile,
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<RegisterFile>(nameof(set)),
         };
 
