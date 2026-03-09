@@ -114,10 +114,10 @@ public partial class AssemblyEditor
         try
         {
             var config = AssemblerConfig ?? new MIPSAssemblerConfig(MipsVersion.MipsIII);
-            var result = await Zarembler.AssembleAsync(Text, "editor", new MIPSAssmblerHandler(config), config);
-            ApplyLogHighlights(result.Logs);
-            UpdateSymbols(result.Symbols);
-            _tokenizedAssembly = result.Tokens;
+            AssemblerResult = await Zarembler.AssembleAsync(Text, "editor", new MIPSAssmblerHandler(config), config);
+            ApplyLogHighlights(AssemblerResult.Logs);
+            UpdateSymbols(AssemblerResult.Symbols);
+            _tokenizedAssembly = AssemblerResult.Tokens;
         }
         catch (Exception)
         {

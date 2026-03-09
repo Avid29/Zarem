@@ -68,7 +68,7 @@
                 VerticalAlignment="Center"
                 FontSize="12"
                 Opacity=".5"
-                Text="{x:Bind local:TextEditorPage.FormatAddres(AssemblyEditor.PositionAddress), Mode=OneWay}" />
+                Text="{x:Bind FormatAddres(AssemblyEditor.PositionAddress), Mode=OneWay}" />
 
             <ComboBox
                 Grid.Column="2"

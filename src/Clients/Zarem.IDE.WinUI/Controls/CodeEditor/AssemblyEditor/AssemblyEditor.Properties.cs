@@ -4,6 +4,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Models;
+using Zarem.Helpers;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Models;
 
@@ -11,6 +13,8 @@ namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class AssemblyEditor
 {
+    private SymbolResolver? _symbolResolver;
+
     /// <summary>
     /// A <see cref="DependencyProperty"/> for the <see cref="RealTimeAssembly"/> property.
     /// </summary>
@@ -96,6 +100,36 @@ public partial class AssemblyEditor
     {
         get => (Address?)GetValue(PositionAddressProperty);
         set => SetValue(PositionAddressProperty, value);
+    }
+
+    /// <summary>
+    /// Gets the assembler result from the last real-time assembly run.
+    /// </summary>
+    public AssemblerResult? AssemblerResult
+    {
+        get => field;
+        set
+        {
+            field = value;
+            _symbolResolver = null;
+        }
+    }
+
+    
+    /// <summary>
+    /// Gets the symbol resolver for the assembler context.
+    /// </summary>
+    public SymbolResolver? SymbolResolver
+    {
+        get
+        {
+            // No symbols to resolve
+            if (AssemblerResult is null)
+                return null;
+
+            // Return existing symbol resolver, or create if needed
+            return _symbolResolver ??= new(AssemblerResult.Symbols);
+        }
     }
 
     private static void OnSyntaxHighlightingThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)

@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using System.IO;
 using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Helpers;
 using Zarem.IDE.Controls.CodeEditor;
 using Zarem.IDE.Messages;
 using Zarem.IDE.Messages.Editor.Enums;
@@ -131,14 +132,34 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
         codeEditor.ApplyOperation(e);
     }
 
-    public static string FormatAddres(Address? address)
+    public string FormatAddres(Address? address)
     {
-        if (!address.HasValue)
-        {
+        if (AssemblyEditor is null || !address.HasValue)
             return string.Empty;
-        }
 
-        return string.Format($"{address?.Section?.Name}:0x{address?.Offset:X4}");
+        var addr = address.Value;
+
+        // Phrase the location in terms of the section
+        string sectionOffsetStr = $"{address?.Section?.Name}:0x{addr.Offset:X8}";
+
+        // Attempt to phrase location in terms of a symbol
+        string? symbolOffsetStr = null;
+        var symbol = AssemblyEditor.SymbolResolver?.FindNearest(addr, out _);
+        if (symbol is not null)
+        {
+            var symOffset = addr.Offset - symbol.Address.Offset;
+            symbolOffsetStr = $"{symbol.Name}+0x{symOffset:X4}";
+        }
+        
+        // Format the string based on available info
+        if (symbolOffsetStr is not null)
+        {
+            return $"{symbolOffsetStr} ({sectionOffsetStr})";
+        }
+        else
+        {
+            return sectionOffsetStr;
+        }
     }
 
     public static string GetPositionText(long line, long column)

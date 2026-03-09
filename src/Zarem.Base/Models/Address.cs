@@ -10,7 +10,7 @@ namespace Zarem.Models;
 /// A struct containing an address and the section it belongs to.
 /// </summary>
 [DebuggerDisplay("{ToString}")]
-public struct Address
+public struct Address : IComparable<Address>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Address"/> struct.
@@ -109,4 +109,28 @@ public struct Address
 
     /// <inheritdoc/>
     public readonly override int GetHashCode() => HashCode.Combine(Offset, Section);
+
+    /// <inheritdoc/>
+    public readonly int CompareTo(Address other)
+    {
+        // Addresses are in the same section. Compare by offset
+        if (ReferenceEquals(Section, other.Section))
+            return Offset.CompareTo(other.Offset);
+
+        // Handle nulls explicitly (sort nulls to the top)
+        if (Section is null)
+            return -1;
+
+        if (other.Section is null)
+            return 1;
+
+        // Compare by memory location
+        int sectionCompare = Section.VirtualAddress.CompareTo(other.Section.VirtualAddress);
+        if (sectionCompare is not 0)
+            return sectionCompare;
+
+        // The different sections share a memory location.
+        // Compare by section name alphabetically
+        return Section.Name.CompareTo(other.Section.Name);
+    }
 }
