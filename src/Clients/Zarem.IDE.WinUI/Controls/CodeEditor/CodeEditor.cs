@@ -29,6 +29,14 @@ public partial class CodeEditor : Control
         DefaultStyleKey = typeof(CodeEditor);
     }
 
+    public void ResetHistory()
+    {
+        if (!TryGetEditor(out var editor))
+            return;
+
+        editor.EmptyUndoBuffer();
+    }
+
     /// <inheritdoc/>
     protected override void OnApplyTemplate()
     {
@@ -44,7 +52,7 @@ public partial class CodeEditor : Control
         SetupKeybinds();
 
         // Apply the current text
-        UpdateText(true);
+        UpdateText();
     }
 
     [MemberNotNullWhen(true, nameof(ChildEditor))]

@@ -160,6 +160,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
         }
 
         OriginalText = text;
+        ActiveCodeEditor.ResetHistory();
     }
 
     private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
