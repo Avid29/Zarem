@@ -487,9 +487,18 @@ public class ExecutionTests
             yield return [new ExecutionTestCase("sub.S $f16, $f8, $f9", FloatRegister.F16, 10.5f - 2.5f)];
             yield return [new ExecutionTestCase("mul.S $f16, $f8, $f9", FloatRegister.F16, 10.5f * 2.5f)];
             yield return [new ExecutionTestCase("div.S $f16, $f8, $f9", FloatRegister.F16, 10.5f / 2.5f)];
-            yield return [new ExecutionTestCase("abs.S $f16, $f7", FloatRegister.F16, 2.0f)];
-            yield return [new ExecutionTestCase("neg.S $f16, $f5", FloatRegister.F16, -2.0f)];
+            yield return [new ExecutionTestCase("abs.S $f16, $f7", FloatRegister.F16, 2f)];
+            yield return [new ExecutionTestCase("neg.S $f16, $f5", FloatRegister.F16, -2f)];
             yield return [new ExecutionTestCase("sqrt.S $f16, $f8", FloatRegister.F16, MathF.Sqrt(10.5f))];
+
+            // Double
+            yield return [new ExecutionTestCase("add.D $f16, $f12, $f14", FloatRegister.F16, 2d + 0.5d)];
+            yield return [new ExecutionTestCase("sub.D $f16, $f12, $f14", FloatRegister.F16, 2d - 0.5d)];
+            yield return [new ExecutionTestCase("mul.D $f16, $f12, $f14", FloatRegister.F16, 2d * 0.5d)];
+            yield return [new ExecutionTestCase("div.D $f16, $f12, $f14", FloatRegister.F16, 2d / 0.5d)];
+            yield return [new ExecutionTestCase("abs.D $f16, $f16", FloatRegister.F16, 2d)];
+            yield return [new ExecutionTestCase("neg.D $f16, $f12", FloatRegister.F16, -2d)];
+            yield return [new ExecutionTestCase("sqrt.D $f16, $f12", FloatRegister.F16, Math.Sqrt(2d))];
         }
     }
 
