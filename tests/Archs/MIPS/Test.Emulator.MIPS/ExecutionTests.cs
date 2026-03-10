@@ -454,12 +454,19 @@ public class ExecutionTests
             // Exception Return
             yield return [new ExecutionTestCase("eret", MIPSTrap.ReservedInstruction)];
             yield return [new ExecutionTestCase("eret", SideEffect.WriteCoProc)
-            { Status = new StatusRegister { ExceptionLevel = true } }];
+            {
+                Status = new StatusRegister
+                {
+                    ExceptionLevel = true
+                }
+            }];
 
             // Enable Interrupts
             yield return [new ExecutionTestCase("ei", MIPSTrap.ReservedInstruction)];
             yield return [new ExecutionTestCase("ei", SideEffect.WriteCoProc)
-            { PrivilegeMode = PrivilegeMode.Kernel }];
+            {
+                PrivilegeMode = PrivilegeMode.Kernel
+            }];
             yield return [new ExecutionTestCase("ei $v0", GPRegister.ReturnValue0)
             {
                 ExpectedSideEffect = SideEffect.WriteCoProc,
@@ -469,12 +476,24 @@ public class ExecutionTests
             // Disable Interrupts
             yield return [new ExecutionTestCase("di", MIPSTrap.ReservedInstruction)];
             yield return [new ExecutionTestCase("di", SideEffect.WriteCoProc)
-            { PrivilegeMode = PrivilegeMode.Kernel }];
+            {
+                PrivilegeMode = PrivilegeMode.Kernel
+            }];
             yield return [new ExecutionTestCase("di $v1", GPRegister.ReturnValue1)
             {
                 ExpectedSideEffect = SideEffect.WriteCoProc,
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
+        }
+    }
+
+    public static IEnumerable<object[]> CoProcMoveInstructionTestList
+    {
+        get
+        {
+            // CoProcessor 1
+            yield return [new ExecutionTestCase("mtc1 $t2, $f16", FloatRegister.F16, 20)];
+            yield return [new ExecutionTestCase("mfc1 $v0, $f0", GPRegister.ReturnValue0, 2)];
         }
     }
 
@@ -537,13 +556,13 @@ public class ExecutionTests
             yield return [new ExecutionTestCase("round.W.D $f16, $f18", FloatRegister.F16, 3)];
             yield return [new ExecutionTestCase("round.L.S $f16, $f10", FloatRegister.F16, 1L)];
             yield return [new ExecutionTestCase("round.L.D $f16, $f18", FloatRegister.F16, 3L)];
-            
+
             // Ceiling
             yield return [new ExecutionTestCase("ceil.W.S $f16, $f10", FloatRegister.F16, 2)];
             yield return [new ExecutionTestCase("ceil.W.D $f16, $f18", FloatRegister.F16, 4)];
             yield return [new ExecutionTestCase("ceil.L.S $f16, $f10", FloatRegister.F16, 2L)];
             yield return [new ExecutionTestCase("ceil.L.D $f16, $f18", FloatRegister.F16, 4L)];
-            
+
             // Floor
             yield return [new ExecutionTestCase("floor.W.S $f16, $f10", FloatRegister.F16, 1)];
             yield return [new ExecutionTestCase("floor.W.D $f16, $f18", FloatRegister.F16, 3)];
@@ -587,6 +606,10 @@ public class ExecutionTests
     [DataTestMethod]
     [DynamicData(nameof(SystemInstructionTestsList))]
     public void SystemInstructionTests(ExecutionTestCase @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [DynamicData(nameof(CoProcMoveInstructionTestList))]
+    public void CoProcMoveInstructionTest(ExecutionTestCase @case) => RunTest(@case);
 
     [DataTestMethod]
     [DynamicData(nameof(FloatArithmeticInstructionTestsList))]

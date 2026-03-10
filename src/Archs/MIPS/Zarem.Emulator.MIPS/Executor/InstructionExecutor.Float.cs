@@ -22,10 +22,10 @@ public partial class InstructionExecutor
     {
         return FloatInstruction.CoProc1RSCode switch
         {
-            CoProc1RSCode.MFC1 => throw new NotImplementedException(),
+            CoProc1RSCode.MFC1 => Execution.CreateWriteback(FloatInstruction.RT, Processor.FloatProcessor[FloatInstruction.FS]),
             CoProc1RSCode.CFC1 => throw new NotImplementedException(),
             CoProc1RSCode.MFHC1 => throw new NotImplementedException(),
-            CoProc1RSCode.MTC1 => throw new NotImplementedException(),
+            CoProc1RSCode.MTC1 => Execution.CreateFloatWriteback(FloatInstruction.FS, Processor[FloatInstruction.RT]),
             CoProc1RSCode.CTC1 => throw new NotImplementedException(),
             CoProc1RSCode.MTHC1 => throw new NotImplementedException(),
             CoProc1RSCode.BC1 => throw new NotImplementedException(),
