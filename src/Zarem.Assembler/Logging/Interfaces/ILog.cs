@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.Tokenization.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Logging.Interfaces;
 

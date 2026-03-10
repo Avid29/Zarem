@@ -4,6 +4,7 @@ using System.IO;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Logging;
 
@@ -21,7 +22,7 @@ public class AssemblerEntry : ILog
         Severity = severity;
         Message = message;
         Tokens = tokens;
-        FilePath = tokens[0].FilePath;
+        FilePath = tokens[0].Location.File;
     }
 
     /// <inheritdoc/>

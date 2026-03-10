@@ -64,6 +64,12 @@ public partial class Zarembler
         {
             _logger.Log(Severity.Error, LogId.UnexpectedToken, line.Args[0].Tokens[0], "UnexpectedToken", line.Args[0].Tokens[0]);
         }
+
+        // Log a debug line if this line changed the address
+        if (line.Address != CurrentAddress && line.Count > 0)
+        {
+            _module.AddLineEntry(line.Address, line[0].Location);
+        }
     }
 
     private void RealizationPass(AssemblyLine line)

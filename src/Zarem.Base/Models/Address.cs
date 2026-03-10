@@ -9,7 +9,7 @@ namespace Zarem.Models;
 /// <summary>
 /// A struct containing an address and the section it belongs to.
 /// </summary>
-[DebuggerDisplay("{ToString}")]
+[DebuggerDisplay("{ToString()}")]
 public struct Address : IComparable<Address>
 {
     /// <summary>

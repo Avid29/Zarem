@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Windows.UI;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor;
 

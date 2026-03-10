@@ -8,7 +8,6 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Messages;
-using Zarem.IDE.Messages.Editor;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings;
@@ -16,6 +15,7 @@ using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.IDE.ViewModels.Pages.Interfaces;
 using Zarem.MIPS;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.ViewModels.Pages;
 

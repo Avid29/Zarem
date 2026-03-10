@@ -3,7 +3,7 @@
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
-using Zarem.Assembler.Tokenization.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.Linker.Logging;
 

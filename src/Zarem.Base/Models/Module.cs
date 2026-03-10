@@ -16,6 +16,7 @@ public sealed class Module : ModuleBase
 {
     private readonly Dictionary<string, Section> _sections = [];
     private readonly Dictionary<string, Symbol> _symbols = [];
+    private readonly List<LineEntry>? _debugLines = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Module"/> class.
@@ -74,6 +75,11 @@ public sealed class Module : ModuleBase
     /// Gets the module sections.
     /// </summary>
     public IReadOnlyDictionary<string, Section> Sections => _sections;
+
+    /// <summary>
+    /// Gets the module's debug line info.
+    /// </summary>
+    public IReadOnlyList<LineEntry>? DebugLines => _debugLines;
     
     /// <summary>
     /// Gets or creates a section in the module.
@@ -108,6 +114,13 @@ public sealed class Module : ModuleBase
 
         return symbol;
     }
+
+    /// <summary>
+    /// Logs a debug line entry.
+    /// </summary>
+    /// <param name="address">The address of the machine code.</param>
+    /// <param name="location">The source location info.</param>
+    public void AddLineEntry(Address address, SourceLocation location) => _debugLines?.Add(new(address, location));
 
     /// <summary>
     /// Attempts to get a symbol in the module.

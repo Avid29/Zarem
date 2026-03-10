@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.IO;
 using System.Threading.Tasks;
-using Zarem.Assembler.Tokenization.Models;
 using Zarem.Helpers;
 using Zarem.IDE.Controls.CodeEditor;
 using Zarem.IDE.Messages;
@@ -17,6 +16,7 @@ using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.Interfaces;
 using Zarem.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Views.Pages.Editor;
 

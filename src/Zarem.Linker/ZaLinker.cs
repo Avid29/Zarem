@@ -68,6 +68,7 @@ public sealed class ZaLinker
     {
         LayoutSections(modules);
         BuildSymbolTable(modules);
+        RelocateDebugInfo(modules);
         ResolveRelocations(modules);
 
         if (_config.LinkMode is LinkMode.Executable)
@@ -201,6 +202,41 @@ public sealed class ZaLinker
                 if (!symbol.IsDefined)
                 {
                     _logger.Log(Severity.Error, LogId.UndefinedSymbol, Module.Identity, "SymbolNeverDefined", symbol.Name);
+                }
+            }
+        }
+    }
+
+    private void RelocateDebugInfo(Module[] modules)
+    {
+        foreach (var module in modules)
+        {
+            // Skip incompatible modules
+            if (module.Architecture != _handler.GetArchitectureName())
+                continue;
+
+            // If the module has no debug info, skip it
+            if (module.DebugLines is null || module.DebugLines.Count is 0)
+                continue;
+
+            foreach (var entry in module.DebugLines)
+            {
+                var sourceAddr = entry.Address;
+                var sectionName = sourceAddr.Section?.Name;
+
+                // Find where this section was moved to in the linked module
+                if (sectionName is not null &&
+                    _moduleSectionOffsets.TryGetValue(module, out var offsets) &&
+                    offsets.TryGetValue(sectionName, out ulong sectionOffsetInLinked))
+                {
+                    var linkedSection = Module.GetOrCreateSection(sectionName);
+
+                    // Calculate the new offset within the combined section
+                    uint newOffset = (uint)((long)sectionOffsetInLinked + sourceAddr.Offset);
+                    var linkedAddr = new Address(linkedSection, newOffset);
+
+                    // Add the relocated entry to the final module
+                    Module.AddLineEntry(linkedAddr, entry.Location);
                 }
             }
         }

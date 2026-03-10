@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Tokenization;
 
@@ -16,7 +17,6 @@ namespace Zarem.Assembler.Tokenization;
 public partial class Tokenizer
 {
     private readonly TokenizerMode _mode;
-    private readonly string? _filename;
     private readonly StringBuilder _cache;
 
     private TokenizerState _state;
@@ -33,9 +33,8 @@ public partial class Tokenizer
         _mode = mode;
         _state = TokenizerState.TokenBegin;
         _cache = new();
-        _location = new SourceLocation();
+        _location = new SourceLocation(filename);
         _cacheLocation = _location;
-        _filename = filename;
     }
 
     private List<AssemblyLine> TokenLines { get; }

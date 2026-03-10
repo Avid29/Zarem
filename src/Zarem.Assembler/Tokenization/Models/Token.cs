@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2024
 
 using Zarem.Assembler.Tokenization.Models.Enums;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Tokenization.Models;
 
@@ -22,11 +23,6 @@ public class Token
     /// Gets the value of the token as a string.
     /// </summary>
     public string Source { get; init; }
-
-    /// <summary>
-    /// Gets the token's file path.
-    /// </summary>
-    public string? FilePath { get; init; }
 
     /// <summary>
     /// Gets the token's location.

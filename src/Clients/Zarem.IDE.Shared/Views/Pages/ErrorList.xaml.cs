@@ -5,12 +5,12 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Globalization;
 using Zarem.Assembler.Logging;
-using Zarem.Assembler.Tokenization.Models;
 using Zarem.IDE.Messages.Build;
 using Zarem.IDE.Messages.Navigation;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings;
 using Zarem.IDE.ViewModels.Pages;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Views.Pages;
 

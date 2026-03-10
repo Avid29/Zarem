@@ -127,7 +127,7 @@ public partial class MainViewModel
     private async Task NavigateToToken(Token token)
     {
         // Get the file path
-        var path = token.FilePath;
+        var path = token.Location.File;
         if (path is null)
             return;
 
