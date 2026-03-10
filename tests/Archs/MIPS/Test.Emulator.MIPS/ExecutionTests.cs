@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Zarem.Assembler.Models;
@@ -35,21 +36,85 @@ public class ExecutionTests
                     [
                         // Max/Min values to test edge cases, as well as some arbitrary non-edge-case values for good measure
                         // Stored in the argument registers
-                        (GPRegister.Argument0, int.MaxValue), (GPRegister.Argument1, (uint)int.MinValue),
-                        (GPRegister.Argument2, uint.MaxValue), (GPRegister.Argument3, uint.MinValue),
+                        (GPRegister.Argument0, int.MaxValue),
+                        (GPRegister.Argument1, (uint)int.MinValue),
+                        (GPRegister.Argument2, uint.MaxValue),
+                        (GPRegister.Argument3, uint.MinValue),
 
                         // Saved 1 - 4 are assigned to 1 through 4 respectively,
                         // while saved 5 and 6 are assigned to -1 and -2 (to test sign handling in arithmetic instructions)
-                        (GPRegister.Saved1, 1), (GPRegister.Saved2, 2), (GPRegister.Saved3, 3), (GPRegister.Saved4, 4),
-                        (GPRegister.Saved5, (uint)-1), (GPRegister.Saved6, (uint)-2),
+                        (GPRegister.Saved1, 1),
+                        (GPRegister.Saved2, 2),
+                        (GPRegister.Saved3, 3),
+                        (GPRegister.Saved4, 4),
+                        (GPRegister.Saved5, (uint)-1),
+                        (GPRegister.Saved6, (uint)-2),
 
                         // Temp 1 - 4 are assigned to 10, 20, 30, 40 respectively,
                         // while temp 5 and 6 are assigned to -10 and -20 (to test sign handling in arithmetic instructions)
-                        (GPRegister.Temporary1, 10), (GPRegister.Temporary2, 20), (GPRegister.Temporary3, 30), (GPRegister.Temporary4, 40),
-                        (GPRegister.Temporary5, (uint)-10), (GPRegister.Temporary6, (uint)-20), (GPRegister.Temporary7, (uint)-30),
+                        (GPRegister.Temporary1, 10),
+                        (GPRegister.Temporary2, 20),
+                        (GPRegister.Temporary3, 30),
+                        (GPRegister.Temporary4, 40),
+                        (GPRegister.Temporary5, (uint)-10),
+                        (GPRegister.Temporary6, (uint)-20),
+                        (GPRegister.Temporary7, (uint)-30),
 
                         // Assign some arbitrary values to the rest of the registers as well, just in case
-                        (GPRegister.Temporary8, 101), (GPRegister.AssemblerTemporary, 0x89ab_cdef), (GPRegister.Kernel0, K0), (GPRegister.Kernel1, K1)
+                        (GPRegister.Temporary8, 101),
+                        (GPRegister.AssemblerTemporary, 0x89ab_cdef),
+                        (GPRegister.Kernel0, K0),
+                        (GPRegister.Kernel1, K1)
+                    ];
+
+                FPRInitialization =
+                    [
+                        // F0 - F3: Simple Integers (for CVT.S.W or CVT.D.L tests)
+                        (FloatRegister.F0, 2),
+                        (FloatRegister.F1, 0),      // Note: F0 is 2 as a long or as a word
+                        (FloatRegister.F2, 10),
+                        (FloatRegister.F3, (uint)-10),
+
+                        // F4 - F11: Small "Clean" Floats (Single Precision)
+                        // Using values that have exact representations in binary
+                        (FloatRegister.F4, BitConverter.SingleToUInt32Bits(1.0f)),
+                        (FloatRegister.F5, BitConverter.SingleToUInt32Bits(2.0f)),
+                        (FloatRegister.F6, BitConverter.SingleToUInt32Bits(0.5f)),
+                        (FloatRegister.F7, BitConverter.SingleToUInt32Bits(-2.0f)),
+                        (FloatRegister.F8, BitConverter.SingleToUInt32Bits(10.5f)),
+                        (FloatRegister.F9, BitConverter.SingleToUInt32Bits(2.5f)),
+                        (FloatRegister.F10, BitConverter.SingleToUInt32Bits(1.25f)),
+                        (FloatRegister.F11, BitConverter.SingleToUInt32Bits(-0.75f)),
+
+                        // F12 - F19: Double Precision Pairs (f12/13, f14/15, etc.)
+                        // f12/f13 = 1.0, f14/f15 = 0.5, f16/f17 = -2.0, f18/f19 = PI (approx)
+                        (FloatRegister.F12, (uint)(BitConverter.DoubleToUInt64Bits(2.0) & 0xFFFFFFFF)),
+                        (FloatRegister.F13, (uint)(BitConverter.DoubleToUInt64Bits(2.0) >> 32)),
+
+                        (FloatRegister.F14, (uint)(BitConverter.DoubleToUInt64Bits(0.5) & 0xFFFFFFFF)),
+                        (FloatRegister.F15, (uint)(BitConverter.DoubleToUInt64Bits(0.5) >> 32)),
+
+                        (FloatRegister.F16, (uint)(BitConverter.DoubleToUInt64Bits(-2.0) & 0xFFFFFFFF)),
+                        (FloatRegister.F17, (uint)(BitConverter.DoubleToUInt64Bits(-2.0) >> 32)),
+
+                        (FloatRegister.F18, (uint)(BitConverter.DoubleToUInt64Bits(Math.PI) & 0xFFFFFFFF)),
+                        (FloatRegister.F19, (uint)(BitConverter.DoubleToUInt64Bits(Math.PI) >> 32)),
+
+                        // F20 - F27: IEEE 754 Edge Cases (Single Precision)
+                        (FloatRegister.F20, BitConverter.SingleToUInt32Bits(float.PositiveInfinity)),
+                        (FloatRegister.F21, BitConverter.SingleToUInt32Bits(float.NegativeInfinity)),
+                        (FloatRegister.F22, BitConverter.SingleToUInt32Bits(float.NaN)),
+                        (FloatRegister.F23, BitConverter.SingleToUInt32Bits(0.0f)),
+                        (FloatRegister.F24, BitConverter.SingleToUInt32Bits(-0.0f)),
+                        (FloatRegister.F25, BitConverter.SingleToUInt32Bits(float.Epsilon)), // Subnormal/Tiny
+                        (FloatRegister.F26, BitConverter.SingleToUInt32Bits(float.MaxValue)),
+                        (FloatRegister.F27, BitConverter.SingleToUInt32Bits(float.MinValue)),
+
+                        // F28 - F31: Large Integers (to test Rounding/Overflow traps)
+                        (FloatRegister.F28, (uint)int.MaxValue),
+                        (FloatRegister.F29, 0), // Upper bits for F28 if treated as Long
+                        (FloatRegister.F30, (uint)int.MinValue),
+                        (FloatRegister.F31, 0xFFFFFFFF) // All bits set
                     ];
 
                 InitialHighLow = (0x1234, 0x5678);
@@ -72,6 +137,24 @@ public class ExecutionTests
         public ExecutionTestCase(string input, GPRegister reg, uint? writeBack = null) : this(input)
         {
             ExpectedWriteBack = (reg, writeBack);
+        }
+
+        public ExecutionTestCase(string input, FloatRegister reg, float writeBack) : this(input, reg, BitConverter.SingleToInt32Bits(writeBack))
+        {
+        }
+
+        public ExecutionTestCase(string input, FloatRegister reg, double writeBack) : this(input, reg, BitConverter.DoubleToInt64Bits(writeBack))
+        {
+        }
+
+        public ExecutionTestCase(string input, FloatRegister reg, int writeBack) : this(input)
+        {
+            ExpectedWordFloatWriteBack = (reg, (uint)writeBack);
+        }
+
+        public ExecutionTestCase(string input, FloatRegister reg, long writeBack) : this(input)
+        {
+            ExpectedLongFloatWriteBack = (reg, (ulong)writeBack);
         }
 
         public ExecutionTestCase(string input, (uint, byte[]) memory) : this(input)
@@ -97,8 +180,12 @@ public class ExecutionTests
         public string Input { get; }
 
         public MIPSTrap ExpectedTrap { get; init; } = MIPSTrap.None;
- 
+
         public (GPRegister Regiter, uint? Value)? ExpectedWriteBack { get; init; } = null;
+
+        public (FloatRegister Register, uint Value)? ExpectedWordFloatWriteBack { get; init; } = null;
+
+        public (FloatRegister Register, ulong Value)? ExpectedLongFloatWriteBack { get; init; } = null;
 
         public uint? ExpectedPC { get; init; } = null;
 
@@ -109,6 +196,8 @@ public class ExecutionTests
         public (uint High, uint Low)? ExpectedHighLow { get; init; }
 
         public (GPRegister Register, uint Value)[] RegisterInitialization { get; init; } = [];
+
+        public (FloatRegister Register, uint Value)[] FPRInitialization { get; init; } = [];
 
         public (uint Address, byte[] Data)[] MemoryInitialization { get; init; } = [];
 
@@ -389,6 +478,80 @@ public class ExecutionTests
         }
     }
 
+    public static IEnumerable<object[]> FloatArithmeticInstructionTestsList
+    {
+        get
+        {
+            // Single
+            yield return [new ExecutionTestCase("add.S $f16, $f8, $f9", FloatRegister.F16, 10.5f + 2.5f)];
+            yield return [new ExecutionTestCase("sub.S $f16, $f8, $f9", FloatRegister.F16, 10.5f - 2.5f)];
+            yield return [new ExecutionTestCase("mul.S $f16, $f8, $f9", FloatRegister.F16, 10.5f * 2.5f)];
+            yield return [new ExecutionTestCase("div.S $f16, $f8, $f9", FloatRegister.F16, 10.5f / 2.5f)];
+            yield return [new ExecutionTestCase("abs.S $f16, $f7", FloatRegister.F16, 2f)];
+            yield return [new ExecutionTestCase("neg.S $f16, $f5", FloatRegister.F16, -2f)];
+            yield return [new ExecutionTestCase("sqrt.S $f16, $f8", FloatRegister.F16, MathF.Sqrt(10.5f))];
+            yield return [new ExecutionTestCase("recip.S $f16, $f9", FloatRegister.F16, float.ReciprocalEstimate(2.5f))];
+
+            // Double
+            yield return [new ExecutionTestCase("add.D $f16, $f12, $f14", FloatRegister.F16, 2d + 0.5d)];
+            yield return [new ExecutionTestCase("sub.D $f16, $f12, $f14", FloatRegister.F16, 2d - 0.5d)];
+            yield return [new ExecutionTestCase("mul.D $f16, $f12, $f14", FloatRegister.F16, 2d * 0.5d)];
+            yield return [new ExecutionTestCase("div.D $f16, $f12, $f14", FloatRegister.F16, 2d / 0.5d)];
+            yield return [new ExecutionTestCase("abs.D $f16, $f16", FloatRegister.F16, 2d)];
+            yield return [new ExecutionTestCase("neg.D $f16, $f12", FloatRegister.F16, -2d)];
+            yield return [new ExecutionTestCase("sqrt.D $f16, $f12", FloatRegister.F16, Math.Sqrt(2d))];
+            yield return [new ExecutionTestCase("recip.D $f16, $f12", FloatRegister.F16, double.ReciprocalEstimate(2d))];
+        }
+    }
+
+    public static IEnumerable<object[]> FloatConvertInstructionTestsList
+    {
+        get
+        {
+            // From Single 
+            yield return [new ExecutionTestCase("cvt.D.S $f16, $f5", FloatRegister.F16, 2d)];     // To Double
+            yield return [new ExecutionTestCase("cvt.W.S $f16, $f5", FloatRegister.F16, 2)];      // To Word
+            yield return [new ExecutionTestCase("cvt.L.S $f16, $f5", FloatRegister.F16, 2L)];     // To Long
+
+            // From Double
+            yield return [new ExecutionTestCase("cvt.S.D $f16, $f12", FloatRegister.F16, 2f)];    // To Single
+            yield return [new ExecutionTestCase("cvt.W.D $f16, $f12", FloatRegister.F16, 2)];     // To Word
+            yield return [new ExecutionTestCase("cvt.L.D $f16, $f12", FloatRegister.F16, 2L)];    // To Long
+
+            // From Word 
+            yield return [new ExecutionTestCase("cvt.S.W $f16, $f0", FloatRegister.F16, 2f)];     // To Single
+            yield return [new ExecutionTestCase("cvt.D.W $f16, $f0", FloatRegister.F16, 2d)];     // To Double
+
+            // From Long
+            yield return [new ExecutionTestCase("cvt.S.L $f16, $f0", FloatRegister.F16, 2f)];     // To Single
+            yield return [new ExecutionTestCase("cvt.D.L $f16, $f0", FloatRegister.F16, 2d)];     // To Double
+        }
+    }
+
+    public static IEnumerable<object[]> FloatRoundInstructionTestsList
+    {
+        get
+        {
+            // Round
+            yield return [new ExecutionTestCase("round.W.S $f16, $f10", FloatRegister.F16, 1)];
+            yield return [new ExecutionTestCase("round.W.D $f16, $f18", FloatRegister.F16, 3)];
+            yield return [new ExecutionTestCase("round.L.S $f16, $f10", FloatRegister.F16, 1L)];
+            yield return [new ExecutionTestCase("round.L.D $f16, $f18", FloatRegister.F16, 3L)];
+            
+            // Ceiling
+            yield return [new ExecutionTestCase("ceil.W.S $f16, $f10", FloatRegister.F16, 2)];
+            yield return [new ExecutionTestCase("ceil.W.D $f16, $f18", FloatRegister.F16, 4)];
+            yield return [new ExecutionTestCase("ceil.L.S $f16, $f10", FloatRegister.F16, 2L)];
+            yield return [new ExecutionTestCase("ceil.L.D $f16, $f18", FloatRegister.F16, 4L)];
+            
+            // Floor
+            yield return [new ExecutionTestCase("floor.W.S $f16, $f10", FloatRegister.F16, 1)];
+            yield return [new ExecutionTestCase("floor.W.D $f16, $f18", FloatRegister.F16, 3)];
+            yield return [new ExecutionTestCase("floor.L.S $f16, $f10", FloatRegister.F16, 1L)];
+            yield return [new ExecutionTestCase("floor.L.D $f16, $f18", FloatRegister.F16, 3L)];
+        }
+    }
+
     [DataTestMethod]
     [DynamicData(nameof(ArithmeticInstructionTestsList))]
     public void ArithmeticInstructionTests(ExecutionTestCase @case) => RunTest(@case);
@@ -425,7 +588,19 @@ public class ExecutionTests
     [DynamicData(nameof(SystemInstructionTestsList))]
     public void SystemInstructionTests(ExecutionTestCase @case) => RunTest(@case);
 
-    private static void RunTest(ExecutionTestCase @case , bool branchDelay = true)
+    [DataTestMethod]
+    [DynamicData(nameof(FloatArithmeticInstructionTestsList))]
+    public void FloatArithmeticInstructionTests(ExecutionTestCase @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [DynamicData(nameof(FloatConvertInstructionTestsList))]
+    public void FloatConvertInstructionTests(ExecutionTestCase @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [DynamicData(nameof(FloatRoundInstructionTestsList))]
+    public void FloatRoundInstructionTests(ExecutionTestCase @case) => RunTest(@case);
+
+    private static void RunTest(ExecutionTestCase @case, bool branchDelay = true)
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input);
@@ -449,6 +624,11 @@ public class ExecutionTests
         // Initialize the register file with the provided values
         foreach (var (reg, value) in @case.RegisterInitialization)
             emulator.Computer.Processor[reg] = value;
+
+        foreach (var (reg, value) in @case.FPRInitialization)
+        {
+            emulator.Computer.Processor.FloatProcessor[reg] = value;
+        }
 
         // Initialize the high and low registers if specified in the test case
         if (@case.InitialHighLow.HasValue)
@@ -497,6 +677,20 @@ public class ExecutionTests
             var buffer = new byte[expectedMemory.Value.Data.Length];
             emulator.Computer.Memory.Read(expectedMemory.Value.Address, buffer);
             CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
+        }
+
+        var expectedFloatWord = @case.ExpectedWordFloatWriteBack;
+        if (expectedFloatWord.HasValue)
+        {
+            Assert.AreEqual(expectedFloatWord.Value.Register, execution.FloatReg);
+            Assert.AreEqual(expectedFloatWord.Value.Value, execution.FWordWriteBack);
+        }
+
+        var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
+        if (expectedFloatLong.HasValue)
+        {
+            Assert.AreEqual(expectedFloatLong.Value.Register, execution.FloatReg);
+            Assert.AreEqual(expectedFloatLong.Value.Value, execution.FLongWriteBack);
         }
 
         var expectedPC = @case.ExpectedPC;

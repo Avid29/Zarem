@@ -44,6 +44,8 @@ public partial class InstructionExecutor
 
     private CoProc0Instruction CoProc0Instruction => (CoProc0Instruction)Instruction;
 
+    private FloatInstruction FloatInstruction => (FloatInstruction)Instruction;
+
     private MIPSEmulatorConfig Config => Processor.Computer.Config;
 
     private InstructionExecutor(MIPSInstruction instruction, MIPSCpu processor)
@@ -85,7 +87,7 @@ public partial class InstructionExecutor
 
             // Coprocessor instructions
             OperationCode.Coprocessor0 => CreateCo0Execution(),
-            OperationCode.Coprocessor1 => throw new NotImplementedException(),
+            OperationCode.Coprocessor1 => CreateCoproc1Execution(),
             OperationCode.Coprocessor2 => throw new NotImplementedException(),
             OperationCode.Coprocessor3 => throw new NotImplementedException(),
 

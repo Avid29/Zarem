@@ -1,6 +1,9 @@
 ﻿// Avishai Dernis 2025
 
+using CommunityToolkit.HighPerformance;
 using System;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -18,8 +21,9 @@ public readonly struct Execution
 
     // These values are used for secondary effects
     // They can be (low, high), (memAddress, size*(-signed)), (pc, _), (writeback, register|regset)
-    private readonly uint _secondary1; 
+    private readonly uint _secondary1;
     private readonly uint _secondary2;
+    private readonly ulong _floatWriteback;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
@@ -42,6 +46,28 @@ public readonly struct Execution
         {
             CoProc0Reg = dest,
             CoProcWriteBack = writeBack,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Execution"/> struct.
+    /// </summary>
+    public static Execution CreateFloatWriteback<T>(FloatRegister dest, T writeBack)
+        where T : INumber<T>
+    {
+        ulong longValue = writeBack switch
+        {
+            uint i => i,
+            ulong l => l,
+            float f => BitConverter.SingleToUInt32Bits(f),
+            double d => BitConverter.DoubleToUInt64Bits(d),
+            _ => ulong.CreateTruncating(writeBack),
+        };
+
+        return new Execution
+        {
+            FloatReg = dest,
+            FLongWriteBack = longValue,
         };
     }
 
@@ -306,6 +332,19 @@ public readonly struct Execution
     }
 
     /// <summary>
+    /// Gets the coproc1 register for a co-process writeback.
+    /// </summary>
+    public readonly FloatRegister FloatReg
+    {
+        get => (FloatRegister)UintMasking.GetShiftMask(_secondary2, REG_BITCOUNT, 0);
+        init
+        {
+            UintMasking.SetShiftMask(ref _secondary2, REG_BITCOUNT, 0, (uint)value);
+            CoProcRegisterSet = RegisterSet.FloatingPoints;
+        }
+    }
+
+    /// <summary>
     /// Gets the register set to writeback to for co-process writeback.
     /// </summary>
     public readonly RegisterSet CoProcRegisterSet
@@ -329,6 +368,49 @@ public readonly struct Execution
             _secondary1 = value;
             SideEffect = SideEffect.WriteCoProc;
         }
+    }
+
+    /// <summary>
+    /// Gets the value being written to the float processor as a <see cref="long"/>.
+    /// </summary>
+    public readonly uint FWordWriteBack
+    {
+        get => (uint)FLongWriteBack;
+        init
+        {
+            FLongWriteBack = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets the value being written to the co-processor as a <see cref="long"/>.
+    /// </summary>
+    public readonly ulong FLongWriteBack
+    {
+        get => _floatWriteback;
+        init
+        {
+            _floatWriteback = value;
+            SideEffect = SideEffect.WriteCoProc;
+        }
+    }
+
+    /// <summary>
+    /// Gets the value being written to the co-processor as a <see cref="float"/>.
+    /// </summary>
+    public readonly float FFloatWriteBack
+    {
+        get => BitConverter.UInt32BitsToSingle(FWordWriteBack);
+        init => FWordWriteBack = BitConverter.SingleToUInt32Bits(value);
+    }
+
+    /// <summary>
+    /// Gets the value being written to the co-processor as a <see cref="double"/>.
+    /// </summary>
+    public readonly double FDoubleWriteBack
+    {
+        get => BitConverter.UInt64BitsToDouble(FLongWriteBack);
+        init => FLongWriteBack = BitConverter.DoubleToUInt64Bits(value);
     }
 
     /// <summary>
