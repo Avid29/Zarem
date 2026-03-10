@@ -100,12 +100,6 @@
                     <Border Padding="8,4,8,4" CornerRadius="4">
                         <ctc:DataTable>
                             <ctc:DataColumn
-                                x:Uid="/Pages/ModuleEditor/SymbolNameDC"
-                                Content="Symbol Name"
-                                CanResize="True"
-                                MinWidth="80"
-                                DesiredWidth="240" />
-                            <ctc:DataColumn
                                 x:Uid="/Pages/ModuleEditor/SectionDC"
                                 Content="Section"
                                 CanResize="True"
@@ -117,6 +111,12 @@
                                 CanResize="True"
                                 MinWidth="40"
                                 DesiredWidth="100" />
+                            <ctc:DataColumn
+                                x:Uid="/Pages/ModuleEditor/SymbolReferencedDC"
+                                Content="Symbol Referenced"
+                                CanResize="True"
+                                MinWidth="80"
+                                DesiredWidth="240" />
                             <ctc:DataColumn
                                 x:Uid="/Pages/ModuleEditor/TypeDC"
                                 Content="Type"
@@ -137,13 +137,13 @@
                         <ctc:DataRow HorizontalAlignment="Left">
                             <TextBlock
                                 Margin="8,0"
-                                Text="{x:Bind SymbolName, Mode=OneWay}" />
-                            <TextBlock
-                                Margin="8,0"
                                 Text="{x:Bind Location.Section.Name, Mode=OneWay}" />
                             <TextBlock
                                 Margin="8,0"
                                 Text="{x:Bind local:ModuleEditorPage.FormatOffset(Location), Mode=OneWay}" />
+                            <TextBlock
+                                Margin="8,0"
+                                Text="{x:Bind SymbolName, Mode=OneWay}" />
                             <TextBlock
                                 Margin="8,0"
                                 Text="{x:Bind Type, Mode=OneWay}" />

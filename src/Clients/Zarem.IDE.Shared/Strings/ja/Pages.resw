@@ -180,4 +180,7 @@
   <data name="ModuleEditor/TypeDC.Content" xml:space="preserve">
     <value>Type</value>
   </data>
+  <data name="ModuleEditor/SymbolReferencedDC.Content" xml:space="preserve">
+    <value>Symbol Referenced</value>
+  </data>
 </root>
