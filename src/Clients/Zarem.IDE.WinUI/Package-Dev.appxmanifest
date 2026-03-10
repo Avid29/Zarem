@@ -9,11 +9,11 @@
   IgnorableNamespaces="uap rescap uap18">
 
 	<Identity
-	  Name="38062AvishaiDernis.Zarem-Dev"
+	  Name="38062AvishaiDernis.Zarem"
 	  Publisher="CN=43D24869-0557-46C9-8B30-13C6ACFDB86B"
-	  Version="0.1.60225.0" />
+	  Version="0.2.60310.0" />
 
-	<mp:PhoneIdentity PhoneProductId="1b08646b-66fd-4241-8c77-8f57decc0ae8" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+	<mp:PhoneIdentity PhoneProductId="aca9e3e2-ecec-4379-bb99-0c09c86c2823" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
 	<Properties>
 		<DisplayName>ms-resource:/Manifest/AppDisplayName</DisplayName>
