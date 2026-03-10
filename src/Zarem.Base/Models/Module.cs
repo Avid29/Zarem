@@ -29,7 +29,7 @@ public sealed class Module : ModuleBase
     /// <summary>
     /// Initializes a new instance of the <see cref="Module"/> class.
     /// </summary>
-    public Module(string? identity, string architecture) : base(identity)
+    public Module(string? filePath, string architecture) : base(Path.GetFileNameWithoutExtension(filePath))
     {
         Architecture = architecture;
     }

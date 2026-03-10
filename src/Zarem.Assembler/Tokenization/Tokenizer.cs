@@ -40,22 +40,22 @@ public partial class Tokenizer
     private List<AssemblyLine> TokenLines { get; }
 
     /// <inheritdoc/>
-    public static async Task<TokenizedAssembly> TokenizeAsync(Stream stream, string? filename = null)
+    public static async Task<TokenizedAssembly> TokenizeAsync(Stream stream, string? filePath = null)
     {
         using var reader = new StreamReader(stream);
-        return await TokenizeAsync(reader, filename);
+        return await TokenizeAsync(reader, filePath);
     }
 
     /// <summary>
     /// Tokenizes a stream of assembly code.
     /// </summary>
     /// <param name="reader">The stream of code.</param>
-    /// <param name="filename">The filename of the stream.</param>
+    /// <param name="filePath">The filename of the stream.</param>
     /// <returns>A list of tokens.</returns>
-    public static async Task<TokenizedAssembly> TokenizeAsync(TextReader reader, string? filename = null)
+    public static async Task<TokenizedAssembly> TokenizeAsync(TextReader reader, string? filePath = null)
     {
         // Create tokenizer
-        Tokenizer tokenizer = new(filename);
+        Tokenizer tokenizer = new(filePath);
 
         // Parse line by line from stream
         while (true)
@@ -73,9 +73,9 @@ public partial class Tokenizer
     /// <summary>
     /// Tokenizes a single line of assembly code.
     /// </summary>
-    public static AssemblyLine TokenizeLine(string line, string? filename = null, TokenizerMode mode = TokenizerMode.Assembly)
+    public static AssemblyLine TokenizeLine(string line, string? filePath = null, TokenizerMode mode = TokenizerMode.Assembly)
     {
-        Tokenizer tokenizer = new(filename, mode: mode);
+        Tokenizer tokenizer = new(filePath, mode: mode);
 
         if (line.Contains('\n'))
             ThrowHelper.ThrowArgumentException("Single line tokenizer cannot contain a new line.");
