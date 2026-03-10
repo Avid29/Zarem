@@ -95,6 +95,9 @@ public enum OperationCode : byte
     /// </remarks>
     StoreWordCoprocessor2 = 0x3a,
     StoreWordCoprocessor3 = 0x3b,
+    StoreDoubleWordCoprocessor1 = 0x3d,
+    StoreDoubleWordCoprocessor2 = 0x3e,
+    StoreDoubleWordCoprocessor3 = 0x3f,
 
     /// <remarks>
     /// MIPS VI
@@ -104,7 +107,7 @@ public enum OperationCode : byte
     /// <remarks>
     /// MIPS VI
     /// </remarks>
-    BranchAndLinkCompact = 0x3a, 
+    BranchAndLinkCompact = 0x3a,
 
 #pragma warning restore CS1591
 }
