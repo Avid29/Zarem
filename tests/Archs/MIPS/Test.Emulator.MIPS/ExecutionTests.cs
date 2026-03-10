@@ -528,6 +528,30 @@ public class ExecutionTests
         }
     }
 
+    public static IEnumerable<object[]> FloatRoundInstructionTestsList
+    {
+        get
+        {
+            // Round
+            yield return [new ExecutionTestCase("round.W.S $f16, $f10", FloatRegister.F16, 1)];
+            yield return [new ExecutionTestCase("round.W.D $f16, $f18", FloatRegister.F16, 3)];
+            yield return [new ExecutionTestCase("round.L.S $f16, $f10", FloatRegister.F16, 1L)];
+            yield return [new ExecutionTestCase("round.L.D $f16, $f18", FloatRegister.F16, 3L)];
+            
+            // Ceiling
+            yield return [new ExecutionTestCase("ceil.W.S $f16, $f10", FloatRegister.F16, 2)];
+            yield return [new ExecutionTestCase("ceil.W.D $f16, $f18", FloatRegister.F16, 4)];
+            yield return [new ExecutionTestCase("ceil.L.S $f16, $f10", FloatRegister.F16, 2L)];
+            yield return [new ExecutionTestCase("ceil.L.D $f16, $f18", FloatRegister.F16, 4L)];
+            
+            // Floor
+            yield return [new ExecutionTestCase("floor.W.S $f16, $f10", FloatRegister.F16, 1)];
+            yield return [new ExecutionTestCase("floor.W.D $f16, $f18", FloatRegister.F16, 3)];
+            yield return [new ExecutionTestCase("floor.L.S $f16, $f10", FloatRegister.F16, 1L)];
+            yield return [new ExecutionTestCase("floor.L.D $f16, $f18", FloatRegister.F16, 3L)];
+        }
+    }
+
     [DataTestMethod]
     [DynamicData(nameof(ArithmeticInstructionTestsList))]
     public void ArithmeticInstructionTests(ExecutionTestCase @case) => RunTest(@case);
@@ -571,6 +595,10 @@ public class ExecutionTests
     [DataTestMethod]
     [DynamicData(nameof(FloatConvertInstructionTestsList))]
     public void FloatConvertInstructionTests(ExecutionTestCase @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [DynamicData(nameof(FloatRoundInstructionTestsList))]
+    public void FloatRoundInstructionTests(ExecutionTestCase @case) => RunTest(@case);
 
     private static void RunTest(ExecutionTestCase @case, bool branchDelay = true)
     {
