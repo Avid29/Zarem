@@ -7,7 +7,7 @@
 
 # Introduction
 
-**Zarem** (Zippy Assembly Resolver, Emulator, & Manager) is a assembler, linker, emulator, and IDE targeted at academic uses. It is very much a WIP, but the goal is to create the most accessible environment possible for learning to write assembly code.
+**Zarem** (Zippy Assembly Resolver, Emulator, & Manager) is an assembler, linker, emulator, and IDE targeted at academic uses, with plans for advanced homebrewing in the future. It is very much a WIP, but the goal is to create the most accessible environment possible for learning to write assembly code.
 
 # Assembly/Emulation Architectures
 
@@ -32,7 +32,7 @@ The Zarem IDE is a WinUI 3 project, and therefore only available on Windows. **H
 | Linux   | ✅ Yes        | ✅ Yes          | ⚠️ WIP         | ⚠️ WIP Uno Platform |
 | Wasm    | ⚠️ WIP        | ⚠️ WIP          | ❌ Not Planned | ⚠️ WIP Uno Platform |
 
-# Translation
+# Localization
 
 Zarem supports localization for both the IDE and the Assembler. Assembler localization is integrated directly into the assembler, and is therefore available in the console as-well-as the Zarem IDE app.
 
