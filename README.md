@@ -7,7 +7,7 @@
 
 # Introduction
 
-**Zarem** (Zippy Assembly Resolver, Emulator, & Manager) is a assembler, linker, emulator, and IDE targeted at academic uses. It is very much a WIP, but the goal is to create the most accessible environment possible for learning to write assembly code.
+**Zarem** (Zippy Assembly Resolver, Emulator, & Manager) is an assembler, linker, emulator, and IDE targeted at academic uses. It is very much a WIP, but the goal is to create the most accessible environment possible for learning to write assembly code.
 
 # Assembly/Emulation Architectures
 
