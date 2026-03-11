@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using Zarem.Assembler.Config;
-using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization.Models;
@@ -13,7 +11,7 @@ using Zarem.Models.Tables;
 namespace Zarem.Assembler.Handlers;
 
 /// <summary>
-/// An interface for an handling architecture specific assembler functions.
+/// An interface for an architecture specific assembler behavior handler.
 /// </summary>
 public interface IAssemblerHandler
 {

@@ -34,6 +34,9 @@
     <Project Path="src/Archs/MIPS/Zarem.Assembler.MIPS/Zarem.Assembler.MIPS.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
+    <Project Path="src/Archs/MIPS/Zarem.Debugger.MIPS/Zarem.Debugger.MIPS.csproj" Id="7c2da9e5-f431-458d-880a-1b1a91b0a498">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
     <Project Path="src/Archs/MIPS/Zarem.Disassembler.MIPS/Zarem.Disassembler.MIPS.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
@@ -111,6 +114,9 @@
   </Project>
   <Project Path="src/Zarem.Base/Zarem.Base.csproj">
     <BuildType Solution="Alpha|*" Project="Release" />
+  </Project>
+  <Project Path="src/Zarem.Debugger/Zarem.Debugger.csproj" Id="2a72c433-6cac-4d50-bf58-4f5f5cb2ba83">
+    <BuildType Solution="Alpha|*" Project="Debug" />
   </Project>
   <Project Path="src/Zarem.Disassembler/Zarem.Disassembler.csproj" Id="cfe7fc00-2550-4bc7-aae5-9484270fa566">
     <BuildType Solution="Alpha|*" Project="Release" />

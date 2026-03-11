@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.Debugger</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+  	  <ProjectReference Include="..\Zarem.Base\Zarem.Base.csproj" />
+  </ItemGroup>
+	
+</Project>
