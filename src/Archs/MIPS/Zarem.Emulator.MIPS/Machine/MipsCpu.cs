@@ -313,17 +313,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
             return;
         }
 
-        // Status and cause registers
-        CoProcessor0.StatusRegister = CoProcessor0.StatusRegister with { ExceptionLevel = true };
-        CoProcessor0.CauseRegister = CoProcessor0.CauseRegister with
-        {
-            ExecptionCode = trap,
-            //IsBranchDelayed = // TODO: Handle delay slots
-        };
-
-        // Track the current program counter in the EPC register
-        // before jumping to the exception handler
-        CoProcessor0[CP0Registers.ExceptionPC] = ProgramCounter;
+        CoProcessor0.EnterTrap(trap, ProgramCounter, _branchDelay.HasValue);
         ProgramCounter = CoProcessor0.ExceptionVector;
     }
 }

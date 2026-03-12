@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2024
 
+using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -70,5 +71,22 @@ public class CoProcessor0
     {
         get => RegisterFile[reg];
         set => RegisterFile[reg] = value;
+    }
+
+    /// <summary>
+    /// Handles entering a trap.
+    /// </summary>
+    public void EnterTrap(MipsTrap trap, uint programCounter, bool isDelaySlot)
+    {
+        StatusRegister = StatusRegister with { ExceptionLevel = true };
+        CauseRegister = CauseRegister with
+        {
+            ExecptionCode = trap,
+            IsBranchDelayed = isDelaySlot,
+        };
+
+        // Track the current program counter in the EPC register
+        // before jumping to the exception handler
+        this[CP0Registers.ExceptionPC] = programCounter;
     }
 }
