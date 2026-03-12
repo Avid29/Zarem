@@ -27,6 +27,11 @@ public abstract class ComputerBase : IComputer
     /// <inheritdoc/>
     public abstract void Tick();
 
+    /// <summary>
+    /// Maps the devices in the memory bus.
+    /// </summary>
+    protected abstract void MapDevices(MemoryMapper mapper);
+
     /// <inheritdoc/>
     protected virtual void OnTrap(TrapEventArgs e)
     {

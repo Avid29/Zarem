@@ -80,15 +80,21 @@ public class PhysicalBus : IMemoryAccessor
             Endianness.Big => typeof(T) switch
             {
                 Type t when t == typeof(ulong) => (T)(object)BinaryPrimitives.ReadUInt64BigEndian(buffer),
+                Type t when t == typeof(long) => (T)(object)BinaryPrimitives.ReadInt64BigEndian(buffer),
                 Type t when t == typeof(uint) => (T)(object)BinaryPrimitives.ReadUInt32BigEndian(buffer),
+                Type t when t == typeof(int) => (T)(object)BinaryPrimitives.ReadInt32BigEndian(buffer),
                 Type t when t == typeof(ushort) => (T)(object)BinaryPrimitives.ReadUInt16BigEndian(buffer),
+                Type t when t == typeof(short) => (T)(object)BinaryPrimitives.ReadInt16BigEndian(buffer),
                 _ => MemoryMarshal.Read<T>(buffer),
             },
             Endianness.Little or _ => typeof(T) switch
             {
                 Type t when t == typeof(ulong) => (T)(object)BinaryPrimitives.ReadUInt64LittleEndian(buffer),
+                Type t when t == typeof(long) => (T)(object)BinaryPrimitives.ReadInt64LittleEndian(buffer),
                 Type t when t == typeof(uint) => (T)(object)BinaryPrimitives.ReadUInt32LittleEndian(buffer),
+                Type t when t == typeof(int) => (T)(object)BinaryPrimitives.ReadInt32LittleEndian(buffer),
                 Type t when t == typeof(ushort) => (T)(object)BinaryPrimitives.ReadUInt16LittleEndian(buffer),
+                Type t when t == typeof(short) => (T)(object)BinaryPrimitives.ReadInt16LittleEndian(buffer),
                 _ => MemoryMarshal.Read<T>(buffer),
             },
         };
