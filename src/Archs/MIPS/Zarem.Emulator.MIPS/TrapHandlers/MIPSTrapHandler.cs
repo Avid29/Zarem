@@ -73,7 +73,7 @@ public abstract class MIPSTrapHandler : TrapHandlerBase
     /// <param name="trap">The type of trap that occurred.</param>
     protected abstract void HandleTrap(MIPSTrap trap);
 
-    private void Processor_TrapOccurring(MIPSCpu sender, TrapOccurringEventArgs<MIPSTrap> e)
+    private void Processor_TrapOccurring(MIPSCpu sender, TrapEventArgs<MIPSTrap> e)
     {
         // The emulator is handling the trap
         // No need to interpret

@@ -9,6 +9,7 @@ using Zarem.Emulator.Executor;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Emulator.Machine.CPU;
 
@@ -20,7 +21,7 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
     private int? _branchDelay = null;
 
     /// <inheritdoc/>
-    public event EventHandler<MIPSCpu, TrapOccurringEventArgs<MIPSTrap>>? TrapOccurring;
+    public event EventHandler<MIPSCpu, TrapEventArgs>? TrapOccurring;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSCpu"/> class.
@@ -73,6 +74,18 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
     /// Gets or sets the value in the high register.
     /// </summary>
     public uint High { get; set; }
+
+    /// <inheritdoc/>
+    public string ArchitectureName => "MIPS";
+
+    /// <inheritdoc/>
+    ulong ICpu.ProgramCounter
+    {
+        get => ProgramCounter;
+        set => ProgramCounter = (uint)value;
+    }
+
+    IRegisterGroup ICpu.Registers => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public void Step()
