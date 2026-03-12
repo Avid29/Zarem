@@ -113,8 +113,8 @@ public partial class AssemblyEditor
         // Run assembler and show errors
         try
         {
-            var config = AssemblerConfig ?? new MIPSAssemblerConfig(MipsVersion.MipsIII);
-            AssemblerResult = await Zarembler.AssembleAsync(Text, "editor", new MIPSAssmblerHandler(config), config);
+            var config = AssemblerConfig ?? new MipsAssemblerConfig(MipsVersion.MipsIII);
+            AssemblerResult = await Zarembler.AssembleAsync(Text, "editor", new MipsAssmblerHandler(config), config);
             ApplyLogHighlights(AssemblerResult.Logs);
             UpdateSymbols(AssemblerResult.Symbols);
             _tokenizedAssembly = AssemblerResult.Tokens;

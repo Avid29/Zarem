@@ -14,7 +14,7 @@ public enum Co0FuncCode
     /// </summary>
     /// <remarks>
     /// This value is too large to encode in a real instruction. If by accident this were encoded into
-    /// an <see cref="MIPSInstruction"/> struct, it would become 0.
+    /// an <see cref="MipsInstruction"/> struct, it would become 0.
     /// </remarks>
     None = 0x40,
 

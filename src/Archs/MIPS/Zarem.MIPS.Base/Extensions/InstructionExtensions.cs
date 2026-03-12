@@ -18,7 +18,7 @@ public static class InstructionExtensions
     /// </summary>
     /// <param name="instruction">The instruction.</param>
     /// <returns>Which register the instruction writes back to.</returns>
-    public static GPRegister? GetWritebackRegister(this MIPSInstruction instruction)
+    public static GPRegister? GetWritebackRegister(this MipsInstruction instruction)
     {
         var arg = instruction.GetWritebackArgument();
 
@@ -35,7 +35,7 @@ public static class InstructionExtensions
     /// </summary>
     /// <param name="instruction">The instruction.</param>
     /// <returns>Which argument register the instruction writes back to.</returns>
-    public static Argument? GetWritebackArgument(this MIPSInstruction instruction)
+    public static Argument? GetWritebackArgument(this MipsInstruction instruction)
     {
         if (instruction.Type is InstructionType.BasicR)
         {

@@ -26,14 +26,14 @@ public class AssemblerTests
         await RunTest(stream, moduleId, null, expected);
     }
 
-    protected static async Task RunStringTest(string str, MIPSAssemblerConfig? config = null, params LogId[] expected)
+    protected static async Task RunStringTest(string str, MipsAssemblerConfig? config = null, params LogId[] expected)
     {
         // Wrap the test in a stream and run the test
         var stream = new MemoryStream(Encoding.Default.GetBytes(str));
         await RunTest(stream, null, config, [.. expected.Select((x) => (x, 1L))]);
     }
 
-    protected static async Task RunTest(Stream stream, string? moduleId, MIPSAssemblerConfig? config = null, params (LogId, long)[] expected)
+    protected static async Task RunTest(Stream stream, string? moduleId, MipsAssemblerConfig? config = null, params (LogId, long)[] expected)
     {
         // Load output file
         //var output = TestFilePathing.GetMatchingObjectFilePath(filename);
@@ -41,7 +41,7 @@ public class AssemblerTests
 
         // Run assembler
         config ??= new();
-        var result = await Zarembler.AssembleAsync(stream, moduleId, new MIPSAssmblerHandler(config), config);
+        var result = await Zarembler.AssembleAsync(stream, moduleId, new MipsAssmblerHandler(config), config);
 
         // Find expected errors, warnings, and messages
         if (expected.Length == result.Logs.Count)

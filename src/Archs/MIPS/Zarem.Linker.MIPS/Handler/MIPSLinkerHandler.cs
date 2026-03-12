@@ -16,12 +16,12 @@ namespace Zarem.Linker.Handler;
 /// <summary>
 /// A linker handler for the MIPS architecture.
 /// </summary>
-public class MIPSLinkerHandler : ILinkerHandler<MIPSLinkerConfig>
+public class MipsLinkerHandler : ILinkerHandler<MipsLinkerConfig>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSLinkerHandler"/> class.
+    /// Initializes a new instance of the <see cref="MipsLinkerHandler"/> class.
     /// </summary>
-    public MIPSLinkerHandler(MIPSLinkerConfig config)
+    public MipsLinkerHandler(MipsLinkerConfig config)
     {
         Config = config;
     }
@@ -30,7 +30,7 @@ public class MIPSLinkerHandler : ILinkerHandler<MIPSLinkerConfig>
     public string GetArchitectureName() => "MIPS";
 
     /// <inheritdoc/>
-    public MIPSLinkerConfig Config { get; }
+    public MipsLinkerConfig Config { get; }
 
     /// <inheritdoc/>
     public bool PatchRelocation(Section section, RelocationEntry relocation, ulong offset, ulong symbolVirtual, ulong patchVirtual, ILogger logger)
@@ -40,7 +40,7 @@ public class MIPSLinkerHandler : ILinkerHandler<MIPSLinkerConfig>
         section.Position = (long)offset;
         section.Stream.TryRead<uint>(out var value);
 
-        var instruction = (MIPSInstruction)value;
+        var instruction = (MipsInstruction)value;
 
         long target = (long)symbolVirtual + relocation.Addend;
         long pcTarget = target - ((long)patchVirtual + 4);
@@ -60,19 +60,19 @@ public class MIPSLinkerHandler : ILinkerHandler<MIPSLinkerConfig>
         return true;
     }
 
-    private static uint MIPS_Low16(MIPSInstruction instruction, long target)
+    private static uint MIPS_Low16(MipsInstruction instruction, long target)
     {
         instruction.ImmediateValue = (short)(target & 0xFFFF);
         return (uint)instruction;
     }
 
-    private static uint MIPS_High16(MIPSInstruction instruction, long target)
+    private static uint MIPS_High16(MipsInstruction instruction, long target)
     {
         instruction.ImmediateValue = (short)((target + 0x8000) >> 16);
         return (uint)instruction;
     }
 
-    private static uint MIPS_PC16(MIPSInstruction instruction, long pcTarget)
+    private static uint MIPS_PC16(MipsInstruction instruction, long pcTarget)
     {
         // TODO: Log error, branch out of range
 
@@ -80,7 +80,7 @@ public class MIPSLinkerHandler : ILinkerHandler<MIPSLinkerConfig>
         return (uint)instruction;
     }
 
-    private static uint MIPS_Jump26(MIPSInstruction instruction, long target, ulong patchVirtual, RelocationEntry relocation, LinkerLogger logger)
+    private static uint MIPS_Jump26(MipsInstruction instruction, long target, ulong patchVirtual, RelocationEntry relocation, LinkerLogger logger)
     {
         if (((ulong)target & 0xF0000000UL) != (patchVirtual & 0xF0000000UL))
         {

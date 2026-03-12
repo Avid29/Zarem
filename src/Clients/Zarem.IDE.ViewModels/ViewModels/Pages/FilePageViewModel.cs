@@ -90,7 +90,7 @@ public partial class FilePageViewModel : PageViewModel
     /// <summary>
     /// Gets the config to use for assembler checking.
     /// </summary>
-    public MIPSAssemblerConfig? AssemblerConfig
+    public MipsAssemblerConfig? AssemblerConfig
     {
         get
         {

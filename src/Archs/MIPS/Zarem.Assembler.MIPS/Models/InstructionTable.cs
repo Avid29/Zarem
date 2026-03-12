@@ -21,12 +21,12 @@ public class InstructionTable : InstructionTableBase<string>
     /// <summary>
     /// Initializes a new instance of the <see cref="InstructionTable"/> class.
     /// </summary>
-    public InstructionTable(MIPSAssemblerConfig config) : base(config)
+    public InstructionTable(MipsAssemblerConfig config) : base(config)
     {
     }
 
     /// <inheritdoc/>
-    public override bool TryGetInstruction(string name, [NotNullWhen(true)] out List<InstructionMetadata>? metadatas, out MipsVersion? requiredVersion, out bool banned)
+    public override bool TryGetInstruction(string name, [NotNullWhen(true)] out List<MipsInstructionMetadata>? metadatas, out MipsVersion? requiredVersion, out bool banned)
     {
         banned = _banned.Contains(name);
         metadatas = null;
@@ -62,7 +62,7 @@ public class InstructionTable : InstructionTableBase<string>
     /// <param name="requiredVersion">The required version to have this instruction, if there is one.</param>
     /// <param name="banned">Indicates if the instruction was found, but is banned according the config.</param>
     /// <returns>Whether or not an instruction exists by that name</returns>
-    public bool TryGetInstruction(string name, int argCount, out InstructionMetadata metadata, out MipsVersion? requiredVersion, out bool banned)
+    public bool TryGetInstruction(string name, int argCount, out MipsInstructionMetadata metadata, out MipsVersion? requiredVersion, out bool banned)
     {
         metadata = default;
 
@@ -82,7 +82,7 @@ public class InstructionTable : InstructionTableBase<string>
     }
 
     /// <inheritdoc/>
-    protected override void LoadInstruction(InstructionMetadata metadata)
+    protected override void LoadInstruction(MipsInstructionMetadata metadata)
     {
         if (metadata.IsPseudoInstruction && Config.PseudoInstructionPermissibility is not null)
         {
@@ -99,13 +99,13 @@ public class InstructionTable : InstructionTableBase<string>
         }
 
 
-        if (metadata.MIPSVersions.Contains(Config.MipsVersion))
+        if (metadata.MipsVersions.Contains(Config.MipsVersion))
         {
             LoadInstruction(metadata.Name, metadata);
         }
         else if (!_outOfVersion.ContainsKey(metadata.Name))
         {
-            _outOfVersion.Add(metadata.Name, metadata.MIPSVersions);
+            _outOfVersion.Add(metadata.Name, metadata.MipsVersions);
         }
     }
 }

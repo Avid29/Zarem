@@ -14,7 +14,7 @@ public enum Func3Code
     /// </summary>
     /// <remarks>
     /// This value is too large to encode in a real instruction. If by accident this were encoded into
-    /// an <see cref="MIPSInstruction"/> struct, it would become <see cref="ExtractBitField"/>.
+    /// an <see cref="MipsInstruction"/> struct, it would become <see cref="ExtractBitField"/>.
     /// </remarks>
     None = 0x40,
     

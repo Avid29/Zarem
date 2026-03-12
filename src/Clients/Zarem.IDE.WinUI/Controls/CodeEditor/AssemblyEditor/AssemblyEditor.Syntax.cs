@@ -64,7 +64,7 @@ public partial class AssemblyEditor
         Instructions = [];
 
         // Get the instruction table
-        var config = AssemblerConfig ?? new MIPSAssemblerConfig();
+        var config = AssemblerConfig ?? new MipsAssemblerConfig();
         var table = new InstructionTable(config);
         var instructions = table.GetInstructions();
 

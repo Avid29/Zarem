@@ -54,53 +54,53 @@ public readonly struct PseudoInstruction
     /// <summary>
     /// Expands the pseudo-instruction into an array of real instructions.
     /// </summary>
-    public readonly MIPSInstruction[] Expand()
+    public readonly MipsInstruction[] Expand()
     {
         return PseudoOp switch
         {
             PseudoOp.NoOperation =>
             [
-                MIPSInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Zero, GPRegister.Zero, 0),
+                MipsInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Zero, GPRegister.Zero, 0),
             ],
             PseudoOp.SuperScalarNoOperation =>
             [
-                MIPSInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Zero, GPRegister.Zero, 1),
+                MipsInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Zero, GPRegister.Zero, 1),
             ],
             PseudoOp.UnconditionalBranch =>
             [
-                MIPSInstruction.Create(OperationCode.BranchOnEquals, GPRegister.Zero, GPRegister.Zero, (short)Immediate),
+                MipsInstruction.Create(OperationCode.BranchOnEquals, GPRegister.Zero, GPRegister.Zero, (short)Immediate),
             ],
             PseudoOp.BranchOnLessThan =>
             [
-                MIPSInstruction.Create(FunctionCode.SetLessThan, RS, RT, GPRegister.AssemblerTemporary),
-                MIPSInstruction.Create(OperationCode.BranchOnNotEquals, GPRegister.AssemblerTemporary, GPRegister.Zero, (short)Immediate)
+                MipsInstruction.Create(FunctionCode.SetLessThan, RS, RT, GPRegister.AssemblerTemporary),
+                MipsInstruction.Create(OperationCode.BranchOnNotEquals, GPRegister.AssemblerTemporary, GPRegister.Zero, (short)Immediate)
             ],
             PseudoOp.LoadImmediate =>
             [
-                MIPSInstruction.Create(OperationCode.LoadUpperImmediate, RT, (short)(Immediate >> 16)),
-                MIPSInstruction.Create(OperationCode.OrImmediate, RT, RT, (short)Immediate)
+                MipsInstruction.Create(OperationCode.LoadUpperImmediate, RT, (short)(Immediate >> 16)),
+                MipsInstruction.Create(OperationCode.OrImmediate, RT, RT, (short)Immediate)
             ],
             PseudoOp.AbsoluteValue =>
             [
-                MIPSInstruction.Create(FunctionCode.AddUnsigned, RS, GPRegister.Zero, RT),
-                MIPSInstruction.Create(RegImmFuncCode.BranchOnGreaterThanOrEqualToZero, RS, 8),
-                MIPSInstruction.Create(FunctionCode.Subtract, GPRegister.Zero, RS, RT),
+                MipsInstruction.Create(FunctionCode.AddUnsigned, RS, GPRegister.Zero, RT),
+                MipsInstruction.Create(RegImmFuncCode.BranchOnGreaterThanOrEqualToZero, RS, 8),
+                MipsInstruction.Create(FunctionCode.Subtract, GPRegister.Zero, RS, RT),
             ],
             PseudoOp.Move =>
             [
-                MIPSInstruction.Create(FunctionCode.Add, RS, GPRegister.Zero, RT),
+                MipsInstruction.Create(FunctionCode.Add, RS, GPRegister.Zero, RT),
             ],
             PseudoOp.LoadAddress =>
             [
-                MIPSInstruction.Create(OperationCode.LoadUpperImmediate, RT, (short)(Immediate >> 16)),
-                MIPSInstruction.Create(OperationCode.OrImmediate, RT, RT, (short)Immediate)
+                MipsInstruction.Create(OperationCode.LoadUpperImmediate, RT, (short)(Immediate >> 16)),
+                MipsInstruction.Create(OperationCode.OrImmediate, RT, RT, (short)Immediate)
             ],
             PseudoOp.SetGreaterThanOrEqual =>
             [
-                MIPSInstruction.Create(OperationCode.AddImmediateUnsigned, RT, RT, (short)-1),
-                MIPSInstruction.Create(FunctionCode.SetLessThan, RS, RT, RD),
+                MipsInstruction.Create(OperationCode.AddImmediateUnsigned, RT, RT, (short)-1),
+                MipsInstruction.Create(FunctionCode.SetLessThan, RS, RT, RD),
             ],
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<MIPSInstruction[]>(),
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsInstruction[]>(),
         };
     }
 

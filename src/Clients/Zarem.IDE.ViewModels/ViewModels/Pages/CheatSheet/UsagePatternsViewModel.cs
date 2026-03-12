@@ -42,24 +42,24 @@ public class UsagePatternsViewModel : CheatSheetSubPageViewModel
     /// <summary>
     /// Gets an <see cref="ObservableGroupedCollection{String, InstructionMetadata}"/> of common instruction metadatas, grouped by category.
     /// </summary>
-    public ObservableGroupedCollection<string, InstructionMetadata>? CommonInstructions { get; }
+    public ObservableGroupedCollection<string, MipsInstructionMetadata>? CommonInstructions { get; }
 
     /// <summary>
     /// Gets an <see cref="ObservableGroupedCollection{String, InstructionMetadata}"/> of floating-point instruction metadatas, grouped by category.
     /// </summary>
-    public ObservableGroupedCollection<string, InstructionMetadata>? FloatInstructions { get; }
+    public ObservableGroupedCollection<string, MipsInstructionMetadata>? FloatInstructions { get; }
 
     /// <summary>
     /// Gets an <see cref="ObservableGroupedCollection{String, InstructionMetadata}"/> of coproc0 instruction metadatas, grouped by category.
     /// </summary>
-    public ObservableGroupedCollection<string, InstructionMetadata>? CoProc0Instructions { get; }
+    public ObservableGroupedCollection<string, MipsInstructionMetadata>? CoProc0Instructions { get; }
 
     /// <summary>
     /// Gets an <see cref="ObservableGroupedCollection{String, InstructionMetadata}"/> of specialized instruction metadatas, grouped by category.
     /// </summary>
-    public ObservableGroupedCollection<string, InstructionMetadata>? Specialized0Instructions { get; }
+    public ObservableGroupedCollection<string, MipsInstructionMetadata>? Specialized0Instructions { get; }
 
-    private IEnumerable<IGrouping<string, InstructionMetadata>>? LoadInstructionSet(string filename, InstructionMetadata[] instructions)
+    private IEnumerable<IGrouping<string, MipsInstructionMetadata>>? LoadInstructionSet(string filename, MipsInstructionMetadata[] instructions)
     {
         // Load groupings
         var assembly = Assembly.GetExecutingAssembly();

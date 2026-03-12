@@ -201,7 +201,7 @@ namespace Zarem.Models.Instructions;
 /// A struct representing an instruction.
 /// </summary>
 [DebuggerDisplay("{Disassembled}")]
-public struct MIPSInstruction
+public struct MipsInstruction
 {
     // Universal
     private const int OPCODE_BIT_SIZE = 6;
@@ -232,9 +232,9 @@ public struct MIPSInstruction
     /// <summary>
     /// Creates a new <see cref="InstructionType.BasicR"/> instruction.
     /// </summary>
-    public static MIPSInstruction Create(FunctionCode funcCode, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
+    public static MipsInstruction Create(FunctionCode funcCode, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
     {
-        MIPSInstruction value = default;
+        MipsInstruction value = default;
         value.OpCode = OperationCode.Special;
         value.RS = rs;
         value.RT = rt;
@@ -247,9 +247,9 @@ public struct MIPSInstruction
     /// <summary>
     /// Creates a new <see cref="InstructionType.Special2R"/> instruction.
     /// </summary>
-    public static MIPSInstruction Create(Func2Code func2Code, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
+    public static MipsInstruction Create(Func2Code func2Code, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
     {
-        MIPSInstruction value = default;
+        MipsInstruction value = default;
         value.OpCode = OperationCode.Special2;
         value.RS = rs;
         value.RT = rt;
@@ -262,9 +262,9 @@ public struct MIPSInstruction
     /// <summary>
     /// Creates a new <see cref="InstructionType.Special3R"/> instruction.
     /// </summary>
-    public static MIPSInstruction Create(Func3Code func3Code, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
+    public static MipsInstruction Create(Func3Code func3Code, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
     {
-        MIPSInstruction value = default;
+        MipsInstruction value = default;
         value.OpCode = OperationCode.Special3;
         value.RS = rs;
         value.RT = rt;
@@ -277,9 +277,9 @@ public struct MIPSInstruction
     /// <summary>
     /// Creates a new <see cref="InstructionType.BasicI"/> instruction.
     /// </summary>
-    public static MIPSInstruction Create(OperationCode opCode, GPRegister rs, GPRegister rt, short immediate)
+    public static MipsInstruction Create(OperationCode opCode, GPRegister rs, GPRegister rt, short immediate)
     {
-        MIPSInstruction value = default;
+        MipsInstruction value = default;
         value.OpCode = opCode;
         value.RS = rs;
         value.RT = rt;
@@ -290,9 +290,9 @@ public struct MIPSInstruction
     /// <summary>
     /// Creates a new <see cref="InstructionType.BasicI"/> instruction.
     /// </summary>
-    public static MIPSInstruction Create(OperationCode opCode, GPRegister rs, GPRegister rt, int offset)
+    public static MipsInstruction Create(OperationCode opCode, GPRegister rs, GPRegister rt, int offset)
     {
-        MIPSInstruction value = default;
+        MipsInstruction value = default;
         value.OpCode = opCode;
         value.RS = rs;
         value.RT = rt;
@@ -306,9 +306,9 @@ public struct MIPSInstruction
     /// <remarks>
     /// This is just for load upper immediate.
     /// </remarks>
-    public static MIPSInstruction Create(OperationCode opCode, GPRegister rt, short immediate)
+    public static MipsInstruction Create(OperationCode opCode, GPRegister rt, short immediate)
     {
-        MIPSInstruction value = default;
+        MipsInstruction value = default;
         value.OpCode = opCode;
         value.RT = rt;
         value.ImmediateValue = immediate;
@@ -318,9 +318,9 @@ public struct MIPSInstruction
     /// <summary>
     /// Creates a new <see cref="InstructionType.BasicJ"/> instruction.
     /// </summary>
-    public static MIPSInstruction Create(OperationCode opCode, uint address)
+    public static MipsInstruction Create(OperationCode opCode, uint address)
     {
-        MIPSInstruction value = default;
+        MipsInstruction value = default;
         value.OpCode = opCode;
         value.Address = address;
         return value;
@@ -329,9 +329,9 @@ public struct MIPSInstruction
     /// <summary>
     /// Creates a new <see cref="InstructionType.RegisterImmediate"/> instruction.
     /// </summary>
-    public static MIPSInstruction Create(RegImmFuncCode code, GPRegister rs, short immediate)
+    public static MipsInstruction Create(RegImmFuncCode code, GPRegister rs, short immediate)
     {
-        MIPSInstruction value = default;
+        MipsInstruction value = default;
         value.OpCode = OperationCode.RegisterImmediate;
         value.RTFuncCode = code;
         value.RS = rs;
@@ -342,9 +342,9 @@ public struct MIPSInstruction
     /// <summary>
     /// Creates a new <see cref="InstructionType.RegisterImmediateBranch"/> branch instruction.
     /// </summary>
-    public static MIPSInstruction Create(RegImmFuncCode code, GPRegister rs, int offset)
+    public static MipsInstruction Create(RegImmFuncCode code, GPRegister rs, int offset)
     {
-        MIPSInstruction value = default;
+        MipsInstruction value = default;
         value.OpCode = OperationCode.RegisterImmediate;
         value.RTFuncCode = code;
         value.RS = rs;
@@ -355,7 +355,7 @@ public struct MIPSInstruction
     /// <summary>
     /// Gets a no operation instruction.
     /// </summary>
-    public static MIPSInstruction NOP => (MIPSInstruction)0;
+    public static MipsInstruction NOP => (MipsInstruction)0;
 
     /// <summary>
     /// Gets the instruction type.
@@ -493,12 +493,12 @@ public struct MIPSInstruction
     #endif
 
     /// <summary>
-    /// Casts a <see cref="uint"/> to a <see cref="MIPSInstruction"/>.
+    /// Casts a <see cref="uint"/> to a <see cref="MipsInstruction"/>.
     /// </summary>
-    public static explicit operator MIPSInstruction(uint value) => Unsafe.As<uint, MIPSInstruction>(ref value);
+    public static explicit operator MipsInstruction(uint value) => Unsafe.As<uint, MipsInstruction>(ref value);
 
     /// <summary>
-    /// Casts a <see cref="MIPSInstruction"/> to a <see cref="uint"/>.
+    /// Casts a <see cref="MipsInstruction"/> to a <see cref="uint"/>.
     /// </summary>
-    public static explicit operator uint(MIPSInstruction value) => Unsafe.As<MIPSInstruction, uint>(ref value);
+    public static explicit operator uint(MipsInstruction value) => Unsafe.As<MipsInstruction, uint>(ref value);
 }

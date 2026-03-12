@@ -78,7 +78,7 @@ namespace Zarem.Models.Instructions;
 /// </summary>
 public struct FloatInstruction
 {
-    private MIPSInstruction _inst;
+    private MipsInstruction _inst;
     
     /// <summary>
     /// Creates a new floating-point coprocessor instruction.
@@ -191,12 +191,12 @@ public struct FloatInstruction
     public static unsafe explicit operator uint(FloatInstruction value) => Unsafe.As<FloatInstruction, uint>(ref value);
 
     /// <summary>
-    /// Casts an <see cref="MIPSInstruction"/> to a <see cref="FloatInstruction"/>.
+    /// Casts an <see cref="MipsInstruction"/> to a <see cref="FloatInstruction"/>.
     /// </summary>
-    public static unsafe implicit operator FloatInstruction(MIPSInstruction value) => Unsafe.As<MIPSInstruction, FloatInstruction>(ref value);
+    public static unsafe implicit operator FloatInstruction(MipsInstruction value) => Unsafe.As<MipsInstruction, FloatInstruction>(ref value);
 
     /// <summary>
-    /// Casts a <see cref="FloatInstruction"/> to a <see cref="MIPSInstruction"/>.
+    /// Casts a <see cref="FloatInstruction"/> to a <see cref="MipsInstruction"/>.
     /// </summary>
-    public static unsafe implicit operator MIPSInstruction(FloatInstruction value) => Unsafe.As<FloatInstruction, MIPSInstruction>(ref value);
+    public static unsafe implicit operator MipsInstruction(FloatInstruction value) => Unsafe.As<FloatInstruction, MipsInstruction>(ref value);
 }

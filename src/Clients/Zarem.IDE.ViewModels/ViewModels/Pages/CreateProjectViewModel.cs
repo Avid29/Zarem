@@ -168,12 +168,12 @@ public partial class CreateProjectViewModel : PageViewModel
             ArchitectureConfig = new MIPSArchitectureConfig()
             {
                 MipsVersion = MipsVersion,
-                AssemblerConfig = new MIPSAssemblerConfig(),
+                AssemblerConfig = new MipsAssemblerConfig(),
                 EmulatorConfig = new MIPSEmulatorConfig()
                 {
                     HostedTraps = true
                 },
-                LinkerConfig = new MIPSLinkerConfig(),
+                LinkerConfig = new MipsLinkerConfig(),
             },
             FormatConfig = formatConfig,
         };

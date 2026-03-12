@@ -18,8 +18,8 @@ public class MIPSLinkerDescriptor : ILinkerDescriptor
     public string Identifier => "MIPS";
 
     /// <inheritdoc/>
-    public Type LinkerHandlerType => typeof(MIPSLinkerHandler);
+    public Type LinkerHandlerType => typeof(MipsLinkerHandler);
 
     /// <inheritdoc/>
-    public Type ConfigType => typeof(MIPSLinkerConfig);
+    public Type ConfigType => typeof(MipsLinkerConfig);
 }

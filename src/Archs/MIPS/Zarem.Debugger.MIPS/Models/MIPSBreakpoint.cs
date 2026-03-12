@@ -8,7 +8,7 @@ namespace Zarem.Debugger.MIPS.Models;
 /// <summary>
 /// A breakpoint in a MIPS executable.
 /// </summary>
-public class MIPSBreakpoint : Breakpoint
+public class MipsBreakpoint : Breakpoint
 {
     /// <summary>
     /// Gets or sets the instruction to break in-place of.
@@ -17,7 +17,7 @@ public class MIPSBreakpoint : Breakpoint
     /// This instruction is replaced with a break instruction in the code.
     /// It must be executed after the breakpoint is hit.
     /// </remarks>
-    public MIPSInstruction OriginalInstruction { get; private set; }
+    public MipsInstruction OriginalInstruction { get; private set; }
 
     /// <inheritdoc/>
     public override bool TryDisable()

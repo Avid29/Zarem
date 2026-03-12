@@ -628,7 +628,7 @@ public class ExecutionTests
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input);
         var table = new InstructionTable(new());
-        var parser = new MIPSInstructionParser(new(), table, default, null, null);
+        var parser = new MipsInstructionParser(new(), table, default, null, null);
         var parsed = parser.Parse(tokenized);
         if (parsed is null)
             Assert.Fail();
@@ -723,7 +723,7 @@ public class ExecutionTests
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
                 Assert.AreEqual((uint)4, emulator.Computer.Processor.ProgramCounter);
-                emulator.Computer.Processor.Insert(MIPSInstruction.NOP, out _);
+                emulator.Computer.Processor.Insert(MipsInstruction.NOP, out _);
             }
 
             Assert.AreEqual(expectedPC.Value, emulator.Computer.Processor.ProgramCounter);

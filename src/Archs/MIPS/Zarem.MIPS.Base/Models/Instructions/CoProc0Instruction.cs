@@ -139,7 +139,7 @@ namespace Zarem.Models.Instructions;
 /// </summary>
 public partial struct CoProc0Instruction
 {
-    private MIPSInstruction _inst;
+    private MipsInstruction _inst;
 
     /// <summary>
     /// Creates a new <see cref="OperationCode.Coprocessor0"/> instruction.
@@ -257,12 +257,12 @@ public partial struct CoProc0Instruction
     public static unsafe explicit operator uint(CoProc0Instruction value) => Unsafe.As<CoProc0Instruction, uint>(ref value);
 
     /// <summary>
-    /// Casts an <see cref="MIPSInstruction"/> to a <see cref="CoProc0Instruction"/>.
+    /// Casts an <see cref="MipsInstruction"/> to a <see cref="CoProc0Instruction"/>.
     /// </summary>
-    public static unsafe implicit operator CoProc0Instruction(MIPSInstruction value) => Unsafe.As<MIPSInstruction, CoProc0Instruction>(ref value);
+    public static unsafe implicit operator CoProc0Instruction(MipsInstruction value) => Unsafe.As<MipsInstruction, CoProc0Instruction>(ref value);
 
     /// <summary>
-    /// Casts a <see cref="CoProc0Instruction"/> to a <see cref="MIPSInstruction"/>.
+    /// Casts a <see cref="CoProc0Instruction"/> to a <see cref="MipsInstruction"/>.
     /// </summary>
-    public static unsafe implicit operator MIPSInstruction(CoProc0Instruction value) => Unsafe.As<CoProc0Instruction, MIPSInstruction>(ref value);
+    public static unsafe implicit operator MipsInstruction(CoProc0Instruction value) => Unsafe.As<CoProc0Instruction, MipsInstruction>(ref value);
 }

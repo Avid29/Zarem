@@ -32,7 +32,7 @@ public partial class InstructionExecutor
     delegate bool TrapIDelegate(uint rs, short rt);
     delegate bool OverflowCheckDelegate(int a, int b, int r);
 
-    private MIPSInstruction Instruction { get; }
+    private MipsInstruction Instruction { get; }
 
     private MipsCpu Processor { get; }
 
@@ -48,7 +48,7 @@ public partial class InstructionExecutor
 
     private MIPSEmulatorConfig Config => Processor.Computer.Config;
 
-    private InstructionExecutor(MIPSInstruction instruction, MipsCpu processor)
+    private InstructionExecutor(MipsInstruction instruction, MipsCpu processor)
     {
         Instruction = instruction;
         Processor = processor;
@@ -61,7 +61,7 @@ public partial class InstructionExecutor
     /// <param name="processor"></param>
     /// <param name="execution"></param>
     /// <returns></returns>
-    public static MIPSTrap Execute(MIPSInstruction instruction, MipsCpu processor, out Execution execution)
+    public static MIPSTrap Execute(MipsInstruction instruction, MipsCpu processor, out Execution execution)
     {
         var context = new InstructionExecutor(instruction, processor);
         execution = context.CreateExecution();

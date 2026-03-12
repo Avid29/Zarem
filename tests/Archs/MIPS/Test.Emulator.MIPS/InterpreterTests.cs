@@ -25,13 +25,13 @@ public class InterpreterTests
         var path = TestFilePathing.GetAssemblyFilePath("emulator_tests/usercode_tests/hello_world.asm");
 
         // Run assembler, and assert successful assembly
-        var asmConfig = new MIPSAssemblerConfig();
-        var asmHandler = new MIPSAssmblerHandler(asmConfig);
+        var asmConfig = new MipsAssemblerConfig();
+        var asmHandler = new MipsAssmblerHandler(asmConfig);
         var result = await Zarembler.AssembleAsync(path, asmHandler, asmConfig);
 
         // Link
-        var linkConfig = new MIPSLinkerConfig();
-        var linkHandler = new MIPSLinkerHandler(linkConfig);
+        var linkConfig = new MipsLinkerConfig();
+        var linkHandler = new MipsLinkerHandler(linkConfig);
         var module = ZaLinker.Link(linkConfig, linkHandler, null, result.Module);
 
         // Setup emulator
