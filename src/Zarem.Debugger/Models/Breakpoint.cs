@@ -1,33 +1,33 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Models;
-
 namespace Zarem.Debugger.Models;
 
 /// <summary>
 /// A breakpoint in the code.
 /// </summary>
-public abstract class Breakpoint
+public class Breakpoint
 {
+    /// <summary>
+    /// Initiailizes a new instance of the <see cref="Breakpoint"/> class.
+    /// </summary>
+    public Breakpoint(ulong address, int swapSize)
+    {
+        Address = address;
+        Swap = new byte[swapSize];
+    }
+
     /// <summary>
     /// Gets or sets the breakpoint address.
     /// </summary>
-    public Address Address { get; }
+    public ulong Address { get; }
 
     /// <summary>
-    /// Gets or sets whether or not the breakpoint is enabled.
+    /// Gets or sets the bytes swapped out to insert the breakpoint.
     /// </summary>
-    public bool IsEnabled { get; private set; }
+    public byte[] Swap { get; internal set; }
 
     /// <summary>
-    /// Attempts to enable a breakpoint, inserting a break instruction.
+    /// Gets whether or not the breakpoint is applied.
     /// </summary>
-    /// <returns>Whether or not the breakpoint was successfuly enabled.</returns>
-    public abstract bool TryEnable();
-
-    /// <summary>
-    /// Attempts to disable a breakpoint, reverting the inserted break instruction.
-    /// </summary>
-    /// <returns>Whether or not the breakpoint was successfuly disabled.</returns>
-    public abstract bool TryDisable();
+    public bool IsApplied { get; internal set; }
 }

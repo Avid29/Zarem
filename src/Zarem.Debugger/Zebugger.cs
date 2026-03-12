@@ -1,5 +1,11 @@
 ﻿// Avishai Dernis 2026
 
+using System.Collections.Generic;
+using Zarem.Debugger.Handlers;
+using Zarem.Debugger.Models;
+using Zarem.Emulator.Events;
+using Zarem.Emulator.Machine.Interfaces;
+
 namespace Zarem.Debugger;
 
 /// <summary>
@@ -7,5 +13,171 @@ namespace Zarem.Debugger;
 /// </summary>
 public class Zebugger
 {
+    private readonly IDebugHandler _handler;
+    private readonly IComputer _computer;
+    private readonly Dictionary<ulong, Breakpoint> _breakpoints = [];
+    private Breakpoint? _restorePoint;
+    private Breakpoint? _tempPoint;
 
+    private TrapEventArgs? _trapEvent;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Zebugger"/> class.
+    /// </summary>
+    public Zebugger(IDebugHandler handler, IComputer computer)
+    {
+        _handler = handler;
+        _computer = computer;
+
+        _computer.Cpu.BreakpointHit += OnBreakpointHit;
+    }
+
+    /// <summary>
+    /// Gets the currently hit breakpoint
+    /// </summary>
+    public Breakpoint? GetCurrentBreakpoint()
+    {
+        var address = _computer.Cpu.ProgramCounter;
+        if (_breakpoints.TryGetValue(address, out var breakpoint))
+            return breakpoint;
+
+        return null;
+    }
+
+    private void OnBreakpointHit(object? sender, TrapEventArgs e)
+    {
+        _trapEvent = e;
+
+        // Restore the breakpoint if a restoration is queued
+        if (_restorePoint is not null)
+        {
+            ToggleBreakpoint(_restorePoint, true);
+            _restorePoint = null;
+        }
+
+        // Temp point is used to enqueue a restoration.
+        // Just remove the temp-point and continue
+        if (_tempPoint is not null)
+        {
+            ToggleBreakpoint(_tempPoint, false);
+            _tempPoint = null;
+        }
+    }
+
+    /// <summary>
+    /// Resumes execution.
+    /// </summary>
+    public void Resume()
+    {
+        if (_trapEvent is null)
+            return;
+
+        var current = GetCurrentBreakpoint();
+        if (current is not null)
+        {
+            // Temporarily disable the breakpoint so the CPU can execute the real instruction
+            // Mark the breakpoint for restoration
+            ToggleBreakpoint(current, false);
+            _restorePoint = current;
+
+            // If there's not already a breakpoint there, setup a temporary breakpoint at the next instruction
+            // TODO: Variable instruction sizes
+            var nextAddress = current.Address + _handler.InstructionSize;
+            if (!_breakpoints.ContainsKey(nextAddress))
+            {
+                _tempPoint = new Breakpoint(nextAddress, _handler.BreakpointBytes.Length);
+                ToggleBreakpoint(_tempPoint, true);
+            }
+
+            // Rewind the program counter and resume
+            _computer.Cpu.ProgramCounter -= (ulong)_handler.BreakpointBytes.Length;
+        }
+
+        _trapEvent.Resume();
+        _trapEvent = null;
+    }
+
+    /// <summary>
+    /// Steps into a call or "and link" instruction. Or just steps one instruction.
+    /// </summary>
+    public void StepIn()
+    {
+        if (_trapEvent is null)
+            return;
+
+        // TODO:
+    }
+
+    /// <summary>
+    /// Steps over a call or "and link" instruction to when it return. Or just steps one instruction.
+    /// </summary>
+    public void StepOver()
+    {
+        if (_trapEvent is null)
+            return;
+
+        // TODO:
+    }
+
+    /// <summary>
+    /// Steps out to the current return address.
+    /// </summary>
+    public void StepOut()
+    {
+        if (_trapEvent is null)
+            return;
+
+        // TODO:
+    }
+
+    /// <summary>
+    /// Sets a breakpoint in memory.
+    /// </summary>
+    /// <param name="address">The address to set the breakpoint</param>
+    public void SetBreakpoint(ulong address)
+    {
+        // Initialize the breakpoint
+        if (!_breakpoints.TryGetValue(address, out var bp))
+        {
+            bp = new Breakpoint(address, _handler.BreakpointBytes.Length);
+            _breakpoints.Add(address, bp);
+        }
+
+        // Enable the breakpoint
+        ToggleBreakpoint(bp, true);
+    }
+
+    /// <summary>
+    /// Removes a breakpoint from memory.
+    /// </summary>
+    /// <param name="address"></param>
+    public void RemoveBreakpoint(ulong address)
+    {
+        // Retreive the breakpoint
+        if (!_breakpoints.TryGetValue(address, out var bp))
+            return;
+
+        // Disable the breakpoint
+        ToggleBreakpoint(bp, false);
+    }
+
+    private void ToggleBreakpoint(Breakpoint bp, bool enabled)
+    {
+        if (bp.IsApplied == enabled)
+            return;
+
+        if (enabled)
+        {
+            // Enable the breakpoint
+            _computer.Memory.Virtual.Read(bp.Address, bp.Swap);
+            _computer.Memory.Virtual.Write(bp.Address, _handler.BreakpointBytes);
+        }
+        else
+        {
+            // Disable the breakpoint
+            _computer.Memory.Virtual.Write(bp.Address, bp.Swap);
+        }
+
+        bp.IsApplied = enabled;
+    }
 }
