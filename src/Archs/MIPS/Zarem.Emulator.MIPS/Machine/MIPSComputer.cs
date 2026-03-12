@@ -1,54 +1,62 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Emulator.Machine.CPU;
-using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Machine.Devices;
+using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Models;
 
 namespace Zarem.Emulator.Machine;
 
 /// <summary>
 /// A class representing a computer system in the MIPS interpreter.
 /// </summary>
-public class MIPSComputer : IComputer
+public class MipsComputer : ComputerBase
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSComputer"/> class.
+    /// Initializes a new instance of the <see cref="MipsComputer"/> class.
     /// </summary>
-    public MIPSComputer(MIPSEmulator emulator, MIPSEmulatorConfig config)
+    public MipsComputer(MIPSEmulatorConfig config)
     {
         Config = config;
-        Emulator = emulator;
 
-        Processor = new MIPSCpu(this);
-        Memory = new SystemMemory();
+        // Create the physical memory bus
+        var mapper = new MemoryMapper();
+        var bus = new PhysicalBus(mapper);
+        MapDevices(mapper);
+
+        // Initialize the components
+        Processor = new MipsCpu(config, bus);
+        Memory = new MemorySystem(bus, Processor.Tlb);
+
+        // Hook the virtual memory system into the Cpu
+        Processor.Memory = Memory;
     }
 
     /// <summary>
     /// Gets the processor of the computer system.
     /// </summary>
-    public MIPSCpu Processor { get; }
+    public MipsCpu Processor { get; }
 
-    /// <summary>
-    /// Gets the memory of the computer system.
-    /// </summary>
-    public SystemMemory Memory { get; }
+    /// <inheritdoc/>
+    public override ICpu Cpu => Processor;
 
     /// <summary>
     /// Gets the emulation configuration to follow for computing.
     /// </summary>
     public MIPSEmulatorConfig Config { get; }
 
-    /// <summary>
-    /// Gets the emulator that owns the computer.
-    /// </summary>
-    /// <remarks>
-    /// Currently used for shutdown. Is this an instance of bad coupling?
-    /// </remarks>
-    internal MIPSEmulator Emulator { get; }
+    /// <inheritdoc/>
+    public override IMemorySystem Memory { get; }
 
     /// <inheritdoc/>
-    public void Tick()
+    public override void Tick()
     {
         Processor.Step();
+    }
+
+    /// <inheritdoc/>
+    protected override void MapDevices(MemoryMapper mapper)
+    {
+        mapper.MapDevice(0x0, new RamDevice(1024 * 1024 * 1024)); // TODO: Config ram size
     }
 }

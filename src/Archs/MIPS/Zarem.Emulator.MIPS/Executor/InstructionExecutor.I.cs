@@ -58,7 +58,7 @@ public partial class InstructionExecutor
         if (checkFunc is not null &&
             checkFunc((int)RS, Instruction.ImmediateValue, (int)value))
         {
-            return CreateTrap(MIPSTrap.ArithmeticOverflow);
+            return CreateTrap(MipsTrap.ArithmeticOverflow);
         }
 
         // No overflow detected

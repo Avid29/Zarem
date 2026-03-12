@@ -9,8 +9,9 @@ using Zarem.Assembler.Tokenization;
 using Zarem.Emulator;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Executor.Enum;
-using Zarem.Emulator.Machine.CPU.Registers;
+using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
@@ -124,7 +125,7 @@ public class ExecutionTests
             }
         }
 
-        public ExecutionTestCase(string input, MIPSTrap trap) : this(input)
+        public ExecutionTestCase(string input, MipsTrap trap) : this(input)
         {
             ExpectedTrap = trap;
         }
@@ -179,7 +180,7 @@ public class ExecutionTests
 
         public string Input { get; }
 
-        public MIPSTrap ExpectedTrap { get; init; } = MIPSTrap.None;
+        public MipsTrap ExpectedTrap { get; init; } = MipsTrap.None;
 
         public (GPRegister Regiter, uint? Value)? ExpectedWriteBack { get; init; } = null;
 
@@ -261,25 +262,25 @@ public class ExecutionTests
                 // In practice, we will just take the low 32 bits of the quotient and discard the high 32 bits, and write the remainder to the high register.
 
                 // Signed (without signs)
-                yield return [new ExecutionTestCase("add $v0, $a0, $s1", MIPSTrap.ArithmeticOverflow)];             // max + 1
-                yield return [new ExecutionTestCase("addi $v0, $a0, 1", MIPSTrap.ArithmeticOverflow)];              // max + 1
-                yield return [new ExecutionTestCase("sub $v0, $a1, $s1", MIPSTrap.ArithmeticOverflow)];             // min - 1
+                yield return [new ExecutionTestCase("add $v0, $a0, $s1", MipsTrap.ArithmeticOverflow)];             // max + 1
+                yield return [new ExecutionTestCase("addi $v0, $a0, 1", MipsTrap.ArithmeticOverflow)];              // max + 1
+                yield return [new ExecutionTestCase("sub $v0, $a1, $s1", MipsTrap.ArithmeticOverflow)];             // min - 1
                 yield return [new ExecutionTestCase("mul $v0, $a0, $a0", int.MaxValue * int.MaxValue)];             // max * max
                 yield return [new ExecutionTestCase("mult $a0, $a0", (long)int.MaxValue * int.MaxValue)];           // max * max
                 yield return [new ExecutionTestCase("div $a0, $a0", ((uint)((long)int.MaxValue % int.MaxValue), (uint)((long)int.MaxValue / int.MaxValue)))];
 
                 // Signed (with signs)
-                yield return [new ExecutionTestCase("add $v0, $a1, $s5", MIPSTrap.ArithmeticOverflow)];             // min + (-1)
-                yield return [new ExecutionTestCase("addi $v0, $a1, -1", MIPSTrap.ArithmeticOverflow)];             // min + (-1)
-                yield return [new ExecutionTestCase("sub $v0, $a0, $s5", MIPSTrap.ArithmeticOverflow)];             // max - (-1)
+                yield return [new ExecutionTestCase("add $v0, $a1, $s5", MipsTrap.ArithmeticOverflow)];             // min + (-1)
+                yield return [new ExecutionTestCase("addi $v0, $a1, -1", MipsTrap.ArithmeticOverflow)];             // min + (-1)
+                yield return [new ExecutionTestCase("sub $v0, $a0, $s5", MipsTrap.ArithmeticOverflow)];             // max - (-1)
                 yield return [new ExecutionTestCase("mul $v0, $a1, $a1", (uint)(int.MinValue * int.MinValue))];     // min * min
                 yield return [new ExecutionTestCase("mult $a1, $a1", (long)int.MinValue * int.MinValue)];           // min * min
                 yield return [new ExecutionTestCase("div $a1, $a1", ((uint)((long)int.MinValue % int.MinValue), (uint)((long)int.MinValue / int.MinValue)))];
             }
 
             // Division by zero. Undefined behavior, but NOT a trap! (Shouldn't crash the emulator either)
-            yield return [new ExecutionTestCase("divu $t3, $zero", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("div $t3, $zero", MIPSTrap.None)];
+            yield return [new ExecutionTestCase("divu $t3, $zero", MipsTrap.None)];
+            yield return [new ExecutionTestCase("div $t3, $zero", MipsTrap.None)];
 
             // Multiply and Add/Subtract
             yield return [new ExecutionTestCase("maddu $t3, $t2", (0x1234, 0x5678 + (30 * 20)))];
@@ -393,34 +394,34 @@ public class ExecutionTests
         get
         {
             // Equality
-            yield return [new ExecutionTestCase("teq $t2, $t3", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("teq $t1, $t1", MIPSTrap.Trap)];
-            yield return [new ExecutionTestCase("tne $t1, $t1", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("tne $t3, $t2", MIPSTrap.Trap)];
+            yield return [new ExecutionTestCase("teq $t2, $t3", MipsTrap.None)];
+            yield return [new ExecutionTestCase("teq $t1, $t1", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase("tne $t1, $t1", MipsTrap.None)];
+            yield return [new ExecutionTestCase("tne $t3, $t2", MipsTrap.Trap)];
 
             // Unsigned
-            yield return [new ExecutionTestCase("tltu $t3, $t2", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("tltu $t2, $t3", MIPSTrap.Trap)];
-            yield return [new ExecutionTestCase("tltu $t1, $t1", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("tgeu $t2, $t3", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("tgeu $t3, $t2", MIPSTrap.Trap)];
-            yield return [new ExecutionTestCase("tgeu $t1, $t1", MIPSTrap.Trap)];
+            yield return [new ExecutionTestCase("tltu $t3, $t2", MipsTrap.None)];
+            yield return [new ExecutionTestCase("tltu $t2, $t3", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase("tltu $t1, $t1", MipsTrap.None)];
+            yield return [new ExecutionTestCase("tgeu $t2, $t3", MipsTrap.None)];
+            yield return [new ExecutionTestCase("tgeu $t3, $t2", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase("tgeu $t1, $t1", MipsTrap.Trap)];
 
             // Signed (without signs)
-            yield return [new ExecutionTestCase("tlt $t3, $t2", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("tlt $t2, $t3", MIPSTrap.Trap)];
-            yield return [new ExecutionTestCase("tlt $t1, $t1", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("tge $t2, $t3", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("tge $t3, $t2", MIPSTrap.Trap)];
-            yield return [new ExecutionTestCase("tge $t1, $t1", MIPSTrap.Trap)];
+            yield return [new ExecutionTestCase("tlt $t3, $t2", MipsTrap.None)];
+            yield return [new ExecutionTestCase("tlt $t2, $t3", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase("tlt $t1, $t1", MipsTrap.None)];
+            yield return [new ExecutionTestCase("tge $t2, $t3", MipsTrap.None)];
+            yield return [new ExecutionTestCase("tge $t3, $t2", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase("tge $t1, $t1", MipsTrap.Trap)];
 
             // Signed (with signs)
-            yield return [new ExecutionTestCase("tlt $t6, $t7", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("tlt $t7, $t6", MIPSTrap.Trap)];
-            yield return [new ExecutionTestCase("tlt $t5, $t5", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("tge $t7, $t6", MIPSTrap.None)];
-            yield return [new ExecutionTestCase("tge $t6, $t7", MIPSTrap.Trap)];
-            yield return [new ExecutionTestCase("tge $t5, $t5", MIPSTrap.Trap)];
+            yield return [new ExecutionTestCase("tlt $t6, $t7", MipsTrap.None)];
+            yield return [new ExecutionTestCase("tlt $t7, $t6", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase("tlt $t5, $t5", MipsTrap.None)];
+            yield return [new ExecutionTestCase("tge $t7, $t6", MipsTrap.None)];
+            yield return [new ExecutionTestCase("tge $t6, $t7", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase("tge $t5, $t5", MipsTrap.Trap)];
         }
     }
 
@@ -448,11 +449,11 @@ public class ExecutionTests
     {
         get
         {
-            yield return [new ExecutionTestCase("syscall", MIPSTrap.Syscall)];
-            yield return [new ExecutionTestCase("break", MIPSTrap.Breakpoint)];
+            yield return [new ExecutionTestCase("syscall", MipsTrap.Syscall)];
+            yield return [new ExecutionTestCase("break", MipsTrap.Breakpoint)];
 
             // Exception Return
-            yield return [new ExecutionTestCase("eret", MIPSTrap.ReservedInstruction)];
+            yield return [new ExecutionTestCase("eret", MipsTrap.ReservedInstruction)];
             yield return [new ExecutionTestCase("eret", SideEffect.WriteCoProc)
             {
                 Status = new StatusRegister
@@ -462,7 +463,7 @@ public class ExecutionTests
             }];
 
             // Enable Interrupts
-            yield return [new ExecutionTestCase("ei", MIPSTrap.ReservedInstruction)];
+            yield return [new ExecutionTestCase("ei", MipsTrap.ReservedInstruction)];
             yield return [new ExecutionTestCase("ei", SideEffect.WriteCoProc)
             {
                 PrivilegeMode = PrivilegeMode.Kernel
@@ -474,7 +475,7 @@ public class ExecutionTests
             }];
 
             // Disable Interrupts
-            yield return [new ExecutionTestCase("di", MIPSTrap.ReservedInstruction)];
+            yield return [new ExecutionTestCase("di", MipsTrap.ReservedInstruction)];
             yield return [new ExecutionTestCase("di", SideEffect.WriteCoProc)
             {
                 PrivilegeMode = PrivilegeMode.Kernel
@@ -628,7 +629,7 @@ public class ExecutionTests
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input);
         var table = new InstructionTable(new());
-        var parser = new MIPSInstructionParser(new(), table, default, null, null);
+        var parser = new MipsInstructionParser(new(), table, default, null, null);
         var parsed = parser.Parse(tokenized);
         if (parsed is null)
             Assert.Fail();
@@ -639,32 +640,33 @@ public class ExecutionTests
         {
             DisableBranchDelays = !branchDelay,
         };
-        var emulator = new MIPSEmulator(emulatorConfig);
+        var computer = new MipsComputer(emulatorConfig);
+        var emulator = new Zaremulator(computer);
 
         // Initialize the status register
-        emulator.Computer.Processor.CoProcessor0.StatusRegister = @case.Status;
+        computer.Processor.CoProcessor0.StatusRegister = @case.Status;
 
         // Initialize the register file with the provided values
         foreach (var (reg, value) in @case.RegisterInitialization)
-            emulator.Computer.Processor[reg] = value;
+            computer.Processor[reg] = value;
 
         foreach (var (reg, value) in @case.FPRInitialization)
         {
-            emulator.Computer.Processor.FloatProcessor[reg] = value;
+            computer.Processor.FloatProcessor[reg] = value;
         }
 
         // Initialize the high and low registers if specified in the test case
         if (@case.InitialHighLow.HasValue)
         {
-            emulator.Computer.Processor.Low = @case.InitialHighLow.Value.Low;
-            emulator.Computer.Processor.High = @case.InitialHighLow.Value.High;
+            computer.Processor.Low = @case.InitialHighLow.Value.Low;
+            computer.Processor.High = @case.InitialHighLow.Value.High;
         }
 
         // Initialize the memory, if specified in the test case
         foreach (var (address, data) in @case.MemoryInitialization)
-            emulator.Computer.Memory.Write(address, data);
+            computer.Memory.Write(address, data);
 
-        emulator.Computer.Processor.Insert(instruction, out var execution, out var trap);
+        computer.Processor.Insert(instruction, out var execution, out var trap);
 
         // Ensure that the expected trap was raised (if any)
         Assert.AreEqual(@case.ExpectedTrap, trap);
@@ -678,7 +680,7 @@ public class ExecutionTests
             var writeBackValue = writeback.Value.Value;
             if (writeBackValue.HasValue)
             {
-                Assert.AreEqual(writeBackValue.Value, emulator.Computer.Processor.RegisterFile[execution.GPR]);
+                Assert.AreEqual(writeBackValue.Value, computer.Processor.RegisterFile[execution.GPR]);
             }
         }
         else
@@ -690,15 +692,15 @@ public class ExecutionTests
         var highLow = @case.ExpectedHighLow;
         if (highLow.HasValue)
         {
-            Assert.AreEqual(highLow.Value.Low, emulator.Computer.Processor.Low);
-            Assert.AreEqual(highLow.Value.High, emulator.Computer.Processor.High);
+            Assert.AreEqual(highLow.Value.Low, computer.Processor.Low);
+            Assert.AreEqual(highLow.Value.High, computer.Processor.High);
         }
 
         var expectedMemory = @case.ExpectedMemory;
         if (expectedMemory is not null)
         {
             var buffer = new byte[expectedMemory.Value.Data.Length];
-            emulator.Computer.Memory.Read(expectedMemory.Value.Address, buffer);
+            computer.Memory.Read(expectedMemory.Value.Address, buffer);
             CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
         }
 
@@ -722,11 +724,11 @@ public class ExecutionTests
             if (branchDelay && execution.SideEffect is SideEffect.BranchProgramCounter)
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
-                Assert.AreEqual((uint)4, emulator.Computer.Processor.ProgramCounter);
-                emulator.Computer.Processor.Insert(MIPSInstruction.NOP, out _);
+                Assert.AreEqual((uint)4, computer.Processor.ProgramCounter);
+                computer.Processor.Insert(MipsInstruction.NOP, out _);
             }
 
-            Assert.AreEqual(expectedPC.Value, emulator.Computer.Processor.ProgramCounter);
+            Assert.AreEqual(expectedPC.Value, computer.Processor.ProgramCounter);
         }
     }
 }

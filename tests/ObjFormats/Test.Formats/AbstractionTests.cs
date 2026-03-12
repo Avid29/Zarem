@@ -21,7 +21,7 @@ public class AbstractionTests<TModule, TConfig>
     where TModule : IBuildModule<TModule, TConfig>
     where TConfig : FormatConfig, new()
 {
-    protected static async Task RunFileTest(string fileName, MIPSAssemblerConfig? config = null)
+    protected static async Task RunFileTest(string fileName, MipsAssemblerConfig? config = null)
     {
         // Load the file
         var path = TestFilePathing.GetAssemblyFilePath(fileName);
@@ -30,18 +30,18 @@ public class AbstractionTests<TModule, TConfig>
         await RunTest(path, config);
     }
 
-    protected static async Task RunTest(string filePath, MIPSAssemblerConfig? assemblerConfig = null, TConfig? formatConfig = null)
+    protected static async Task RunTest(string filePath, MipsAssemblerConfig? assemblerConfig = null, TConfig? formatConfig = null)
     {
         assemblerConfig ??= new();
         formatConfig ??= new();
 
-        var assemblyResult = await Zarembler.AssembleAsync(filePath, new MIPSAssmblerHandler(assemblerConfig), assemblerConfig);
+        var assemblyResult = await Zarembler.AssembleAsync(filePath, new MipsAssmblerHandler(assemblerConfig), assemblerConfig);
         Guard.IsNotNull(assemblyResult.Module);
 
         // Link
         var module = assemblyResult.Module;
-        var linkConfig = new MIPSLinkerConfig();
-        var linkHandler = new MIPSLinkerHandler(linkConfig);
+        var linkConfig = new MipsLinkerConfig();
+        var linkHandler = new MipsLinkerHandler(linkConfig);
         module = ZaLinker.Link(linkConfig, linkHandler, null, module);
         Guard.IsNotNull(module);
 

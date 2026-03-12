@@ -11,20 +11,20 @@ namespace Zarem.Disassembler.Services;
 /// <summary>
 /// An implementation of the <see cref="IDisassemblerService"/>.
 /// </summary>
-public class MIPSDisassemblerService : IDisassemblerService
+public class MipsDisassemblerService : IDisassemblerService
 {
-    private MIPSDisassembler _disassembler;
+    private MipsDisassembler _disassembler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSDisassemblerService"/> class.
+    /// Initializes a new instance of the <see cref="MipsDisassemblerService"/> class.
     /// </summary>
-    public MIPSDisassemblerService(MIPSAssemblerConfig config)
+    public MipsDisassemblerService(MipsAssemblerConfig config)
     {
-        _disassembler = new MIPSDisassembler(config);
+        _disassembler = new MipsDisassembler(config);
     }
 
     /// <inheritdoc/>
-    public string Disassemble(MIPSInstruction instruction)
+    public string Disassemble(MipsInstruction instruction)
         => _disassembler.Disassemble(instruction);
 }
 

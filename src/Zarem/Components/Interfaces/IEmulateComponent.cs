@@ -18,5 +18,5 @@ public interface IEmulateComponent : IProjectComponent
     /// <summary>
     /// Creates a new emulator.
     /// </summary>
-    IEmulator? CreateEmulator();
+    Zaremulator? CreateEmulator();
 }

@@ -28,7 +28,7 @@ public class Program()
     static async Task Main()
     {
 #if DEBUG
-        ServiceCollection.DisassemblerService = new MIPSDisassemblerService(new());
+        ServiceCollection.DisassemblerService = new MipsDisassemblerService(new());
 #endif
         var program = new Program();
         while (true)
@@ -70,8 +70,8 @@ public class Program()
     {
         var stream = new MemoryStream(Encoding.Default.GetBytes(line));
 
-        var config = new MIPSAssemblerConfig();
-        var result = await Zarembler.AssembleAsync(stream, "test", new MIPSAssmblerHandler(config), config);
+        var config = new MipsAssemblerConfig();
+        var result = await Zarembler.AssembleAsync(stream, "test", new MipsAssmblerHandler(config), config);
 
         if (!result.Failed)
         {
@@ -96,7 +96,7 @@ public class Program()
             }
 
             Console.Write("\n\nDisassembly: ");
-            var disassembly = new MIPSDisassembler(new()).Disassemble((MIPSInstruction)inst);
+            var disassembly = new MipsDisassembler(new()).Disassemble((MipsInstruction)inst);
             Console.Write(disassembly);
         }
         else

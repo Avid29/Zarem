@@ -11,26 +11,26 @@ using Zarem.Models.Tables;
 namespace Zarem.Assembler.Models;
 
 /// <summary>
-/// An instruction as parsed by the <see cref="MIPSInstructionParser"/>.
+/// An instruction as parsed by the <see cref="MipsInstructionParser"/>.
 /// </summary>
-public class MIPSParsedInstruction : IParsedInstruction
+public class MipsParsedInstruction : IParsedInstruction
 {
-    private readonly MIPSInstruction? _real;
+    private readonly MipsInstruction? _real;
     private readonly PseudoInstruction? _pseudo;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSParsedInstruction"/> class.
+    /// Initializes a new instance of the <see cref="MipsParsedInstruction"/> class.
     /// </summary>
-    public MIPSParsedInstruction(MIPSInstruction instruction, List<RelocationEntry>? references = null)
+    public MipsParsedInstruction(MipsInstruction instruction, List<RelocationEntry>? references = null)
     {
         _real = instruction;
         References = references;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSParsedInstruction"/> class.
+    /// Initializes a new instance of the <see cref="MipsParsedInstruction"/> class.
     /// </summary>
-    public MIPSParsedInstruction(PseudoInstruction instruction, List<RelocationEntry>? references = null)
+    public MipsParsedInstruction(PseudoInstruction instruction, List<RelocationEntry>? references = null)
     {
         _pseudo = instruction;
         References = references;
@@ -49,7 +49,7 @@ public class MIPSParsedInstruction : IParsedInstruction
     /// <summary>
     /// Gets the parsed instruction implemented exlcusively in real instructions.
     /// </summary>
-    public MIPSInstruction[] Realize()
+    public MipsInstruction[] Realize()
     {
         if (!IsPseduoInstruction)
             return [_real.Value];

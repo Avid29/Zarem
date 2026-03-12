@@ -22,7 +22,7 @@ namespace Zarem.IDE.Controls.CheatSheet;
 /// </summary>
 public sealed partial class UsagePatternDisplay : UserControl
 {
-    private InstructionMetadata? _metadata;
+    private MipsInstructionMetadata? _metadata;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UsagePatternDisplay"/> class.
@@ -32,7 +32,7 @@ public sealed partial class UsagePatternDisplay : UserControl
         InitializeComponent();
     }
 
-    public InstructionMetadata? Metadata
+    public MipsInstructionMetadata? Metadata
     {
         get => _metadata;
         set
@@ -65,7 +65,7 @@ public sealed partial class UsagePatternDisplay : UserControl
         UpdateBehaviorDisplay(data.Behavior, localizer);
     }
 
-    private void UpdateNameDisplay(InstructionMetadata data, ILocalizationService localizer)
+    private void UpdateNameDisplay(MipsInstructionMetadata data, ILocalizationService localizer)
     {
         // Construct a new Paragraph with the instruction name
         var block = new Paragraph();

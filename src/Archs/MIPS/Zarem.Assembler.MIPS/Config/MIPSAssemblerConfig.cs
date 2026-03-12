@@ -10,19 +10,19 @@ namespace Zarem.Assembler.Config;
 /// <summary>
 /// A class containing assembler configurations.
 /// </summary>
-public class MIPSAssemblerConfig : AssemblerConfig
+public class MipsAssemblerConfig : AssemblerConfig
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSAssemblerConfig"/> class.
+    /// Initializes a new instance of the <see cref="MipsAssemblerConfig"/> class.
     /// </summary>
-    public MIPSAssemblerConfig() : this(MipsVersion.MipsIII)
+    public MipsAssemblerConfig() : this(MipsVersion.MipsIII)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSAssemblerConfig"/> class.
+    /// Initializes a new instance of the <see cref="MipsAssemblerConfig"/> class.
     /// </summary>
-    public MIPSAssemblerConfig(MipsVersion version = MipsVersion.MipsIII)
+    public MipsAssemblerConfig(MipsVersion version = MipsVersion.MipsIII)
     {
         MipsVersion = version;
     }

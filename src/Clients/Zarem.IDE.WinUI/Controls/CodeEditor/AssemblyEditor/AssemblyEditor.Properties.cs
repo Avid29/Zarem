@@ -90,9 +90,9 @@ public partial class AssemblyEditor
     /// <summary>
     /// Gets or sets the assembler configuration to use for <see cref="RealTimeAssembly"/> checks.
     /// </summary>
-    public MIPSAssemblerConfig? AssemblerConfig
+    public MipsAssemblerConfig? AssemblerConfig
     {
-        get => (MIPSAssemblerConfig)GetValue(AssemblerConfigProperty);
+        get => (MipsAssemblerConfig)GetValue(AssemblerConfigProperty);
         set => SetValue(AssemblerConfigProperty, value);
     }
 

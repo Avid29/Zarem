@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Zarem.Elf;
 using Zarem.Emulator;
+using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.MIPS;
@@ -90,17 +91,17 @@ public sealed class DemoProjectTests
         var session = project.StartDebug(module);
         Assert.IsNotNull(session);
 
-        if (session.Emulator is not MIPSEmulator mipsEmu)
+        if (session.Emulator.Computer is not MipsComputer mipsComp)
         {
             Assert.Fail();
             return;
         }
 
-        _ = new MARSTrapHandler(mipsEmu.Computer);
+        _ = new MarsTrapHandler(mipsComp);
 
         // Setup comparision unpon completion
         var tcs = new TaskCompletionSource();
-        mipsEmu.StateChanged += (s, state) =>
+        session.Emulator.StateChanged += (s, state) =>
         {
             if (state is EmulatorState.Stopped)
                 tcs.SetResult();

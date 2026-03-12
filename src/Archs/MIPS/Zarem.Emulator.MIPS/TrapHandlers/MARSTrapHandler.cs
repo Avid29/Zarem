@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using Zarem.Emulator.Executor.Enum;
+using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Machine;
 
 namespace Zarem.Emulator.TrapHandlers;
@@ -10,13 +11,13 @@ namespace Zarem.Emulator.TrapHandlers;
 /// <summary>
 /// An interpreter mimicking the MARS syscall pattern.
 /// </summary>
-public class MARSTrapHandler : MIPSTrapHandler
+public class MarsTrapHandler : MipsTrapHandler
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MARSTrapHandler"/> class.
+    /// Initializes a new instance of the <see cref="MarsTrapHandler"/> class.
     /// </summary>
     /// <param name="computer"></param>
-    public MARSTrapHandler(MIPSComputer computer) : base(computer)
+    public MarsTrapHandler(MipsComputer computer) : base(computer)
     {
     }
 
@@ -64,12 +65,12 @@ public class MARSTrapHandler : MIPSTrapHandler
                 bytes[i] = 0; // Null terminate
 
                 // Write to memory
-                Computer.Memory.Write(A0, bytes, false);
+                Computer.Memory.Write(A0, bytes);
                 break;
 
             // Stop execution
             case 10:
-                Computer.Emulator.ShutDown();
+                Computer.RequestShutdown();
                 break;
 
             default:
@@ -81,7 +82,7 @@ public class MARSTrapHandler : MIPSTrapHandler
     }
 
     /// <inheritdoc/>
-    protected override void HandleTrap(MIPSTrap trap)
+    protected override void HandleTrap(MipsTrap trap)
     {
         throw new NotImplementedException();
     }

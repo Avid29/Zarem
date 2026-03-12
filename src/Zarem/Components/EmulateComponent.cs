@@ -4,22 +4,23 @@ using Zarem.Components.Interfaces;
 using Zarem.Descriptors;
 using Zarem.Emulator;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Components;
 
 /// <summary>
 /// A component of a <see cref="Project"/> that emulates machines.
 /// </summary>
-/// <typeparam name="TEmulator">The emulator's type.</typeparam>
+/// <typeparam name="TComputer">The type of the computer created.</typeparam>
 /// <typeparam name="TConfig">The type for the format's config.</typeparam>
-public class EmulateComponent<TEmulator, TConfig> : IEmulateComponent
-    where TEmulator : Emulator<TConfig>
+public class EmulateComponent<TComputer, TConfig> : IEmulateComponent
+    where TComputer : IComputer
     where TConfig : EmulatorConfig
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="EmulateComponent{TEmulator, TConfig}"/> class.
+    /// Initializes a new instance of the <see cref="EmulateComponent{TComputer, TConfig}"/> class.
     /// </summary>
-    public EmulateComponent(TConfig config, IEmulatorDescriptor descriptor)
+    public EmulateComponent(TConfig config, IComputerDescriptor descriptor)
     {
         Config = config;
         Descriptor = descriptor;
@@ -28,10 +29,17 @@ public class EmulateComponent<TEmulator, TConfig> : IEmulateComponent
     /// <inheritdoc/>
     public TConfig Config { get; }
 
-    private IEmulatorDescriptor Descriptor { get; }
+    private IComputerDescriptor Descriptor { get; }
 
     EmulatorConfig IEmulateComponent.Config => Config;
 
     /// <inheritdoc/>
-    public IEmulator? CreateEmulator() => Descriptor.Create(Config);
+    public Zaremulator? CreateEmulator()
+    {
+        var computer = Descriptor.Create(Config);
+        if (computer is null)
+            return null;
+
+        return new Zaremulator(computer);
+    }
 }

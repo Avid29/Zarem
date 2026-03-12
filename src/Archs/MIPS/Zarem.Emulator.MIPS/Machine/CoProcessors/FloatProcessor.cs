@@ -3,10 +3,10 @@
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Zarem.Emulator.Machine.CPU.Registers;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Machine.CPU.CoProcessors;
+namespace Zarem.Emulator.Machine.CoProcessors;
 
 /// <summary>
 /// a class representing the floating-point coprocessor unit.

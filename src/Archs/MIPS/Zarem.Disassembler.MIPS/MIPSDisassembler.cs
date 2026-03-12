@@ -16,12 +16,12 @@ namespace Zarem.Disassembler;
 /// <summary>
 /// A MIPS disassembler.
 /// </summary>
-public class MIPSDisassembler
+public class MipsDisassembler
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSDisassembler"/> class.
+    /// Initializes a new instance of the <see cref="MipsDisassembler"/> class.
     /// </summary>
-    public MIPSDisassembler(MIPSAssemblerConfig config)
+    public MipsDisassembler(MipsAssemblerConfig config)
     {
         Config = config;
         InstructionTable = new InstructionTable(config);
@@ -30,7 +30,7 @@ public class MIPSDisassembler
     /// <summary>
     /// Gets the assembler configuration to use for disassembly.
     /// </summary>
-    public MIPSAssemblerConfig Config { get; }
+    public MipsAssemblerConfig Config { get; }
 
     /// <summary>
     /// Gets the instruction table for this disassembler instance.
@@ -42,7 +42,7 @@ public class MIPSDisassembler
     /// </summary>
     /// <param name="instruction">The instruction to disassemble.</param>
     /// <returns>The instruction as a string.</returns>
-    public string Disassemble(MIPSInstruction instruction)
+    public string Disassemble(MipsInstruction instruction)
     {
         byte funcCode = instruction.Type switch
         {

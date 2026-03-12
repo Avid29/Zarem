@@ -16,7 +16,7 @@ public interface IDisassemblerService
     /// </summary>
     /// <param name="instruction">The instruction to disassemble.</param>
     /// <returns>The encoded instruction as assembly code.</returns>
-    public string Disassemble(MIPSInstruction instruction);
+    public string Disassemble(MipsInstruction instruction);
 }
 
 #endif

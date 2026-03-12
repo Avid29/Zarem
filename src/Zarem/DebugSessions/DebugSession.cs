@@ -9,7 +9,7 @@ namespace Zarem.DebugSessions;
 /// </summary>
 public class DebugSession
 {
-    internal DebugSession(IEmulator emulator)
+    internal DebugSession(Zaremulator emulator)
     {
         Emulator = emulator;
     }
@@ -17,5 +17,5 @@ public class DebugSession
     /// <summary>
     /// Gets the emulator managed by the debug session.
     /// </summary>
-    public IEmulator Emulator { get; private set; }
+    public Zaremulator Emulator { get; private set; }
 }

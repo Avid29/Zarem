@@ -33,10 +33,10 @@ public class InstructionParserTests
 {
     public sealed record InstructionParsingTestCase(
         string Input,
-        MIPSInstruction? Expected,
+        MipsInstruction? Expected,
         LogId? Code)
     {
-        public InstructionParsingTestCase(string input, MIPSInstruction expected) : this(input, expected, null)
+        public InstructionParsingTestCase(string input, MipsInstruction expected) : this(input, expected, null)
         {
         }
 
@@ -54,14 +54,14 @@ public class InstructionParserTests
     {
         get
         {
-            yield return [new InstructionParsingTestCase("nop", MIPSInstruction.NOP)];
-            yield return [new InstructionParsingTestCase("add $t0, $s0, $s1", MIPSInstruction.Create(FunctionCode.Add, GPRegister.Saved0, GPRegister.Saved1, GPRegister.Temporary0))];
-            yield return [new InstructionParsingTestCase("addi $t0, $s0, 100", MIPSInstruction.Create(OperationCode.AddImmediate, GPRegister.Saved0, GPRegister.Temporary0, (short)100))];
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, 3", MIPSInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 3))];
-            yield return [new InstructionParsingTestCase("lw $t0, 100($s0)", MIPSInstruction.Create(OperationCode.LoadWord, GPRegister.Saved0, GPRegister.Temporary0, (short)100))];
-            yield return [new InstructionParsingTestCase("sb $t0, -100($s0)", MIPSInstruction.Create(OperationCode.StoreByte, GPRegister.Saved0, GPRegister.Temporary0, (short)-100))];
-            yield return [new InstructionParsingTestCase("j 1000", MIPSInstruction.Create(OperationCode.Jump, 1000))];
-            yield return [new InstructionParsingTestCase("j 10*10", MIPSInstruction.Create(OperationCode.Jump, 10 * 10))];
+            yield return [new InstructionParsingTestCase("nop", MipsInstruction.NOP)];
+            yield return [new InstructionParsingTestCase("add $t0, $s0, $s1", MipsInstruction.Create(FunctionCode.Add, GPRegister.Saved0, GPRegister.Saved1, GPRegister.Temporary0))];
+            yield return [new InstructionParsingTestCase("addi $t0, $s0, 100", MipsInstruction.Create(OperationCode.AddImmediate, GPRegister.Saved0, GPRegister.Temporary0, (short)100))];
+            yield return [new InstructionParsingTestCase("sll $t0, $s0, 3", MipsInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 3))];
+            yield return [new InstructionParsingTestCase("lw $t0, 100($s0)", MipsInstruction.Create(OperationCode.LoadWord, GPRegister.Saved0, GPRegister.Temporary0, (short)100))];
+            yield return [new InstructionParsingTestCase("sb $t0, -100($s0)", MipsInstruction.Create(OperationCode.StoreByte, GPRegister.Saved0, GPRegister.Temporary0, (short)-100))];
+            yield return [new InstructionParsingTestCase("j 1000", MipsInstruction.Create(OperationCode.Jump, 1000))];
+            yield return [new InstructionParsingTestCase("j 10*10", MipsInstruction.Create(OperationCode.Jump, 10 * 10))];
             yield return [new InstructionParsingTestCase("di", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, GPRegister.Zero, 12))];
             yield return [new InstructionParsingTestCase("di $t1", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, GPRegister.Temporary1, 12))];
             yield return [new InstructionParsingTestCase("ei", CoProc0Instruction.Create(MFMC0FuncCode.EnableInterrupts, GPRegister.Zero, 12))];
@@ -83,9 +83,9 @@ public class InstructionParserTests
     {
         get
         {
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, 33", MIPSInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 1), LogId.IntegerTruncated)];
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, -1", MIPSInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 31), LogId.IntegerTruncated)];
-            yield return [new InstructionParsingTestCase("j 0x1", MIPSInstruction.Create(OperationCode.Jump, 0x1), LogId.IntegerTruncated)];
+            yield return [new InstructionParsingTestCase("sll $t0, $s0, 33", MipsInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 1), LogId.IntegerTruncated)];
+            yield return [new InstructionParsingTestCase("sll $t0, $s0, -1", MipsInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 31), LogId.IntegerTruncated)];
+            yield return [new InstructionParsingTestCase("j 0x1", MipsInstruction.Create(OperationCode.Jump, 0x1), LogId.IntegerTruncated)];
         }
     }
 
@@ -101,7 +101,7 @@ public class InstructionParserTests
         DynamicDataDisplayName = nameof(InstructionParsingTestCaseDisplayName),
         DynamicDataDisplayNameDeclaringType = typeof(InstructionParserTests))]
     public void RawInstructionSuccessTests(InstructionParsingTestCase @case)
-        => RunTest(@case.Input, new MIPSParsedInstruction(@case.Expected!.Value));
+        => RunTest(@case.Input, new MipsParsedInstruction(@case.Expected!.Value));
 
     [DataTestMethod]
     [DynamicData(nameof(RawInstructionFailureTestsList),
@@ -115,7 +115,7 @@ public class InstructionParserTests
         DynamicDataDisplayName = nameof(InstructionParsingTestCaseDisplayName),
         DynamicDataDisplayNameDeclaringType = typeof(InstructionParserTests))]
     public void RawInstructionWarningTests(InstructionParsingTestCase @case)
-        => RunTest(@case.Input, new MIPSParsedInstruction(@case.Expected!.Value), @case.Code);
+        => RunTest(@case.Input, new MipsParsedInstruction(@case.Expected!.Value), @case.Code);
 
     private const string LoadImmediate = "li $t0, 0x10001";
     
@@ -123,7 +123,7 @@ public class InstructionParserTests
     public void LoadImmediateTest()
     {
         PseudoInstruction expected = new(PseudoOp.LoadImmediate) { RT = GPRegister.Temporary0, Immediate = 0x10001 };
-        RunTest(LoadImmediate, new MIPSParsedInstruction(expected));
+        RunTest(LoadImmediate, new MipsParsedInstruction(expected));
     }
 
     [TestMethod("MIPS I")]
@@ -158,13 +158,13 @@ public class InstructionParserTests
 
     private void AssembleDisassembleTest(string input, MipsVersion version)
     {
-        var config = new MIPSAssemblerConfig(version);
+        var config = new MipsAssemblerConfig(version);
 #if DEBUG
-        ServiceCollection.DisassemblerService = new MIPSDisassemblerService(config);
+        ServiceCollection.DisassemblerService = new MipsDisassemblerService(config);
 #endif
 
         var table = new InstructionTable(config);
-        var parser = new MIPSInstructionParser(config, null, default, null, null);
+        var parser = new MipsInstructionParser(config, null, default, null, null);
 
         var tokenized = Tokenizer.TokenizeLine(input, nameof(RunTest));
         var actual = parser.Parse(tokenized);
@@ -180,13 +180,13 @@ public class InstructionParserTests
 #endif
     }
 
-    private static void RunTest(string input, MIPSParsedInstruction? expected = null, LogId? logCode = null)
+    private static void RunTest(string input, MipsParsedInstruction? expected = null, LogId? logCode = null)
     {
         bool succeeds = expected is not null;
 
         // Initialize parser
         var logger = new Logger();
-        var parser = new MIPSInstructionParser(new MIPSAssemblerConfig(), null, default, null, logger);
+        var parser = new MipsInstructionParser(new MipsAssemblerConfig(), null, default, null, logger);
 
         // Parse instruction
         var line = Tokenizer.TokenizeLine(input, nameof(RunTest));

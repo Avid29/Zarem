@@ -8,19 +8,19 @@ namespace Zarem.Linker.Config;
 /// <summary>
 /// A class containing linker configurations.
 /// </summary>
-public class MIPSLinkerConfig : LinkerConfig
+public class MipsLinkerConfig : LinkerConfig
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSLinkerConfig"/> class.
+    /// Initializes a new instance of the <see cref="MipsLinkerConfig"/> class.
     /// </summary>
-    public MIPSLinkerConfig() : this(MipsVersion.MipsIII)
+    public MipsLinkerConfig() : this(MipsVersion.MipsIII)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSLinkerConfig"/> class.
+    /// Initializes a new instance of the <see cref="MipsLinkerConfig"/> class.
     /// </summary>
-    public MIPSLinkerConfig(MipsVersion version = MipsVersion.MipsIII)
+    public MipsLinkerConfig(MipsVersion version = MipsVersion.MipsIII)
     {
         MipsVersion = version;
     }

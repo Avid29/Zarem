@@ -19,14 +19,14 @@ namespace Zarem.Assembler.Models;
 /// <remarks>
 /// This struct is JSON Serializable.
 /// </remarks>
-public readonly struct InstructionMetadata
+public readonly struct MipsInstructionMetadata
 {
     private static readonly MipsVersion[] AllVersions = [MipsVersion.MipsI, MipsVersion.MipsII, MipsVersion.MipsIII, MipsVersion.MipsIV, MipsVersion.MipsV, MipsVersion.MipsVI];
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionMetadata"/> struct.
+    /// Initializes a new instance of the <see cref="MipsInstructionMetadata"/> struct.
     /// </summary>
-    public InstructionMetadata(string name, OperationCode opCode, Argument[] argumentPattern, params MipsVersion[] versions)
+    public MipsInstructionMetadata(string name, OperationCode opCode, Argument[] argumentPattern, params MipsVersion[] versions)
     {
         Name = name;
         OpCode = opCode;
@@ -35,13 +35,13 @@ public readonly struct InstructionMetadata
         if (versions.Length is 0)
             versions = AllVersions;
 
-        MIPSVersions = [..versions];
+        MipsVersions = [..versions];
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionMetadata"/> struct.
+    /// Initializes a new instance of the <see cref="MipsInstructionMetadata"/> struct.
     /// </summary>
-    public InstructionMetadata(string name, FunctionCode funcCode, Argument[] argumentPattern, params MipsVersion[] versions)
+    public MipsInstructionMetadata(string name, FunctionCode funcCode, Argument[] argumentPattern, params MipsVersion[] versions)
     {
         Name = name;
         OpCode = OperationCode.Special;
@@ -51,13 +51,13 @@ public readonly struct InstructionMetadata
         if (versions.Length is 0)
             versions = AllVersions;
 
-        MIPSVersions = [..versions];
+        MipsVersions = [..versions];
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionMetadata"/> struct.
+    /// Initializes a new instance of the <see cref="MipsInstructionMetadata"/> struct.
     /// </summary>
-    public InstructionMetadata(string name, Func2Code funcCode, Argument[] argumentPattern, params MipsVersion[] versions)
+    public MipsInstructionMetadata(string name, Func2Code funcCode, Argument[] argumentPattern, params MipsVersion[] versions)
     {
         Name = name;
         OpCode = OperationCode.Special2;
@@ -67,13 +67,13 @@ public readonly struct InstructionMetadata
         if (versions.Length is 0)
             versions = AllVersions;
         
-        MIPSVersions = [..versions];
+        MipsVersions = [..versions];
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionMetadata"/> struct.
+    /// Initializes a new instance of the <see cref="MipsInstructionMetadata"/> struct.
     /// </summary>
-    public InstructionMetadata(string name, RegImmFuncCode branchCode, Argument[] argumentPattern, params MipsVersion[] versions)
+    public MipsInstructionMetadata(string name, RegImmFuncCode branchCode, Argument[] argumentPattern, params MipsVersion[] versions)
     {
         Name = name;
         OpCode = OperationCode.RegisterImmediate;
@@ -83,16 +83,16 @@ public readonly struct InstructionMetadata
         if (versions.Length is 0)
             versions = AllVersions;
         
-        MIPSVersions = [..versions];
+        MipsVersions = [..versions];
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionMetadata"/> struct.
+    /// Initializes a new instance of the <see cref="MipsInstructionMetadata"/> struct.
     /// </summary>
     /// <remarks>
     /// This is constructor is only for pseudo-instructions.
     /// </remarks>
-    public InstructionMetadata(string name, PseudoOp pseudoOp, Argument[] argumentPattern, int realizedCount, params MipsVersion[] versions)
+    public MipsInstructionMetadata(string name, PseudoOp pseudoOp, Argument[] argumentPattern, int realizedCount, params MipsVersion[] versions)
     {
         Name = name;
         PseudoOp = pseudoOp;
@@ -102,14 +102,14 @@ public readonly struct InstructionMetadata
         if (versions.Length is 0)
             versions = AllVersions;
         
-        MIPSVersions = [..versions];
+        MipsVersions = [..versions];
     }
     
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionMetadata"/> struct.
+    /// Initializes a new instance of the <see cref="MipsInstructionMetadata"/> struct.
     /// </summary>
     [JsonConstructor]
-    internal InstructionMetadata(
+    internal MipsInstructionMetadata(
         string name,
         OperationCode? opCode,
         FunctionCode? funcCode,
@@ -148,7 +148,7 @@ public readonly struct InstructionMetadata
         PseudoOp = pseudoOp;
         ArgumentPattern = argumentPattern;
         RealizedInstructionCount = realizedInstructionCount;
-        MIPSVersions = mIPSVersions;
+        MipsVersions = mIPSVersions;
         Obsolete = obsolete;
         Behavior = behavior;
     }
@@ -293,7 +293,7 @@ public readonly struct InstructionMetadata
     /// </summary>
     [JsonPropertyName("versions")]
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public HashSet<MipsVersion> MIPSVersions { get; }
+    public HashSet<MipsVersion> MipsVersions { get; }
 
     /// <summary>
     /// Gets whether or not the instruction has been marked for removal in a future version.

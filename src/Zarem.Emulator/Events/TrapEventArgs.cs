@@ -8,15 +8,14 @@ namespace Zarem.Emulator.Events;
 /// <summary>
 /// The event args for when a trap occurs in emulation.
 /// </summary>
-public class TrapOccurringEventArgs<TTrap> : EventArgs
-    where TTrap : Enum
+public class TrapEventArgs : EventArgs
 {
     private readonly ManualResetEventSlim? _resumeEvent;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TrapOccurringEventArgs{TTrap}"/> class.
+    /// Initializes a new instance of the <see cref="TrapEventArgs"/> class.
     /// </summary>
-    public TrapOccurringEventArgs(TTrap trap, bool unhandled)
+    public TrapEventArgs(ulong trap, bool unhandled)
     {
         Trap = trap;
         Unhandled = unhandled;
@@ -30,7 +29,7 @@ public class TrapOccurringEventArgs<TTrap> : EventArgs
     /// <summary>
     /// Gets the trap that occurred.
     /// </summary>
-    public TTrap Trap { get; }
+    public ulong Trap { get; }
 
     /// <summary>
     /// Gets whether or not the trap will be handled by the emulation.

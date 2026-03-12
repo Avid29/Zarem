@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Threading.Tasks;
 using Zarem.DebugSessions;
 using Zarem.Emulator;
+using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.IDE.Messages.DebugSession;
@@ -73,13 +74,13 @@ public class DebugService : IDebugService
             return;
 
         // Cheat and grab the mips emulator
-        if (_session?.Emulator is not MIPSEmulator mipsEmu)
+        if (_session.Emulator.Computer is not MipsComputer mipsComp)
             return;
 
         _consoleService.ShowConsoleWindow();
 
-        _ = new MARSTrapHandler(mipsEmu.Computer);
-        mipsEmu.StateChanged += MipsEmu_StateChanged;
+        _ = new MarsTrapHandler(mipsComp);
+        _session.Emulator.StateChanged += MipsEmu_StateChanged;
 
         _stateService.SetState(IdeState.Running);
         _messenger.Send(new DebugSessionStartedMessage());
@@ -101,10 +102,10 @@ public class DebugService : IDebugService
         var session = await _projectService.Project.StartDebugAsync(file.ObjectFile);
 
         // Cheat and grab the mips emulator
-        if (session?.Emulator is not MIPSEmulator mipsEmu)
+        if (session?.Emulator.Computer is not MipsComputer mipsComp)
             return;
 
-        var trapHandler = new MARSTrapHandler(mipsEmu.Computer);
+        var trapHandler = new MarsTrapHandler(mipsComp);
 
         session.Emulator.Start();
     }

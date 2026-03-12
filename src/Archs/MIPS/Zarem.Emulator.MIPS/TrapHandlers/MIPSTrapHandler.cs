@@ -3,7 +3,6 @@
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.CPU;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.TrapHandlers;
@@ -11,12 +10,12 @@ namespace Zarem.Emulator.TrapHandlers;
 /// <summary>
 /// An interface for an interpreter, which handles traps as the host-layer
 /// </summary>
-public abstract class MIPSTrapHandler : TrapHandlerBase
+public abstract class MipsTrapHandler : TrapHandlerBase
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSTrapHandler"/> class
+    /// Initializes a new instance of the <see cref="MipsTrapHandler"/> class
     /// </summary>
-    public MIPSTrapHandler(MIPSComputer computer)
+    public MipsTrapHandler(MipsComputer computer)
     {
         Computer = computer;
 
@@ -25,9 +24,9 @@ public abstract class MIPSTrapHandler : TrapHandlerBase
     }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="MIPSTrapHandler"/> class.
+    /// Finalizes an instance of the <see cref="MipsTrapHandler"/> class.
     /// </summary>
-    ~MIPSTrapHandler()
+    ~MipsTrapHandler()
     {
         // Unregister the trap event
         Computer.Processor.TrapOccurring -= Processor_TrapOccurring;
@@ -36,7 +35,7 @@ public abstract class MIPSTrapHandler : TrapHandlerBase
     /// <summary>
     /// Gets the computer the traps occur on.
     /// </summary>
-    protected MIPSComputer Computer { get; }
+    protected MipsComputer Computer { get; }
 
     /// <summary>
     /// Gets the value of first argument register.
@@ -71,16 +70,16 @@ public abstract class MIPSTrapHandler : TrapHandlerBase
     /// A method to direct trap handling.
     /// </summary>
     /// <param name="trap">The type of trap that occurred.</param>
-    protected abstract void HandleTrap(MIPSTrap trap);
+    protected abstract void HandleTrap(MipsTrap trap);
 
-    private void Processor_TrapOccurring(MIPSCpu sender, TrapOccurringEventArgs<MIPSTrap> e)
+    private void Processor_TrapOccurring(MipsCpu sender, TrapEventArgs e)
     {
         // The emulator is handling the trap
         // No need to interpret
         if (!e.Unhandled)
             return;
 
-        if (e.Trap is MIPSTrap.Syscall)
+        if ((MipsTrap)e.Trap is MipsTrap.Syscall)
         {
             HandleSyscall(sender.RegisterFile[GPRegister.ReturnValue0]);
         }

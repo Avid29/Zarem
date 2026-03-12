@@ -4,6 +4,8 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Threading;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Localization;
 using Zarem.Models;
@@ -11,11 +13,9 @@ using Zarem.Models;
 namespace Zarem.Emulator;
 
 /// <summary>
-/// A base class for an emulator.
+/// An emulator class that wraps an <see cref="IComputer"/> for emulation.
 /// </summary>
-/// <typeparam name="TConfig">The emulator configuration info</typeparam>
-public abstract class Emulator<TConfig> : IEmulator
-    where TConfig : EmulatorConfig
+public class Zaremulator
 {
     private readonly ManualResetEventSlim _runGate = new(false);
     private Thread? _thread;
@@ -26,17 +26,21 @@ public abstract class Emulator<TConfig> : IEmulator
     public event EventHandler<EmulatorState>? StateChanged;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Emulator{TConfig}"/> class.
+    /// Initializes a new instance of the <see cref="Zaremulator"/> class.
     /// </summary>
-    public Emulator(TConfig config)
+    public Zaremulator(IComputer computer)
     {
-        Config = config;
+        Computer = computer;
+
+        Computer.ShutdownRequested += Computer_ShutdownRequested;
     }
 
+    private void Computer_ShutdownRequested(object? sender, EventArgs e) => ShutDown();
+
     /// <summary>
-    /// Gets or sets the emulators configuration.
+    /// Gets the emulated computer info.
     /// </summary>
-    public TConfig Config { get; }
+    public IComputer Computer { get; }
 
     /// <inheritdoc/>
     public EmulatorState State
@@ -50,10 +54,15 @@ public abstract class Emulator<TConfig> : IEmulator
     } = EmulatorState.Stopped;
 
     /// <inheritdoc/>
-    public abstract void Load(Module module);
+    public void Load(Module module)
+    {
+        Computer.Load(module);
+
+        State = EmulatorState.Ready;
+    }
 
     /// <inheritdoc/>
-    public virtual void Start()
+    public void Start()
     {
         // Nothing to be done
         if (State is EmulatorState.Running)
@@ -82,7 +91,7 @@ public abstract class Emulator<TConfig> : IEmulator
     }
 
     /// <inheritdoc/>
-    public virtual void Resume()
+    public void Resume()
     {
         // Nothing to be done
         if (State is EmulatorState.Running)
@@ -96,7 +105,7 @@ public abstract class Emulator<TConfig> : IEmulator
     }
 
     /// <inheritdoc/>
-    public virtual void Pause()
+    public void Pause()
     {
         // Schedule pause
         State = EmulatorState.Pausing;
@@ -104,7 +113,7 @@ public abstract class Emulator<TConfig> : IEmulator
     }
 
     /// <inheritdoc/>
-    public virtual void ShutDown()
+    public void ShutDown()
     {
         // Schedule the shutdown
         State = EmulatorState.Stopping;
@@ -112,14 +121,9 @@ public abstract class Emulator<TConfig> : IEmulator
     }
 
     /// <summary>
-    /// Steps a tick in the processor.
-    /// </summary>
-    protected abstract void Tick();
-
-    /// <summary>
     /// The loop that progresses the emulation while running.
     /// </summary>
-    protected virtual void ExecutionLoop()
+    protected void ExecutionLoop()
     {
         try
         {
@@ -130,7 +134,7 @@ public abstract class Emulator<TConfig> : IEmulator
 
                 // Loop ticks while running
                 while (State is EmulatorState.Running)
-                    Tick();
+                    Computer.Tick();
 
                 // Complete pausing transition
                 if (State is EmulatorState.Pausing)
@@ -139,7 +143,7 @@ public abstract class Emulator<TConfig> : IEmulator
         }
         catch
         {
-            var localizer = new Localizer("Zarem.Emulator.Resources.Messages", typeof(Emulator<>).Assembly);
+            var localizer = new Localizer("Zarem.Emulator.Resources.Messages", typeof(Zaremulator).Assembly);
             Console.WriteLine(localizer["ExceptionOccurred"]);
         }
 

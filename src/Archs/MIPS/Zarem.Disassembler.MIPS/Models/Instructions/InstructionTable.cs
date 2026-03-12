@@ -18,14 +18,14 @@ public class InstructionTable : InstructionTableBase<DisassemblerLookup>
     /// <summary>
     /// Initializes a new instance of the <see cref="InstructionTable"/> class.
     /// </summary>
-    public InstructionTable(MIPSAssemblerConfig config) : base(config)
+    public InstructionTable(MipsAssemblerConfig config) : base(config)
     {
     }
 
     /// <inheritdoc/>
-    protected override void LoadInstruction(InstructionMetadata metadata)
+    protected override void LoadInstruction(MipsInstructionMetadata metadata)
     {
-        if (!metadata.MIPSVersions.Contains(Config.MipsVersion))
+        if (!metadata.MipsVersions.Contains(Config.MipsVersion))
             return;
 
         byte? funcCode = metadata.Type switch
@@ -69,7 +69,7 @@ public class InstructionTable : InstructionTableBase<DisassemblerLookup>
         LoadInstruction(key, metadata);
     }
 
-    private static byte GetRSCode(InstructionMetadata metadata)
+    private static byte GetRSCode(MipsInstructionMetadata metadata)
     {
         if (metadata.OpCode is not OperationCode.Coprocessor0)
             return 0;

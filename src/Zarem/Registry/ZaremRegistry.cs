@@ -27,7 +27,7 @@ public static class ZaremRegistry
     /// <summary>
     /// Gets the emulator registry.
     /// </summary>
-    public static DescriptorRegistry<IEmulatorDescriptor> Emulators { get; } = new();
+    public static DescriptorRegistry<IComputerDescriptor> Emulators { get; } = new();
 
     /// <summary>
     /// Gets the format registry.
@@ -41,7 +41,7 @@ public static class ZaremRegistry
     {
         Architectures.Register(descriptor);
         Assemblers.Register(descriptor.Assembler);
-        Emulators.Register(descriptor.Emulator);
+        Emulators.Register(descriptor.Computer);
         Linkers.Register(descriptor.Linker);
     }
 }

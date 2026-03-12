@@ -4,12 +4,10 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using Zarem.Assembler.Config;
-using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
-using Zarem.Config;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
@@ -18,14 +16,14 @@ namespace Zarem.Assembler.Handlers;
 /// <summary>
 /// An <see cref="IAssemblerHandler"/> for the mips architecture.
 /// </summary>
-public class MIPSAssmblerHandler : IAssemblerHandler<MIPSAssemblerConfig>
+public class MipsAssmblerHandler : IAssemblerHandler<MipsAssemblerConfig>
 {
     private readonly InstructionTable _instructionTable;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSAssmblerHandler"/> class.
+    /// Initializes a new instance of the <see cref="MipsAssmblerHandler"/> class.
     /// </summary>
-    public MIPSAssmblerHandler(MIPSAssemblerConfig config)
+    public MipsAssmblerHandler(MipsAssemblerConfig config)
     {
         _instructionTable = new(config);
         Config = config;
@@ -35,7 +33,7 @@ public class MIPSAssmblerHandler : IAssemblerHandler<MIPSAssemblerConfig>
     public string GetArchitectureName() => "MIPS";
 
     /// <inheritdoc/>
-    public MIPSAssemblerConfig Config { get; }
+    public MipsAssemblerConfig Config { get; }
 
     /// <inheritdoc/>
     public int GetInstructionSize(AssemblyLine line)
@@ -60,7 +58,7 @@ public class MIPSAssmblerHandler : IAssemblerHandler<MIPSAssemblerConfig>
     /// <inheritdoc/>
     public IParsedInstruction? ParseInstruction(AssemblyLine line, Address address, IReadOnlyDictionary<string, Symbol> symbols, ILogger? logger)
     {
-        var parser = new MIPSInstructionParser(Config, _instructionTable, address, symbols, logger);
+        var parser = new MipsInstructionParser(Config, _instructionTable, address, symbols, logger);
         return parser.Parse(line);
     }
 }

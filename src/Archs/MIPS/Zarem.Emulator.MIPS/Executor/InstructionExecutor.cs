@@ -1,13 +1,13 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Emulator.Machine.CPU;
-using Zarem.Emulator.Machine.CPU.Registers;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Registers;
 
 namespace Zarem.Emulator.Executor;
 
@@ -32,11 +32,11 @@ public partial class InstructionExecutor
     delegate bool TrapIDelegate(uint rs, short rt);
     delegate bool OverflowCheckDelegate(int a, int b, int r);
 
-    private MIPSInstruction Instruction { get; }
+    private MipsInstruction Instruction { get; }
 
-    private MIPSCpu Processor { get; }
+    private MipsCpu Processor { get; }
 
-    private MIPSTrap Trap { get; set; }
+    private MipsTrap Trap { get; set; }
 
     private uint RS => Processor[Instruction.RS];
 
@@ -46,9 +46,9 @@ public partial class InstructionExecutor
 
     private FloatInstruction FloatInstruction => (FloatInstruction)Instruction;
 
-    private MIPSEmulatorConfig Config => Processor.Computer.Config;
+    private MIPSEmulatorConfig Config => Processor.Config;
 
-    private InstructionExecutor(MIPSInstruction instruction, MIPSCpu processor)
+    private InstructionExecutor(MipsInstruction instruction, MipsCpu processor)
     {
         Instruction = instruction;
         Processor = processor;
@@ -61,7 +61,7 @@ public partial class InstructionExecutor
     /// <param name="processor"></param>
     /// <param name="execution"></param>
     /// <returns></returns>
-    public static MIPSTrap Execute(MIPSInstruction instruction, MIPSCpu processor, out Execution execution)
+    public static MipsTrap Execute(MipsInstruction instruction, MipsCpu processor, out Execution execution)
     {
         var context = new InstructionExecutor(instruction, processor);
         execution = context.CreateExecution();
@@ -91,7 +91,7 @@ public partial class InstructionExecutor
             OperationCode.Coprocessor2 => throw new NotImplementedException(),
             OperationCode.Coprocessor3 => throw new NotImplementedException(),
 
-            OperationCode.Trap => CreateTrap(MIPSTrap.Trap),
+            OperationCode.Trap => CreateTrap(MipsTrap.Trap),
             OperationCode.SIMD => throw new NotImplementedException(),
 
             >= OperationCode.LoadByte and <= OperationCode.StoreWordRight => CreateMemoryExecution(),
@@ -113,7 +113,7 @@ public partial class InstructionExecutor
         };
     }
 
-    private Execution CreateTrap(MIPSTrap trap)
+    private Execution CreateTrap(MipsTrap trap)
     {
         Trap = trap;
         return default;
