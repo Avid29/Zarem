@@ -28,7 +28,7 @@ public interface IProject
     /// <summary>
     /// Creates a debug session.
     /// </summary>
-    DebugSession? StartDebug(Module module);
+    DebugSession? StartDebug(Module module, bool attach = true);
 
     /// <summary>
     /// Creates a debug session.

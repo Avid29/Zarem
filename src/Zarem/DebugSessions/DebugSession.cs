@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.Debugger;
 using Zarem.Emulator;
 
 namespace Zarem.DebugSessions;
@@ -9,13 +10,19 @@ namespace Zarem.DebugSessions;
 /// </summary>
 public class DebugSession
 {
-    internal DebugSession(Zaremulator emulator)
+    internal DebugSession(Zaremulator emulator, Zebugger? debugger = null)
     {
         Emulator = emulator;
+        Debugger = debugger;
     }
 
     /// <summary>
     /// Gets the emulator managed by the debug session.
     /// </summary>
-    public Zaremulator Emulator { get; private set; }
+    public Zaremulator Emulator { get; }
+
+    /// <summary>
+    /// Gets the debugger attached to the emulator.
+    /// </summary>
+    public Zebugger? Debugger { get; }
 }

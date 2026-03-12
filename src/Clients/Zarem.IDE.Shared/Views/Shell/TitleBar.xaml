@@ -397,7 +397,8 @@
                 <!--  Run  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/StartDebuggingMFI"
-                    IsEnabled="False"
+                    Command="{x:Bind ViewModel.StartDebuggingCommand, Mode=OneWay}"
+                    IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}"
                     Text="Start Debugging">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartDebuggingIcon}" />
