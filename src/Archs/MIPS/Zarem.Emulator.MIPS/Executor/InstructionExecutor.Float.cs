@@ -9,7 +9,7 @@ using System.Windows.Markup;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
-using static Zarem.Emulator.Machine.CPU.CoProcessors.FloatProcessor;
+using static Zarem.Emulator.Machine.CoProcessors.FloatProcessor;
 
 namespace Zarem.Emulator.Executor;
 

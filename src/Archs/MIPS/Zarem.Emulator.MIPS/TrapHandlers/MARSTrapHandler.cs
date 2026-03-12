@@ -16,7 +16,7 @@ public class MARSTrapHandler : MIPSTrapHandler
     /// Initializes a new instance of the <see cref="MARSTrapHandler"/> class.
     /// </summary>
     /// <param name="computer"></param>
-    public MARSTrapHandler(MIPSComputer computer) : base(computer)
+    public MARSTrapHandler(MipsComputer computer) : base(computer)
     {
     }
 

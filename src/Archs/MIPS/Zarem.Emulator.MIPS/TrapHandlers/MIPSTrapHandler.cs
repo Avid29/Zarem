@@ -3,7 +3,6 @@
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.CPU;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.TrapHandlers;
@@ -16,7 +15,7 @@ public abstract class MIPSTrapHandler : TrapHandlerBase
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSTrapHandler"/> class
     /// </summary>
-    public MIPSTrapHandler(MIPSComputer computer)
+    public MIPSTrapHandler(MipsComputer computer)
     {
         Computer = computer;
 
@@ -36,7 +35,7 @@ public abstract class MIPSTrapHandler : TrapHandlerBase
     /// <summary>
     /// Gets the computer the traps occur on.
     /// </summary>
-    protected MIPSComputer Computer { get; }
+    protected MipsComputer Computer { get; }
 
     /// <summary>
     /// Gets the value of first argument register.
@@ -73,7 +72,7 @@ public abstract class MIPSTrapHandler : TrapHandlerBase
     /// <param name="trap">The type of trap that occurred.</param>
     protected abstract void HandleTrap(MIPSTrap trap);
 
-    private void Processor_TrapOccurring(MIPSCpu sender, TrapEventArgs<MIPSTrap> e)
+    private void Processor_TrapOccurring(MipsCpu sender, TrapEventArgs<MIPSTrap> e)
     {
         // The emulator is handling the trap
         // No need to interpret

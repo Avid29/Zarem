@@ -1,31 +1,42 @@
 ﻿// Avishai Dernis 2025
 
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine.CPU;
-using Zarem.Emulator.Machine.Memory;
+using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Models;
 
 namespace Zarem.Emulator.Machine;
 
 /// <summary>
 /// A class representing a computer system in the MIPS interpreter.
 /// </summary>
-public class MIPSComputer : ComputerBase
+public class MipsComputer : ComputerBase
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSComputer"/> class.
+    /// Initializes a new instance of the <see cref="MipsComputer"/> class.
     /// </summary>
-    public MIPSComputer(MIPSEmulatorConfig config)
+    public MipsComputer(MIPSEmulatorConfig config)
     {
         Config = config;
 
-        Processor = new MIPSCpu(this);
-        Memory = new SystemMemory();
+        // Create the physical memory bus
+        var mapper = new MemoryMapper();
+        var bus = new PhysicalBus(mapper);
+
+        // Initialize the components
+        Processor = new MipsCpu(bus);
+        Memory = new MemorySystem(bus, Processor.Tlb);
+
+        // Hook the virtual memory system into the Cpu
+        Processor.Memory = Memory;
     }
 
     /// <summary>
     /// Gets the processor of the computer system.
     /// </summary>
-    public MIPSCpu Processor { get; }
+    public MipsCpu Processor { get; }
+
+    /// <inheritdoc/>
+    public override ICpu Cpu => Processor;
 
     /// <summary>
     /// Gets the emulation configuration to follow for computing.
@@ -33,7 +44,16 @@ public class MIPSComputer : ComputerBase
     public MIPSEmulatorConfig Config { get; }
 
     /// <inheritdoc/>
-    public void Tick()
+    public override IMemorySystem Memory { get; }
+
+    /// <inheritdoc/>
+    public override void Load(Module module)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public override void Tick()
     {
         Processor.Step();
     }

@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Helpers;
 
-namespace Zarem.Emulator.Machine.CPU.Registers;
+namespace Zarem.Emulator.Machine.Registers;
 
 /// <summary>
 /// CoProcessor0 Status register.

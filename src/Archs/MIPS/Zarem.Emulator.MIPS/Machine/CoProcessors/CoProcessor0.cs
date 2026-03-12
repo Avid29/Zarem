@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2024
 
-using Zarem.Emulator.Machine.CPU.Registers;
 using Zarem.Emulator.Machine.Enums;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Machine.CPU.CoProcessors;
+namespace Zarem.Emulator.Machine.CoProcessors;
 
 /// <summary>
 /// A class representing the status/control coprocessor unit.

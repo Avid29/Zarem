@@ -1,13 +1,13 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Emulator.Machine.CPU;
-using Zarem.Emulator.Machine.CPU.Registers;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Registers;
 
 namespace Zarem.Emulator.Executor;
 
@@ -34,7 +34,7 @@ public partial class InstructionExecutor
 
     private MIPSInstruction Instruction { get; }
 
-    private MIPSCpu Processor { get; }
+    private MipsCpu Processor { get; }
 
     private MIPSTrap Trap { get; set; }
 
@@ -48,7 +48,7 @@ public partial class InstructionExecutor
 
     private MIPSEmulatorConfig Config => Processor.Computer.Config;
 
-    private InstructionExecutor(MIPSInstruction instruction, MIPSCpu processor)
+    private InstructionExecutor(MIPSInstruction instruction, MipsCpu processor)
     {
         Instruction = instruction;
         Processor = processor;
@@ -61,7 +61,7 @@ public partial class InstructionExecutor
     /// <param name="processor"></param>
     /// <param name="execution"></param>
     /// <returns></returns>
-    public static MIPSTrap Execute(MIPSInstruction instruction, MIPSCpu processor, out Execution execution)
+    public static MIPSTrap Execute(MIPSInstruction instruction, MipsCpu processor, out Execution execution)
     {
         var context = new InstructionExecutor(instruction, processor);
         execution = context.CreateExecution();

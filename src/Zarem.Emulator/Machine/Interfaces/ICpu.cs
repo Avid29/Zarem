@@ -17,8 +17,9 @@ public interface ICpu
     /// </summary>
     ulong ProgramCounter { get; set; }
 
-    /// <summary>
-    /// Gets the register info for the CPU.
-    /// </summary>
-    IRegisterGroup Registers { get; }
+    ///// <summary>
+    ///// Gets the register info for the CPU.
+    ///// </summary>
+    // TODO: Add debugger interface to expose register info
+    //IRegisterGroup Registers { get; }
 }

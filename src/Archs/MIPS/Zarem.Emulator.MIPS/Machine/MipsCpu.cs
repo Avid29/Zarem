@@ -2,42 +2,40 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
-using Zarem.Emulator.Machine.CPU.CoProcessors;
-using Zarem.Emulator.Machine.CPU.Registers;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Executor;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.Registers;
+using Zarem.Emulator.Machine.CoProcessors;
 
-namespace Zarem.Emulator.Machine.CPU;
+namespace Zarem.Emulator.Machine;
 
 /// <summary>
 /// A class representing a processor unit.
 /// </summary>
-public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
+public partial class MipsCpu : ICpu<MipsCpu, MIPSInstruction, MIPSTrap>
 {
     private int? _branchDelay = null;
 
     /// <inheritdoc/>
-    public event EventHandler<MIPSCpu, TrapEventArgs>? TrapOccurring;
+    public event EventHandler<MipsCpu, TrapEventArgs>? TrapOccurring;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSCpu"/> class.
+    /// Initializes a new instance of the <see cref="MipsCpu"/> class.
     /// </summary>
-    public MIPSCpu(MIPSComputer computer)
+    public MipsCpu(IMemoryAccessor memory)
     {
-        Computer = computer;
-
         RegisterFile = new(true);
         CoProcessor0 = new ();
         FloatProcessor = new();
+        Tlb = new MipsTlb();
+        Memory = memory;
     }
 
     internal RegisterFile RegisterFile { get; }
-
-    internal MIPSComputer Computer { get; }
 
     /// <summary>
     /// Gets or sets the value in the program counter register.
@@ -53,6 +51,16 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
     /// Gets the floating-point coprocessor of the computer system.
     /// </summary>
     public FloatProcessor FloatProcessor { get; }
+
+    /// <summary>
+    /// Gets the translation look-aside buffer.
+    /// </summary>
+    public MipsTlb Tlb { get; }
+
+    /// <summary>
+    /// Gets the system memory
+    /// </summary>
+    public IMemoryAccessor Memory { get; internal set; }
 
     /// <summary>
     /// Gets or sets the value of a general-purpose register on the processor.
@@ -84,8 +92,6 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
         get => ProgramCounter;
         set => ProgramCounter = (uint)value;
     }
-
-    IRegisterGroup ICpu.Registers => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public void Step()
@@ -284,7 +290,7 @@ public partial class MIPSCpu : ICpu<MIPSCpu, MIPSInstruction, MIPSTrap>
         // Breakpoints are handled by the debugger upon the trap occurring event
         // The host also handles every kind of trap if that's what the config specifies
         var hostTrap = trap is MIPSTrap.Breakpoint || Computer.Config.HostedTraps;
-        var args = new TrapOccurringEventArgs<MIPSTrap>(trap, hostTrap);
+        var args = new TrapEventArgs((ulong)trap, hostTrap);
         TrapOccurring?.Invoke(this, args);
 
         // The host handled the trap, do not emulate it
