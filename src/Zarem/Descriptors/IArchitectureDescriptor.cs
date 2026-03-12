@@ -21,4 +21,9 @@ public interface IArchitectureDescriptor : IDisplayDescriptor
     /// Gets the <see cref="IComputerDescriptor"/> for the architecture's emulated computer.
     /// </summary>
     IComputerDescriptor Computer { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IDebuggerDescriptor"/> for the architecture's emulated computer.
+    /// </summary>
+    IDebuggerDescriptor Debugger { get; }
 }

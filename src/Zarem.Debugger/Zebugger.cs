@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Collections.Generic;
 using Zarem.Debugger.Handlers;
 using Zarem.Debugger.Models;
@@ -18,8 +19,12 @@ public class Zebugger
     private readonly Dictionary<ulong, Breakpoint> _breakpoints = [];
     private Breakpoint? _restorePoint;
     private Breakpoint? _tempPoint;
-
     private TrapEventArgs? _trapEvent;
+
+    /// <summary>
+    /// An invoked when the debugger halted the execution.
+    /// </summary>
+    public event EventHandler? Halted;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Zebugger"/> class.
@@ -61,7 +66,13 @@ public class Zebugger
         {
             ToggleBreakpoint(_tempPoint, false);
             _tempPoint = null;
+
+            _trapEvent.Resume();
+            _trapEvent = null;
+            return;
         }
+
+        Halted?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>

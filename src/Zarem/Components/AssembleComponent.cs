@@ -16,16 +16,16 @@ namespace Zarem.Components;
 /// <summary>
 /// A component of a <see cref="Project"/> class for assembling assembly code.
 /// </summary>
-public class AssembleComponent<TAssemblerHandler, TConfig> : IAssembleComponent
-    where TAssemblerHandler : IAssemblerHandler<TConfig>
+public class AssembleComponent<THandler, TConfig> : IAssembleComponent
+    where THandler : IAssemblerHandler<TConfig>
     where TConfig : AssemblerConfig
 {
-    private TAssemblerHandler _handler;
+    private THandler _handler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssembleComponent{TAssembler, TConfig}"/> class.
     /// </summary>
-    public AssembleComponent(TAssemblerHandler handler, TConfig config, IAssemblerDescriptor descriptor)
+    public AssembleComponent(THandler handler, TConfig config, IAssemblerDescriptor descriptor)
     {
         _handler = handler;
         Config = config;

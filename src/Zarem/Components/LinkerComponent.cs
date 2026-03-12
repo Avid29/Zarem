@@ -13,16 +13,16 @@ namespace Zarem.Components;
 /// <summary>
 /// A component of a <see cref="Project"/> that emulates machines.
 /// </summary>
-public class LinkerComponent<TLinkerComponent, TConfig> : ILinkerComponent
-    where TLinkerComponent : ILinkerHandler<TConfig>
+public class LinkerComponent<THandler, TConfig> : ILinkerComponent
+    where THandler : ILinkerHandler<TConfig>
     where TConfig : LinkerConfig
 {
-    private readonly TLinkerComponent _handler;
+    private readonly THandler _handler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssembleComponent{TAssembler, TConfig}"/> class.
     /// </summary>
-    public LinkerComponent(TLinkerComponent handler, TConfig config, ILinkerDescriptor descriptor)
+    public LinkerComponent(THandler handler, TConfig config, ILinkerDescriptor descriptor)
     {
         _handler = handler;
         Config = config;

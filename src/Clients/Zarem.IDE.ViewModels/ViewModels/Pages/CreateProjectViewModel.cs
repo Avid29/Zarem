@@ -165,7 +165,7 @@ public partial class CreateProjectViewModel : PageViewModel
         {
             Name = ProjectName,
             ConfigPath = projectFilePath,
-            ArchitectureConfig = new MIPSArchitectureConfig()
+            ArchitectureConfig = new MipsArchitectureConfig()
             {
                 MipsVersion = MipsVersion,
                 AssemblerConfig = new MipsAssemblerConfig(),

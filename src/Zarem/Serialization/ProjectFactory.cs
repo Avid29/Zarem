@@ -39,9 +39,10 @@ public static class ProjectFactory
         var assemble = CreateHandledComponent<IAssembleComponent, AssemblerConfig>(typeof(AssembleComponent<,>), archInfo.Assembler.AssemblerHandlerType, config.ArchitectureConfig.AssemblerConfig, archInfo.Assembler);
         var linker = CreateHandledComponent<ILinkerComponent, LinkerConfig>(typeof(LinkerComponent<,>), archInfo.Linker.LinkerHandlerType, config.ArchitectureConfig.LinkerConfig, archInfo.Linker);
         var emulate = CreateComponent<IEmulateComponent, EmulatorConfig>(typeof(EmulateComponent<,>), archInfo.Computer.ComputerType, config.ArchitectureConfig.EmulatorConfig, archInfo.Computer);
+        var debug = CreateHandledComponent<IDebugComponent>(typeof(DebugComponent<>), archInfo.Debugger.DebugHandleType, archInfo.Debugger);
         var format = CreateComponent<IFormatComponent, FormatConfig>(typeof(FormatComponent<,>), formatInfo.FormatType, config.FormatConfig, formatInfo);
 
-        var project = new Project(config, assemble, emulate, linker, format);
+        var project = new Project(config, assemble, linker, emulate, debug, format);
         Guard.IsNotNull(project);
         
         return project;
@@ -68,6 +69,20 @@ public static class ProjectFactory
         // Instantiate
         var handler = Activator.CreateInstance(primaryType, config);
         var component = (T?)Activator.CreateInstance(closedType, handler, config, descripter);
+        Guard.IsNotNull(component);
+
+        return component;
+    }
+
+    private static T CreateHandledComponent<T>(Type openType, Type primaryType, object descripter)
+        where T : IProjectComponent
+    {
+        // Form a closed-type format component
+        var closedType = openType.MakeGenericType(primaryType);
+
+        // Instantiate
+        var handler = Activator.CreateInstance(primaryType);
+        var component = (T?)Activator.CreateInstance(closedType, handler, descripter);
         Guard.IsNotNull(component);
 
         return component;
