@@ -62,6 +62,8 @@ public sealed partial class TitleBar : UserControl
 
     public static bool IsNotNull(object? obj) => obj is not null;
 
+    public static Visibility VisibleIfNot(bool value) => value ? Visibility.Collapsed : Visibility.Visible;
+
     private async void WikiMFI_Click(object sender, RoutedEventArgs e)
         => await Launcher.LaunchUriAsync(new("https://github.com/Avid29/Zarem/wiki"));
 }

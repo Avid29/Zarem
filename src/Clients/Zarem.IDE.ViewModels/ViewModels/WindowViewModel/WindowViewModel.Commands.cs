@@ -168,16 +168,10 @@ public partial class WindowViewModel
     #region Debug
 
     [RelayCommand]
-    private async Task StartDebuggingAsync()
-    {
-        await _debugService.RunAsync(true);
-    }
+    private async Task StartDebuggingAsync() => await _debugService.RunAsync(true);
 
     [RelayCommand]
-    private async Task StartWithoutDebuggingAsync()
-    {
-        await _debugService.RunAsync(false);
-    }
+    private async Task StartWithoutDebuggingAsync() => await _debugService.RunAsync(false);
 
     [RelayCommand]
     private async Task StartFileWithoutDebuggingAsync()
@@ -196,10 +190,10 @@ public partial class WindowViewModel
     }
 
     [RelayCommand]
-    private async Task StopDebugging()
-    {
-        _debugService.StopDebugging();
-    }
+    private async Task DebugResume() => _debugService.Resume();
+
+    [RelayCommand]
+    private async Task StopDebugging() => _debugService.StopDebugging();
 
     #endregion
 

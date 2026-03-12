@@ -111,10 +111,19 @@ public class DebugService : IDebugService
     }
 
     /// <inheritdoc/>
+    public void Resume()
+    {
+        _session?.Debugger?.Resume();
+    }
+
+    /// <inheritdoc/>
     public void StopDebugging()
     {
         if (_session?.Emulator.State is not (EmulatorState.Stopped or EmulatorState.Stopping))
             _session?.Emulator.ShutDown();
+
+        // Resume to ensure it reaches the shutdown
+        Resume();
     }
 
     private async Task<bool> PreRunChecks(SourceFile file)

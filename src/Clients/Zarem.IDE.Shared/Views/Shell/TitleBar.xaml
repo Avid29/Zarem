@@ -399,6 +399,7 @@
                     x:Uid="/TitleBar/StartDebuggingMFI"
                     Command="{x:Bind ViewModel.StartDebuggingCommand, Mode=OneWay}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}"
+                    Visibility="{x:Bind local:TitleBar.VisibleIfNot(ViewModel.MainViewModel.StatusViewModel.IsRunning), Mode=OneWay}"
                     Text="Start Debugging">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartDebuggingIcon}" />
@@ -411,6 +412,7 @@
                     x:Uid="/TitleBar/StartWithoutDebuggingMFI"
                     Command="{x:Bind ViewModel.StartWithoutDebuggingCommand, Mode=OneWay}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}"
+                    Visibility="{x:Bind local:TitleBar.VisibleIfNot(ViewModel.MainViewModel.StatusViewModel.IsRunning), Mode=OneWay}"
                     Text="Start Without Debugging">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartWithoutDebuggingIcon}" />
@@ -418,6 +420,16 @@
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Key="F5" Modifiers="Control" />
                     </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/ResumeMFI"
+                    Command="{x:Bind ViewModel.DebugResumeCommand, Mode=OneWay}"
+                    Text="Resume"
+                    Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <ImageIcon Source="{StaticResource StartDebuggingIcon}" />
+                    </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/StopDebuggingMFI"
