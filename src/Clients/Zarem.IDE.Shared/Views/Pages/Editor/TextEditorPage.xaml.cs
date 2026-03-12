@@ -178,10 +178,16 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
             await using var stream = await file.FileItem.OpenStreamForReadAsync();
             using var reader = new StreamReader(stream);
             text = await reader.ReadToEndAsync();
+
+            if (UseAssemblyEditor && file.SourceFile is not null)
+            {
+                AssemblyEditor.RegisterBreakpointSource(file.SourceFile.Breakpoints);
+            }
         }
 
         OriginalText = text;
         ActiveCodeEditor?.ResetHistory();
+
     }
 
     private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)

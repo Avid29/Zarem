@@ -1,0 +1,61 @@
+﻿// Avishai Dernis 2026
+
+using System.Collections.Generic;
+using WinUIEditor;
+using Zarem.Models.Breakpoints;
+
+namespace Zarem.IDE.Controls;
+
+public class ScintillaBreakpointSource : IBreakpointSource
+{
+    private readonly Dictionary<BreakpointIdentity, int> _idToHandle = [];
+    private readonly Dictionary<int, BreakpointIdentity> _handleToId = [];
+    private readonly Editor _editor;
+
+    public ScintillaBreakpointSource(Editor editor, BreakpointCollection breakpoints)
+    {
+        BreakpointCollection = breakpoints;
+        _editor = editor;
+
+        BreakpointCollection.Source = null;
+
+        foreach (var bp in breakpoints.Breakpoints)
+            MarkBreakpoint(bp);
+
+        BreakpointCollection.Source = this;
+    }
+
+    public BreakpointCollection BreakpointCollection { get; }
+
+    public void SetBreakpoint(long line)
+    {
+        var bp = BreakpointCollection.Add((ulong)line);
+        MarkBreakpoint(bp);
+    }
+
+    public void RemoveBreakpoint(long line)
+    {
+        int handle = _editor.MarkerHandleFromLine(line, 0);
+        if (!_handleToId.TryGetValue(handle, out var bp))
+            return;
+
+        BreakpointCollection.Remove(bp);
+        _editor.MarkerDelete(line, 1);
+    }
+
+    public ulong? GetBreakpointLine(BreakpointIdentity id)
+    {
+        if (!_idToHandle.TryGetValue(id, out var handle))
+            return null;
+
+        // TODO: Handle when the handle does not exist
+        return (ulong)_editor.MarkerLineFromHandle(handle);
+    }
+
+    private void MarkBreakpoint(BreakpointIdentity bp)
+    {
+        int handle = _editor.MarkerAdd((long)bp.Line, 1);
+        _idToHandle[bp] = handle;
+        _handleToId[handle] = bp;
+    }
+}

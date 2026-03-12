@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using System.IO;
+using Zarem.Models.Breakpoints;
 
 namespace Zarem.Models.Files;
 
@@ -22,7 +23,13 @@ public class SourceFile : FileBase
         var saveFilePath = Path.Combine(directory, saveFileName);
 
         ObjectFile = new ObjectFile(this, saveFilePath);
+        Breakpoints = new(this);
     }
+
+    /// <summary>
+    /// Gets the breakpoints defined in the source file.
+    /// </summary>
+    public BreakpointCollection Breakpoints { get; }
 
     /// <summary>
     /// Gets the associates object file.

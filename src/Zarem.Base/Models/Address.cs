@@ -40,6 +40,20 @@ public struct Address : IComparable<Address>
     public long Offset { get; set; }
 
     /// <summary>
+    /// Gets the virtual address of the address in memory.
+    /// </summary>
+    public ulong? VirtualAddress
+    {
+        get
+        {
+            if (Section is null)
+                return null;
+
+            return (ulong)((long)Section.VirtualAddress + Offset);
+        }
+    }
+
+    /// <summary>
     /// Gets whether or not the value is relocatable.
     /// </summary>
     public readonly bool IsRelocatable => Section is not null;

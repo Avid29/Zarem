@@ -17,9 +17,8 @@ public partial class Project
         if (emulator is null)
             return null;
 
-        emulator.Load(module);
         Zebugger? debugger = attach ? Debug.AttachDebugger(emulator.Computer) : null;
-        return new DebugSession(emulator, debugger);
+        return new DebugSession(this, module, emulator, debugger);
     }
 
     /// <inheritdoc/>
@@ -33,7 +32,6 @@ public partial class Project
         if (emulator is null)
             return null;
 
-        emulator.Load(module);
-        return new DebugSession(emulator);
+        return new DebugSession(this, module, emulator);
     }
 }

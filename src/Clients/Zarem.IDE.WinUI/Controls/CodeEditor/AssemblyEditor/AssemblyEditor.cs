@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Windows.UI;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Models.Breakpoints;
 using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor;
@@ -22,6 +23,7 @@ public partial class AssemblyEditor : CodeEditor
     /// </remarks>
     private readonly Dictionary<int, SourceLocation> _locationMapper;
     private TokenizedAssembly? _tokenizedAssembly;
+    private ScintillaBreakpointSource? _breakpoints;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblyEditor"/> class.
@@ -47,6 +49,20 @@ public partial class AssemblyEditor : CodeEditor
         // Setup styling
         SetupHighlighting();
         SetupIndicators();
+    }
+
+    public void RegisterBreakpointSource(BreakpointCollection breakpoints)
+    {
+        if (!TryGetEditor(out var editor))
+            return;
+
+        _breakpoints = new ScintillaBreakpointSource(editor, breakpoints);
+    }
+
+    public void UnregisterBreakpointSource()
+    {
+        _breakpoints?.BreakpointCollection.Source = null;
+        _breakpoints = null;
     }
 
     /// <summary>
