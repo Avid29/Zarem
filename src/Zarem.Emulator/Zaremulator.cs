@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Threading;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Localization;
@@ -30,7 +31,11 @@ public class Zaremulator
     public Zaremulator(IComputer computer)
     {
         Computer = computer;
+
+        Computer.ShutdownRequested += Computer_ShutdownRequested;
     }
+
+    private void Computer_ShutdownRequested(object? sender, EventArgs e) => ShutDown();
 
     /// <summary>
     /// Gets the emulated computer info.
@@ -49,7 +54,12 @@ public class Zaremulator
     } = EmulatorState.Stopped;
 
     /// <inheritdoc/>
-    public void Load(Module module) => Computer.Load(module);
+    public void Load(Module module)
+    {
+        Computer.Load(module);
+
+        State = EmulatorState.Ready;
+    }
 
     /// <inheritdoc/>
     public void Start()

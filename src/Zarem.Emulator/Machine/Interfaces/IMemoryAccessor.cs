@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.IO;
 
 namespace Zarem.Emulator.Machine.Interfaces;
 
@@ -38,4 +39,9 @@ public interface IMemoryAccessor
     /// <param name="address">The address to write to.</param>
     /// <param name="buffer">The bytes to write to memory.</param>
     void Write(ulong address, ReadOnlySpan<byte> buffer);
+
+    /// <summary>
+    /// Gets the <see cref="IMemoryAccessor"/> as a <see cref="Stream"/>.
+    /// </summary>
+    Stream AsStream();
 }

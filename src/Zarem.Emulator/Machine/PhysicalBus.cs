@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Zarem.Emulator.Helpers;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models.Enums;
 
@@ -58,10 +59,7 @@ public class PhysicalBus : IMemoryAccessor
     }
 
     /// <inheritdoc/>
-    public Stream AsStream()
-    {
-        throw new NotImplementedException();
-    }
+    public Stream AsStream() => new BusStream(this);
 
     private static void CheckAlignment(ulong address, int size)
     {

@@ -1,6 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.IO;
+using Zarem.Emulator.Helpers;
 using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Emulator.Machine;
@@ -50,4 +52,7 @@ internal class VirtualMemorySystem : IVirtualMemoryAccessor
         ulong pAddress = _translator.Translate(address);
         _physical.Write(pAddress, buffer);
     }
+
+    /// <inheritdoc/>
+    public Stream AsStream() => new BusStream(this);
 }

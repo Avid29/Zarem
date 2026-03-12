@@ -49,12 +49,6 @@ public class MipsComputer : ComputerBase
     public override IMemorySystem Memory { get; }
 
     /// <inheritdoc/>
-    public override void Load(Module module)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    /// <inheritdoc/>
     public override void Tick()
     {
         Processor.Step();

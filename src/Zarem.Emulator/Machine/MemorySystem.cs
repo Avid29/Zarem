@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.IO;
 using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Emulator.Machine;
@@ -40,4 +41,7 @@ public class MemorySystem : IMemorySystem
     /// <inheritdoc/>
     public void Write(ulong address, ReadOnlySpan<byte> buffer)
         => Virtual.Write(address, buffer);
+
+    /// <inheritdoc/>
+    public Stream AsStream() => Virtual.AsStream();
 }

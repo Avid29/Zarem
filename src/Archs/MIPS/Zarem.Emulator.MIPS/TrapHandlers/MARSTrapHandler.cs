@@ -70,7 +70,7 @@ public class MarsTrapHandler : MipsTrapHandler
 
             // Stop execution
             case 10:
-                //Computer.ShutDown();
+                Computer.RequestShutdown();
                 break;
 
             default:

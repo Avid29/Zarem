@@ -17,6 +17,11 @@ public interface IComputer
     event EventHandler<TrapEventArgs>? TrapOccurred;
 
     /// <summary>
+    /// An event invoked when a shutdown is requested.
+    /// </summary>
+    event EventHandler? ShutdownRequested;
+
+    /// <summary>
     /// Gets an interface to the CPU state info.
     /// </summary>
     ICpu Cpu { get; }
