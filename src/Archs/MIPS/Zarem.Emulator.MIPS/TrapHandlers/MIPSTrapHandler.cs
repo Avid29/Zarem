@@ -3,6 +3,7 @@
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.TrapHandlers;
@@ -20,7 +21,7 @@ public abstract class MipsTrapHandler : TrapHandlerBase
         Computer = computer;
 
         // Register for the trap event
-        Computer.Processor.TrapOccurring += Processor_TrapOccurring;
+        Computer.Processor.TrapOccurred += OnTrap;
     }
 
     /// <summary>
@@ -29,7 +30,7 @@ public abstract class MipsTrapHandler : TrapHandlerBase
     ~MipsTrapHandler()
     {
         // Unregister the trap event
-        Computer.Processor.TrapOccurring -= Processor_TrapOccurring;
+        Computer.Processor.TrapOccurred -= OnTrap;
     }
 
     /// <summary>
@@ -72,8 +73,11 @@ public abstract class MipsTrapHandler : TrapHandlerBase
     /// <param name="trap">The type of trap that occurred.</param>
     protected abstract void HandleTrap(MipsTrap trap);
 
-    private void Processor_TrapOccurring(MipsCpu sender, TrapEventArgs e)
+    private void OnTrap(ICpu sender, TrapEventArgs e)
     {
+        if (sender is not MipsCpu cpu)
+            return;
+
         // The emulator is handling the trap
         // No need to interpret
         if (!e.Unhandled)
@@ -81,7 +85,7 @@ public abstract class MipsTrapHandler : TrapHandlerBase
 
         if ((MipsTrap)e.Trap is MipsTrap.Syscall)
         {
-            HandleSyscall(sender.RegisterFile[GPRegister.ReturnValue0]);
+            HandleSyscall(cpu.RegisterFile[GPRegister.ReturnValue0]);
         }
 
         // Resume the emulation

@@ -71,7 +71,7 @@ public sealed class DemoProjectTests
     private async Task RunAndCompare(string projectPath, string expectedOutput)
     {
         // Register plugins
-        ZaremRegistry.RegisterArchitecture(new MIPSArchitectureDescriptor());
+        ZaremRegistry.RegisterArchitecture(new MipsArchitectureDescriptor());
         ZaremRegistry.Formats.Register(new ElfModuleDescriptor());
 
         // ReDirect console output

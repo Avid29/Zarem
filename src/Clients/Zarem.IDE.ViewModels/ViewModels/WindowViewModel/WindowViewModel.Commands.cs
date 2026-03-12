@@ -168,6 +168,12 @@ public partial class WindowViewModel
     #region Debug
 
     [RelayCommand]
+    private async Task StartDebuggingAsync()
+    {
+        await _debugService.RunAsync(true);
+    }
+
+    [RelayCommand]
     private async Task StartWithoutDebuggingAsync()
     {
         await _debugService.RunAsync(false);

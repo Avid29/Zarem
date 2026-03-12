@@ -13,11 +13,6 @@ public interface ICpu<TSelf, TInstruction, TTrap> : ICpu
     where TTrap : Enum
 {
     /// <summary>
-    /// An event that is invoked when a trap occures before it is handled.
-    /// </summary>
-    event EventHandler<TSelf, TrapEventArgs>? TrapOccurring;
-
-    /// <summary>
     /// Advances the state of the emulator by one step.
     /// </summary>
     void Step();

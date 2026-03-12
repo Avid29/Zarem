@@ -45,7 +45,7 @@ public class ProjectService : IProjectService
         _stateService = stateService;
 
         // Populate
-        ZaremRegistry.RegisterArchitecture(new MIPSArchitectureDescriptor());
+        ZaremRegistry.RegisterArchitecture(new MipsArchitectureDescriptor());
         ZaremRegistry.Formats.Register(new ElfModuleDescriptor());
         //ZaremRegistry.Formats.Register(new RasmModuleDescriptor());
     }

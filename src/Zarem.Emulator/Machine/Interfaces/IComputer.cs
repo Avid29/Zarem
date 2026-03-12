@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Emulator.Events;
 using Zarem.Models;
 
 namespace Zarem.Emulator.Machine.Interfaces;
@@ -11,11 +10,6 @@ namespace Zarem.Emulator.Machine.Interfaces;
 /// </summary>
 public interface IComputer
 {
-    /// <summary>
-    /// An event invoked when a trap occurs.
-    /// </summary>
-    event EventHandler<TrapEventArgs>? TrapOccurred;
-
     /// <summary>
     /// An event invoked when a shutdown is requested.
     /// </summary>

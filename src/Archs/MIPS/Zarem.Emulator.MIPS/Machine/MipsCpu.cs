@@ -22,7 +22,10 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     private int? _branchDelay = null;
 
     /// <inheritdoc/>
-    public event EventHandler<MipsCpu, TrapEventArgs>? TrapOccurring;
+    public event EventHandler<ICpu, TrapEventArgs>? TrapOccurred;
+
+    /// <inheritdoc/>
+    public event EventHandler<TrapEventArgs>? BreakpointHit;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu"/> class.
@@ -299,7 +302,15 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
         // The host also handles every kind of trap if that's what the config specifies
         var hostTrap = trap is MipsTrap.Breakpoint || Config.HostedTraps;
         var args = new TrapEventArgs((ulong)trap, hostTrap);
-        TrapOccurring?.Invoke(this, args);
+
+        if (trap is MipsTrap.Breakpoint)
+        {
+            BreakpointHit?.Invoke(this, args);
+        }
+        else
+        {
+            TrapOccurred?.Invoke(this, args);
+        }
 
         // The host handled the trap, do not emulate it
         // Breakpoints are always handled by the host
@@ -307,7 +318,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
         {
             // Wait for the host to handle the trap before resuming execution
             // Only do this if there's actually a host register to the even though
-            if (TrapOccurring is not null)
+            if (TrapOccurred is not null)
                 args.Wait();
 
             return;

@@ -11,7 +11,7 @@ namespace Zarem.MIPS;
 /// <summary>
 /// An <see cref="IArchitectureConfig"/> for the MIPS Architecture.
 /// </summary>
-public sealed class MIPSArchitectureConfig : IArchitectureConfig
+public sealed class MipsArchitectureConfig : IArchitectureConfig
 {
     /// <summary>
     /// Gets the mips version 

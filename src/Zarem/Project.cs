@@ -16,14 +16,15 @@ public partial class Project : IProject
     /// <summary>
     /// Initialzes a new instance of the <see cref="Project"/> class.
     /// </summary>
-    internal Project(IProjectConfig config, IAssembleComponent assemble, IEmulateComponent emulate, ILinkerComponent linker, IFormatComponent format)
+    internal Project(IProjectConfig config, IAssembleComponent assemble, ILinkerComponent linker, IEmulateComponent emulate, IDebugComponent debug, IFormatComponent format)
     {
         Guard.IsNotNull(config.RootFolderPath);
 
         Config = config;
         Assemble = assemble;
-        Emulate = emulate;
         Linker = linker;
+        Emulate = emulate;
+        Debug = debug;
         Format = format;
         SourceFiles = new SourceCollection(this, config.RootFolderPath);
     }
@@ -44,14 +45,19 @@ public partial class Project : IProject
     public IAssembleComponent Assemble { get; }
 
     /// <summary>
+    /// Gets the project's linker component.
+    /// </summary>
+    public ILinkerComponent Linker { get; }
+
+    /// <summary>
     /// Gets the project's emulate component.
     /// </summary>
     public IEmulateComponent Emulate { get; }
 
     /// <summary>
-    /// Gets the project's linker component.
+    /// Gets the project's debug component.
     /// </summary>
-    public ILinkerComponent Linker { get; }
+    public IDebugComponent Debug { get; }
 
     /// <summary>
     /// Gets the project's format component.

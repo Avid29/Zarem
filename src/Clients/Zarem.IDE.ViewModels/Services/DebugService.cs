@@ -69,7 +69,7 @@ public class DebugService : IDebugService
             return;
 
         // Start a debug session
-        _session = _projectService.Project.StartDebug(buildResult.OutputModule);
+        _session = _projectService.Project.StartDebug(buildResult.OutputModule, debug);
         if (_session is null)
             return;
 

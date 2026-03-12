@@ -12,7 +12,7 @@ namespace Zarem.MIPS;
 /// An <see cref="ILinkerDescriptor"/> for the MIPS assembler.
 /// </summary>
 [ZaremPlugin]
-public class MIPSLinkerDescriptor : ILinkerDescriptor
+public class MipsLinkerDescriptor : ILinkerDescriptor
 {
     /// <inheritdoc/>
     public string Identifier => "MIPS";
