@@ -10,13 +10,14 @@ using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Machine.CoProcessors;
+using Zarem.Emulator.Config;
 
 namespace Zarem.Emulator.Machine;
 
 /// <summary>
 /// A class representing a processor unit.
 /// </summary>
-public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MIPSTrap>
+public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 {
     private int? _branchDelay = null;
 
@@ -26,8 +27,10 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MIPSTrap>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu"/> class.
     /// </summary>
-    public MipsCpu(IMemoryAccessor memory)
+    public MipsCpu(MIPSEmulatorConfig config, IMemoryAccessor memory)
     {
+        Config = config;
+
         RegisterFile = new(true);
         CoProcessor0 = new ();
         FloatProcessor = new();
@@ -56,6 +59,11 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MIPSTrap>
     /// Gets the translation look-aside buffer.
     /// </summary>
     public MipsTlb Tlb { get; }
+
+    /// <summary>
+    /// Gets the emulation config.
+    /// </summary>
+    public MIPSEmulatorConfig Config { get; }
 
     /// <summary>
     /// Gets the system memory
@@ -102,47 +110,47 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MIPSTrap>
     }
 
     /// <inheritdoc/>
-    public void Insert(MipsInstruction instruction, out MIPSTrap trap)
+    public void Insert(MipsInstruction instruction, out MipsTrap trap)
         => Insert(instruction, out _, out trap);
 
-    /// <inheritdoc cref="Insert(MipsInstruction, out MIPSTrap)"/>
-    public void Insert(MipsInstruction instruction, out Execution execution, out MIPSTrap trap)
+    /// <inheritdoc cref="Insert(MipsInstruction, out MipsTrap)"/>
+    public void Insert(MipsInstruction instruction, out Execution execution, out MipsTrap trap)
         => trap = ExecuteAndApply(instruction, out execution);
 
     /// <remarks>
     /// Immitates the fetch step in a MIPS cpu, reading an instruction from memory.
     /// </remarks>
-    private MIPSTrap Fetch(out MipsInstruction instruction)
+    private MipsTrap Fetch(out MipsInstruction instruction)
     {
         instruction = default;
 
         if (ProgramCounter % 4 is not 0)
         {
-            return MIPSTrap.AddressErrorLoad;
+            return MipsTrap.AddressErrorLoad;
         }
 
-        instruction = (MipsInstruction)Computer.Memory.Read<uint>(ProgramCounter);
-        return MIPSTrap.None;
+        instruction = (MipsInstruction)Memory.Read<uint>(ProgramCounter);
+        return MipsTrap.None;
     }
 
     /// <remarks>
     /// Wraps the last 3 stages of the instruction pipeline.
     /// This allows for executing instructions that were not fetched.
     /// </remarks>
-    private MIPSTrap ExecuteAndApply(MipsInstruction instruction, out Execution execution, MIPSTrap proceedingTrap = MIPSTrap.None)
+    private MipsTrap ExecuteAndApply(MipsInstruction instruction, out Execution execution, MipsTrap proceedingTrap = MipsTrap.None)
     {
         // Pre-define everything to avoid unset variable accusations
-        MIPSTrap trap = proceedingTrap;
+        MipsTrap trap = proceedingTrap;
         uint memRead = default;
         execution = default;
 
         // Perform the back-half of the MIPS pipeline
-        trap = trap is MIPSTrap.None ? Execute(instruction, out execution) : trap;
-        trap = trap is MIPSTrap.None ? MemAccess(execution, out memRead) : trap;
-        trap = trap is MIPSTrap.None ? WriteBack(execution, memRead) : trap;
+        trap = trap is MipsTrap.None ? Execute(instruction, out execution) : trap;
+        trap = trap is MipsTrap.None ? MemAccess(execution, out memRead) : trap;
+        trap = trap is MipsTrap.None ? WriteBack(execution, memRead) : trap;
 
         // Handle trap, if any occurred
-        if (trap is not MIPSTrap.None)
+        if (trap is not MipsTrap.None)
             HandleTrap(trap);
 
         return trap;
@@ -151,10 +159,10 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MIPSTrap>
     /// <summary>
     /// Immitates the execute step in a MIPS cpu, constructing the modifications to apply in the following stages.
     /// </summary>
-    private MIPSTrap Execute(MipsInstruction instruction, out Execution execution)
+    private MipsTrap Execute(MipsInstruction instruction, out Execution execution)
         => InstructionExecutor.Execute(instruction, this, out execution);
 
-    private MIPSTrap MemAccess(Execution execution, out uint read)
+    private MipsTrap MemAccess(Execution execution, out uint read)
     {
         read = default;
 
@@ -170,12 +178,12 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MIPSTrap>
             read = size switch
             {
                 1 => signed
-                    ? (uint)Computer.Memory.Read<sbyte>(addr)
-                    : Computer.Memory.Read<byte>(addr),
+                    ? (uint)Memory.Read<sbyte>(addr)
+                    : Memory.Read<byte>(addr),
                 2 => signed
-                    ? (uint)Computer.Memory.Read<short>(addr)
-                    : Computer.Memory.Read<ushort>(addr),
-                4 => Computer.Memory.Read<uint>(addr),
+                    ? (uint)Memory.Read<short>(addr)
+                    : Memory.Read<ushort>(addr),
+                4 => Memory.Read<uint>(addr),
                 _ => ThrowHelper.ThrowInvalidOperationException<uint>($"Invalid memory read size: {size}"),
             };
         }
@@ -184,15 +192,15 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MIPSTrap>
             switch (size)
             {
                 case 1:
-                    Computer.Memory.Write(addr, (byte)execution.WriteBack);
+                    Memory.Write(addr, (byte)execution.WriteBack);
                     break;
 
                 case 2:
-                    Computer.Memory.Write(addr, (ushort)execution.WriteBack);
+                    Memory.Write(addr, (ushort)execution.WriteBack);
                     break;
 
                 case 4:
-                    Computer.Memory.Write(addr, execution.WriteBack);
+                    Memory.Write(addr, execution.WriteBack);
                     break;
 
                 default:
@@ -200,10 +208,10 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MIPSTrap>
             }
         }
 
-        return MIPSTrap.None;
+        return MipsTrap.None;
     }
 
-    private MIPSTrap WriteBack(Execution execution, uint memRead)
+    private MipsTrap WriteBack(Execution execution, uint memRead)
     {
         var programCounter = ProgramCounter;
         if (_branchDelay.HasValue)
@@ -253,12 +261,12 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MIPSTrap>
         // Apply the program counter update
         ProgramCounter = programCounter;
 
-        return MIPSTrap.None;
+        return MipsTrap.None;
     }
 
     private void ApplyBranch(int branch, ref uint pc)
     {
-        if (Computer.Config.DisableBranchDelays)
+        if (Config.DisableBranchDelays)
         {
             // Branch delays are disabled. Just change the PC
             pc = (uint)(pc + branch);
@@ -282,14 +290,14 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MIPSTrap>
         registerSet[register] = writeback;
     }
 
-    private void HandleTrap(MIPSTrap trap)
+    private void HandleTrap(MipsTrap trap)
     {
-        if (trap is MIPSTrap.None)
+        if (trap is MipsTrap.None)
             return;
 
         // Breakpoints are handled by the debugger upon the trap occurring event
         // The host also handles every kind of trap if that's what the config specifies
-        var hostTrap = trap is MIPSTrap.Breakpoint || Computer.Config.HostedTraps;
+        var hostTrap = trap is MipsTrap.Breakpoint || Config.HostedTraps;
         var args = new TrapEventArgs((ulong)trap, hostTrap);
         TrapOccurring?.Invoke(this, args);
 

@@ -51,7 +51,7 @@
                 ImmediateValueBrush="{StaticResource ImmArg}"
                 MiscArgBrush="{StaticResource MiscArg}" />
 
-            <DataTemplate x:Key="InstructionEntryTemplate" x:DataType="data:InstructionMetadata">
+            <DataTemplate x:Key="InstructionEntryTemplate" x:DataType="data:MipsInstructionMetadata">
                 <cheat:UsagePatternDisplay
                     ArgumentBrushPalette="{StaticResource ArgumentBrushPalette}"
                     FontFamily="Cascadia Code"

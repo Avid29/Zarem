@@ -31,5 +31,5 @@ public class MIPSArchitectureDescriptor : LocalizedDescriptor<MIPSArchitectureDe
     public ILinkerDescriptor Linker => new MIPSLinkerDescriptor();
 
     /// <inheritdoc/>
-    public IEmulatorDescriptor Emulator => new MIPSEmulatorDescriptor();
+    public IComputerDescriptor Computer => new MipsComputerDescriptor();
 }

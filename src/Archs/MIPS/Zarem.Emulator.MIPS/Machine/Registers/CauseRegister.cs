@@ -30,9 +30,9 @@ public struct CauseRegister
     /// <summary>
     /// Gets or sets the trap code for the last exception.
     /// </summary>
-    public MIPSTrap ExecptionCode
+    public MipsTrap ExecptionCode
     {
-        readonly get => (MIPSTrap)UintMasking.GetShiftMask(_cause, EXCEPTION_CODE_SIZE, EXCEPTION_CODE_OFFSET);
+        readonly get => (MipsTrap)UintMasking.GetShiftMask(_cause, EXCEPTION_CODE_SIZE, EXCEPTION_CODE_OFFSET);
         set => UintMasking.SetShiftMask(ref _cause, EXCEPTION_CODE_SIZE, EXCEPTION_CODE_OFFSET, (uint)value);
     }
 

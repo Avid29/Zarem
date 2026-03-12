@@ -38,7 +38,7 @@ public static class ProjectFactory
         // Create components
         var assemble = CreateHandledComponent<IAssembleComponent, AssemblerConfig>(typeof(AssembleComponent<,>), archInfo.Assembler.AssemblerHandlerType, config.ArchitectureConfig.AssemblerConfig, archInfo.Assembler);
         var linker = CreateHandledComponent<ILinkerComponent, LinkerConfig>(typeof(LinkerComponent<,>), archInfo.Linker.LinkerHandlerType, config.ArchitectureConfig.LinkerConfig, archInfo.Linker);
-        var emulate = CreateComponent<IEmulateComponent, EmulatorConfig>(typeof(EmulateComponent<,>), archInfo.Emulator.EmulatorType, config.ArchitectureConfig.EmulatorConfig, archInfo.Emulator);
+        var emulate = CreateComponent<IEmulateComponent, EmulatorConfig>(typeof(EmulateComponent<,>), archInfo.Computer.ComputerType, config.ArchitectureConfig.EmulatorConfig, archInfo.Computer);
         var format = CreateComponent<IFormatComponent, FormatConfig>(typeof(FormatComponent<,>), formatInfo.FormatType, config.FormatConfig, formatInfo);
 
         var project = new Project(config, assemble, emulate, linker, format);

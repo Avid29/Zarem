@@ -5,7 +5,7 @@ namespace Zarem.Emulator.Executor.Enum;
 /// <summary>
 /// An enum describing the kind of trap that occurred during an <see cref="Execution"/>.
 /// </summary>
-public enum MIPSTrap
+public enum MipsTrap
 {
 
 #pragma warning disable CS1591

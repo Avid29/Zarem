@@ -47,7 +47,7 @@ public partial class InstructionExecutor
         int size = Unsafe.SizeOf<T>();
         if (size > 1 && (addr & (uint)(size - 1)) != 0)
         {
-            return CreateTrap(MIPSTrap.AddressErrorStore);
+            return CreateTrap(MipsTrap.AddressErrorStore);
         }
 
         bool signed = (-T.MultiplicativeIdentity) < T.Zero;
@@ -64,7 +64,7 @@ public partial class InstructionExecutor
         int size = Unsafe.SizeOf<T>();
         if (size > 1 && (addr & (uint)(size - 1)) != 0)
         {
-            return CreateTrap(MIPSTrap.AddressErrorStore);
+            return CreateTrap(MipsTrap.AddressErrorStore);
         }
 
         return Execution.CreateMemWrite(RT, addr, size);

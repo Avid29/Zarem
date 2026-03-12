@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-using System.IO;
 using System.Threading.Tasks;
 using Test.MIPS.Helpers;
 using Zarem.Assembler;
@@ -8,6 +7,7 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Handlers;
 using Zarem.Emulator;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Machine;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.Linker;
 using Zarem.Linker.Config;
@@ -39,12 +39,13 @@ public class InterpreterTests
         {
             HostedTraps = true
         };
-        var emulator = new MIPSEmulator(emulatorConfig);
+        var computer = new MipsComputer(emulatorConfig);
+        var emulator = new Zaremulator(computer);
 
         emulator.Load(module);
 
         // Setup interpreter
-        var interpreter = new MARSTrapHandler(emulator.Computer);
+        var interpreter = new MarsTrapHandler(computer);
 
         // Start the emulator
         emulator.Start();

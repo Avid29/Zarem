@@ -25,7 +25,7 @@ public class Zaremulator
     public event EventHandler<EmulatorState>? StateChanged;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Emulator{TConfig}"/> class.
+    /// Initializes a new instance of the <see cref="Zaremulator"/> class.
     /// </summary>
     public Zaremulator(IComputer computer)
     {

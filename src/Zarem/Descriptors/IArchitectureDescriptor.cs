@@ -13,12 +13,12 @@ public interface IArchitectureDescriptor : IDisplayDescriptor
     IAssemblerDescriptor Assembler { get; }
 
     /// <summary>
-    /// Gets the <see cref="ILinkerDescriptor"/> for the architecture's assembler.
+    /// Gets the <see cref="ILinkerDescriptor"/> for the architecture's linker.
     /// </summary>
     ILinkerDescriptor Linker { get; }
 
     /// <summary>
-    /// Gets the <see cref="IEmulatorDescriptor"/> for the architecture's emulator.
+    /// Gets the <see cref="IComputerDescriptor"/> for the architecture's emulated computer.
     /// </summary>
-    IEmulatorDescriptor Emulator { get; }
+    IComputerDescriptor Computer { get; }
 }

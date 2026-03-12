@@ -23,7 +23,7 @@ public class MipsComputer : ComputerBase
         var bus = new PhysicalBus(mapper);
 
         // Initialize the components
-        Processor = new MipsCpu(bus);
+        Processor = new MipsCpu(config, bus);
         Memory = new MemorySystem(bus, Processor.Tlb);
 
         // Hook the virtual memory system into the Cpu

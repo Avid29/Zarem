@@ -2,6 +2,7 @@
 
 using System;
 using System.Buffers.Binary;
+using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -37,14 +38,8 @@ public class PhysicalBus : IMemoryAccessor
         int size = Unsafe.SizeOf<T>();
         CheckAlignment(address, size);
 
-        var device = _mapper.Resolve(address, out var baseAddress);
-        ulong offset = address - baseAddress;
-
-        if (offset + (ulong)size > device.BusRangeSize)
-            throw new Exception("Cross-device multi-byte read is not supported.");
-
         Span<byte> buffer = stackalloc byte[size];
-        device.Read(offset, buffer);
+        Read(address, buffer);
 
         return ReadEndianness<T>(buffer);
     }
@@ -56,13 +51,10 @@ public class PhysicalBus : IMemoryAccessor
         int size = Unsafe.SizeOf<T>();
         CheckAlignment(address, size);
 
-        var device = _mapper.Resolve(address, out var baseAddress);
-        ulong offset = address - baseAddress;
-
         Span<byte> buffer = stackalloc byte[size];
         WriteEndianness(buffer, value);
 
-        device.Write(offset, buffer);
+        Write(address, buffer);
     }
 
     /// <inheritdoc/>
@@ -148,5 +140,26 @@ public class PhysicalBus : IMemoryAccessor
                 }
                 break;
         };
+    }
+
+    /// <inheritdoc/>
+    public void Read(ulong address, Span<byte> buffer)
+    {
+        var device = _mapper.Resolve(address, out var baseAddress);
+        ulong offset = address - baseAddress;
+
+        if (offset + (ulong)buffer.Length > device.BusRangeSize)
+            throw new Exception("Cross-device multi-byte read is not supported.");
+
+        device.Read(offset, buffer);
+    }
+
+    /// <inheritdoc/>
+    public void Write(ulong address, ReadOnlySpan<byte> buffer)
+    {
+        var device = _mapper.Resolve(address, out var baseAddress);
+        ulong offset = address - baseAddress;
+
+        device.Write(offset, buffer);
     }
 }

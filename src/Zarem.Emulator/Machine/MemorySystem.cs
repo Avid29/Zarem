@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Emulator.Machine;
@@ -27,8 +28,16 @@ public class MemorySystem : IMemorySystem
     /// <inheritdoc/>
     public T Read<T>(ulong address) where T : unmanaged
         => Virtual.Read<T>(address);
-       
+
+    /// <inheritdoc/>
+    public void Read(ulong address, Span<byte> buffer)
+        => Virtual.Read(address, buffer);
+
     /// <inheritdoc/>
     public void Write<T>(ulong address, T value) where T : unmanaged
         => Virtual.Write(address, value);
+
+    /// <inheritdoc/>
+    public void Write(ulong address, ReadOnlySpan<byte> buffer)
+        => Virtual.Write(address, buffer);
 }

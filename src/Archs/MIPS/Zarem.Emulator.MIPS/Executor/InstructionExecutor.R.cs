@@ -63,8 +63,8 @@ public partial class InstructionExecutor
                 FunctionCode.JumpAndLinkRegister => JumpR(Instruction.RD),
 
                 // System
-                FunctionCode.SystemCall => CreateTrap(MIPSTrap.Syscall),
-                FunctionCode.Break => CreateTrap(MIPSTrap.Breakpoint),
+                FunctionCode.SystemCall => CreateTrap(MipsTrap.Syscall),
+                FunctionCode.Break => CreateTrap(MipsTrap.Breakpoint),
                 FunctionCode.Sync => throw new NotImplementedException(),
 
                 FunctionCode.MoveFromHigh => Execution.CreateWriteback(Instruction.RD, Processor.High),
@@ -134,7 +134,7 @@ public partial class InstructionExecutor
         if (checkFunc is not null &&
             checkFunc((int)RS, (int)RT, (int)value))
         {
-            Trap = MIPSTrap.ArithmeticOverflow;
+            Trap = MipsTrap.ArithmeticOverflow;
             return default;
         }
 
@@ -163,7 +163,7 @@ public partial class InstructionExecutor
     }
 
     private Execution TrapR(BranchDelegate func)
-        => func(RS, RT) ? CreateTrap(MIPSTrap.Trap) : default;
+        => func(RS, RT) ? CreateTrap(MipsTrap.Trap) : default;
 
     private Execution JumpR(GPRegister? link = null)
     {
