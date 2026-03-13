@@ -624,7 +624,7 @@ public class ExecutionTests
     [DynamicData(nameof(FloatRoundInstructionTestsList))]
     public void FloatRoundInstructionTests(ExecutionTestCase @case) => RunTest(@case);
 
-    private static void RunTest(ExecutionTestCase @case, bool branchDelay = true)
+    private static void RunTest(ExecutionTestCase @case, bool delaysSlots = true)
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input);
@@ -638,7 +638,7 @@ public class ExecutionTests
         var instruction = parsed.Realize()[0];
         var emulatorConfig = new MIPSEmulatorConfig()
         {
-            DisableBranchDelays = !branchDelay,
+            DisableDelaySlots = !delaysSlots,
         };
         var computer = new MipsComputer(emulatorConfig);
         var emulator = new Zaremulator(computer);
@@ -721,7 +721,7 @@ public class ExecutionTests
         var expectedPC = @case.ExpectedPC;
         if (expectedPC is not null)
         {
-            if (branchDelay && execution.SideEffect is SideEffect.BranchProgramCounter)
+            if (delaysSlots && execution.SideEffect is SideEffect.ProgramCounter)
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
                 Assert.AreEqual((uint)4, computer.Processor.ProgramCounter);
