@@ -14,8 +14,8 @@ public readonly struct SourceLocation
     {
         File = file;
         Index = 0;
-        Line = 1;
-        Column = 1;
+        Line = 0;
+        Column = 0;
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public readonly struct SourceLocation
             File = File,
             Index = Index + incSize,
             Line = Line + 1,
-            Column = 1,
+            Column = 0,
         };
 
     /// <summary>

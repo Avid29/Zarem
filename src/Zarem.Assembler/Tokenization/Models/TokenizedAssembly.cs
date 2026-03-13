@@ -24,7 +24,7 @@ public class TokenizedAssembly
     /// <returns>The line's token list as a span.</returns>
     public AssemblyLine this[int line]
     {
-        get => _tokenLines[line - 1];
+        get => _tokenLines[line];
     }
 
     /// <summary>

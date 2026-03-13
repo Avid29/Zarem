@@ -84,7 +84,7 @@ public partial class AssemblyEditor : CodeEditor
             return;
 
         // Go to position, and focus the keyboard
-        editor.EnsureVisible(location.Line - 1);
+        editor.EnsureVisible(location.Line);
         editor.GotoPos(mappedLocation.Index);
         ChildEditor?.Focus(FocusState.Keyboard);
     }
@@ -96,7 +96,7 @@ public partial class AssemblyEditor : CodeEditor
         {
             EditorOperation.ToggleBreakpoint => () =>
             {
-                ToggleBreakpoint(Line - 1);
+                ToggleBreakpoint(Line);
             },
             EditorOperation.ClearBreakpoints => () =>
             {

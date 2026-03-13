@@ -82,7 +82,7 @@ public partial class AssemblyEditor
         if (ExecutingLine.HasValue)
         {
             // Get line range info
-            var line = (long)(ExecutingLine.Value - 1);
+            var line = (long)ExecutingLine.Value;
 
             // Set new marker
             _executionLineHandle = editor.MarkerAdd(line, ExecutionPointIndex);
@@ -94,7 +94,7 @@ public partial class AssemblyEditor
             // Adjust line position to only highlight tokens
             if (_tokenizedAssembly is not null)
             {
-                var asmLine = _tokenizedAssembly[(int)(line + 1)];
+                var asmLine = _tokenizedAssembly[(int)line];
                 if (asmLine.Count > 0)
                 {
                     var realStart = asmLine[0].Location.Index;

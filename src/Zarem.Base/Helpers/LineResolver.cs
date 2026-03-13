@@ -41,7 +41,7 @@ public class LineResolver
     /// <param name="lineNumber">The line number in the file.</param>
     /// <returns></returns>
     public Address? GetAddress(string filePath, ulong lineNumber)
-        => _lookup.TryGetValue((filePath, lineNumber + 1), out var address) ? address : null;
+        => _lookup.TryGetValue((filePath, lineNumber), out var address) ? address : null;
 
     /// <summary>
     /// Gets the file and line number given a virtual address.

@@ -30,7 +30,7 @@ public class AssemblerTests
     {
         // Wrap the test in a stream and run the test
         var stream = new MemoryStream(Encoding.Default.GetBytes(str));
-        await RunTest(stream, null, config, [.. expected.Select((x) => (x, 1L))]);
+        await RunTest(stream, null, config, [.. expected.Select((x) => (x, 0L))]);
     }
 
     protected static async Task RunTest(Stream stream, string? moduleId, MipsAssemblerConfig? config = null, params (LogId, long)[] expected)
@@ -49,7 +49,7 @@ public class AssemblerTests
             foreach (var (code, line) in expected)
             {
                 var logEntry = result.Logs.FirstOrDefault(x => x.Code.Id == (uint)code && x.Location?.Line == line);
-                Assert.IsNotNull(logEntry, $"Could not find matching {code} error on line {line}");
+                Assert.IsNotNull(logEntry, $"Could not find matching {code} error on line {line + 1}");
             }
         }
 

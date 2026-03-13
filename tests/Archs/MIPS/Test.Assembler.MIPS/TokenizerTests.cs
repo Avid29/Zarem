@@ -36,7 +36,7 @@ public class TokenizerTests
 
         // Assert token strings match
         int i = 0; // Token in canon
-        int j = 1; // Assembly line (1 indexed)
+        int j = 0; // Assembly line
         int k = 0; // Token in line
         for (; i < canon.Length; i++)
         {

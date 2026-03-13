@@ -180,7 +180,7 @@ public partial class AssemblyEditor
 
         // Adjust fold level based on the line's label
         var foldLevel = GetAndAdjustLabelDepth(tokenized.Label, foldLabels);
-        editor.SetFoldLevel(utf8Pos.Line - 1, foldLevel);
+        editor.SetFoldLevel(utf8Pos.Line, foldLevel);
     }
 
     private static FoldLevel GetAndAdjustLabelDepth(Token? label, Stack<string> labels)

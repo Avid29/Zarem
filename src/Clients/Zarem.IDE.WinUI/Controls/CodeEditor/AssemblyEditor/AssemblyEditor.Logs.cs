@@ -80,7 +80,7 @@ public partial class AssemblyEditor
                 _ => ErrorAnnotationStyleIndex,
             };
 
-            var line = utf8Location.Line - 1;
+            var line = utf8Location.Line;
             editor.AnnotationSetStyle(line, annotationStyle);
             editor.AnnotationSetText(line, log.Message);
         }
