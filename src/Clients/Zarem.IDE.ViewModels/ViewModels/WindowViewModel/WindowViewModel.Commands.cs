@@ -53,48 +53,7 @@ public partial class WindowViewModel
     #region Edit
 
     [RelayCommand]
-    private void Undo() => SendEdit(EditorOperation.Undo);
-
-    [RelayCommand]
-    private void Redo() => SendEdit(EditorOperation.Redo);
-
-    [RelayCommand]
-    private void Cut() => SendEdit(EditorOperation.Cut);
-
-    [RelayCommand]
-    private void Copy() => SendEdit(EditorOperation.Copy);
-
-    [RelayCommand]
-    private void Paste() => SendEdit(EditorOperation.Paste);
-
-    [RelayCommand]
-    private void Duplicate() => SendEdit(EditorOperation.Duplicate);
-
-    [RelayCommand]
-    private void SelectAll() => SendEdit(EditorOperation.SelectAll);
-
-    [RelayCommand]
-    private void TransposeUp() => SendEdit(EditorOperation.TransposeUp);
-
-    [RelayCommand]
-    private void TransposeDown() => SendEdit(EditorOperation.TransposeDown);
-
-    [RelayCommand]
-    private void ToggleOutlining() => SendEdit(EditorOperation.ToggleOutlining);
-
-    [RelayCommand]
-    private void ExpandChildren() => SendEdit(EditorOperation.ExpandChildren);
-
-    [RelayCommand]
-    private void CollapseChildren() => SendEdit(EditorOperation.CollapseChildren);
-
-    [RelayCommand]
-    private void ExpandAll() => SendEdit(EditorOperation.ExpandAll);
-
-    [RelayCommand]
-    private void CollapseAll() => SendEdit(EditorOperation.CollapseAll);
-
-    private void SendEdit(EditorOperation operation) => _messenger.Send(new EditorOperationRequestMessage(operation));
+    private void SendEditOperation(EditorOperation operation) => _messenger.Send(new EditorOperationRequestMessage(operation));
 
     #endregion
 
@@ -168,16 +127,10 @@ public partial class WindowViewModel
     #region Debug
 
     [RelayCommand]
-    private async Task StartDebuggingAsync()
-    {
-        await _debugService.RunAsync(true);
-    }
+    private async Task StartDebuggingAsync() => await _debugService.RunAsync(true);
 
     [RelayCommand]
-    private async Task StartWithoutDebuggingAsync()
-    {
-        await _debugService.RunAsync(false);
-    }
+    private async Task StartWithoutDebuggingAsync() => await _debugService.RunAsync(false);
 
     [RelayCommand]
     private async Task StartFileWithoutDebuggingAsync()
@@ -196,10 +149,10 @@ public partial class WindowViewModel
     }
 
     [RelayCommand]
-    private async Task StopDebugging()
-    {
-        _debugService.StopDebugging();
-    }
+    private async Task DebugContinue() => _debugService.Continue();
+
+    [RelayCommand]
+    private async Task StopDebugging() => _debugService.StopDebugging();
 
     #endregion
 

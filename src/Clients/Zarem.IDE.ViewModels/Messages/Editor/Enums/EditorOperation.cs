@@ -28,5 +28,9 @@ public enum EditorOperation
     ExpandAll,
     CollapseAll,
 
+    // Debugging
+    ToggleBreakpoint,
+    ClearBreakpoints
+
 #pragma warning restore CS1591
 }

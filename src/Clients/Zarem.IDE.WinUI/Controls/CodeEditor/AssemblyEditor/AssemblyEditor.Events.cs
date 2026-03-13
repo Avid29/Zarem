@@ -42,7 +42,7 @@ public partial class AssemblyEditor
         switch (args.Margin)
         {
             case 0:
-                SetBreakpoint(line);
+                ToggleBreakpoint(line);
                 break;
         }
     }
@@ -65,7 +65,6 @@ public partial class AssemblyEditor
         // Restore the loaded event and detach unloaded event
         this.Loaded += AssemblyEditor_Loaded;
         this.Unloaded -= AssemblyEditBox_Unloaded;
-
 
         if (!TryGetEditor(out var editor))
             return;

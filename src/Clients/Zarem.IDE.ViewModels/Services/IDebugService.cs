@@ -24,6 +24,11 @@ public interface IDebugService
     Task RunFileAsync(SourceFile file, bool debug = true);
 
     /// <summary>
+    /// Resumes a currently paused debugger
+    /// </summary>
+    void Continue();
+
+    /// <summary>
     /// Stops the current debug session.
     /// </summary>
     void StopDebugging();

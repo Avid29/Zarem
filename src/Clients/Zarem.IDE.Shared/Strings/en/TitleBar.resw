@@ -291,4 +291,13 @@
   <data name="StopDebuggingMFI.Text" xml:space="preserve">
     <value>Stop Debugging</value>
   </data>
+  <data name="ContinueMFI.Text" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="ToggleBreakpointMFI.Text" xml:space="preserve">
+    <value>Toggle Breakpoint</value>
+  </data>
+  <data name="ClearBreakpointsMFI.Text" xml:space="preserve">
+    <value>Clear Breakpoints</value>
+  </data>
 </root>

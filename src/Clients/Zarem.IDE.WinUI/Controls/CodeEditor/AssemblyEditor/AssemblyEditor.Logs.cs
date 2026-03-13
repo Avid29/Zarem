@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using Microsoft.UI;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,6 +20,9 @@ public partial class AssemblyEditor
     private const int ErrorIndicatorIndex = 8;
     private const int WarningIndicatorIndex = 9;
     private const int MessageIndicatorIndex = 10;
+
+    // Debugging
+    private const int ExecutingLineIndicatorIndex = 15;
 
     /// <summary>
     /// Applies formatting based on a log messages.
@@ -143,6 +147,12 @@ public partial class AssemblyEditor
         editor.IndicSetStyle(MessageIndicatorIndex, IndicatorStyle.Plain);
         editor.IndicSetFore(MessageIndicatorIndex, ToInt(SyntaxHighlightingTheme.MessageUnderlineColor));
         editor.IndicSetUnder(MessageIndicatorIndex, true);
+
+        editor.IndicSetStyle(ExecutingLineIndicatorIndex, IndicatorStyle.StraightBox);
+        editor.IndicSetFore(ExecutingLineIndicatorIndex, ToInt(Colors.Yellow));
+        editor.IndicSetUnder(ExecutingLineIndicatorIndex, true);
+        editor.IndicSetAlpha(ExecutingLineIndicatorIndex, (Alpha)0x80);
+        editor.IndicSetOutlineAlpha(ExecutingLineIndicatorIndex, Alpha.Opaque);
     }
 
     private bool MeetsThreshold(Severity severity)

@@ -1,10 +1,14 @@
 ﻿// Avishai Dernis 2025
 
 using Microsoft.UI.Xaml;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI;
+using WinUIEditor;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.IDE.Messages.Editor.Enums;
+using Zarem.Models.Breakpoints;
 using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor;
@@ -22,6 +26,7 @@ public partial class AssemblyEditor : CodeEditor
     /// </remarks>
     private readonly Dictionary<int, SourceLocation> _locationMapper;
     private TokenizedAssembly? _tokenizedAssembly;
+    private ScintillaBreakpointSource? _breakpoints;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblyEditor"/> class.
@@ -49,6 +54,20 @@ public partial class AssemblyEditor : CodeEditor
         SetupIndicators();
     }
 
+    public void RegisterBreakpointSource(BreakpointCollection breakpoints)
+    {
+        if (!TryGetEditor(out var editor))
+            return;
+
+        _breakpoints = new ScintillaBreakpointSource(editor, breakpoints);
+    }
+
+    public void UnregisterBreakpointSource()
+    {
+        _breakpoints?.BreakpointCollection.Source = null;
+        _breakpoints = null;
+    }
+
     /// <summary>
     /// Navigates to a <see cref="SourceLocation"/>.
     /// </summary>
@@ -70,8 +89,25 @@ public partial class AssemblyEditor : CodeEditor
         ChildEditor?.Focus(FocusState.Keyboard);
     }
 
+    /// <inheritdoc/>
+    protected override Action? GetOperationAction(EditorOperation operation)
+    {
+        return operation switch
+        {
+            EditorOperation.ToggleBreakpoint => () =>
+            {
+                ToggleBreakpoint(Line - 1);
+            },
+            EditorOperation.ClearBreakpoints => () =>
+            {
+                _breakpoints?.ClearBreakpoints();
+            },
+            _ => null,
+        };
+    }
+
     private static int GetEncodingSize(string original)
         => Encoding.UTF8.GetByteCount(original);
 
-    private static int ToInt(Color color) => color.R | color.G << 8 | color.B << 16;
+    private static int ToInt(Color color) => color.R | color.G << 8 | color.B << 16 | color.A << 24;
 }

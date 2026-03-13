@@ -32,6 +32,7 @@ public partial class AssemblyEditor
     private const int WarningAnnotationStyleIndex = 18;
     private const int MessageAnnotationStyleIndex = 19;
 
+
     private HashSet<string>? Instructions = null;
     private HashSet<string>? Symbols = null;
 
