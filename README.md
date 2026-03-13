@@ -38,12 +38,12 @@ Zarem supports localization for both the IDE and the Assembler. Assembler locali
 
 Current languages:
 
-| Language | IDE Support | Assembler Support |
+| Language | Provided    | Verified          |
 | -------- | ----------- | ----------------- |
-| English  | ✅ Yes     | ✅ Yes            |
-| Hebrew   | ✅ Yes     | ✅ Yes            |
-| Spanish  | ⌛ Planned | ⌛ Planned        |
-| Japanese | ⌛ Planned | ⌛ Planned        |
+| English  | 🟦 100%    | ✅ 100%           |
+| Hebrew   | [![he translation](https://img.shields.io/badge/dynamic/json?color=blue&label=he&style=flat&logo=crowdin&query=%24.progress.1.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16364446-872226.json)](https://crowdin.com/project/zarem) | [![he proofreading](https://img.shields.io/badge/dynamic/json?color=green&label=he&style=flat&logo=crowdin&query=%24.progress.1.data.approvalProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16364446-872226.json)](https://crowdin.com/project/zarem) |
+| Spanish  | [![es-ES translation](https://img.shields.io/badge/dynamic/json?color=blue&label=es-ES&style=flat&logo=crowdin&query=%24.progress.0.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16364446-872226.json)](https://crowdin.com/project/zarem) | [![es-ES proofreading](https://img.shields.io/badge/dynamic/json?color=green&label=es-ES&style=flat&logo=crowdin&query=%24.progress.0.data.approvalProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16364446-872226.json)](https://crowdin.com/project/zarem) |
+| Japanese | [![ja translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ja&style=flat&logo=crowdin&query=%24.progress.2.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16364446-872226.json)](https://crowdin.com/project/zarem) | [![ja proofreading](https://img.shields.io/badge/dynamic/json?color=green&label=ja&style=flat&logo=crowdin&query=%24.progress.2.data.approvalProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16364446-872226.json)](https://crowdin.com/project/zarem) |
 
 [![Crowdin](https://badges.crowdin.net/zarem/localized.svg)](https://crowdin.com/project/zarem)
 
