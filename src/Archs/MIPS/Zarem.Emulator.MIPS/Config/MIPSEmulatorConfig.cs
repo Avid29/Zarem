@@ -34,5 +34,5 @@ public class MIPSEmulatorConfig : EmulatorConfig
     /// <summary>
     /// Gets or sets whether or not to disable branch delay slot emulation
     /// </summary>
-    public bool DisableBranchDelays { get; set; } = false;
+    public bool DisableDelaySlots { get; set; } = false;
 }

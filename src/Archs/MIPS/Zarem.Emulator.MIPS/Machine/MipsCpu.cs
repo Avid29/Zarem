@@ -19,7 +19,7 @@ namespace Zarem.Emulator.Machine;
 /// </summary>
 public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 {
-    private int? _branchDelay = null;
+    private uint? _delaySlot = null;
 
     /// <inheritdoc/>
     public event EventHandler<ICpu, TrapEventArgs>? TrapOccurred;
@@ -216,18 +216,17 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 
     private MipsTrap WriteBack(Execution execution, uint memRead)
     {
-        var programCounter = ProgramCounter;
-        if (_branchDelay.HasValue)
+        uint nextPc;
+        if (_delaySlot.HasValue)
         {
-            var newPC = programCounter + _branchDelay.Value;
-            programCounter = (uint)newPC;
-            _branchDelay = null;
+            nextPc = _delaySlot.Value;
+            _delaySlot = null;
         }
         else
         {
             // Increment the program counter by default
             // (some instructions will override this)
-            programCounter = ProgramCounter + 4;
+            nextPc = ProgramCounter + 4;
         }
 
         // Handle gpr writeback
@@ -246,11 +245,8 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
             case SideEffect.HighLow:
                 (High, Low) = (execution.High, execution.Low);
                 break;
-            case SideEffect.JumpProgramCounter:
-                programCounter = execution.ProgramCounter;
-                break;
-            case SideEffect.BranchProgramCounter:
-                ApplyBranch(execution.Branch, ref programCounter);
+            case SideEffect.ProgramCounter:
+                ApplyJump(execution.ProgramCounter, ref nextPc);
                 break;
             case SideEffect.ReadMemory:
                 RegisterFile[execution.GPR] = memRead;
@@ -262,22 +258,22 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
         }
 
         // Apply the program counter update
-        ProgramCounter = programCounter;
+        ProgramCounter = nextPc;
 
         return MipsTrap.None;
     }
 
-    private void ApplyBranch(int branch, ref uint pc)
+    private void ApplyJump(uint targetPc, ref uint nextPc)
     {
-        if (Config.DisableBranchDelays)
+        if (Config.DisableDelaySlots)
         {
             // Branch delays are disabled. Just change the PC
-            pc = (uint)(pc + branch);
+            nextPc = targetPc;
             return;
         }
 
         // Store the branch offset in the delay slot
-        _branchDelay = branch;
+        _delaySlot = targetPc;
     }
 
     private void WriteCoProc(RegisterSet set, GPRegister register, uint writeback)
@@ -324,7 +320,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
             return;
         }
 
-        CoProcessor0.EnterTrap(trap, ProgramCounter, _branchDelay.HasValue);
+        CoProcessor0.EnterTrap(trap, ProgramCounter, _delaySlot.HasValue);
         ProgramCounter = CoProcessor0.ExceptionVector;
     }
 }

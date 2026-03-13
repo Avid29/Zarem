@@ -40,7 +40,7 @@ public partial class InstructionExecutor
             return default;
         }
 
-        return Execution.CreateBranch(Instruction.Offset);
+        return Execution.CreateJump((uint)(Processor.ProgramCounter + Instruction.Offset + 4));
     }
 
     private Execution TrapI(TrapIDelegate func)
