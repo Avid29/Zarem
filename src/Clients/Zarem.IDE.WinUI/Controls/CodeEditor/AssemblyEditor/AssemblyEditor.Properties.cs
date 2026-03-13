@@ -60,6 +60,13 @@ public partial class AssemblyEditor
             typeof(AssemblyEditor),
             new PropertyMetadata(null));
 
+    public static readonly DependencyProperty ExecutingLineProperty =
+        DependencyProperty.Register(
+            nameof(ExecutingLine),
+            typeof(ulong?),
+            typeof(AssemblyEditor),
+            new PropertyMetadata(null, OnExecutingLineChanged));
+
     /// <summary>
     /// Gets or sets a value indicating whether or not to check assembly errors in real-time.
     /// </summary>
@@ -100,6 +107,12 @@ public partial class AssemblyEditor
     {
         get => (Address?)GetValue(PositionAddressProperty);
         set => SetValue(PositionAddressProperty, value);
+    }
+
+    public ulong? ExecutingLine
+    {
+        get => (ulong?)GetValue(ExecutingLineProperty);
+        set => SetValue(ExecutingLineProperty, value);
     }
 
     /// <summary>
@@ -162,27 +175,35 @@ public partial class AssemblyEditor
 
     private static void OnRTAssemblyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
     {
-        if (d is not AssemblyEditor asmBox)
+        if (d is not AssemblyEditor asmEditor)
             return;
 
-        asmBox.ClearLogHighlights();
-        _ = asmBox.RunAssemblerAsync();
+        asmEditor.ClearLogHighlights();
+        _ = asmEditor.RunAssemblerAsync();
     }
     
     private static void OnLogAnnotationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
     {
-        if (d is not AssemblyEditor asmBox)
+        if (d is not AssemblyEditor asmEditor)
             return;
 
-        asmBox.ClearLogHighlights();
-        _ = asmBox.RunAssemblerAsync();
+        asmEditor.ClearLogHighlights();
+        _ = asmEditor.RunAssemblerAsync();
     }
 
     private static void OnAssemblerConfigChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
     {
-        if (d is not AssemblyEditor asmBox)
+        if (d is not AssemblyEditor asmEditor)
             return;
 
-        asmBox.SetupKeywords();
+        asmEditor.SetupKeywords();
+    }
+
+    private static void OnExecutingLineChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+    {
+        if (d is not AssemblyEditor asmEditor)
+            return;
+
+        asmEditor.UpdateExecutingLine();
     }
 }

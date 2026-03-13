@@ -42,6 +42,7 @@
             x:Load="{x:Bind UseAssemblyEditor, Mode=OneWay}"
             AnnotationThreshold="{x:Bind ViewModel.AnnotationThreshold, Mode=OneWay}"
             AssemblerConfig="{x:Bind ViewModel.AssemblerConfig, Mode=OneWay}"
+            ExecutingLine="{x:Bind ViewModel.ExecutingLine, Mode=OneWay}"
             RealTimeAssembly="{x:Bind ViewModel.AssembleRealTime, Mode=OneWay}"
             SyntaxHighlightingTheme="{StaticResource SyntaxHighlighting}"
             Text="{x:Bind Text, Mode=TwoWay}" />

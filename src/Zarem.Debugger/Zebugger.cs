@@ -24,7 +24,7 @@ public class Zebugger
     /// <summary>
     /// An invoked when the debugger halted the execution.
     /// </summary>
-    public event EventHandler? Halted;
+    public event EventHandler<Zebugger, ulong>? Halted;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Zebugger"/> class.
@@ -72,7 +72,7 @@ public class Zebugger
             return;
         }
 
-        Halted?.Invoke(this, EventArgs.Empty);
+        Halted?.Invoke(this, (ulong)((long)_computer.Cpu.ProgramCounter));
     }
 
     /// <summary>

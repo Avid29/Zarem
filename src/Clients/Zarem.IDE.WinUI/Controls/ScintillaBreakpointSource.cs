@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using WinUIEditor;
+using Zarem.IDE.Controls.CodeEditor;
 using Zarem.Models.Breakpoints;
 
 namespace Zarem.IDE.Controls;
@@ -40,7 +41,7 @@ public class ScintillaBreakpointSource : IBreakpointSource
             return;
 
         BreakpointCollection.Remove(bp);
-        _editor.MarkerDelete(line, 1);
+        _editor.MarkerDelete(line, AssemblyEditor.BreakpointMarkerIndex);
     }
 
     public void ClearBreakpoints()
@@ -66,7 +67,7 @@ public class ScintillaBreakpointSource : IBreakpointSource
 
     private void MarkBreakpoint(BreakpointIdentity bp)
     {
-        int handle = _editor.MarkerAdd((long)bp.Line, 1);
+        int handle = _editor.MarkerAdd((long)bp.Line, AssemblyEditor.BreakpointMarkerIndex);
         _idToHandle[bp] = handle;
         _handleToId[handle] = bp;
     }

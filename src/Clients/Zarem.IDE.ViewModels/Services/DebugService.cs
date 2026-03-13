@@ -1,7 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.Messaging;
+using System;
 using System.Threading.Tasks;
+using Zarem.Debugger;
 using Zarem.DebugSessions;
 using Zarem.Emulator;
 using Zarem.Emulator.Machine;
@@ -81,10 +83,22 @@ public class DebugService : IDebugService
 
         _ = new MarsTrapHandler(mipsComp);
         _session.Emulator.StateChanged += MipsEmu_StateChanged;
+        _session.Debugger?.Halted += Debugger_Halted;
 
         _stateService.SetState(IdeState.Running);
         _messenger.Send(new DebugSessionStartedMessage());
         _session.Emulator.Start();
+    }
+
+    private void Debugger_Halted(Zebugger? sender, ulong e)
+    {
+        // TODO: Handle app state transition
+
+        var sourceLine = _session?.LineResolver?.GetSourceLine(e);
+        if (sourceLine is null)
+            return;
+
+        _dispatcher.RunOnUIThread(() => _messenger.Send(new ExecutingLineChangedMessage(sourceLine.Value.Item1, sourceLine.Value.Item2)));        
     }
 
     /// <inheritdoc/>
@@ -114,6 +128,8 @@ public class DebugService : IDebugService
     public void Continue()
     {
         _session?.Debugger?.Continue();
+
+        _messenger.Send(new ExecutingLineChangedMessage());
     }
 
     /// <inheritdoc/>
@@ -182,6 +198,7 @@ public class DebugService : IDebugService
             _consoleService.HideConsoleWindow(_localizationService["DebugSessionEnded"]);
 
             _dispatcher.RunOnUIThread(() => _stateService.SetState(IdeState.Ready));
+            _session?.Debugger?.Halted -= Debugger_Halted;
             _session?.Dispose();
             _session = null;
         }

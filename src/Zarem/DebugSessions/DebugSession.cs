@@ -16,7 +16,6 @@ public class DebugSession : IDisposable
 {
     private readonly IProject _project;
     private readonly Module _module;
-    private readonly LineResolver? _lineResolver;
 
     internal DebugSession(IProject project, Module module, Zaremulator emulator, Zebugger? debugger = null)
     {
@@ -32,7 +31,7 @@ public class DebugSession : IDisposable
         {
             if (_module.DebugLines is not null)
             {
-                _lineResolver = new LineResolver(_module.DebugLines);
+                LineResolver = new LineResolver(_module.DebugLines);
             }
 
             SetupBreakpoints();
@@ -48,6 +47,11 @@ public class DebugSession : IDisposable
     /// Gets the debugger attached to the emulator.
     /// </summary>
     public Zebugger? Debugger { get; }
+    
+    /// <summary>
+    /// Gets the line resolver for addresses in the debug session.
+    /// </summary>
+    public LineResolver? LineResolver { get; }
 
     /// <inheritdoc/>
     public void Dispose()
@@ -88,7 +92,7 @@ public class DebugSession : IDisposable
 
     private void ToggleBreakpoint(BreakpointIdentity bp, bool enable = true)
     {
-        var address = _lineResolver?.GetAddress(bp.Parent.File.FullPath, bp.Line);
+        var address = LineResolver?.GetAddress(bp.Parent.File.FullPath, bp.Line);
         if (address?.VirtualAddress is not null)
         {
             var vAddress = address.Value.VirtualAddress.Value;

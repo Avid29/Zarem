@@ -8,6 +8,7 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Messages;
+using Zarem.IDE.Messages.DebugSession;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings;
@@ -73,6 +74,15 @@ public partial class FilePageViewModel : PageViewModel
     }
 
     /// <summary>
+    /// Gets or sets the currently executing line.
+    /// </summary>
+    public ulong? ExecutingLine
+    {
+        get => field;
+        set => SetProperty(ref field, value);
+    }
+
+    /// <summary>
     /// Gets or sets the <see cref="IFileEditorHandler"/> for driving UI events.
     /// </summary>
     public IFileEditorHandler? EditorHandler { get; set; }
@@ -119,6 +129,7 @@ public partial class FilePageViewModel : PageViewModel
     /// <inheritdoc/>
     protected override void OnActivated()
     {
+        _messenger.Register<FilePageViewModel, ExecutingLineChangedMessage>(this, (r, m) => r.ExecutingLine = (m.FilePath == File?.Path) ? m.LineNumber : null);
         _messenger.Register<FilePageViewModel, SettingChangedMessage<AnnotationThreshold>>(this, (r, m) => OnPropertyChanged(nameof(AnnotationThreshold)));
         _messenger.Register<FilePageViewModel, SettingChangedMessage<bool>>(this, (r, m) =>
         {

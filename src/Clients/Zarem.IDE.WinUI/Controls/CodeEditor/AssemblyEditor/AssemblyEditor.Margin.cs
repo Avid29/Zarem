@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using WinUIEditor;
 
@@ -7,6 +8,11 @@ namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class AssemblyEditor
 {
+    private int _executionLineHandle = -1;
+
+    public const int BreakpointMarkerIndex = 2;
+    public const int ExecutionPointIndex = 3;
+
     private void SetupMargins()
     {
         if (!TryGetEditor(out var editor))
@@ -17,19 +23,29 @@ public partial class AssemblyEditor
         editor.SetMarginMaskN(1, 0);    // Clear markers from line 1
 
         // Setup breakpoints on margin 0
+        int margin0Mask = 0;
         editor.SetMarginTypeN(0, MarginType.Symbol);
         editor.SetMarginWidthN(0, 30);
         editor.SetMarginSensitiveN(0, true);
-        editor.SetMarginMaskN(0, 1 << 1);
         editor.MarginLeft = 8;
 
         // Define the breakpoint marker 
-        editor.MarkerDefine(1, MarkerSymbol.Circle);
-        editor.MarkerSetBack(1, ToInt(Colors.Red));
+        editor.MarkerDefine(BreakpointMarkerIndex, MarkerSymbol.Circle);
+        editor.MarkerSetBack(BreakpointMarkerIndex, ToInt(Colors.Red));
+        margin0Mask |= (1 << BreakpointMarkerIndex);
 
         // Define a ghost breakpoint marker for hovering
-        editor.MarkerDefine(2, MarkerSymbol.Circle);
-        editor.MarkerSetBack(2, ToInt(Colors.LightGray));
+        //editor.MarkerDefine(2, MarkerSymbol.Circle);
+        //editor.MarkerSetBack(2, ToInt(Colors.LightGray));
+
+        // Define execution markers
+        editor.MarkerDefine(ExecutionPointIndex, MarkerSymbol.ShortArrow);
+        editor.MarkerSetBack(ExecutionPointIndex, ToInt(Colors.Yellow));
+        editor.MarkerSetFore(ExecutionPointIndex, ToInt(Colors.Black));
+        margin0Mask |= (1 << ExecutionPointIndex);
+
+        // Set margin mask
+        editor.SetMarginMaskN(0, margin0Mask);
     }
 
     private void ToggleBreakpoint(long line)
@@ -40,13 +56,42 @@ public partial class AssemblyEditor
         // TODO: Actually set breakpoints and sync with breakpoint collection
         // For now, just make a visual indicator
         uint markerMask = (uint)editor.MarkerGet(line);
-        if ((markerMask & (1 << 1)) != 0)
+        if ((markerMask & (1 << BreakpointMarkerIndex)) != 0)
         {
             _breakpoints?.RemoveBreakpoint(line);
         }
         else
         {
             _breakpoints?.SetBreakpoint(line);
+        }
+    }
+
+    private void UpdateExecutingLine()
+    {
+        if (!TryGetEditor(out var editor))
+            return;
+
+        // Clear existing marker
+        editor.MarkerDeleteHandle(_executionLineHandle);
+        _executionLineHandle = -1;
+
+        // Clear existing highlight
+        editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
+        editor.IndicatorClearRange(0, editor.TextLength);
+
+        if (ExecutingLine.HasValue)
+        {
+            // Get line range info
+            var line = (long)(ExecutingLine.Value - 1);
+
+            // Set new marker
+            //_executionLineHandle = editor.MarkerAdd(line, ExecutionPointIndex);
+
+            // Set new highlight
+            editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
+            var lineStart = editor.PositionFromLine(line);
+            var length = editor.LineLength(line);
+            editor.IndicatorFillRange(lineStart, length);
         }
     }
 }
