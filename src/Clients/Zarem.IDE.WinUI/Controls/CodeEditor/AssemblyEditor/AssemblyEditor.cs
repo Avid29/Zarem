@@ -1,10 +1,13 @@
 ﻿// Avishai Dernis 2025
 
 using Microsoft.UI.Xaml;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI;
+using WinUIEditor;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.Models.Breakpoints;
 using Zarem.Models.Tables;
 
@@ -84,6 +87,23 @@ public partial class AssemblyEditor : CodeEditor
         editor.EnsureVisible(location.Line - 1);
         editor.GotoPos(mappedLocation.Index);
         ChildEditor?.Focus(FocusState.Keyboard);
+    }
+
+    /// <inheritdoc/>
+    protected override Action? GetOperationAction(EditorOperation operation)
+    {
+        return operation switch
+        {
+            EditorOperation.ToggleBreakpoint => () =>
+            {
+                ToggleBreakpoint(Line - 1);
+            },
+            EditorOperation.ClearBreakpoints => () =>
+            {
+                _breakpoints?.ClearBreakpoints();
+            },
+            _ => null,
+        };
     }
 
     private static int GetEncodingSize(string original)

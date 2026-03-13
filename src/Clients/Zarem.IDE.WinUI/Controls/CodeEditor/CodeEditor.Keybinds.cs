@@ -70,8 +70,11 @@ public partial class CodeEditor
         if (editor is null)
             return;
 
-        // Select or construct action
-        Action? action = operation switch
+        // Get action from child type
+        var action = GetOperationAction(operation);
+
+        // Select default behaviors if not overriden
+        action ??= operation switch
         {
             EditorOperation.Undo => editor.Undo,
             EditorOperation.Redo => editor.Redo,
@@ -126,6 +129,13 @@ public partial class CodeEditor
         // Perform the action
         action();
     }
+
+    /// <summary>
+    /// Gets the action for a given a <see cref="EditorOperation"/>.
+    /// </summary>
+    /// <param name="operation">The operation requested.</param>
+    /// <returns>Null if default behavior should be used.</returns>
+    protected virtual Action? GetOperationAction(EditorOperation operation) => null;
 
     private int KeyDef(char key, KeyMod mod = KeyMod.Norm)
     {

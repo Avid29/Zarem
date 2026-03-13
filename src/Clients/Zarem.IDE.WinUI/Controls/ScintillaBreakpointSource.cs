@@ -43,6 +43,18 @@ public class ScintillaBreakpointSource : IBreakpointSource
         _editor.MarkerDelete(line, 1);
     }
 
+    public void ClearBreakpoints()
+    {
+        foreach (var (bp, handle) in _idToHandle)
+        {
+            BreakpointCollection.Remove(bp);
+            _editor.MarkerDeleteHandle(handle);
+        }
+
+        _idToHandle.Clear();
+        _handleToId.Clear();
+    }
+
     public ulong? GetBreakpointLine(BreakpointIdentity id)
     {
         if (!_idToHandle.TryGetValue(id, out var handle))
