@@ -88,9 +88,23 @@ public partial class AssemblyEditor
             _executionLineHandle = editor.MarkerAdd(line, ExecutionPointIndex);
 
             // Set new highlight
-            editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
             var lineStart = editor.PositionFromLine(line);
             var length = editor.LineLength(line);
+
+            // Adjust line position to only highlight tokens
+            if (_tokenizedAssembly is not null)
+            {
+                var asmLine = _tokenizedAssembly[(int)(line + 1)];
+                if (asmLine.Count > 0)
+                {
+                    var realStart = asmLine[0].Location.Index;
+                    realStart = _locationMapper[realStart].Index;
+                    length -= realStart - lineStart;
+                    lineStart = realStart;
+                }
+            }
+
+            editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
             editor.IndicatorFillRange(lineStart, length);
         }
     }
