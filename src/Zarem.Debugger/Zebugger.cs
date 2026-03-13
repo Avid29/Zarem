@@ -60,6 +60,29 @@ public class Zebugger
             _restorePoint = null;
         }
 
+        // Temporarily disable the breakpoint so the CPU can execute the real instruction when resumed
+        // Mark the breakpoint for restoration, though
+        // This is also convenient because the instruction's memory is correct
+        var current = GetCurrentBreakpoint();
+        if (current is not null)
+        {
+            ToggleBreakpoint(current, false);
+            _restorePoint = current;
+
+            // If there's not already a breakpoint there, setup a temporary breakpoint at the next instruction
+            // TODO: Variable instruction sizes
+            //var nextAddress = current.Address + _handler.InstructionSize;
+            var nextAddress = _handler.GetStepAddress(_computer);
+            if (!_breakpoints.ContainsKey(nextAddress))
+            {
+                _tempPoint = new Breakpoint(nextAddress, _handler.BreakpointBytes.Length);
+                ToggleBreakpoint(_tempPoint, true);
+            }
+
+            // Rewind the program counter
+            _computer.Cpu.ProgramCounter -= (ulong)_handler.BreakpointBytes.Length;
+        }
+
         // Temp point is used to enqueue a restoration.
         // Just remove the temp-point and continue
         if (_tempPoint is not null)
@@ -83,35 +106,15 @@ public class Zebugger
         if (_trapEvent is null)
             return;
 
-        var current = GetCurrentBreakpoint();
-        if (current is not null)
-        {
-            // Temporarily disable the breakpoint so the CPU can execute the real instruction
-            // Mark the breakpoint for restoration
-            ToggleBreakpoint(current, false);
-            _restorePoint = current;
-
-            // If there's not already a breakpoint there, setup a temporary breakpoint at the next instruction
-            // TODO: Variable instruction sizes
-            var nextAddress = current.Address + _handler.InstructionSize;
-            if (!_breakpoints.ContainsKey(nextAddress))
-            {
-                _tempPoint = new Breakpoint(nextAddress, _handler.BreakpointBytes.Length);
-                ToggleBreakpoint(_tempPoint, true);
-            }
-
-            // Rewind the program counter and resume
-            _computer.Cpu.ProgramCounter -= (ulong)_handler.BreakpointBytes.Length;
-        }
-
+        // That's it. The restoration point has already been established
         _trapEvent.Resume();
         _trapEvent = null;
     }
 
     /// <summary>
-    /// Steps into a call or "and link" instruction. Or just steps one instruction.
+    /// Steps a single instruction.
     /// </summary>
-    public void StepIn()
+    public void Step()
     {
         if (_trapEvent is null)
             return;

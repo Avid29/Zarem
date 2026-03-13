@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Debugger.Handlers;
 
@@ -12,7 +13,7 @@ public interface IDebugHandler
     /// <summary>
     /// Gets the bytes that make a breakpoint instruction.
     /// </summary>
-    public ReadOnlySpan<byte> BreakpointBytes { get; }
+    ReadOnlySpan<byte> BreakpointBytes { get; }
 
     /// <summary>
     /// Gets the size of instructions in the ISA.
@@ -20,5 +21,29 @@ public interface IDebugHandler
     /// <remarks>
     /// 0 is variable size.
     /// </remarks>
-    public uint InstructionSize { get; }
+    uint InstructionSize { get; }
+
+    /// <summary>
+    /// Gets the step address for a given computer's state.
+    /// </summary>
+    /// <remarks>
+    /// Step is always the next instruction that will execute.
+    /// </remarks>
+    ulong GetStepAddress(IComputer computer);
+
+    /// <summary>
+    /// Gets the step over address for a given computer's state.
+    /// </summary>
+    /// <remarks>
+    /// Step over will skip jumps and branches (including their delay slots in MIPS).
+    /// </remarks>
+    ulong GetStepOverAddress(IComputer computer);
+
+    /// <summary>
+    /// Gets the step out address for a given computer's state.
+    /// </summary>
+    /// <remarks>
+    /// The step out address is the return address.
+    /// </remarks>
+    ulong GetStepOutAddress(IComputer computer);
 }
