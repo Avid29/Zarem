@@ -26,7 +26,7 @@ public interface IDebugService
     /// <summary>
     /// Resumes a currently paused debugger
     /// </summary>
-    void Resume();
+    void Continue();
 
     /// <summary>
     /// Stops the current debug session.

@@ -437,13 +437,16 @@
                 </MenuFlyoutItem>
 
                 <MenuFlyoutItem
-                    x:Uid="/TitleBar/ResumeMFI"
-                    Command="{x:Bind ViewModel.DebugResumeCommand}"
-                    Text="Resume"
+                    x:Uid="/TitleBar/ContinueMFI"
+                    Command="{x:Bind ViewModel.DebugContinueCommand}"
+                    Text="Continue"
                     Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartDebuggingIcon}" />
                     </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F5" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/StopDebuggingMFI"

@@ -78,7 +78,7 @@ public class Zebugger
     /// <summary>
     /// Resumes execution.
     /// </summary>
-    public void Resume()
+    public void Continue()
     {
         if (_trapEvent is null)
             return;

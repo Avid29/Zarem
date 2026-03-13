@@ -149,7 +149,7 @@ public partial class WindowViewModel
     }
 
     [RelayCommand]
-    private async Task DebugResume() => _debugService.Resume();
+    private async Task DebugContinue() => _debugService.Continue();
 
     [RelayCommand]
     private async Task StopDebugging() => _debugService.StopDebugging();

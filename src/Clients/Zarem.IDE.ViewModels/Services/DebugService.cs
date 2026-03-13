@@ -111,9 +111,9 @@ public class DebugService : IDebugService
     }
 
     /// <inheritdoc/>
-    public void Resume()
+    public void Continue()
     {
-        _session?.Debugger?.Resume();
+        _session?.Debugger?.Continue();
     }
 
     /// <inheritdoc/>
@@ -123,7 +123,7 @@ public class DebugService : IDebugService
             _session?.Emulator.ShutDown();
 
         // Resume to ensure it reaches the shutdown
-        Resume();
+        Continue();
     }
 
     private async Task<bool> PreRunChecks(SourceFile file)

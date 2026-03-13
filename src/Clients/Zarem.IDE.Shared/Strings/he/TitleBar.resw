@@ -291,4 +291,13 @@
   <data name="StopDebuggingMFI.Text" xml:space="preserve">
     <value>עצור ניפוי שגיאות</value>
   </data>
+  <data name="ContinueMFI.Text" xml:space="preserve">
+    <value>המשך</value>
+  </data>
+  <data name="ToggleBreakpointMFI.Text" xml:space="preserve">
+    <value>הוס/הסר נקודת עצירה</value>
+  </data>
+  <data name="ClearBreakpointsMFI.Text" xml:space="preserve">
+    <value>נקה נקודות עצירה</value>
+  </data>
 </root>
