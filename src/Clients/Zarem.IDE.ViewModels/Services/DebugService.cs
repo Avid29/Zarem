@@ -182,6 +182,7 @@ public class DebugService : IDebugService
             _consoleService.HideConsoleWindow(_localizationService["DebugSessionEnded"]);
 
             _dispatcher.RunOnUIThread(() => _stateService.SetState(IdeState.Ready));
+            _session?.Dispose();
             _session = null;
         }
     }

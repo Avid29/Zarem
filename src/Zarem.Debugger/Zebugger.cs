@@ -170,6 +170,7 @@ public class Zebugger
 
         // Disable the breakpoint
         ToggleBreakpoint(bp, false);
+        _breakpoints.Remove(address);
     }
 
     private void ToggleBreakpoint(Breakpoint bp, bool enabled)

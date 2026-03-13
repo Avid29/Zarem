@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using Zarem.Debugger;
 using Zarem.Emulator;
 using Zarem.Helpers;
@@ -11,7 +12,7 @@ namespace Zarem.DebugSessions;
 /// <summary>
 /// A class for managing an emulator during a debug session.
 /// </summary>
-public class DebugSession
+public class DebugSession : IDisposable
 {
     private readonly IProject _project;
     private readonly Module _module;
@@ -48,6 +49,16 @@ public class DebugSession
     /// </summary>
     public Zebugger? Debugger { get; }
 
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        foreach (var file in _project.SourceFiles)
+        {
+            file.Breakpoints.BreakpointAdded -= Breakpoints_BreakpointAdded;
+            file.Breakpoints.BreakpointRemoved -= Breakpoints_BreakpointRemoved;
+        }
+    }
+
     private void SetupBreakpoints()
     {
         if (Debugger is null)
@@ -57,17 +68,38 @@ public class DebugSession
         {
             foreach (var bp in file.Breakpoints.Breakpoints)
             {
-                BindBreakpoint(bp);
+                ToggleBreakpoint(bp);
             }
+
+            file.Breakpoints.BreakpointAdded += Breakpoints_BreakpointAdded;
+            file.Breakpoints.BreakpointRemoved += Breakpoints_BreakpointRemoved;
         }
     }
 
-    private void BindBreakpoint(BreakpointIdentity bp)
+    private void Breakpoints_BreakpointAdded(object? sender, BreakpointIdentity e)
+    {
+        ToggleBreakpoint(e);
+    }
+
+    private void Breakpoints_BreakpointRemoved(object? sender, BreakpointIdentity e)
+    {
+        ToggleBreakpoint(e, false);
+    }
+
+    private void ToggleBreakpoint(BreakpointIdentity bp, bool enable = true)
     {
         var address = _lineResolver?.GetAddress(bp.Parent.File.FullPath, bp.Line);
         if (address?.VirtualAddress is not null)
         {
-            Debugger?.SetBreakpoint(address.Value.VirtualAddress.Value);
+            var vAddress = address.Value.VirtualAddress.Value;
+            if (enable)
+            {
+                Debugger?.SetBreakpoint(vAddress);
+            }
+            else
+            {
+                Debugger?.RemoveBreakpoint(vAddress);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Collections.Generic;
 using Zarem.Models.Files;
 
@@ -11,6 +12,16 @@ namespace Zarem.Models.Breakpoints;
 public class BreakpointCollection
 {
     private readonly HashSet<BreakpointIdentity> _breakpoints = [];
+
+    /// <summary>
+    /// Invoked when a breakpoint is added.
+    /// </summary>
+    public event EventHandler<BreakpointIdentity>? BreakpointAdded;
+
+    /// <summary>
+    /// Invoked when a breakpoint is removed.
+    /// </summary>
+    public event EventHandler<BreakpointIdentity>? BreakpointRemoved;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BreakpointCollection"/> class.
@@ -44,6 +55,7 @@ public class BreakpointCollection
     {
         var breakpoint = new BreakpointIdentity(this, line);
         _breakpoints.Add(breakpoint);
+        BreakpointAdded?.Invoke(this, breakpoint);
         return breakpoint;
     }
 
@@ -54,5 +66,6 @@ public class BreakpointCollection
     public void Remove(BreakpointIdentity id)
     {
         _breakpoints.Remove(id);
+        BreakpointRemoved?.Invoke(this, id);
     }
 }
