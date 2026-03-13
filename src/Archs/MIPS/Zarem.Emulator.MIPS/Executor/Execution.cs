@@ -127,30 +127,6 @@ public readonly struct Execution
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
     /// </summary>
-    public static Execution CreateBranch(int relativePC)
-    {
-        return new Execution
-        {
-            Branch = relativePC,
-        };
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Execution"/> struct.
-    /// </summary>
-    public static Execution CreateBranchAndLink(int relativePC, uint returnAddress, GPRegister raReg = GPRegister.ReturnAddress)
-    {
-        return new Execution
-        {
-            Branch = relativePC,
-            WriteBack = returnAddress,
-            GPR = raReg,
-        };
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Execution"/> struct.
-    /// </summary>
     public static Execution CreateHighLow(ulong highLow)
     {
         return new Execution
@@ -258,20 +234,7 @@ public readonly struct Execution
         init
         {
             _secondary1 = value;
-            SideEffect = SideEffect.JumpProgramCounter;
-        }
-    }
-
-    /// <summary>
-    /// Gets the branch PC value, if application.
-    /// </summary>
-    public readonly int Branch
-    {
-        get => (int)_secondary1;
-        init
-        {
-            _secondary1 = (uint)value;
-            SideEffect = SideEffect.BranchProgramCounter;
+            SideEffect = SideEffect.ProgramCounter;
         }
     }
 
@@ -416,7 +379,7 @@ public readonly struct Execution
     /// <summary>
     /// Gets a value indicating whether or not execution handled the PC changing.
     /// </summary>
-    public readonly bool PCHandled => SideEffect == SideEffect.JumpProgramCounter;
+    public readonly bool PCHandled => SideEffect is SideEffect.ProgramCounter;
 
     private SideEffect MergeHighLow(SideEffect @new)
     {

@@ -245,11 +245,8 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
             case SideEffect.HighLow:
                 (High, Low) = (execution.High, execution.Low);
                 break;
-            case SideEffect.JumpProgramCounter:
+            case SideEffect.ProgramCounter:
                 ApplyJump(execution.ProgramCounter, ref nextPc);
-                break;
-            case SideEffect.BranchProgramCounter:
-                ApplyBranch(execution.Branch, ref nextPc);
                 break;
             case SideEffect.ReadMemory:
                 RegisterFile[execution.GPR] = memRead;
@@ -278,8 +275,6 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
         // Store the branch offset in the delay slot
         _delaySlot = targetPc;
     }
-
-    private void ApplyBranch(int branchOffset, ref uint nextPc) => ApplyJump((uint)(nextPc + branchOffset), ref nextPc);
 
     private void WriteCoProc(RegisterSet set, GPRegister register, uint writeback)
     {

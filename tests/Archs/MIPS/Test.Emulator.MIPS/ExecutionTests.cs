@@ -721,7 +721,7 @@ public class ExecutionTests
         var expectedPC = @case.ExpectedPC;
         if (expectedPC is not null)
         {
-            if (delaysSlots && execution.SideEffect is SideEffect.BranchProgramCounter or SideEffect.JumpProgramCounter)
+            if (delaysSlots && execution.SideEffect is SideEffect.ProgramCounter)
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
                 Assert.AreEqual((uint)4, computer.Processor.ProgramCounter);
