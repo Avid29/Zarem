@@ -36,12 +36,23 @@ public class ScintillaBreakpointSource : IBreakpointSource
 
     public void RemoveBreakpoint(long line)
     {
-        int handle = _editor.MarkerHandleFromLine(line, 0);
-        if (!_handleToId.TryGetValue(handle, out var bp))
+        // Find the breakpoint based on the markers on the line
+        BreakpointIdentity? bp = null;
+        int handle = -1;
+        for (int i = 0; i < _editor.MarkerNumberFromLine(line, 0); i++)
+        {
+            handle = _editor.MarkerHandleFromLine(line, i);
+            if (_handleToId.TryGetValue(handle, out bp))
+                break;
+        }
+
+        // Breakpoint not found
+        if (bp is null)
             return;
 
+        // Remove the breakpoint
         BreakpointCollection.Remove(bp);
-        _editor.MarkerDelete(line, AssemblyEditor.BreakpointMarkerIndex);
+        _editor.MarkerDeleteHandle(handle);
     }
 
     public void ClearBreakpoints()

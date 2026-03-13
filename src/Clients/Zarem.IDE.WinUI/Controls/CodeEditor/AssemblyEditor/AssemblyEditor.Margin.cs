@@ -39,7 +39,7 @@ public partial class AssemblyEditor
         //editor.MarkerSetBack(2, ToInt(Colors.LightGray));
 
         // Define execution markers
-        editor.MarkerDefine(ExecutionPointIndex, MarkerSymbol.ShortArrow);
+        editor.MarkerDefine(ExecutionPointIndex, MarkerSymbol.LeftRect);
         editor.MarkerSetBack(ExecutionPointIndex, ToInt(Colors.Yellow));
         editor.MarkerSetFore(ExecutionPointIndex, ToInt(Colors.Black));
         margin0Mask |= (1 << ExecutionPointIndex);
@@ -85,7 +85,7 @@ public partial class AssemblyEditor
             var line = (long)(ExecutingLine.Value - 1);
 
             // Set new marker
-            //_executionLineHandle = editor.MarkerAdd(line, ExecutionPointIndex);
+            _executionLineHandle = editor.MarkerAdd(line, ExecutionPointIndex);
 
             // Set new highlight
             editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
