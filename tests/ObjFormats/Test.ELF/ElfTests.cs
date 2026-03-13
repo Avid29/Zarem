@@ -70,21 +70,21 @@ public class ElfTests : AssemblerTests
 
     [TestMethod(TestFilePathing.CompositeFailTestFile)]
     public async Task CompositeFailTest() => await RunFileTest(TestFilePathing.CompositeFailTestFile,
-        (LogId.InvalidInstructionArgCount, 14),
-        (LogId.InvalidInstructionName, 16),
-        (LogId.UnparsableExpression, 19),
-        (LogId.InvalidRegisterArgument, 24), // Debatably should be an InvalidAddressOffsetArgument error
-        (LogId.ZeroRegWriteback, 29),
-        (LogId.IntegerTruncated, 30),
-        (LogId.InvalidInstructionArg, 31),
-        (LogId.InvalidRegisterArgument, 32),
-        (LogId.InvalidCharLiteral, 35));
+        (LogId.InvalidInstructionArgCount, 13),
+        (LogId.InvalidInstructionName, 15),
+        (LogId.UnparsableExpression, 18),
+        (LogId.InvalidRegisterArgument, 23), // Debatably should be an InvalidAddressOffsetArgument error
+        (LogId.ZeroRegWriteback, 28),
+        (LogId.IntegerTruncated, 29),
+        (LogId.InvalidInstructionArg, 30),
+        (LogId.InvalidRegisterArgument, 31),
+        (LogId.InvalidCharLiteral, 34));
 
     [TestMethod(TestFilePathing.DuplicateSymbolFile)]
     public async Task DuplicateSymbolTest() => await RunFileTest(TestFilePathing.DuplicateSymbolFile,
-        (LogId.DuplicateSymbolDefinition, 15));
+        (LogId.DuplicateSymbolDefinition, 14));
 
     [TestMethod(TestFilePathing.SubtractAddressFile)]
     public async Task SubtractAddressTest() => await RunFileTest(TestFilePathing.SubtractAddressFile,
-        (LogId.InvalidExpressionOperation, 14));
+        (LogId.InvalidExpressionOperation, 13));
 }

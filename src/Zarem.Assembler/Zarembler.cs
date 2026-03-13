@@ -124,7 +124,7 @@ public partial class Zarembler
         var tokens = await Tokenizer.TokenizeAsync(reader, filePath);
 
         // Run the alignment pass on each line
-        for (int i = 1; i <= tokens.LineCount; i++)
+        for (int i = 0; i < tokens.LineCount; i++)
             assembler.AlignmentPass(tokens[i]);
 
         // Reset all streams to start
@@ -133,7 +133,7 @@ public partial class Zarembler
             section.Position = 0;
 
         // Run the realization pass on each line
-        for (int i = 1; i <= tokens.LineCount; i++)
+        for (int i = 0; i < tokens.LineCount; i++)
             assembler.RealizationPass(tokens[i]);
 
         return (assembler, tokens);

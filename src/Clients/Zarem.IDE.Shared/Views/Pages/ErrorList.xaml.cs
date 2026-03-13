@@ -49,7 +49,7 @@ public sealed partial class ErrorList : UserControl
         }
 
         // Get the line
-        return $"{location.Value.Line}";
+        return $"{location.Value.Line + 1}";
     }
 
     private void ListView_ItemClick(object sender, ItemClickEventArgs e)

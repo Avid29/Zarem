@@ -29,7 +29,7 @@ public partial class AssemblyEditor
             return;
 
         var pos = sender.CurrentPos;
-        var line = sender.LineFromPosition(pos) + 1;
+        var line = sender.LineFromPosition(pos);
         var asmLine = _tokenizedAssembly[(int)line];
 
         PositionAddress = asmLine.Address;
