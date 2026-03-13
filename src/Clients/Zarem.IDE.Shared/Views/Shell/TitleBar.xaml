@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Zarem.IDE.Views.Shell"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:editenum="using:Zarem.IDE.Messages.Editor.Enums"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -58,7 +59,7 @@
                     </MenuFlyoutSubItem.Icon>
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/NewProjectMFI"
-                        Command="{x:Bind ViewModel.OpenCreateProjectCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.OpenCreateProjectCommand}"
                         Text="New Project">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="N" Modifiers="Control,Shift" />
@@ -67,7 +68,7 @@
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/NewFileMFI"
-                        Command="{x:Bind ViewModel.MainViewModel.ExplorerViewModel.CreateNewFileCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.MainViewModel.ExplorerViewModel.CreateNewFileCommand}"
                         IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.RootNode), FallbackValue=False, Mode=OneWay}"
                         Text="New File">
                         <MenuFlyoutItem.Icon>
@@ -83,7 +84,7 @@
                 <MenuFlyoutSubItem x:Uid="/TitleBar/OpenMFSI" Text="Open">
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/OpenProjectMFI"
-                        Command="{x:Bind ViewModel.PickAndOpenProjectCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.PickAndOpenProjectCommand}"
                         Text="Open Project">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="O" Modifiers="Control,Shift" />
@@ -91,7 +92,7 @@
                     </MenuFlyoutItem>
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/OpenFolderMFI"
-                        Command="{x:Bind ViewModel.PickAndOpenFolderCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.PickAndOpenFolderCommand}"
                         Icon="OpenLocal"
                         Text="Open Folder">
                         <MenuFlyoutItem.KeyboardAccelerators>
@@ -102,7 +103,7 @@
 
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/OpenFileMFI"
-                        Command="{x:Bind ViewModel.PickAndOpenFileCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.PickAndOpenFileCommand}"
                         Icon="OpenFile"
                         Text="Open File">
                         <MenuFlyoutItem.KeyboardAccelerators>
@@ -115,7 +116,7 @@
                 <!--  Save  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/SaveFileMFI"
-                    Command="{x:Bind ViewModel.SaveFileCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SaveFileCommand}"
                     Icon="Save"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanSave, FallbackValue=False, Mode=OneWay}"
                     Text="Save File">
@@ -125,7 +126,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/SaveAllMFI"
-                    Command="{x:Bind ViewModel.SaveAllFilesCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SaveAllFilesCommand}"
                     Text="Save All">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEA35;" />
@@ -139,7 +140,7 @@
                 <!--  Close  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/ClosePageMFI"
-                    Command="{x:Bind ViewModel.ClosePageCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.ClosePageCommand}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.IsPageOpen, FallbackValue=False, Mode=OneWay}"
                     Text="Close Page">
                     <MenuFlyoutItem.KeyboardAccelerators>
@@ -148,7 +149,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/CloseProjectMFI"
-                    Command="{x:Bind ViewModel.CloseProjectCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.CloseProjectCommand}"
                     IsEnabled="{x:Bind local:TitleBar.IsNotNull(ViewModel.MainViewModel.ExplorerViewModel.RootNode), FallbackValue=False, Mode=OneWay}"
                     Text="Close Project" />
             </MenuBarItem>
@@ -161,7 +162,8 @@
                 <!--  History  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/UndoMFI"
-                    Command="{x:Bind ViewModel.UndoCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                    CommandParameter="{x:Bind editenum:EditorOperation.Undo}"
                     Icon="Undo"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanTextEdit, FallbackValue=False, Mode=OneWay}"
                     Text="Undo">
@@ -171,7 +173,8 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/RedoMFI"
-                    Command="{x:Bind ViewModel.RedoCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                    CommandParameter="{x:Bind editenum:EditorOperation.Redo}"
                     Icon="Redo"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanTextEdit, FallbackValue=False, Mode=OneWay}"
                     Text="Redo">
@@ -185,7 +188,8 @@
                 <!--  Basic  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/CutMFI"
-                    Command="{x:Bind ViewModel.CutCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                    CommandParameter="{x:Bind editenum:EditorOperation.Cut}"
                     Icon="Cut"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanTextEdit, FallbackValue=False, Mode=OneWay}"
                     Text="Cut">
@@ -195,7 +199,8 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/CopyMFI"
-                    Command="{x:Bind ViewModel.CopyCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                    CommandParameter="{x:Bind editenum:EditorOperation.Copy}"
                     Icon="Copy"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanTextEdit, FallbackValue=False, Mode=OneWay}"
                     Text="Copy">
@@ -205,7 +210,8 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/PasteMFI"
-                    Command="{x:Bind ViewModel.PasteCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                    CommandParameter="{x:Bind editenum:EditorOperation.Paste}"
                     Icon="Paste"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanTextEdit, FallbackValue=False, Mode=OneWay}"
                     Text="Paste">
@@ -215,7 +221,8 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/DuplicateMFI"
-                    Command="{x:Bind ViewModel.DuplicateCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                    CommandParameter="{x:Bind editenum:EditorOperation.Duplicate}"
                     Icon="Copy"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanTextEdit, FallbackValue=False, Mode=OneWay}"
                     Text="Duplicate">
@@ -228,7 +235,8 @@
                 <!--  Select  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/SelectAllMFI"
-                    Command="{x:Bind ViewModel.SelectAllCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                    CommandParameter="{x:Bind editenum:EditorOperation.SelectAll}"
                     Icon="SelectAll"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanTextEdit, FallbackValue=False, Mode=OneWay}"
                     Text="Select All">
@@ -245,7 +253,8 @@
                     Text="Advanced">
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/MoveLineUpMFI"
-                        Command="{x:Bind ViewModel.TransposeUpCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                        CommandParameter="{x:Bind editenum:EditorOperation.TransposeUp}"
                         Text="Move Line Up">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Up" Modifiers="Menu" />
@@ -253,7 +262,8 @@
                     </MenuFlyoutItem>
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/MoveLineDownMFI"
-                        Command="{x:Bind ViewModel.TransposeDownCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                    CommandParameter="{x:Bind editenum:EditorOperation.TransposeDown}"
                         Text="Move Line Down">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Down" Modifiers="Menu" />
@@ -270,7 +280,8 @@
                     <!--<MenuFlyoutItem x:Uid="/TitleBar/ToggleOutliningMFI" Text="Toggle Outlining"/>-->
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/ExpandCurrentMFI"
-                        Command="{x:Bind ViewModel.ExpandChildrenCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                        CommandParameter="{x:Bind editenum:EditorOperation.ExpandChildren}"
                         Text="Expand Current">
                         <MenuFlyoutItem.Icon>
                             <ImageIcon Source="{StaticResource ExpandCurrentIcon}" />
@@ -281,7 +292,8 @@
                     </MenuFlyoutItem>
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/CollapseCurrentMFI"
-                        Command="{x:Bind ViewModel.CollapseChildrenCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                        CommandParameter="{x:Bind editenum:EditorOperation.CollapseChildren}"
                         Text="Collapse Current">
                         <MenuFlyoutItem.Icon>
                             <ImageIcon Source="{StaticResource CollapseCurrentIcon}" />
@@ -292,7 +304,8 @@
                     </MenuFlyoutItem>
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/ExpandAllMFI"
-                        Command="{x:Bind ViewModel.ExpandAllCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                        CommandParameter="{x:Bind editenum:EditorOperation.ExpandAll}"
                         Text="Expand All">
                         <MenuFlyoutItem.Icon>
                             <ImageIcon Source="{StaticResource ExpandAllIcon}" />
@@ -303,7 +316,8 @@
                     </MenuFlyoutItem>
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/CollapseAllMFI"
-                        Command="{x:Bind ViewModel.CollapseAllCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                        CommandParameter="{x:Bind editenum:EditorOperation.CollapseAll}"
                         Text="Collapse All">
                         <MenuFlyoutItem.Icon>
                             <ImageIcon Source="{StaticResource CollapseAllIcon}" />
@@ -339,7 +353,7 @@
                 <!--  Build/Rebuild  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/BuildProjectMFI"
-                    Command="{x:Bind ViewModel.BuildProjectCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.BuildProjectCommand}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}"
                     Text="Build Project">
                     <MenuFlyoutItem.Icon>
@@ -351,7 +365,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/RebuildProjectMFI"
-                    Command="{x:Bind ViewModel.RebuildProjectCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.RebuildProjectCommand}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}"
                     Text="Rebuild Project">
                     <MenuFlyoutItem.Icon>
@@ -363,7 +377,7 @@
                 <!--  Assemble  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/AssembleFileMFI"
-                    Command="{x:Bind ViewModel.AssembleFileCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.AssembleFileCommand}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanAssemble, FallbackValue=False, Mode=OneWay}"
                     Text="Assemble File">
                     <MenuFlyoutItem.KeyboardAccelerators>
@@ -375,7 +389,7 @@
                 <!--  Clean  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/CleanProjectMFI"
-                    Command="{x:Bind ViewModel.CleanProjectCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.CleanProjectCommand}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}"
                     Text="Clean Project">
                     <MenuFlyoutItem.Icon>
@@ -384,7 +398,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/CleanFileMFI"
-                    Command="{x:Bind ViewModel.CleanFileCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.CleanFileCommand}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanAssemble, FallbackValue=False, Mode=OneWay}"
                     Text="Clean File" />
             </MenuBarItem>
@@ -397,7 +411,7 @@
                 <!--  Run  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/StartDebuggingMFI"
-                    Command="{x:Bind ViewModel.StartDebuggingCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.StartDebuggingCommand}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}"
                     Visibility="{x:Bind local:TitleBar.VisibleIfNot(ViewModel.MainViewModel.StatusViewModel.IsRunning), Mode=OneWay}"
                     Text="Start Debugging">
@@ -410,7 +424,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/StartWithoutDebuggingMFI"
-                    Command="{x:Bind ViewModel.StartWithoutDebuggingCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.StartWithoutDebuggingCommand}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}"
                     Visibility="{x:Bind local:TitleBar.VisibleIfNot(ViewModel.MainViewModel.StatusViewModel.IsRunning), Mode=OneWay}"
                     Text="Start Without Debugging">
@@ -424,7 +438,7 @@
 
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/ResumeMFI"
-                    Command="{x:Bind ViewModel.DebugResumeCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.DebugResumeCommand}"
                     Text="Resume"
                     Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
@@ -433,7 +447,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/StopDebuggingMFI"
-                    Command="{x:Bind ViewModel.StopDebuggingCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.StopDebuggingCommand}"
                     Text="Stop Debugging"
                     Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
@@ -498,7 +512,9 @@
                 <!--  Breakpoints  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/ToggleBreakpointMFI"
-                    IsEnabled="False"
+                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                    CommandParameter="{x:Bind editenum:EditorOperation.ToggleBreakpoint}"
+                    IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanAssemble, FallbackValue=False, Mode=OneWay}"
                     Text="Toggle Breakpoint">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource ToggleBreakpointIcon}" />
@@ -509,7 +525,9 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/ClearBreakpointsMFI"
-                    IsEnabled="False"
+                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                    CommandParameter="{x:Bind editenum:EditorOperation.ClearBreakpoints}"
+                    IsEnabled="{x:Bind ViewModel.MainViewModel.FocusedPanel.CurrentPage.CanAssemble, FallbackValue=False, Mode=OneWay}"
                     Text="Clear Breakpoints">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource ClearBreakpointsIcon}" />
