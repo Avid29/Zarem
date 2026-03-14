@@ -1,12 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using System.Buffers;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Windows.Markup;
-using Zarem.Emulator.Executor.Enum;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 using static Zarem.Emulator.Machine.CoProcessors.FloatProcessor;

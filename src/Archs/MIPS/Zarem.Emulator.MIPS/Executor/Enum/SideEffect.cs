@@ -58,6 +58,16 @@ public enum SideEffect
     WriteCoProc,
 
     /// <summary>
+    /// Writes to the floating-point processor.
+    /// </summary>
+    WriteFloat,
+
+    /// <summary>
+    /// Writes to the floating-point processor.
+    /// </summary>
+    WriteDouble,
+
+    /// <summary>
     /// Reads a TLB entry into EntryHi/Lo registers.
     /// </summary>
     TLBRead,

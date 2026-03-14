@@ -23,7 +23,7 @@ public readonly struct Execution
     // They can be (low, high), (memAddress, size*(-signed)), (pc, _), (writeback, register|regset)
     private readonly uint _secondary1;
     private readonly uint _secondary2;
-    private readonly ulong _floatWriteback;
+    private readonly long _floatWriteback;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Execution"/> struct.
@@ -55,13 +55,15 @@ public readonly struct Execution
     public static Execution CreateFloatWriteback<T>(FloatRegister dest, T writeBack)
         where T : INumber<T>
     {
-        ulong longValue = writeBack switch
+        long longValue = writeBack switch
         {
-            uint i => i,
-            ulong l => l,
-            float f => BitConverter.SingleToUInt32Bits(f),
-            double d => BitConverter.DoubleToUInt64Bits(d),
-            _ => ulong.CreateTruncating(writeBack),
+            int i => i,
+            uint ui => ui,
+            long l => l,
+            ulong ul => (long)ul,
+            float f => BitConverter.SingleToInt32Bits(f),
+            double d => BitConverter.DoubleToInt64Bits(d),
+            _ => long.CreateTruncating(writeBack),
         };
 
         return new Execution
@@ -336,44 +338,45 @@ public readonly struct Execution
     /// <summary>
     /// Gets the value being written to the float processor as a <see cref="long"/>.
     /// </summary>
-    public readonly uint FWordWriteBack
+    public readonly int FWordWriteBack
     {
-        get => (uint)FLongWriteBack;
+        get => (int)FLongWriteBack;
         init
         {
-            FLongWriteBack = value;
+            _floatWriteback = value;
+            SideEffect = SideEffect.WriteFloat;
         }
     }
 
     /// <summary>
-    /// Gets the value being written to the co-processor as a <see cref="long"/>.
+    /// Gets the value being written to the float processor  as a <see cref="long"/>.
     /// </summary>
-    public readonly ulong FLongWriteBack
+    public readonly long FLongWriteBack
     {
         get => _floatWriteback;
         init
         {
             _floatWriteback = value;
-            SideEffect = SideEffect.WriteCoProc;
+            SideEffect = SideEffect.WriteDouble;
         }
     }
 
     /// <summary>
-    /// Gets the value being written to the co-processor as a <see cref="float"/>.
+    /// Gets the value being written to the float processor as a <see cref="float"/>.
     /// </summary>
     public readonly float FFloatWriteBack
     {
-        get => BitConverter.UInt32BitsToSingle(FWordWriteBack);
-        init => FWordWriteBack = BitConverter.SingleToUInt32Bits(value);
+        get => BitConverter.Int32BitsToSingle(FWordWriteBack);
+        init => FWordWriteBack = BitConverter.SingleToInt32Bits(value);
     }
 
     /// <summary>
-    /// Gets the value being written to the co-processor as a <see cref="double"/>.
+    /// Gets the value being written to the float processor as a <see cref="double"/>.
     /// </summary>
     public readonly double FDoubleWriteBack
     {
-        get => BitConverter.UInt64BitsToDouble(FLongWriteBack);
-        init => FLongWriteBack = BitConverter.DoubleToUInt64Bits(value);
+        get => BitConverter.Int64BitsToDouble(FLongWriteBack);
+        init => FLongWriteBack = BitConverter.DoubleToInt64Bits(value);
     }
 
     /// <summary>

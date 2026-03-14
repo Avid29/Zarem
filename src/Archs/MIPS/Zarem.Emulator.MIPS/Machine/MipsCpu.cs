@@ -258,6 +258,12 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
             case SideEffect.WriteCoProc:
                 WriteCoProc(execution.CoProcRegisterSet, execution.CoProcReg, execution.CoProcWriteBack);
                 break;
+            case SideEffect.WriteFloat:
+                FloatProcessor.Words[execution.FloatReg] = execution.FWordWriteBack;
+                break;
+            case SideEffect.WriteDouble:
+                FloatProcessor.Longs[execution.FloatReg] = execution.FLongWriteBack;
+                break;
                 // TODO: Handle TLB side effects
         }
 
