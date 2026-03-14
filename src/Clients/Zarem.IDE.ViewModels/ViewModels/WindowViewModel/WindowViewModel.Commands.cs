@@ -4,9 +4,9 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Linq;
 using System.Threading.Tasks;
+using Zarem.Debugger.Models.Enums;
 using Zarem.IDE.Messages.Editor;
 using Zarem.IDE.Messages.Editor.Enums;
-using Zarem.IDE.Messages.Files;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.CheatSheet;
 using Zarem.IDE.ViewModels.Pages.Settings;
@@ -149,7 +149,7 @@ public partial class WindowViewModel
     }
 
     [RelayCommand]
-    private async Task DebugContinue() => _debugService.Continue();
+    private async Task Step(StepMode mode) => _debugService.Step(mode);
 
     [RelayCommand]
     private async Task StopDebugging() => _debugService.StopDebugging();

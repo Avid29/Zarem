@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Threading.Tasks;
+using Zarem.Debugger.Models.Enums;
 using Zarem.Models.Files;
 
 namespace Zarem.IDE.Services;
@@ -24,9 +25,15 @@ public interface IDebugService
     Task RunFileAsync(SourceFile file, bool debug = true);
 
     /// <summary>
-    /// Resumes a currently paused debugger
+    /// Resumes a currently paused debugger.
     /// </summary>
     void Continue();
+
+    /// <summary>
+    /// Steps the current debugger.
+    /// </summary>
+    /// <param name="mode">The type of step to perform.</param>
+    public void Step(StepMode mode);
 
     /// <summary>
     /// Stops the current debug session.

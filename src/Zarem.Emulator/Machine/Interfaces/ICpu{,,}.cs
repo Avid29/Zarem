@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Emulator.Events;
 
 namespace Zarem.Emulator.Machine.Interfaces;
 

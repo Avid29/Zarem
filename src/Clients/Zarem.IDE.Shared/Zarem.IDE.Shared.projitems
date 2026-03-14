@@ -531,4 +531,7 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\Step.svg" />
+  </ItemGroup>
 </Project>

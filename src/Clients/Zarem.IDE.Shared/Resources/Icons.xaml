@@ -44,6 +44,7 @@
     <ImageSource x:Key="StartDebuggingIcon">ms-appx:///Assets/Icons/DebugIcons/StartDebugging.svg</ImageSource>
     <ImageSource x:Key="StartWithoutDebuggingIcon">ms-appx:///Assets/Icons/DebugIcons/StartWithoutDebugging.svg</ImageSource>
     <ImageSource x:Key="StopDebuggingIcon">ms-appx:///Assets/Icons/DebugIcons/StopDebugging.svg</ImageSource>
+    <ImageSource x:Key="StepIcon">ms-appx:///Assets/Icons/DebugIcons/Step.svg</ImageSource>
     <ImageSource x:Key="StepOverIcon">ms-appx:///Assets/Icons/DebugIcons/StepOver.svg</ImageSource>
     <ImageSource x:Key="StepIntoIcon">ms-appx:///Assets/Icons/DebugIcons/StepInto.svg</ImageSource>
     <ImageSource x:Key="StepOutIcon">ms-appx:///Assets/Icons/DebugIcons/StepOut.svg</ImageSource>

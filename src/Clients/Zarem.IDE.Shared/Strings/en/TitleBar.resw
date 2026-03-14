@@ -300,4 +300,7 @@
   <data name="ClearBreakpointsMFI.Text" xml:space="preserve">
     <value>Clear Breakpoints</value>
   </data>
+  <data name="StepMFI.Text" xml:space="preserve">
+    <value>Step</value>
+  </data>
 </root>

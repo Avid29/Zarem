@@ -300,4 +300,7 @@
   <data name="ClearBreakpointsMFI.Text" xml:space="preserve">
     <value>נקה נקודות עצירה</value>
   </data>
+  <data name="StepMFI.Text" xml:space="preserve">
+    <value>צעד</value>
+  </data>
 </root>

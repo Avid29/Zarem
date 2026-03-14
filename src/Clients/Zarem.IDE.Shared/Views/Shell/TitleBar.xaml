@@ -7,6 +7,7 @@
     xmlns:local="using:Zarem.IDE.Views.Shell"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:editenum="using:Zarem.IDE.Messages.Editor.Enums"
+    xmlns:debugenum="using:Zarem.Debugger.Models.Enums"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -438,7 +439,8 @@
 
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/ContinueMFI"
-                    Command="{x:Bind ViewModel.DebugContinueCommand}"
+                    Command="{x:Bind ViewModel.StepCommand}"
+                    CommandParameter="{x:Bind debugenum:StepMode.Continue}"
                     Text="Continue"
                     Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
@@ -478,22 +480,26 @@
 
                 <!--  Step  -->
                 <MenuFlyoutItem
-                    x:Uid="/TitleBar/StepOverMFI"
-                    IsEnabled="False"
-                    Text="Step Over">
+                    x:Uid="/TitleBar/StepMFI"
+                    Command="{x:Bind ViewModel.StepCommand}"
+                    CommandParameter="{x:Bind debugenum:StepMode.Step}"
+                    Text="Step"
+                    Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
-                        <ImageIcon Source="{StaticResource StepOverIcon}" />
+                        <ImageIcon Source="{StaticResource StepIntoIcon}" />
                     </MenuFlyoutItem.Icon>
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Key="F10" />
                     </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
-                    x:Uid="/TitleBar/StepIntoMFI"
-                    IsEnabled="False"
-                    Text="Step Into">
+                    x:Uid="/TitleBar/StepOverMFI"
+                    Command="{x:Bind ViewModel.StepCommand}"
+                    CommandParameter="{x:Bind debugenum:StepMode.StepOver}"
+                    Text="Step Over"
+                    Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
-                        <ImageIcon Source="{StaticResource StepIntoIcon}" />
+                        <ImageIcon Source="{StaticResource StepOverIcon}" />
                     </MenuFlyoutItem.Icon>
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Key="F11" />
@@ -501,8 +507,10 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/StepOutMFI"
-                    IsEnabled="False"
-                    Text="Step Out">
+                    Command="{x:Bind ViewModel.StepCommand}"
+                    CommandParameter="{x:Bind debugenum:StepMode.StepOut}"
+                    Text="Step Out"
+                    Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StepOutIcon}" />
                     </MenuFlyoutItem.Icon>
@@ -510,7 +518,7 @@
                         <KeyboardAccelerator Key="F11" Modifiers="Shift" />
                     </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
-                <MenuFlyoutSeparator />
+                <MenuFlyoutSeparator Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}"/>
 
                 <!--  Breakpoints  -->
                 <MenuFlyoutItem
