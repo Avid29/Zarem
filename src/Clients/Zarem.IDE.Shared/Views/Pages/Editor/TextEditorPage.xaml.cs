@@ -34,6 +34,18 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
 
         Service.Get<IMessenger>().Register<TextEditorPage, SettingChangedMessage<Theme>>(this, (r, m) => SyntaxHighlighting.ReloadFromSettings());
         Service.Get<IMessenger>().Register<TextEditorPage, SettingChangedMessage<EditorColorScheme>>(this, (r, m) => SyntaxHighlighting.ReloadFromSettings());
+
+        Loaded += TextEditorPage_Loaded;
+    }
+
+    private async void TextEditorPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not TextEditorPage page)
+            return;
+
+        page.Loaded -= TextEditorPage_Loaded;
+
+        await page.LoadContentAsync();
     }
 
     /// <summary>
@@ -170,6 +182,10 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
 
     private async Task LoadContentAsync()
     {
+        // Defer until loaded
+        if (ActiveCodeEditor is null)
+            return;
+
         var file = ViewModel?.File;
         var text = string.Empty;
 
