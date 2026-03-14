@@ -5,6 +5,7 @@ using System;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Machine;
+using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.TrapHandlers;
 
@@ -32,14 +33,14 @@ public class MarsTrapHandler : MipsTrapHandler
                 break;
 
             // Print float
-            //case 2:
-            //    // TODO: Print float
-            //    break;
+            case 2:
+                Console.WriteLine($"{Computer.Processor.FloatProcessor.Singles[FloatRegister.F12]}");
+                break;
 
             // Print double
-            //case 3:
-            //    // TODO: Print double
-            //    break;
+            case 3:
+                Console.WriteLine($"{Computer.Processor.FloatProcessor.Doubles[FloatRegister.F12]}");
+                break;
 
             // Print string
             case 4:
@@ -49,6 +50,16 @@ public class MarsTrapHandler : MipsTrapHandler
             // Read integer
             case 5:
                 V0 = (uint)int.Parse(Console.ReadLine() ?? "");
+                break;
+
+            // Read float
+            case 6:
+                Computer.Processor.FloatProcessor.Singles[FloatRegister.F0] = float.Parse(Console.ReadLine() ?? "");
+                break;
+
+            // Read double
+            case 7:
+                Computer.Processor.FloatProcessor.Doubles[FloatRegister.F0] = double.Parse(Console.ReadLine() ?? "");
                 break;
 
             // Read string
