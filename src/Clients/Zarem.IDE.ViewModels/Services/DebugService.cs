@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Threading.Tasks;
 using Zarem.Debugger;
+using Zarem.Debugger.Models.Enums;
 using Zarem.DebugSessions;
 using Zarem.Emulator;
 using Zarem.Emulator.Machine;
@@ -125,9 +126,12 @@ public class DebugService : IDebugService
     }
 
     /// <inheritdoc/>
-    public void Continue()
+    public void Continue() => Step(StepMode.Continue);
+
+    /// <inheritdoc/>
+    public void Step(StepMode mode)
     {
-        _session?.Debugger?.Continue();
+        _session?.Debugger?.Step(mode);
 
         _messenger.Send(new ExecutingLineChangedMessage());
     }

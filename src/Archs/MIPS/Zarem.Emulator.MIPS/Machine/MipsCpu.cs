@@ -19,7 +19,6 @@ namespace Zarem.Emulator.Machine;
 /// </summary>
 public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 {
-    private uint? _delaySlot = null;
 
     /// <inheritdoc/>
     public event EventHandler<ICpu, TrapEventArgs>? TrapOccurred;
@@ -93,6 +92,11 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     /// Gets or sets the value in the high register.
     /// </summary>
     public uint High { get; set; }
+
+    /// <summary>
+    /// Gets the jump address in the delay slot.
+    /// </summary>
+    public uint? DelaySlot { get; private set; } = null;
 
     /// <inheritdoc/>
     public string ArchitectureName => "MIPS";
@@ -217,10 +221,10 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     private MipsTrap WriteBack(Execution execution, uint memRead)
     {
         uint nextPc;
-        if (_delaySlot.HasValue)
+        if (DelaySlot.HasValue)
         {
-            nextPc = _delaySlot.Value;
-            _delaySlot = null;
+            nextPc = DelaySlot.Value;
+            DelaySlot = null;
         }
         else
         {
@@ -273,7 +277,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
         }
 
         // Store the branch offset in the delay slot
-        _delaySlot = targetPc;
+        DelaySlot = targetPc;
     }
 
     private void WriteCoProc(RegisterSet set, GPRegister register, uint writeback)
@@ -320,7 +324,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
             return;
         }
 
-        CoProcessor0.EnterTrap(trap, ProgramCounter, _delaySlot.HasValue);
+        CoProcessor0.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
         ProgramCounter = CoProcessor0.ExceptionVector;
     }
 }

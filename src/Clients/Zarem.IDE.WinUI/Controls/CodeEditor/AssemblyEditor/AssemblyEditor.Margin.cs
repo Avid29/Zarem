@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.UI;
+using System;
 using WinUIEditor;
 
 namespace Zarem.IDE.Controls.CodeEditor;
@@ -87,7 +88,7 @@ public partial class AssemblyEditor
             // Set new marker
             _executionLineHandle = editor.MarkerAdd(line, ExecutionPointIndex);
 
-            // Set new highlight
+            // Find the position to highlight the executing line
             var lineStart = editor.PositionFromLine(line);
             var length = editor.LineLength(line);
 
@@ -104,8 +105,19 @@ public partial class AssemblyEditor
                 }
             }
 
+            // Apply the new highlight
             editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
             editor.IndicatorFillRange(lineStart, length);
+
+            // Adjust view to ensure the line is comfortably on screen
+            editor.EnsureVisible(line);
+            long firstVisible = editor.FirstVisibleLine;
+            long lastVisible = firstVisible + editor.LinesOnScreen;
+            if (line <= firstVisible + 2 || line > lastVisible - 2)
+            {
+                long targetFirstLine = line - (editor.LinesOnScreen / 2);
+                editor.FirstVisibleLine = Math.Max(0, targetFirstLine);
+            }
         }
     }
 }

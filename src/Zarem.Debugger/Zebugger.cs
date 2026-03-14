@@ -2,10 +2,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Zarem.Debugger.Handlers;
 using Zarem.Debugger.Models;
+using Zarem.Debugger.Models.Enums;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Models;
 
 namespace Zarem.Debugger;
 
@@ -17,8 +20,10 @@ public class Zebugger
     private readonly IDebugHandler _handler;
     private readonly IComputer _computer;
     private readonly Dictionary<ulong, Breakpoint> _breakpoints = [];
-    private Breakpoint? _restorePoint;
-    private Breakpoint? _tempPoint;
+
+    private Breakpoint? _pointToRestore;    // This tracks the user BP to restore after executing
+    private Breakpoint? _internalTrap;      // A temporary breakpoint for restorations
+    private Breakpoint? _stepTrap;          // A temporary breakpoint for stepping
     private TrapEventArgs? _trapEvent;
 
     /// <summary>
@@ -38,111 +43,46 @@ public class Zebugger
     }
 
     /// <summary>
-    /// Gets the currently hit breakpoint
+    /// Gets the currently halting breakpoint.
     /// </summary>
-    public Breakpoint? GetCurrentBreakpoint()
+    public Breakpoint? CurrentBreakpointPoint { get; private set; }
+
+    /// <summary>
+    /// Steps using the specified step mode.
+    /// </summary>
+    /// <param name="mode">The style of step to perform.</param>
+    public void Step(StepMode mode)
     {
-        var address = _computer.Cpu.ProgramCounter;
-        if (_breakpoints.TryGetValue(address, out var breakpoint))
-            return breakpoint;
-
-        return null;
-    }
-
-    private void OnBreakpointHit(object? sender, TrapEventArgs e)
-    {
-        _trapEvent = e;
-
-        // Restore the breakpoint if a restoration is queued
-        if (_restorePoint is not null)
+        Action stepAction = mode switch
         {
-            ToggleBreakpoint(_restorePoint, true);
-            _restorePoint = null;
-        }
+            StepMode.Step => Step,
+            StepMode.StepOver => StepOver,
+            StepMode.StepOut => StepOut,
+            StepMode.Continue or _ => Continue,
+        };
 
-        // Temporarily disable the breakpoint so the CPU can execute the real instruction when resumed
-        // Mark the breakpoint for restoration, though
-        // This is also convenient because the instruction's memory is correct
-        var current = GetCurrentBreakpoint();
-        if (current is not null)
-        {
-            ToggleBreakpoint(current, false);
-            _restorePoint = current;
-
-            // If there's not already a breakpoint there, setup a temporary breakpoint at the next instruction
-            // TODO: Variable instruction sizes
-            //var nextAddress = current.Address + _handler.InstructionSize;
-            var nextAddress = _handler.GetStepAddress(_computer);
-            if (!_breakpoints.ContainsKey(nextAddress))
-            {
-                _tempPoint = new Breakpoint(nextAddress, _handler.BreakpointBytes.Length);
-                ToggleBreakpoint(_tempPoint, true);
-            }
-
-            // Rewind the program counter
-            _computer.Cpu.ProgramCounter -= (ulong)_handler.BreakpointBytes.Length;
-        }
-
-        // Temp point is used to enqueue a restoration.
-        // Just remove the temp-point and continue
-        if (_tempPoint is not null)
-        {
-            ToggleBreakpoint(_tempPoint, false);
-            _tempPoint = null;
-
-            _trapEvent.Resume();
-            _trapEvent = null;
-            return;
-        }
-
-        Halted?.Invoke(this, (ulong)((long)_computer.Cpu.ProgramCounter));
+        stepAction();
     }
 
     /// <summary>
     /// Resumes execution.
     /// </summary>
-    public void Continue()
-    {
-        if (_trapEvent is null)
-            return;
-
-        // That's it. The restoration point has already been established
-        _trapEvent.Resume();
-        _trapEvent = null;
-    }
+    public void Continue() => ResumeExecution();
 
     /// <summary>
     /// Steps a single instruction.
     /// </summary>
-    public void Step()
-    {
-        if (_trapEvent is null)
-            return;
-
-        // TODO:
-    }
+    public void Step() => SetStepAndResume(_handler.GetStepAddress(_computer));
 
     /// <summary>
     /// Steps over a call or "and link" instruction to when it return. Or just steps one instruction.
     /// </summary>
-    public void StepOver()
-    {
-        if (_trapEvent is null)
-            return;
-
-        // TODO:
-    }
+    public void StepOver() => SetStepAndResume(_handler.GetStepOverAddress(_computer));
 
     /// <summary>
     /// Steps out to the current return address.
     /// </summary>
-    public void StepOut()
-    {
-        if (_trapEvent is null)
-            return;
-
-        // TODO:
-    }
+    public void StepOut() => SetStepAndResume(_handler.GetStepOutAddress(_computer));
 
     /// <summary>
     /// Sets a breakpoint in memory.
@@ -174,6 +114,79 @@ public class Zebugger
         // Disable the breakpoint
         ToggleBreakpoint(bp, false);
         _breakpoints.Remove(address);
+
+        if (_pointToRestore == bp)
+            _pointToRestore = null;
+    }
+
+    private void OnBreakpointHit(object? sender, TrapEventArgs e)
+    {
+        _trapEvent = e;
+        var address = _computer.Cpu.ProgramCounter;
+
+
+        // Always restore a user breakpoint if we were stepping off one
+        if (_pointToRestore is not null)
+        {
+            ToggleBreakpoint(_pointToRestore, true);
+            _pointToRestore = null;
+        }
+
+        // Check and clear step and internal traps
+        bool hitStep = CheckAndClearTempBreakpoint(ref _stepTrap, out var stepPoint);
+        bool hitInternal = CheckAndClearTempBreakpoint(ref _internalTrap, out _);
+
+        // If we hit or there's a user breakpoint here, we hit a breakpoint
+        if (_breakpoints.TryGetValue(address, out var userBp) || hitStep)
+        {
+            // This is a safe null suppression. Step point cannot be null since hitStep is true
+            CurrentBreakpointPoint = userBp ?? stepPoint!;
+            _pointToRestore = userBp;
+            ToggleBreakpoint(CurrentBreakpointPoint, false);
+        }
+        else
+        {
+            // Otherwise we hit an internal breakpoint
+            ResumeExecution();
+            return;
+        }
+
+        Halted?.Invoke(this, address);
+    }
+
+    private void SetStepAndResume(ulong targetAddress)
+    {
+        if (!_breakpoints.TryGetValue(targetAddress, out var bp))
+        {
+            bp = new Breakpoint(targetAddress, _handler.BreakpointBytes.Length);
+        }
+
+        _stepTrap = bp;
+        ToggleBreakpoint(_stepTrap, true);
+
+        ResumeExecution();
+    }
+
+    private void ResumeExecution()
+    {
+        if (_trapEvent == null)
+            return;
+
+        // Setup an internal trap as a restoration point, if needed
+        if (_pointToRestore is not null)
+        {
+            // Only set a trap if the there's not already a breakpoint there, user or step
+            var nextAddr = _handler.GetStepAddress(_computer);
+            if (!_breakpoints.ContainsKey(nextAddr) && !(_stepTrap?.Address == nextAddr))
+            {
+                _internalTrap = new Breakpoint(nextAddr, _handler.BreakpointBytes.Length);
+                ToggleBreakpoint(_internalTrap, true);
+            }
+        }
+
+        _trapEvent.Resume();
+        _trapEvent = null;
+        CurrentBreakpointPoint = null;
     }
 
     private void ToggleBreakpoint(Breakpoint bp, bool enabled)
@@ -194,5 +207,23 @@ public class Zebugger
         }
 
         bp.IsApplied = enabled;
+    }
+
+    private bool CheckAndClearTempBreakpoint(ref Breakpoint? temp, [NotNullWhen(true)] out Breakpoint? bp)
+    {
+        // Ensure the breakpoint is disabled
+        if (temp is not null)
+        {
+            ToggleBreakpoint(temp, false);
+        }
+
+        // Check if the breakpoint was hit
+        var address = _computer.Cpu.ProgramCounter;
+        bool hit = temp is not null && address == temp.Address;
+
+        // Clear the breakpoint
+        bp = temp;
+        temp = null;
+        return hit;
     }
 }
