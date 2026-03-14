@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using Microsoft.UI.Xaml;
+using System;
 using WinUIEditor;
 
 namespace Zarem.IDE.Controls.CodeEditor;
@@ -25,11 +26,12 @@ public partial class AssemblyEditor
 
     private void Editor_UpdateUI(Editor sender, UpdateUIEventArgs args)
     {
-        if (_tokenizedAssembly is null)
+        if (_tokenizedAssembly is null || _tokenizedAssembly.LineCount is 0)
             return;
 
         var pos = sender.CurrentPos;
         var line = sender.LineFromPosition(pos);
+        line = Math.Min(line, _tokenizedAssembly.LineCount - 1);
         var asmLine = _tokenizedAssembly[(int)line];
 
         PositionAddress = asmLine.Address;

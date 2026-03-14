@@ -19,10 +19,10 @@ public class FloatProcessor
     public FloatProcessor()
     {
         RegisterFile = new();
-        Singles = new(this);
-        Doubles = new(this);
-        Words = new(this);
-        Longs = new(this);
+        Singles = new SingleIndexer(this);
+        Doubles = new DoubleIndexer(this);
+        Words = new WordIndexer(this);
+        Longs = new LongIndexer(this);
     }
 
     internal RegisterFile RegisterFile { get; }
@@ -30,22 +30,22 @@ public class FloatProcessor
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="float"/>.
     /// </summary>
-    public SingleIndexer Singles { get; }
+    public IFloatRegisterIndexer<float> Singles { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="double"/>.
     /// </summary>
-    public DoubleIndexer Doubles { get; }
+    public IFloatRegisterIndexer<double> Doubles { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as an <see cref="int"/>.
     /// </summary>
-    public WordIndexer Words { get; }
+    public IFloatRegisterIndexer<int> Words { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="long"/>.
     /// </summary>
-    public LongIndexer Longs { get; }
+    public IFloatRegisterIndexer<long> Longs { get; }
 
     /// <summary>
     /// Gets or sets the value of a register on the coprocessor.
@@ -58,7 +58,11 @@ public class FloatProcessor
         set => RegisterFile[reg] = value;
     }
 
-    internal interface IFloatRegisterIndexer<T>
+    /// <summary>
+    /// An interface for indexing the FPU registers with different formats.
+    /// </summary>
+    /// <typeparam name="T">The indexer's format.</typeparam>
+    public interface IFloatRegisterIndexer<T>
         where T : INumber<T>
     {
         /// <summary>
@@ -72,7 +76,7 @@ public class FloatProcessor
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.
     /// </summary>
-    public readonly struct SingleIndexer(FloatProcessor parent) : IFloatRegisterIndexer<float>
+    public class SingleIndexer(FloatProcessor parent) : IFloatRegisterIndexer<float>
     {
         private readonly FloatProcessor _parent = parent;
 
@@ -87,7 +91,7 @@ public class FloatProcessor
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.
     /// </summary>
-    public readonly struct DoubleIndexer(FloatProcessor parent) : IFloatRegisterIndexer<double>
+    public class DoubleIndexer(FloatProcessor parent) : IFloatRegisterIndexer<double>
     {
         private readonly FloatProcessor _parent = parent;
 
@@ -123,7 +127,7 @@ public class FloatProcessor
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.
     /// </summary>
-    public readonly struct WordIndexer(FloatProcessor parent) : IFloatRegisterIndexer<int>
+    public class WordIndexer(FloatProcessor parent) : IFloatRegisterIndexer<int>
     {
         private readonly FloatProcessor _parent = parent;
 
@@ -138,7 +142,7 @@ public class FloatProcessor
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.
     /// </summary>
-    public readonly struct LongIndexer(FloatProcessor parent) : IFloatRegisterIndexer<long>
+    public class LongIndexer(FloatProcessor parent) : IFloatRegisterIndexer<long>
     {
         private readonly FloatProcessor _parent = parent;
 
