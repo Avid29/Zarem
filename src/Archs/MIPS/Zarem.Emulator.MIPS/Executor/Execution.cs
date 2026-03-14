@@ -1,9 +1,8 @@
 ﻿// Avishai Dernis 2025
 
-using CommunityToolkit.HighPerformance;
 using System;
 using System.Numerics;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -66,11 +65,22 @@ public readonly struct Execution
             _ => long.CreateTruncating(writeBack),
         };
 
-        return new Execution
+        if (Unsafe.SizeOf<T>() == sizeof(float))
         {
-            FloatReg = dest,
-            FLongWriteBack = longValue,
-        };
+            return new Execution
+            {
+                FloatReg = dest,
+                FWordWriteBack = (int)longValue,
+            };
+        }
+        else
+        {
+            return new Execution
+            {
+                FloatReg = dest,
+                FLongWriteBack = longValue,
+            };
+        }
     }
 
     /// <summary>
