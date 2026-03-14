@@ -181,7 +181,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
 
             if (UseAssemblyEditor && file.SourceFile is not null)
             {
-                AssemblyEditor.RegisterBreakpointSource(file.SourceFile.Breakpoints);
+                AssemblyEditor?.RegisterBreakpointSource(file.SourceFile.Breakpoints);
             }
         }
 

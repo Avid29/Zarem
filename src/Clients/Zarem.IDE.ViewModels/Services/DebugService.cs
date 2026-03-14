@@ -12,6 +12,7 @@ using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.IDE.Messages.DebugSession;
 using Zarem.IDE.Models.Enums;
+using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Popup.Enums;
 using Zarem.IDE.Services.Popup.Models;
@@ -28,6 +29,7 @@ public class DebugService : IDebugService
     private readonly IBuildService _buildService;
     private readonly IConsoleService _consoleService;
     private readonly IDispatcherService _dispatcher;
+    private readonly IFileService _fileService;
     private readonly ILocalizationService _localizationService;
     private readonly IPopupService _popupService;
     private readonly IProjectService _projectService;
@@ -43,6 +45,7 @@ public class DebugService : IDebugService
         IBuildService buildService,
         IConsoleService consoleService,
         IDispatcherService dispatcher,
+        IFileService fileService,
         ILocalizationService localizationService,
         IPopupService popupService,
         IProjectService projectService,
@@ -52,6 +55,7 @@ public class DebugService : IDebugService
         _buildService = buildService;
         _consoleService = consoleService;
         _dispatcher = dispatcher;
+        _fileService = fileService;
         _localizationService = localizationService;
         _popupService = popupService;
         _projectService = projectService;
@@ -99,7 +103,20 @@ public class DebugService : IDebugService
         if (sourceLine is null)
             return;
 
-        _dispatcher.RunOnUIThread(() => _messenger.Send(new ExecutingLineChangedMessage(sourceLine.Value.Item1, sourceLine.Value.Item2)));        
+        _dispatcher.RunOnUIThread(async () =>
+        {
+            var filePath = sourceLine.Value.Item1;
+            var line = sourceLine.Value.Item2;
+
+            // Open the file if possible
+            if (filePath is not null)
+            {
+                var file = await _fileService.GetFileAsync(filePath);
+                file?.Open();
+            }
+
+            _messenger.Send(new ExecutingLineChangedMessage(filePath, line));
+        });
     }
 
     /// <inheritdoc/>
