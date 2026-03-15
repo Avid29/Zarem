@@ -19,6 +19,7 @@ op_buffer:
 .globl entry
 
 entry:
+loop:
     # ---- Get First Number ----
     la      $a0, prompt_num
     jal     read_float
@@ -54,7 +55,7 @@ entry:
     jal print_result
     nop
 
-    j entry               # Repeat indefinitely
+    j loop               # Repeat indefinitely
     
 exit_prog:
     li $v0, 4

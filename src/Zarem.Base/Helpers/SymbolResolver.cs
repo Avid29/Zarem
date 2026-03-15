@@ -39,8 +39,11 @@ public class SymbolResolver
 
         foreach (Symbol symbol in symbols)
         {
+            // NOTE: A single address can have multiple symbols.
+            // Currently we just take the first, but in the future we might like to track 
+            // every matching symbol to their address
             _sortedAddresess.Add(symbol.Address);
-            _symbolMap.Add(symbol.Address, symbol);
+            _symbolMap.TryAdd(symbol.Address, symbol);
         }
 
         _sortedAddresess.Sort();
