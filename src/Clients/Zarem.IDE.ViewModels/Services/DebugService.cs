@@ -71,7 +71,10 @@ public class DebugService : IDebugService
         if (_projectService.Project is null)
             return;
 
-        var buildResult = await _buildService.BuildProjectAsync(false);
+        // NOTE: We're rebuilding when debug is true because the debug info is not 
+        // properly exported properly. This should be changed back to false when
+        // issue #73 is addressed.
+        var buildResult = await _buildService.BuildProjectAsync(debug);
         if (buildResult?.OutputModule is null)
             return;
 
