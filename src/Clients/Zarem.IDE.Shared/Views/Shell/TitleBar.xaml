@@ -4,10 +4,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:debugenum="using:Zarem.Debugger.Models.Enums"
+    xmlns:editenum="using:Zarem.IDE.Messages.Editor.Enums"
     xmlns:local="using:Zarem.IDE.Views.Shell"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:editenum="using:Zarem.IDE.Messages.Editor.Enums"
-    xmlns:debugenum="using:Zarem.Debugger.Models.Enums"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -263,8 +263,8 @@
                     </MenuFlyoutItem>
                     <MenuFlyoutItem
                         x:Uid="/TitleBar/MoveLineDownMFI"
-                    Command="{x:Bind ViewModel.SendEditOperationCommand}"
-                    CommandParameter="{x:Bind editenum:EditorOperation.TransposeDown}"
+                        Command="{x:Bind ViewModel.SendEditOperationCommand}"
+                        CommandParameter="{x:Bind editenum:EditorOperation.TransposeDown}"
                         Text="Move Line Down">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Down" Modifiers="Menu" />
@@ -414,8 +414,8 @@
                     x:Uid="/TitleBar/StartDebuggingMFI"
                     Command="{x:Bind ViewModel.StartDebuggingCommand}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}"
-                    Visibility="{x:Bind local:TitleBar.VisibleIfNot(ViewModel.MainViewModel.StatusViewModel.IsRunning), Mode=OneWay}"
-                    Text="Start Debugging">
+                    Text="Start Debugging"
+                    Visibility="{x:Bind local:TitleBar.VisibleIfNot(ViewModel.MainViewModel.StatusViewModel.IsRunning), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartDebuggingIcon}" />
                     </MenuFlyoutItem.Icon>
@@ -427,8 +427,8 @@
                     x:Uid="/TitleBar/StartWithoutDebuggingMFI"
                     Command="{x:Bind ViewModel.StartWithoutDebuggingCommand}"
                     IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsReady, Mode=OneWay}"
-                    Visibility="{x:Bind local:TitleBar.VisibleIfNot(ViewModel.MainViewModel.StatusViewModel.IsRunning), Mode=OneWay}"
-                    Text="Start Without Debugging">
+                    Text="Start Without Debugging"
+                    Visibility="{x:Bind local:TitleBar.VisibleIfNot(ViewModel.MainViewModel.StatusViewModel.IsRunning), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <ImageIcon Source="{StaticResource StartWithoutDebuggingIcon}" />
                     </MenuFlyoutItem.Icon>
@@ -486,7 +486,7 @@
                     Text="Step"
                     Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
-                        <ImageIcon Source="{StaticResource StepIntoIcon}" />
+                        <ImageIcon Source="{StaticResource StepIcon}" />
                     </MenuFlyoutItem.Icon>
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Key="F10" />
@@ -518,7 +518,7 @@
                         <KeyboardAccelerator Key="F11" Modifiers="Shift" />
                     </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
-                <MenuFlyoutSeparator Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}"/>
+                <MenuFlyoutSeparator Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}" />
 
                 <!--  Breakpoints  -->
                 <MenuFlyoutItem
