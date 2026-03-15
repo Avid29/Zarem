@@ -156,6 +156,9 @@ public class Zebugger
 
     private void SetStepAndResume(ulong targetAddress)
     {
+        if (_trapEvent is null)
+            return;
+
         if (!_breakpoints.TryGetValue(targetAddress, out var bp))
         {
             bp = new Breakpoint(targetAddress, _handler.BreakpointBytes.Length);
@@ -169,7 +172,7 @@ public class Zebugger
 
     private void ResumeExecution()
     {
-        if (_trapEvent == null)
+        if (_trapEvent is null)
             return;
 
         // Setup an internal trap as a restoration point, if needed
