@@ -56,6 +56,7 @@ loop:
     nop
 
     j loop               # Repeat indefinitely
+    nop
     
 exit_prog:
     li $v0, 4
