@@ -2,7 +2,7 @@
 
 using System;
 using Zarem.Attributes;
-using Zarem.Debugger.MIPS;
+using Zarem.Debugger;
 using Zarem.Descriptors;
 
 namespace Zarem.MIPS;

@@ -1,15 +1,16 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using Zarem.Debugger.Handlers;
+using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
-namespace Zarem.Debugger.MIPS;
+namespace Zarem.Debugger;
 
 /// <summary>
 /// A <see cref="IDebugHandler"/> for the mips architecture.
@@ -84,4 +85,7 @@ public class MipsDebugHandler : IDebugHandler
         var mipsCpu = (MipsCpu)computer.Cpu;
         return mipsCpu[GPRegister.ReturnAddress];
     }
+
+    /// <inheritdoc/>
+    public IDebugViewer? GetDebugViewer(IComputer computer) => MipsDebugViewer.Create(computer);
 }

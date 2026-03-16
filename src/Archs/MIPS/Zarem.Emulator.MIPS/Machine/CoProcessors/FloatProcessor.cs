@@ -25,7 +25,7 @@ public class FloatProcessor
         Longs = new LongIndexer(this);
     }
 
-    internal RegisterFile RegisterFile { get; }
+    internal MipsRegisterFile RegisterFile { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="float"/>.

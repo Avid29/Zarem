@@ -23,7 +23,10 @@ public class CoProcessor0
         RegisterFile = new();
     }
 
-    internal RegisterFile RegisterFile { get; }
+    /// <summary>
+    /// Gets the coprocessor0's register file.
+    /// </summary>
+    public MipsRegisterFile RegisterFile { get; }
 
     /// <summary>
     /// Gets the processor's current privilege mode.
