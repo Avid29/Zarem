@@ -1,16 +1,14 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.Messaging;
-using System;
 using System.Threading.Tasks;
 using Zarem.Debugger;
 using Zarem.Debugger.Models.Enums;
 using Zarem.DebugSessions;
-using Zarem.Emulator;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.TrapHandlers;
-using Zarem.IDE.Messages.DebugSession;
+using Zarem.IDE.Messages.DebugSessions;
 using Zarem.IDE.Models.Enums;
 using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Popup;
@@ -94,7 +92,7 @@ public class DebugService : IDebugService
         _session.Debugger?.Halted += Debugger_Halted;
 
         _stateService.SetState(IdeState.Running);
-        _messenger.Send(new DebugSessionStartedMessage());
+        _messenger.Send(new DebugSessionStartedMessage(_session));
         _session.Emulator.Start();
     }
 

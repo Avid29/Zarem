@@ -18,7 +18,7 @@ public class FloatProcessor
     /// </summary>
     public FloatProcessor()
     {
-        RegisterFile = new();
+        RegisterFile = new(RegisterSet.FloatingPoints);
         Singles = new SingleIndexer(this);
         Doubles = new DoubleIndexer(this);
         Words = new WordIndexer(this);

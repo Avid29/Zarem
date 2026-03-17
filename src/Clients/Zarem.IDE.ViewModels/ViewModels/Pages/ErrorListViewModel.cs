@@ -31,13 +31,6 @@ public class ErrorListViewModel : PageViewModel
 
         IsActive = true;
     }
-    
-    /// <inheritdoc/>
-    protected override void OnActivated()
-    {
-        _messenger.Register<ErrorListViewModel, BuildStartedMessage>(this, (r, m) => r.BeginLogging(m));
-        _messenger.Register<ErrorListViewModel, BuildFinishedMessage>(this, (r, m) => r.EndLogging(m));
-    }
 
     /// <inheritdoc/>
     public override string Title => "Error List"; // TODO: Localization
@@ -46,6 +39,13 @@ public class ErrorListViewModel : PageViewModel
     /// Gets the list of errors, warnings, and messages.
     /// </summary>
     public ObservableCollection<ILog> Messages { get; }
+
+    /// <inheritdoc/>
+    protected override void OnActivated()
+    {
+        _messenger.Register<ErrorListViewModel, BuildStartedMessage>(this, (r, m) => r.BeginLogging(m));
+        _messenger.Register<ErrorListViewModel, BuildFinishedMessage>(this, (r, m) => r.EndLogging(m));
+    }
 
     private void BeginLogging(BuildStartedMessage message)
     {

@@ -20,7 +20,7 @@ public class CoProcessor0
     /// </summary>
     public CoProcessor0()
     {
-        RegisterFile = new();
+        RegisterFile = new(RegisterSet.CoProc0);
     }
 
     /// <summary>

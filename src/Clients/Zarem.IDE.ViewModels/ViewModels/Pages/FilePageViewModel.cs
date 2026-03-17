@@ -8,7 +8,7 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Messages;
-using Zarem.IDE.Messages.DebugSession;
+using Zarem.IDE.Messages.DebugSessions;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings;

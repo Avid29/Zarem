@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using Zarem.Debugger.Handlers;
 using Zarem.Debugger.Models;
 using Zarem.Debugger.Models.Enums;
+using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models;
@@ -38,9 +39,15 @@ public class Zebugger
     {
         _handler = handler;
         _computer = computer;
+        Viewer = _handler.GetDebugViewer(computer);
 
         _computer.Cpu.BreakpointHit += OnBreakpointHit;
     }
+
+    /// <summary>
+    /// Gets the <see cref="IDebugViewer"/> for the debug session.
+    /// </summary>
+    public IDebugViewer? Viewer { get; }
 
     /// <summary>
     /// Gets the currently halting breakpoint.

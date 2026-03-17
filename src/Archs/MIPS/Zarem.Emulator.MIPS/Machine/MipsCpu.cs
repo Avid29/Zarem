@@ -33,7 +33,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     {
         Config = config;
 
-        RegisterFile = new(true);
+        RegisterFile = new(RegisterSet.GeneralPurpose);
         CoProcessor0 = new ();
         FloatProcessor = new();
         Tlb = new MipsTlb();
