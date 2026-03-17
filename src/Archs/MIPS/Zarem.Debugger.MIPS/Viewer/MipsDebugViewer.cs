@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System.Collections.Generic;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
 
@@ -17,15 +16,11 @@ public class MipsDebugViewer : IDebugViewer
     {
         _mipsComputer = mipsComputer;
 
-        RegisterGroups =
-            [
-                new MipsRegisterViewer(_mipsComputer.Processor.RegisterFile),
-                new MipsRegisterViewer(_mipsComputer.Processor.CoProcessor0.RegisterFile),
-            ];
+        Registers = new MipsRegisterViewer(_mipsComputer.Processor.RegisterFile);
     }
 
     /// <inheritdoc/>
-    public IEnumerable<IRegisterGroup> RegisterGroups { get; }
+    public IRegisterGroup Registers { get; }
 
     /// <inheritdoc/>
     public static IDebugViewer? Create(IComputer computer)

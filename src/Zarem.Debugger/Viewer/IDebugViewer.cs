@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System.Collections.Generic;
 using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Debugger.Viewer;
@@ -11,9 +10,14 @@ namespace Zarem.Debugger.Viewer;
 public interface IDebugViewer
 {
     /// <summary>
-    /// Gets the register groups for the debug view.
+    /// Gets the registers for the debug view.
     /// </summary>
-    IEnumerable<IRegisterGroup> RegisterGroups { get; }
+    IRegisterGroup Registers { get; }
+
+    ///// <summary>
+    ///// Gets the register groups for the debug view.
+    ///// </summary>
+    //IEnumerable<IRegisterGroup> RegisterGroups { get; }
 
     /// <summary>
     /// Creates a new debug viewer around a computer.

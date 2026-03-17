@@ -1,11 +1,11 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
 using Zarem.Debugger.Viewer;
 using Zarem.DebugSessions;
-using Zarem.IDE.Messages.Build;
+using Zarem.IDE.Bindables;
 using Zarem.IDE.Messages.DebugSessions;
-using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels.Pages;
@@ -24,12 +24,18 @@ public class RegisterViewerViewModel : PageViewModel
     public RegisterViewerViewModel(IMessenger messenger)
     {
         _messenger = messenger;
+        Registers = [];
 
         IsActive = true;
     }
 
     /// <inheritdoc/>
     public override string Title => "Register Viewer"; // TODO: Localization
+
+    /// <summary>
+    /// Gets the collection of registers being viewed.
+    /// </summary>
+    public ObservableCollection<BindableRegister> Registers { get; }
 
     /// <inheritdoc/>
     protected override void OnActivated()
@@ -44,11 +50,16 @@ public class RegisterViewerViewModel : PageViewModel
         if (_viewer is null)
             return;
 
-
+        foreach (var reg in _viewer.Registers.RegisterNames)
+        {
+            Registers.Add(new BindableRegister(reg, _viewer.Registers));
+        }
     }
 
     private void UnregisterSession()
     {
         _viewer = null;
+
+        Registers.Clear();
     }
 }
