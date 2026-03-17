@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Debugger.Handlers;
@@ -46,4 +47,9 @@ public interface IDebugHandler
     /// The step out address is the return address.
     /// </remarks>
     ulong GetStepOutAddress(IComputer computer);
+
+    /// <summary>
+    /// Gets a new <see cref="IDebugViewer"/> for the given computer.
+    /// </summary>
+    IDebugViewer? GetDebugViewer(IComputer computer);
 }

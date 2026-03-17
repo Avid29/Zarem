@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.IDE.Messages.DebugSession;
+namespace Zarem.IDE.Messages.DebugSessions;
 
 /// <summary>
 /// A message sent when the executing line changes.

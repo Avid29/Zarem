@@ -314,6 +314,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\RegisterViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\SettingsPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -467,6 +471,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\UsagePatternsSubPage.xaml.cs">
       <DependentUpon>UsagePatternsSubPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\RegisterViewer.xaml.cs">
+      <DependentUpon>RegisterViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>

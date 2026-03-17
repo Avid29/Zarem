@@ -150,12 +150,12 @@ public class ExecutionTests
 
         public ExecutionTestCase(string input, FloatRegister reg, int writeBack) : this(input)
         {
-            ExpectedWordFloatWriteBack = (reg, (uint)writeBack);
+            ExpectedWordFloatWriteBack = (reg, writeBack);
         }
 
         public ExecutionTestCase(string input, FloatRegister reg, long writeBack) : this(input)
         {
-            ExpectedLongFloatWriteBack = (reg, (ulong)writeBack);
+            ExpectedLongFloatWriteBack = (reg, writeBack);
         }
 
         public ExecutionTestCase(string input, (uint, byte[]) memory) : this(input)
@@ -184,9 +184,9 @@ public class ExecutionTests
 
         public (GPRegister Regiter, uint? Value)? ExpectedWriteBack { get; init; } = null;
 
-        public (FloatRegister Register, uint Value)? ExpectedWordFloatWriteBack { get; init; } = null;
+        public (FloatRegister Register, int Value)? ExpectedWordFloatWriteBack { get; init; } = null;
 
-        public (FloatRegister Register, ulong Value)? ExpectedLongFloatWriteBack { get; init; } = null;
+        public (FloatRegister Register, long Value)? ExpectedLongFloatWriteBack { get; init; } = null;
 
         public uint? ExpectedPC { get; init; } = null;
 

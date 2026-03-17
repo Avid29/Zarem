@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using System;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine.Registers;
@@ -7,20 +8,34 @@ namespace Zarem.Emulator.Machine.Registers;
 /// <summary>
 /// A class representing a register file.
 /// </summary>
-public class RegisterFile
+public class MipsRegisterFile
 {
     private readonly uint[] _registers;
-    private readonly bool _gpr;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RegisterFile"/> class.
+    /// An event invoked when a register is changed.
     /// </summary>
-    public RegisterFile(bool gpr = false, int count = 32)
+    public event EventHandler<GPRegister>? RegisterChanged;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MipsRegisterFile"/> class.
+    /// </summary>
+    public MipsRegisterFile(RegisterSet set, int count = 32)
     {
-        _gpr = gpr;
+        RegisterSet = set;
         _registers = new uint[count];
     }
-    
+
+    /// <summary>
+    /// Gets the register set type.
+    /// </summary>
+    public RegisterSet RegisterSet { get; }
+
+    /// <summary>
+    /// Gets the number of registers in the register file.
+    /// </summary>
+    public int Count => _registers.Length;
+
     /// <summary>
     /// Gets or sets the value in a register.
     /// </summary>
@@ -30,7 +45,7 @@ public class RegisterFile
         set
         {
             // Cannot set the 0 GPR register
-            if (register is 0 && _gpr)
+            if (register is 0 && RegisterSet == RegisterSet.GeneralPurpose)
                 return;
 
             // Register is out of the indexable bounds. Do nothing.
@@ -38,6 +53,7 @@ public class RegisterFile
                 return;
 
             _registers[register] = value;
+            RegisterChanged?.Invoke(this, (GPRegister)register);
         }
     }
 

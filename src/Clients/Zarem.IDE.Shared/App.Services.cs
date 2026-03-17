@@ -56,6 +56,7 @@ public partial class App
             // Panel ViewModels
             .AddSingleton<ExplorerViewModel>()
             .AddSingleton<ErrorListViewModel>()
+            .AddSingleton<RegisterViewerViewModel>()
 
             // ViewModels
             .AddTransient<StatusViewModel>()

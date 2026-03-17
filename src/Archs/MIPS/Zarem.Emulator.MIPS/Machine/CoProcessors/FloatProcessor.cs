@@ -18,14 +18,14 @@ public class FloatProcessor
     /// </summary>
     public FloatProcessor()
     {
-        RegisterFile = new();
+        RegisterFile = new(RegisterSet.FloatingPoints);
         Singles = new SingleIndexer(this);
         Doubles = new DoubleIndexer(this);
         Words = new WordIndexer(this);
         Longs = new LongIndexer(this);
     }
 
-    internal RegisterFile RegisterFile { get; }
+    internal MipsRegisterFile RegisterFile { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="float"/>.

@@ -33,14 +33,17 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     {
         Config = config;
 
-        RegisterFile = new(true);
+        RegisterFile = new(RegisterSet.GeneralPurpose);
         CoProcessor0 = new ();
         FloatProcessor = new();
         Tlb = new MipsTlb();
         Memory = memory;
     }
 
-    internal RegisterFile RegisterFile { get; }
+    /// <summary>
+    /// Gets the cpu's general purpose register file.
+    /// </summary>
+    public MipsRegisterFile RegisterFile { get; }
 
     /// <summary>
     /// Gets or sets the value in the program counter register.
@@ -293,7 +296,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
             RegisterSet.GeneralPurpose => RegisterFile,
             RegisterSet.CoProc0 => CoProcessor0.RegisterFile,
             RegisterSet.FloatingPoints => FloatProcessor.RegisterFile,
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<RegisterFile>(nameof(set)),
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsRegisterFile>(nameof(set)),
         };
 
         registerSet[register] = writeback;
