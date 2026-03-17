@@ -10,16 +10,37 @@
     d:DesignWidth="400"
     mc:Ignorable="d">
 
-    <Grid>
-        <GridView ItemsSource="{x:Bind ViewModel.Registers, Mode=OneWay}">
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="bindable:BindableRegister">
-                    <StackPanel Orientation="Horizontal" Spacing="2">
-                        <TextBlock Opacity=".5" Text="{x:Bind RegisterName, Mode=OneWay}" />
-                        <TextBlock Text="{x:Bind Value, Mode=OneWay}" />
-                    </StackPanel>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
-    </Grid>
+    <GridView
+        Padding="12"
+        ItemsSource="{x:Bind ViewModel.Registers, Mode=OneWay}"
+        SelectionMode="None">
+        <GridView.ItemsPanel>
+            <ItemsPanelTemplate>
+                <ItemsWrapGrid MaximumRowsOrColumns="16" Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </GridView.ItemsPanel>
+
+        <GridView.ItemTemplate>
+            <DataTemplate x:DataType="bindable:BindableRegister">
+                <Border
+                    Margin="2"
+                    Padding="8,4"
+                    Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}"
+                    CornerRadius="4">
+                    <Grid Width="100">
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            FontSize="11"
+                            Opacity="0.6"
+                            Text="{x:Bind RegisterName, Mode=OneWay}" />
+                        <TextBlock
+                            HorizontalAlignment="Right"
+                            FontFamily="Consolas"
+                            FontWeight="Bold"
+                            Text="{x:Bind Value, Mode=OneWay}" />
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </GridView.ItemTemplate>
+    </GridView>
 </UserControl>
