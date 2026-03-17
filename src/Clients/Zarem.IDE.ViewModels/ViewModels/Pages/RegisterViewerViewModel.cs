@@ -60,6 +60,7 @@ public class RegisterViewerViewModel : PageViewModel
     {
         _viewer = null;
 
-        Registers.Clear();
+        foreach (var reg in Registers)
+            reg.Dispose();
     }
 }

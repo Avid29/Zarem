@@ -1,5 +1,7 @@
 // Avishai Dernis 2024
 
+using Microsoft.UI.Xaml;
+
 namespace Zarem.IDE.Windows;
 
 /// <summary>
@@ -18,4 +20,6 @@ public sealed partial class MainWindow : ZaremWindow
         // Open the welcome page on startup
         ViewModel.OpenWelcomeCommand.Execute(null);
     }
+
+    private Visibility InvertVisibile(bool x) => x ? Visibility.Collapsed : Visibility.Visible;
 }

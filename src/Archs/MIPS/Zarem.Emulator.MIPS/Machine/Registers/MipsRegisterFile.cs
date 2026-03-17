@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using System;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine.Registers;
@@ -10,6 +11,11 @@ namespace Zarem.Emulator.Machine.Registers;
 public class MipsRegisterFile
 {
     private readonly uint[] _registers;
+
+    /// <summary>
+    /// An event invoked when a register is changed.
+    /// </summary>
+    public event EventHandler<GPRegister>? RegisterChanged;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsRegisterFile"/> class.
@@ -47,6 +53,7 @@ public class MipsRegisterFile
                 return;
 
             _registers[register] = value;
+            RegisterChanged?.Invoke(this, (GPRegister)register);
         }
     }
 
