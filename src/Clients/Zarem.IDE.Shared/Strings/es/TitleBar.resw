@@ -303,4 +303,7 @@
   <data name="StepMFI.Text" xml:space="preserve">
     <value>Step</value>
   </data>
+  <data name="ReportBugMFI.Text" xml:space="preserve">
+    <value>Report a Bug</value>
+  </data>
 </root>

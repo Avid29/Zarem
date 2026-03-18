@@ -303,4 +303,7 @@
   <data name="StepMFI.Text" xml:space="preserve">
     <value>צעד</value>
   </data>
+  <data name="ReportBugMFI.Text" xml:space="preserve">
+    <value>דיווח באג</value>
+  </data>
 </root>
