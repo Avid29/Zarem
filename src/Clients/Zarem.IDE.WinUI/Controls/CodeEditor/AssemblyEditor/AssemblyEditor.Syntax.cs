@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using WinUIEditor;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
@@ -33,8 +34,8 @@ public partial class AssemblyEditor
     private const int MessageAnnotationStyleIndex = 19;
 
 
-    private HashSet<string>? Instructions = null;
-    private HashSet<string>? Symbols = null;
+    private InstructionTable? _instructionTable = null;
+    private HashSet<string>? _symbolsSet = null;
 
     private bool @lock = false;
 
@@ -62,26 +63,17 @@ public partial class AssemblyEditor
 
     private void SetupKeywords()
     {
-        Instructions = [];
-
         // Get the instruction table
         var config = AssemblerConfig ?? new MipsAssemblerConfig();
-        var table = new InstructionTable(config);
-        var instructions = table.GetInstructions();
-
-        foreach (var instr in instructions)
-        {
-            // TODO: Handle formatting instructions
-            Instructions.Add(instr.Name);
-        }
+        _instructionTable = new InstructionTable(config);
     }
 
     private void UpdateSymbols(IReadOnlyList<Symbol> symbols)
     {
-        Symbols = [];
+        _symbolsSet = [];
 
         foreach(var symbol in symbols)
-            Symbols.Add(symbol.Name);
+            _symbolsSet.Add(symbol.Name);
     }
 
     private void UpdateSyntaxHighlighting()
@@ -144,15 +136,15 @@ public partial class AssemblyEditor
 
             var style = token.Type switch
             {
-                TokenType.Instruction when Instructions is not null =>
-                    Instructions.Contains(token.Source) ? InstructionStyleIndex : InvalidInstructionStyleIndex,
+                TokenType.Instruction when _instructionTable is not null =>
+                    _instructionTable.TryGetInstruction(FloatFormatTable.TryGetFloatFormat(token.Source, out _, out var lookup) ? lookup : token.Source, out _, out _, out var banned) ? InstructionStyleIndex : InvalidInstructionStyleIndex,
 
                 TokenType.Instruction => InstructionStyleIndex,
                 TokenType.Register => RegisterStyleIndex,
                 TokenType.Immediate => ImmediateStyleIndex,
 
-                TokenType.Reference when Symbols is not null =>
-                    Symbols.Contains(token.Source) ? ReferenceStyleIndex : InvalidReferenceStyleIndex,
+                TokenType.Reference when _symbolsSet is not null =>
+                    _symbolsSet.Contains(token.Source) ? ReferenceStyleIndex : InvalidReferenceStyleIndex,
 
                 TokenType.Reference or
                 TokenType.LabelDeclaration => ReferenceStyleIndex,
