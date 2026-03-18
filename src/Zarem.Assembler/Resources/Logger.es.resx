@@ -288,4 +288,7 @@
   <data name="DirectiveDoesNotExist" xml:space="preserve">
     <value>'{0}' is not a valid directive.</value>
   </data>
+  <data name="MultipleLabels" xml:space="preserve">
+    <value>A line cannot contain multiple labels.</value>
+  </data>
 </root>

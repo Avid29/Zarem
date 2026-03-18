@@ -30,11 +30,7 @@
     syscall
 
 .data
-name_prompt:
-    .asciiz "What is your name? (36 chars)\n"
-hello_str:
-    .ascii "Hello "
-name_str:
-    .space 36
-newline_str:
-    .asciiz "\n"
+name_prompt:    .asciiz "What is your name? (36 chars)\n"
+hello_str:      .ascii "Hello "
+name_str:       .space 36
+newline_str:    .asciiz "\n"

@@ -17,5 +17,4 @@ entry:
     syscall
 
 .data
-hello_world:
-	.asciiz "Hello World!\n"
+hello_world:    .asciiz "Hello World!\n"
