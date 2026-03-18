@@ -15,7 +15,7 @@ Zarem is currently MIPS only, but support for other architectures is planned.
 
 | Architecture   | Assembling     |  Emulating       | Debugging     | Disassembly |
 | -------------- | -------------- | --------------- | ------------- | ----------- |
-| MIPS32         | ✅ Supported  | ✅ Supported    | ⚠️  WIP      | ⚠️  WIP     |
+| MIPS32         | ✅ Supported  | ✅ Supported    | ✅ Supported | ⚠️  WIP     |
 | MIPS64         | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
 | RISC-V         | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
 | ARM            | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  |
