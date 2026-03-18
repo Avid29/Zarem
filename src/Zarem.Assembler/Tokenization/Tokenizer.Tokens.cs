@@ -38,9 +38,9 @@ public partial class Tokenizer
             if (meaningful || _mode is TokenizerMode.IDE or TokenizerMode.BehaviorExpression)
                 classified.Add(newToken);
 
-            // If a meaningful token was appended,
-            // we are no longer at the start
-            start = start && !meaningful;
+            // If a meaningful token was appended, we are no longer at the start. 
+            // we also remain at the start after label declarations
+            start = start && (!meaningful || newToken.Type is TokenType.LabelDeclaration);
 
             // Advance the appropriate number of tokens
             span = span[advance..];

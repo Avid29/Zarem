@@ -1,19 +1,11 @@
 .data
-prompt_num:
-    .asciiz "Enter a number: "
-prompt_op:
-    .asciiz "Enter Operator (+, -, *, / or 'q' to quit): "
-result_msg:
-    .asciiz "Result: "
-error_msg:
-    .asciiz "Error: Invalid Operator"
-exit_msg:
-    .asciiz "Exiting calculator. Goodbye!\n"
-newline:
-    .asciiz "\n"
-    
-op_buffer:
-    .space 2
+prompt_num: .asciiz "Enter a number: "
+prompt_op:  .asciiz "Enter Operator (+, -, *, / or 'q' to quit): "
+result_msg: .asciiz "Result: "
+error_msg:  .asciiz "Error: Invalid Operator"
+exit_msg:   .asciiz "Exiting calculator. Goodbye!\n"
+newline:    .asciiz "\n"
+op_buffer:  .space 2
     
 .text
 .globl entry

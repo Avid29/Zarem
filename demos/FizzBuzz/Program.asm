@@ -82,9 +82,6 @@ loop_end:
 
     # Define resource strings
     
-fizz_str:
-	.asciiz "Fizz"
-buzz_str:
-	.asciiz "Buzz"
-newline_str:
-    .asciiz "\n"
+fizz_str: .asciiz "Fizz"
+buzz_str: .asciiz "Buzz"
+newline_str: .asciiz "\n"
