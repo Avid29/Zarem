@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AlphaTB.Text" xml:space="preserve">
-    <value>אלפא</value>
+    <value>ALPHA</value>
   </data>
   <data name="GettingReadyDescriptionTB.Text" xml:space="preserve">
-    <value>זוהי גרסת אלפא שחסרות בה תכונות רבות. בקרו אותנו ב־GitHub כדי לראות מה צפוי בקרוב!</value>
+    <value>This is an alpha release missing significant functionality. Check us out on GitHub to see what's coming soon!</value>
   </data>
   <data name="GettingReadyTB.Text" xml:space="preserve">
-    <value>אנחנו עדיין בהכנות...</value>
+    <value>We're still getting ready...</value>
   </data>
   <data name="GettingStartedDescriptionTB.Text" xml:space="preserve">
-    <value>עיינו בוויקי כדי ללמוד כיצד ליצור פרויקט זרם חדש ולכתוב את תוכנית „שלום עולם” הראשונה שלכם ב־MIPS.</value>
+    <value>Checkout the wiki to learn how to create a new Zarem project and write your first "Hello World" program in MIPS.</value>
   </data>
   <data name="GettingStartedTitleTB.Text" xml:space="preserve">
-    <value>לא בטוחים מאיפה להתחיל?</value>
+    <value>Not sure where to start?</value>
   </data>
   <data name="GitHubLinkHB.Content" xml:space="preserve">
-    <value>קישור ל־GitHub</value>
+    <value>GitHub Link</value>
   </data>
   <data name="WelcomeToZaremTB.Text" xml:space="preserve">
-    <value>ברוכים הבאים לזרם</value>
+    <value>Welcome to Zarem</value>
   </data>
   <data name="WikiGettingStartedLinkHB.Content" xml:space="preserve">
-    <value>ויקי זרם: תחילת העבודה</value>
+    <value>Zarem Wiki: Getting Started</value>
   </data>
 </root>
