@@ -120,6 +120,9 @@
   <data name="Flyout/AddMFSI.Text" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="Flyout/ConfigureMFI.Text" xml:space="preserve">
+    <value>Configure</value>
+  </data>
   <data name="Flyout/CopyFullPathMFI.Text" xml:space="preserve">
     <value>Copy Full Path</value>
   </data>

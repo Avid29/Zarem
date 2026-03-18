@@ -573,6 +573,16 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem
+                    x:Name="ReportBugMFI"
+                    x:Uid="/TitleBar/ReportBugMFI"
+                    Click="ReportBugMFI_Click"
+                    Text="Report a Bug">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE730;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem
                     x:Uid="/TitleBar/WelcomeMFI"
                     Command="{x:Bind ViewModel.OpenWelcomeCommand, Mode=OneWay}"
                     Text="Open Welcome Page" />

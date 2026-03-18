@@ -120,6 +120,9 @@
   <data name="Flyout/AddMFSI.Text" xml:space="preserve">
     <value>הוסף</value>
   </data>
+  <data name="Flyout/ConfigureMFI.Text" xml:space="preserve">
+    <value>הגדרות</value>
+  </data>
   <data name="Flyout/CopyFullPathMFI.Text" xml:space="preserve">
     <value>העתק את הנתיב המלא</value>
   </data>

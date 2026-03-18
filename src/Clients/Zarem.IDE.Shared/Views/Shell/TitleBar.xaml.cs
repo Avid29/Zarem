@@ -66,4 +66,7 @@ public sealed partial class TitleBar : UserControl
 
     private async void WikiMFI_Click(object sender, RoutedEventArgs e)
         => await Launcher.LaunchUriAsync(new("https://github.com/Avid29/Zarem/wiki"));
+
+    private async void ReportBugMFI_Click(object sender, RoutedEventArgs e)
+        => await Launcher.LaunchUriAsync(new("https://github.com/Avid29/Zarem/issues"));
 }

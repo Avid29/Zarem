@@ -239,7 +239,7 @@
 
                         <!--  Configure  -->
                         <MenuFlyoutItem
-                            x:Uid="/Explorer/ConfigureMFI"
+                            x:Uid="/Explorer/Flyout/ConfigureMFI"
                             IsEnabled="False"
                             Text="Configure">
                             <MenuFlyoutItem.Icon>
