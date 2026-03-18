@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -118,192 +118,192 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutMFI.Text" xml:space="preserve">
-    <value>אודות מיפסר</value>
+    <value>About Zarem</value>
   </data>
   <data name="AssembleFileMFI.Text" xml:space="preserve">
-    <value>הרכב קובץ</value>
+    <value>Assemble File</value>
   </data>
   <data name="AssembleOpenFilesMFI.Text" xml:space="preserve">
-    <value>הרכב קבצים פתוחים</value>
+    <value>Assemble Open Files</value>
   </data>
   <data name="AssembleProjectMFI.Text" xml:space="preserve">
-    <value>הרכב פרויקט</value>
+    <value>Assemble Project</value>
   </data>
   <data name="BuildMBI.Title" xml:space="preserve">
-    <value>בנייה</value>
+    <value>Build</value>
   </data>
   <data name="BuildProjectMFI.Text" xml:space="preserve">
-    <value>בנה פרויקט</value>
+    <value>Build Project</value>
   </data>
   <data name="MIPSCheatSheetMFI.Text" xml:space="preserve">
-    <value>הצג גיליון רמאות</value>
+    <value>Show Cheat Sheet</value>
   </data>
   <data name="CleanFileMFI.Text" xml:space="preserve">
-    <value>נקה קובץ</value>
+    <value>Clean File</value>
   </data>
   <data name="CleanOpenFilesMFI.Text" xml:space="preserve">
-    <value>נקה קבצים פתוחים</value>
+    <value>Clean Open Files</value>
   </data>
   <data name="CleanProjectMFI.Text" xml:space="preserve">
-    <value>נקה פרויקט</value>
+    <value>Clean Project</value>
   </data>
   <data name="ClosePage" xml:space="preserve">
-    <value>סגור דף</value>
+    <value>Close Page</value>
   </data>
   <data name="CloseProjectMFI.Text" xml:space="preserve">
-    <value>סגור פרויקט</value>
+    <value>Close Project</value>
   </data>
   <data name="CollapseAllMFI.Text" xml:space="preserve">
-    <value>כווץ הכול</value>
+    <value>Collapse All</value>
   </data>
   <data name="CollapseCurrentMFI.Text" xml:space="preserve">
-    <value>כווץ את הנוכחי</value>
+    <value>Collapse Current</value>
   </data>
   <data name="CopyMFI.Text" xml:space="preserve">
-    <value>העתק</value>
+    <value>Copy</value>
   </data>
   <data name="CutMFI.Text" xml:space="preserve">
-    <value>גזור</value>
+    <value>Cut</value>
   </data>
   <data name="DebugMBI.Title" xml:space="preserve">
-    <value>ניפוי שגיאות</value>
+    <value>Debug</value>
   </data>
   <data name="DuplicateMFI.Text" xml:space="preserve">
-    <value>שכפל</value>
+    <value>Duplicate</value>
   </data>
   <data name="EditMBI.Title" xml:space="preserve">
-    <value>ערוך</value>
+    <value>Edit</value>
   </data>
   <data name="EditorAdvancedMFSI.Text" xml:space="preserve">
-    <value>מתקדם</value>
+    <value>Advanced</value>
   </data>
   <data name="ExpandAllMFI.Text" xml:space="preserve">
-    <value>הרחב הכול</value>
+    <value>Expand All</value>
   </data>
   <data name="ExpandCurrentMFI.Text" xml:space="preserve">
-    <value>הרחב את הנוכחי</value>
+    <value>Expand Current</value>
   </data>
   <data name="FileMBI.Title" xml:space="preserve">
-    <value>קובץ</value>
+    <value>File</value>
   </data>
   <data name="HelpMBI.Title" xml:space="preserve">
-    <value>עזרה</value>
+    <value>Help</value>
   </data>
   <data name="MoveLineDownMFI.Text" xml:space="preserve">
-    <value>הזז שורה מטה</value>
+    <value>Shift Line Down</value>
   </data>
   <data name="MoveLineUpMFI.Text" xml:space="preserve">
-    <value>הזז שורה מעלה</value>
+    <value>Shift Line Up</value>
   </data>
   <data name="NewFileMFI.Text" xml:space="preserve">
-    <value>קובץ חדש</value>
+    <value>New File</value>
   </data>
   <data name="NewMFSI.Text" xml:space="preserve">
-    <value>חדש</value>
+    <value>New</value>
   </data>
   <data name="NewProjectMFI.Text" xml:space="preserve">
-    <value>פרויקט חדש</value>
+    <value>New Project</value>
   </data>
   <data name="OpenFileMFI.Text" xml:space="preserve">
-    <value>פתח קובץ</value>
+    <value>Open File</value>
   </data>
   <data name="OpenFolderMFI.Text" xml:space="preserve">
-    <value>פתח תיקיה</value>
+    <value>Open Folder</value>
   </data>
   <data name="OpenMFSI.Text" xml:space="preserve">
-    <value>פתח</value>
+    <value>Open</value>
   </data>
   <data name="OpenProjectMFI.Text" xml:space="preserve">
-    <value>פתח פרויקט</value>
+    <value>Open Project</value>
   </data>
   <data name="OutliningMFSI.Text" xml:space="preserve">
-    <value>קווי מתאר</value>
+    <value>Outlining</value>
   </data>
   <data name="PasteMFI.Text" xml:space="preserve">
-    <value>הדבק</value>
+    <value>Paste</value>
   </data>
   <data name="RebuildProjectMFI.Text" xml:space="preserve">
-    <value>בנה מחדש את הפרויקט</value>
+    <value>Rebuild Project</value>
   </data>
   <data name="RedoMFI.Text" xml:space="preserve">
-    <value>בצע שוב</value>
+    <value>Redo</value>
   </data>
   <data name="SaveAllMFI.Text" xml:space="preserve">
-    <value>שמור את הכול</value>
+    <value>Save All</value>
   </data>
   <data name="SaveFile" xml:space="preserve">
-    <value>שמור קובץ</value>
+    <value>Save File</value>
   </data>
   <data name="SelectAllMFI.Text" xml:space="preserve">
-    <value>בחר את הכול</value>
+    <value>Select All</value>
   </data>
   <data name="SettingsMFI.Text" xml:space="preserve">
-    <value>הגדרות זרם</value>
+    <value>Zarem Settings</value>
   </data>
   <data name="StartDebuggingMFI.Text" xml:space="preserve">
-    <value>התחל ניפוי שגיאות</value>
+    <value>Start Debugging</value>
   </data>
   <data name="StartWithoutDebuggingMFI.Text" xml:space="preserve">
-    <value>התחל ללא ניפוי שגיאות</value>
+    <value>Start Without Debugging</value>
   </data>
   <data name="StepIntoMFI.Text" xml:space="preserve">
-    <value>צעד לתוך</value>
+    <value>Step Into</value>
   </data>
   <data name="StepOutMFI.Text" xml:space="preserve">
-    <value>צעד החוצה</value>
+    <value>Step Out</value>
   </data>
   <data name="StepOverMFI.Text" xml:space="preserve">
-    <value>צעד מעל</value>
+    <value>Step Over</value>
   </data>
   <data name="ToggleFullScreenMFI.Text" xml:space="preserve">
-    <value>הפעלה/כיבוי מסך מלא</value>
+    <value>Toggle Full Screen</value>
   </data>
   <data name="UndoMFI.Text" xml:space="preserve">
-    <value>בטל פעולה</value>
+    <value>Undo</value>
   </data>
   <data name="ViewMBI.Title" xml:space="preserve">
-    <value>הצג</value>
+    <value>View</value>
   </data>
   <data name="WelcomeMFI.Text" xml:space="preserve">
-    <value>פתח את דף הפתיחה</value>
+    <value>Open Welcome Page</value>
   </data>
   <data name="OpenWikiMFI.Text" xml:space="preserve">
-    <value>פתח ויקי</value>
+    <value>Open Wiki</value>
   </data>
   <data name="StartFileWithoutDebuggingMFI.Text" xml:space="preserve">
-    <value>התחל קובץ ללא ניפוי שגיאות</value>
+    <value>Start File Without Debugging</value>
   </data>
   <data name="SaveSpecificFile" xml:space="preserve">
-    <value>שמור את {0}</value>
+    <value>Save {0}</value>
   </data>
   <data name="CloseSpecificPage" xml:space="preserve">
-    <value>סגור את {0}</value>
+    <value>Close {0}</value>
   </data>
   <data name="SaveFIleMFI.Text" xml:space="preserve">
-    <value>שמור קובץ</value>
+    <value>Save File</value>
   </data>
   <data name="ClosePageMFI.Text" xml:space="preserve">
-    <value>סגור דף</value>
+    <value>Close Page</value>
   </data>
   <data name="StartDebuggingFileMFI.Text" xml:space="preserve">
-    <value>התחל ניפוי שגיאות לקובץ</value>
+    <value>Start Debugging File</value>
   </data>
   <data name="StopDebuggingMFI.Text" xml:space="preserve">
-    <value>עצור ניפוי שגיאות</value>
+    <value>Stop Debugging</value>
   </data>
   <data name="ContinueMFI.Text" xml:space="preserve">
-    <value>המשך</value>
+    <value>Continue</value>
   </data>
   <data name="ToggleBreakpointMFI.Text" xml:space="preserve">
-    <value>הוס/הסר נקודת עצירה</value>
+    <value>Toggle Breakpoint</value>
   </data>
   <data name="ClearBreakpointsMFI.Text" xml:space="preserve">
-    <value>נקה נקודות עצירה</value>
+    <value>Clear Breakpoints</value>
   </data>
   <data name="StepMFI.Text" xml:space="preserve">
-    <value>צעד</value>
+    <value>Step</value>
   </data>
   <data name="ReportBugMFI.Text" xml:space="preserve">
-    <value>דיווח באג</value>
+    <value>Report a Bug</value>
   </data>
 </root>
