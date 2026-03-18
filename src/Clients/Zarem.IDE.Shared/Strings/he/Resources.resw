@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -118,61 +118,61 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IdeState_NotReady" xml:space="preserve">
-    <value>לא מוכן</value>
+    <value>Not Ready</value>
   </data>
   <data name="IdeState_Ready" xml:space="preserve">
-    <value>מוכן</value>
+    <value>Ready</value>
   </data>
   <data name="IdeState_Preparing" xml:space="preserve">
-    <value>מתכונן</value>
+    <value>Preparing</value>
   </data>
   <data name="IdeState_BuildCompleted" xml:space="preserve">
-    <value>הבנייה הושלמה</value>
+    <value>Build Complete</value>
   </data>
   <data name="IdeState_BuildFailed" xml:space="preserve">
-    <value>הבנייה נכשלה</value>
+    <value>Build Failed</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>אוטומטי</value>
+    <value>Default</value>
   </data>
   <data name="Theme_Dark" xml:space="preserve">
-    <value>ככה</value>
+    <value>Dark</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
-    <value>בהיר</value>
+    <value>Light</value>
   </data>
   <data name="LocalizationSettingsHeaderTB.Text" xml:space="preserve">
-    <value>הגדרות שפה</value>
+    <value>Language Settings</value>
   </data>
   <data name="SearchFilesASB.PlaceholderText" xml:space="preserve">
-    <value>מחפש קבצים</value>
+    <value>Search Files</value>
   </data>
   <data name="WIPTitleTB.Text" xml:space="preserve">
-    <value>אנו עוד לא מוכנים...</value>
+    <value>We're Not Ready Yet...</value>
   </data>
   <data name="WIPDescriptionTB.Text" xml:space="preserve">
-    <value>אנחנו עובדים על טיפול בסוג קובץ זה, אבל זה עדיין לא מוכן.</value>
+    <value>We're working on handling this file type, but it's not ready yet.</value>
   </data>
   <data name="AboutHeaderTB.Text" xml:space="preserve">
-    <value>אודות</value>
+    <value>About</value>
   </data>
   <data name="AnnotationThreshold_Never" xml:space="preserve">
-    <value>לעולם לא</value>
+    <value>Never</value>
   </data>
   <data name="AnnotationThreshold_Errors" xml:space="preserve">
-    <value>שגיאות בלבד</value>
+    <value>Only Errors</value>
   </data>
   <data name="AnnotationThreshold_Warnings" xml:space="preserve">
-    <value>אזהרות ושגיאות</value>
+    <value>Warnings and Errors</value>
   </data>
   <data name="AnnotationThreshold_Always" xml:space="preserve">
-    <value>תמיד</value>
+    <value>Always</value>
   </data>
   <data name="CreateBTN.Content" xml:space="preserve">
-    <value>צור</value>
+    <value>Create</value>
   </data>
   <data name="CancelBTN.Content" xml:space="preserve">
-    <value>בטל</value>
+    <value>Cancel</value>
   </data>
   <data name="MipsVersion_MipsI" xml:space="preserve">
     <value>MIPS I</value>
@@ -193,54 +193,54 @@
     <value>MIPS VI</value>
   </data>
   <data name="BuildStatus/Succeeded" xml:space="preserve">
-    <value>{0} הצליחו</value>
+    <value>{0} Succeeded</value>
   </data>
   <data name="BuildStatus/Failed" xml:space="preserve">
-    <value>{0} נכשלו</value>
+    <value>{0} Failed</value>
   </data>
   <data name="BuildStatus/Skipped" xml:space="preserve">
-    <value>{0} דליגו</value>
+    <value>{0} Skipped</value>
   </data>
   <data name="BuildStatus/OneSucceeded" xml:space="preserve">
-    <value>1 הצליח</value>
+    <value>1 Succeeded</value>
   </data>
   <data name="BuildStatus/OneSkipped" xml:space="preserve">
-    <value>1 דליג</value>
+    <value>1 Skipped</value>
   </data>
   <data name="BuildStatus/OneFailed" xml:space="preserve">
-    <value>1 נכשל</value>
+    <value>1 Failed</value>
   </data>
   <data name="PressAnyKeyCloseConsole" xml:space="preserve">
-    <value>לחץ על מקש כלשהו כדי לסגור את המסוף...</value>
+    <value>Press any key to close the Console...</value>
   </data>
   <data name="DebugSessionEnded" xml:space="preserve">
-    <value>ניפוי השגיאות הסתיים.</value>
+    <value>Debug Session Ended.</value>
   </data>
   <data name="IdeState_Running" xml:space="preserve">
-    <value>בהרצה</value>
+    <value>Running</value>
   </data>
   <data name="IdeState_Debugging" xml:space="preserve">
-    <value>בניפוי שגיאות</value>
+    <value>Debugging</value>
   </data>
   <data name="IdeState_Building" xml:space="preserve">
-    <value>בבנייה...</value>
+    <value>Building...</value>
   </data>
   <data name="LicenseType_Other" xml:space="preserve">
-    <value>רישיון אחר</value>
+    <value>Other License</value>
   </data>
   <data name="LicenseType_MIT" xml:space="preserve">
     <value>MIT</value>
   </data>
   <data name="LicenseType_BSD2" xml:space="preserve">
-    <value>סעיף BSD-2</value>
+    <value>BSD-2 Clause</value>
   </data>
   <data name="SymbolBinding_Local" xml:space="preserve">
-    <value>מקומי</value>
+    <value>Local</value>
   </data>
   <data name="SymbolBinding_Global" xml:space="preserve">
-    <value>גלובלי</value>
+    <value>Global</value>
   </data>
   <data name="SymbolBinding_Weak" xml:space="preserve">
-    <value>חלשה</value>
+    <value>Weak</value>
   </data>
 </root>
