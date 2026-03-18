@@ -4,4 +4,4 @@ files:
   - source: /**/*.resx
     ignore:
       - /**/*.*.resx
-    translation: /%original_path%/%original_file_name%.%two_letters_code%.resx
+    translation: /%original_path%/%file_name%.%two_letters_code%.resx
