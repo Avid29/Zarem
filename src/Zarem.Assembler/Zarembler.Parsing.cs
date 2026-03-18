@@ -62,7 +62,11 @@ public partial class Zarembler
         // random garbage is in the file.
         if (line.Type is LineType.None && line.Args.Count is not 0)
         {
-            _logger.Log(Severity.Error, LogId.UnexpectedToken, line.Args[0].Tokens[0], "UnexpectedToken", line.Args[0].Tokens[0]);
+            _ = line.Args[0].Tokens[0].Type switch
+            {
+                TokenType.LabelDeclaration => _logger.Log(Severity.Error, LogId.UnexpectedToken, line.Args[0].Tokens[0], "MultipleLabels"),
+                _ => _logger.Log(Severity.Error, LogId.UnexpectedToken, line.Args[0].Tokens[0], "UnexpectedToken", line.Args[0].Tokens[0]),
+            };
         }
 
         // Log a debug line if this line changed the address

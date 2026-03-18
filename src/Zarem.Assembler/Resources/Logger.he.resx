@@ -288,4 +288,7 @@
   <data name="DirectiveDoesNotExist" xml:space="preserve">
     <value>'{0}' אינה הנחיה תקפה.</value>
   </data>
+  <data name="MultipleLabels" xml:space="preserve">
+    <value>שורה לא יכולה להכיל מספר תוויות.</value>
+  </data>
 </root>
