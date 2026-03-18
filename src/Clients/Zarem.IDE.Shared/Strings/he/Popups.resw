@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -118,57 +118,57 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeleteFileDescription" xml:space="preserve">
-    <value>{0} יימחק לצמיתות.</value>
+    <value>{0} will be deleted permanently.</value>
   </data>
   <data name="DeleteFileTitle" xml:space="preserve">
-    <value>למחוק את {0}?</value>
+    <value>Delete {0}?</value>
   </data>
   <data name="DeleteFolderTitle" xml:space="preserve">
-    <value>למחוק את {0}?</value>
+    <value>Delete {0}?</value>
   </data>
   <data name="DeleteFolderDescription" xml:space="preserve">
-    <value>{0} וכל תוכנו יימחק לצמיתות.</value>
+    <value>{0} and all its contents will be deleted permanently.</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>אישור</value>
+    <value>Confirm</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>בטל</value>
+    <value>Cancel</value>
   </data>
   <data name="DontSave" xml:space="preserve">
-    <value>אל תשמור</value>
+    <value>Don't Save</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>שמור</value>
+    <value>Save</value>
   </data>
   <data name="UnsavedChangesTitle" xml:space="preserve">
-    <value>ל-{0} יש שינויים שלא נשמרו</value>
+    <value>{0} contains unsaved changes</value>
   </data>
   <data name="UnsavedChangesDescription" xml:space="preserve">
-    <value>האם ברצונך לשמור את השינויים לפני סגירת הקובץ?</value>
+    <value>Would you like to save the changes before closing the file?</value>
   </data>
   <data name="FileRunOldAssemblyTitle" xml:space="preserve">
-    <value>לא ניתן היה להרכיב את {0}</value>
+    <value>{0} could not be assembled</value>
   </data>
   <data name="FileRunOldAssemblyDescription" xml:space="preserve">
-    <value>קובץ בינארי קודם עדיין מאוחסן. האם ברצונך להפעיל אותו?</value>
+    <value>A previous binary is still cached. Would you like to run it?</value>
   </data>
   <data name="FileRunOldAssemblyPrimary" xml:space="preserve">
-    <value>הפעל הנוכחי</value>
+    <value>Run Current</value>
   </data>
   <data name="Okay" xml:space="preserve">
-    <value>אישור</value>
+    <value>Okay</value>
   </data>
   <data name="Create" xml:space="preserve">
-    <value>צור</value>
+    <value>Create</value>
   </data>
   <data name="CreateNewFileTitle" xml:space="preserve">
-    <value>צור קובץ חדש</value>
+    <value>Create New File</value>
   </data>
   <data name="CreateNewFolderTitle" xml:space="preserve">
-    <value>צור תיקיה חדשה</value>
+    <value>Create New Folder</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>סגר</value>
+    <value>Close</value>
   </data>
 </root>
