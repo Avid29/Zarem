@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutHeaderTB.Text" xml:space="preserve">
-    <value>אודות</value>
+    <value>About</value>
   </data>
   <data name="AppNameTB.Text" xml:space="preserve">
-    <value>זרם</value>
+    <value>Zarem</value>
   </data>
   <data name="BuildInfoRUN.Text" xml:space="preserve">
-    <value>פרטי בנייה:</value>
+    <value>Build Info:</value>
   </data>
   <data name="CopyrightRUN.Text" xml:space="preserve">
-    <value>© אבישי דרניס</value>
+    <value>© Avishai Dernis</value>
   </data>
   <data name="DiscussOnDiscordTB.Text" xml:space="preserve">
-    <value>דיון ב-Discord</value>
+    <value>Discuss on Discord</value>
   </data>
   <data name="DiscussOnRedditTB.Text" xml:space="preserve">
-    <value>דיון ב-Reddit</value>
+    <value>Discuss on Reddit</value>
   </data>
   <data name="HelloFromTelAvivTB.Text" xml:space="preserve">
-    <value>שלום מגבעתיים</value>
+    <value>Hello from Tel Aviv</value>
   </data>
   <data name="MadeInIsraelTB.Text" xml:space="preserve">
-    <value>תוצרת הארץ</value>
+    <value>Made in Israel</value>
   </data>
   <data name="SponsorsTB.Text" xml:space="preserve">
-    <value>חסויות</value>
+    <value>Sponsors</value>
   </data>
   <data name="ThirdPartyDependenciesTB.Text" xml:space="preserve">
-    <value>תלויות של צד שלישי</value>
+    <value>Third-Party Dependencies</value>
   </data>
   <data name="TranslateOnCrowdinTB.Text" xml:space="preserve">
-    <value>עזרו בתרגום</value>
+    <value>Help Translate</value>
   </data>
   <data name="VersionRUN.Text" xml:space="preserve">
-    <value>גרסה:</value>
+    <value>Version:</value>
   </data>
   <data name="ViewOnGitHubTB.Text" xml:space="preserve">
-    <value>צפה ב-GitHub</value>
+    <value>View on GitHub</value>
   </data>
 </root>
