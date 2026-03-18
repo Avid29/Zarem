@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -118,107 +118,107 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutHeaderTB.Text" xml:space="preserve">
-    <value>אודות</value>
+    <value>About</value>
   </data>
   <data name="AboutSE.Description" xml:space="preserve">
-    <value>© אבישי דרניס</value>
+    <value>© Avishai Dernis</value>
   </data>
   <data name="AboutSE.Header" xml:space="preserve">
-    <value>אודות זרם</value>
+    <value>About Zarem</value>
   </data>
   <data name="AnnotationThresholdSC.Description" xml:space="preserve">
-    <value>מתי על העורך להציג הודעות יומן כהערות מתחת ליומן.</value>
+    <value>When should the editor show log messages as an annotation below the log.</value>
   </data>
   <data name="AnnotationThresholdSC.Header" xml:space="preserve">
-    <value>סף הערות</value>
+    <value>Annotations Threshold</value>
   </data>
   <data name="AppLanguageSE.Description" xml:space="preserve">
-    <value>בחר את שפת התצוגה של היישום. (נדרשת הפעלה מחדש כדי שהשינוי ייכנס לתוקף).</value>
+    <value>Set the app's display language. (Requires a restart to take effect).</value>
   </data>
   <data name="AppLanguageSE.Header" xml:space="preserve">
-    <value>שפת האפליקציה</value>
+    <value>App Language</value>
   </data>
   <data name="AppSettingsTitle" xml:space="preserve">
-    <value>הגדרות אפליקציה</value>
+    <value>App Settings</value>
   </data>
   <data name="AppThemeSC.Description" xml:space="preserve">
-    <value>שנה את הצבעים המופעים של היישום.</value>
+    <value>Change the app's theme.</value>
   </data>
   <data name="AppThemeSC.Header" xml:space="preserve">
-    <value>בחרית מצב</value>
+    <value>Theme</value>
   </data>
   <data name="AssemblerLanguageSC.Description" xml:space="preserve">
-    <value>בחר את השפה המשמשת ליומן האסמבלר.</value>
+    <value>Set the language used by for assembler log information.</value>
   </data>
   <data name="AssemblerLanguageSC.Header" xml:space="preserve">
-    <value>שפת אסמבלר</value>
+    <value>Assembler Language</value>
   </data>
   <data name="AssemblerSettingsTitle" xml:space="preserve">
-    <value>הגדרות אסמבלר</value>
+    <value>Assembler Settings</value>
   </data>
   <data name="EditorSettingsHeaderTB.Text" xml:space="preserve">
-    <value>הגדרות עורך</value>
+    <value>Editor Settings</value>
   </data>
   <data name="EditorSettingsTitle" xml:space="preserve">
-    <value>הגדרות עורך</value>
+    <value>Editor Settings</value>
   </data>
   <data name="LocalizationSettingsHeaderTB.Text" xml:space="preserve">
-    <value>הגדרות שפה</value>
+    <value>Language Settings</value>
   </data>
   <data name="RealTimeAssemblySC.Description" xml:space="preserve">
-    <value>האם העורך צריך להרכיב את הקובץ הפתוח באופן רציף כדי להציג שגיאות בזמן אמת?</value>
+    <value>Should the editor continuously assemble the open file to show errors in real-time?</value>
   </data>
   <data name="RealTimeAssemblySC.Header" xml:space="preserve">
-    <value>הרכבה בזמן אמת</value>
+    <value>Real-Time Assembly</value>
   </data>
   <data name="ThemeSettingsHeaderTB.Text" xml:space="preserve">
-    <value>הגדרות נושא</value>
+    <value>Theme Settings</value>
   </data>
   <data name="UseAppLanguage" xml:space="preserve">
-    <value>שימוש בשפת היישום</value>
+    <value>Use App Language</value>
   </data>
   <data name="UseSystemLanguage" xml:space="preserve">
-    <value>שימוש בשפת המערכת</value>
+    <value>Use System Language</value>
   </data>
   <data name="VersionFormat" xml:space="preserve">
     <value>{0}.{1}.{2}</value>
   </data>
   <data name="EditorDemoText" xml:space="preserve">
-    <value># דגמת עורך
+    <value># Editor Demo
 bar:  
-    addi    $s0, 10         # שגיאה  
-    sll     $s1, $s0, 33    # אזהרה  
-    add     $zero, $s0, $s1 # הודעה  
+    addi    $s0, 10         # Error
+    sll     $s1, $s0, 33    # Warning
+    add     $zero, $s0, $s1 # Message
 .data
 foo:  
-    .asciiz "שלום עולם"
+    .asciiz "Hello World!"
 </value>
   </data>
   <data name="SelectSchemeFileBTN.Content" xml:space="preserve">
-    <value>בחר קובץ</value>
+    <value>Select File</value>
   </data>
   <data name="LoadSchemeFromFileSC.Header" xml:space="preserve">
-    <value>טען מקובץ</value>
+    <value>Load from File</value>
   </data>
   <data name="LoadSchemeFromFileSC.Description" xml:space="preserve">
-    <value>טען ערכת צבעים של העורך מקובץ JSON.</value>
+    <value>Load an editor Color Scheme from a JSON file.</value>
   </data>
   <data name="EditorColorSchemeSE.Header" xml:space="preserve">
-    <value>ערכת צבעים</value>
+    <value>Color Scheme</value>
   </data>
   <data name="EditorColorSchemeSE.Description" xml:space="preserve">
-    <value>התאם באופן מלא את ערכת הצבעים של עורך הטקסט.</value>
+    <value>Fully customize the color scheme of the text editor.</value>
   </data>
   <data name="RestoreOpenProjectSC.Header" xml:space="preserve">
-    <value>שחזר פרויקט/תיקייה פתוחים</value>
+    <value>Restore Open Project/Folder</value>
   </data>
   <data name="RestoreOpenProjectSC.Description" xml:space="preserve">
-    <value>קבע האם היישום ישמור במטמון וישחזר את הפרויקט/התיקיה הפתוחים בעת ההפעלה.</value>
+    <value>Set whether or not the app should cache and restore the open the project/folder when opened.</value>
   </data>
   <data name="LanguageOptionsSE.Header" xml:space="preserve">
-    <value>אפשרויות שפה</value>
+    <value>Language Options</value>
   </data>
   <data name="LanguageOptionsSE.Description" xml:space="preserve">
-    <value>ניהול השפות בשימוש ברחבי האפליקציה.</value>
+    <value>Manage the language(s) used throughout the app.</value>
   </data>
 </root>
