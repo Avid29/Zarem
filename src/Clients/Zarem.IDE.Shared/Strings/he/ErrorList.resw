@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CodeDC.Content" xml:space="preserve">
-    <value>קוד</value>
+    <value>Code</value>
   </data>
   <data name="FileDC.Content" xml:space="preserve">
-    <value>קובץ</value>
+    <value>File</value>
   </data>
   <data name="LineDC.Content" xml:space="preserve">
-    <value>שורה</value>
+    <value>Line</value>
   </data>
   <data name="MessageDC.Content" xml:space="preserve">
-    <value>הודעה</value>
+    <value>Message</value>
   </data>
 </root>
