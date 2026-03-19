@@ -14,6 +14,7 @@ using Windows.UI.StartScreen;
 using Zarem.IDE.Helpers;
 using Zarem.IDE.Messages;
 using Zarem.IDE.Services;
+using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.Windows;
@@ -130,6 +131,9 @@ public partial class App : Application
         switch (Path.GetExtension(file.Path))
         {
             case ".asm":
+                var fileService = Service.Get<IFileService>();
+                var bFile = await fileService.GetFileAsync(file.Path);
+                bFile?.Open();
                 break;
             case ".zrmp":
                 var projectService = Service.Get<IProjectService>();
