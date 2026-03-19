@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.Models.Tables;
+
 namespace Zarem.IDE.Messages.DebugSessions;
 
 /// <summary>
@@ -8,4 +10,4 @@ namespace Zarem.IDE.Messages.DebugSessions;
 /// <remarks>
 /// Only sent if the execution is halted by the debugger, or to clear when resuming.
 /// </remarks>
-public record ExecutingLineChangedMessage(string? FilePath = null, ulong? LineNumber = null);
+public record ExecutingLocationChangedMessage(SourceLocation? Location = null);

@@ -8,6 +8,7 @@ using Zarem.Assembler.Models;
 using Zarem.Helpers;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor;
 
@@ -60,10 +61,10 @@ public partial class AssemblyEditor
             typeof(AssemblyEditor),
             new PropertyMetadata(null));
 
-    public static readonly DependencyProperty ExecutingLineProperty =
+    public static readonly DependencyProperty ExecutingLocationProperty =
         DependencyProperty.Register(
-            nameof(ExecutingLine),
-            typeof(ulong?),
+            nameof(ExecutingLocation),
+            typeof(SourceLocation?),
             typeof(AssemblyEditor),
             new PropertyMetadata(null, OnExecutingLineChanged));
 
@@ -109,10 +110,10 @@ public partial class AssemblyEditor
         set => SetValue(PositionAddressProperty, value);
     }
 
-    public ulong? ExecutingLine
+    public SourceLocation? ExecutingLocation
     {
-        get => (ulong?)GetValue(ExecutingLineProperty);
-        set => SetValue(ExecutingLineProperty, value);
+        get => (SourceLocation?)GetValue(ExecutingLocationProperty);
+        set => SetValue(ExecutingLocationProperty, value);
     }
 
     /// <summary>

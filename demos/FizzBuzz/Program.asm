@@ -18,8 +18,7 @@ loop:
     mfhi    $t6             # Cache x % 3 in $t6
     
     # Branch past fizz if x % 3 != 0
-    bne     $t6,    $zero,  skip_fizz
-    nop
+    bne     $t6,    $zero,  skip_fizz; nop
     
     # Print fizz
     la      $a0,    fizz_str

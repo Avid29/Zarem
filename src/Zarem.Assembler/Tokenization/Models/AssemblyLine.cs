@@ -104,6 +104,14 @@ public class AssemblyLine
         if (segment.Count == 0)
             return;
 
+        // Trim semi-colon if present
+        if (segment[^1].Type is TokenType.SemiColon)
+            segment = segment[..^1];
+
+        // The line contains only a label and semi-colon or is empty
+        if (segment.Count == 0)
+            return;
+
         // Handle line type
         var head = segment[0];
         switch (head.Type)

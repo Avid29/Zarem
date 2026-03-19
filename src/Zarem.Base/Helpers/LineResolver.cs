@@ -12,7 +12,7 @@ namespace Zarem.Helpers;
 public class LineResolver
 {
     private readonly Dictionary<(string?, ulong), Address> _lookup = [];
-    private readonly Dictionary<ulong, (string?, ulong)> _sourceLookup = [];
+    private readonly Dictionary<ulong, SourceLocation> _sourceLookup = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LineResolver"/> class.
@@ -28,7 +28,7 @@ public class LineResolver
 
                 if (line.Address.VirtualAddress.HasValue)
                 {
-                    _sourceLookup[line.Address.VirtualAddress.Value] = key;
+                    _sourceLookup[line.Address.VirtualAddress.Value] = line.Location;
                 }
             }
         }
@@ -47,5 +47,5 @@ public class LineResolver
     /// Gets the file and line number given a virtual address.
     /// </summary>
     /// <param name="address">The virtual address</param>
-    public (string?, ulong)? GetSourceLine(ulong address) => _sourceLookup.TryGetValue(address, out var sourceLine) ? sourceLine : null;
+    public SourceLocation? GetSourceLocation(ulong address) => _sourceLookup.TryGetValue(address, out var location) ? location : null;
 }

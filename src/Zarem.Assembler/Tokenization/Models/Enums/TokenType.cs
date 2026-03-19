@@ -33,6 +33,7 @@ public enum TokenType
     CloseBracket,
     Comma,
     Assign,
+    SemiColon,
 
 #pragma warning restore CS1591
 

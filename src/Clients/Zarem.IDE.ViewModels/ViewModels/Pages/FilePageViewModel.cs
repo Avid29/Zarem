@@ -76,7 +76,7 @@ public partial class FilePageViewModel : PageViewModel
     /// <summary>
     /// Gets or sets the currently executing line.
     /// </summary>
-    public ulong? ExecutingLine
+    public SourceLocation? ExecutingLocation
     {
         get => field;
         set => SetProperty(ref field, value);
@@ -129,7 +129,7 @@ public partial class FilePageViewModel : PageViewModel
     /// <inheritdoc/>
     protected override void OnActivated()
     {
-        _messenger.Register<FilePageViewModel, ExecutingLineChangedMessage>(this, (r, m) => r.ExecutingLine = (m.FilePath == File?.Path) ? m.LineNumber : null);
+        _messenger.Register<FilePageViewModel, ExecutingLocationChangedMessage>(this, (r, m) => r.ExecutingLocation = (m.Location?.File == File?.Path) ? m.Location : null);
         _messenger.Register<FilePageViewModel, SettingChangedMessage<AnnotationThreshold>>(this, (r, m) => OnPropertyChanged(nameof(AnnotationThreshold)));
         _messenger.Register<FilePageViewModel, SettingChangedMessage<bool>>(this, (r, m) =>
         {

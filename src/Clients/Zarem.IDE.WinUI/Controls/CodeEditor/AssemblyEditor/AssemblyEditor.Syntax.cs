@@ -122,56 +122,59 @@ public partial class AssemblyEditor
         var lineLength = GetEncodingSize(line);
 
         // Clear the line to white
-        editor.StartStyling(utf8Pos.Index, 0);
+        editor.StartStyling((long)utf8Pos.Index, 0);
         editor.SetStyling(lineLength, 0);
 
         // Tokenize the line
         var tokenized = Tokenizer.TokenizeLine(line, mode: TokenizerMode.IDE);
 
         // Apply Syntax Highlighting for each token
-        foreach (var token in tokenized.Tokens)
+        foreach (var asmLine in tokenized)
         {
-            // Log token position in location mapper.
-            _locationMapper.Add(utf16Pos.Index, utf8Pos);
-
-            var style = token.Type switch
+            foreach (var token in asmLine.Tokens)
             {
-                TokenType.Instruction when _instructionTable is not null =>
-                    _instructionTable.TryGetInstruction(FloatFormatTable.TryGetFloatFormat(token.Source, out _, out var lookup) ? lookup : token.Source, out _, out _, out var banned) ? InstructionStyleIndex : InvalidInstructionStyleIndex,
+                // Log token position in location mapper.
+                _locationMapper.Add(utf16Pos.Index, utf8Pos);
 
-                TokenType.Instruction => InstructionStyleIndex,
-                TokenType.Register => RegisterStyleIndex,
-                TokenType.Immediate => ImmediateStyleIndex,
+                var style = token.Type switch
+                {
+                    TokenType.Instruction when _instructionTable is not null =>
+                        _instructionTable.TryGetInstruction(FloatFormatTable.TryGetFloatFormat(token.Source, out _, out var lookup) ? lookup : token.Source, out _, out _, out var banned) ? InstructionStyleIndex : InvalidInstructionStyleIndex,
 
-                TokenType.Reference when _symbolsSet is not null =>
-                    _symbolsSet.Contains(token.Source) ? ReferenceStyleIndex : InvalidReferenceStyleIndex,
+                    TokenType.Instruction => InstructionStyleIndex,
+                    TokenType.Register => RegisterStyleIndex,
+                    TokenType.Immediate => ImmediateStyleIndex,
 
-                TokenType.Reference or
-                TokenType.LabelDeclaration => ReferenceStyleIndex,
+                    TokenType.Reference when _symbolsSet is not null =>
+                        _symbolsSet.Contains(token.Source) ? ReferenceStyleIndex : InvalidReferenceStyleIndex,
 
-                TokenType.OpenParenthesis or TokenType.CloseParenthesis or
-                TokenType.OpenBracket or TokenType.CloseBracket or TokenType.Comma or
-                TokenType.Operator => OperatorStyleIndex,
+                    TokenType.Reference or
+                    TokenType.LabelDeclaration => ReferenceStyleIndex,
 
-                TokenType.Directive => DirectiveStyleIndex,
-                TokenType.String => StringStyleIndex,
-                TokenType.Comment => CommentStyleIndex,
+                    TokenType.OpenParenthesis or TokenType.CloseParenthesis or
+                    TokenType.OpenBracket or TokenType.CloseBracket or TokenType.Comma or
+                    TokenType.Operator => OperatorStyleIndex,
 
-                _ => 0,
-            };
+                    TokenType.Directive => DirectiveStyleIndex,
+                    TokenType.String => StringStyleIndex,
+                    TokenType.Comment => CommentStyleIndex,
 
-            // Set style and advance utf8/utf16 positions
-            //var tokenLength = Encoding.UTF8.GetByteCount(token.Source);
-            var tokenLengthUtf8 = GetEncodingSize(token.Source);
-            var tokenLengthUtf16 = token.Source.Length;
-            editor.StartStyling(utf8Pos.Index, 0);
-            editor.SetStyling(tokenLengthUtf8, style);
-            utf8Pos += tokenLengthUtf8;
-            utf16Pos += tokenLengthUtf16;
+                    _ => 0,
+                };
+
+                // Set style and advance utf8/utf16 positions
+                //var tokenLength = Encoding.UTF8.GetByteCount(token.Source);
+                var tokenLengthUtf8 = GetEncodingSize(token.Source);
+                var tokenLengthUtf16 = token.Source.Length;
+                editor.StartStyling(utf8Pos.Index, 0);
+                editor.SetStyling(tokenLengthUtf8, style);
+                utf8Pos += tokenLengthUtf8;
+                utf16Pos += tokenLengthUtf16;
+            }
         }
 
         // Adjust fold level based on the line's label
-        var foldLevel = GetAndAdjustLabelDepth(tokenized.Label, foldLabels);
+        var foldLevel = GetAndAdjustLabelDepth(tokenized[0].Label, foldLabels);
         editor.SetFoldLevel(utf8Pos.Line, foldLevel);
     }
 

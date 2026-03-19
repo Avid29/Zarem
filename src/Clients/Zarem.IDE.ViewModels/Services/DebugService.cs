@@ -100,23 +100,20 @@ public class DebugService : IDebugService
     {
         // TODO: Handle app state transition
 
-        var sourceLine = _session?.LineResolver?.GetSourceLine(e);
-        if (sourceLine is null)
+        var location = _session?.LineResolver?.GetSourceLocation(e);
+        if (location is null)
             return;
 
         _dispatcher.RunOnUIThread(async () =>
         {
-            var filePath = sourceLine.Value.Item1;
-            var line = sourceLine.Value.Item2;
-
             // Open the file if possible
-            if (filePath is not null)
+            if (location?.File is not null)
             {
-                var file = await _fileService.GetFileAsync(filePath);
+                var file = await _fileService.GetFileAsync(location.Value.File);
                 file?.Open();
             }
 
-            _messenger.Send(new ExecutingLineChangedMessage(filePath, line));
+            _messenger.Send(new ExecutingLocationChangedMessage(location));
         });
     }
 
@@ -151,7 +148,7 @@ public class DebugService : IDebugService
     {
         _session?.Debugger?.Step(mode);
 
-        _messenger.Send(new ExecutingLineChangedMessage());
+        _messenger.Send(new ExecutingLocationChangedMessage());
     }
 
     /// <inheritdoc/>
