@@ -25,11 +25,11 @@ public class LineResolver
             if (!_lookup.ContainsKey(key))
             {
                 _lookup[key] = line.Address;
+            }
 
-                if (line.Address.VirtualAddress.HasValue)
-                {
-                    _sourceLookup[line.Address.VirtualAddress.Value] = line.Location;
-                }
+            if (line.Address.VirtualAddress.HasValue)
+            {
+                _sourceLookup[line.Address.VirtualAddress.Value] = line.Location;
             }
         }
     }
