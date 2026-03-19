@@ -89,13 +89,8 @@ public partial class AssemblyEditor
             _executionHandle = editor.MarkerAdd(line, ExecutionPointIndex);
 
             // Find the position to highlight the executing line
-            var lineStart = editor.PositionFromLine(line);
-            var length = editor.LineLength(line);
-
-            // Adjust line position to only highlight tokens
-            var indenting = location.Start.Column;
-            lineStart += indenting;
-            length -= indenting;
+            var lineStart = location.Start.Index;
+            var length = location.Size;
 
             // Apply the new highlight
             editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
