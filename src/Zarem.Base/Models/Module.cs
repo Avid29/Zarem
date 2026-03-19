@@ -120,7 +120,7 @@ public sealed class Module : ModuleBase
     /// </summary>
     /// <param name="address">The address of the machine code.</param>
     /// <param name="location">The source location info.</param>
-    public void AddLineEntry(Address address, SourceLocation location) => _debugLines?.Add(new(address, location));
+    public void AddLineEntry(Address address, SourceRange location) => _debugLines?.Add(new(address, location));
 
     /// <summary>
     /// Attempts to get a symbol in the module.

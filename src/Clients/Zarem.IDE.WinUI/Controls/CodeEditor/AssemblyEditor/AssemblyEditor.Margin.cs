@@ -82,8 +82,8 @@ public partial class AssemblyEditor
         if (ExecutingLocation.HasValue)
         {
             // Get line range info
-            var location = ExecutingLocation.Value;
-            var line = location.Line;
+            var location = _locationMapper.Translate(ExecutingLocation.Value);
+            var line = location.Start.Line;
 
             // Set new marker
             _executionHandle = editor.MarkerAdd(line, ExecutionPointIndex);
@@ -93,7 +93,7 @@ public partial class AssemblyEditor
             var length = editor.LineLength(line);
 
             // Adjust line position to only highlight tokens
-            var indenting = location.Column;
+            var indenting = location.Start.Column;
             lineStart += indenting;
             length -= indenting;
 

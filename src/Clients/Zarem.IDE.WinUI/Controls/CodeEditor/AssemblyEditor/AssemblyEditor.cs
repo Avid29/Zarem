@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Windows.UI;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Helpers;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.Models.Breakpoints;
 using Zarem.Models.Tables;
@@ -23,7 +24,7 @@ public partial class AssemblyEditor : CodeEditor
     /// The text is in UTF8, while the tokenizer output <see cref="SourceLocation"/> is in UTF16.
     /// We make this conversion during syntax highlighting. Track the results for log highlights.
     /// </remarks>
-    private readonly Dictionary<long, SourceLocation> _locationMapper;
+    private readonly LocationMapper _locationMapper;
     private TokenizedAssembly? _tokenizedAssembly;
     private ScintillaBreakpointSource? _breakpoints;
 
@@ -32,7 +33,7 @@ public partial class AssemblyEditor : CodeEditor
     /// </summary>
     public AssemblyEditor()
     {
-        _locationMapper = [];
+        _locationMapper = new();
 
         DefaultStyleKey = typeof(AssemblyEditor);
     }
@@ -78,13 +79,12 @@ public partial class AssemblyEditor : CodeEditor
         if (editor is null)
             return;
 
-        // Attempt to get mapped location
-        if(!_locationMapper.TryGetValue(location.Index, out var mappedLocation))
-            return;
+        // Get mapped location
+        location = _locationMapper.Translate(location);
 
         // Go to position, and focus the keyboard
         editor.EnsureVisible(location.Line);
-        editor.GotoPos(mappedLocation.Index);
+        editor.GotoPos(location.Index);
         ChildEditor?.Focus(FocusState.Keyboard);
     }
 

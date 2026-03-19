@@ -1,8 +1,10 @@
 ﻿// Avishai Dernis 2024
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Tokenization.Models;
 
@@ -77,6 +79,27 @@ public class AssemblyLine
     /// Except section directives will say the address after the assembly line.
     /// </remarks>
     public Address Address { get; internal set; }
+    
+    /// <summary>
+    /// Gets the source location range covered by the assembly line
+    /// </summary>
+    public SourceRange Location
+    {
+        get
+        {
+            if (Count is 0)
+            {
+                return default;
+            }
+
+            var start = _tokens[0].Location;
+            var end = _tokens[^1].Location;
+            var lastTokenLength = _tokens[^1].Source.Length;
+
+            var range = (end.Index - start.Index) + lastTokenLength;
+            return new(start, range);
+        }
+    }
 
     /// <summary>
     /// Extracts the label if present, then determines the type of line
