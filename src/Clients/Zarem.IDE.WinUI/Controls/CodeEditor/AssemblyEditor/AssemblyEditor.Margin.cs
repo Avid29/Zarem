@@ -92,6 +92,10 @@ public partial class AssemblyEditor
             var lineStart = editor.PositionFromLine(line);
             var length = editor.LineLength(line);
 
+            // Adjust line position to only highlight tokens
+            var indenting = location.Column;
+            lineStart += indenting;
+            length -= indenting;
 
             // Apply the new highlight
             editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
