@@ -10,4 +10,4 @@ namespace Zarem.IDE.Messages.DebugSessions;
 /// <remarks>
 /// Only sent if the execution is halted by the debugger, or to clear when resuming.
 /// </remarks>
-public record ExecutingLocationChangedMessage(SourceLocation? Location = null);
+public record ExecutingLocationChangedMessage(SourceRange? Location = null);

@@ -64,7 +64,7 @@ public partial class AssemblyEditor
     public static readonly DependencyProperty ExecutingLocationProperty =
         DependencyProperty.Register(
             nameof(ExecutingLocation),
-            typeof(SourceLocation?),
+            typeof(SourceRange?),
             typeof(AssemblyEditor),
             new PropertyMetadata(null, OnExecutingLineChanged));
 
@@ -110,9 +110,9 @@ public partial class AssemblyEditor
         set => SetValue(PositionAddressProperty, value);
     }
 
-    public SourceLocation? ExecutingLocation
+    public SourceRange? ExecutingLocation
     {
-        get => (SourceLocation?)GetValue(ExecutingLocationProperty);
+        get => (SourceRange?)GetValue(ExecutingLocationProperty);
         set => SetValue(ExecutingLocationProperty, value);
     }
 

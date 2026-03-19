@@ -41,8 +41,7 @@ public partial class AssemblyEditor
                 continue;
 
             // Get the token's start location in utf8
-            if (!_locationMapper.TryGetValue(log.Location.Value.Index, out var utf8Location))
-                continue;
+            var utf8Location = _locationMapper.Translate(log.Location.Value);
 
             // Get the token's string
             var highlightString = new StringBuilder();

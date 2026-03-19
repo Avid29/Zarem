@@ -107,9 +107,9 @@ public class DebugService : IDebugService
         _dispatcher.RunOnUIThread(async () =>
         {
             // Open the file if possible
-            if (location?.File is not null)
+            if (location?.Start.File is not null)
             {
-                var file = await _fileService.GetFileAsync(location.Value.File);
+                var file = await _fileService.GetFileAsync(location.Value.Start.File);
                 file?.Open();
             }
 

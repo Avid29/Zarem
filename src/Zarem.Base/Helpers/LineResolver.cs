@@ -12,7 +12,7 @@ namespace Zarem.Helpers;
 public class LineResolver
 {
     private readonly Dictionary<(string?, ulong), Address> _lookup = [];
-    private readonly Dictionary<ulong, SourceLocation> _sourceLookup = [];
+    private readonly SortedList<ulong, SourceRange> _sourceLookup = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LineResolver"/> class.
@@ -21,15 +21,15 @@ public class LineResolver
     {
         foreach (var line in lines)
         {
-            var key = (line.Location.File, (ulong)line.Location.Line);
+            var key = (line.Location.Start.File, (ulong)line.Location.Start.Line);
             if (!_lookup.ContainsKey(key))
             {
                 _lookup[key] = line.Address;
+            }
 
-                if (line.Address.VirtualAddress.HasValue)
-                {
-                    _sourceLookup[line.Address.VirtualAddress.Value] = line.Location;
-                }
+            if (line.Address.VirtualAddress.HasValue)
+            {
+                _sourceLookup[line.Address.VirtualAddress.Value] = line.Location;
             }
         }
     }
@@ -47,5 +47,32 @@ public class LineResolver
     /// Gets the file and line number given a virtual address.
     /// </summary>
     /// <param name="address">The virtual address</param>
-    public SourceLocation? GetSourceLocation(ulong address) => _sourceLookup.TryGetValue(address, out var location) ? location : null;
+    public SourceRange? GetSourceLocation(ulong address)
+    {
+        if (_sourceLookup.Count == 0)
+            return null;
+
+        // Binary search for the index
+        int index = BinarySearchKeys(address);
+
+        // Address is before our first registered point
+        if (index == -1)
+            return null; 
+
+        return _sourceLookup.Values[index];
+    }
+
+    private int BinarySearchKeys(ulong key)
+    {
+        int low = 0;
+        int high = _sourceLookup.Count - 1;
+        while (low <= high)
+        {
+            int mid = low + (high - low) / 2;
+            if (_sourceLookup.Keys[mid] == key) return mid;
+            if (_sourceLookup.Keys[mid] < key) low = mid + 1;
+            else high = mid - 1;
+        }
+        return high; // Returns the index of the greatest key less than the search key
+    }
 }

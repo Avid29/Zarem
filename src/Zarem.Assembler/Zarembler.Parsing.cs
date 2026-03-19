@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Diagnostics;
+using System.Net.Sockets;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Models.Directives;
@@ -72,7 +73,7 @@ public partial class Zarembler
         // Log a debug line if this line changed the address
         if (line.Address != CurrentAddress && line.Count > 0)
         {
-            _module.AddLineEntry(line.Address, line[0].Location);
+            _module.AddLineEntry(line.Address, line.Location);
         }
     }
 

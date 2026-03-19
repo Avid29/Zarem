@@ -122,7 +122,7 @@ public partial class AssemblyEditor
         var lineLength = GetEncodingSize(line);
 
         // Clear the line to white
-        editor.StartStyling((long)utf8Pos.Index, 0);
+        editor.StartStyling(utf8Pos.Index, 0);
         editor.SetStyling(lineLength, 0);
 
         // Tokenize the line
@@ -134,7 +134,7 @@ public partial class AssemblyEditor
             foreach (var token in asmLine.Tokens)
             {
                 // Log token position in location mapper.
-                _locationMapper.Add(utf16Pos.Index, utf8Pos);
+                _locationMapper.RegisterReferencePoint(utf16Pos.Index, utf8Pos.Index);
 
                 var style = token.Type switch
                 {
