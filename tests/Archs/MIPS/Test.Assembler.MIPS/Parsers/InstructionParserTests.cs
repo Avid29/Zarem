@@ -166,7 +166,7 @@ public class InstructionParserTests
         var table = new InstructionTable(config);
         var parser = new MipsInstructionParser(config, null, default, null, null);
 
-        var tokenized = Tokenizer.TokenizeLine(input, nameof(RunTest));
+        var tokenized = Tokenizer.TokenizeLine(input, nameof(RunTest))[0];
         var actual = parser.Parse(tokenized);
 
         // Validate execution
@@ -189,7 +189,7 @@ public class InstructionParserTests
         var parser = new MipsInstructionParser(new MipsAssemblerConfig(), null, default, null, logger);
 
         // Parse instruction
-        var line = Tokenizer.TokenizeLine(input, nameof(RunTest));
+        var line = Tokenizer.TokenizeLine(input, nameof(RunTest))[0];
         var actual = parser.Parse(line);
 
         // Validate results

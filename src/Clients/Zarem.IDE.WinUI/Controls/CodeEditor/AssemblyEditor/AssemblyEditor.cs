@@ -23,7 +23,7 @@ public partial class AssemblyEditor : CodeEditor
     /// The text is in UTF8, while the tokenizer output <see cref="SourceLocation"/> is in UTF16.
     /// We make this conversion during syntax highlighting. Track the results for log highlights.
     /// </remarks>
-    private readonly Dictionary<int, SourceLocation> _locationMapper;
+    private readonly Dictionary<long, SourceLocation> _locationMapper;
     private TokenizedAssembly? _tokenizedAssembly;
     private ScintillaBreakpointSource? _breakpoints;
 

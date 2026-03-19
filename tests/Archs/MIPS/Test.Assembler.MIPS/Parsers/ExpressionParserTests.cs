@@ -62,7 +62,7 @@ public class ExpressionParserTests
 
     private static void RunTest(string input, long? expected = null)
     {
-        var line = Tokenizer.TokenizeLine(input, nameof(RunTest), TokenizerMode.Expression);
+        var line = Tokenizer.TokenizeLine(input, nameof(RunTest), TokenizerMode.Expression)[0];
         bool success = ExpressionParser.TryParse(line.Tokens, out var actual, null, null);
         Assert.AreEqual(success, expected.HasValue);
         if (expected.HasValue)

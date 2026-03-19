@@ -26,7 +26,7 @@ public readonly struct SourceLocation
     /// <summary>
     /// Gets the index of the location.
     /// </summary>
-    public int Index { get; init; }
+    public long Index { get; init; }
 
     /// <summary>
     /// Gets the row of the location file.
@@ -34,7 +34,7 @@ public readonly struct SourceLocation
     /// <remarks>
     /// The line is 1 indexed.
     /// </remarks>
-    public int Line { get; init; }
+    public long Line { get; init; }
 
     /// <summary>
     /// Gets the column of the location.

@@ -122,7 +122,7 @@ public partial class AssemblyEditor
         var lineLength = GetEncodingSize(line);
 
         // Clear the line to white
-        editor.StartStyling(utf8Pos.Index, 0);
+        editor.StartStyling((long)utf8Pos.Index, 0);
         editor.SetStyling(lineLength, 0);
 
         // Tokenize the line

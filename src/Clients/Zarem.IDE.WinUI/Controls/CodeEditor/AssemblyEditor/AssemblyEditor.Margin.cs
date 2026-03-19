@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using System;
 using WinUIEditor;
@@ -9,7 +8,7 @@ namespace Zarem.IDE.Controls.CodeEditor;
 
 public partial class AssemblyEditor
 {
-    private int _executionLineHandle = -1;
+    private int _executionHandle = -1;
 
     public const int BreakpointMarkerIndex = 2;
     public const int ExecutionPointIndex = 3;
@@ -73,37 +72,26 @@ public partial class AssemblyEditor
             return;
 
         // Clear existing marker
-        editor.MarkerDeleteHandle(_executionLineHandle);
-        _executionLineHandle = -1;
+        editor.MarkerDeleteHandle(_executionHandle);
+        _executionHandle = -1;
 
         // Clear existing highlight
         editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
         editor.IndicatorClearRange(0, editor.TextLength);
 
-        if (ExecutingLine.HasValue)
+        if (ExecutingLocation.HasValue)
         {
             // Get line range info
-            var line = (long)ExecutingLine.Value;
+            var location = ExecutingLocation.Value;
+            var line = location.Line;
 
             // Set new marker
-            _executionLineHandle = editor.MarkerAdd(line, ExecutionPointIndex);
+            _executionHandle = editor.MarkerAdd(line, ExecutionPointIndex);
 
             // Find the position to highlight the executing line
             var lineStart = editor.PositionFromLine(line);
             var length = editor.LineLength(line);
 
-            // Adjust line position to only highlight tokens
-            if (_tokenizedAssembly is not null)
-            {
-                var asmLine = _tokenizedAssembly[(int)line];
-                if (asmLine.Count > 0)
-                {
-                    var realStart = asmLine[0].Location.Index;
-                    realStart = _locationMapper[realStart].Index;
-                    length -= realStart - lineStart;
-                    lineStart = realStart;
-                }
-            }
 
             // Apply the new highlight
             editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
