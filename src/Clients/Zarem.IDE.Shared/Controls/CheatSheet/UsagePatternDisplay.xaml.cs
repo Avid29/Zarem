@@ -149,7 +149,9 @@ public sealed partial class UsagePatternDisplay : UserControl
         var paragraph = new Paragraph();
         var tokens = Tokenizer.TokenizeLine(behavior, null, TokenizerMode.BehaviorExpression);
 
-        foreach (var token in tokens.Tokens)
+        // TODO: Can there be multi-line behavioral expressions?
+
+        foreach (var token in tokens[0].Tokens)
         {
             paragraph.Inlines.Add(CreateTokenRun(token, localizer));
         }

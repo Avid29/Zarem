@@ -12,11 +12,12 @@ namespace Zarem.Assembler.Tokenization;
 
 public partial class Tokenizer
 {
-    private bool ReTokenizeLine(List<Token> raw, out List<Token> classified)
+    private bool ReTokenizeLine(List<Token> raw, out List<AssemblyLine> lines)
     {
         // Prepare for token retokenization
         _state = TokenizerState.LineBegin;
-        classified = [];
+        List<Token> classified = [];
+        lines = [];
 
         bool start = true;
         if (_mode is TokenizerMode.BehaviorExpression or TokenizerMode.Expression)
@@ -38,13 +39,28 @@ public partial class Tokenizer
             if (meaningful || _mode is TokenizerMode.IDE or TokenizerMode.BehaviorExpression)
                 classified.Add(newToken);
 
-            // If a meaningful token was appended, we are no longer at the start. 
-            // we also remain at the start after label declarations
-            start = start && (!meaningful || newToken.Type is TokenType.LabelDeclaration);
+            // Begin a new assembly line if we see a semi-colon
+            if (newToken.Type is TokenType.SemiColon)
+            {
+                // Append the current line
+                lines.Add(new AssemblyLine([..classified]));
+
+                // Begin new assembly line
+                classified = [];
+                start = true;
+            }
+            else
+            {
+                // If a meaningful token was appended, we are no longer at the start. 
+                // we also remain at the start after label declarations
+                start = start && (!meaningful || newToken.Type is TokenType.LabelDeclaration);
+            }
 
             // Advance the appropriate number of tokens
             span = span[advance..];
         }
+
+        lines.Add(new AssemblyLine([..classified]));
 
         return true;
     }
@@ -96,6 +112,7 @@ public partial class Tokenizer
                 "[" => TokenType.OpenBracket,
                 "]" => TokenType.CloseBracket,
                 "," => TokenType.Comma,
+                ";" => TokenType.SemiColon,
 
                 "+" or "-" or "*" or "/" or "%" or
                 "|" or "&" or "^" or "~" => TokenType.Operator,

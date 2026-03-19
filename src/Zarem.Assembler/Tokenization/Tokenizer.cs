@@ -73,7 +73,7 @@ public partial class Tokenizer
     /// <summary>
     /// Tokenizes a single line of assembly code.
     /// </summary>
-    public static AssemblyLine TokenizeLine(string line, string? filePath = null, TokenizerMode mode = TokenizerMode.Assembly)
+    public static List<AssemblyLine> TokenizeLine(string line, string? filePath = null, TokenizerMode mode = TokenizerMode.Assembly)
     {
         Tokenizer tokenizer = new(filePath, mode: mode);
 
@@ -81,7 +81,7 @@ public partial class Tokenizer
             ThrowHelper.ThrowArgumentException("Single line tokenizer cannot contain a new line.");
 
         tokenizer.TokenizeLine(line);
-        return tokenizer.TokenLines[0];
+        return tokenizer.TokenLines;
     }
 
     private bool TokenizeLine(string line)
@@ -91,10 +91,10 @@ public partial class Tokenizer
             return false;
         
         // Second pass
-        if (!ReTokenizeLine(raw, out var classified))
+        if (!ReTokenizeLine(raw, out var lines))
             return false;
 
-        TokenLines.Add(new AssemblyLine([..classified]));
+        TokenLines.AddRange(lines);
         return true;
     }
 }
