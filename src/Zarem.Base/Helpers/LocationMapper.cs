@@ -9,9 +9,6 @@ namespace Zarem.Helpers;
 /// <summary>
 /// A class for converting <see cref="SourceLocation"/> and <see cref="SourceRange"/> models between encodings.
 /// </summary>
-/// <summary>
-/// A class for converting <see cref="SourceLocation"/> and <see cref="SourceRange"/> models between encodings.
-/// </summary>
 public class LocationMapper
 {
     private readonly SortedList<long, long> _mapping = [];
