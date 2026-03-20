@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI;
+using WinUIEditor;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Helpers;
 using Zarem.IDE.Messages.Editor.Enums;
@@ -60,6 +61,7 @@ public partial class AssemblyEditor : CodeEditor
         if (!TryGetEditor(out var editor))
             return;
 
+        editor.MarkerDeleteAll(BreakpointMarkerIndex);
         _breakpoints = new ScintillaBreakpointSource(editor, breakpoints);
     }
 
