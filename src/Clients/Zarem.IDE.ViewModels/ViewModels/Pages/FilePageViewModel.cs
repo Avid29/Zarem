@@ -26,8 +26,9 @@ namespace Zarem.IDE.ViewModels.Pages;
 public partial class FilePageViewModel : PageViewModel
 {
     private readonly IMessenger _messenger;
-    private readonly ISettingsService _settingsService;
+    private readonly IDebugService _debugService;
     private readonly IProjectService _projectService;
+    private readonly ISettingsService _settingsService;
 
     /// <summary>
     /// An event invoked requesting to navigate to a token.
@@ -42,9 +43,10 @@ public partial class FilePageViewModel : PageViewModel
     /// <summary>
     /// Initializes a new instance of the <see cref="FilePageViewModel"/> class.
     /// </summary>
-    public FilePageViewModel(IMessenger messenger, ISettingsService settingsService, IProjectService projectService)
+    public FilePageViewModel(IMessenger messenger, IDebugService debugService, IProjectService projectService, ISettingsService settingsService)
     {
         _messenger = messenger;
+        _debugService = debugService;
         _settingsService = settingsService;
         _projectService = projectService;
 
@@ -78,8 +80,12 @@ public partial class FilePageViewModel : PageViewModel
     /// </summary>
     public SourceRange? ExecutingLocation
     {
-        get => field;
-        set => SetProperty(ref field, value);
+        get => _debugService.ExecutingLocation;
+        set
+        {
+            _debugService.ExecutingLocation = value;
+            OnPropertyChanged(nameof(ExecutingLocation));
+        }
     }
 
     /// <summary>
@@ -129,7 +135,7 @@ public partial class FilePageViewModel : PageViewModel
     /// <inheritdoc/>
     protected override void OnActivated()
     {
-        _messenger.Register<FilePageViewModel, ExecutingLocationChangedMessage>(this, (r, m) => r.ExecutingLocation = (m.Location?.Start.File == File?.Path) ? m.Location : null);
+        _messenger.Register<FilePageViewModel, ExecutingLocationChangedMessage>(this, (r, m) => r.OnPropertyChanged(nameof(ExecutingLocation)));
         _messenger.Register<FilePageViewModel, SettingChangedMessage<AnnotationThreshold>>(this, (r, m) => OnPropertyChanged(nameof(AnnotationThreshold)));
         _messenger.Register<FilePageViewModel, SettingChangedMessage<bool>>(this, (r, m) =>
         {

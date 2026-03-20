@@ -3,6 +3,7 @@
 using System.Threading.Tasks;
 using Zarem.Debugger.Models.Enums;
 using Zarem.Models.Files;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Services;
 
@@ -39,4 +40,9 @@ public interface IDebugService
     /// Stops the current debug session.
     /// </summary>
     void StopDebugging();
+
+    /// <summary>
+    /// Gets or sets the currently executing line.
+    /// </summary>
+    public SourceRange? ExecutingLocation { get; set; }
 }

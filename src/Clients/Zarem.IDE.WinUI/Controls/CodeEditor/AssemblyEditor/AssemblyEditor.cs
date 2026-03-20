@@ -52,6 +52,7 @@ public partial class AssemblyEditor : CodeEditor
         // Setup styling
         SetupHighlighting();
         SetupIndicators();
+        UpdateExecutingLine();
     }
 
     public void RegisterBreakpointSource(BreakpointCollection breakpoints)

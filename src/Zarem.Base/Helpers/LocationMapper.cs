@@ -33,7 +33,7 @@ public class LocationMapper
     /// </summary>
     public SourceLocation Translate(SourceLocation source)
     {
-        if (_mapping.Count == 0)
+        if (_mapping.Count is 0)
             return source;
 
         long sourceIdx = source.Index;
@@ -52,6 +52,9 @@ public class LocationMapper
     /// </summary>
     public SourceRange Translate(SourceRange range)
     {
+        if (_mapping.Count is 0)
+            return range;
+
         var newStart = Translate(range.Start);
 
         // Calculate the end point in target encoding to determine the new Size
