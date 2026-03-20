@@ -15,6 +15,7 @@ using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Popup.Enums;
 using Zarem.IDE.Services.Popup.Models;
 using Zarem.Models.Files;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Services;
 
@@ -61,6 +62,29 @@ public class DebugService : IDebugService
     }
 
     /// <inheritdoc/>
+    public SourceRange? ExecutingLocation
+    {
+        get => field;
+        set
+        {
+            field = value;
+            _dispatcher.RunOnUIThread(async () =>
+            {
+                // Open the file if possible
+                if (value?.Start.File is not null)
+                {
+                    var file = await _fileService.GetFileAsync(value.Value.Start.File);
+                    file?.Open();
+                }
+
+                _messenger.Send(new ExecutingLocationChangedMessage(value));
+            });
+
+            // TODO: Update the PC to match
+        }
+    }
+
+    /// <inheritdoc/>
     public async Task RunAsync(bool debug = true)
     {
         if (!_stateService.IsReady)
@@ -104,17 +128,7 @@ public class DebugService : IDebugService
         if (location is null)
             return;
 
-        _dispatcher.RunOnUIThread(async () =>
-        {
-            // Open the file if possible
-            if (location?.Start.File is not null)
-            {
-                var file = await _fileService.GetFileAsync(location.Value.Start.File);
-                file?.Open();
-            }
-
-            _messenger.Send(new ExecutingLocationChangedMessage(location));
-        });
+        ExecutingLocation = location;
     }
 
     /// <inheritdoc/>
@@ -148,7 +162,7 @@ public class DebugService : IDebugService
     {
         _session?.Debugger?.Step(mode);
 
-        _messenger.Send(new ExecutingLocationChangedMessage());
+        ExecutingLocation = null;
     }
 
     /// <inheritdoc/>
