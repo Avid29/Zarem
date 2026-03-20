@@ -19,7 +19,7 @@ public sealed partial class RegisterViewer : UserControl
 
     private RegisterViewerViewModel ViewModel { get; }
 
-    private string GetFormatedValue(RegisterDisplayMode mode, ulong value)
+    private static string GetFormatedValue(RegisterDisplayMode mode, ulong value)
     {
         return mode switch
         {
