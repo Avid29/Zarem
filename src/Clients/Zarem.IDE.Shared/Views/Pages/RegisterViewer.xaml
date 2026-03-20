@@ -12,6 +12,8 @@
 
     <GridView
         Padding="12"
+        IsItemClickEnabled="True"
+        ItemClick="GridView_ItemClick"
         ItemsSource="{x:Bind ViewModel.Registers, Mode=OneWay}"
         SelectionMode="None">
         <GridView.ItemsPanel>
@@ -37,10 +39,79 @@
                             HorizontalAlignment="Right"
                             FontFamily="Consolas"
                             FontWeight="Bold"
-                            Text="{x:Bind Value, Mode=OneWay}" />
+                            Text="{x:Bind local:RegisterViewer.GetFormatedValue(DisplayMode, Value), Mode=OneWay}" />
                     </Grid>
                 </Border>
             </DataTemplate>
         </GridView.ItemTemplate>
+
+        <GridView.ItemContainerStyle>
+            <Style TargetType="GridViewItem">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="GridViewItem">
+                            <Grid
+                                x:Name="RootGrid"
+                                Background="Transparent"
+                                CornerRadius="8"
+                                RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                </Grid.RenderTransform>
+
+                                <ContentPresenter
+                                    x:Name="ContentPresenter"
+                                    Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentTransitions="{TemplateBinding ContentTransitions}" />
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation TargetName="RootGrid" />
+                                            </Storyboard>
+                                        </VisualState>
+
+                                        <VisualState x:Name="PointerOver">
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="RootGrid"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                    To="1.04"
+                                                    Duration="0:0:0.15" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="RootGrid"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                    To="1.04"
+                                                    Duration="0:0:0.15" />
+                                            </Storyboard>
+                                        </VisualState>
+
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="RootGrid"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                    To="0.98"
+                                                    Duration="0:0:0.05" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="RootGrid"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                    To="0.98"
+                                                    Duration="0:0:0.05" />
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </GridView.ItemContainerStyle>
     </GridView>
 </UserControl>

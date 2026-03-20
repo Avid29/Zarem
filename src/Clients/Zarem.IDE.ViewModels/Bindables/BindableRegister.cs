@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using Zarem.Debugger.Viewer;
+using Zarem.IDE.Models.Enums;
 using Zarem.IDE.Services;
 
 namespace Zarem.IDE.Bindables;
@@ -41,6 +42,15 @@ public class BindableRegister : ObservableObject, IDisposable
             _group[RegisterName] = value;
             OnPropertyChanged(nameof(Value));
         }
+    }
+
+    /// <summary>
+    /// Gets or sets the register's display mode.
+    /// </summary>
+    public RegisterDisplayMode DisplayMode
+    {
+        get => field;
+        set => SetProperty(ref field, value);
     }
 
     /// <inheritdoc/>
