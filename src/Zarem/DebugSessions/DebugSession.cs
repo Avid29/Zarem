@@ -34,6 +34,7 @@ public class DebugSession : IDisposable
                 LineResolver = new LineResolver(_module.DebugLines);
             }
 
+            SymbolResolver = new SymbolResolver(_module.Symbols.Values);
             SetupBreakpoints();
         }
     }
@@ -52,6 +53,11 @@ public class DebugSession : IDisposable
     /// Gets the line resolver for addresses in the debug session.
     /// </summary>
     public LineResolver? LineResolver { get; }
+
+    /// <summary>
+    /// Gets the symbol resolver for the debug session.
+    /// </summary>
+    public SymbolResolver? SymbolResolver { get; }
 
     /// <inheritdoc/>
     public void Dispose()

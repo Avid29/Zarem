@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using Zarem.Debugger.Viewer;
 using Zarem.DebugSessions;
+using Zarem.Helpers;
 using Zarem.IDE.Bindables;
 using Zarem.IDE.Messages.DebugSessions;
 using Zarem.IDE.ViewModels.Pages.Abstract;
@@ -16,7 +17,7 @@ namespace Zarem.IDE.ViewModels.Pages;
 public class RegisterViewerViewModel : PageViewModel
 {
     private readonly IMessenger _messenger;
-    private IDebugViewer? _viewer;
+    private DebugSession? _session;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterViewerViewModel"/> class.
@@ -33,6 +34,11 @@ public class RegisterViewerViewModel : PageViewModel
     public override string Title => "Register Viewer"; // TODO: Localization
 
     /// <summary>
+    /// Gets the register viewer's symbol resolver.
+    /// </summary>
+    public SymbolResolver? SymbolResolver => _session?.SymbolResolver;
+
+    /// <summary>
     /// Gets the collection of registers being viewed.
     /// </summary>
     public ObservableCollection<BindableRegister> Registers { get; }
@@ -46,19 +52,21 @@ public class RegisterViewerViewModel : PageViewModel
 
     private void RegisterSession(DebugSession session)
     {
-        _viewer = session.Debugger?.Viewer;
-        if (_viewer is null)
+        _session = session;
+
+        var viewer = session.Debugger?.Viewer;
+        if (viewer is null)
             return;
 
-        foreach (var reg in _viewer.Registers.RegisterNames)
+        foreach (var reg in viewer.Registers.RegisterNames)
         {
-            Registers.Add(new BindableRegister(reg, _viewer.Registers));
+            Registers.Add(new BindableRegister(reg, viewer.Registers));
         }
     }
 
     private void UnregisterSession()
     {
-        _viewer = null;
+        _session = null;
 
         foreach (var reg in Registers)
             reg.Dispose();
