@@ -118,87 +118,87 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="RegisterNumberNotFound" xml:space="preserve">
-    <value>No register of number '{0}' exists.</value>
+    <value>לא קיים אוגר במספר ‎'{0}'.</value>
   </data>
   <data name="PseudoInstructionsDisabled" xml:space="preserve">
-    <value>Pseudo instructions are disabled.</value>
+    <value>פסאודו־הוראות מנוטרלות.</value>
   </data>
   <data name="RegisterNotFound" xml:space="preserve">
-    <value>No register '{0}' exists.</value>
+    <value>לא קיים אוגר בשם ‎'{0}'.</value>
   </data>
   <data name="RequiresVersion" xml:space="preserve">
-    <value>The instruction '{0}' requires mips version {1}.</value>
+    <value>ההוראה ‎'{0}'‎ דורשת גרסת MIPS ‎{1}.</value>
   </data>
   <data name="RemovedInVersion" xml:space="preserve">
-    <value>The instruction '{0}' is deprecated. Last supported in mips version {1}.</value>
+    <value>ההוראה ‎'{0}'‎ הוצאה משימוש. נתמכה לאחרונה בגרסת MIPS ‎{1}.</value>
   </data>
   <data name="DoesNotSupportFormatSingle" xml:space="preserve">
-    <value>Instruction '{0}' does not support the format 'Single'.</value>
+    <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Single'‎ (דיוק יחיד).</value>
   </data>
   <data name="DoesNotSupportFormatDouble" xml:space="preserve">
-    <value>Instruction '{0}' does not support the format 'Double'.</value>
+    <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Double'‎ (דיוק כפול).</value>
   </data>
   <data name="DoesNotSupportFormatWord" xml:space="preserve">
-    <value>Instruction '{0}' does not support the format 'Word'.</value>
+    <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Word'‎ (מילה).</value>
   </data>
   <data name="DoesNotSupportFormatLong" xml:space="preserve">
-    <value>Instruction '{0}' does not support the format 'Long'.</value>
+    <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Long'‎ (ארוך).</value>
   </data>
   <data name="DoesNotSupportFormatPairedSingle" xml:space="preserve">
-    <value>Instruction '{0}' does not support the format 'Paired Single'.</value>
+    <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Paired Single'‎ (זוג דיוק יחיד).</value>
   </data>
   <data name="ArgumentNotARegister" xml:space="preserve">
-    <value>'{0}' is not a valid register argument.</value>
+    <value>‎'{0}'‎ אינו ארגומנט אוגר תקין.</value>
   </data>
   <data name="RegisterMustBeInGeneralPurposeSet" xml:space="preserve">
-    <value>Invalid register argument '{0}'. Must be in general purpose register set.</value>
+    <value>ארגומנט האוגר ‎'{0}'‎ אינו תקין. עליו להיות באוסף האוגרים הכלליים.</value>
   </data>
   <data name="RegisterMustBeInCoProc0Set" xml:space="preserve">
-    <value>Invalid register argument '{0}'. Must be in coprocessor0 register set.</value>
+    <value>ארגומנט האוגר ‎'{0}'‎ אינו תקין. עליו להיות באוסף האוגרים של Coprocessor0.</value>
   </data>
   <data name="RegisterMustBeInFloatingPointsSet" xml:space="preserve">
-    <value>Invalid register argument '{0}'. Must be in floating-point register set.</value>
+    <value>ארגומנט האוגר ‎'{0}'‎ אינו תקין. עליו להיות באוסף האוגרים של נקודה צפה.</value>
   </data>
   <data name="InvalidAddressOffsetArgument" xml:space="preserve">
-    <value>Argument '{0}' is not a valid address offset.</value>
+    <value>הארגומנט ‎'{0}'‎ אינו היסט כתובת תקין.</value>
   </data>
   <data name="NoInstructionNamed" xml:space="preserve">
-    <value>No instruction named '{0}'.</value>
+    <value>אין הוראה בשם '{0}'.</value>
   </data>
   <data name="InstructionDisabled" xml:space="preserve">
-    <value>The instruction '{0}' is disabled by the project configuration.</value>
+    <value>ההוראה '{0}' הושבתה על־ידי תצורת הפרויקט.</value>
   </data>
   <data name="RelocatableShiftAmount" xml:space="preserve">
-    <value>Shift amount argument cannot reference relocatable symbols.</value>
+    <value>ארגומנט של גודל ההזזה לא יכול להפנות לסימבולים בני־הזזה.</value>
   </data>
   <data name="WrongArgumentCount" xml:space="preserve">
-    <value>Instruction '{0}' cannot take '{1}' arguments.</value>
+    <value>ההוראה ‎'{0}'‎ אינה יכולה לקבל ‎{1}‎ ארגומנטים.</value>
   </data>
   <data name="ZeroRegisterWriteback" xml:space="preserve">
-    <value>This instruction writes to $zero.</value>
+    <value>הוראה זו כותבת לאוגר ‎$zero‎.</value>
   </data>
   <data name="CastWarningSignChanged" xml:space="preserve">
-    <value>Expression '{0}' evaluated to signed value '{1}' but was cast to an unsigned value, resulting in '{2}'.</value>
+    <value>הביטוי ‎'{0}'‎ הוערך לערך חתום ‎'{1}'‎ אך הומר לערך בלתי־חתום, והתוצאה היא ‎'{2}'‎.</value>
   </data>
   <data name="CastWarningTruncatedHighAndSignChanged" xml:space="preserve">
-    <value>Expression '{0}' evaluated to {1} but was truncated to an unsigned value with {3}-bits, resulting in {2}.</value>
+    <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך לערך בלתי־חתום של ‎{3}‎ סיביות, והתוצאה היא ‎{2}‎.</value>
   </data>
   <data name="CastWarningTruncatedLow" xml:space="preserve">
-    <value>Expression '{0}' evaluated to {1} but was truncated with the lower {4} bits dropped, resulting in {2}.</value>
+    <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך לאחר שהוסרו {4}‎ הסיביות הנמוכות, והתוצאה היא ‎{2}‎.</value>
   </data>
   <data name="CastWarningTruncatedLowAndHigh" xml:space="preserve">
-    <value>Expression '{0}' evaluated to {1} but was truncated to {3}-bits with the lower {4} bits dropped, resulting in {2}.</value>
+    <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך ל־{3}‎ סיביות לאחר שהוסרו {4}‎ הסיביות הנמוכות, והתוצאה היא ‎{2}‎.</value>
   </data>
   <data name="CastWarningTruncatedLowAndHighAndSignChanged" xml:space="preserve">
-    <value>Expression '{0}' evaluated to '{1}' but was truncated to an unsigned value with '{3}-bits' and the lower '{4} bits' dropped, resulting in '{2}'.</value>
+    <value>הביטוי ‎'{0}'‎ הוערך ל־‎'{1}'‎ אך נחתך לערך בלתי־חתום של ‎'{3}‎ סיביות' לאחר שהוסרו ‎'{4}‎ הסיביות הנמוכות, והתוצאה היא ‎'{2}'‎.</value>
   </data>
   <data name="CastWarningTruncatedLowAndSignChanged" xml:space="preserve">
-    <value>Expression '{0}' evaluated to {1} but was truncated to an unsigned value with the lower {4} bits, resulting in {2}.</value>
+    <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך לערך בלתי־חתום לאחר הסרת {4}‎ הסיביות הנמוכות, והתוצאה היא ‎{2}‎.</value>
   </data>
   <data name="CastWarningTruncatedHigh" xml:space="preserve">
-    <value>Expression '{0}' evaluated to {1} but was truncated to {3}-bits, resulting in '{2}'.</value>
+    <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך ל־{3}‎ סיביות, והתוצאה היא ‎'{2}'‎.</value>
   </data>
   <data name="EmptyArgument" xml:space="preserve">
-    <value>Argument is empty.</value>
+    <value>הארגומנט ריק.</value>
   </data>
 </root>
