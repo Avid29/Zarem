@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Flyout/AddMFSI.Text" xml:space="preserve">
-    <value>Add</value>
+    <value>הוסף</value>
   </data>
   <data name="Flyout/ConfigureMFI.Text" xml:space="preserve">
-    <value>Configure</value>
+    <value>הגדרות</value>
   </data>
   <data name="Flyout/CopyFullPathMFI.Text" xml:space="preserve">
-    <value>Copy Full Path</value>
+    <value>העתק את הנתיב המלא</value>
   </data>
   <data name="Flyout/CopyMFI.Text" xml:space="preserve">
-    <value>Copy</value>
+    <value>העתק</value>
   </data>
   <data name="Flyout/CopyNameMFI.Text" xml:space="preserve">
-    <value>Copy Name</value>
+    <value>העתק את השם</value>
   </data>
   <data name="Flyout/CutMFI.Text" xml:space="preserve">
-    <value>Cut</value>
+    <value>גזור</value>
   </data>
   <data name="Flyout/DeleteMFI.Text" xml:space="preserve">
-    <value>Delete</value>
+    <value>מחק</value>
   </data>
   <data name="Flyout/ExistingFileMFI.Text" xml:space="preserve">
-    <value>Existing File</value>
+    <value>קובץ קיים</value>
   </data>
   <data name="Flyout/NewFileMFI.Text" xml:space="preserve">
-    <value>New File</value>
+    <value>קובץ חדש</value>
   </data>
   <data name="Flyout/NewFolderMFI.Text" xml:space="preserve">
-    <value>New Folder</value>
+    <value>תיקיה חדשה</value>
   </data>
   <data name="Flyout/OpenInFileExplorerMFI.Text" xml:space="preserve">
-    <value>Open in File Explorer</value>
+    <value>פתח בסייר הקבצים</value>
   </data>
   <data name="Flyout/OpenInWindowsTerminal.Text" xml:space="preserve">
-    <value>Open in Windows Terminal</value>
+    <value>פתח במסוף של Windows</value>
   </data>
   <data name="Flyout/OpenMFI.Text" xml:space="preserve">
-    <value>Open</value>
+    <value>פתח</value>
   </data>
   <data name="Flyout/OpenWithMFSI.Text" xml:space="preserve">
-    <value>Open With</value>
+    <value>פתח עם</value>
   </data>
   <data name="Flyout/PasteMFI.Text" xml:space="preserve">
-    <value>Paste</value>
+    <value>הדבק</value>
   </data>
   <data name="Flyout/RenameMFI.Text" xml:space="preserve">
-    <value>Rename</value>
+    <value>שנה שם</value>
   </data>
 </root>
