@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="JumpOutOfRange" xml:space="preserve">
-    <value>Jump to '{0}' in module '{1}' out of range.</value>
+    <value>הקפיצה אל '{0}' במודול '{1}' חורגת מהטווח.</value>
   </data>
 </root>

@@ -130,6 +130,6 @@
     <value>Module '{0}' is the wrong architecture ('{1}'). '{0}' will be skipped.</value>
   </data>
   <data name="SymbolNeverDefined" xml:space="preserve">
-    <value>Symbol '{0}' is declared but never defined.</value>
+    <value>הסמל '{0}' הוצהר אך לא הוגדר.</value>
   </data>
 </root>

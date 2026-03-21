@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArchOptionAlias1" xml:space="preserve">
-    <value>a</value>
+    <value>א</value>
   </data>
   <data name="ArchOptionName" xml:space="preserve">
-    <value>arch</value>
+    <value>ארכ</value>
   </data>
   <data name="AssembleCommandDescription" xml:space="preserve">
-    <value>Assemble files</value>
+    <value>הרכב קבצים</value>
   </data>
   <data name="AssembleCommandName" xml:space="preserve">
-    <value>assemble</value>
+    <value>הרכב</value>
   </data>
   <data name="BuildCommandDescription" xml:space="preserve">
-    <value>Build the project</value>
+    <value>בנה את הפרויקט</value>
   </data>
   <data name="BuildCommandName" xml:space="preserve">
-    <value>build</value>
+    <value>בנה</value>
   </data>
   <data name="CreateCommandDescription" xml:space="preserve">
-    <value>Create a new project</value>
+    <value>צור פרויקט חדש</value>
   </data>
   <data name="CreateCommandName" xml:space="preserve">
-    <value>create</value>
+    <value>צור</value>
   </data>
 </root>
