@@ -118,69 +118,69 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CreateProject/ConflictingProjectTB.Text" xml:space="preserve">
-    <value>A project with that name already exists in this folder.</value>
+    <value>פרויקט בשם זה כבר קיים בתיקייה זו.</value>
   </data>
   <data name="CreateProject/CreateANewProjectTB.Text" xml:space="preserve">
-    <value>Create a new project</value>
+    <value>צור פרויקט חדש</value>
   </data>
   <data name="CreateProject/CreationPath" xml:space="preserve">
-    <value>Project will be created in '{0}'</value>
+    <value>הפרויקט ייווצר ב-'{0}'</value>
   </data>
   <data name="CreateProject/FolderTBox.Header" xml:space="preserve">
-    <value>Folder</value>
+    <value>תיקיה</value>
   </data>
   <data name="CreateProject/FolderTBox.PlaceholderText" xml:space="preserve">
-    <value>Path</value>
+    <value>נתיב</value>
   </data>
   <data name="CreateProject/MipsVersionCB.Header" xml:space="preserve">
-    <value>Mips Version</value>
+    <value>גירסה Mips</value>
   </data>
   <data name="CreateProject/ProjectNameTBox.Header" xml:space="preserve">
-    <value>Project Name</value>
+    <value>שם פרויקט</value>
   </data>
   <data name="CreateProject/ProjectNameTBox.PlaceholderText" xml:space="preserve">
-    <value>Cool Project Name</value>
+    <value>שם פרויקט מגניב</value>
   </data>
   <data name="CreateProject/SelectFolderBTN.Content" xml:space="preserve">
-    <value>Select Folder</value>
+    <value>בחר תיקיה</value>
   </data>
   <data name="TextEditor/LineAndColumn" xml:space="preserve">
-    <value>Ln {0}, Col {1}</value>
+    <value>שו' {0}, עמ' {1}</value>
   </data>
   <data name="Explorer/CreateNewProjectBTN.Content" xml:space="preserve">
-    <value>Create New Project</value>
+    <value>צור פרויקט חדש</value>
   </data>
   <data name="Explorer/RecentFolderListItem" xml:space="preserve">
-    <value>{0}/{1} (Folder)</value>
+    <value>{0}/{1} (תיקיה)</value>
   </data>
   <data name="Explorer/RecentProjectsAndFoldersTB.Text" xml:space="preserve">
-    <value>Recent Projects and Folders</value>
+    <value>פרויקטים ותיקיות אחרונים</value>
   </data>
   <data name="ModuleEditor/SymbolNameDC.Content" xml:space="preserve">
-    <value>Symbol Name</value>
+    <value>שם הסמל</value>
   </data>
   <data name="ModuleEditor/SectionDC.Content" xml:space="preserve">
-    <value>Section</value>
+    <value>מקטע</value>
   </data>
   <data name="ModuleEditor/OffsetDC.Content" xml:space="preserve">
-    <value>Offset</value>
+    <value>הסט</value>
   </data>
   <data name="ModuleEditor/BindingDC.Content" xml:space="preserve">
-    <value>Binding</value>
+    <value>קישוריות</value>
   </data>
   <data name="ModuleEditor/SymbolTableTB.Text" xml:space="preserve">
-    <value>Symbol Table</value>
+    <value>טבלת סמל</value>
   </data>
   <data name="ModuleEditor/AddendDC.Content" xml:space="preserve">
-    <value>Added</value>
+    <value>תוספת</value>
   </data>
   <data name="ModuleEditor/RelocationTableTB.Text" xml:space="preserve">
-    <value>Relocation Table</value>
+    <value>טבלת רילוקיישן</value>
   </data>
   <data name="ModuleEditor/TypeDC.Content" xml:space="preserve">
-    <value>Type</value>
+    <value>סוג</value>
   </data>
   <data name="ModuleEditor/SymbolReferencedDC.Content" xml:space="preserve">
-    <value>Symbol Referenced</value>
+    <value>סמל מאוזכר</value>
   </data>
 </root>
