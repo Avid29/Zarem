@@ -12,7 +12,7 @@ public interface ITrapHandler
     /// <summary>
     /// Defers trap handling to a custom implementation.
     /// </summary>
-    /// <param name="computer">The computer instance (can be cast to specific architecture types).</param>
+    /// <param name="cpu">The cput instance (can be cast to specific architecture types).</param>
     /// <param name="trapCode">The raw architecture-specific trap or exception code.</param>
-    void HandleTrap(IComputer computer, ulong trapCode);
+    void HandleTrap(ICpu cpu, ulong trapCode);
 }

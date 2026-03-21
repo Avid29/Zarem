@@ -111,7 +111,6 @@ public class DebugService : IDebugService
 
         _consoleService.ShowConsoleWindow();
 
-        _ = new ZaremTrapHandler(mipsComp);
         _session.Emulator.StateChanged += MipsEmu_StateChanged;
         _session.Debugger?.Halted += Debugger_Halted;
 
@@ -148,8 +147,6 @@ public class DebugService : IDebugService
         // Cheat and grab the mips emulator
         if (session?.Emulator.Computer is not MipsComputer mipsComp)
             return;
-
-        var trapHandler = new ZaremTrapHandler(mipsComp);
 
         session.Emulator.Start();
     }

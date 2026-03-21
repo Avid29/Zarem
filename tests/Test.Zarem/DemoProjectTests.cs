@@ -97,8 +97,6 @@ public sealed class DemoProjectTests
             return;
         }
 
-        _ = new ZaremTrapHandler(mipsComp);
-
         // Setup comparision unpon completion
         var tcs = new TaskCompletionSource();
         session.Emulator.StateChanged += (s, state) =>

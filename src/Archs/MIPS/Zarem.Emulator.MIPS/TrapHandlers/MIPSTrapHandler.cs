@@ -32,14 +32,14 @@ public abstract class MipsTrapHandler : ITrapHandler
     }
 
     /// <inheritdoc/>
-    public void HandleTrap(IComputer computer, ulong trapCode)
+    public void HandleTrap(ICpu cpu, ulong trapCode)
     {
-        if (computer is not MipsComputer mipsComputer)
+        if (cpu is not MipsCpu mipsCpu)
         {
-            ThrowHelper.ThrowArgumentException(nameof(mipsComputer));
+            ThrowHelper.ThrowArgumentException(nameof(mipsCpu));
             return;
         }
 
-        HandleTrap(new MipsTrapContext(mipsComputer, trapCode));
+        HandleTrap(new MipsTrapContext(mipsCpu, trapCode));
     }
 }

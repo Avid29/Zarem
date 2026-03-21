@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2025
 
+using System;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Interfaces;
-using Zarem.Models;
 
 namespace Zarem.Emulator.Machine;
 
@@ -30,6 +30,8 @@ public class MipsComputer : ComputerBase
 
         // Hook the virtual memory system into the Cpu
         Processor.Memory = Memory;
+
+        Processor.ShutdownRequested += Processor_ShutdownRequested;
     }
 
     /// <summary>
@@ -58,5 +60,11 @@ public class MipsComputer : ComputerBase
     protected override void MapDevices(MemoryMapper mapper)
     {
         mapper.MapDevice(0x0, new RamDevice(1024 * 1024 * 1024)); // TODO: Config ram size
+    }
+
+    private void Processor_ShutdownRequested(object? sender, EventArgs e)
+    {
+        Processor.ShutdownRequested -= Processor_ShutdownRequested;
+        RequestShutdown();
     }
 }
