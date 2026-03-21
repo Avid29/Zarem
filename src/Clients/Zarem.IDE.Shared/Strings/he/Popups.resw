@@ -118,57 +118,57 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeleteFileDescription" xml:space="preserve">
-    <value>{0} will be deleted permanently.</value>
+    <value>{0} יימחק לצמיתות.</value>
   </data>
   <data name="DeleteFileTitle" xml:space="preserve">
-    <value>Delete {0}?</value>
+    <value>למחוק את {0}?</value>
   </data>
   <data name="DeleteFolderTitle" xml:space="preserve">
-    <value>Delete {0}?</value>
+    <value>למחוק את {0}?</value>
   </data>
   <data name="DeleteFolderDescription" xml:space="preserve">
-    <value>{0} and all its contents will be deleted permanently.</value>
+    <value>{0} וכל תוכנו יימחק לצמיתות.</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
+    <value>אישור</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>בטל</value>
   </data>
   <data name="DontSave" xml:space="preserve">
-    <value>Don't Save</value>
+    <value>אל תשמור</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Save</value>
+    <value>שמור</value>
   </data>
   <data name="UnsavedChangesTitle" xml:space="preserve">
-    <value>{0} contains unsaved changes</value>
+    <value>ל-{0} יש שינויים שלא נשמרו</value>
   </data>
   <data name="UnsavedChangesDescription" xml:space="preserve">
-    <value>Would you like to save the changes before closing the file?</value>
+    <value>האם ברצונך לשמור את השינויים לפני סגירת הקובץ?</value>
   </data>
   <data name="FileRunOldAssemblyTitle" xml:space="preserve">
-    <value>{0} could not be assembled</value>
+    <value>לא ניתן היה להרכיב את {0}</value>
   </data>
   <data name="FileRunOldAssemblyDescription" xml:space="preserve">
-    <value>A previous binary is still cached. Would you like to run it?</value>
+    <value>קובץ בינארי קודם עדיין מאוחסן. האם ברצונך להפעיל אותו?</value>
   </data>
   <data name="FileRunOldAssemblyPrimary" xml:space="preserve">
-    <value>Run Current</value>
+    <value>הפעל הנוכחי</value>
   </data>
   <data name="Okay" xml:space="preserve">
-    <value>Okay</value>
+    <value>אישור</value>
   </data>
   <data name="Create" xml:space="preserve">
-    <value>Create</value>
+    <value>צור</value>
   </data>
   <data name="CreateNewFileTitle" xml:space="preserve">
-    <value>Create New File</value>
+    <value>צור קובץ חדש</value>
   </data>
   <data name="CreateNewFolderTitle" xml:space="preserve">
-    <value>Create New Folder</value>
+    <value>צור תיקיה חדשה</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>סגר</value>
   </data>
 </root>
