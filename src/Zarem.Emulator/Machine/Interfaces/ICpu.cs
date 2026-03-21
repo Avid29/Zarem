@@ -11,11 +11,6 @@ namespace Zarem.Emulator.Machine.Interfaces;
 public interface ICpu
 {
     /// <summary>
-    /// An event invoked when a trap occurs.
-    /// </summary>
-    event EventHandler<ICpu, TrapEventArgs>? TrapOccurred;
-
-    /// <summary>
     /// An event invoked when a breakpoint is hit.
     /// </summary>
     event EventHandler<TrapEventArgs>? BreakpointHit;

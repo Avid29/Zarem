@@ -93,7 +93,7 @@ public class DebugService : IDebugService
         if (_projectService.Project is null)
             return;
 
-        // NOTE: We're rebuilding when debug is true because the debug info is not 
+        // TODO: We're rebuilding when debug is true because the debug info is not 
         // properly exported properly. This should be changed back to false when
         // issue #73 is addressed.
         var buildResult = await _buildService.BuildProjectAsync(debug);
@@ -111,7 +111,6 @@ public class DebugService : IDebugService
 
         _consoleService.ShowConsoleWindow();
 
-        _ = new MarsTrapHandler(mipsComp);
         _session.Emulator.StateChanged += MipsEmu_StateChanged;
         _session.Debugger?.Halted += Debugger_Halted;
 
@@ -148,8 +147,6 @@ public class DebugService : IDebugService
         // Cheat and grab the mips emulator
         if (session?.Emulator.Computer is not MipsComputer mipsComp)
             return;
-
-        var trapHandler = new MarsTrapHandler(mipsComp);
 
         session.Emulator.Start();
     }

@@ -3,18 +3,17 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Zarem.Descriptors;
+using Zarem.Descriptors.Base;
 
 namespace Zarem.Registry;
 
 /// <summary>
-/// A class for implementing a registry for a given descriptor.
+/// A class for implementing a registry for a given <see cref="IDescriptor"/>.
 /// </summary>
-public class DescriptorRegistry<T>
+public abstract class DescriptorRegistry<T>
     where T : class, IDescriptor
 {
     private readonly ConcurrentDictionary<string, T> _idTable = [];
-    private readonly ConcurrentDictionary<Type, T> _configTable = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DescriptorRegistry{T}"/> class.
@@ -38,23 +37,14 @@ public class DescriptorRegistry<T>
     /// <summary>
     /// Retrieves a descriptor from the registry.
     /// </summary>
-    /// <param name="configType">The type for for the config associated with the descriptor.</param>
-    public T? Get(Type configType)
-    {
-        if (_configTable.TryGetValue(configType, out var value))
-            return value;
-
-        return null;
-    }
+    public abstract T? Get(Type type);
 
     /// <summary>
     /// Registers the descriptor in the look up table.
     /// </summary>
-    /// <param name="descriptor"></param>
-    public void Register(T descriptor)
+    public virtual void Register(T descriptor)
     {
         _idTable.TryAdd(descriptor.Identifier, descriptor);
-        _configTable.TryAdd(descriptor.ConfigType, descriptor);
     }
 
     /// <summary>

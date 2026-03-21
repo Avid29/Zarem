@@ -8,8 +8,9 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using Zarem.Assembler.Config;
 using Zarem.Config;
-using Zarem.Descriptors;
+using Zarem.Descriptors.Base;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.TrapHandlers;
 using Zarem.Linker.Config;
 using Zarem.Registry;
 
@@ -57,6 +58,7 @@ public static partial class ProjectSerializer
                 _ when typeof(EmulatorConfig).IsAssignableFrom(prop.PropertyType) => (obj, child, prop) => DeserializeConfig(ZaremRegistry.Emulators, obj, child, prop),
                 _ when typeof(LinkerConfig).IsAssignableFrom(prop.PropertyType) => (obj, child, prop) => DeserializeConfig(ZaremRegistry.Linkers, obj, child, prop),
                 _ when typeof(FormatConfig).IsAssignableFrom(prop.PropertyType) => (obj, child, prop) => DeserializeConfig(ZaremRegistry.Formats, obj, child, prop),
+                _ when typeof(ITrapHandler).IsAssignableFrom(prop.PropertyType) => (obj, child, prop) => DeserializeType(ZaremRegistry.TrapHandlers, obj, child, prop),
                 _ when prop.PropertyType.IsEnum => DeserializeEnum,
                 _ when IsSimple(prop.PropertyType) => DeserializeSimple,
                 _ => DeserializeObject,
@@ -66,8 +68,9 @@ public static partial class ProjectSerializer
             @delegate(obj, child, prop);
         }
     }
+
     private static void DeserializeConfig<T>(DescriptorRegistry<T> registry, object obj, XElement child, PropertyInfo prop)
-        where T : class, IDescriptor
+        where T : class, IConfigDescriptor
     {
         var identifier = child.Attribute("Type")?.Value;
         Guard.IsNotNull(identifier);
@@ -81,6 +84,25 @@ public static partial class ProjectSerializer
         ReadObjectProperties(child, config);
 
         prop.SetValue(obj, config);
+    }
+
+    private static void DeserializeType<T>(DescriptorRegistry<T> registry, object obj, XElement child, PropertyInfo prop)
+        where T : class, ITypeDescriptor
+    {
+        string identifier = child.Value;
+        if (string.IsNullOrWhiteSpace(identifier))
+        {
+            prop.SetValue(obj, null);
+            return;
+        }
+
+        var descriptor = registry.Get(identifier);
+        Guard.IsNotNull(descriptor);
+
+        var value = Activator.CreateInstance(descriptor.Type);
+        Guard.IsNotNull(value);
+
+        prop.SetValue(obj, value);
     }
 
     private static void DeserializeSimple(object obj, XElement child, PropertyInfo prop)

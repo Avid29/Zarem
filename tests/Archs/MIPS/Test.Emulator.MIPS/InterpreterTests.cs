@@ -37,15 +37,12 @@ public class InterpreterTests
         // Setup emulator
         var emulatorConfig = new MIPSEmulatorConfig()
         {
-            HostedTraps = true
+            TrapHost = new ZaremTrapHandler(),
         };
         var computer = new MipsComputer(emulatorConfig);
         var emulator = new Zaremulator(computer);
 
         emulator.Load(module);
-
-        // Setup interpreter
-        var interpreter = new MarsTrapHandler(computer);
 
         // Start the emulator
         emulator.Start();

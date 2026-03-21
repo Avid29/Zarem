@@ -2,6 +2,7 @@
 
 using System;
 using Zarem.Descriptors;
+using Zarem.Descriptors.Base;
 using Zarem.Elf.Config;
 
 namespace Zarem.Elf;

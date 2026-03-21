@@ -2,13 +2,14 @@
 
 using System;
 using Zarem.Debugger.Handlers;
+using Zarem.Descriptors.Base;
 
 namespace Zarem.Descriptors;
 
 /// <summary>
 /// An interface for a class describing an <see cref="IDebugHandler"/>
 /// </summary>
-public interface IDebuggerDescriptor
+public interface IDebuggerDescriptor : IDescriptor
 {
     /// <summary>
     /// Gets the <see cref="Type"/> of the <see cref="IDebugHandler"/> for an architecture.

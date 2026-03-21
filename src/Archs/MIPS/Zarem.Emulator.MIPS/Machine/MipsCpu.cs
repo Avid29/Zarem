@@ -19,12 +19,10 @@ namespace Zarem.Emulator.Machine;
 /// </summary>
 public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 {
-
-    /// <inheritdoc/>
-    public event EventHandler<ICpu, TrapEventArgs>? TrapOccurred;
-
     /// <inheritdoc/>
     public event EventHandler<TrapEventArgs>? BreakpointHit;
+
+    internal event EventHandler? ShutdownRequested;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu"/> class.
@@ -110,6 +108,11 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
         get => ProgramCounter;
         set => ProgramCounter = (uint)value;
     }
+
+    /// <summary>
+    /// Requests a shutdown.
+    /// </summary>
+    public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
 
     /// <inheritdoc/>
     public void Step()
@@ -309,31 +312,20 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 
         // Breakpoints are handled by the debugger upon the trap occurring event
         // The host also handles every kind of trap if that's what the config specifies
-        var hostTrap = trap is MipsTrap.Breakpoint || Config.HostedTraps;
-        var args = new TrapEventArgs((ulong)trap, hostTrap);
-
         if (trap is MipsTrap.Breakpoint)
         {
-            BreakpointHit?.Invoke(this, args);
+            BreakpointHit?.Invoke(this, new TrapEventArgs((ulong)trap, true));
+        }
+        else if (Config.TrapHost is not null)
+        {
+            // The host handled the trap, do not emulate it
+            // Breakpoints are always handled by the host
+            Config.TrapHost.HandleTrap(this, (ulong)trap);
         }
         else
         {
-            TrapOccurred?.Invoke(this, args);
+            CoProcessor0.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
+            ProgramCounter = CoProcessor0.ExceptionVector;
         }
-
-        // The host handled the trap, do not emulate it
-        // Breakpoints are always handled by the host
-        if (hostTrap)
-        {
-            // Wait for the host to handle the trap before resuming execution
-            // Only do this if there's actually a host register to the even though
-            if (TrapOccurred is not null)
-                args.Wait();
-
-            return;
-        }
-
-        CoProcessor0.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
-        ProgramCounter = CoProcessor0.ExceptionVector;
     }
 }

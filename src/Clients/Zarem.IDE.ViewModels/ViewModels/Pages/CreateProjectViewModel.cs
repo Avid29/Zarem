@@ -11,6 +11,7 @@ using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Descriptors;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.TrapHandlers;
 using Zarem.IDE.Messages.Navigation;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Files;
@@ -171,7 +172,7 @@ public partial class CreateProjectViewModel : PageViewModel
                 AssemblerConfig = new MipsAssemblerConfig(),
                 EmulatorConfig = new MIPSEmulatorConfig()
                 {
-                    HostedTraps = true
+                    TrapHost = new ZaremTrapHandler(),
                 },
                 LinkerConfig = new MipsLinkerConfig(),
             },

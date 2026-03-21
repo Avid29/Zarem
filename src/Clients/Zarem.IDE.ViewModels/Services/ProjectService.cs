@@ -12,6 +12,7 @@ using Zarem.IDE.Models.Enums;
 using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Files.Models;
 using Zarem.MIPS;
+using Zarem.MIPS.TrapHandlers;
 using Zarem.Models.Files;
 using Zarem.Registry;
 using Zarem.Serialization;
@@ -48,6 +49,7 @@ public class ProjectService : IProjectService
         ZaremRegistry.RegisterArchitecture(new MipsArchitectureDescriptor());
         ZaremRegistry.Formats.Register(new ElfModuleDescriptor());
         //ZaremRegistry.Formats.Register(new RasmModuleDescriptor());
+        ZaremRegistry.TrapHandlers.Register(new ZaremTrapHandlerDescriptor());
     }
 
     /// <inheritdoc/>

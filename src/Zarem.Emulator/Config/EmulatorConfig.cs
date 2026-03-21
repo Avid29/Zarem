@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Config;
+using Zarem.Emulator.TrapHandlers;
 
 namespace Zarem.Emulator.Config;
 
@@ -10,11 +11,11 @@ namespace Zarem.Emulator.Config;
 public class EmulatorConfig : IConfig
 {
     /// <summary>
-    /// Gets or sets whether or not the host should handle traps.
+    /// Gets or sets the emulator's trap handler.
     /// </summary>
     /// <remarks>
-    /// If set to true, ALL traps will be handled by the host-layer, and not the emulated machine.
-    /// This allows user-code programs to be interpreted by the emulator without loading and executing an OS.
+    /// If null, all traps EXCEPT BREAK will be handled by the host-layer, and not the emulated machine.
+    /// If not null, the trap handler will interpret traps and syscalls.
     /// </remarks>
-    public bool HostedTraps { get; init; }
+    public ITrapHandler? TrapHost { get; init; }
 }

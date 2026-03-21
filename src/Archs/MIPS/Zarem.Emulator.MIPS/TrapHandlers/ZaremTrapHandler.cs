@@ -1,11 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
 using System;
 using System.Text;
-using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Extensions;
-using Zarem.Emulator.Machine;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.TrapHandlers;
@@ -13,74 +10,66 @@ namespace Zarem.Emulator.TrapHandlers;
 /// <summary>
 /// An interpreter mimicking the MARS syscall pattern.
 /// </summary>
-public class MarsTrapHandler : MipsTrapHandler
+public class ZaremTrapHandler : MipsTrapHandler
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MarsTrapHandler"/> class.
-    /// </summary>
-    /// <param name="computer"></param>
-    public MarsTrapHandler(MipsComputer computer) : base(computer)
-    {
-    }
-
     /// <inheritdoc/>
-    protected override void HandleSyscall(uint code)
+    protected override void HandleSyscall(ulong code, MipsTrapContext context)
     {
         switch (code)
         {
             // Print integer
             case 1:
-                Console.Write($"{A0}");
+                Console.Write($"{context.A0}");
                 break;
 
             // Print float
             case 2:
-                Console.WriteLine($"{Computer.Processor.FloatProcessor.Singles[FloatRegister.F12]}");
+                Console.WriteLine($"{context.Cpu.FloatProcessor.Singles[FloatRegister.F12]}");
                 break;
 
             // Print double
             case 3:
-                Console.WriteLine($"{Computer.Processor.FloatProcessor.Doubles[FloatRegister.F12]}");
+                Console.WriteLine($"{context.Cpu.FloatProcessor.Doubles[FloatRegister.F12]}");
                 break;
 
             // Print ascii string
             case 4:
-                Console.Write(Computer.Memory.ReadString(A0, Encoding.ASCII));
+                Console.Write(context.Cpu.Memory.ReadString(context.A0, Encoding.ASCII));
                 break;
 
             // Read integer
             case 5:
-                V0 = (uint)int.Parse(Console.ReadLine() ?? "");
+                context.V0 = (uint)int.Parse(Console.ReadLine() ?? "");
                 break;
 
             // Read float
             case 6:
-                Computer.Processor.FloatProcessor.Singles[FloatRegister.F0] = float.Parse(Console.ReadLine() ?? "");
+                context.Cpu.FloatProcessor.Singles[FloatRegister.F0] = float.Parse(Console.ReadLine() ?? "");
                 break;
 
             // Read double
             case 7:
-                Computer.Processor.FloatProcessor.Doubles[FloatRegister.F0] = double.Parse(Console.ReadLine() ?? "");
+                context.Cpu.FloatProcessor.Doubles[FloatRegister.F0] = double.Parse(Console.ReadLine() ?? "");
                 break;
 
             // Read ascii string
             case 8:
-                Computer.Memory.Write(A0, ReadString(Encoding.ASCII, A1));
+                context.Cpu.Memory.Write(context.A0, ReadString(Encoding.ASCII, context.A1));
                 break;
 
             // Stop execution
             case 10:
-                Computer.RequestShutdown();
+                context.Cpu.RequestShutdown();
                 break;
 
             // Print unicode string
             case 80:
-                Console.Write(Computer.Memory.ReadString(A0, Encoding.BigEndianUnicode));
+                Console.Write(context.Cpu.Memory.ReadString(context.A0, Encoding.BigEndianUnicode));
                 break;
 
             // Read unicode string
             case 81:
-                Computer.Memory.Write(A0, ReadString(Encoding.BigEndianUnicode, A1));
+                context.Cpu.Memory.Write(context.A0, ReadString(Encoding.BigEndianUnicode, context.A1));
                 break;
 
             default:
@@ -88,13 +77,7 @@ public class MarsTrapHandler : MipsTrapHandler
         }
 
         // Increment the PC
-        Computer.Processor.ProgramCounter += 4;
-    }
-
-    /// <inheritdoc/>
-    protected override void HandleTrap(MipsTrap trap)
-    {
-        throw new NotImplementedException();
+        context.Cpu.ProgramCounter += 4;
     }
 
     private static byte[] ReadString(Encoding encoding, uint maxBytes)

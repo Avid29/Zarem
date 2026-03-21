@@ -6,7 +6,7 @@
     <AssemblerConfig Type="MIPS" />
     <EmulatorConfig Type="MIPS">
       <DisableDelaySlots>false</DisableDelaySlots>
-      <HostedTraps>true</HostedTraps>
+      <TrapHost>Zarem</TrapHost>
     </EmulatorConfig>
     <LinkerConfig Type="MIPS">
       <EntryPoint>entry</EntryPoint>
