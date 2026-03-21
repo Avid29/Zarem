@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ModuleFormatName" xml:space="preserve">
-    <value>rasm (RIT Standard)</value>
+    <value>rasm (RIT סטנדרט)</value>
   </data>
   <data name="ModuleFormatShortName" xml:space="preserve">
     <value>rasm</value>
