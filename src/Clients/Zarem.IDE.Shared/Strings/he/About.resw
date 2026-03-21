@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutHeaderTB.Text" xml:space="preserve">
-    <value>About</value>
+    <value>אודות</value>
   </data>
   <data name="AppNameTB.Text" xml:space="preserve">
-    <value>Zarem</value>
+    <value>זרם</value>
   </data>
   <data name="BuildInfoRUN.Text" xml:space="preserve">
-    <value>Build Info:</value>
+    <value>פרטי בנייה:</value>
   </data>
   <data name="CopyrightRUN.Text" xml:space="preserve">
-    <value>© Avishai Dernis</value>
+    <value>© אבישי דרניס</value>
   </data>
   <data name="DiscussOnDiscordTB.Text" xml:space="preserve">
-    <value>Discuss on Discord</value>
+    <value>דיון ב-Discord</value>
   </data>
   <data name="DiscussOnRedditTB.Text" xml:space="preserve">
-    <value>Discuss on Reddit</value>
+    <value>דיון ב-Reddit</value>
   </data>
   <data name="HelloFromTelAvivTB.Text" xml:space="preserve">
-    <value>Hello from Tel Aviv</value>
+    <value>שלום מגבעתיים</value>
   </data>
   <data name="MadeInIsraelTB.Text" xml:space="preserve">
-    <value>Made in Israel</value>
+    <value>תוצרת הארץ</value>
   </data>
   <data name="SponsorsTB.Text" xml:space="preserve">
-    <value>Sponsors</value>
+    <value>חסויות</value>
   </data>
   <data name="ThirdPartyDependenciesTB.Text" xml:space="preserve">
-    <value>Third-Party Dependencies</value>
+    <value>תלויות של צד שלישי</value>
   </data>
   <data name="TranslateOnCrowdinTB.Text" xml:space="preserve">
-    <value>Help Translate</value>
+    <value>עזרו בתרגום</value>
   </data>
   <data name="VersionRUN.Text" xml:space="preserve">
-    <value>Version:</value>
+    <value>גרסה:</value>
   </data>
   <data name="ViewOnGitHubTB.Text" xml:space="preserve">
-    <value>View on GitHub</value>
+    <value>צפה ב-GitHub</value>
   </data>
 </root>
