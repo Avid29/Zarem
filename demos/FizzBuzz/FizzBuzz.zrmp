@@ -5,7 +5,7 @@
     <MipsVersion>mips3</MipsVersion>
     <AssemblerConfig Type="MIPS" />
     <EmulatorConfig Type="MIPS">
-      <HostedTraps>true</HostedTraps>
+      <TrapHost>Zarem</TrapHost>
     </EmulatorConfig>
     <LinkerConfig Type="MIPS">
       <LinkMode>Executable</LinkMode>
