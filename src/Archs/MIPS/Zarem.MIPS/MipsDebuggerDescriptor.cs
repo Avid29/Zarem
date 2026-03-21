@@ -14,5 +14,8 @@ namespace Zarem.MIPS;
 public class MipsDebuggerDescriptor : IDebuggerDescriptor
 {
     /// <inheritdoc/>
+    public string Identifier => "MIPS";
+
+    /// <inheritdoc/>
     public Type DebugHandleType => typeof(MipsDebugHandler);
 }

@@ -8,8 +8,9 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using Zarem.Assembler.Config;
 using Zarem.Config;
-using Zarem.Descriptors;
+using Zarem.Descriptors.Base;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.TrapHandlers;
 using Zarem.Linker.Config;
 using Zarem.Registry;
 
@@ -61,6 +62,7 @@ public static partial class ProjectSerializer
                 _ when value is EmulatorConfig => (parent, prop, value) => SerializeConfig(ZaremRegistry.Emulators, parent, prop, value),
                 _ when value is LinkerConfig => (parent, prop, value) => SerializeConfig(ZaremRegistry.Linkers, parent, prop, value),
                 _ when value is FormatConfig => (parent, prop, value) => SerializeConfig(ZaremRegistry.Formats, parent, prop, value),
+                _ when value is ITrapHandler => (parent, prop, value) => SerializeType(ZaremRegistry.TrapHandlers, parent, prop, value),
                 _ when prop.PropertyType.IsEnum => SerializeEnum,
                 _ when IsSimple(prop.PropertyType) => SerializeSimple,
                 _ => SerializeObject,
@@ -72,7 +74,7 @@ public static partial class ProjectSerializer
     }
 
     private static void SerializeConfig<T>(DescriptorRegistry<T> registry, XElement parent, PropertyInfo prop, object value)
-        where T : class, IDescriptor
+        where T : class, IConfigDescriptor
     {
         var descriptor = registry.Get(value.GetType());
         Guard.IsNotNull(descriptor);
@@ -80,6 +82,20 @@ public static partial class ProjectSerializer
         var element = new XElement(prop.Name, new XAttribute("Type", descriptor.Identifier));
 
         WriteObjectProperties(element, value);
+        parent.Add(element);
+    }
+
+    private static void SerializeType<T>(DescriptorRegistry<T> registry, XElement parent, PropertyInfo prop, object value)
+        where T : class, ITypeDescriptor
+    {
+        if (value is null)
+            return;
+
+        var descriptor = registry.Get(value.GetType());
+        Guard.IsNotNull(descriptor);
+
+        var element = new XElement(prop.Name, descriptor.Identifier);
+
         parent.Add(element);
     }
 

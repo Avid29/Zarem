@@ -3,12 +3,12 @@
 using System;
 using Zarem.Localization;
 
-namespace Zarem.Descriptors;
+namespace Zarem.Descriptors.Base;
 
 /// <summary>
-/// A base class for a <see cref="IDescriptor"/> which implements a lazy localizer.
+/// A base class for a <see cref="IConfigDescriptor"/> which implements a lazy localizer.
 /// </summary>
-public abstract class LocalizedDescriptor<TSelf> : IDescriptor
+public abstract class LocalizedDescriptor<TSelf> : IConfigDescriptor
     where TSelf : LocalizedDescriptor<TSelf>
 {
     private readonly Lazy<Localizer> _localizer;

@@ -3,6 +3,7 @@
 using System;
 using Zarem.Attributes;
 using Zarem.Descriptors;
+using Zarem.Descriptors.Base;
 
 namespace Zarem.MIPS;
 

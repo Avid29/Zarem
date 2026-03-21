@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using Zarem.Descriptors.Base;
 using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Descriptors;
@@ -8,7 +9,7 @@ namespace Zarem.Descriptors;
 /// <summary>
 /// An interface for a class describing an emulated computer.
 /// </summary>
-public interface IComputerDescriptor : IDescriptor
+public interface IComputerDescriptor : IConfigDescriptor
 {
     /// <summary>
     /// Gets the <see cref="Type"/> of the emulator.

@@ -1,9 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-
-// Avishai Dernis 2026
-
-namespace Zarem.Descriptors;
+namespace Zarem.Descriptors.Base;
 
 /// <summary>
 /// A shared interface for a descriptor of a zarem plugin descriptor with display info.
