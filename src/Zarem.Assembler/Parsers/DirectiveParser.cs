@@ -3,8 +3,8 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
+using System.Text;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Logging;
@@ -73,8 +73,14 @@ public readonly struct DirectiveParser
             ".word" => TryParseData<int>(token, line.Args, out directive),
             ".half" => TryParseData<short>(token, line.Args, out directive),
             ".byte" => TryParseData<byte>(token, line.Args, out directive),
-            ".ascii" => TryParseAscii(line.Args, false, out directive),
-            ".asciiz" => TryParseAscii(line.Args, true, out directive),
+
+            // String
+            ".ascii" => TryParseString(line.Args, Encoding.ASCII, false, out directive),
+            ".asciiz" => TryParseString(line.Args, Encoding.ASCII, true, out directive),
+            ".utf8" => TryParseString(line.Args, Encoding.UTF8, false, out directive),
+            ".utf8z" => TryParseString(line.Args, Encoding.UTF8, true, out directive),
+            ".unicode" or ".utf16" => TryParseString(line.Args, Encoding.BigEndianUnicode, false, out directive),
+            ".unicodez" or ".utf16z" => TryParseString(line.Args, Encoding.BigEndianUnicode, true, out directive),
 
             // Invalid directive
             _ => _logger?.Log(Severity.Error, LogId.InvalidDirectiveName, token, "DirectiveDoesNotExist", token.Source) ?? false,
@@ -248,7 +254,7 @@ public readonly struct DirectiveParser
         return true;
     }
 
-    private bool TryParseAscii(AssemblyLineArgs args, bool terminate, out Directive? directive)
+    private bool TryParseString(AssemblyLineArgs args, Encoding encoding, bool terminate, out Directive? directive)
     {
         directive = null;
 
@@ -263,9 +269,12 @@ public readonly struct DirectiveParser
             if (!StringParser.TryParseString(arg[0], out var value, _logger?.Parent))
                 return false;
 
+            // Encode the string
+            var encoded = encoding.GetBytes(value);
+
             // Copy to byte list
-            bytes.Capacity += value.Length;
-            bytes.AddRange(value.Select(x => (byte)x));
+            bytes.Capacity += encoded.Length;
+            bytes.AddRange(encoded);
 
             // Null terminate string conditionally
             if (terminate)

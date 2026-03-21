@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using System.Text;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Machine;
@@ -42,9 +43,9 @@ public class MarsTrapHandler : MipsTrapHandler
                 Console.WriteLine($"{Computer.Processor.FloatProcessor.Doubles[FloatRegister.F12]}");
                 break;
 
-            // Print string
+            // Print ascii string
             case 4:
-                Console.Write(Computer.Memory.ReadString(A0));
+                Console.Write(Computer.Memory.ReadString(A0, Encoding.ASCII));
                 break;
 
             // Read integer
@@ -82,6 +83,11 @@ public class MarsTrapHandler : MipsTrapHandler
             // Stop execution
             case 10:
                 Computer.RequestShutdown();
+                break;
+
+            // Print unicode string
+            case 80:
+                Console.Write(Computer.Memory.ReadString(A0, Encoding.BigEndianUnicode));
                 break;
 
             default:
