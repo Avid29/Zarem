@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -118,69 +118,69 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CreateProject/ConflictingProjectTB.Text" xml:space="preserve">
-    <value>פרויקט בשם זה כבר קיים בתיקייה זו.</value>
+    <value>A project with that name already exists in this folder.</value>
   </data>
   <data name="CreateProject/CreateANewProjectTB.Text" xml:space="preserve">
-    <value>צור פרויקט חדש</value>
+    <value>Create a new project</value>
   </data>
   <data name="CreateProject/CreationPath" xml:space="preserve">
-    <value>הפרויקט ייווצר ב-'{0}'</value>
+    <value>Project will be created in '{0}'</value>
   </data>
   <data name="CreateProject/FolderTBox.Header" xml:space="preserve">
-    <value>תיקיה</value>
+    <value>Folder</value>
   </data>
   <data name="CreateProject/FolderTBox.PlaceholderText" xml:space="preserve">
-    <value>נתיב</value>
+    <value>Path</value>
   </data>
   <data name="CreateProject/MipsVersionCB.Header" xml:space="preserve">
-    <value>גירסה Mips</value>
+    <value>Mips Version</value>
   </data>
   <data name="CreateProject/ProjectNameTBox.Header" xml:space="preserve">
-    <value>שם פרויקט</value>
+    <value>Project Name</value>
   </data>
   <data name="CreateProject/ProjectNameTBox.PlaceholderText" xml:space="preserve">
-    <value>שם פרויקט מגניב</value>
+    <value>Cool Project Name</value>
   </data>
   <data name="CreateProject/SelectFolderBTN.Content" xml:space="preserve">
-    <value>בחר תיקיה</value>
+    <value>Select Folder</value>
   </data>
   <data name="TextEditor/LineAndColumn" xml:space="preserve">
-    <value>שו' {0}, עמ' {1}</value>
+    <value>Ln {0}, Col {1}</value>
   </data>
   <data name="Explorer/CreateNewProjectBTN.Content" xml:space="preserve">
-    <value>צור פרויקט חדש</value>
+    <value>Create New Project</value>
   </data>
   <data name="Explorer/RecentFolderListItem" xml:space="preserve">
-    <value>{0}/{1} (תיקיה)</value>
+    <value>{0}/{1} (Folder)</value>
   </data>
   <data name="Explorer/RecentProjectsAndFoldersTB.Text" xml:space="preserve">
-    <value>פרויקטים ותיקיות אחרונים</value>
+    <value>Recent Projects and Folders</value>
   </data>
   <data name="ModuleEditor/SymbolNameDC.Content" xml:space="preserve">
-    <value>שם הסמל</value>
+    <value>Symbol Name</value>
   </data>
   <data name="ModuleEditor/SectionDC.Content" xml:space="preserve">
-    <value>מקטע</value>
+    <value>Section</value>
   </data>
   <data name="ModuleEditor/OffsetDC.Content" xml:space="preserve">
-    <value>הסט</value>
+    <value>Offset</value>
   </data>
   <data name="ModuleEditor/BindingDC.Content" xml:space="preserve">
-    <value>קישוריות</value>
+    <value>Binding</value>
   </data>
   <data name="ModuleEditor/SymbolTableTB.Text" xml:space="preserve">
-    <value>טבלת סמל</value>
+    <value>Symbol Table</value>
   </data>
   <data name="ModuleEditor/AddendDC.Content" xml:space="preserve">
-    <value>תוספת</value>
+    <value>Added</value>
   </data>
   <data name="ModuleEditor/RelocationTableTB.Text" xml:space="preserve">
-    <value>טבלת רילוקיישן</value>
+    <value>Relocation Table</value>
   </data>
   <data name="ModuleEditor/TypeDC.Content" xml:space="preserve">
-    <value>סוג</value>
+    <value>Type</value>
   </data>
   <data name="ModuleEditor/SymbolReferencedDC.Content" xml:space="preserve">
-    <value>סמל מאוזכר</value>
+    <value>Symbol Referenced</value>
   </data>
 </root>
