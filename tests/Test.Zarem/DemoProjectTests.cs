@@ -97,7 +97,7 @@ public sealed class DemoProjectTests
             return;
         }
 
-        _ = new MarsTrapHandler(mipsComp);
+        _ = new ZaremTrapHandler(mipsComp);
 
         // Setup comparision unpon completion
         var tcs = new TaskCompletionSource();

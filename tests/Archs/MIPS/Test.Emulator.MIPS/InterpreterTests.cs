@@ -45,7 +45,7 @@ public class InterpreterTests
         emulator.Load(module);
 
         // Setup interpreter
-        var interpreter = new MarsTrapHandler(computer);
+        var interpreter = new ZaremTrapHandler(computer);
 
         // Start the emulator
         emulator.Start();

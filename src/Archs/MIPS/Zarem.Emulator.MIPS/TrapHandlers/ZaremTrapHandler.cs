@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
 using System;
 using System.Text;
 using Zarem.Emulator.Executor.Enum;
@@ -13,13 +12,13 @@ namespace Zarem.Emulator.TrapHandlers;
 /// <summary>
 /// An interpreter mimicking the MARS syscall pattern.
 /// </summary>
-public class MarsTrapHandler : MipsTrapHandler
+public class ZaremTrapHandler : MipsTrapHandler
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MarsTrapHandler"/> class.
+    /// Initializes a new instance of the <see cref="ZaremTrapHandler"/> class.
     /// </summary>
     /// <param name="computer"></param>
-    public MarsTrapHandler(MipsComputer computer) : base(computer)
+    public ZaremTrapHandler(MipsComputer computer) : base(computer)
     {
     }
 
