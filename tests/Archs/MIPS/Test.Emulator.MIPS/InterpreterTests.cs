@@ -37,7 +37,7 @@ public class InterpreterTests
         // Setup emulator
         var emulatorConfig = new MIPSEmulatorConfig()
         {
-            HostedTraps = true
+            TrapHost = true
         };
         var computer = new MipsComputer(emulatorConfig);
         var emulator = new Zaremulator(computer);

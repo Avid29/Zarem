@@ -1,94 +1,45 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Events;
+using CommunityToolkit.Diagnostics;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
-using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.TrapHandlers;
 
 /// <summary>
 /// An interface for an interpreter, which handles traps as the host-layer
 /// </summary>
-public abstract class MipsTrapHandler : TrapHandlerBase
+public abstract class MipsTrapHandler : ITrapHandler
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MipsTrapHandler"/> class
+    /// A method to handle syscalls.
     /// </summary>
-    public MipsTrapHandler(MipsComputer computer)
-    {
-        Computer = computer;
-
-        // Register for the trap event
-        Computer.Processor.TrapOccurred += OnTrap;
-    }
-
-    /// <summary>
-    /// Finalizes an instance of the <see cref="MipsTrapHandler"/> class.
-    /// </summary>
-    ~MipsTrapHandler()
-    {
-        // Unregister the trap event
-        Computer.Processor.TrapOccurred -= OnTrap;
-    }
-
-    /// <summary>
-    /// Gets the computer the traps occur on.
-    /// </summary>
-    protected MipsComputer Computer { get; }
-
-    /// <summary>
-    /// Gets the value of first argument register.
-    /// </summary>
-    protected uint A0 => Computer.Processor[GPRegister.Argument0];
-
-    /// <summary>
-    /// Gets the value of first argument register.
-    /// </summary>
-    protected uint A1 => Computer.Processor[GPRegister.Argument1];
-
-    /// <summary>
-    /// Gets the value of first argument register.
-    /// </summary>
-    protected uint A2 => Computer.Processor[GPRegister.Argument2];
-
-    /// <summary>
-    /// Gets the value of first argument register.
-    /// </summary>
-    protected uint A3 => Computer.Processor[GPRegister.Argument3];
-
-    /// <summary>
-    /// Gets or sets the value of first return value register.
-    /// </summary>
-    protected uint V0
-    {
-        get => Computer.Processor[GPRegister.ReturnValue0];
-        set => Computer.Processor[GPRegister.ReturnValue0] = value;
-    }
+    /// <param name="code">The syscall code.</param>
+    /// <param name="context">The trap context</param>
+    protected abstract void HandleSyscall(ulong code, MipsTrapContext context);
 
     /// <summary>
     /// A method to direct trap handling.
     /// </summary>
-    /// <param name="trap">The type of trap that occurred.</param>
-    protected abstract void HandleTrap(MipsTrap trap);
-
-    private void OnTrap(ICpu sender, TrapEventArgs e)
+    /// <param name="context">The context of the trap.</param>
+    protected virtual void HandleTrap(MipsTrapContext context)
     {
-        if (sender is not MipsCpu cpu)
-            return;
-
-        // The emulator is handling the trap
-        // No need to interpret
-        if (!e.Unhandled)
-            return;
-
-        if ((MipsTrap)e.Trap is MipsTrap.Syscall)
+        if ((MipsTrap)context.TrapCode is MipsTrap.Syscall)
         {
-            HandleSyscall(cpu.RegisterFile[GPRegister.ReturnValue0]);
+            HandleSyscall(context.V0, context);
+        }
+    }
+
+    /// <inheritdoc/>
+    public void HandleTrap(IComputer computer, ulong trapCode)
+    {
+        if (computer is not MipsComputer mipsComputer)
+        {
+            ThrowHelper.ThrowArgumentException(nameof(mipsComputer));
+            return;
         }
 
-        // Resume the emulation
-        e.Resume();
+        HandleTrap(new MipsTrapContext(mipsComputer, trapCode));
     }
 }

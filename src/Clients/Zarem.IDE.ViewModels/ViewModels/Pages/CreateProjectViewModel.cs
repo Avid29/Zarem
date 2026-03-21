@@ -171,7 +171,7 @@ public partial class CreateProjectViewModel : PageViewModel
                 AssemblerConfig = new MipsAssemblerConfig(),
                 EmulatorConfig = new MIPSEmulatorConfig()
                 {
-                    HostedTraps = true
+                    TrapHost = true
                 },
                 LinkerConfig = new MipsLinkerConfig(),
             },

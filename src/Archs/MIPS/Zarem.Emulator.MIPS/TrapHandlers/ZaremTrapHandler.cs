@@ -14,72 +14,64 @@ namespace Zarem.Emulator.TrapHandlers;
 /// </summary>
 public class ZaremTrapHandler : MipsTrapHandler
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ZaremTrapHandler"/> class.
-    /// </summary>
-    /// <param name="computer"></param>
-    public ZaremTrapHandler(MipsComputer computer) : base(computer)
-    {
-    }
-
     /// <inheritdoc/>
-    protected override void HandleSyscall(uint code)
+    protected override void HandleSyscall(ulong code, MipsTrapContext context)
     {
         switch (code)
         {
             // Print integer
             case 1:
-                Console.Write($"{A0}");
+                Console.Write($"{context.A0}");
                 break;
 
             // Print float
             case 2:
-                Console.WriteLine($"{Computer.Processor.FloatProcessor.Singles[FloatRegister.F12]}");
+                Console.WriteLine($"{context.Computer.Processor.FloatProcessor.Singles[FloatRegister.F12]}");
                 break;
 
             // Print double
             case 3:
-                Console.WriteLine($"{Computer.Processor.FloatProcessor.Doubles[FloatRegister.F12]}");
+                Console.WriteLine($"{context.Computer.Processor.FloatProcessor.Doubles[FloatRegister.F12]}");
                 break;
 
             // Print ascii string
             case 4:
-                Console.Write(Computer.Memory.ReadString(A0, Encoding.ASCII));
+                Console.Write(context.Computer.Memory.ReadString(context.A0, Encoding.ASCII));
                 break;
 
             // Read integer
             case 5:
-                V0 = (uint)int.Parse(Console.ReadLine() ?? "");
+                context.V0 = (uint)int.Parse(Console.ReadLine() ?? "");
                 break;
 
             // Read float
             case 6:
-                Computer.Processor.FloatProcessor.Singles[FloatRegister.F0] = float.Parse(Console.ReadLine() ?? "");
+                context.Computer.Processor.FloatProcessor.Singles[FloatRegister.F0] = float.Parse(Console.ReadLine() ?? "");
                 break;
 
             // Read double
             case 7:
-                Computer.Processor.FloatProcessor.Doubles[FloatRegister.F0] = double.Parse(Console.ReadLine() ?? "");
+                context.Computer.Processor.FloatProcessor.Doubles[FloatRegister.F0] = double.Parse(Console.ReadLine() ?? "");
                 break;
 
             // Read ascii string
             case 8:
-                Computer.Memory.Write(A0, ReadString(Encoding.ASCII, A1));
+                context.Computer.Memory.Write(context.A0, ReadString(Encoding.ASCII, context.A1));
                 break;
 
             // Stop execution
             case 10:
-                Computer.RequestShutdown();
+                context.Computer.RequestShutdown();
                 break;
 
             // Print unicode string
             case 80:
-                Console.Write(Computer.Memory.ReadString(A0, Encoding.BigEndianUnicode));
+                Console.Write(context.Computer.Memory.ReadString(context.A0, Encoding.BigEndianUnicode));
                 break;
 
             // Read unicode string
             case 81:
-                Computer.Memory.Write(A0, ReadString(Encoding.BigEndianUnicode, A1));
+                context.Computer.Memory.Write(context.A0, ReadString(Encoding.BigEndianUnicode, context.A1));
                 break;
 
             default:
@@ -87,13 +79,7 @@ public class ZaremTrapHandler : MipsTrapHandler
         }
 
         // Increment the PC
-        Computer.Processor.ProgramCounter += 4;
-    }
-
-    /// <inheritdoc/>
-    protected override void HandleTrap(MipsTrap trap)
-    {
-        throw new NotImplementedException();
+        context.Computer.Processor.ProgramCounter += 4;
     }
 
     private static byte[] ReadString(Encoding encoding, uint maxBytes)

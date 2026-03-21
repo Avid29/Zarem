@@ -19,10 +19,6 @@ namespace Zarem.Emulator.Machine;
 /// </summary>
 public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 {
-
-    /// <inheritdoc/>
-    public event EventHandler<ICpu, TrapEventArgs>? TrapOccurred;
-
     /// <inheritdoc/>
     public event EventHandler<TrapEventArgs>? BreakpointHit;
 
@@ -309,7 +305,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 
         // Breakpoints are handled by the debugger upon the trap occurring event
         // The host also handles every kind of trap if that's what the config specifies
-        var hostTrap = trap is MipsTrap.Breakpoint || Config.HostedTraps;
+        var hostTrap = trap is MipsTrap.Breakpoint || Config.TrapHost;
         var args = new TrapEventArgs((ulong)trap, hostTrap);
 
         if (trap is MipsTrap.Breakpoint)
@@ -318,6 +314,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
         }
         else
         {
+            Config.TrapHost.
             TrapOccurred?.Invoke(this, args);
         }
 

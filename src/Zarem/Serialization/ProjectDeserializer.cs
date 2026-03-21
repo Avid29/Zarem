@@ -66,6 +66,7 @@ public static partial class ProjectSerializer
             @delegate(obj, child, prop);
         }
     }
+
     private static void DeserializeConfig<T>(DescriptorRegistry<T> registry, object obj, XElement child, PropertyInfo prop)
         where T : class, IDescriptor
     {
