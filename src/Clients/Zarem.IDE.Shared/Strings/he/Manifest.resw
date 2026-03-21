@@ -118,24 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Zarem</value>
+    <value>זרם</value>
   </data>
   <data name="AppDisplayName-Alpha" xml:space="preserve">
-    <value>Zarem - Alpha</value>
+    <value>זרם - Alpha</value>
   </data>
   <data name="AppDisplayName-Dev" xml:space="preserve">
-    <value>Zarem - Dev</value>
+    <value>זרם - Dev</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>Zarem is an IDE, Assembler, and Interpreter for the MIPS assembly language and architecture.</value>
+    <value>זרם הוא סביבת פיתוח משולבת, אסמבלר, ומפרש עבור שפת ההרכבה וארכיטקורת MIPS.</value>
   </data>
   <data name="FileType/AssemblyFile" xml:space="preserve">
-    <value>Assembly File</value>
+    <value>קובץ אסמבלי</value>
   </data>
   <data name="FileType/ZaremProject" xml:space="preserve">
-    <value>Zarem Project</value>
+    <value>פרויקט זרם</value>
   </data>
   <data name="PublisherDisplayName" xml:space="preserve">
-    <value>Avishai Dernis</value>
+    <value>אבישי דרניס</value>
   </data>
 </root>
