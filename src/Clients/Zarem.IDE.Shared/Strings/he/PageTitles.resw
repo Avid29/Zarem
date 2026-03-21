@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="About" xml:space="preserve">
-    <value>About Zarem</value>
+    <value>אודות זרם</value>
   </data>
   <data name="CreateNewProject" xml:space="preserve">
-    <value>Create New Project</value>
+    <value>צור פרויקט חדש</value>
   </data>
   <data name="MIPSCheatSheet" xml:space="preserve">
-    <value>MIPS Cheat Sheet</value>
+    <value>דף עזר ל-MIPS</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>הגדרות</value>
   </data>
   <data name="Welcome" xml:space="preserve">
-    <value>Welcome</value>
+    <value>ברוכים הבאים</value>
   </data>
 </root>
