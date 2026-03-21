@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EncodingPattern/RTypeInstructions" xml:space="preserve">
-    <value>פקודות מסוג אוגר (R)</value>
+    <value>Register (R) Type Instructions</value>
   </data>
   <data name="EncodingPattern/ITypeInstructions" xml:space="preserve">
-    <value>פקודות מסוג מיידי ‏ (I)</value>
+    <value>Immediate (I) Type Instructions</value>
   </data>
   <data name="EncodingPattern/JTypeInstructions" xml:space="preserve">
-    <value>פקודות מסוג קפיצה (J)</value>
+    <value>Jump (J) Type Instructions</value>
   </data>
   <data name="EncodingPattern/BTypeInstructions" xml:space="preserve">
-    <value>פקודות מסוג הסתעפות/לכידה ‏(B)</value>
+    <value>Branch/Trap (B) Type Instructions</value>
   </data>
   <data name="EncodingPattern/C0Instructions" xml:space="preserve">
-    <value>פקודות C0</value>
+    <value>C0 Instructions</value>
   </data>
   <data name="EncodingPattern/CoProc0MoveInstructions" xml:space="preserve">
-    <value>פקודות העברה של מעבד-משנה ‏0</value>
+    <value>CoProcessor0 Move Instructions</value>
   </data>
   <data name="EncodingPattern/FloatingPointInstructions" xml:space="preserve">
-    <value>פקודות נקודה צפה</value>
+    <value>Floating-Point Instructions</value>
   </data>
   <data name="EncodingPattern/CoProc1MoveInstructions" xml:space="preserve">
-    <value>פקודות העברה של מעבד-משנה ‏1</value>
+    <value>CoProcessor1 Move Instructions</value>
   </data>
   <data name="EncodingPattern/CoProc1XInstructions" xml:space="preserve">
-    <value>פקודות  מעבד-משנה 1X</value>
+    <value>CoProcessor1X Instructions</value>
   </data>
   <data name="EncodingPattern/SyscallBreakSdbbp" xml:space="preserve">
     <value>SYSCALL / BREAK / SDBBP</value>
@@ -157,114 +157,114 @@
     <value>Execution Hazard Barrier</value>
   </data>
   <data name="CommonInstructionsTB.Text" xml:space="preserve">
-    <value>פקודות נפוצות</value>
+    <value>Common Instructions</value>
   </data>
   <data name="InstructionUsageTablesTB.Text" xml:space="preserve">
-    <value>טבלאות שימוש בפקודות</value>
+    <value>Instruction Usage Tables</value>
   </data>
   <data name="CoProc0InstructionsTB.Text" xml:space="preserve">
-    <value>פקודות מעבד-משנה 0</value>
+    <value>CoProcessor0 Instruction</value>
   </data>
   <data name="CoProc0InstructionTypePatternsTB.Text" xml:space="preserve">
-    <value>תבניות קידוד של סוגי פקודות מעבד-משנה 0</value>
+    <value>CoProcessor0 Instruction Types Encoding Patterns</value>
   </data>
   <data name="CoProc1InstructionTypePatternsTB.Text" xml:space="preserve">
-    <value>תבניות קידוד של סוגי פקודות מעבד-משנה לנקודה צפה</value>
+    <value>Floating-Point CoProcessor Instruction Types Encoding Patterns</value>
   </data>
   <data name="FloatInstructionsTB.Text" xml:space="preserve">
-    <value>פקודות נקודה צפה</value>
+    <value>Floating-Point Instructions</value>
   </data>
   <data name="SpecializedInstructionsTB.Text" xml:space="preserve">
-    <value>פקודות ייעודיות</value>
+    <value>Specialized Instructions</value>
   </data>
   <data name="InstructionEncodingPatternsTB.Text" xml:space="preserve">
-    <value>דפוסים קידוד פקודות</value>
+    <value>Instruction Encoding Patterns</value>
   </data>
   <data name="PrimaryInstructionTypePatternsTB.Text" xml:space="preserve">
-    <value>תבניות קידוד של סוגי הפקודות הראשיים</value>
+    <value>Primary Instruction Types Encoding Patterns</value>
   </data>
   <data name="EncodingTablesTB.Text" xml:space="preserve">
-    <value>טבלאות קידוד</value>
+    <value>Encoding Tables</value>
   </data>
   <data name="UniqueInstructionPatternsTB.Text" xml:space="preserve">
-    <value>תבניות קידוד ייחודיות לפקודות</value>
+    <value>Unique Instruction Encoding Patterns</value>
   </data>
   <data name="GeneralPurposeRegisterEncodingTB.Text" xml:space="preserve">
-    <value>קידוד אוגרים כלליים</value>
+    <value>General Purpose Register Encoding</value>
   </data>
   <data name="InstructionGroup/SignedArithmetic" xml:space="preserve">
-    <value>חשבון (עם סימן)</value>
+    <value>Arithmetic (Signed)</value>
   </data>
   <data name="InstructionGroup/UnsignedArithmetic" xml:space="preserve">
-    <value>חשבון (ללא סימן)</value>
+    <value>Arithmetic (Unsigned)</value>
   </data>
   <data name="InstructionGroup/Logical" xml:space="preserve">
-    <value>לוגית</value>
+    <value>Logical</value>
   </data>
   <data name="InstructionGroup/Memory" xml:space="preserve">
-    <value>זיכרון</value>
+    <value>Memory</value>
   </data>
   <data name="InstructionGroup/Jump" xml:space="preserve">
-    <value>קיפוץ</value>
+    <value>Jump</value>
   </data>
   <data name="InstructionGroup/Data" xml:space="preserve">
-    <value>נתונים</value>
+    <value>Data</value>
   </data>
   <data name="InstructionGroup/Branch" xml:space="preserve">
-    <value>הסתעפות</value>
+    <value>Branch</value>
   </data>
   <data name="InstructionGroup/Compare" xml:space="preserve">
-    <value>השוואה</value>
+    <value>Compare</value>
   </data>
   <data name="InstructionGroup/System" xml:space="preserve">
-    <value>מערכת</value>
+    <value>System</value>
   </data>
   <data name="InstructionGroup/Move" xml:space="preserve">
-    <value>העברה</value>
+    <value>Move</value>
   </data>
   <data name="InstructionGroup/Interrupts" xml:space="preserve">
-    <value>פסיקות</value>
+    <value>Interrupts</value>
   </data>
   <data name="InstructionGroup/TLB" xml:space="preserve">
-    <value>מטמון תרגום כתובות (TLB)</value>
+    <value>Translation Lookaside Buffer</value>
   </data>
   <data name="InstructionGroup/Debug" xml:space="preserve">
-    <value>ניפוי שגיאות</value>
+    <value>Debug</value>
   </data>
   <data name="InstructionGroup/FPArithmetic" xml:space="preserve">
-    <value>חשבון נקודה צפה</value>
+    <value>Floating-Point Arithmetic</value>
   </data>
   <data name="InstructionGroup/FPRounding" xml:space="preserve">
-    <value>עיגול נקודה צפה</value>
+    <value>Floating-Point Rounding</value>
   </data>
   <data name="InstructionGroup/FPConversion" xml:space="preserve">
-    <value>המרת נקודה צפה</value>
+    <value>Floating-Point Conversion</value>
   </data>
   <data name="InstructionGroup/FPConditionalMove" xml:space="preserve">
-    <value>העברה מותנית</value>
+    <value>Conditional Move</value>
   </data>
   <data name="InstructionGroup/Trap" xml:space="preserve">
-    <value>מלכודת</value>
+    <value>Trap</value>
   </data>
   <data name="Usage/address" xml:space="preserve">
-    <value>כתובת</value>
+    <value>address</value>
   </data>
   <data name="Usage/immediate" xml:space="preserve">
-    <value>מיידי</value>
+    <value>immediate</value>
   </data>
   <data name="Usage/offset" xml:space="preserve">
-    <value>היסט</value>
+    <value>offset</value>
   </data>
   <data name="Usage/shift" xml:space="preserve">
-    <value>הזזה</value>
+    <value>shift</value>
   </data>
   <data name="InstructionUsagePatternsTitle" xml:space="preserve">
-    <value>תבניות לשימוש פקודות</value>
+    <value>Instruction Usage Patterns</value>
   </data>
   <data name="InstructionEncodingPatternsTitle" xml:space="preserve">
-    <value>דפוסים קידוד פקודות</value>
+    <value>Instruction Encoding Patterns</value>
   </data>
   <data name="EncodingTablesTitle" xml:space="preserve">
-    <value>טבלאות קידוד</value>
+    <value>Encoding Tables</value>
   </data>
 </root>
