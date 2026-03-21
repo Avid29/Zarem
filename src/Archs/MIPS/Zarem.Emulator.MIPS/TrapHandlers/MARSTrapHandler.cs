@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using System.Text;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Machine;
@@ -42,9 +43,9 @@ public class MarsTrapHandler : MipsTrapHandler
                 Console.WriteLine($"{Computer.Processor.FloatProcessor.Doubles[FloatRegister.F12]}");
                 break;
 
-            // Print string
+            // Print ascii string
             case 4:
-                Console.Write(Computer.Memory.ReadString(A0));
+                Console.Write(Computer.Memory.ReadString(A0, Encoding.ASCII));
                 break;
 
             // Read integer
@@ -62,26 +63,24 @@ public class MarsTrapHandler : MipsTrapHandler
                 Computer.Processor.FloatProcessor.Doubles[FloatRegister.F0] = double.Parse(Console.ReadLine() ?? "");
                 break;
 
-            // Read string
+            // Read ascii string
             case 8:
-                var str = Console.ReadLine();
-                Guard.IsNotNull(str);
-
-                // TODO: Cap A1?
-                int i;
-                var bytes = new byte[A1];
-                for (i = 0; i < str.Length && i < (bytes.Length - 1); i++)
-                    bytes[i] = Convert.ToByte(str[i]);
-                
-                bytes[i] = 0; // Null terminate
-
-                // Write to memory
-                Computer.Memory.Write(A0, bytes);
+                Computer.Memory.Write(A0, ReadString(Encoding.ASCII, A1));
                 break;
 
             // Stop execution
             case 10:
                 Computer.RequestShutdown();
+                break;
+
+            // Print unicode string
+            case 80:
+                Console.Write(Computer.Memory.ReadString(A0, Encoding.BigEndianUnicode));
+                break;
+
+            // Read unicode string
+            case 81:
+                Computer.Memory.Write(A0, ReadString(Encoding.BigEndianUnicode, A1));
                 break;
 
             default:
@@ -96,5 +95,35 @@ public class MarsTrapHandler : MipsTrapHandler
     protected override void HandleTrap(MipsTrap trap)
     {
         throw new NotImplementedException();
+    }
+
+    private static byte[] ReadString(Encoding encoding, uint maxBytes)
+    {
+        var str = Console.ReadLine() ?? string.Empty;
+
+        // Determine null-terminator size (1 for UTF8, 2 for UTF16, etc.)
+        int stride = encoding.GetByteCount("\0");
+
+        // We must leave 'stride' bytes at the end for the \0
+        int maxDataBytes = (int)maxBytes - stride;
+        if (maxDataBytes < 0)
+            return [];
+
+        byte[] bytes = new byte[maxBytes];
+        var encoder = encoding.GetEncoder();
+
+        // Apply encoding
+        encoder.Convert(
+            chars: str.AsSpan(),
+            bytes: bytes.AsSpan(0, maxDataBytes),
+            flush: true,
+            out int _,
+            out int bytesUsed,
+            out bool _);
+
+        // Apply null terminator and resize the array to only the bytes used.
+        Array.Resize(ref bytes, bytesUsed + stride);
+        bytes.AsSpan(bytesUsed, stride).Clear();
+        return bytes;
     }
 }
