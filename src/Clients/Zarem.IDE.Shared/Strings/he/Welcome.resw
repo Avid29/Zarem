@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AlphaTB.Text" xml:space="preserve">
-    <value>ALPHA</value>
+    <value>אלפא</value>
   </data>
   <data name="GettingReadyDescriptionTB.Text" xml:space="preserve">
-    <value>This is an alpha release missing significant functionality. Check us out on GitHub to see what's coming soon!</value>
+    <value>זוהי גרסת אלפא שחסרות בה תכונות רבות. בקרו אותנו ב־GitHub כדי לראות מה צפוי בקרוב!</value>
   </data>
   <data name="GettingReadyTB.Text" xml:space="preserve">
-    <value>We're still getting ready...</value>
+    <value>אנחנו עדיין בהכנות...</value>
   </data>
   <data name="GettingStartedDescriptionTB.Text" xml:space="preserve">
-    <value>Checkout the wiki to learn how to create a new Zarem project and write your first "Hello World" program in MIPS.</value>
+    <value>עיינו בוויקי כדי ללמוד כיצד ליצור פרויקט זרם חדש ולכתוב את תוכנית „שלום עולם” הראשונה שלכם ב־MIPS.</value>
   </data>
   <data name="GettingStartedTitleTB.Text" xml:space="preserve">
-    <value>Not sure where to start?</value>
+    <value>לא בטוחים מאיפה להתחיל?</value>
   </data>
   <data name="GitHubLinkHB.Content" xml:space="preserve">
-    <value>GitHub Link</value>
+    <value>קישור ל־GitHub</value>
   </data>
   <data name="WelcomeToZaremTB.Text" xml:space="preserve">
-    <value>Welcome to Zarem</value>
+    <value>ברוכים הבאים לזרם</value>
   </data>
   <data name="WikiGettingStartedLinkHB.Content" xml:space="preserve">
-    <value>Zarem Wiki: Getting Started</value>
+    <value>ויקי זרם: תחילת העבודה</value>
   </data>
 </root>
