@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:bindable="using:Zarem.IDE.Bindables"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enums="using:Zarem.IDE.Models.Enums"
     xmlns:local="using:Zarem.IDE.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
@@ -29,6 +30,66 @@
                     Padding="8,4"
                     Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}"
                     CornerRadius="4">
+                    <Border.ContextFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/DecimalModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                Tag="{x:Bind enums:RegisterDisplayMode.Decimal}"
+                                Text="Decimal">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource DecimalDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/BinaryModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                Tag="{x:Bind enums:RegisterDisplayMode.Binary}"
+                                Text="Binary">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource BinaryDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/OctalModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                Tag="{x:Bind enums:RegisterDisplayMode.Octal}"
+                                Text="Octal">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource OctalDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/HexadecimalModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                Tag="{x:Bind enums:RegisterDisplayMode.Hex}"
+                                Text="Hexadecimal">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource HexadecimalDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/LabelOffsetModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                IsEnabled="False"
+                                Tag="{x:Bind enums:RegisterDisplayMode.Label}"
+                                Text="Label">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource LabelDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/StringModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                IsEnabled="False"
+                                Tag="{x:Bind enums:RegisterDisplayMode.String}"
+                                Text="String">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource StringDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Border.ContextFlyout>
                     <Grid Width="100">
                         <TextBlock
                             HorizontalAlignment="Left"
@@ -39,7 +100,8 @@
                             HorizontalAlignment="Right"
                             FontFamily="Consolas"
                             FontWeight="Bold"
-                            Text="{x:Bind local:RegisterViewer.GetFormatedValue(DisplayMode, Value), Mode=OneWay}" />
+                            Text="{x:Bind local:RegisterViewer.GetFormatedValue(DisplayMode, Value), Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis" />
                     </Grid>
                 </Border>
             </DataTemplate>

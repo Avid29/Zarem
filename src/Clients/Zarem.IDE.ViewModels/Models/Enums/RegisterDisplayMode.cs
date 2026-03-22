@@ -10,13 +10,16 @@ public enum RegisterDisplayMode
 #pragma warning disable CS1591
 
     Decimal,
+    Binary,
+    Octal,
     Hex,
 
     /// <remarks>
     /// Waiting on https://github.com/microsoft/microsoft-ui-xaml/issues/2508 to implement.
     /// But that day is never coming, so someday I'll stop being lazy and write an actual converter.
     /// </remarks>
-    LabelOffset,
+    Label,
+    String,
 
 #pragma warning restore CS1591
 }
