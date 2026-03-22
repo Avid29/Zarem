@@ -124,7 +124,7 @@
     <value>Hexadecimal</value>
   </data>
   <data name="LabelOffsetModeMFI.Text" xml:space="preserve">
-    <value>Label Offset</value>
+    <value>Label</value>
   </data>
   <data name="StringModeMFI.Text" xml:space="preserve">
     <value>String</value>

@@ -16,7 +16,7 @@ public enum RegisterDisplayMode
     /// Waiting on https://github.com/microsoft/microsoft-ui-xaml/issues/2508 to implement.
     /// But that day is never coming, so someday I'll stop being lazy and write an actual converter.
     /// </remarks>
-    LabelOffset,
+    Label,
     String,
 
 #pragma warning restore CS1591

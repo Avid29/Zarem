@@ -54,8 +54,8 @@
                                 x:Uid="/RegisterView/LabelOffsetModeMFI"
                                 Click="MenuFlyoutItem_Click"
                                 IsEnabled="False"
-                                Tag="{x:Bind enums:RegisterDisplayMode.LabelOffset}"
-                                Text="Label Offset">
+                                Tag="{x:Bind enums:RegisterDisplayMode.Label}"
+                                Text="Label">
                                 <MenuFlyoutItem.Icon>
                                     <ImageIcon Source="{StaticResource LabelDisplayModeIcon}" />
                                 </MenuFlyoutItem.Icon>
