@@ -42,6 +42,24 @@
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutItem
+                                x:Uid="/RegisterView/BinaryModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                Tag="{x:Bind enums:RegisterDisplayMode.Binary}"
+                                Text="Binary">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource BinaryDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/OctalModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                Tag="{x:Bind enums:RegisterDisplayMode.Octal}"
+                                Text="Octal">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource OctalDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
                                 x:Uid="/RegisterView/HexadecimalModeMFI"
                                 Click="MenuFlyoutItem_Click"
                                 Tag="{x:Bind enums:RegisterDisplayMode.Hex}"
@@ -82,7 +100,8 @@
                             HorizontalAlignment="Right"
                             FontFamily="Consolas"
                             FontWeight="Bold"
-                            Text="{x:Bind local:RegisterViewer.GetFormatedValue(DisplayMode, Value), Mode=OneWay}" />
+                            Text="{x:Bind local:RegisterViewer.GetFormatedValue(DisplayMode, Value), Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis" />
                     </Grid>
                 </Border>
             </DataTemplate>

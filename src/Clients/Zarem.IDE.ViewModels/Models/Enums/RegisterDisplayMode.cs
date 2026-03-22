@@ -10,6 +10,8 @@ public enum RegisterDisplayMode
 #pragma warning disable CS1591
 
     Decimal,
+    Binary,
+    Octal,
     Hex,
 
     /// <remarks>
