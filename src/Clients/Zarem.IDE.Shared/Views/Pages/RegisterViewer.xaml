@@ -36,24 +36,40 @@
                                 x:Uid="/RegisterView/DecimalModeMFI"
                                 Click="MenuFlyoutItem_Click"
                                 Tag="{x:Bind enums:RegisterDisplayMode.Decimal}"
-                                Text="Decimal" />
+                                Text="Decimal">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource DecimalDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
                             <MenuFlyoutItem
                                 x:Uid="/RegisterView/HexadecimalModeMFI"
                                 Click="MenuFlyoutItem_Click"
                                 Tag="{x:Bind enums:RegisterDisplayMode.Hex}"
-                                Text="Hexadecimal" />
+                                Text="Hexadecimal">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource HexadecimalDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
                             <MenuFlyoutItem
                                 x:Uid="/RegisterView/LabelOffsetModeMFI"
                                 Click="MenuFlyoutItem_Click"
                                 IsEnabled="False"
                                 Tag="{x:Bind enums:RegisterDisplayMode.LabelOffset}"
-                                Text="Label Offset" />
+                                Text="Label Offset">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource LabelDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
                             <MenuFlyoutItem
                                 x:Uid="/RegisterView/StringModeMFI"
                                 Click="MenuFlyoutItem_Click"
                                 IsEnabled="False"
                                 Tag="{x:Bind enums:RegisterDisplayMode.String}"
-                                Text="String" />
+                                Text="String">
+                                <MenuFlyoutItem.Icon>
+                                    <ImageIcon Source="{StaticResource StringDisplayModeIcon}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
                         </MenuFlyout>
                     </Border.ContextFlyout>
                     <Grid Width="100">

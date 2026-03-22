@@ -183,6 +183,12 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Files\obj.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Flags\Simple\IL.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Flags\Stylized\IL.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\RegisterDisplayModes\Binary.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\RegisterDisplayModes\Decimal.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\RegisterDisplayModes\Hexadecimal.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\RegisterDisplayModes\Label.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\RegisterDisplayModes\Octal.svg" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\RegisterDisplayModes\String.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Services\Crowdin-Dark.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Services\Crowdin-Light.svg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\Services\Discord.svg" />
@@ -538,9 +544,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Views\Pages\Settings\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DebugIcons\Step.svg" />

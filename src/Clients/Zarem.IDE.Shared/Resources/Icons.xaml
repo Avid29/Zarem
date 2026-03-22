@@ -57,6 +57,14 @@
     <ImageSource x:Key="AsmFileIcon">ms-appx:///Assets/Icons/Files/asm.svg</ImageSource>
     <ImageSource x:Key="ObjFileIcon">ms-appx:///Assets/Icons/Files/obj.svg</ImageSource>
 
+    <!--  Register Display Modes  -->
+    <ImageSource x:Key="DecimalDisplayModeIcon">ms-appx:///Assets/Icons/RegisterDisplayModes/Decimal.svg</ImageSource>
+    <ImageSource x:Key="BinaryDisplayModeIcon">ms-appx:///Assets/Icons/RegisterDisplayModes/Binary.svg</ImageSource>
+    <ImageSource x:Key="OctalDisplayModeIcon">ms-appx:///Assets/Icons/RegisterDisplayModes/Octal.svg</ImageSource>
+    <ImageSource x:Key="HexadecimalDisplayModeIcon">ms-appx:///Assets/Icons/RegisterDisplayModes/Hexadecimal.svg</ImageSource>
+    <ImageSource x:Key="LabelDisplayModeIcon">ms-appx:///Assets/Icons/RegisterDisplayModes/Label.svg</ImageSource>
+    <ImageSource x:Key="StringDisplayModeIcon">ms-appx:///Assets/Icons/RegisterDisplayModes/String.svg</ImageSource>
+
     <!--  Services  -->
     <ImageSource x:Key="DiscordIcon">ms-appx:///Assets/Icons/Services/Discord.svg</ImageSource>
     <ImageSource x:Key="GitServiceIcon">ms-appx:///Assets/Icons/Services/Git.svg</ImageSource>
