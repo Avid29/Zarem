@@ -138,5 +138,6 @@ print_result:
     li $v0, 4
     la $a0, newline
     syscall
+    syscall
     jr $ra
     nop

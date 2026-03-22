@@ -24,12 +24,12 @@ public class ZaremTrapHandler : MipsTrapHandler
 
             // Print float
             case 2:
-                Console.WriteLine($"{context.Cpu.FloatProcessor.Singles[FloatRegister.F12]}");
+                Console.Write($"{context.Cpu.FloatProcessor.Singles[FloatRegister.F12]}");
                 break;
 
             // Print double
             case 3:
-                Console.WriteLine($"{context.Cpu.FloatProcessor.Doubles[FloatRegister.F12]}");
+                Console.Write($"{context.Cpu.FloatProcessor.Doubles[FloatRegister.F12]}");
                 break;
 
             // Print ascii string
