@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Zarem.IDE.Bindables;
 using Zarem.IDE.Models.Enums;
@@ -34,5 +35,19 @@ public sealed partial class RegisterViewer : UserControl
             return;
 
         reg.DisplayMode = (RegisterDisplayMode)(((int)reg.DisplayMode + 1) % 2);
+    }
+
+    private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuFlyoutItem mfi)
+            return;
+
+        if (mfi.DataContext is not BindableRegister br)
+            return;
+
+        if (mfi.Tag is not RegisterDisplayMode dm)
+            return;
+
+        br.DisplayMode = dm;
     }
 }

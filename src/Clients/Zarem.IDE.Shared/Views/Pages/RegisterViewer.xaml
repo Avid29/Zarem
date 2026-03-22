@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:bindable="using:Zarem.IDE.Bindables"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enums="using:Zarem.IDE.Models.Enums"
     xmlns:local="using:Zarem.IDE.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
@@ -29,6 +30,32 @@
                     Padding="8,4"
                     Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}"
                     CornerRadius="4">
+                    <Border.ContextFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/DecimalModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                Tag="{x:Bind enums:RegisterDisplayMode.Decimal}"
+                                Text="Decimal" />
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/HexadecimalModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                Tag="{x:Bind enums:RegisterDisplayMode.Hex}"
+                                Text="Hexadecimal" />
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/LabelOffsetModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                IsEnabled="False"
+                                Tag="{x:Bind enums:RegisterDisplayMode.LabelOffset}"
+                                Text="Label Offset" />
+                            <MenuFlyoutItem
+                                x:Uid="/RegisterView/StringModeMFI"
+                                Click="MenuFlyoutItem_Click"
+                                IsEnabled="False"
+                                Tag="{x:Bind enums:RegisterDisplayMode.String}"
+                                Text="String" />
+                        </MenuFlyout>
+                    </Border.ContextFlyout>
                     <Grid Width="100">
                         <TextBlock
                             HorizontalAlignment="Left"

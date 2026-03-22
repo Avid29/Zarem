@@ -17,6 +17,7 @@ public enum RegisterDisplayMode
     /// But that day is never coming, so someday I'll stop being lazy and write an actual converter.
     /// </remarks>
     LabelOffset,
+    String,
 
 #pragma warning restore CS1591
 }

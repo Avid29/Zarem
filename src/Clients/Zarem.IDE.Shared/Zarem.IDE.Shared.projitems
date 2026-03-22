@@ -199,6 +199,7 @@
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\About.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\CheatSheet.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\RegisterView.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\ErrorList.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Explorer.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Manifest.resw" />
@@ -217,6 +218,7 @@
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Pages.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\PageTitles.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\RegisterView.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Resources.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\Settings.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\TitleBar.resw" />
@@ -229,6 +231,7 @@
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Pages.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\PageTitles.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\RegisterView.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Resources.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\Settings.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\he\TitleBar.resw" />
@@ -241,6 +244,7 @@
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Pages.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\PageTitles.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Popups.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\RegisterView.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Resources.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\Settings.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja\TitleBar.resw" />
