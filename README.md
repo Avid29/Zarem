@@ -9,6 +9,10 @@
 
 **Zarem** (Zippy Assembly Resolver, Emulator, & Manager) is an assembler, linker, emulator, and IDE targeted at academic uses, with plans for advanced homebrewing in the future. It is very much a WIP, but the goal is to create the most accessible environment possible for learning to write assembly code.
 
+# Pre-release Notice
+
+This project is in pre-release stages of development. Changes to Project File formats, emulator behavior, and plug-in APIs should be expected. **If you have any questions or run into any issues, please open a new Q&A discussion and I will get back to you ASAP.**
+
 # Assembly/Emulation Architectures
 
 Zarem is currently MIPS only, but support for other architectures is planned.
