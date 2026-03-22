@@ -13,7 +13,7 @@ public interface ICpu
     /// <summary>
     /// An event invoked when a breakpoint is hit.
     /// </summary>
-    event EventHandler<TrapEventArgs>? BreakpointHit;
+    event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
 
     /// <summary>
     /// Gets the CPU architecture's name.
