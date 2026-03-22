@@ -25,7 +25,7 @@ public class Zebugger
     private Breakpoint? _pointToRestore;    // This tracks the user BP to restore after executing
     private Breakpoint? _internalTrap;      // A temporary breakpoint for restorations
     private Breakpoint? _stepTrap;          // A temporary breakpoint for stepping
-    private TrapEventArgs? _trapEvent;
+    private BreakpointHitEventArgs? _trapEvent;
 
     /// <summary>
     /// An invoked when the debugger halted the execution.
@@ -126,11 +126,10 @@ public class Zebugger
             _pointToRestore = null;
     }
 
-    private void OnBreakpointHit(object? sender, TrapEventArgs e)
+    private void OnBreakpointHit(object? sender, BreakpointHitEventArgs e)
     {
         _trapEvent = e;
         var address = _computer.Cpu.ProgramCounter;
-
 
         // Always restore a user breakpoint if we were stepping off one
         if (_pointToRestore is not null)

@@ -14,7 +14,7 @@ namespace Zarem.Emulator.Machine;
 public abstract class ComputerBase : IComputer
 {
     /// <inheritdoc/>
-    public event EventHandler<TrapEventArgs>? TrapOccurred;
+    public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
 
     /// <inheritdoc/>
     public event EventHandler? ShutdownRequested;
@@ -62,8 +62,8 @@ public abstract class ComputerBase : IComputer
     protected abstract void MapDevices(MemoryMapper mapper);
 
     /// <inheritdoc/>
-    protected virtual void OnTrap(TrapEventArgs e)
+    protected virtual void OnTrap(BreakpointHitEventArgs e)
     {
-        TrapOccurred?.Invoke(this, e);
+        BreakpointHit?.Invoke(this, e);
     }
 }
