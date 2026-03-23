@@ -312,10 +312,11 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 
         // Breakpoints are handled by the debugger upon the trap occurring event
         // The host also handles every kind of trap if that's what the config specifies
-        if (trap is MipsTrap.Breakpoint)
+        if (trap is MipsTrap.Breakpoint && BreakpointHit is not null)
         {
+            // Only wait if a debugger is attached
             var eventArgs = new BreakpointHitEventArgs();
-            BreakpointHit?.Invoke(this, eventArgs);
+            BreakpointHit.Invoke(this, eventArgs);
             eventArgs.Wait();
         }
         else if (Config.TrapHost is not null)

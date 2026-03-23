@@ -12,6 +12,7 @@ using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.MIPS;
+using Zarem.MIPS.TrapHandlers;
 using Zarem.Registry;
 using Zarem.Serialization;
 
@@ -73,6 +74,7 @@ public sealed class DemoProjectTests
         // Register plugins
         ZaremRegistry.RegisterArchitecture(new MipsArchitectureDescriptor());
         ZaremRegistry.Formats.Register(new ElfModuleDescriptor());
+        ZaremRegistry.TrapHandlers.Register(new ZaremTrapHandlerDescriptor());
 
         // ReDirect console output
         var consoleOutput = new StringBuilder();
