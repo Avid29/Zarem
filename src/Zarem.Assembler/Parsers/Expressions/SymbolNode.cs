@@ -25,7 +25,7 @@ public class SymbolNode : ValueNode<Symbol>
     /// <inheritdoc/>
     public override bool TryEvaluate(Evaluator evaluator, out ExpressionResult result)
     {
-        result = new ExpressionResult(Value);
+        result = new ExpressionResult(this);
         return true;
     }
 }
