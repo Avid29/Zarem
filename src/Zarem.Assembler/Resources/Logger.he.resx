@@ -297,7 +297,4 @@
   <data name="DirectiveTakesTwoArguments" xml:space="preserve">
     <value>'{0]' only takes two arguments.</value>
   </data>
-  <data name="DefinitionMustBeConstant" xml:space="preserve">
-    <value>'{0}' values cannot be constant.</value>
-  </data>
 </root>

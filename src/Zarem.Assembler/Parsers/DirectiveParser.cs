@@ -326,7 +326,7 @@ public readonly struct DirectiveParser
         var nameToken = nameArg.Tokens[0];
         if (result.IsSymbolic)
         {
-            _logger?.Log(Severity.Error, LogId.InvalidRelocatable, result.SymbolNode.ExpressionToken, "DefinitionMustBeConstant", name);
+            _logger?.Log(Severity.Error, LogId.InvalidRelocatable, result.SymbolNode.ExpressionToken, "DirectiveNoRelocatableArguments", name);
             return false;
         }
 
