@@ -291,4 +291,10 @@
   <data name="MultipleLabels" xml:space="preserve">
     <value>A line cannot contain multiple labels.</value>
   </data>
+  <data name="DirectiveRequiresTwoArguments" xml:space="preserve">
+    <value>'{0}' requires two arguments.</value>
+  </data>
+  <data name="DirectiveTakesTwoArguments" xml:space="preserve">
+    <value>'{0]' only takes two arguments.</value>
+  </data>
 </root>

@@ -54,8 +54,8 @@ public readonly struct Evaluator
             return false;
         }
 
-        var symbol = left.Symbol ?? right.Symbol;
-        result = new(left.Addend + right.Addend, symbol);
+        var symbolNode = left.SymbolNode ?? right.SymbolNode;
+        result = new(left.Addend + right.Addend, symbolNode);
         return true;
     }
 
@@ -98,7 +98,7 @@ public readonly struct Evaluator
         // This works for both
         // Symbolic - Constant
         // Constant - Constant
-        result = new ExpressionResult(left.Addend - right.Addend, left.Symbol);
+        result = new ExpressionResult(left.Addend - right.Addend, left.SymbolNode);
         return true;
     }
 

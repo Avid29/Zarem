@@ -286,7 +286,7 @@ public struct MipsInstructionParser
         if (expResult.IsSymbolic && target is Argument.Shift)
         {
             // TODO: Consider tracking ref symbol token
-            _logger?.Log(Severity.Error, LogId.RelocatableReferenceInShift, arg, "RelocatableShiftAmount");
+            _logger?.Log(Severity.Error, LogId.InvalidRelocatable, arg, "RelocatableShiftAmount");
             return false;
         }
 

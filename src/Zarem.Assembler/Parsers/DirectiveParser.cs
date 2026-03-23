@@ -65,6 +65,9 @@ public readonly struct DirectiveParser
             // Global References
             ".globl" => TryParseGlobal(token, line.Args, out directive),
 
+            // Define
+            ".def" or ".define" => TryParseDefine(token, line.Args, out directive),
+
             // Align or Space
             ".align" => TryParseAlignOrSpace(token, line.Args, out directive, true),
             ".space" => TryParseAlignOrSpace(token, line.Args, out directive, false),
@@ -282,6 +285,52 @@ public readonly struct DirectiveParser
         }
 
         directive = new DataDirective([..bytes]);
+        return true;
+    }
+
+    private bool TryParseDefine(Token name, AssemblyLineArgs args, out Directive? directive)
+    {
+        directive = null;
+
+        if (args.Count < 2)
+        {
+            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArgCount, name, "DirectiveRequiresTwoArguments", name);
+            return false;
+        }
+
+        if (args.Count > 2)
+        {
+            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArgCount, args[1].ProceedingComma ?? name, "DirectiveTakesTwoArguments", name);
+            return false;
+        }
+
+        var nameArg = args[0];
+        if (nameArg.Tokens.Length is 0)
+        {
+            var comma = args[0].ProceedingComma;
+            Guard.IsNotNull(comma);
+            _logger?.Log(Severity.Error, LogId.UnexpectedToken, comma, "EmptyArgument");
+            return false;
+        }
+
+        if (nameArg.Tokens.Length > 1)
+        {
+            _logger?.Log(Severity.Error, LogId.UnexpectedToken, nameArg.Tokens[1], "UnexpectedToken", nameArg.Tokens[1]);
+            return false;
+        }
+
+        var valueArg = args[1];
+        if (!ExpressionParser.TryParse(valueArg.Tokens, out var result, _symbols, _logger?.Parent))
+            return false;
+
+        var nameToken = nameArg.Tokens[0];
+        if (result.IsSymbolic)
+        {
+            _logger?.Log(Severity.Error, LogId.InvalidRelocatable, result.SymbolNode.ExpressionToken, "DirectiveNoRelocatableArguments", name);
+            return false;
+        }
+
+        directive = new DefineDirective(nameToken, result.Addend);
         return true;
     }
 }

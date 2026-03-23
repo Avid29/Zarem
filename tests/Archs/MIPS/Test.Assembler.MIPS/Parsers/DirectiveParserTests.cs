@@ -33,9 +33,13 @@ public class DirectiveParserTests
     }
 
     private const string Global = ".globl main";
+    private const string DefinePrintInt = ".def SYS_PRINT_INT, 1";
 
     [TestMethod(Global)]
     public void GlobalTest() => RunGlobalTest(Global, "main");
+
+    [TestMethod(DefinePrintInt)]
+    public void DefinePrintIntText() => RunDefineTest(DefinePrintInt, "SYS_PRINT_INT", 1);
 
     [DataTestMethod]
     [DynamicData(nameof(DataTestsList))]
@@ -77,10 +81,13 @@ public class DirectiveParserTests
     {
         // Get directive and validate type
         var directive = ParseDirective(input);
-        if (directive is not DataDirective)
+        if (directive is not DataDirective datDir)
+        {
             Assert.Fail();
+            return;
+        }
 
-        var actual = ((DataDirective)directive).Data;
+        var actual = datDir.Data;
         Guard.IsNotNull(actual);
 
         Assert.AreEqual(expected.Length, actual.Length);
@@ -88,5 +95,19 @@ public class DirectiveParserTests
         {
             Assert.AreEqual(expected[i], actual[i]);
         }
+    }
+
+    private static void RunDefineTest(string input, string name, long value)
+    {
+        // Get directive and validate type
+        var directive = ParseDirective(input);
+        if (directive is not DefineDirective defDir)
+        {
+            Assert.Fail();
+            return;
+        }
+
+        Assert.AreEqual(name, defDir.Name.Source);
+        Assert.AreEqual(value, defDir.Value);
     }
 }

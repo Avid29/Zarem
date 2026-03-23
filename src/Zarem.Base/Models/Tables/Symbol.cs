@@ -12,7 +12,7 @@ public class Symbol
     /// <summary>
     /// Initializes a new instance of the <see cref="Symbol"/> class.
     /// </summary>
-    public Symbol(string name, SymbolType type = SymbolType.Label, SymbolBinding binding = SymbolBinding.Local)
+    public Symbol(string name, SymbolType type = SymbolType.Unknown, SymbolBinding binding = SymbolBinding.Local)
     {
         Name = name;
         Type = type;
@@ -42,5 +42,5 @@ public class Symbol
     /// <summary>
     /// Gets whether or not the symbol is defined.
     /// </summary>
-    public bool IsDefined => Address.Section is not null;
+    public bool IsDefined => Type is not SymbolType.Unknown;
 }

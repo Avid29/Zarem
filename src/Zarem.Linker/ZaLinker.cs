@@ -176,10 +176,8 @@ public sealed class ZaLinker
                 newSymbol.Binding = symbol.Binding;
                 newSymbol.Type = symbol.Type;
 
-                if (symbol.IsDefined)
+                if (symbol.Address.IsRelocatable)
                 {
-                    Guard.IsNotNull(symbol.Address.Section);
-
                     // Translate the symbol address within the section
                     var sectionName = symbol.Address.Section.Name;
                     var linkedSection = Module.GetOrCreateSection(sectionName);
@@ -272,7 +270,7 @@ public sealed class ZaLinker
 
                     linkedSection.AddRelocation(new RelocationEntry(symbolName, relocation.Location, relocation.Type, relocation.Addend));
 
-                    if (!symbol.IsDefined)
+                    if (!symbol.Address.IsRelocatable)
                         continue;
 
                     // The symbol is defined, so it should have a section

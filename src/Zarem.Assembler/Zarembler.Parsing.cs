@@ -57,7 +57,7 @@ public partial class Zarembler
         // NOTE: Directive allocations are made in both passes
         // Issues are only logged on the second pass though
         if (line.Type is LineType.Directive)
-            HandleDirective(line, false);
+            HandleDirective(line, 1);
 
         // If args is non-zero while the line type is none,
         // random garbage is in the file.
@@ -88,7 +88,7 @@ public partial class Zarembler
             // Make allocations if directive is present
             // NOTE: Directive allocations are made in both passes
             case LineType.Directive:
-                HandleDirective(line);
+                HandleDirective(line, 2);
                 return;
 
             // Macros can be skipped on realization pass
@@ -152,19 +152,20 @@ public partial class Zarembler
         _activeSection.Append(instruction.RealizeBytes());
     }
 
-    private void HandleDirective(AssemblyLine line, bool log = true)
+    private void HandleDirective(AssemblyLine line, int pass)
     {
-        var parser = new DirectiveParser(_module.Symbols, Config, log ? _logger.Parent : null);
+        // Only log parser errors on the second pass
+        var parser = new DirectiveParser(_module.Symbols, Config, pass is 2 ? _logger.Parent : null);
 
         var name = line.Directive;
         if (name is null || !parser.TryParseDirective(line, out var directive))
             return;
 
         Guard.IsNotNull(directive);
-        ExecuteDirective(directive, line);
+        ExecuteDirective(directive, line, pass);
     }
 
-    private void ExecuteDirective(Directive directive, AssemblyLine line)
+    private void ExecuteDirective(Directive directive, AssemblyLine line, int pass)
     {
         switch (directive)
         {
@@ -181,6 +182,13 @@ public partial class Zarembler
                 break;
             case DataDirective data:
                 _activeSection.Append(data.Data);
+                break;
+            case DefineDirective define:
+                if (pass is 2)
+                {
+                    // Only define constants on the second pass
+                    DefineSymbol(define.Name, new Address(define.Value), SymbolType.Constant);
+                }
                 break;
         }
     }

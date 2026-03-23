@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Zarem.Models.Tables;
 
 namespace Zarem.Models;
@@ -56,6 +57,7 @@ public struct Address : IComparable<Address>
     /// <summary>
     /// Gets whether or not the value is relocatable.
     /// </summary>
+    [MemberNotNullWhen(true, nameof(Section))]
     public readonly bool IsRelocatable => Section is not null;
 
     /// <summary>
