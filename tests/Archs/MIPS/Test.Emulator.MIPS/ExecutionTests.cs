@@ -66,7 +66,10 @@ public class ExecutionTests
                         (GPRegister.Temporary8, 101),
                         (GPRegister.AssemblerTemporary, 0x89ab_cdef),
                         (GPRegister.Kernel0, K0),
-                        (GPRegister.Kernel1, K1)
+                        (GPRegister.Kernel1, K1),
+
+                        // Print integer
+                        (GPRegister.ReturnValue0, 1),
                     ];
 
                 FPRInitialization =
@@ -640,6 +643,7 @@ public class ExecutionTests
         var emulatorConfig = new MIPSEmulatorConfig()
         {
             DisableDelaySlots = !delaysSlots,
+            TrapHost = new ZaremTrapHandler(),
         };
         var computer = new MipsComputer(emulatorConfig);
         var emulator = new Zaremulator(computer);
