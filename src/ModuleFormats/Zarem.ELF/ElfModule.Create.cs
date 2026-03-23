@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Zarem.Elf.Config;
 using Zarem.Models;
+using Zarem.Models.Tables.Enums;
 
 namespace Zarem.Elf;
 
@@ -94,6 +95,12 @@ public partial class ElfModule
                     Value = (ulong)symbol.Address.Offset,
                     Bind = symbol.Binding.ToElf(),
                     SectionLink = link,
+                    Type = symbol.Type switch
+                    {
+                        SymbolType.Label => ElfSymbolType.Common,
+                        SymbolType.Constant => ElfSymbolType.SpecificOS0,
+                        SymbolType.Unknown or _ => ElfSymbolType.NoType,
+                    }
                 };
 
                 _symtab.Entries.Add(elfSymbol);

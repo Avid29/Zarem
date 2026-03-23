@@ -25,6 +25,12 @@ public class SymbolNode : ValueNode<Symbol>
     /// <inheritdoc/>
     public override bool TryEvaluate(Evaluator evaluator, out ExpressionResult result)
     {
+        if (Value.IsDefined && !Value.Address.IsRelocatable)
+        {
+            result = new ExpressionResult(Value.Address.Offset);
+            return true;
+        }
+
         result = new ExpressionResult(this);
         return true;
     }

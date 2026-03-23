@@ -9,6 +9,7 @@ public enum SymbolType
 {
 #pragma warning disable CS1591
 
+    Unknown,
     Label,
     Macro,
     Constant,

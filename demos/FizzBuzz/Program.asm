@@ -2,6 +2,9 @@
 
 # The classic fizz buzz
 
+.def SYS_PRINT_INT, 1
+.def SYS_PRINT_STR, 4
+
 .globl entry
 
 .text
@@ -22,7 +25,7 @@ loop:
     
     # Print fizz
     la      $a0,    fizz_str
-    xori    $v0,    $zero,  4
+    xori    $v0,    $zero,  SYS_PRINT_STR
     syscall
     
 skip_fizz:
@@ -38,7 +41,7 @@ skip_fizz:
     
     # Print buzz
     la      $a0,    buzz_str
-    xori    $v0,    $zero,  4
+    xori    $v0,    $zero,  SYS_PRINT_STR
     syscall
     
 skip_buzz:
@@ -59,7 +62,7 @@ newline:
 
     # Explicitly print new line if either fizz or buzz
     la      $a0,    newline_str
-    xori    $v0,    $zero,  4
+    xori    $v0,    $zero,  SYS_PRINT_STR
     syscall
     
 loop_check:
@@ -68,7 +71,7 @@ loop_check:
     # Increment in the delay slot
     slti    $t0,    $s0,    100
     bgtz    $t0,    loop
-    addi    $s0,    $s0,    1
+    addi    $s0,    $s0,    SYS_PRINT_INT
     
 loop_end:
 

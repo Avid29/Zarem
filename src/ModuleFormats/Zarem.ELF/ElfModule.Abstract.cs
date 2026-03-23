@@ -55,6 +55,12 @@ public partial class ElfModule
                 var symbol = Module.GetOrCreateSymbol(name);
                 symbol.Address = value;
                 symbol.Binding = binding;
+                symbol.Type = elfSymbol.Type switch
+                {
+                    ElfSymbolType.Common => SymbolType.Label,
+                    ElfSymbolType.SpecificOS0 => SymbolType.Constant,
+                    ElfSymbolType.NoType or _ => SymbolType.Unknown,
+                };
             }
 
             return true;
