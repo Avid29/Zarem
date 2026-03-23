@@ -30,7 +30,7 @@ public enum LogId : uint
     BranchBetweenSections,
     ExternalBranching,
     IntegerTruncated,
-    RelocatableReferenceInShift,
+    InvalidRelocatable,
     ZeroRegWriteback,
 
     // Expression parser
