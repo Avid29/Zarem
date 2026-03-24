@@ -212,6 +212,18 @@ public partial struct InstructionServiceTable
         public static bool Check(uint rs, uint rt) => (int)rs <= 0;
     }
 
+    private struct XltzLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => (int)rs < 0;
+    }
+
+    private struct XgezLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => (int)rs >= 0;
+    }
+
     private struct XgtzLogic : ICondLogic
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

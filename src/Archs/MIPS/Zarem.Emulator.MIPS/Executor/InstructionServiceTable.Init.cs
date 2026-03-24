@@ -145,7 +145,19 @@ public partial struct InstructionServiceTable
 
     private readonly void InitRegImm(MIPSEmulatorConfig config)
     {
+        // Branch
+        _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZero] = 
+        _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroLikely] = BranchOn<XltzLogic>;
+        _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = 
+        _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely] = BranchOn<XgezLogic>;
 
+        // Trap
+        _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediate] = TrapOnI<XgeLogic>;
+        _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediateUnsigned] = TrapOnI<XgeuLogic>;
+        _regImmTable[(int)RegImmFuncCode.TrapOnLessThanImmediate] = TrapOnI<XltLogic>;
+        _regImmTable[(int)RegImmFuncCode.TrapOnLessThanImmediateUnsigned] = TrapOnI<XltuLogic>;
+        _regImmTable[(int)RegImmFuncCode.TrapOnEqualsImmediate] = TrapOnI<XeqLogic>;
+        _regImmTable[(int)RegImmFuncCode.TrapOnNotEqualsImmediate] = TrapOnI<XneLogic>;
     }
 
     private readonly void InitSpecial2(MIPSEmulatorConfig config)

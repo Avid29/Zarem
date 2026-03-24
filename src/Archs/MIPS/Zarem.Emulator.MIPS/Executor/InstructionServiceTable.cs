@@ -183,6 +183,13 @@ public readonly partial struct InstructionServiceTable
         return T.Check(Processor[inst.RS], Processor[inst.RT]) ? MipsTrap.Trap : MipsTrap.None;
     }
 
+    private MipsTrap TrapOnI<T>(MipsInstruction inst, out Execution exec)
+        where T : ICondLogic
+    {
+        exec = default;
+        return T.Check(Processor[inst.RS], (uint)(int)inst.ImmediateValue) ? MipsTrap.Trap : MipsTrap.None;
+    }
+
     private MipsTrap Load<T>(MipsInstruction inst, out Execution exec)
         where T : IBinaryInteger<T>
     {

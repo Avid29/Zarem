@@ -28,7 +28,7 @@ public enum RegImmFuncCode : byte
     BranchOnGreaterThanOrEqualToZeroLikely = 0x03,
 
     TrapOnGreaterOrEqualImmediate = 0x08,
-    TrapOnGreaterOrEqualImmediateUnisigned = 0x09,
+    TrapOnGreaterOrEqualImmediateUnsigned = 0x09,
     TrapOnLessThanImmediate = 0x0a,
     TrapOnLessThanImmediateUnsigned = 0x0b,
     TrapOnEqualsImmediate = 0x0c,
