@@ -2,15 +2,8 @@
 
 using System;
 using Zarem.Emulator.Executor.Enum;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
-using System.ComponentModel;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.Executor;
 
@@ -35,7 +28,7 @@ public partial struct InstructionServiceTable
     {
         Processor = processor;
 
-        Initialize(processor.Config);
+        InitTables(processor.Config);
     }
 
     private MipsCpu Processor { get; }
@@ -108,10 +101,45 @@ public partial struct InstructionServiceTable
         return MipsTrap.None;
     }
 
+    private static MipsTrap AluI<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+        where T : IAluLogic
+    {
+        exec = Execution.CreateWriteback(inst.RT, T.Compute(context.Processor[inst.RS], (uint)(int)inst.ImmediateValue));
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap CheckedAluI<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+        where T : ICheckedAluLogic
+    {
+        var rs = context.Processor[inst.RS];
+        var imm = (uint)(int)inst.ImmediateValue;
+        var value = T.Compute(rs, imm);
+
+        if (T.Overflow((int)rs, (int)imm, (int)value))
+        {
+            exec = default;
+            return MipsTrap.ArithmeticOverflow;
+        }
+
+        exec = Execution.CreateWriteback(inst.RT, value);
+        return MipsTrap.None;
+    }
+
     private static MipsTrap MultR<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
         where T : IMultLogic
     {
-        exec = Execution.CreateHighLow(T.Compute(context.Processor[inst.RS], context.Processor[inst.RT]));
+        var rs = context.Processor[inst.RS];
+        var rt = context.Processor[inst.RT];
+        exec = Execution.CreateHighLow(T.Compute(rs, rt));
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap MultAddR<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+        where T : IMultAddLogic
+    {
+        var rs = context.Processor[inst.RS];
+        var rt = context.Processor[inst.RT];
+        exec = Execution.CreateHighLow(T.Compute(rs, rt, context.Processor.High, context.Processor.Low));
         return MipsTrap.None;
     }
 
@@ -131,11 +159,38 @@ public partial struct InstructionServiceTable
         return T.Trap();
     }
 
+    private static MipsTrap BranchOn<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+        where T : ICondLogic
+    {
+        if (T.Check(context.Processor[inst.RS], context.Processor[inst.RT]))
+        {
+            exec = Execution.CreateJump((uint)(context.Processor.ProgramCounter + inst.Offset + 4));
+        }
+        else
+        {
+            exec = default;
+        }
+
+        return MipsTrap.None;
+    }
+
     private static MipsTrap TrapOn<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
         where T : ICondLogic
     {
         exec = default;
         return T.Check(context.Processor[inst.RS], context.Processor[inst.RT]) ? MipsTrap.Trap : MipsTrap.None;
+    }
+
+    private static MipsTrap Jump(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    {
+        exec = Execution.CreateJump(inst.Address);
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap JumpLink(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    {
+        exec = Execution.CreateJumpAndLink(inst.Address, context.Processor.ProgramCounter + 4, inst.RD);
+        return MipsTrap.None;
     }
 
     private static MipsTrap JumpR(InstructionServiceTable context, MipsInstruction inst, out Execution exec)

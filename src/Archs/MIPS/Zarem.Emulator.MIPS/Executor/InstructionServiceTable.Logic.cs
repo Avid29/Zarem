@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Executor.Enum;
 
@@ -28,6 +29,11 @@ public partial struct InstructionServiceTable
     private interface IMultLogic
     {
         static abstract ulong Compute(uint rs, uint rt);
+    }
+
+    private interface IMultAddLogic
+    {
+        static abstract ulong Compute(uint rs, uint rt, uint hi, uint lo);
     }
 
     private interface IDivLogic
@@ -161,6 +167,12 @@ public partial struct InstructionServiceTable
         public static uint Compute(uint rs, uint rt) => (uint)(rs < rt ? 1 : 0);
     }
 
+    private struct LuiLogic : IAluLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Compute(uint rs, uint rt) => rt << 16;
+    }
+
     private struct XgeLogic : ICondLogic
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -197,6 +209,18 @@ public partial struct InstructionServiceTable
         public static bool Check(uint rs, uint rt) => rs != rt;
     }
 
+    private struct XlezLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => (int)rs <= 0;
+    }
+
+    private struct XgtzLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => (int)rs > 0;
+    }
+
     private struct SyscallLogic : ITrapLogic
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -207,5 +231,67 @@ public partial struct InstructionServiceTable
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static MipsTrap Trap() => MipsTrap.Breakpoint;
+    }
+
+    private struct MulLogic : IAluLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Compute(uint rs, uint rt) => (uint)((long)(int)rs * (int)rt);
+    }
+
+    private struct MultAddLogic : IMultAddLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Compute(uint rs, uint rt, uint hi, uint low)
+        {
+            long sum = ((long)(int)hi << 32) + (int)low;
+            sum += (long)(int)rs * (int)rt;
+            return (ulong)sum;
+        }
+    }
+
+    private struct MultAdduLogic : IMultAddLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Compute(uint rs, uint rt, uint hi, uint low)
+        {
+            ulong sum = ((ulong)hi << 32) + low;
+            sum += (ulong)rs * rt;
+            return sum;
+        }
+    }
+
+    private struct MultSubLogic : IMultAddLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Compute(uint rs, uint rt, uint hi, uint low)
+        {
+            long diff = ((long)(int)hi << 32) + (int)low;
+            diff -= (long)(int)rs * (int)rt;
+            return (ulong)diff;
+        }
+    }
+
+    private struct MultSubuLogic : IMultAddLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Compute(uint rs, uint rt, uint hi, uint low)
+        {
+            ulong diff = ((ulong)hi << 32) + low;
+            diff -= (ulong)rs * rt;
+            return diff;
+        }
+    }
+
+    private struct ClzLogic : IAluLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Compute(uint rs, uint rt) => (uint)BitOperations.LeadingZeroCount(rs);
+    }
+
+    private struct CloLogic : IAluLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Compute(uint rs, uint rt) => (uint)BitOperations.LeadingZeroCount(~rs);
     }
 }

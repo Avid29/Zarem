@@ -1,16 +1,9 @@
 ﻿// Avishai Dernis 2026
 
-using System;
-using Zarem.Emulator.Executor.Enum;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
-using System.ComponentModel;
 using Zarem.Models.Instructions.Enums;
+using Zarem.Models.Instructions.Enums.Operations;
+using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
 namespace Zarem.Emulator.Executor;
 
@@ -19,18 +12,54 @@ namespace Zarem.Emulator.Executor;
 /// </summary>
 public partial struct InstructionServiceTable
 {
-    private readonly void Initialize(MIPSEmulatorConfig config)
+    private readonly void InitTables(MIPSEmulatorConfig config)
     {
-        InitSpecial(config);
-
+        // Special and RegImmediate (R and B types)
         _opCodeTable[(int)OperationCode.Special] = DispatchSpecial;
         _opCodeTable[(int)OperationCode.RegisterImmediate] = DispatchRegImm;
 
+        // Jump (J-Type)
+        _opCodeTable[(int)OperationCode.RegisterImmediate] = Jump;
+        _opCodeTable[(int)OperationCode.RegisterImmediate] = JumpLink;
+
+        InitITypes(config);
+        InitSpecial(config);
+        InitRegImm(config);
+
         if (config.MipsVersion is <= MipsVersion.MipsV)
         {
+            InitSpecial2(config);
             _opCodeTable[(int)OperationCode.Special2] = DispatchSpecial2;
         }
     }
+
+    private readonly void InitITypes(MIPSEmulatorConfig config)
+    {
+        // Branch
+        _opCodeTable[(int)OperationCode.BranchOnEquals] =
+        _opCodeTable[(int)OperationCode.BranchOnEqualLikely] = BranchOn<XeqLogic>;
+        _opCodeTable[(int)OperationCode.BranchOnNotEquals] =
+        _opCodeTable[(int)OperationCode.BranchOnNotEqualLikely] = BranchOn<XneLogic>;
+        _opCodeTable[(int)OperationCode.BranchOnLessThanOrEqualToZero] =
+        _opCodeTable[(int)OperationCode.BranchOnLessThanOrEqualToZeroLikely] = BranchOn<XlezLogic>;
+        _opCodeTable[(int)OperationCode.BranchOnGreaterThanZero] =
+        _opCodeTable[(int)OperationCode.BranchOnGreaterThanZeroLikely] = BranchOn<XgtzLogic>;
+
+        // Arithmetic
+        _opCodeTable[(int)OperationCode.AddImmediate] = CheckedAluI<AddLogic>;
+        _opCodeTable[(int)OperationCode.AddImmediateUnsigned] = AluI<AdduLogic>;
+
+        // Compare
+        _opCodeTable[(int)OperationCode.SetLessThanImmediate] = AluI<SltLogic>;
+        _opCodeTable[(int)OperationCode.SetLessThanImmediateUnsigned] = AluI<SltuLogic>;
+
+        // Logical
+        _opCodeTable[(int)OperationCode.AndImmediate] = AluI<AndLogic>;
+        _opCodeTable[(int)OperationCode.OrImmediate] = AluI<OrLogic>;
+        _opCodeTable[(int)OperationCode.ExclusiveOrImmediate] = AluI<XorLogic>;
+
+        // Load Upper Immediate
+        _opCodeTable[(int)OperationCode.ExclusiveOrImmediate] = AluI<LuiLogic>;
 
     private readonly void InitSpecial(MIPSEmulatorConfig config)
     {
@@ -86,57 +115,22 @@ public partial struct InstructionServiceTable
         _specialTable[(int)FunctionCode.TrapOnNotEquals] = TrapOn<XneLogic>;
     }
 
+    private readonly void InitRegImm(MIPSEmulatorConfig config)
+    {
+
+    }
+
     private readonly void InitSpecial2(MIPSEmulatorConfig config)
     {
-        // Shift
-        _specialTable[(int)FunctionCode.ShiftLeftLogical] = Shift<SllLogic>;
-        _specialTable[(int)FunctionCode.ShiftRightLogical] = Shift<SrlLogic>;
-        _specialTable[(int)FunctionCode.ShiftRightArithmetic] = Shift<SraLogic>;
-        _specialTable[(int)FunctionCode.ShiftLeftLogicalVariable] = ShiftVar<SllLogic>;
-        _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = ShiftVar<SrlLogic>;
-        _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = ShiftVar<SraLogic>;
+        // Multiply
+        _special2Table[(int)Func2Code.MultiplyToGPR] = AluR<MulLogic>;
+        _special2Table[(int)Func2Code.MultiplyAndAddHiLow] = MultAddR<MultAddLogic>;
+        _special2Table[(int)Func2Code.MultiplyAndAddHiLowUnsigned] = MultAddR<MultAddLogic>;
+        _special2Table[(int)Func2Code.MultiplyAndSubtractHiLow] = MultAddR<MultSubLogic>;
+        _special2Table[(int)Func2Code.MultiplyAndSubtractHiLowUnsigned] = MultAddR<MultSubuLogic>;
 
-        // Arithmetic
-        _specialTable[(int)FunctionCode.Add] = CheckedAluR<AddLogic>;
-        _specialTable[(int)FunctionCode.AddUnsigned] = AluR<AdduLogic>;
-        _specialTable[(int)FunctionCode.Subtract] = CheckedAluR<SubLogic>;
-        _specialTable[(int)FunctionCode.SubtractUnsigned] = AluR<SubuLogic>;
-        _specialTable[(int)FunctionCode.Multiply] = MultR<MultLogic>;
-        _specialTable[(int)FunctionCode.MultiplyUnsigned] = MultR<MultuLogic>;
-        _specialTable[(int)FunctionCode.Divide] = DivR<DivLogic>;
-        _specialTable[(int)FunctionCode.DivideUnsigned] = DivR<DivuLogic>;
-
-        // Logical
-        _specialTable[(int)FunctionCode.And] = AluR<AndLogic>;
-        _specialTable[(int)FunctionCode.Or] = AluR<OrLogic>;
-        _specialTable[(int)FunctionCode.ExclusiveOr] = AluR<XorLogic>;
-        _specialTable[(int)FunctionCode.Nor] = AluR<NorLogic>;
-
-        // Compare
-        _specialTable[(int)FunctionCode.SetLessThan] = AluR<SltLogic>;
-        _specialTable[(int)FunctionCode.SetLessThanUnsigned] = AluR<SltuLogic>;
-
-        // Jump Register
-        _specialTable[(int)FunctionCode.SetLessThan] = JumpR;
-        _specialTable[(int)FunctionCode.SetLessThanUnsigned] = JumpLinkR;
-
-        // System
-        _specialTable[(int)FunctionCode.SystemCall] = Trap<SyscallLogic>;
-        _specialTable[(int)FunctionCode.Break] = Trap<BreakLogic>;
-        //_specialTable[(int)FunctionCode.Sync] = NotImplemented;
-
-        // Hi/Low
-        _specialTable[(int)FunctionCode.MoveFromHigh] = Mfhi;
-        _specialTable[(int)FunctionCode.MoveToHigh] = Mthi;
-        _specialTable[(int)FunctionCode.MoveFromLow] = Mflo;
-        _specialTable[(int)FunctionCode.MoveToLow] = Mtlo;
-
-        // Trap
-        _specialTable[(int)FunctionCode.TrapOnGreaterOrEqual] = TrapOn<XgeLogic>;
-        _specialTable[(int)FunctionCode.TrapOnGreaterOrEqualUnsigned] = TrapOn<XgeuLogic>;
-        _specialTable[(int)FunctionCode.TrapOnLessThan] = TrapOn<XltLogic>;
-        _specialTable[(int)FunctionCode.TrapOnLessThanUnsigned] = TrapOn<XltuLogic>;
-        _specialTable[(int)FunctionCode.TrapOnEquals] = TrapOn<XeqLogic>;
-        _specialTable[(int)FunctionCode.TrapOnNotEquals] = TrapOn<XneLogic>;
+        // Bit Counting
+        _special2Table[(int)Func2Code.CountLeadingZeros] = AluR<ClzLogic>;
+        _special2Table[(int)Func2Code.CountLeadingOnes] = AluR<CloLogic>;
     }
 }
