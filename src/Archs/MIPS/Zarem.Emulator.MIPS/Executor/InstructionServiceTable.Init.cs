@@ -64,7 +64,7 @@ public partial struct InstructionServiceTable
         _opCodeTable[(int)OperationCode.ExclusiveOrImmediate] = AluI<XorLogic>;
 
         // Load Upper Immediate
-        _opCodeTable[(int)OperationCode.LoadUpperImmediate] = AluI<LuiLogic>;
+        _opCodeTable[(int)OperationCode.LoadUpperImmediate] = Lui;
 
         // Trap
         _opCodeTable[(int)OperationCode.Trap] = Trap<TrapLogic>;

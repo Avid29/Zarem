@@ -106,7 +106,7 @@ public readonly partial struct InstructionServiceTable
     private MipsTrap AluI<T>(MipsInstruction inst, out Execution exec)
         where T : IAluLogic
     {
-        exec = Execution.CreateWriteback(inst.RT, T.Compute(Processor[inst.RS], (uint)(int)inst.ImmediateValue));
+        exec = Execution.CreateWriteback(inst.RT, T.Compute(Processor[inst.RS], (ushort)inst.ImmediateValue));
         return MipsTrap.None;
     }
 
@@ -273,6 +273,12 @@ public readonly partial struct InstructionServiceTable
     private MipsTrap Mtlo(MipsInstruction inst, out Execution exec)
     {
         exec = Execution.CreateLow(Processor[inst.RS]);
+        return MipsTrap.None;
+    }
+
+    private MipsTrap Lui(MipsInstruction inst, out Execution exec)
+    {
+        exec = Execution.CreateWriteback(inst.RT, (uint)(ushort)inst.ImmediateValue << 16);
         return MipsTrap.None;
     }
 }

@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models.Enums;
@@ -123,6 +124,10 @@ public class Zaremulator
     /// </summary>
     protected void ExecutionLoop()
     {
+#if DEBUG
+        Stopwatch sw = Stopwatch.StartNew();
+        long totalInstructions = 0;
+#endif
         try
         {
             while (State is not EmulatorState.Stopping)
@@ -132,7 +137,21 @@ public class Zaremulator
 
                 // Loop ticks while running
                 while (State is EmulatorState.Running)
+                {
                     Computer.Tick();
+
+#if DEBUG
+                    totalInstructions++;
+
+                    if (sw.ElapsedMilliseconds > 500)
+                    {
+                        double mips = (totalInstructions / (sw.Elapsed.TotalSeconds * 1000000.0));
+                        Debug.WriteLine($"{mips} MIPS");
+                        totalInstructions = 0;
+                        sw.Restart();
+                    }
+                }
+#endif
 
                 // Complete pausing transition
                 if (State is EmulatorState.Pausing)

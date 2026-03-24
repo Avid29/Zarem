@@ -164,12 +164,6 @@ public partial struct InstructionServiceTable
         public static uint Compute(uint rs, uint rt) => (uint)(rs < rt ? 1 : 0);
     }
 
-    private struct LuiLogic : IAluLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => rt << 16;
-    }
-
     private struct XgeLogic : ICondLogic
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
