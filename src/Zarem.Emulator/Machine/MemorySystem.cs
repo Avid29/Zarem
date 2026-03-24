@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Numerics;
 using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Emulator.Machine;
@@ -27,7 +28,7 @@ public class MemorySystem : IMemorySystem
     public IVirtualMemoryAccessor Virtual { get; }
 
     /// <inheritdoc/>
-    public T Read<T>(ulong address) where T : unmanaged
+    public T Read<T>(ulong address) where T : unmanaged, IBinaryNumber<T>
         => Virtual.Read<T>(address);
 
     /// <inheritdoc/>
@@ -35,7 +36,7 @@ public class MemorySystem : IMemorySystem
         => Virtual.Read(address, buffer);
 
     /// <inheritdoc/>
-    public void Write<T>(ulong address, T value) where T : unmanaged
+    public void Write<T>(ulong address, T value) where T : unmanaged, IBinaryNumber<T>
         => Virtual.Write(address, value);
 
     /// <inheritdoc/>

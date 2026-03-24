@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Numerics;
 using Zarem.Emulator.Helpers;
 using Zarem.Emulator.Machine.Interfaces;
 
@@ -22,7 +23,7 @@ internal class VirtualMemorySystem : IVirtualMemoryAccessor
     }
 
     /// <inheritdoc/>
-    public T Read<T>(ulong address) where T : unmanaged
+    public T Read<T>(ulong address) where T : unmanaged, IBinaryNumber<T>
     {
         ulong pAddress = _translator.Translate(address);
         return _physical.Read<T>(pAddress);
@@ -41,7 +42,7 @@ internal class VirtualMemorySystem : IVirtualMemoryAccessor
     public bool TryTranslate(ulong virtualAddress, out ulong address) => _translator.TryTranslate(virtualAddress, out address);
 
     /// <inheritdoc/>
-    public void Write<T>(ulong address, T value) where T : unmanaged
+    public void Write<T>(ulong address, T value) where T : unmanaged, IBinaryNumber<T>
     {
         ulong pAddress = _translator.Translate(address);
         _physical.Write(pAddress, value);

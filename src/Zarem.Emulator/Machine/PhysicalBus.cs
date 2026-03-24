@@ -4,6 +4,7 @@ using System;
 using System.Buffers.Binary;
 using System.Drawing;
 using System.IO;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Emulator.Helpers;
@@ -15,7 +16,7 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// Handles the operations of a physical bus in an emulated computer.
 /// </summary>
-public class PhysicalBus : IMemoryAccessor
+public unsafe class PhysicalBus : IMemoryAccessor
 {
     private readonly MemoryMapper _mapper;
 
@@ -34,7 +35,7 @@ public class PhysicalBus : IMemoryAccessor
 
     /// <inheritdoc/>
     public T Read<T>(ulong address)
-        where T : unmanaged
+        where T : unmanaged, IBinaryNumber<T>
     {
         int size = Unsafe.SizeOf<T>();
         CheckAlignment(address, size);
@@ -47,7 +48,7 @@ public class PhysicalBus : IMemoryAccessor
 
     /// <inheritdoc/>
     public void Write<T>(ulong address, T value)
-        where T : unmanaged
+        where T : unmanaged, IBinaryNumber<T>
     {
         int size = Unsafe.SizeOf<T>();
         CheckAlignment(address, size);
@@ -66,84 +67,80 @@ public class PhysicalBus : IMemoryAccessor
         if (address % (ulong)size != 0)
             throw new Exception($"Unaligned access at 0x{address:X16} for size {size}");
     }
-
-    private T ReadEndianness<T>(ReadOnlySpan<byte> buffer) where T : unmanaged
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private T ReadEndianness<T>(ReadOnlySpan<byte> buffer)
+        where T : unmanaged, IBinaryNumber<T>
     {
-        // No endianness difference
-        if (BitConverter.IsLittleEndian == Endianness is Endianness.Little)
-            return MemoryMarshal.Read<T>(buffer);
+        T value = MemoryMarshal.Read<T>(buffer);
 
-        return Endianness switch
-        {
-            Endianness.Big => typeof(T) switch
-            {
-                Type t when t == typeof(ulong) => (T)(object)BinaryPrimitives.ReadUInt64BigEndian(buffer),
-                Type t when t == typeof(long) => (T)(object)BinaryPrimitives.ReadInt64BigEndian(buffer),
-                Type t when t == typeof(uint) => (T)(object)BinaryPrimitives.ReadUInt32BigEndian(buffer),
-                Type t when t == typeof(int) => (T)(object)BinaryPrimitives.ReadInt32BigEndian(buffer),
-                Type t when t == typeof(ushort) => (T)(object)BinaryPrimitives.ReadUInt16BigEndian(buffer),
-                Type t when t == typeof(short) => (T)(object)BinaryPrimitives.ReadInt16BigEndian(buffer),
-                _ => MemoryMarshal.Read<T>(buffer),
-            },
-            Endianness.Little or _ => typeof(T) switch
-            {
-                Type t when t == typeof(ulong) => (T)(object)BinaryPrimitives.ReadUInt64LittleEndian(buffer),
-                Type t when t == typeof(long) => (T)(object)BinaryPrimitives.ReadInt64LittleEndian(buffer),
-                Type t when t == typeof(uint) => (T)(object)BinaryPrimitives.ReadUInt32LittleEndian(buffer),
-                Type t when t == typeof(int) => (T)(object)BinaryPrimitives.ReadInt32LittleEndian(buffer),
-                Type t when t == typeof(ushort) => (T)(object)BinaryPrimitives.ReadUInt16LittleEndian(buffer),
-                Type t when t == typeof(short) => (T)(object)BinaryPrimitives.ReadInt16LittleEndian(buffer),
-                _ => MemoryMarshal.Read<T>(buffer),
-            },
-        };
+        // If the system endianness doesn't match the target MIPS endianness, swap it.
+        if (BitConverter.IsLittleEndian != (Endianness == Endianness.Little))
+            return ReverseEndianness(value);
+
+        return value;
     }
 
-    private void WriteEndianness<T>(Span<byte> buffer, T value) where T : unmanaged
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static T ReverseEndianness<T>(T value)
+        where T : unmanaged, IBinaryNumber<T>
     {
-        // No endianness difference
-        if (BitConverter.IsLittleEndian == Endianness is Endianness.Little)
+        // These 'if' checks on sizeof are resolved at COMPILE TIME by the JIT.
+        // The code for the "wrong" sizes is completely deleted from the final machine code.
+        if (sizeof(T) == 1) return value;
+        if (sizeof(T) == 2) return (T)(object)BinaryPrimitives.ReverseEndianness((ushort)(object)value);
+        if (sizeof(T) == 4) return (T)(object)BinaryPrimitives.ReverseEndianness((uint)(object)value);
+        if (sizeof(T) == 8) return (T)(object)BinaryPrimitives.ReverseEndianness((ulong)(object)value);
+
+        throw new NotSupportedException();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void WriteEndianness<T>(Span<byte> buffer, T value)
+        where T : unmanaged, IBinaryNumber<T>
+    {
+        // If host matches target, just write raw bytes
+        if (BitConverter.IsLittleEndian == (Endianness == Endianness.Little))
         {
             MemoryMarshal.Write(buffer, in value);
             return;
         }
 
-        switch (Endianness)
+        // No match. Change endianness before writing
+        // The JIT optimizes this into a single path based on the caller's 'T'
+        if (sizeof(T) == 1)
         {
-            case Endianness.Big:
-                switch (value)
-                {
-                    case ulong u64:
-                        BinaryPrimitives.WriteUInt64BigEndian(buffer, u64);
-                        break;
-                    case uint u32:
-                        BinaryPrimitives.WriteUInt32BigEndian(buffer, u32);
-                        break;
-                    case ushort u16:
-                        BinaryPrimitives.WriteUInt16BigEndian(buffer, u16);
-                        break;
-                    default:
-                        MemoryMarshal.Write(buffer, in value);
-                        break;
-                }
-                break;
-            case Endianness.Little:
-                switch (value)
-                {
-                    case ulong u64:
-                        BinaryPrimitives.WriteUInt64LittleEndian(buffer, u64);
-                        break;
-                    case uint u32:
-                        BinaryPrimitives.WriteUInt32LittleEndian(buffer, u32);
-                        break;
-                    case ushort u16:
-                        BinaryPrimitives.WriteUInt16LittleEndian(buffer, u16);
-                        break;
-                    default:
-                        MemoryMarshal.Write(buffer, in value);
-                        break;
-                }
-                break;
-        };
+            buffer[0] = Unsafe.As<T, byte>(ref value);
+        }
+        else if (sizeof(T) == 2)
+        {
+            ushort val = Unsafe.As<T, ushort>(ref value);
+            if (Endianness == Endianness.Big)
+                BinaryPrimitives.WriteUInt16BigEndian(buffer, val);
+            else
+                BinaryPrimitives.WriteUInt16LittleEndian(buffer, val);
+        }
+        else if (sizeof(T) == 4)
+        {
+            uint val = Unsafe.As<T, uint>(ref value);
+            // Note: Using the 'Opposite' primitive is often faster than Manual Reverse + Write
+            if (Endianness == Endianness.Big)
+                BinaryPrimitives.WriteUInt32BigEndian(buffer, val);
+            else
+                BinaryPrimitives.WriteUInt32LittleEndian(buffer, val);
+        }
+        else if (sizeof(T) == 8)
+        {
+            ulong val = Unsafe.As<T, ulong>(ref value);
+            if (Endianness == Endianness.Big)
+                BinaryPrimitives.WriteUInt64BigEndian(buffer, val);
+            else
+                BinaryPrimitives.WriteUInt64LittleEndian(buffer, val);
+        }
+        else
+        {
+            throw new NotSupportedException();
+        }
     }
 
     /// <inheritdoc/>
