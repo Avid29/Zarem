@@ -8,10 +8,7 @@ using static Zarem.Emulator.Machine.CoProcessors.FloatProcessor;
 
 namespace Zarem.Emulator.Executor;
 
-/// <summary>
-/// A class which handles converting decoded instructions into <see cref="Execution"/> models.
-/// </summary>
-public partial class InstructionExecutor
+public partial struct InstructionExecutor
 {
     private Execution CreateCoproc1Execution()
     {

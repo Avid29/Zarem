@@ -8,10 +8,7 @@ using Zarem.Models.Instructions.Enums.Operations;
 
 namespace Zarem.Emulator.Executor;
 
-/// <summary>
-/// A class which handles converting decoded instructions into <see cref="Execution"/> models.
-/// </summary>
-public partial class InstructionExecutor
+public partial struct InstructionExecutor
 {
     private Execution CreateMemoryExecution()
     {
