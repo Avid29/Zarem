@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Threading.Tasks;
 
@@ -12,6 +13,20 @@ namespace Zarem.IDE.ViewModels.Pages.Abstract;
 /// </summary>
 public abstract class PageViewModel : ObservableRecipient
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PageViewModel"/> class.
+    /// </summary>
+    public PageViewModel()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PageViewModel"/> class.
+    /// </summary>
+    public PageViewModel(IMessenger messenger) : base(messenger)
+    {
+    }
+
     /// <summary>
     /// Gets or sets the title of the page.
     /// </summary>

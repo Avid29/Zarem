@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.Devices.Interfaces;
 
 namespace Zarem.Emulator.Machine;
 
@@ -14,6 +14,11 @@ public class MemoryMapper
     private readonly List<ulong> _sortedAddresses = [];
     private readonly Dictionary<ulong, IBusDevice> _devices = [];
     private bool _sorted = true;
+
+    /// <summary>
+    /// Gets an <see cref="IEnumerable{IDevice}"/> of the registered devices.
+    /// </summary>
+    public IEnumerable<IDevice> Devices => _devices.Values;
 
     /// <summary>
     /// Map a new device onto the bus.

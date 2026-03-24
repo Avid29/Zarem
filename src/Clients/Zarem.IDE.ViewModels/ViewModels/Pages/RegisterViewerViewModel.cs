@@ -2,11 +2,9 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
-using Zarem.Debugger.Viewer;
 using Zarem.DebugSessions;
 using Zarem.Helpers;
 using Zarem.IDE.Bindables;
-using Zarem.IDE.Messages.DebugSessions;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels.Pages;
@@ -14,20 +12,14 @@ namespace Zarem.IDE.ViewModels.Pages;
 /// <summary>
 /// A view model for the register viewer.
 /// </summary>
-public class RegisterViewerViewModel : PageViewModel
+public class RegisterViewerViewModel : DebugPageViewModel
 {
-    private readonly IMessenger _messenger;
-    private DebugSession? _session;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterViewerViewModel"/> class.
     /// </summary>
-    public RegisterViewerViewModel(IMessenger messenger)
+    public RegisterViewerViewModel(IMessenger messenger) : base(messenger)
     {
-        _messenger = messenger;
         Registers = [];
-
-        IsActive = true;
     }
 
     /// <inheritdoc/>
@@ -36,7 +28,7 @@ public class RegisterViewerViewModel : PageViewModel
     /// <summary>
     /// Gets the register viewer's symbol resolver.
     /// </summary>
-    public SymbolResolver? SymbolResolver => _session?.SymbolResolver;
+    public SymbolResolver? SymbolResolver => Session?.SymbolResolver;
 
     /// <summary>
     /// Gets the collection of registers being viewed.
@@ -44,16 +36,8 @@ public class RegisterViewerViewModel : PageViewModel
     public ObservableCollection<BindableRegister> Registers { get; }
 
     /// <inheritdoc/>
-    protected override void OnActivated()
+    protected override void RegisterSession(DebugSession session)
     {
-        _messenger.Register<RegisterViewerViewModel, DebugSessionStartedMessage>(this, (r, m) => RegisterSession(m.Session));
-        _messenger.Register<RegisterViewerViewModel, DebugSessionEndedMessage>(this, (r, m) => UnregisterSession());
-    }
-
-    private void RegisterSession(DebugSession session)
-    {
-        _session = session;
-
         var viewer = session.Debugger?.Viewer;
         if (viewer is null)
             return;
@@ -64,10 +48,9 @@ public class RegisterViewerViewModel : PageViewModel
         }
     }
 
-    private void UnregisterSession()
+    /// <inheritdoc/>
+    protected override void UnregisterSession()
     {
-        _session = null;
-
         foreach (var reg in Registers)
             reg.Dispose();
     }

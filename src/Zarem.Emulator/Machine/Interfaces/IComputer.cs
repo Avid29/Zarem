@@ -1,6 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Collections.Generic;
+using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Models;
 
 namespace Zarem.Emulator.Machine.Interfaces;
@@ -24,6 +26,11 @@ public interface IComputer
     /// Gets an interface for the computer's memory system.
     /// </summary>
     IMemorySystem Memory { get; }
+
+    /// <summary>
+    /// Gets an <see cref="IEnumerable{IDevice}"/> of all the devices in the <see cref="IComputer"/>.
+    /// </summary>
+    IEnumerable<IDevice> Devices { get; }
 
     /// <summary>
     /// Advance the computer one tick.

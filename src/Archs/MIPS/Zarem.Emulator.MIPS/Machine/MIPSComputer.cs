@@ -1,8 +1,10 @@
 ﻿// Avishai Dernis 2025
 
 using System;
+using System.Collections.Generic;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Devices;
+using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Emulator.Machine;
@@ -12,6 +14,8 @@ namespace Zarem.Emulator.Machine;
 /// </summary>
 public class MipsComputer : ComputerBase
 {
+    private readonly MemoryMapper _memoryMapper;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsComputer"/> class.
     /// </summary>
@@ -20,9 +24,9 @@ public class MipsComputer : ComputerBase
         Config = config;
 
         // Create the physical memory bus
-        var mapper = new MemoryMapper();
-        var bus = new PhysicalBus(mapper);
-        MapDevices(mapper);
+        _memoryMapper = new MemoryMapper();
+        var bus = new PhysicalBus(_memoryMapper);
+        MapDevices(_memoryMapper);
 
         // Initialize the components
         Processor = new MipsCpu(config, bus);
@@ -49,6 +53,9 @@ public class MipsComputer : ComputerBase
 
     /// <inheritdoc/>
     public override IMemorySystem Memory { get; }
+
+    /// <inheritdoc/>
+    public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;
 
     /// <inheritdoc/>
     public override void Tick()
