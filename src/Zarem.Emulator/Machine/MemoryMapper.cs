@@ -11,14 +11,15 @@ namespace Zarem.Emulator.Machine;
 /// </summary>
 public class MemoryMapper
 {
-    private readonly List<ulong> _sortedAddresses = [];
-    private readonly Dictionary<ulong, IBusDevice> _devices = [];
-    private bool _sorted = true;
+    private readonly record struct DeviceMapping(ulong BaseAddress, IBusDevice? Device);
+
+    private readonly DeviceMapping[] _pageTable = new DeviceMapping[1024 * 1024];
+    private readonly List<IBusDevice> _devices = [];
 
     /// <summary>
     /// Gets an <see cref="IEnumerable{IDevice}"/> of the registered devices.
     /// </summary>
-    public IEnumerable<IDevice> Devices => _devices.Values;
+    public IEnumerable<IDevice> Devices => _devices;
 
     /// <summary>
     /// Map a new device onto the bus.
@@ -27,9 +28,16 @@ public class MemoryMapper
     /// <param name="device">The device to register.</param>
     public void MapDevice(ulong baseAddress, IBusDevice device)
     {
-        _sortedAddresses.Add(baseAddress);
-        _devices.Add(baseAddress, device);
-        _sorted = false;
+        uint startPage = (uint)(baseAddress >> 12);
+        uint pageCount = (uint)(device.BusRangeSize >> 12);
+
+        var mapping = new DeviceMapping(baseAddress, device);
+        for (uint i = 0; i < pageCount; i++)
+        {
+            _pageTable[startPage + i] = mapping;
+        }
+
+        _devices.Add(device);
     }
 
     /// <summary>
@@ -40,24 +48,13 @@ public class MemoryMapper
     /// <returns>The device registered to that address.</returns>
     public IBusDevice Resolve(ulong address, out ulong baseAddress)
     {
-        if (!_sorted)
+        var mapping = _pageTable[address >> 12];
+        if (mapping.Device is null)
         {
-            _sortedAddresses.Sort();
-            _sorted = true;
-        }
-
-        int index = _sortedAddresses.BinarySearch(address);
-        if (index < 0)
-        {
-            index = (~index) - 1;
-        }
-
-        baseAddress = _sortedAddresses[index];
-        var device = _devices[baseAddress];
-
-        if (address > baseAddress + device.BusRangeSize)
             throw new Exception($"No device mapped at address: 0x{address:X16}");
+        }
 
-        return device;
+        baseAddress = mapping.BaseAddress;
+        return mapping.Device;
     }
 }
