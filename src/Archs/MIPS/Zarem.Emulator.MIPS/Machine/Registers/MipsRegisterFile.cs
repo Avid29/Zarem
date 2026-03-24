@@ -37,6 +37,18 @@ public class MipsRegisterFile
     public int Count => _registers.Length;
 
     /// <summary>
+    /// Gets an unsafe point to the registers
+    /// </summary>
+    public unsafe uint* Regs
+    {
+        get
+        {
+            fixed (uint* ptr = _registers)
+                return ptr;
+        }
+    }
+
+    /// <summary>
     /// Gets or sets the value in a register.
     /// </summary>
     public uint this[int register]

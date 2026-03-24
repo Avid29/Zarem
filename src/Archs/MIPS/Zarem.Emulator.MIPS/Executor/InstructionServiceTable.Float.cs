@@ -10,18 +10,18 @@ using static Zarem.Emulator.Machine.CoProcessors.FloatProcessor;
 
 namespace Zarem.Emulator.Executor;
 
-public partial struct InstructionServiceTable
+public partial class InstructionServiceTable
 {
-    private MipsTrap CreateCoProc1Execution(MipsInstruction inst, out Execution exec)
+    private static MipsTrap CreateCoProc1Execution(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
     {
         var floatInstruction = (FloatInstruction)inst;
 
         exec = floatInstruction.CoProc1RSCode switch
         {
-            CoProc1RSCode.MFC1 => Execution.CreateWriteback(floatInstruction.RT, Processor.FloatProcessor[floatInstruction.FS]),
+            CoProc1RSCode.MFC1 => Execution.CreateWriteback(floatInstruction.RT, @this._processor.FloatProcessor[floatInstruction.FS]),
             CoProc1RSCode.CFC1 => throw new NotImplementedException(),
             CoProc1RSCode.MFHC1 => throw new NotImplementedException(),
-            CoProc1RSCode.MTC1 => Execution.CreateFloatWriteback(floatInstruction.FS, Processor[floatInstruction.RT]),
+            CoProc1RSCode.MTC1 => Execution.CreateFloatWriteback(floatInstruction.FS, @this._processor[floatInstruction.RT]),
             CoProc1RSCode.CTC1 => throw new NotImplementedException(),
             CoProc1RSCode.MTHC1 => throw new NotImplementedException(),
             CoProc1RSCode.BC1 => throw new NotImplementedException(),
@@ -41,10 +41,10 @@ public partial struct InstructionServiceTable
 
             _ => floatInstruction.Format switch
             {
-                FloatFormat.Single => CreateFloatExecution(inst, Processor.FloatProcessor.Singles),
-                FloatFormat.Double => CreateFloatExecution(inst, Processor.FloatProcessor.Doubles),
-                FloatFormat.Word => CreateFloatIntExecution(inst, Processor.FloatProcessor.Words),
-                FloatFormat.Long => CreateFloatIntExecution(inst, Processor.FloatProcessor.Longs),
+                FloatFormat.Single => CreateFloatExecution(inst, @this._processor.FloatProcessor.Singles),
+                FloatFormat.Double => CreateFloatExecution(inst, @this._processor.FloatProcessor.Doubles),
+                FloatFormat.Word => CreateFloatIntExecution(inst, @this._processor.FloatProcessor.Words),
+                FloatFormat.Long => CreateFloatIntExecution(inst, @this._processor.FloatProcessor.Longs),
                 _ => throw new NotImplementedException(),
             }
         };

@@ -9,13 +9,13 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 namespace Zarem.Emulator.Executor;
 
-public partial struct InstructionServiceTable
+public partial class InstructionServiceTable
 {
-    private MipsTrap CreateCoProc0Execution(MipsInstruction inst, out Execution exec)
+    private static MipsTrap CreateCoProc0Execution(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?
-        if (Processor.CoProcessor0.PrivilegeMode is not PrivilegeMode.Kernel)
+        if (@this._processor.CoProcessor0.PrivilegeMode is not PrivilegeMode.Kernel)
         {
             exec = default;
             return MipsTrap.ReservedInstruction;
@@ -27,7 +27,7 @@ public partial struct InstructionServiceTable
             // C0 Instructions
             CoProc0RSCode.C0 => coInst.Co0FuncCode switch
             {
-                Co0FuncCode.ExceptionReturn => Eret(),
+                Co0FuncCode.ExceptionReturn => @this.Eret(),
                 Co0FuncCode.ReadIndexedTLBEntry => Execution.CreateEffect(SideEffect.TLBRead),
                 Co0FuncCode.WriteIndexedTLBEntry => Execution.CreateEffect(SideEffect.TLBWriteIndexed),
                 Co0FuncCode.WriteRandomTLBEntry => Execution.CreateEffect(SideEffect.TLBWriteRandom),
@@ -39,15 +39,15 @@ public partial struct InstructionServiceTable
             // MFMC0 Instructions
             CoProc0RSCode.MFMC0 => coInst.MFMC0FuncCode switch
             {
-                MFMC0FuncCode.EnableInterrupts => SetInterrupts(inst, true),
-                MFMC0FuncCode.DisableInterrupts => SetInterrupts(inst, false),
+                MFMC0FuncCode.EnableInterrupts => @this.SetInterrupts(inst, true),
+                MFMC0FuncCode.DisableInterrupts => @this.SetInterrupts(inst, false),
 
                 _ => throw new NotImplementedException()
             },
 
             // Move instructions
-            CoProc0RSCode.MFC0 => Execution.CreateWriteback(inst.RT, Processor.CoProcessor0[(CP0Registers)inst.RD]),
-            CoProc0RSCode.MTC0 => Execution.CreateWriteback((CP0Registers)inst.RD, Processor[inst.RT]),
+            CoProc0RSCode.MFC0 => Execution.CreateWriteback(inst.RT, @this._processor.CoProcessor0[(CP0Registers)inst.RD]),
+            CoProc0RSCode.MTC0 => Execution.CreateWriteback((CP0Registers)inst.RD, @this._processor[inst.RT]),
 
             _ => throw new NotImplementedException()
         };
@@ -58,12 +58,12 @@ public partial struct InstructionServiceTable
     private Execution Eret()
     {
         // Retrieve the status register value
-        var status = Processor.CoProcessor0.StatusRegister;
+        var status = _processor.CoProcessor0.StatusRegister;
 
         // Determine the target program counter based on the error level
         uint targetPC = status.ErrorLevel
-            ? Processor.CoProcessor0[CP0Registers.ErrorEPC]
-            : Processor.CoProcessor0[CP0Registers.ExceptionPC];
+            ? _processor.CoProcessor0[CP0Registers.ErrorEPC]
+            : _processor.CoProcessor0[CP0Registers.ExceptionPC];
 
         // Clear the appropriate level bit in the status register
         if (status.ErrorLevel)
@@ -88,7 +88,7 @@ public partial struct InstructionServiceTable
     private Execution SetInterrupts(CoProc0Instruction inst, bool enabled)
     {
         // Retrieve the status register
-        var status = Processor.CoProcessor0.StatusRegister;
+        var status = _processor.CoProcessor0.StatusRegister;
 
         // Apply the update function
         status.InteruptEnabled = enabled;
