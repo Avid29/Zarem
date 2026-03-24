@@ -12,13 +12,14 @@ using Zarem.Emulator.Machine.Registers;
 namespace Zarem.Emulator.Executor;
 
 /// <summary>
-/// A class which handles converting decoded instructions into <see cref="Execution"/> models.
+/// A struct which handles converting decoded instructions into <see cref="Execution"/> models.
 /// </summary>
-public partial class InstructionExecutor
+public partial struct InstructionExecutor
 {
     // R-Type delegates
     delegate uint BasicRDelegate(uint rs, uint rt);
     delegate ulong MultRDelegate(uint rs, uint rt);
+    delegate ulong MultAddRDelegate(uint rs, uint rt, uint hi, uint low);
     delegate uint ShiftRDelegate(uint rs, byte shift);
 
     // I-Type delegates
@@ -38,15 +39,15 @@ public partial class InstructionExecutor
 
     private MipsTrap Trap { get; set; }
 
-    private uint RS => Processor[Instruction.RS];
+    private readonly uint RS => Processor[Instruction.RS];
 
-    private uint RT => Processor[Instruction.RT];
+    private readonly uint RT => Processor[Instruction.RT];
 
-    private CoProc0Instruction CoProc0Instruction => (CoProc0Instruction)Instruction;
+    private readonly CoProc0Instruction CoProc0Instruction => (CoProc0Instruction)Instruction;
 
-    private FloatInstruction FloatInstruction => (FloatInstruction)Instruction;
+    private readonly FloatInstruction FloatInstruction => (FloatInstruction)Instruction;
 
-    private MIPSEmulatorConfig Config => Processor.Config;
+    private readonly MIPSEmulatorConfig Config => Processor.Config;
 
     private InstructionExecutor(MipsInstruction instruction, MipsCpu processor)
     {

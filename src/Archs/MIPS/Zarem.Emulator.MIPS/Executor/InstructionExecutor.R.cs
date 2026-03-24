@@ -10,10 +10,7 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
 namespace Zarem.Emulator.Executor;
 
-/// <summary>
-/// A class which handles converting decoded instructions into <see cref="Execution"/> models.
-/// </summary>
-public partial class InstructionExecutor
+public partial struct InstructionExecutor
 {
     private Execution CreateRTypeExecution()
     {
@@ -88,27 +85,27 @@ public partial class InstructionExecutor
             {
                 // Multiply
                 Func2Code.MultiplyToGPR => BasicR((rs, rt) => (uint)((long)(int)rs * (int)rt)),
-                Func2Code.MultiplyAndAddHiLow => MultR((rs, rt) =>
+                Func2Code.MultiplyAndAddHiLow => MultAddR((rs, rt, hi, low) =>
                 {
-                    long sum = ((long)(int)Processor.High << 32) + (int)Processor.Low;
+                    long sum = ((long)(int)hi << 32) + (int)low;
                     sum += (long)(int)rs * (int)rt;
                     return (ulong)sum;
                 }),
-                Func2Code.MultiplyAndAddHiLowUnsigned => MultR((rs, rt) =>
+                Func2Code.MultiplyAndAddHiLowUnsigned => MultAddR((rs, rt, hi, low) =>
                 {
-                    ulong sum = ((ulong)Processor.High << 32) + Processor.Low;
+                    ulong sum = ((ulong)hi << 32) + low;
                     sum += (ulong)rs * rt;
                     return sum;
                 }),
-                Func2Code.MultiplyAndSubtractHiLow => MultR((rs, rt) =>
+                Func2Code.MultiplyAndSubtractHiLow => MultAddR((rs, rt, hi, low) =>
                 {
-                    long diff = ((long)(int)Processor.High << 32) + (int)Processor.Low;
+                    long diff = ((long)(int)hi << 32) + (int)low;
                     diff -= (long)(int)rs * (int)rt;
                     return (ulong)diff;
                 }),
-                Func2Code.MultiplyAndSubtractHiLowUnsigned => MultR((rs, rt) =>
+                Func2Code.MultiplyAndSubtractHiLowUnsigned => MultAddR((rs, rt, hi, low) =>
                 {
-                    ulong diff = ((ulong)Processor.High << 32) + Processor.Low;
+                    ulong diff = ((ulong)hi << 32) + low;
                     diff -= (ulong)rs * rt;
                     return diff;
                 }),
@@ -152,6 +149,12 @@ public partial class InstructionExecutor
     private Execution MultR(MultRDelegate func)
     {
         ulong value = func(RS, RT);
+        return Execution.CreateHighLow(value);
+    }
+
+    private Execution MultAddR(MultAddRDelegate func)
+    {
+        ulong value = func(RS, RT, Processor.High, Processor.Low);
         return Execution.CreateHighLow(value);
     }
 
