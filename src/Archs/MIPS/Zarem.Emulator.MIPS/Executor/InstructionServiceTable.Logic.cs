@@ -42,6 +42,11 @@ public partial struct InstructionServiceTable
         static abstract MipsTrap Trap();
     }
 
+    private interface ICondLogic
+    {
+        static abstract bool Check(uint rs, uint rt);
+    }
+
     private struct SllLogic : IShiftLogic
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -154,6 +159,42 @@ public partial struct InstructionServiceTable
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Compute(uint rs, uint rt) => (uint)(rs < rt ? 1 : 0);
+    }
+
+    private struct XgeLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => (int)rs >= (int)rt;
+    }
+
+    private struct XgeuLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => rs >= rt;
+    }
+
+    private struct XltLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => (int)rs < (int)rt;
+    }
+
+    private struct XltuLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => rs < rt;
+    }
+
+    private struct XeqLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => rs == rt;
+    }
+
+    private struct XneLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => rs != rt;
     }
 
     private struct SyscallLogic : ITrapLogic

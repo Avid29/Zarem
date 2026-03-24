@@ -10,6 +10,7 @@ using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
 using System.ComponentModel;
+using Zarem.Models.Instructions.Enums;
 
 namespace Zarem.Emulator.Executor;
 
@@ -21,7 +22,6 @@ public partial struct InstructionServiceTable
     private readonly ExecutionDelegate[] _opCodeTable = new ExecutionDelegate[64];
     private readonly ExecutionDelegate[] _specialTable = new ExecutionDelegate[64];
     private readonly ExecutionDelegate[] _special2Table = new ExecutionDelegate[64];
-    private readonly ExecutionDelegate[] _special3Table = new ExecutionDelegate[64];
     private readonly ExecutionDelegate[] _regImmTable = new ExecutionDelegate[32];
 
     // Execution delegate
@@ -44,59 +44,31 @@ public partial struct InstructionServiceTable
     /// 
     /// </summary>
     /// <param name="instruction"></param>
-    /// <param name="processor"></param>
     /// <param name="execution"></param>
     /// <returns></returns>
-    public readonly MipsTrap Execute(MipsInstruction instruction, out Execution execution) => _opCodeTable[(int)instruction.OpCode](this, instruction, out execution);
-
-    private readonly void Initialize(MIPSEmulatorConfig config)
+    public readonly MipsTrap Execute(MipsInstruction instruction, out Execution execution)
     {
-        InitSpecial(config);
-
-        _opCodeTable[(int)OperationCode.Special] = DispatchSpecial;
+        var func = _opCodeTable[(int)instruction.OpCode] ?? throw new NotImplementedException();
+        return func(this, instruction, out execution);
     }
 
-    private readonly void InitSpecial(MIPSEmulatorConfig config)
+    private static MipsTrap DispatchSpecial(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
     {
-        // Shift
-        _specialTable[(int)FunctionCode.ShiftLeftLogical] = Shift<SllLogic>;
-        _specialTable[(int)FunctionCode.ShiftRightLogical] = Shift<SrlLogic>;
-        _specialTable[(int)FunctionCode.ShiftRightArithmetic] = Shift<SraLogic>;
-        _specialTable[(int)FunctionCode.ShiftLeftLogicalVariable] = ShiftVar<SllLogic>;
-        _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = ShiftVar<SrlLogic>;
-        _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = ShiftVar<SraLogic>;
-
-        // Arithmetic
-        _specialTable[(int)FunctionCode.Add] = CheckedAluR<AddLogic>;
-        _specialTable[(int)FunctionCode.AddUnsigned] = AluR<AdduLogic>;
-        _specialTable[(int)FunctionCode.Subtract] = CheckedAluR<SubLogic>;
-        _specialTable[(int)FunctionCode.SubtractUnsigned] = AluR<SubuLogic>;
-        _specialTable[(int)FunctionCode.Multiply] = MultR<MultLogic>;
-        _specialTable[(int)FunctionCode.MultiplyUnsigned] = MultR<MultuLogic>;
-        _specialTable[(int)FunctionCode.Divide] = DivR<DivLogic>;
-        _specialTable[(int)FunctionCode.DivideUnsigned] = DivR<DivuLogic>;
-
-        // Logical
-        _specialTable[(int)FunctionCode.And] = AluR<AndLogic>;
-        _specialTable[(int)FunctionCode.Or] = AluR<OrLogic>;
-        _specialTable[(int)FunctionCode.ExclusiveOr] = AluR<XorLogic>;
-        _specialTable[(int)FunctionCode.Nor] = AluR<NorLogic>;
-
-        // Compare
-        _specialTable[(int)FunctionCode.SetLessThan] = AluR<SltLogic>;
-        _specialTable[(int)FunctionCode.SetLessThanUnsigned] = AluR<SltuLogic>;
-
-        // Jump Register
-        _specialTable[(int)FunctionCode.SetLessThan] = JumpR;
-        _specialTable[(int)FunctionCode.SetLessThanUnsigned] = JumpLinkR;
-
-        // System
-        _specialTable[(int)FunctionCode.SystemCall] = Trap<SyscallLogic>;
-        _specialTable[(int)FunctionCode.Break] = Trap<BreakLogic>;
-        _specialTable[(int)FunctionCode.Sync] = NotImplemented;
+        var func = context._specialTable[(int)inst.FuncCode] ?? throw new NotImplementedException();
+        return func(context, inst, out exec);
     }
 
-    private static MipsTrap DispatchSpecial(InstructionServiceTable context, MipsInstruction inst, out Execution exec) => context._specialTable[(int)inst.FuncCode](context, inst, out exec);
+    private static MipsTrap DispatchSpecial2(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    {
+        var func = context._special2Table[(int)inst.FuncCode] ?? throw new NotImplementedException();
+        return func(context, inst, out exec);
+    }
+
+    private static MipsTrap DispatchRegImm(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    {
+        var func = context._regImmTable[(int)inst.FuncCode] ?? throw new NotImplementedException();
+        return func(context, inst, out exec);
+    }
 
     private static MipsTrap Shift<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
         where T : IShiftLogic
@@ -159,6 +131,13 @@ public partial struct InstructionServiceTable
         return T.Trap();
     }
 
+    private static MipsTrap TrapOn<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+        where T : ICondLogic
+    {
+        exec = default;
+        return T.Check(context.Processor[inst.RS], context.Processor[inst.RT]) ? MipsTrap.Trap : MipsTrap.None;
+    }
+
     private static MipsTrap JumpR(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
     {
         exec = Execution.CreateJump(context.Processor[inst.RS]);
@@ -173,8 +152,25 @@ public partial struct InstructionServiceTable
 
     private static MipsTrap Mfhi(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
     {
-
+        exec = Execution.CreateWriteback(inst.RD, context.Processor.High);
+        return MipsTrap.None;
     }
 
-    private static MipsTrap NotImplemented(InstructionServiceTable context, MipsInstruction inst, out Execution exec) => throw new NotImplementedException();
+    private static MipsTrap Mthi(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    {
+        exec = Execution.CreateHigh(context.Processor[inst.RS]);
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap Mflo(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    {
+        exec = Execution.CreateWriteback(inst.RD, context.Processor.Low);
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap Mtlo(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    {
+        exec = Execution.CreateLow(context.Processor[inst.RS]);
+        return MipsTrap.None;
+    }
 }
