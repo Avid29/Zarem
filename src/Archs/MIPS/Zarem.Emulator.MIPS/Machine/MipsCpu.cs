@@ -173,7 +173,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     /// Immitates the execute step in a MIPS cpu, constructing the modifications to apply in the following stages.
     /// </summary>
     private MipsTrap Execute(MipsInstruction instruction, out Execution execution)
-        => InstructionExecutor.Execute(instruction, this, out execution);
+        => InstructionServiceTable.Execute(instruction, this, out execution);
 
     private MipsTrap MemAccess(Execution execution, out uint read)
     {
