@@ -127,6 +127,14 @@ public class Zaremulator
 #if DEBUG
         Stopwatch sw = Stopwatch.StartNew();
         long totalInstructions = 0;
+
+        void DumpMHz()
+        {
+            double mhz = (totalInstructions / (sw.Elapsed.TotalSeconds * 1000000.0));
+            Debug.WriteLine($"{mhz} MHz");
+            totalInstructions = 0;
+            sw.Restart();
+        }
 #endif
         try
         {
@@ -143,13 +151,8 @@ public class Zaremulator
 #if DEBUG
                     totalInstructions++;
 
-                    if (sw.ElapsedMilliseconds > 500)
-                    {
-                        double mips = (totalInstructions / (sw.Elapsed.TotalSeconds * 1000000.0));
-                        Debug.WriteLine($"{mips} MIPS");
-                        totalInstructions = 0;
-                        sw.Restart();
-                    }
+                    if (sw.ElapsedMilliseconds > 1000)
+                        DumpMHz();
                 }
 #endif
 
@@ -163,6 +166,10 @@ public class Zaremulator
             var localizer = new Localizer("Zarem.Emulator.Resources.Messages", typeof(Zaremulator).Assembly);
             Console.WriteLine(localizer["ExceptionOccurred"]);
         }
+
+#if DEBUG
+        DumpMHz();
+#endif
 
         // Complete the shutdown,
         // or handle exception
