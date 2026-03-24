@@ -2,18 +2,13 @@
 
 using System;
 
-namespace Zarem.Emulator.Machine.Interfaces;
+namespace Zarem.Emulator.Machine.Devices.Interfaces;
 
 /// <summary>
-/// An interface for a device hooked up to the memory bus.
+/// An interface for an <see cref="IDevice"/> hooked up to the memory bus.
 /// </summary>
-public interface IBusDevice
+public interface IBusDevice : IDevice
 {
-    /// <summary>
-    /// Gets the name of the device.
-    /// </summary>
-    string Name { get; }
-
     /// <summary>
     /// Gets the size of the range the device uses on the bus.
     /// </summary>

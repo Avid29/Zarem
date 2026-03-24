@@ -272,6 +272,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\GraphicsViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Controls\RunningIndicator.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -321,6 +325,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\UsagePatternsSubPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Pages\GraphicalOutputPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -433,6 +441,9 @@
       <DependentUpon>UsagePatternDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Controls\EditableTextBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\GraphicsViewer.xaml.cs">
+      <DependentUpon>GraphicsViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Controls\RunningIndicator.xaml.cs">
       <DependentUpon>RunningIndicator.xaml</DependentUpon>
     </Compile>
@@ -481,6 +492,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\CheatSheet\UsagePatternsSubPage.xaml.cs">
       <DependentUpon>UsagePatternsSubPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\GraphicalOutputPage.xaml.cs">
+      <DependentUpon>GraphicalOutputPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\RegisterViewer.xaml.cs">
       <DependentUpon>RegisterViewer.xaml</DependentUpon>

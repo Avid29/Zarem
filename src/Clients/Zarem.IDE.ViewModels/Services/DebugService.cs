@@ -1,11 +1,13 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.Messaging;
+using System.Linq;
 using System.Threading.Tasks;
 using Zarem.Debugger;
 using Zarem.Debugger.Models.Enums;
 using Zarem.DebugSessions;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.IDE.Messages.DebugSessions;
@@ -14,6 +16,8 @@ using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Popup.Enums;
 using Zarem.IDE.Services.Popup.Models;
+using Zarem.IDE.ViewModels;
+using Zarem.IDE.ViewModels.Pages;
 using Zarem.Models.Files;
 using Zarem.Models.Tables;
 
@@ -110,6 +114,10 @@ public class DebugService : IDebugService
             return;
 
         _consoleService.ShowConsoleWindow();
+        if (_session.Emulator.Computer.Devices.Any(x => x is IGraphicsDevice))
+        {
+            Service.Get<MainViewModel>().GoToPageByType<GraphicalOutputPageViewModel>();
+        }
 
         _session.Emulator.StateChanged += MipsEmu_StateChanged;
         _session.Debugger?.Halted += Debugger_Halted;
@@ -225,12 +233,16 @@ public class DebugService : IDebugService
     {
         if (e is EmulatorState.Stopped)
         {
-            _consoleService.HideConsoleWindow(_localizationService["DebugSessionEnded"]);
-
-            _dispatcher.RunOnUIThread(() => _stateService.SetState(IdeState.Ready));
+            _dispatcher.RunOnUIThread(() =>
+            {
+                _stateService.SetState(IdeState.Ready);
+                _messenger.Send(new DebugSessionEndedMessage());
+            });
             _session?.Debugger?.Halted -= Debugger_Halted;
             _session?.Dispose();
             _session = null;
+
+            _consoleService.HideConsoleWindow(_localizationService["DebugSessionEnded"]);
         }
     }
 }

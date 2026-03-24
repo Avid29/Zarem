@@ -58,6 +58,13 @@
                     </TabViewItem>
                 </DataTemplate>
             </selectors:PageTemplateSelector.FilePageTemplate>
+            <selectors:PageTemplateSelector.GraphicalOuputPageTemplate>
+                <DataTemplate x:DataType="vmv:GraphicalOutputPageViewModel">
+                    <TabViewItem HeaderTemplate="{StaticResource PageHeaderTemplate}">
+                        <pages:GraphicalOutputPage ViewModel="{x:Bind Mode=OneWay}" />
+                    </TabViewItem>
+                </DataTemplate>
+            </selectors:PageTemplateSelector.GraphicalOuputPageTemplate>
             <selectors:PageTemplateSelector.SettingsPageTemplate>
                 <DataTemplate x:DataType="svmv:SettingsPageViewModel">
                     <TabViewItem HeaderTemplate="{StaticResource PageHeaderTemplate}">

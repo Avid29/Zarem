@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml.Controls;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.CheatSheet;
 using Zarem.IDE.ViewModels.Pages.Settings;
-using Zarem.ViewModels.Pages;
 
 namespace Zarem.IDE.Selectors;
 
@@ -32,6 +31,11 @@ public partial class PageTemplateSelector : DataTemplateSelector
     public DataTemplate? FilePageTemplate { get; set; }
 
     /// <summary>
+    /// Gets the <see cref="DataTemplate"/> for a <see cref="GraphicalOutputPageViewModel"/>.
+    /// </summary>
+    public DataTemplate? GraphicalOuputPageTemplate { get; set; }
+
+    /// <summary>
     /// Gets the <see cref="DataTemplate"/> for a <see cref="SettingsPageViewModel"/>."/>
     /// </summary>
     public DataTemplate? SettingsPageTemplate { get; set; }
@@ -49,6 +53,7 @@ public partial class PageTemplateSelector : DataTemplateSelector
             CheatSheetViewModel => CheatSheetPageTemplate,
             CreateProjectViewModel => CreateProjectPageTemplate,
             FilePageViewModel => FilePageTemplate,
+            GraphicalOutputPageViewModel => GraphicalOuputPageTemplate,
             SettingsPageViewModel => SettingsPageTemplate,
             WelcomePageViewModel => WelcomePageTemplate,
             _ => null,

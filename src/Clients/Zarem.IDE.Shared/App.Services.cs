@@ -57,6 +57,7 @@ public partial class App
             .AddSingleton<ExplorerViewModel>()
             .AddSingleton<ErrorListViewModel>()
             .AddSingleton<RegisterViewerViewModel>()
+            .AddSingleton<GraphicalOutputPageViewModel>()
 
             // ViewModels
             .AddTransient<StatusViewModel>()

@@ -1,8 +1,10 @@
 ﻿// Avishai Dernis 2025
 
 using System;
+using System.Collections.Generic;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Devices;
+using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Emulator.Machine;
@@ -12,6 +14,8 @@ namespace Zarem.Emulator.Machine;
 /// </summary>
 public class MipsComputer : ComputerBase
 {
+    private readonly MemoryMapper _memoryMapper;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsComputer"/> class.
     /// </summary>
@@ -20,9 +24,9 @@ public class MipsComputer : ComputerBase
         Config = config;
 
         // Create the physical memory bus
-        var mapper = new MemoryMapper();
-        var bus = new PhysicalBus(mapper);
-        MapDevices(mapper);
+        _memoryMapper = new MemoryMapper();
+        var bus = new PhysicalBus(_memoryMapper);
+        MapDevices(_memoryMapper);
 
         // Initialize the components
         Processor = new MipsCpu(config, bus);
@@ -51,6 +55,9 @@ public class MipsComputer : ComputerBase
     public override IMemorySystem Memory { get; }
 
     /// <inheritdoc/>
+    public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;
+
+    /// <inheritdoc/>
     public override void Tick()
     {
         Processor.Step();
@@ -59,7 +66,11 @@ public class MipsComputer : ComputerBase
     /// <inheritdoc/>
     protected override void MapDevices(MemoryMapper mapper)
     {
-        mapper.MapDevice(0x0, new RamDevice(1024 * 1024 * 1024)); // TODO: Config ram size
+        // System RAM
+        mapper.MapDevice(0x0000_0000, new RamDevice(1024 * 1024 * 1024)); // TODO: Config ram size
+
+        // Graphics Buffer 
+        mapper.MapDevice(0x1300_0000, new ZaremGBU());
     }
 
     private void Processor_ShutdownRequested(object? sender, EventArgs e)

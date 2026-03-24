@@ -1,8 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Zarem.Emulator.Events;
+using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models;
 
@@ -24,6 +26,9 @@ public abstract class ComputerBase : IComputer
 
     /// <inheritdoc/>
     public abstract IMemorySystem Memory { get; }
+
+    /// <inheritdoc/>
+    public abstract IEnumerable<IDevice> Devices { get; }
 
     /// <summary>
     /// Requests a shutdown.
