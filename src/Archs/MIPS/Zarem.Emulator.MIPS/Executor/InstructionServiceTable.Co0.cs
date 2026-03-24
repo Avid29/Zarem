@@ -1,26 +1,31 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Executor.Enum;
+using Zarem.Emulator.Machine.Enums;
+using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 namespace Zarem.Emulator.Executor;
 
-public partial struct InstructionExecutor
+public partial struct InstructionServiceTable
 {
-    private Execution CreateCo0Execution()
+    private MipsTrap CreateCoProc0Execution(MipsInstruction inst, out Execution exec)
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?
         if (Processor.CoProcessor0.PrivilegeMode is not PrivilegeMode.Kernel)
-            return CreateTrap(MipsTrap.ReservedInstruction);
+        {
+            exec = default;
+            return MipsTrap.ReservedInstruction;
+        }
 
-        return CoProc0Instruction.CoProc0RSCode switch
+        var coInst = (CoProc0Instruction)inst;
+        exec = coInst.CoProc0RSCode switch
         {
             // C0 Instructions
-            CoProc0RSCode.C0 => CoProc0Instruction.Co0FuncCode switch
+            CoProc0RSCode.C0 => coInst.Co0FuncCode switch
             {
                 Co0FuncCode.ExceptionReturn => Eret(),
                 Co0FuncCode.ReadIndexedTLBEntry => Execution.CreateEffect(SideEffect.TLBRead),
@@ -32,20 +37,22 @@ public partial struct InstructionExecutor
             },
 
             // MFMC0 Instructions
-            CoProc0RSCode.MFMC0 => CoProc0Instruction.MFMC0FuncCode switch
+            CoProc0RSCode.MFMC0 => coInst.MFMC0FuncCode switch
             {
-                MFMC0FuncCode.EnableInterrupts => StatusUpdateInstruction((ref status) => status.InteruptEnabled = true),
-                MFMC0FuncCode.DisableInterrupts => StatusUpdateInstruction((ref status) => status.InteruptEnabled = false),
+                MFMC0FuncCode.EnableInterrupts => SetInterrupts(inst, true),
+                MFMC0FuncCode.DisableInterrupts => SetInterrupts(inst, false),
 
                 _ => throw new NotImplementedException()
             },
 
             // Move instructions
-            CoProc0RSCode.MFC0 => Execution.CreateWriteback(Instruction.RT, Processor.CoProcessor0[(CP0Registers)Instruction.RD]),
-            CoProc0RSCode.MTC0 => Execution.CreateWriteback((CP0Registers)Instruction.RD, RT),
+            CoProc0RSCode.MFC0 => Execution.CreateWriteback(inst.RT, Processor.CoProcessor0[(CP0Registers)inst.RD]),
+            CoProc0RSCode.MTC0 => Execution.CreateWriteback((CP0Registers)inst.RD, Processor[inst.RT]),
 
             _ => throw new NotImplementedException()
         };
+
+        return MipsTrap.None;
     }
 
     private Execution Eret()
@@ -78,15 +85,15 @@ public partial struct InstructionExecutor
         };
     }
 
-    private Execution StatusUpdateInstruction(StatusUpdateDelegate func)
+    private Execution SetInterrupts(CoProc0Instruction inst, bool enabled)
     {
         // Retrieve the status register
         var status = Processor.CoProcessor0.StatusRegister;
 
         // Apply the update function
-        func(ref status);
+        status.InteruptEnabled = enabled;
 
-        if (Instruction.RT is not GPRegister.Zero)
+        if (inst.RT is not GPRegister.Zero)
         {
             // Write the updated status register value back to the specified GPR
             return new Execution
@@ -94,7 +101,7 @@ public partial struct InstructionExecutor
                 CoProc0Reg = CP0Registers.Status,
                 CoProcWriteBack = (uint)status,
                 WriteBack = (uint)status,
-                GPR = Instruction.RT,
+                GPR = inst.RT,
             };
         }
 

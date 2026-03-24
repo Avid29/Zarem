@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models.Enums;
@@ -123,6 +124,18 @@ public class Zaremulator
     /// </summary>
     protected void ExecutionLoop()
     {
+#if DEBUG
+        Stopwatch sw = Stopwatch.StartNew();
+        long totalInstructions = 0;
+
+        void DumpMHz()
+        {
+            double mhz = (totalInstructions / (sw.Elapsed.TotalSeconds * 1000000.0));
+            Debug.WriteLine($"{mhz} MHz");
+            totalInstructions = 0;
+            sw.Restart();
+        }
+#endif
         try
         {
             while (State is not EmulatorState.Stopping)
@@ -132,7 +145,16 @@ public class Zaremulator
 
                 // Loop ticks while running
                 while (State is EmulatorState.Running)
+                {
                     Computer.Tick();
+
+#if DEBUG
+                    totalInstructions++;
+
+                    if (sw.ElapsedMilliseconds > 1000)
+                        DumpMHz();
+                }
+#endif
 
                 // Complete pausing transition
                 if (State is EmulatorState.Pausing)
@@ -144,6 +166,10 @@ public class Zaremulator
             var localizer = new Localizer("Zarem.Emulator.Resources.Messages", typeof(Zaremulator).Assembly);
             Console.WriteLine(localizer["ExceptionOccurred"]);
         }
+
+#if DEBUG
+        DumpMHz();
+#endif
 
         // Complete the shutdown,
         // or handle exception
