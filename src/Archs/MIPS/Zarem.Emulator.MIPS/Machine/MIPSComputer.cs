@@ -66,7 +66,11 @@ public class MipsComputer : ComputerBase
     /// <inheritdoc/>
     protected override void MapDevices(MemoryMapper mapper)
     {
-        mapper.MapDevice(0x0, new RamDevice(1024 * 1024 * 1024)); // TODO: Config ram size
+        // System RAM
+        mapper.MapDevice(0x0000_0000, new RamDevice(1024 * 1024 * 1024)); // TODO: Config ram size
+
+        // Graphics Buffer 
+        mapper.MapDevice(0x1300_0000, new ZaremGBU());
     }
 
     private void Processor_ShutdownRequested(object? sender, EventArgs e)

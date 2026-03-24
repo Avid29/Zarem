@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Runtime.InteropServices;
+using Windows.Devices.HumanInterfaceDevice;
 using Windows.Graphics.DirectX;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.IDE.Views.Pages;
@@ -17,7 +18,7 @@ public sealed partial class GraphicsViewer : UserControl
     private CanvasBitmap? _canvasBitmap; // Use persistent bitmap to avoid re-allocation
 
     public static readonly DependencyProperty DeviceProperty =
-        DependencyProperty.Register(nameof(Device), typeof(IGraphicsDevice), typeof(GraphicalOutputPage), new(null));
+        DependencyProperty.Register(nameof(Device), typeof(IGraphicsDevice), typeof(GraphicalOutputPage), new(null, OnDevicePropertyChanged));
 
     public GraphicsViewer()
     {
@@ -37,47 +38,75 @@ public sealed partial class GraphicsViewer : UserControl
 
         var buffer = Device.GetPixelBuffer();
 
-        // Initialize or Re-initialize the bitmap if the resolution changed
-        if (_canvasBitmap == null ||
-            _canvasBitmap.SizeInPixels.Width != (uint)buffer.Width ||
-            _canvasBitmap.SizeInPixels.Height != (uint)buffer.Height)
+        if (Device.IsDirty)
         {
-            _canvasBitmap = CanvasBitmap.CreateFromBytes(
-                sender,
-                new byte[buffer.Width * buffer.Height * 4], // Initial empty buffer
-                buffer.Width,
-                buffer.Height,
-                DirectXPixelFormat.B8G8R8X8UIntNormalized);
-        }
-
-        if (buffer.TryGetSpan(out var span))
-        {
-            // Optimized Data Transfer
-            fixed (uint* ptr = span)
+            // Initialize or Re-initialize the bitmap if the resolution changed
+            if (_canvasBitmap == null ||
+                _canvasBitmap.SizeInPixels.Width != (uint)buffer.Width ||
+                _canvasBitmap.SizeInPixels.Height != (uint)buffer.Height)
             {
-                // SetPixelBytes can take a pointer or a byte array.
-                // Converting Span to a temporary byte-view without copying:
-                var byteSpan = MemoryMarshal.AsBytes(span);
-                _canvasBitmap.SetPixelBytes(byteSpan.ToArray());
+                _canvasBitmap = CanvasBitmap.CreateFromBytes(
+                    sender,
+                    new byte[buffer.Width * buffer.Height * 4], // Initial empty buffer
+                    buffer.Width,
+                    buffer.Height,
+                    DirectXPixelFormat.B8G8R8X8UIntNormalized);
+
+                sender.Width = buffer.Width;
+                sender.Height = buffer.Height;
             }
 
-            args.DrawingSession.DrawImage(_canvasBitmap);
-        }
-        else
-        {
-            // Fallback: If TryGetSpan fails (e.g., non-contiguous memory), 
-            // we copy row-by-row using the Span2D structure.
-            byte[] staging = new byte[buffer.Width * buffer.Height * 4];
-            var stagingSpan = staging.AsSpan();
-
-            for (int y = 0; y < buffer.Height; y++)
+            if (buffer.TryGetSpan(out var span))
             {
-                var row = MemoryMarshal.AsBytes(buffer.GetRowSpan(y));
-                row.CopyTo(stagingSpan[(y * buffer.Width * 4)..]);
-            }
-            _canvasBitmap.SetPixelBytes(staging);
+                // Optimized Data Transfer
+                fixed (uint* ptr = span)
+                {
+                    // SetPixelBytes can take a pointer or a byte array.
+                    // Converting Span to a temporary byte-view without copying:
+                    var byteSpan = MemoryMarshal.AsBytes(span);
+                    _canvasBitmap.SetPixelBytes(byteSpan.ToArray());
+                }
 
-            args.DrawingSession.DrawImage(_canvasBitmap);
+                args.DrawingSession.DrawImage(_canvasBitmap);
+            }
+            else
+            {
+                // Fallback: If TryGetSpan fails (e.g., non-contiguous memory), 
+                // we copy row-by-row using the Span2D structure.
+                byte[] staging = new byte[buffer.Width * buffer.Height * 4];
+                var stagingSpan = staging.AsSpan();
+
+                for (int y = 0; y < buffer.Height; y++)
+                {
+                    var row = MemoryMarshal.AsBytes(buffer.GetRowSpan(y));
+                    row.CopyTo(stagingSpan[(y * buffer.Width * 4)..]);
+                }
+                _canvasBitmap.SetPixelBytes(staging);
+            }
+        }
+
+        args.DrawingSession.DrawImage(_canvasBitmap);
+        Device.IsDirty = false;
+    }
+
+    private void RequestRefresh(object? sender, EventArgs args) => DisplayCanvas.Invalidate();
+
+    private static void OnDevicePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+        if (obj is not GraphicsViewer viewer)
+            return;
+
+        if (args.Property != DeviceProperty)
+            return;
+
+        if (args.OldValue is IGraphicsDevice oldDevice)
+        {
+            oldDevice?.Refresh -= viewer.RequestRefresh;
+        }
+
+        if (args.NewValue is IGraphicsDevice newDevice)
+        {
+            newDevice?.Refresh += viewer.RequestRefresh;
         }
     }
 }

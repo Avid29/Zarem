@@ -39,6 +39,17 @@ public class ZaremGBU : IBusDevice, IGraphicsDevice
     public ulong BusRangeSize => (ulong)(_width * _height * sizeof(uint));
 
     /// <inheritdoc/>
+    public bool IsDirty
+    {
+        get => field;
+        set
+        {
+            field = value;
+            Refresh?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    /// <inheritdoc/>
     public ReadOnlySpan2D<uint> GetPixelBuffer() => new(_framebuffer, _height, _width);
 
     /// <inheritdoc/>
@@ -56,5 +67,7 @@ public class ZaremGBU : IBusDevice, IGraphicsDevice
     {
         var destSpan = MemoryMarshal.AsBytes(_framebuffer.AsSpan());
         source.CopyTo(destSpan[(int)offset..]);
+
+        IsDirty = true;
     }
 }

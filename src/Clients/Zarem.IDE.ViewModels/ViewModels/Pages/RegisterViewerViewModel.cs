@@ -53,5 +53,7 @@ public class RegisterViewerViewModel : DebugPageViewModel
     {
         foreach (var reg in Registers)
             reg.Dispose();
+
+        Registers.Clear();
     }
 }

@@ -16,6 +16,11 @@ public interface IGraphicsDevice : IDevice
     event EventHandler? Refresh;
 
     /// <summary>
+    /// Gets or sets if the graphics dump is up-to-date.
+    /// </summary>
+    public bool IsDirty { get; set; }
+
+    /// <summary>
     /// Gets the pixel buffer for graphics device.
     /// </summary>
     ReadOnlySpan2D<uint> GetPixelBuffer();
