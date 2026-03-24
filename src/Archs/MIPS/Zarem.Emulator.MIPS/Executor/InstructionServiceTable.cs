@@ -1,6 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine;
 using Zarem.Models.Instructions;
@@ -10,7 +12,7 @@ namespace Zarem.Emulator.Executor;
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="Execution"/> models.
 /// </summary>
-public partial struct InstructionServiceTable
+public readonly partial struct InstructionServiceTable
 {
     private readonly ExecutionDelegate[] _opCodeTable = new ExecutionDelegate[64];
     private readonly ExecutionDelegate[] _specialTable = new ExecutionDelegate[64];
@@ -18,7 +20,7 @@ public partial struct InstructionServiceTable
     private readonly ExecutionDelegate[] _regImmTable = new ExecutionDelegate[32];
 
     // Execution delegate
-    delegate MipsTrap ExecutionDelegate(InstructionServiceTable context, MipsInstruction inst, out Execution execution);
+    delegate MipsTrap ExecutionDelegate(MipsInstruction inst, out Execution execution);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InstructionServiceTable"/> struct.
@@ -39,56 +41,56 @@ public partial struct InstructionServiceTable
     /// <param name="instruction"></param>
     /// <param name="execution"></param>
     /// <returns></returns>
-    public readonly MipsTrap Execute(MipsInstruction instruction, out Execution execution)
+    public MipsTrap Execute(MipsInstruction instruction, out Execution execution)
     {
         var func = _opCodeTable[(int)instruction.OpCode] ?? throw new NotImplementedException();
-        return func(this, instruction, out execution);
+        return func(instruction, out execution);
     }
 
-    private static MipsTrap DispatchSpecial(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap DispatchSpecial(MipsInstruction inst, out Execution exec)
     {
-        var func = context._specialTable[(int)inst.FuncCode] ?? throw new NotImplementedException();
-        return func(context, inst, out exec);
+        var func = _specialTable[(int)inst.FuncCode] ?? throw new NotImplementedException();
+        return func(inst, out exec);
     }
 
-    private static MipsTrap DispatchSpecial2(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap DispatchSpecial2(MipsInstruction inst, out Execution exec)
     {
-        var func = context._special2Table[(int)inst.FuncCode] ?? throw new NotImplementedException();
-        return func(context, inst, out exec);
+        var func = _special2Table[(int)inst.FuncCode] ?? throw new NotImplementedException();
+        return func(inst, out exec);
     }
 
-    private static MipsTrap DispatchRegImm(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap DispatchRegImm(MipsInstruction inst, out Execution exec)
     {
-        var func = context._regImmTable[(int)inst.FuncCode] ?? throw new NotImplementedException();
-        return func(context, inst, out exec);
+        var func = _regImmTable[(int)inst.FuncCode] ?? throw new NotImplementedException();
+        return func(inst, out exec);
     }
 
-    private static MipsTrap Shift<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap Shift<T>(MipsInstruction inst, out Execution exec)
         where T : IShiftLogic
     {
-        exec = Execution.CreateWriteback(inst.RD, T.Execute(context.Processor[inst.RT], inst.ShiftAmount));
+        exec = Execution.CreateWriteback(inst.RD, T.Execute(Processor[inst.RT], inst.ShiftAmount));
         return MipsTrap.None;
     }
 
-    private static MipsTrap ShiftVar<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap ShiftVar<T>(MipsInstruction inst, out Execution exec)
         where T : IShiftLogic
     {
-        exec = Execution.CreateWriteback(inst.RD, T.Execute(context.Processor[inst.RT], (int)context.Processor[inst.RS]));
+        exec = Execution.CreateWriteback(inst.RD, T.Execute(Processor[inst.RT], (int)Processor[inst.RS]));
         return MipsTrap.None;
     }
 
-    private static MipsTrap AluR<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap AluR<T>(MipsInstruction inst, out Execution exec)
         where T : IAluLogic
     {
-        exec = Execution.CreateWriteback(inst.RD, T.Compute(context.Processor[inst.RS], context.Processor[inst.RT]));
+        exec = Execution.CreateWriteback(inst.RD, T.Compute(Processor[inst.RS], Processor[inst.RT]));
         return MipsTrap.None;
     }
 
-    private static MipsTrap CheckedAluR<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap CheckedAluR<T>(MipsInstruction inst, out Execution exec)
         where T : ICheckedAluLogic
     {
-        var rs = context.Processor[inst.RS];
-        var rt = context.Processor[inst.RT];
+        var rs = Processor[inst.RS];
+        var rt = Processor[inst.RT];
         var value = T.Compute(rs, rt);
 
         if (T.Overflow((int)rs, (int)rt, (int)value))
@@ -101,17 +103,17 @@ public partial struct InstructionServiceTable
         return MipsTrap.None;
     }
 
-    private static MipsTrap AluI<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap AluI<T>(MipsInstruction inst, out Execution exec)
         where T : IAluLogic
     {
-        exec = Execution.CreateWriteback(inst.RT, T.Compute(context.Processor[inst.RS], (uint)(int)inst.ImmediateValue));
+        exec = Execution.CreateWriteback(inst.RT, T.Compute(Processor[inst.RS], (uint)(int)inst.ImmediateValue));
         return MipsTrap.None;
     }
 
-    private static MipsTrap CheckedAluI<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap CheckedAluI<T>(MipsInstruction inst, out Execution exec)
         where T : ICheckedAluLogic
     {
-        var rs = context.Processor[inst.RS];
+        var rs = Processor[inst.RS];
         var imm = (uint)(int)inst.ImmediateValue;
         var value = T.Compute(rs, imm);
 
@@ -125,46 +127,46 @@ public partial struct InstructionServiceTable
         return MipsTrap.None;
     }
 
-    private static MipsTrap MultR<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap MultR<T>(MipsInstruction inst, out Execution exec)
         where T : IMultLogic
     {
-        var rs = context.Processor[inst.RS];
-        var rt = context.Processor[inst.RT];
+        var rs = Processor[inst.RS];
+        var rt = Processor[inst.RT];
         exec = Execution.CreateHighLow(T.Compute(rs, rt));
         return MipsTrap.None;
     }
 
-    private static MipsTrap MultAddR<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap MultAddR<T>(MipsInstruction inst, out Execution exec)
         where T : IMultAddLogic
     {
-        var rs = context.Processor[inst.RS];
-        var rt = context.Processor[inst.RT];
-        exec = Execution.CreateHighLow(T.Compute(rs, rt, context.Processor.High, context.Processor.Low));
+        var rs = Processor[inst.RS];
+        var rt = Processor[inst.RT];
+        exec = Execution.CreateHighLow(T.Compute(rs, rt, Processor.High, Processor.Low));
         return MipsTrap.None;
     }
 
-    private static MipsTrap DivR<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap DivR<T>(MipsInstruction inst, out Execution exec)
         where T : IDivLogic
     {
-        var rs = context.Processor[inst.RS];
-        var rt = context.Processor[inst.RT];
+        var rs = Processor[inst.RS];
+        var rt = Processor[inst.RT];
         exec = Execution.CreateHighLow((T.Remainder(rs, rs), T.Divisor(rs, rt)));
         return MipsTrap.None;
     }
 
-    private static MipsTrap Trap<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private static MipsTrap Trap<T>(MipsInstruction inst, out Execution exec)
         where T : ITrapLogic
     {
         exec = default;
         return T.Trap();
     }
 
-    private static MipsTrap BranchOn<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap BranchOn<T>(MipsInstruction inst, out Execution exec)
         where T : ICondLogic
     {
-        if (T.Check(context.Processor[inst.RS], context.Processor[inst.RT]))
+        if (T.Check(Processor[inst.RS], Processor[inst.RT]))
         {
-            exec = Execution.CreateJump((uint)(context.Processor.ProgramCounter + inst.Offset + 4));
+            exec = Execution.CreateJump((uint)(Processor.ProgramCounter + inst.Offset + 4));
         }
         else
         {
@@ -174,58 +176,96 @@ public partial struct InstructionServiceTable
         return MipsTrap.None;
     }
 
-    private static MipsTrap TrapOn<T>(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap TrapOn<T>(MipsInstruction inst, out Execution exec)
         where T : ICondLogic
     {
         exec = default;
-        return T.Check(context.Processor[inst.RS], context.Processor[inst.RT]) ? MipsTrap.Trap : MipsTrap.None;
+        return T.Check(Processor[inst.RS], Processor[inst.RT]) ? MipsTrap.Trap : MipsTrap.None;
     }
 
-    private static MipsTrap Jump(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap Load<T>(MipsInstruction inst, out Execution exec)
+        where T : IBinaryInteger<T>
+    {
+        uint baseAddr = Processor[inst.RS];
+        int offset = inst.ImmediateValue; // already sign-extended
+        uint addr = baseAddr + (uint)offset;
+
+        // Alignment check (bytes are always aligned)
+        int size = Unsafe.SizeOf<T>();
+        if (size > 1 && (addr & (uint)(size - 1)) != 0)
+        {
+            exec = default;
+            return MipsTrap.AddressErrorStore;
+        }
+
+        bool signed = (-T.MultiplicativeIdentity) < T.Zero;
+        exec = Execution.CreateMemRead(inst.RT, addr, size, signed);
+        return MipsTrap.None;
+    }
+
+    private MipsTrap Store<T>(MipsInstruction inst, out Execution exec)
+    {
+        uint baseAddr = Processor[inst.RS];
+        int offset = inst.ImmediateValue; // already sign-extended
+        uint addr = baseAddr + (uint)offset;
+
+        // Alignment check (bytes are always aligned)
+        int size = Unsafe.SizeOf<T>();
+        if (size > 1 && (addr & (uint)(size - 1)) != 0)
+        {
+            exec = default;
+            return MipsTrap.AddressErrorStore;
+        }
+
+        exec = Execution.CreateMemWrite(Processor[inst.RT], addr, size);
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap Jump(MipsInstruction inst, out Execution exec)
     {
         exec = Execution.CreateJump(inst.Address);
         return MipsTrap.None;
     }
 
-    private static MipsTrap JumpLink(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap JumpLink(MipsInstruction inst, out Execution exec)
     {
-        exec = Execution.CreateJumpAndLink(inst.Address, context.Processor.ProgramCounter + 4, inst.RD);
+        exec = Execution.CreateJumpAndLink(inst.Address, Processor.ProgramCounter + 4, inst.RD);
         return MipsTrap.None;
     }
 
-    private static MipsTrap JumpR(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap JumpR(MipsInstruction inst, out Execution exec)
     {
-        exec = Execution.CreateJump(context.Processor[inst.RS]);
+        exec = Execution.CreateJump(Processor[inst.RS]);
         return MipsTrap.None;
     }
 
-    private static MipsTrap JumpLinkR(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap JumpLinkR(MipsInstruction inst, out Execution exec)
     {
-        exec = Execution.CreateJumpAndLink(context.Processor[inst.RS], context.Processor.ProgramCounter + 4, inst.RD);
+        exec = Execution.CreateJumpAndLink(Processor[inst.RS], Processor.ProgramCounter + 4, inst.RD);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mfhi(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap Mfhi(MipsInstruction inst, out Execution exec)
     {
-        exec = Execution.CreateWriteback(inst.RD, context.Processor.High);
+        exec = Execution.CreateWriteback(inst.RD, Processor.High);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mthi(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap Mthi(MipsInstruction inst, out Execution exec)
     {
-        exec = Execution.CreateHigh(context.Processor[inst.RS]);
+        exec = Execution.CreateHigh(Processor[inst.RS]);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mflo(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap Mflo(MipsInstruction inst, out Execution exec)
     {
-        exec = Execution.CreateWriteback(inst.RD, context.Processor.Low);
+        exec = Execution.CreateWriteback(inst.RD, Processor.Low);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mtlo(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap Mtlo(MipsInstruction inst, out Execution exec)
     {
-        exec = Execution.CreateLow(context.Processor[inst.RS]);
+        exec = Execution.CreateLow(Processor[inst.RS]);
         return MipsTrap.None;
     }
 }

@@ -20,10 +20,12 @@ public partial struct InstructionServiceTable
         _opCodeTable[(int)OperationCode.RegisterImmediate] = JumpLink;
 
         // CoProcessor Instructions
+        _opCodeTable[(int)OperationCode.Coprocessor0] = CreateCoProc0Execution;
         _opCodeTable[(int)OperationCode.Coprocessor1] = CreateCoProc1Execution;
 
-        // Complete I-Types
+        // Complete Root Table
         InitITypes(config);
+        InitMemTypes(config);
 
         // Initialize sub tables
         InitSpecial(config);
@@ -66,6 +68,25 @@ public partial struct InstructionServiceTable
 
         // Trap
         _opCodeTable[(int)OperationCode.Trap] = Trap<TrapLogic>;
+    }
+
+    private readonly void InitMemTypes(MIPSEmulatorConfig config)
+    {
+        // Load
+        _opCodeTable[(int)OperationCode.LoadByte] = Load<sbyte>;
+        _opCodeTable[(int)OperationCode.LoadHalfWord] = Load<short>;
+        //_opCodeTable[(int)OperationCode.LoadWordLeft] = TODO:
+        _opCodeTable[(int)OperationCode.LoadWord] = Load<int>;
+        _opCodeTable[(int)OperationCode.LoadByteUnsigned] = Load<byte>;
+        _opCodeTable[(int)OperationCode.LoadHalfWordUnsigned] = Load<ushort>;
+        //_opCodeTable[(int)OperationCode.LoadWordRight] = TODO:
+
+        // Store
+        _opCodeTable[(int)OperationCode.StoreByte] = Store<sbyte>;
+        _opCodeTable[(int)OperationCode.StoreHalfWord] = Load<short>;
+        //_opCodeTable[(int)OperationCode.StoreWordLeft] = TODO:
+        _opCodeTable[(int)OperationCode.StoreWord] = Load<int>;
+        //_opCodeTable[(int)OperationCode.StoreWordRight] = TODO:
     }
 
     private readonly void InitSpecial(MIPSEmulatorConfig config)

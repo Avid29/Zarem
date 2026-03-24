@@ -12,7 +12,7 @@ namespace Zarem.Emulator.Executor;
 
 public partial struct InstructionServiceTable
 {
-    private readonly MipsTrap CreateCoProc1Execution(InstructionServiceTable context, MipsInstruction inst, out Execution exec)
+    private MipsTrap CreateCoProc1Execution(MipsInstruction inst, out Execution exec)
     {
         var floatInstruction = (FloatInstruction)inst;
 
@@ -41,10 +41,10 @@ public partial struct InstructionServiceTable
 
             _ => floatInstruction.Format switch
             {
-                FloatFormat.Single => CreateFloatExecution(inst, context.Processor.FloatProcessor.Singles),
-                FloatFormat.Double => CreateFloatExecution(inst, context.Processor.FloatProcessor.Doubles),
-                FloatFormat.Word => CreateFloatIntExecution(inst, context.Processor.FloatProcessor.Words),
-                FloatFormat.Long => CreateFloatIntExecution(inst, context.Processor.FloatProcessor.Longs),
+                FloatFormat.Single => CreateFloatExecution(inst, Processor.FloatProcessor.Singles),
+                FloatFormat.Double => CreateFloatExecution(inst, Processor.FloatProcessor.Doubles),
+                FloatFormat.Word => CreateFloatIntExecution(inst, Processor.FloatProcessor.Words),
+                FloatFormat.Long => CreateFloatIntExecution(inst, Processor.FloatProcessor.Longs),
                 _ => throw new NotImplementedException(),
             }
         };
@@ -52,7 +52,7 @@ public partial struct InstructionServiceTable
         return MipsTrap.None;
     }
 
-    private readonly Execution CreateFloatExecution<T>(FloatInstruction inst, IFloatRegisterIndexer<T> indexer)
+    private static Execution CreateFloatExecution<T>(FloatInstruction inst, IFloatRegisterIndexer<T> indexer)
         where T : unmanaged, IFloatingPointIeee754<T>
     {
         return inst.FloatFuncCode switch
@@ -72,7 +72,7 @@ public partial struct InstructionServiceTable
         };
     }
 
-    private readonly Execution CreateFloatIntExecution<T>(FloatInstruction inst, IFloatRegisterIndexer<T> indexer)
+    private static Execution CreateFloatIntExecution<T>(FloatInstruction inst, IFloatRegisterIndexer<T> indexer)
         where T : unmanaged, INumber<T>
     {
         return inst.FloatFuncCode switch
@@ -85,7 +85,7 @@ public partial struct InstructionServiceTable
         };
     }
 
-    private readonly Execution CreateFloatRoundExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
+    private static Execution CreateFloatRoundExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
         where TFrom : unmanaged, IFloatingPointIeee754<TFrom>
         where TTo : INumber<TTo>, IMinMaxValue<TTo>
     {
@@ -127,7 +127,7 @@ public partial struct InstructionServiceTable
         return Execution.CreateFloatWriteback(destination, finalResult);
     }
 
-    private readonly Execution CreateFloatArithmeticExecution<T>(FloatInstruction inst, IFloatRegisterIndexer<T> indexer)
+    private static Execution CreateFloatArithmeticExecution<T>(FloatInstruction inst, IFloatRegisterIndexer<T> indexer)
         where T : unmanaged, IFloatingPointIeee754<T>
     {
         var destination = inst.FD;
@@ -155,7 +155,7 @@ public partial struct InstructionServiceTable
         return Execution.CreateFloatWriteback(destination, value);
     }
 
-    private readonly Execution CreateConvertExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
+    private static Execution CreateConvertExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
         where TFrom : INumber<TFrom>
         where TTo : INumber<TTo>
     {
