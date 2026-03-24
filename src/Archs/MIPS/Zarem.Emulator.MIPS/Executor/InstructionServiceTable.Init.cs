@@ -7,9 +7,6 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
 namespace Zarem.Emulator.Executor;
 
-/// <summary>
-/// A struct which handles converting decoded instructions into <see cref="Execution"/> models.
-/// </summary>
 public partial struct InstructionServiceTable
 {
     private readonly void InitTables(MIPSEmulatorConfig config)
@@ -22,7 +19,13 @@ public partial struct InstructionServiceTable
         _opCodeTable[(int)OperationCode.RegisterImmediate] = Jump;
         _opCodeTable[(int)OperationCode.RegisterImmediate] = JumpLink;
 
+        // CoProcessor Instructions
+        _opCodeTable[(int)OperationCode.Coprocessor1] = CreateCoProc1Execution;
+
+        // Complete I-Types
         InitITypes(config);
+
+        // Initialize sub tables
         InitSpecial(config);
         InitRegImm(config);
 
@@ -60,6 +63,10 @@ public partial struct InstructionServiceTable
 
         // Load Upper Immediate
         _opCodeTable[(int)OperationCode.ExclusiveOrImmediate] = AluI<LuiLogic>;
+
+        // Trap
+        _opCodeTable[(int)OperationCode.Trap] = Trap<TrapLogic>;
+    }
 
     private readonly void InitSpecial(MIPSEmulatorConfig config)
     {

@@ -6,9 +6,6 @@ using Zarem.Emulator.Executor.Enum;
 
 namespace Zarem.Emulator.Executor;
 
-/// <summary>
-/// A struct which handles converting decoded instructions into <see cref="Execution"/> models.
-/// </summary>
 public partial struct InstructionServiceTable
 {
     private interface IShiftLogic
@@ -231,6 +228,12 @@ public partial struct InstructionServiceTable
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static MipsTrap Trap() => MipsTrap.Breakpoint;
+    }
+
+    private struct TrapLogic : ITrapLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static MipsTrap Trap() => MipsTrap.Trap;
     }
 
     private struct MulLogic : IAluLogic
