@@ -19,6 +19,8 @@ namespace Zarem.Emulator.Machine;
 /// </summary>
 public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 {
+    private InstructionServiceTable _instructionServiceTable;
+
     /// <inheritdoc/>
     public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
 
@@ -36,6 +38,8 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
         FloatProcessor = new();
         Tlb = new MipsTlb();
         Memory = memory;
+
+        _instructionServiceTable = new InstructionServiceTable(this);
     }
 
     /// <summary>
@@ -173,7 +177,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     /// Immitates the execute step in a MIPS cpu, constructing the modifications to apply in the following stages.
     /// </summary>
     private MipsTrap Execute(MipsInstruction instruction, out Execution execution)
-        => InstructionServiceTable.Execute(instruction, this, out execution);
+        => _instructionServiceTable.Execute(instruction, out execution);
 
     private MipsTrap MemAccess(Execution execution, out uint read)
     {

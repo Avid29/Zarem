@@ -61,7 +61,7 @@ public readonly partial struct InstructionServiceTable
 
     private MipsTrap DispatchRegImm(MipsInstruction inst, out Execution exec)
     {
-        var func = _regImmTable[(int)inst.FuncCode] ?? throw new NotImplementedException();
+        var func = _regImmTable[(int)inst.RTFuncCode] ?? throw new NotImplementedException();
         return func(inst, out exec);
     }
 
@@ -150,7 +150,7 @@ public readonly partial struct InstructionServiceTable
     {
         var rs = Processor[inst.RS];
         var rt = Processor[inst.RT];
-        exec = Execution.CreateHighLow((T.Remainder(rs, rs), T.Divisor(rs, rt)));
+        exec = Execution.CreateHighLow((T.Remainder(rs, rt), T.Divisor(rs, rt)));
         return MipsTrap.None;
     }
 
@@ -236,7 +236,7 @@ public readonly partial struct InstructionServiceTable
 
     private MipsTrap JumpLink(MipsInstruction inst, out Execution exec)
     {
-        exec = Execution.CreateJumpAndLink(inst.Address, Processor.ProgramCounter + 4, inst.RD);
+        exec = Execution.CreateJumpAndLink(inst.Address, Processor.ProgramCounter + 4);
         return MipsTrap.None;
     }
 

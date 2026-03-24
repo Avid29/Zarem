@@ -16,8 +16,8 @@ public partial struct InstructionServiceTable
         _opCodeTable[(int)OperationCode.RegisterImmediate] = DispatchRegImm;
 
         // Jump (J-Type)
-        _opCodeTable[(int)OperationCode.RegisterImmediate] = Jump;
-        _opCodeTable[(int)OperationCode.RegisterImmediate] = JumpLink;
+        _opCodeTable[(int)OperationCode.Jump] = Jump;
+        _opCodeTable[(int)OperationCode.JumpAndLink] = JumpLink;
 
         // CoProcessor Instructions
         _opCodeTable[(int)OperationCode.Coprocessor0] = CreateCoProc0Execution;
@@ -41,9 +41,9 @@ public partial struct InstructionServiceTable
     private readonly void InitITypes(MIPSEmulatorConfig config)
     {
         // Branch
-        _opCodeTable[(int)OperationCode.BranchOnEquals] =
+        _opCodeTable[(int)OperationCode.BranchOnEquals] = BranchOn<XeqLogic>;
         _opCodeTable[(int)OperationCode.BranchOnEqualLikely] = BranchOn<XeqLogic>;
-        _opCodeTable[(int)OperationCode.BranchOnNotEquals] =
+        _opCodeTable[(int)OperationCode.BranchOnNotEquals] = BranchOn<XneLogic>;
         _opCodeTable[(int)OperationCode.BranchOnNotEqualLikely] = BranchOn<XneLogic>;
         _opCodeTable[(int)OperationCode.BranchOnLessThanOrEqualToZero] =
         _opCodeTable[(int)OperationCode.BranchOnLessThanOrEqualToZeroLikely] = BranchOn<XlezLogic>;
@@ -64,7 +64,7 @@ public partial struct InstructionServiceTable
         _opCodeTable[(int)OperationCode.ExclusiveOrImmediate] = AluI<XorLogic>;
 
         // Load Upper Immediate
-        _opCodeTable[(int)OperationCode.ExclusiveOrImmediate] = AluI<LuiLogic>;
+        _opCodeTable[(int)OperationCode.LoadUpperImmediate] = AluI<LuiLogic>;
 
         // Trap
         _opCodeTable[(int)OperationCode.Trap] = Trap<TrapLogic>;
@@ -83,9 +83,9 @@ public partial struct InstructionServiceTable
 
         // Store
         _opCodeTable[(int)OperationCode.StoreByte] = Store<sbyte>;
-        _opCodeTable[(int)OperationCode.StoreHalfWord] = Load<short>;
+        _opCodeTable[(int)OperationCode.StoreHalfWord] = Store<short>;
         //_opCodeTable[(int)OperationCode.StoreWordLeft] = TODO:
-        _opCodeTable[(int)OperationCode.StoreWord] = Load<int>;
+        _opCodeTable[(int)OperationCode.StoreWord] = Store<int>;
         //_opCodeTable[(int)OperationCode.StoreWordRight] = TODO:
     }
 
@@ -120,8 +120,8 @@ public partial struct InstructionServiceTable
         _specialTable[(int)FunctionCode.SetLessThanUnsigned] = AluR<SltuLogic>;
 
         // Jump Register
-        _specialTable[(int)FunctionCode.SetLessThan] = JumpR;
-        _specialTable[(int)FunctionCode.SetLessThanUnsigned] = JumpLinkR;
+        _specialTable[(int)FunctionCode.JumpRegister] = JumpR;
+        _specialTable[(int)FunctionCode.JumpAndLinkRegister] = JumpLinkR;
 
         // System
         _specialTable[(int)FunctionCode.SystemCall] = Trap<SyscallLogic>;
@@ -146,9 +146,9 @@ public partial struct InstructionServiceTable
     private readonly void InitRegImm(MIPSEmulatorConfig config)
     {
         // Branch
-        _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZero] = 
+        _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZero] = BranchOn<XltzLogic>;
         _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroLikely] = BranchOn<XltzLogic>;
-        _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = 
+        _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = BranchOn<XgezLogic>;
         _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely] = BranchOn<XgezLogic>;
 
         // Trap
