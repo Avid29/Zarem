@@ -67,6 +67,8 @@ public class DebugSession : IDisposable
             file.Breakpoints.BreakpointAdded -= Breakpoints_BreakpointAdded;
             file.Breakpoints.BreakpointRemoved -= Breakpoints_BreakpointRemoved;
         }
+
+        Emulator.Dispose();
     }
 
     private void SetupBreakpoints()

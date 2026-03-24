@@ -8,6 +8,8 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Emulator.Helpers;
+using Zarem.Emulator.Machine.Devices;
+using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models.Enums;
 
@@ -19,41 +21,51 @@ namespace Zarem.Emulator.Machine;
 public unsafe class PhysicalBus : IMemoryAccessor
 {
     private readonly MemoryMapper _mapper;
+    private readonly bool _endianMismatch;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PhysicalBus"/> class.
     /// </summary>
-    public PhysicalBus(MemoryMapper mapper)
+    public PhysicalBus(MemoryMapper mapper, Endianness endianness = Endianness.Big)
     {
         _mapper = mapper;
+        _endianMismatch = BitConverter.IsLittleEndian != (endianness == Endianness.Little);
     }
 
     /// <summary>
     /// Gets or sets the endianness of the bus.
     /// </summary>
-    public Endianness Endianness { get; set; } = Endianness.Big;
+    public Endianness Endianness { get; }
 
     /// <inheritdoc/>
     public T Read<T>(ulong address)
         where T : unmanaged, IBinaryNumber<T>
     {
-        int size = Unsafe.SizeOf<T>();
-        CheckAlignment(address, size);
+        CheckAlignment<T>(address);
 
-        Span<byte> buffer = stackalloc byte[size];
-        Read(address, buffer);
+        var device = _mapper.Resolve(address, out var baseAddress);
+        ulong offset = address - baseAddress;
 
-        return ReadEndianness<T>(buffer);
+        if (device is RamDevice memDevice)
+        {
+            byte* ptr = memDevice.GetPointer(offset);
+            T value = Unsafe.Read<T>(ptr);
+
+            return _endianMismatch
+                ? ReverseEndianness(value)
+                : value;
+        }
+
+        return ReadSlow<T>(device, offset);
     }
 
     /// <inheritdoc/>
     public void Write<T>(ulong address, T value)
         where T : unmanaged, IBinaryNumber<T>
     {
-        int size = Unsafe.SizeOf<T>();
-        CheckAlignment(address, size);
+        CheckAlignment<T>(address);
 
-        Span<byte> buffer = stackalloc byte[size];
+        Span<byte> buffer = stackalloc byte[sizeof(T)];
         WriteEndianness(buffer, value);
 
         Write(address, buffer);
@@ -62,10 +74,12 @@ public unsafe class PhysicalBus : IMemoryAccessor
     /// <inheritdoc/>
     public Stream AsStream() => new BusStream(this);
 
-    private static void CheckAlignment(ulong address, int size)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void CheckAlignment<T>(ulong address)
+        where T : unmanaged, IBinaryNumber<T>
     {
-        if (address % (ulong)size != 0)
-            throw new Exception($"Unaligned access at 0x{address:X16} for size {size}");
+        if ((address & (ulong)(sizeof(T) - 1)) != 0)
+            throw new Exception($"Unaligned access at 0x{address:X16} for size {sizeof(T)}");
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -75,7 +89,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
         T value = MemoryMarshal.Read<T>(buffer);
 
         // If the system endianness doesn't match the target MIPS endianness, swap it.
-        if (BitConverter.IsLittleEndian != (Endianness == Endianness.Little))
+        if (_endianMismatch)
             return ReverseEndianness(value);
 
         return value;
@@ -162,5 +176,17 @@ public unsafe class PhysicalBus : IMemoryAccessor
         ulong offset = address - baseAddress;
 
         device.Write(offset, buffer);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private T ReadSlow<T>(IBusDevice device, ulong offset) where T : unmanaged, IBinaryNumber<T>
+    {
+        int size = sizeof(T);
+        // Use a fixed buffer on the stack to avoid span overhead in the slow path
+        byte* buffer = stackalloc byte[size];
+        var span = new Span<byte>(buffer, size);
+
+        device.Read(offset, span);
+        return ReadEndianness<T>(span);
     }
 }

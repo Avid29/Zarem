@@ -135,4 +135,17 @@ public unsafe class RamDevice : IBusDevice
             return _pageTable[idx];
         }
     }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        lock (_pageTable)
+        {
+            foreach (var page in _pageTable)
+            {
+                if (page is not null)
+                    NativeMemory.Free(page);
+            }
+        }
+    }
 }

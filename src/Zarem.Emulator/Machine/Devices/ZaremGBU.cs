@@ -70,4 +70,9 @@ public class ZaremGBU : IBusDevice, IGraphicsDevice
 
         IsDirty = true;
     }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+    }
 }

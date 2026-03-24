@@ -14,7 +14,7 @@ namespace Zarem.Emulator;
 /// <summary>
 /// An emulator class that wraps an <see cref="IComputer"/> for emulation.
 /// </summary>
-public class Zaremulator
+public class Zaremulator : IDisposable
 {
     private readonly ManualResetEventSlim _runGate = new(false);
     private Thread? _thread;
@@ -176,4 +176,7 @@ public class Zaremulator
         State = EmulatorState.Stopped;
         _thread?.Join();
     }
+
+    /// <inheritdoc/>
+    public void Dispose() => Computer.Dispose();
 }
