@@ -38,6 +38,7 @@ public class StatusViewModel : ObservableRecipient
             OnPropertyChanged(nameof(State));
             OnPropertyChanged(nameof(IsReady));
             OnPropertyChanged(nameof(IsRunning));
+            OnPropertyChanged(nameof(IsPaused));
         });
     }
 
@@ -55,6 +56,11 @@ public class StatusViewModel : ObservableRecipient
     /// Gets whether or not the current state is a running state.
     /// </summary>
     public bool IsRunning => _stateService.IsRunning;
+
+    /// <summary>
+    /// Gets whether or not the current state is paused.
+    /// </summary>
+    public bool IsPaused => _stateService.State is IdeState.Paused;
 
     /// <summary>
     /// Gets the build status message.

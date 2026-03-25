@@ -441,6 +441,7 @@
                     x:Uid="/TitleBar/ContinueMFI"
                     Command="{x:Bind ViewModel.StepCommand}"
                     CommandParameter="{x:Bind debugenum:StepMode.Continue}"
+                    IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsPaused, Mode=OneWay}"
                     Text="Continue"
                     Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
@@ -483,6 +484,7 @@
                     x:Uid="/TitleBar/StepMFI"
                     Command="{x:Bind ViewModel.StepCommand}"
                     CommandParameter="{x:Bind debugenum:StepMode.Step}"
+                    IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsPaused, Mode=OneWay}"
                     Text="Step"
                     Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
@@ -496,6 +498,7 @@
                     x:Uid="/TitleBar/StepOverMFI"
                     Command="{x:Bind ViewModel.StepCommand}"
                     CommandParameter="{x:Bind debugenum:StepMode.StepOver}"
+                    IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsPaused, Mode=OneWay}"
                     Text="Step Over"
                     Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
@@ -509,6 +512,7 @@
                     x:Uid="/TitleBar/StepOutMFI"
                     Command="{x:Bind ViewModel.StepCommand}"
                     CommandParameter="{x:Bind debugenum:StepMode.StepOut}"
+                    IsEnabled="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsPaused, Mode=OneWay}"
                     Text="Step Out"
                     Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
