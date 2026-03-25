@@ -17,13 +17,14 @@ This project is in pre-release stages of development. Changes to Project File fo
 
 Zarem is currently MIPS only, but support for other architectures is planned.
 
-| Architecture   | Assembling     |  Emulating      | Debugging     | Disassembly | Static Analysis |
-| -------------- | -------------- | --------------- | ------------- | ----------- | --------------- |
-| MIPS32         | ✅ Supported  | ✅ Supported    | ✅ Supported | ⚠️  WIP     | ⌛ Planned     |
-| MIPS64         | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  | ⌛ Planned     |
-| RISC-V         | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  | ⌛ Planned     |
-| ARM            | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  | ⌛ Planned     |
-| ARM64          | ⌛ Planned    | ⌛ Planned      | ⌛ Planned   | ⌛ Planned  | ⌛ Planned     |
+| Architecture   | Assembling      | Emulation (Interpret) | Emulation (JIT) | Debugging      | Disassembly     | Static Analysis |
+| -------------- | --------------- | --------------------- | --------------- | -------------- | --------------- | --------------- |
+| MIPS32         | ✅ Supported   | ✅ Supported          | ⌛ Planned     | ✅ Supported   | ⚠️  WIP        | ⌛ Planned     |
+| RISC-V         | ⌛ Planned     | ⌛ Planned            | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     |
+| ARM            | ⌛ Planned     | ⌛ Planned            | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     |
+| ARM64          | ⌛ Planned     | ⌛ Planned            | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     |
+| MIPS64         | ❌ Not Planned | ❌ Not Planned        | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned |
+| x86_64         | ❌ Not Planned | ❌ Not Planned        | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned |
 
 # Cross-Platform Support
 
@@ -40,7 +41,7 @@ The Zarem IDE is a WinUI 3 project, and therefore only available on Windows. **H
 
 Zarem supports localization for both the IDE and the Assembler. Assembler localization is integrated directly into the assembler, and is therefore available in the console as-well-as the Zarem IDE app.
 
-Current languages:
+### Current languages:
 
 | Language | Provided    | Verified          |
 | -------- | ----------- | ----------------- |
