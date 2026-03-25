@@ -32,8 +32,8 @@ public struct CauseRegister
     /// </summary>
     public MipsTrap ExecptionCode
     {
-        readonly get => (MipsTrap)UintMasking.GetShiftMask(_cause, EXCEPTION_CODE_SIZE, EXCEPTION_CODE_OFFSET);
-        set => UintMasking.SetShiftMask(ref _cause, EXCEPTION_CODE_SIZE, EXCEPTION_CODE_OFFSET, (uint)value);
+        readonly get => (MipsTrap)BitField.GetField(_cause, EXCEPTION_CODE_SIZE, EXCEPTION_CODE_OFFSET);
+        set => BitField.SetField(ref _cause, EXCEPTION_CODE_SIZE, EXCEPTION_CODE_OFFSET, (uint)value);
     }
 
     /// <summary>
@@ -41,8 +41,8 @@ public struct CauseRegister
     /// </summary>
     public byte PendingInterupts
     {
-        readonly get => (byte)UintMasking.GetShiftMask(_cause, PENDING_INTERUPTS_SIZE, PENDING_INTERUPTS_OFFSET);
-        set => UintMasking.SetShiftMask(ref _cause, PENDING_INTERUPTS_SIZE, PENDING_INTERUPTS_OFFSET, value);
+        readonly get => (byte)BitField.GetField(_cause, PENDING_INTERUPTS_SIZE, PENDING_INTERUPTS_OFFSET);
+        set => BitField.SetField(ref _cause, PENDING_INTERUPTS_SIZE, PENDING_INTERUPTS_OFFSET, value);
     }
     
     /// <summary>
@@ -50,8 +50,8 @@ public struct CauseRegister
     /// </summary>
     public byte CoProcessorException
     {
-        readonly get => (byte)UintMasking.GetShiftMask(_cause, COPROCESSOR_EXCEPTION_SIZE, COPROCESSOR_EXCEPTION_OFFSET);
-        set => UintMasking.SetShiftMask(ref _cause, COPROCESSOR_EXCEPTION_SIZE, COPROCESSOR_EXCEPTION_OFFSET, value);
+        readonly get => (byte)BitField.GetField(_cause, COPROCESSOR_EXCEPTION_SIZE, COPROCESSOR_EXCEPTION_OFFSET);
+        set => BitField.SetField(ref _cause, COPROCESSOR_EXCEPTION_SIZE, COPROCESSOR_EXCEPTION_OFFSET, value);
     }
 
     /// <summary>
@@ -59,8 +59,8 @@ public struct CauseRegister
     /// </summary>
     public bool IsBranchDelayed
     {
-        readonly get => UintMasking.CheckBit(_cause, BRANCH_DELAY_BIT);
-        set => UintMasking.SetBit(ref _cause, BRANCH_DELAY_BIT, value);
+        readonly get => BitField.GetBit(_cause, BRANCH_DELAY_BIT);
+        set => BitField.SetBit(ref _cause, BRANCH_DELAY_BIT, value);
     }
 
     /// <summary>

@@ -1,11 +1,12 @@
 ﻿// Avishai Dernis 2024
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
-using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
+using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Models.Instructions;
 
@@ -76,8 +77,10 @@ namespace Zarem.Models.Instructions;
 /// <summary>
 /// A struct representing an instruction utilizing the floating-point coprocessor.
 /// </summary>
+[StructLayout(LayoutKind.Explicit, Size = 4)]
 public struct FloatInstruction
 {
+    [FieldOffset(0)]
     private MipsInstruction _inst;
     
     /// <summary>
@@ -183,20 +186,20 @@ public struct FloatInstruction
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="FloatInstruction"/>.
     /// </summary>
-    public static unsafe explicit operator FloatInstruction(uint value) => Unsafe.As<uint, FloatInstruction>(ref value);
+    public static explicit operator FloatInstruction(uint value) => Unsafe.As<uint, FloatInstruction>(ref value);
 
     /// <summary>
     /// Casts a <see cref="FloatInstruction"/> to a <see cref="uint"/>.
     /// </summary>
-    public static unsafe explicit operator uint(FloatInstruction value) => Unsafe.As<FloatInstruction, uint>(ref value);
+    public static explicit operator uint(FloatInstruction value) => Unsafe.As<FloatInstruction, uint>(ref value);
 
     /// <summary>
     /// Casts an <see cref="MipsInstruction"/> to a <see cref="FloatInstruction"/>.
     /// </summary>
-    public static unsafe implicit operator FloatInstruction(MipsInstruction value) => Unsafe.As<MipsInstruction, FloatInstruction>(ref value);
+    public static implicit operator FloatInstruction(MipsInstruction value) => Unsafe.As<MipsInstruction, FloatInstruction>(ref value);
 
     /// <summary>
     /// Casts a <see cref="FloatInstruction"/> to a <see cref="MipsInstruction"/>.
     /// </summary>
-    public static unsafe implicit operator MipsInstruction(FloatInstruction value) => Unsafe.As<FloatInstruction, MipsInstruction>(ref value);
+    public static implicit operator MipsInstruction(FloatInstruction value) => Unsafe.As<FloatInstruction, MipsInstruction>(ref value);
 }

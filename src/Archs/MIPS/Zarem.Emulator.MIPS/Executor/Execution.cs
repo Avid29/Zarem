@@ -285,10 +285,10 @@ public readonly struct Execution
     /// </summary>
     public readonly GPRegister CoProcReg
     {
-        get => (GPRegister)UintMasking.GetShiftMask(_secondary2, REG_BITCOUNT, 0);
+        get => (GPRegister)BitField.GetField(_secondary2, REG_BITCOUNT, 0);
         init
         {
-            UintMasking.SetShiftMask(ref _secondary2, REG_BITCOUNT, 0, (uint)value);
+            BitField.SetField(ref _secondary2, REG_BITCOUNT, 0, (uint)value);
             SideEffect = SideEffect.WriteCoProc;
         }
     }
@@ -298,10 +298,10 @@ public readonly struct Execution
     /// </summary>
     public readonly CP0Registers CoProc0Reg
     {
-        get => (CP0Registers)UintMasking.GetShiftMask(_secondary2, REG_BITCOUNT, 0);
+        get => (CP0Registers)BitField.GetField(_secondary2, REG_BITCOUNT, 0);
         init
         {
-            UintMasking.SetShiftMask(ref _secondary2, REG_BITCOUNT, 0, (uint)value);
+            BitField.SetField(ref _secondary2, REG_BITCOUNT, 0, (uint)value);
             CoProcRegisterSet = RegisterSet.CoProc0;
         }
     }
@@ -311,10 +311,10 @@ public readonly struct Execution
     /// </summary>
     public readonly FloatRegister FloatReg
     {
-        get => (FloatRegister)UintMasking.GetShiftMask(_secondary2, REG_BITCOUNT, 0);
+        get => (FloatRegister)BitField.GetField(_secondary2, REG_BITCOUNT, 0);
         init
         {
-            UintMasking.SetShiftMask(ref _secondary2, REG_BITCOUNT, 0, (uint)value);
+            BitField.SetField(ref _secondary2, REG_BITCOUNT, 0, (uint)value);
             CoProcRegisterSet = RegisterSet.FloatingPoints;
         }
     }
@@ -324,10 +324,10 @@ public readonly struct Execution
     /// </summary>
     public readonly RegisterSet CoProcRegisterSet
     {
-        get => (RegisterSet)UintMasking.GetShiftMask(_secondary2, REGSET_BITCOUNT, REGSET_OFFSET);
+        get => (RegisterSet)BitField.GetField(_secondary2, REGSET_BITCOUNT, REGSET_OFFSET);
         init
         {
-            UintMasking.SetShiftMask(ref _secondary2, REGSET_BITCOUNT, REGSET_OFFSET, (uint)value);
+            BitField.SetField(ref _secondary2, REGSET_BITCOUNT, REGSET_OFFSET, (uint)value);
             SideEffect = SideEffect.WriteCoProc;
         }
     }

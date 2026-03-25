@@ -6,7 +6,7 @@ using Zarem.Emulator.Executor.Enum;
 
 namespace Zarem.Emulator.Executor;
 
-public partial struct InstructionServiceTable
+public partial class InstructionServiceTable
 {
     private interface IShiftLogic
     {

@@ -1,17 +1,15 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using Zarem.Debugger.Viewer;
 using Zarem.IDE.Models.Enums;
-using Zarem.IDE.Services;
 
 namespace Zarem.IDE.Bindables;
 
 /// <summary>
 /// A bindable wrapper for viewing a register.
 /// </summary>
-public class BindableRegister : ObservableObject, IDisposable
+public class BindableRegister : ObservableObject
 {
     private readonly IRegisterGroup _group;
 
@@ -22,8 +20,6 @@ public class BindableRegister : ObservableObject, IDisposable
     {
         _group = group;
         RegisterName = registerName;
-
-        _group.RegisterUpdated += OnRegisterUpdated;
     }
 
     /// <summary>
@@ -40,7 +36,7 @@ public class BindableRegister : ObservableObject, IDisposable
         set
         {
             _group[RegisterName] = value;
-            OnPropertyChanged(nameof(Value));
+            OnPropertyChanged();
         }
     }
 
@@ -53,20 +49,11 @@ public class BindableRegister : ObservableObject, IDisposable
         set => SetProperty(ref field, value);
     }
 
-    /// <inheritdoc/>
-    public void Dispose()
+    /// <summary>
+    /// Invalidates the current <see cref="Value"/> and invokes a property changed.
+    /// </summary>
+    public void Invalidate()
     {
-        _group.RegisterUpdated -= OnRegisterUpdated;
-    }
-
-    private void OnRegisterUpdated(IRegisterGroup sender, string e)
-    {
-        if (e != RegisterName)
-            return;
-
-        Service.Get<IDispatcherService>().RunOnUIThread(() =>
-        {
-            OnPropertyChanged(nameof(Value));
-        });
+        OnPropertyChanged(nameof(Value));
     }
 }

@@ -1,10 +1,11 @@
 ﻿// Avishai Dernis 2025
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
 using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Models.Instructions.Enums.SpecialFunctions;
+using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 namespace Zarem.Models.Instructions;
 
@@ -137,8 +138,10 @@ namespace Zarem.Models.Instructions;
 /// <summary>
 /// A struct representing an instruction utilizing coprocessor0.
 /// </summary>
+[StructLayout(LayoutKind.Explicit, Size = 4)]
 public partial struct CoProc0Instruction
 {
+    [FieldOffset(0)]
     private MipsInstruction _inst;
 
     /// <summary>
@@ -249,20 +252,20 @@ public partial struct CoProc0Instruction
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="CoProc0Instruction"/>.
     /// </summary>
-    public static unsafe explicit operator CoProc0Instruction(uint value) => Unsafe.As<uint, CoProc0Instruction>(ref value);
+    public static explicit operator CoProc0Instruction(uint value) => Unsafe.As<uint, CoProc0Instruction>(ref value);
 
     /// <summary>
     /// Casts a <see cref="CoProc0Instruction"/> to a <see cref="uint"/>.
     /// </summary>
-    public static unsafe explicit operator uint(CoProc0Instruction value) => Unsafe.As<CoProc0Instruction, uint>(ref value);
+    public static explicit operator uint(CoProc0Instruction value) => Unsafe.As<CoProc0Instruction, uint>(ref value);
 
     /// <summary>
     /// Casts an <see cref="MipsInstruction"/> to a <see cref="CoProc0Instruction"/>.
     /// </summary>
-    public static unsafe implicit operator CoProc0Instruction(MipsInstruction value) => Unsafe.As<MipsInstruction, CoProc0Instruction>(ref value);
+    public static implicit operator CoProc0Instruction(MipsInstruction value) => Unsafe.As<MipsInstruction, CoProc0Instruction>(ref value);
 
     /// <summary>
     /// Casts a <see cref="CoProc0Instruction"/> to a <see cref="MipsInstruction"/>.
     /// </summary>
-    public static unsafe implicit operator MipsInstruction(CoProc0Instruction value) => Unsafe.As<CoProc0Instruction, MipsInstruction>(ref value);
+    public static implicit operator MipsInstruction(CoProc0Instruction value) => Unsafe.As<CoProc0Instruction, MipsInstruction>(ref value);
 }

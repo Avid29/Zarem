@@ -10,7 +10,7 @@ namespace Zarem.Debugger.Viewer;
 /// </summary>
 public class MipsDebugViewer : IDebugViewer
 {
-    private MipsComputer _mipsComputer;
+    private readonly MipsComputer _mipsComputer;
 
     private MipsDebugViewer(MipsComputer mipsComputer)
     {

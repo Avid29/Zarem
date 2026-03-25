@@ -14,7 +14,7 @@ namespace Zarem.Emulator;
 /// <summary>
 /// An emulator class that wraps an <see cref="IComputer"/> for emulation.
 /// </summary>
-public class Zaremulator
+public class Zaremulator : IDisposable
 {
     private readonly ManualResetEventSlim _runGate = new(false);
     private Thread? _thread;
@@ -130,7 +130,7 @@ public class Zaremulator
 
         void DumpMHz()
         {
-            double mhz = (totalInstructions / (sw.Elapsed.TotalSeconds * 1000000.0));
+            double mhz = totalInstructions / (sw.Elapsed.TotalSeconds * 1000000.0);
             Debug.WriteLine($"{mhz} MHz");
             totalInstructions = 0;
             sw.Restart();
@@ -153,18 +153,18 @@ public class Zaremulator
 
                     if (sw.ElapsedMilliseconds > 1000)
                         DumpMHz();
-                }
 #endif
+                }
 
                 // Complete pausing transition
                 if (State is EmulatorState.Pausing)
                     State = EmulatorState.Paused;
             }
         }
-        catch
+        catch (Exception e)
         {
             var localizer = new Localizer("Zarem.Emulator.Resources.Messages", typeof(Zaremulator).Assembly);
-            Console.WriteLine(localizer["ExceptionOccurred"]);
+            Console.WriteLine(localizer["ExceptionOccurred", e]);
         }
 
 #if DEBUG
@@ -176,4 +176,7 @@ public class Zaremulator
         State = EmulatorState.Stopped;
         _thread?.Join();
     }
+
+    /// <inheritdoc/>
+    public void Dispose() => Computer.Dispose();
 }

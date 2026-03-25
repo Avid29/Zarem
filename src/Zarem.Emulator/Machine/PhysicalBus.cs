@@ -4,9 +4,12 @@ using System;
 using System.Buffers.Binary;
 using System.Drawing;
 using System.IO;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Emulator.Helpers;
+using Zarem.Emulator.Machine.Devices;
+using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models.Enums;
 
@@ -15,135 +18,175 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// Handles the operations of a physical bus in an emulated computer.
 /// </summary>
-public class PhysicalBus : IMemoryAccessor
+public unsafe class PhysicalBus : IMemoryAccessor
 {
     private readonly MemoryMapper _mapper;
+    private readonly bool _endianMismatch;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PhysicalBus"/> class.
     /// </summary>
-    public PhysicalBus(MemoryMapper mapper)
+    public PhysicalBus(MemoryMapper mapper, Endianness endianness = Endianness.Big)
     {
         _mapper = mapper;
+        _endianMismatch = BitConverter.IsLittleEndian != (endianness == Endianness.Little);
     }
 
     /// <summary>
     /// Gets or sets the endianness of the bus.
     /// </summary>
-    public Endianness Endianness { get; set; } = Endianness.Big;
+    public Endianness Endianness { get; }
 
     /// <inheritdoc/>
     public T Read<T>(ulong address)
-        where T : unmanaged
+        where T : unmanaged, IBinaryNumber<T>
     {
-        int size = Unsafe.SizeOf<T>();
-        CheckAlignment(address, size);
+        CheckAlignment<T>(address);
 
-        Span<byte> buffer = stackalloc byte[size];
-        Read(address, buffer);
+        var device = _mapper.Resolve(address, out var baseAddress);
+        ulong offset = address - baseAddress;
 
-        return ReadEndianness<T>(buffer);
+        if (device is RamDevice memDevice)
+        {
+            byte* ptr = memDevice.GetPointer(offset);
+            T value = Unsafe.Read<T>(ptr);
+
+            return _endianMismatch
+                ? ReverseEndianness(value)
+                : value;
+        }
+
+        // Fallback: MMIO/Hardware registers
+        return ReadSlow<T>(device, offset);
     }
 
     /// <inheritdoc/>
     public void Write<T>(ulong address, T value)
-        where T : unmanaged
+        where T : unmanaged, IBinaryNumber<T>
     {
-        int size = Unsafe.SizeOf<T>();
-        CheckAlignment(address, size);
+        CheckAlignment<T>(address);
 
-        Span<byte> buffer = stackalloc byte[size];
-        WriteEndianness(buffer, value);
+        var device = _mapper.Resolve(address, out var baseAddress);
+        ulong offset = address - baseAddress;
 
-        Write(address, buffer);
+        if (device is RamDevice memDevice)
+        {
+            byte* ptr = memDevice.GetPointer(offset);
+
+            // Handle endianness swap before writing to raw memory
+            if (_endianMismatch)
+            {
+                value = ReverseEndianness(value);
+            }
+
+            Unsafe.Write(ptr, value);
+            return;
+        }
+        // Fallback: MMIO/Hardware registers
+        WriteSlow(device, offset, value);
     }
 
     /// <inheritdoc/>
     public Stream AsStream() => new BusStream(this);
 
-    private static void CheckAlignment(ulong address, int size)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void CheckAlignment<T>(ulong address)
+        where T : unmanaged, IBinaryNumber<T>
     {
-        if (address % (ulong)size != 0)
-            throw new Exception($"Unaligned access at 0x{address:X16} for size {size}");
+        if ((address & (ulong)(sizeof(T) - 1)) != 0)
+            throw new Exception($"Unaligned access at 0x{address:X16} for size {sizeof(T)}");
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private T ReadEndianness<T>(ReadOnlySpan<byte> buffer)
+        where T : unmanaged, IBinaryNumber<T>
+    {
+        T value = MemoryMarshal.Read<T>(buffer);
+
+        // If the system endianness doesn't match the target MIPS endianness, swap it.
+            return _endianMismatch
+                ? ReverseEndianness(value)
+                : value;
     }
 
-    private T ReadEndianness<T>(ReadOnlySpan<byte> buffer) where T : unmanaged
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void WriteEndianness<T>(Span<byte> buffer, T value)
+        where T : unmanaged, IBinaryNumber<T>
     {
-        // No endianness difference
-        if (BitConverter.IsLittleEndian == Endianness is Endianness.Little)
-            return MemoryMarshal.Read<T>(buffer);
-
-        return Endianness switch
-        {
-            Endianness.Big => typeof(T) switch
-            {
-                Type t when t == typeof(ulong) => (T)(object)BinaryPrimitives.ReadUInt64BigEndian(buffer),
-                Type t when t == typeof(long) => (T)(object)BinaryPrimitives.ReadInt64BigEndian(buffer),
-                Type t when t == typeof(uint) => (T)(object)BinaryPrimitives.ReadUInt32BigEndian(buffer),
-                Type t when t == typeof(int) => (T)(object)BinaryPrimitives.ReadInt32BigEndian(buffer),
-                Type t when t == typeof(ushort) => (T)(object)BinaryPrimitives.ReadUInt16BigEndian(buffer),
-                Type t when t == typeof(short) => (T)(object)BinaryPrimitives.ReadInt16BigEndian(buffer),
-                _ => MemoryMarshal.Read<T>(buffer),
-            },
-            Endianness.Little or _ => typeof(T) switch
-            {
-                Type t when t == typeof(ulong) => (T)(object)BinaryPrimitives.ReadUInt64LittleEndian(buffer),
-                Type t when t == typeof(long) => (T)(object)BinaryPrimitives.ReadInt64LittleEndian(buffer),
-                Type t when t == typeof(uint) => (T)(object)BinaryPrimitives.ReadUInt32LittleEndian(buffer),
-                Type t when t == typeof(int) => (T)(object)BinaryPrimitives.ReadInt32LittleEndian(buffer),
-                Type t when t == typeof(ushort) => (T)(object)BinaryPrimitives.ReadUInt16LittleEndian(buffer),
-                Type t when t == typeof(short) => (T)(object)BinaryPrimitives.ReadInt16LittleEndian(buffer),
-                _ => MemoryMarshal.Read<T>(buffer),
-            },
-        };
-    }
-
-    private void WriteEndianness<T>(Span<byte> buffer, T value) where T : unmanaged
-    {
-        // No endianness difference
-        if (BitConverter.IsLittleEndian == Endianness is Endianness.Little)
+        // If host matches target, just write raw bytes
+        if (!_endianMismatch)
         {
             MemoryMarshal.Write(buffer, in value);
             return;
         }
 
-        switch (Endianness)
+        // No match. Change endianness before writing
+        // The JIT optimizes this into a single path based on the caller's 'T'
+        if (sizeof(T) == 1)
         {
-            case Endianness.Big:
-                switch (value)
-                {
-                    case ulong u64:
-                        BinaryPrimitives.WriteUInt64BigEndian(buffer, u64);
-                        break;
-                    case uint u32:
-                        BinaryPrimitives.WriteUInt32BigEndian(buffer, u32);
-                        break;
-                    case ushort u16:
-                        BinaryPrimitives.WriteUInt16BigEndian(buffer, u16);
-                        break;
-                    default:
-                        MemoryMarshal.Write(buffer, in value);
-                        break;
-                }
-                break;
-            case Endianness.Little:
-                switch (value)
-                {
-                    case ulong u64:
-                        BinaryPrimitives.WriteUInt64LittleEndian(buffer, u64);
-                        break;
-                    case uint u32:
-                        BinaryPrimitives.WriteUInt32LittleEndian(buffer, u32);
-                        break;
-                    case ushort u16:
-                        BinaryPrimitives.WriteUInt16LittleEndian(buffer, u16);
-                        break;
-                    default:
-                        MemoryMarshal.Write(buffer, in value);
-                        break;
-                }
-                break;
-        };
+            buffer[0] = Unsafe.As<T, byte>(ref value);
+        }
+        else if (sizeof(T) == 2)
+        {
+            ushort val = Unsafe.As<T, ushort>(ref value);
+            if (BitConverter.IsLittleEndian)
+                BinaryPrimitives.WriteUInt16BigEndian(buffer, val);
+            else
+                BinaryPrimitives.WriteUInt16LittleEndian(buffer, val);
+        }
+        else if (sizeof(T) == 4)
+        {
+            uint val = Unsafe.As<T, uint>(ref value);
+            if (BitConverter.IsLittleEndian)
+                BinaryPrimitives.WriteUInt32BigEndian(buffer, val);
+            else
+                BinaryPrimitives.WriteUInt32LittleEndian(buffer, val);
+        }
+        else if (sizeof(T) == 8)
+        {
+            ulong val = Unsafe.As<T, ulong>(ref value);
+            if (BitConverter.IsLittleEndian)
+                BinaryPrimitives.WriteUInt64BigEndian(buffer, val);
+            else
+                BinaryPrimitives.WriteUInt64LittleEndian(buffer, val);
+        }
+        else
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static T ReverseEndianness<T>(T value)
+        where T : unmanaged, IBinaryNumber<T>
+    {
+        // sizeof(T) is a JIT constant. No branches in the final assembly.
+        if (sizeof(T) == 1)
+            return value;
+
+        if (sizeof(T) == 2)
+        {
+            // Reinterprets the bytes of T as a ushort without boxing or conversion logic.
+            ushort val = Unsafe.As<T, ushort>(ref value);
+            ushort swapped = BinaryPrimitives.ReverseEndianness(val);
+            return Unsafe.As<ushort, T>(ref swapped);
+        }
+
+        if (sizeof(T) == 4)
+        {
+            uint val = Unsafe.As<T, uint>(ref value);
+            uint swapped = BinaryPrimitives.ReverseEndianness(val);
+            return Unsafe.As<uint, T>(ref swapped);
+        }
+
+        if (sizeof(T) == 8)
+        {
+            ulong val = Unsafe.As<T, ulong>(ref value);
+            ulong swapped = BinaryPrimitives.ReverseEndianness(val);
+            return Unsafe.As<ulong, T>(ref swapped);
+        }
+
+        throw new NotSupportedException($"Size {sizeof(T)} not supported for endianness swap.");
     }
 
     /// <inheritdoc/>
@@ -165,5 +208,28 @@ public class PhysicalBus : IMemoryAccessor
         ulong offset = address - baseAddress;
 
         device.Write(offset, buffer);
+    }
+
+    private T ReadSlow<T>(IBusDevice device, ulong offset) where T : unmanaged, IBinaryNumber<T>
+    {
+        int size = sizeof(T);
+        // Use a fixed buffer on the stack to avoid span overhead in the slow path
+        byte* buffer = stackalloc byte[size];
+        var span = new Span<byte>(buffer, size);
+
+        device.Read(offset, span);
+        return ReadEndianness<T>(span);
+    }
+
+    private void WriteSlow<T>(IBusDevice device, ulong offset, T value)
+    where T : unmanaged, IBinaryNumber<T>
+    {
+        int size = sizeof(T);
+        byte* buffer = stackalloc byte[size];
+        var span = new Span<byte>(buffer, size);
+
+        WriteEndianness(span, value);
+
+        device.Write(offset, span);
     }
 }

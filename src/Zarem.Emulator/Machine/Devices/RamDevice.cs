@@ -1,6 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 
 namespace Zarem.Emulator.Machine.Devices;
@@ -8,10 +11,11 @@ namespace Zarem.Emulator.Machine.Devices;
 /// <summary>
 /// An <see cref="IBusDevice"/> that is the system RAM.
 /// </summary>
-public class RamDevice : IBusDevice
+public unsafe class RamDevice : IBusDevice
 {
-    private readonly byte[][] _pageTable;
+    private readonly byte*[] _pageTable;
     private readonly uint _pageSize;
+    private readonly uint _pageShift;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RamDevice"/> class.
@@ -20,9 +24,10 @@ public class RamDevice : IBusDevice
     {
         BusRangeSize = size;
         _pageSize = pageSize;
+        _pageShift = (uint)BitOperations.TrailingZeroCount(pageSize);
 
         // Calculate total pages needed for the range
-        _pageTable = new byte[(size + pageSize - 1) / pageSize][];
+        _pageTable = new byte*[(size + pageSize - 1) / pageSize];
     }
 
     /// <inheritdoc/>
@@ -31,6 +36,28 @@ public class RamDevice : IBusDevice
     /// <inheritdoc/>
     public ulong BusRangeSize { get; }
 
+    /// <summary>
+    /// Gets a pointer to an address within the ram device.
+    /// </summary>
+    /// <param name="offset">The offset within the device address range.</param>
+    /// <returns>A pointer to the requested address.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public byte* GetPointer(ulong offset)
+    {
+        ulong pageIdx = offset >> (int)_pageShift;
+        uint pageOffset = (uint)(offset & (_pageSize - 1));
+
+        byte* page = _pageTable[pageIdx];
+
+        // Lazy Allocate on the fly
+        if (page is null)
+        {
+            page = AllocatePage(pageIdx);
+        }
+
+        return page + pageOffset;
+    }
+
     /// <inheritdoc/>
     public void Read(ulong offset, Span<byte> destination)
     {
@@ -38,27 +65,29 @@ public class RamDevice : IBusDevice
         int destOffset = 0;
         ulong currentAddr = offset;
 
-        while (remaining > 0)
+        fixed (byte* destPtr = destination)
         {
-            ulong pageIdx = currentAddr / _pageSize;
-            int pageOffset = (int)(currentAddr % _pageSize);
-            int bytesInPage = (int)Math.Min((ulong)_pageSize - (ulong)pageOffset, (ulong)remaining);
-
-            var page = _pageTable[pageIdx];
-            if (page == null)
+            while (remaining > 0)
             {
-                // Sparse Read: If page doesn't exist, it's logically all zeros
-                destination.Slice(destOffset, bytesInPage).Clear();
-            }
-            else
-            {
-                // Copy from the existing page
-                page.AsSpan(pageOffset, bytesInPage).CopyTo(destination.Slice(destOffset, bytesInPage));
-            }
+                ulong pageIdx = currentAddr >> (int)_pageShift;
+                uint pageOffset = (uint)(currentAddr & (_pageSize - 1));
 
-            remaining -= bytesInPage;
-            destOffset += bytesInPage;
-            currentAddr += (ulong)bytesInPage;
+                int bytesInPage = (int)Math.Min(_pageSize - pageOffset, (uint)remaining);
+
+                byte* page = _pageTable[pageIdx];
+                if (page == null)
+                {
+                    Unsafe.InitBlock(destPtr + destOffset, 0, (uint)bytesInPage);
+                }
+                else
+                {
+                    Unsafe.CopyBlock(destPtr + destOffset, page + pageOffset, (uint)bytesInPage);
+                }
+
+                remaining -= bytesInPage;
+                destOffset += bytesInPage;
+                currentAddr += (ulong)bytesInPage;
+            }
         }
     }
 
@@ -69,23 +98,54 @@ public class RamDevice : IBusDevice
         int srcOffset = 0;
         ulong currentAddr = offset;
 
-        while (remaining > 0)
+        fixed (byte* srcPtr = source)
         {
-            ulong pageIdx = currentAddr / _pageSize;
-            int pageOffset = (int)(currentAddr % _pageSize);
-            int bytesToCopy = (int)Math.Min((ulong)_pageSize - (ulong)pageOffset, (ulong)remaining);
-
-            // Lazy Allocation: Create the page only when it's written to
-            if (_pageTable[pageIdx] == null)
+            while (remaining > 0)
             {
-                _pageTable[pageIdx] = new byte[_pageSize];
+                ulong pageIdx = currentAddr >> (int)_pageShift;
+                uint pageOffset = (uint)(currentAddr & (_pageSize - 1));
+
+                int bytesToCopy = (int)Math.Min(_pageSize - pageOffset, (uint)remaining);
+
+                byte* page = _pageTable[pageIdx];
+                if (page == null)
+                {
+                    page = AllocatePage(pageIdx);
+                }
+
+                // Raw Memory Copy
+                Unsafe.CopyBlock(page + pageOffset, srcPtr + srcOffset, (uint)bytesToCopy);
+
+                remaining -= bytesToCopy;
+                srcOffset += bytesToCopy;
+                currentAddr += (ulong)bytesToCopy;
             }
+        }
+    }
 
-            source.Slice(srcOffset, bytesToCopy).CopyTo(_pageTable[pageIdx].AsSpan(pageOffset, bytesToCopy));
+    private byte* AllocatePage(ulong idx)
+    {
+        lock (_pageTable)
+        {
+            if (_pageTable[idx] is null)
+            {
+                // Allocate unmanaged memory so the GC doesn't move it
+                _pageTable[idx] = (byte*)NativeMemory.AllocZeroed(_pageSize);
+            }
+            return _pageTable[idx];
+        }
+    }
 
-            remaining -= bytesToCopy;
-            srcOffset += bytesToCopy;
-            currentAddr += (ulong)bytesToCopy;
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        lock (_pageTable)
+        {
+            foreach (var page in _pageTable)
+            {
+                if (page is not null)
+                    NativeMemory.Free(page);
+            }
         }
     }
 }

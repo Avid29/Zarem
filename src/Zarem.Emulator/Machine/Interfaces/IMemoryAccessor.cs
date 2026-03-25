@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Numerics;
 
 namespace Zarem.Emulator.Machine.Interfaces;
 
@@ -16,7 +17,7 @@ public interface IMemoryAccessor
     /// <typeparam name="T">The type of object to read from memory.</typeparam>
     /// <param name="address">The address to read from.</param>
     /// <returns>The <typeparamref name="T"/> at <paramref name="address"/>.</returns>
-    T Read<T>(ulong address) where T : unmanaged;
+    T Read<T>(ulong address) where T : unmanaged, IBinaryNumber<T>;
 
     /// <summary>
     /// Reads a span of bytes from memory.
@@ -31,7 +32,7 @@ public interface IMemoryAccessor
     /// <typeparam name="T">The type of object to write from memory.</typeparam>
     /// <param name="address">The address to write to.</param>
     /// <param name="value">The value to write to memory.</param>
-    void Write<T>(ulong address, T value) where T : unmanaged;
+    void Write<T>(ulong address, T value) where T : unmanaged, IBinaryNumber<T>;
 
     /// <summary>
     /// Write a span of bytes to memory.

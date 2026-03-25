@@ -71,4 +71,13 @@ public abstract class ComputerBase : IComputer
     {
         BreakpointHit?.Invoke(this, e);
     }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        foreach (var device in Devices)
+        {
+            device.Dispose();
+        }
+    }
 }

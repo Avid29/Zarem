@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Collections.Generic;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Emulator.Machine.Registers;
@@ -11,12 +10,9 @@ namespace Zarem.Debugger.Viewer;
 /// <summary>
 /// A class wrapping a <see cref="MipsRegisterFile"/> as an <see cref="IRegisterGroup"/>.
 /// </summary>
-public class MipsRegisterViewer : IRegisterGroup, IDisposable
+public class MipsRegisterViewer : IRegisterGroup
 {
-    private MipsRegisterFile _registers;
-
-    /// <inheritdoc/>
-    public event EventHandler<IRegisterGroup, string>? RegisterUpdated;
+    private readonly MipsRegisterFile _registers;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsRegisterViewer"/> class.
@@ -24,7 +20,6 @@ public class MipsRegisterViewer : IRegisterGroup, IDisposable
     public MipsRegisterViewer(MipsRegisterFile registerFile)
     {
         _registers = registerFile;
-        _registers.RegisterChanged += OnRegisterChanged;
     }
 
     /// <inheritdoc/>
@@ -48,17 +43,5 @@ public class MipsRegisterViewer : IRegisterGroup, IDisposable
                 yield return RegistersTable.GetRegisterString((GPRegister)i, _registers.RegisterSet);
             }
         }
-    }
-
-    /// <inheritdoc/>
-    public void Dispose()
-    {
-        _registers.RegisterChanged -= OnRegisterChanged;
-    }
-
-    private void OnRegisterChanged(object? sender, GPRegister e)
-    {
-        var registerName = RegistersTable.GetRegisterString(e, _registers.RegisterSet);
-        RegisterUpdated?.Invoke(this, registerName);
     }
 }

@@ -10,7 +10,7 @@ namespace Zarem.Emulator.Machine.Interfaces;
 /// <summary>
 /// An interface for an emulated computer.
 /// </summary>
-public interface IComputer
+public interface IComputer : IDisposable
 {
     /// <summary>
     /// An event invoked when a shutdown is requested.

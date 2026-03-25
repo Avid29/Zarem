@@ -13,11 +13,6 @@ public class MipsRegisterFile
     private readonly uint[] _registers;
 
     /// <summary>
-    /// An event invoked when a register is changed.
-    /// </summary>
-    public event EventHandler<GPRegister>? RegisterChanged;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="MipsRegisterFile"/> class.
     /// </summary>
     public MipsRegisterFile(RegisterSet set, int count = 32)
@@ -37,6 +32,18 @@ public class MipsRegisterFile
     public int Count => _registers.Length;
 
     /// <summary>
+    /// Gets an unsafe point to the registers
+    /// </summary>
+    public unsafe uint* Regs
+    {
+        get
+        {
+            fixed (uint* ptr = _registers)
+                return ptr;
+        }
+    }
+
+    /// <summary>
     /// Gets or sets the value in a register.
     /// </summary>
     public uint this[int register]
@@ -53,7 +60,6 @@ public class MipsRegisterFile
                 return;
 
             _registers[register] = value;
-            RegisterChanged?.Invoke(this, (GPRegister)register);
         }
     }
 
