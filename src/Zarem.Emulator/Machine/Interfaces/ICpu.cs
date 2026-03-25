@@ -8,7 +8,7 @@ namespace Zarem.Emulator.Machine.Interfaces;
 /// <summary>
 /// An interface for the CPU state.
 /// </summary>
-public interface ICpu
+public interface ICpu : IDisposable
 {
     /// <summary>
     /// An event invoked when a breakpoint is hit.

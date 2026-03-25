@@ -26,7 +26,7 @@ public class CoProcessor0
     /// <summary>
     /// Gets the coprocessor0's register file.
     /// </summary>
-    public MipsRegisterFile RegisterFile { get; }
+    internal MipsRegisterFile RegisterFile { get; }
 
     /// <summary>
     /// Gets the processor's current privilege mode.

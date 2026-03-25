@@ -19,7 +19,7 @@ namespace Zarem.Emulator.Machine;
 /// </summary>
 public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 {
-    private InstructionServiceTable _instructionServiceTable;
+    private readonly InstructionServiceTable _instructionServiceTable;
 
     /// <inheritdoc/>
     public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
@@ -194,12 +194,8 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
         {
             read = size switch
             {
-                1 => signed
-                    ? (uint)Memory.Read<sbyte>(addr)
-                    : Memory.Read<byte>(addr),
-                2 => signed
-                    ? (uint)Memory.Read<short>(addr)
-                    : Memory.Read<ushort>(addr),
+                1 => signed ? (uint)Memory.Read<sbyte>(addr) : Memory.Read<byte>(addr),
+                2 => signed ? (uint)Memory.Read<short>(addr) : Memory.Read<ushort>(addr),
                 4 => Memory.Read<uint>(addr),
                 _ => ThrowHelper.ThrowInvalidOperationException<uint>($"Invalid memory read size: {size}"),
             };
@@ -211,15 +207,12 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
                 case 1:
                     Memory.Write(addr, (byte)execution.WriteBack);
                     break;
-
                 case 2:
                     Memory.Write(addr, (ushort)execution.WriteBack);
                     break;
-
                 case 4:
                     Memory.Write(addr, execution.WriteBack);
                     break;
-
                 default:
                     throw new InvalidOperationException($"Invalid memory write size: {size}");
             }
@@ -230,22 +223,17 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 
     private MipsTrap WriteBack(Execution execution, uint memRead)
     {
-        uint nextPc;
-        if (DelaySlot.HasValue)
-        {
-            nextPc = DelaySlot.Value;
-            DelaySlot = null;
-        }
-        else
-        {
-            // Increment the program counter by default
-            // (some instructions will override this)
-            nextPc = ProgramCounter + 4;
-        }
+        // Calculate what the next pc will be.
+        // If a previous instruction set a DelaySlot, we go there.
+        // Otherwise, we move forward.
+        uint nextPc = DelaySlot ?? (ProgramCounter + 4);
+        DelaySlot = null;
 
         // Handle gpr writeback
-        // NOTE: This will clear the register momentarily during load operations.
-        RegisterFile[execution.GPR] = execution.WriteBack;
+        if (execution.SideEffect is not (SideEffect.ReadMemory or SideEffect.WriteMemory))
+        {
+            RegisterFile[execution.GPR] = execution.WriteBack;
+        }
 
         // Apply side effects
         switch (execution.SideEffect)
@@ -266,7 +254,7 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
                 RegisterFile[execution.GPR] = memRead;
                 break;
             case SideEffect.WriteCoProc:
-                WriteCoProc(execution.CoProcRegisterSet, execution.CoProcReg, execution.CoProcWriteBack);
+                CoProcessor0[execution.CoProc0Reg] = execution.CoProcWriteBack;
                 break;
             case SideEffect.WriteFloat:
                 FloatProcessor.Words[execution.FloatReg] = execution.FWordWriteBack;
@@ -279,7 +267,6 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 
         // Apply the program counter update
         ProgramCounter = nextPc;
-
         return MipsTrap.None;
     }
 
@@ -294,19 +281,6 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 
         // Store the branch offset in the delay slot
         DelaySlot = targetPc;
-    }
-
-    private void WriteCoProc(RegisterSet set, GPRegister register, uint writeback)
-    {
-        var registerSet = set switch
-        {
-            RegisterSet.GeneralPurpose => RegisterFile,
-            RegisterSet.CoProc0 => CoProcessor0.RegisterFile,
-            RegisterSet.FloatingPoints => FloatProcessor.RegisterFile,
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsRegisterFile>(nameof(set)),
-        };
-
-        registerSet[register] = writeback;
     }
 
     private void HandleTrap(MipsTrap trap)
@@ -334,5 +308,13 @@ public partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
             CoProcessor0.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
             ProgramCounter = CoProcessor0.ExceptionVector;
         }
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        RegisterFile.Dispose();
+        CoProcessor0.RegisterFile.Dispose();
+        FloatProcessor.RegisterFile.Dispose();
     }
 }

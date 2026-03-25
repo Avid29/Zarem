@@ -132,6 +132,7 @@ public unsafe class RamDevice : IBusDevice
                 // Allocate unmanaged memory so the GC doesn't move it
                 _pageTable[idx] = (byte*)NativeMemory.AllocZeroed(_pageSize);
             }
+
             return _pageTable[idx];
         }
     }

@@ -714,6 +714,7 @@ public class ExecutionTests
         {
             Assert.AreEqual(expectedFloatWord.Value.Register, execution.FloatReg);
             Assert.AreEqual(expectedFloatWord.Value.Value, execution.FWordWriteBack);
+            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Processor.FloatProcessor.Words[execution.FloatReg]);
         }
 
         var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
@@ -721,6 +722,7 @@ public class ExecutionTests
         {
             Assert.AreEqual(expectedFloatLong.Value.Register, execution.FloatReg);
             Assert.AreEqual(expectedFloatLong.Value.Value, execution.FLongWriteBack);
+            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Processor.FloatProcessor.Longs[execution.FloatReg]);
         }
 
         var expectedPC = @case.ExpectedPC;
