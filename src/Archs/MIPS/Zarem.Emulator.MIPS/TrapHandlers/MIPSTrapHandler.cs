@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Diagnostics;
-using Zarem.Emulator.Executor.Enum;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Models.Enum;
 
 namespace Zarem.Emulator.TrapHandlers;
 

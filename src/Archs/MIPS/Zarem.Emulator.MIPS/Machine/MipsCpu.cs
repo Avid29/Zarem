@@ -2,15 +2,15 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
-using Zarem.Emulator.Executor;
-using Zarem.Emulator.Executor.Enum;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Emulator.Machine.CoProcessors;
-using Zarem.Emulator.Config;
+using Zarem.Emulator.Models;
+using Zarem.Emulator.Models.Enum;
+using Zarem.Models.Instructions;
+using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine;
 
