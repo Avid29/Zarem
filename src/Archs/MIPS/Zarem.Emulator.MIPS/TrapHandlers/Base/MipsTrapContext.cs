@@ -3,12 +3,12 @@
 using Zarem.Emulator.Machine;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.TrapHandlers;
+namespace Zarem.Emulator.TrapHandlers.Base;
 
 /// <summary>
 /// A struct for the context of a 
 /// </summary>
-public readonly ref struct MipsTrapContext
+public readonly struct MipsTrapContext
 {
     internal MipsTrapContext(MipsCpu cpu, ulong trapCode)
     {

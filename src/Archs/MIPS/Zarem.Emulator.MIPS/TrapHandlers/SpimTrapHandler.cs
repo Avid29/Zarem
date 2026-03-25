@@ -7,9 +7,9 @@ using Zarem.Emulator.TrapHandlers.Base;
 namespace Zarem.Emulator.TrapHandlers;
 
 /// <summary>
-/// The Zarem default trap handler.
+/// A <see cref="MipsTrapHandler"/> that implements the SPIM syscalls.
 /// </summary>
-public class ZaremTrapHandler : MipsTrapHandler
+public class SpimTrapHandler : MipsTrapHandler
 {
     /// <inheritdoc/>
     protected override void HandleSyscall(ulong code, MipsTrapContext context)
@@ -25,8 +25,6 @@ public class ZaremTrapHandler : MipsTrapHandler
             case 7:     ReadDouble(context); break;
             case 8:     ReadString(context, Encoding.ASCII); break;
             case 10:    Shutdown(context); break;
-            case 80:    PrintString(context, Encoding.BigEndianUnicode); break;
-            case 81:    ReadString(context, Encoding.BigEndianUnicode); break;
             default:    throw new NotImplementedException();
         }
     }
