@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Executor.Enum;
+using Zarem.Emulator.Models.Enum;
 using Zarem.Helpers;
 
 namespace Zarem.Emulator.Machine.Registers;

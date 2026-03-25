@@ -5,7 +5,7 @@ using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
-namespace Zarem.Emulator.Executor;
+namespace Zarem.Emulator.Models;
 
 public unsafe partial class InstructionServiceTable
 {

@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Emulator.Executor.Enum;
+namespace Zarem.Emulator.Models.Enum;
 
 /// <summary>
 /// An enum describing the secondary effect of an <see cref="Execution"/>.

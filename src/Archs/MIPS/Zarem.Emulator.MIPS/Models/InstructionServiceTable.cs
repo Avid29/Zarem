@@ -3,11 +3,11 @@
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Executor.Enum;
+using Zarem.Emulator.Models.Enum;
 using Zarem.Emulator.Machine;
 using Zarem.Models.Instructions;
 
-namespace Zarem.Emulator.Executor;
+namespace Zarem.Emulator.Models;
 
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="Execution"/> models.

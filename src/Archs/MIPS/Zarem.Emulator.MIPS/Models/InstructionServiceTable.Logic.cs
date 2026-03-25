@@ -2,9 +2,9 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Executor.Enum;
+using Zarem.Emulator.Models.Enum;
 
-namespace Zarem.Emulator.Executor;
+namespace Zarem.Emulator.Models;
 
 public partial class InstructionServiceTable
 {

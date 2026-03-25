@@ -3,11 +3,11 @@
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Executor.Enum;
+using Zarem.Emulator.Models.Enum;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Executor;
+namespace Zarem.Emulator.Models;
 
 /// <summary>
 /// A struct representing the results of an instruction's execution.

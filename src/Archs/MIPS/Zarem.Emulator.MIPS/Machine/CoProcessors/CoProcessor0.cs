@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2024
 
-using Zarem.Emulator.Executor.Enum;
+using Zarem.Emulator.Models.Enum;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Instructions.Enums.Registers;
