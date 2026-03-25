@@ -35,7 +35,7 @@ public class StateService : IStateService
         IdeState.BuildCompleted or IdeState.BuildFailed;
 
     /// <inheritdoc/>
-    public bool IsRunning => State is IdeState.Running or IdeState.Debugging;
+    public bool IsRunning => State is IdeState.Running or IdeState.Debugging or IdeState.Paused;
 
     /// <inheritdoc/>
     public void SetState(IdeState state, string? message = null)

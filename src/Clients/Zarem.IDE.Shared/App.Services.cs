@@ -60,7 +60,7 @@ public partial class App
             .AddSingleton<GraphicalOutputPageViewModel>()
 
             // ViewModels
-            .AddTransient<StatusViewModel>()
+            .AddSingleton<StatusViewModel>()
             .AddTransient<WindowViewModel>()
             .AddTransient<PanelViewModel>()
             .AddSingleton<MainViewModel>()

@@ -16,6 +16,7 @@ public enum IdeState
     BuildFailed,
     Running,
     Debugging,
+    Paused,
     
     # pragma warning restore CS1591
 }
