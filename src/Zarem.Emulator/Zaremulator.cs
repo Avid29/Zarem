@@ -124,18 +124,18 @@ public class Zaremulator : IDisposable
     /// </summary>
     protected void ExecutionLoop()
     {
-//#if DEBUG
+#if DEBUG
         Stopwatch sw = Stopwatch.StartNew();
         long totalInstructions = 0;
 
         void DumpMHz()
         {
-            double mhz = (totalInstructions / (sw.Elapsed.TotalSeconds * 1000000.0));
-            Console.WriteLine($"{mhz} MHz");
+            double mhz = totalInstructions / (sw.Elapsed.TotalSeconds * 1000000.0);
+            Debug.WriteLine($"{mhz} MHz");
             totalInstructions = 0;
             sw.Restart();
         }
-//#endif
+#endif
         try
         {
             while (State is not EmulatorState.Stopping)
@@ -148,12 +148,12 @@ public class Zaremulator : IDisposable
                 {
                     Computer.Tick();
 
-//#if DEBUG
+#if DEBUG
                     totalInstructions++;
 
                     if (sw.ElapsedMilliseconds > 1000)
                         DumpMHz();
-//#endif
+#endif
                 }
 
                 // Complete pausing transition
@@ -167,9 +167,9 @@ public class Zaremulator : IDisposable
             Console.WriteLine(localizer["ExceptionOccurred", e]);
         }
 
-//#if DEBUG
+#if DEBUG
         DumpMHz();
-//#endif
+#endif
 
         // Complete the shutdown,
         // or handle exception
