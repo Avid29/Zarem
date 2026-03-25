@@ -36,8 +36,8 @@ public struct StatusRegister
     /// </remarks>
     public bool InteruptEnabled
     {
-        readonly get => UintMasking.CheckBit(_status, INTERUPT_ENABLED_BIT);
-        set => UintMasking.SetBit(ref _status, INTERUPT_ENABLED_BIT, value);
+        readonly get => BitField.GetBit(_status, INTERUPT_ENABLED_BIT);
+        set => BitField.SetBit(ref _status, INTERUPT_ENABLED_BIT, value);
     }
 
     /// <summary>
@@ -48,8 +48,8 @@ public struct StatusRegister
     /// </remarks>
     public bool ExceptionLevel
     {
-        readonly get => UintMasking.CheckBit(_status, EXCEPTION_LEVEL_BIT);
-        set => UintMasking.SetBit(ref _status, EXCEPTION_LEVEL_BIT, value);
+        readonly get => BitField.GetBit(_status, EXCEPTION_LEVEL_BIT);
+        set => BitField.SetBit(ref _status, EXCEPTION_LEVEL_BIT, value);
     }
 
     /// <summary>
@@ -60,8 +60,8 @@ public struct StatusRegister
     /// </remarks>
     public bool ErrorLevel
     {
-        readonly get => UintMasking.CheckBit(_status, ERROR_LEVEL_BIT);
-        set => UintMasking.SetBit(ref _status, ERROR_LEVEL_BIT, value);
+        readonly get => BitField.GetBit(_status, ERROR_LEVEL_BIT);
+        set => BitField.SetBit(ref _status, ERROR_LEVEL_BIT, value);
     }
 
     /// <summary>
@@ -72,8 +72,8 @@ public struct StatusRegister
     /// </remarks>
     public PrivilegeMode PrivilegeMode
     {
-        readonly get => (PrivilegeMode)UintMasking.GetShiftMask(_status, KSU_SIZE, KSU_OFFSET);
-        set => UintMasking.SetShiftMask(ref _status, KSU_SIZE, KSU_OFFSET, (uint)value);
+        readonly get => (PrivilegeMode)BitField.GetField(_status, KSU_SIZE, KSU_OFFSET);
+        set => BitField.SetField(ref _status, KSU_SIZE, KSU_OFFSET, (uint)value);
     }
 
     /// <summary>
@@ -84,8 +84,8 @@ public struct StatusRegister
     /// </remarks>
     public byte InteruptMask
     {
-        readonly get => (byte)UintMasking.GetShiftMask(_status, INTERUPT_MASK_SIZE, INTERUPT_MASK_OFFSET);
-        set => UintMasking.SetShiftMask(ref _status, INTERUPT_MASK_SIZE, INTERUPT_MASK_OFFSET, value);
+        readonly get => (byte)BitField.GetField(_status, INTERUPT_MASK_SIZE, INTERUPT_MASK_OFFSET);
+        set => BitField.SetField(ref _status, INTERUPT_MASK_SIZE, INTERUPT_MASK_OFFSET, value);
     }
 
     /// <summary>
@@ -93,8 +93,8 @@ public struct StatusRegister
     /// </summary>
     public bool BootStrapping
     {
-        readonly get => UintMasking.CheckBit(_status, BOOTSTRAPPING_BIT);
-        set => UintMasking.SetBit(ref _status, BOOTSTRAPPING_BIT, value);
+        readonly get => BitField.GetBit(_status, BOOTSTRAPPING_BIT);
+        set => BitField.SetBit(ref _status, BOOTSTRAPPING_BIT, value);
     }
 
     /// <summary>

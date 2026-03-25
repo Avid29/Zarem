@@ -366,27 +366,30 @@ public struct MipsInstruction
     /// Gets the instruction's operation code.
     /// </summary>
     public OperationCode OpCode
-    { 
-        readonly get => (OperationCode)UintMasking.GetShiftMask(_inst, OPCODE_BIT_SIZE, OPCODE_BIT_OFFSET);
-        set => UintMasking.SetShiftMask(ref _inst, OPCODE_BIT_SIZE, OPCODE_BIT_OFFSET, (uint)value);
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly get => (OperationCode)BitField.GetField(_inst, OPCODE_BIT_SIZE, OPCODE_BIT_OFFSET);
+        set => BitField.SetField(ref _inst, OPCODE_BIT_SIZE, OPCODE_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
     /// Gets the instruction's RS Register 
     /// </summary>
     public GPRegister RS
-    { 
-        readonly get => (GPRegister)UintMasking.GetShiftMask(_inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET);
-        set => UintMasking.SetShiftMask(ref _inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET, (uint)value);
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly get => (GPRegister)BitField.GetField(_inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET);
+        set => BitField.SetField(ref _inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET, (uint)value);
     }
     
     /// <summary>
     /// Gets the instruction's RT Register 
     /// </summary>
     public GPRegister RT
-    { 
-        readonly get => (GPRegister)UintMasking.GetShiftMask(_inst, REGISTER_BIT_SIZE, RT_BIT_OFFSET);
-        set => UintMasking.SetShiftMask(ref _inst, REGISTER_BIT_SIZE, RT_BIT_OFFSET, (uint)value);
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly get => (GPRegister)BitField.GetField(_inst, REGISTER_BIT_SIZE, RT_BIT_OFFSET);
+        set => BitField.SetField(ref _inst, REGISTER_BIT_SIZE, RT_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
@@ -398,6 +401,7 @@ public struct MipsInstruction
     /// </remarks>
     public RegImmFuncCode RTFuncCode
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => (RegImmFuncCode)RT;
         set => RT = (GPRegister)value;
     }
@@ -406,18 +410,20 @@ public struct MipsInstruction
     /// Gets the instruction's RD Register 
     /// </summary>
     public GPRegister RD
-    { 
-        readonly get => (GPRegister)UintMasking.GetShiftMask(_inst, REGISTER_BIT_SIZE, RD_BIT_OFFSET);
-        set => UintMasking.SetShiftMask(ref _inst, REGISTER_BIT_SIZE, RD_BIT_OFFSET, (uint)value);
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly get => (GPRegister)BitField.GetField(_inst, REGISTER_BIT_SIZE, RD_BIT_OFFSET);
+        set => BitField.SetField(ref _inst, REGISTER_BIT_SIZE, RD_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
     /// Gets the instruction's shift amount 
     /// </summary>
     public byte ShiftAmount
-    { 
-        readonly get => (byte)UintMasking.GetShiftMask(_inst, SHIFT_AMOUNT_BIT_SIZE, SHIFT_AMOUNT_BIT_OFFSET);
-        set => UintMasking.SetShiftMask(ref _inst, SHIFT_AMOUNT_BIT_SIZE, SHIFT_AMOUNT_BIT_OFFSET, (uint)value);
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly get => (byte)BitField.GetField(_inst, SHIFT_AMOUNT_BIT_SIZE, SHIFT_AMOUNT_BIT_OFFSET);
+        set => BitField.SetField(ref _inst, SHIFT_AMOUNT_BIT_SIZE, SHIFT_AMOUNT_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
@@ -427,9 +433,10 @@ public struct MipsInstruction
     /// Instruction may or may not have function code.
     /// </remarks>
     public FunctionCode FuncCode
-    { 
-        readonly get => (FunctionCode)UintMasking.GetShiftMask(_inst, FUNCTION_BIT_SIZE, FUNCTION_BIT_OFFSET);
-        set => UintMasking.SetShiftMask(ref _inst, FUNCTION_BIT_SIZE, FUNCTION_BIT_OFFSET, (uint)value);
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly get => (FunctionCode)BitField.GetField(_inst, FUNCTION_BIT_SIZE, FUNCTION_BIT_OFFSET);
+        set => BitField.SetField(ref _inst, FUNCTION_BIT_SIZE, FUNCTION_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
@@ -440,6 +447,7 @@ public struct MipsInstruction
     /// </remarks>
     public Func2Code Func2Code
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => (Func2Code)FuncCode;
         set => FuncCode = (FunctionCode)value;
     }
@@ -452,6 +460,7 @@ public struct MipsInstruction
     /// </remarks>
     public Func3Code Func3Code
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => (Func3Code)FuncCode;
         set => FuncCode = (FunctionCode)value;
     }
@@ -460,9 +469,10 @@ public struct MipsInstruction
     /// Gets the instruction's immediate value.
     /// </summary>
     public short ImmediateValue
-    { 
-        readonly get => (short)UintMasking.GetShiftMask(_inst, IMMEDIATE_BIT_SIZE, IMMEDIATE_BIT_OFFSET);
-        set => UintMasking.SetShiftMask(ref _inst, IMMEDIATE_BIT_SIZE, IMMEDIATE_BIT_OFFSET, (ushort)value);
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly get => (short)BitField.GetField(_inst, IMMEDIATE_BIT_SIZE, IMMEDIATE_BIT_OFFSET);
+        set => BitField.SetField(ref _inst, IMMEDIATE_BIT_SIZE, IMMEDIATE_BIT_OFFSET, (ushort)value);
     }
 
     /// <summary>
@@ -470,6 +480,7 @@ public struct MipsInstruction
     /// </summary>
     public int Offset
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => ImmediateValue << 2;
         set => ImmediateValue = (short)(value >> 2);
     }
@@ -478,9 +489,10 @@ public struct MipsInstruction
     /// Gets the instruction's immediate value.
     /// </summary>
     public uint Address
-    { 
-        readonly get => UintMasking.GetShiftMask(_inst, ADDRESS_BIT_SIZE, ADDRESS_BIT_OFFSET) << 2;
-        set => UintMasking.SetShiftMask(ref _inst, ADDRESS_BIT_SIZE, ADDRESS_BIT_OFFSET, value >> 2);
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly get => BitField.GetField(_inst, ADDRESS_BIT_SIZE, ADDRESS_BIT_OFFSET) << 2;
+        set => BitField.SetField(ref _inst, ADDRESS_BIT_SIZE, ADDRESS_BIT_OFFSET, value >> 2);
     }
     
     #if DEBUG
