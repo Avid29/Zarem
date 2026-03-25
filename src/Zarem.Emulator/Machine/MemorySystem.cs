@@ -15,7 +15,7 @@ public class MemorySystem : IMemorySystem
     /// <summary>
     /// Initializes a new instance of the <see cref="MemorySystem"/> class.
     /// </summary>
-    public MemorySystem(IMemoryAccessor physical, IAddressTranslator translator)
+    public MemorySystem(PhysicalBus physical, IAddressTranslator translator)
     {
         Physical = physical;
         Virtual = new VirtualMemorySystem(physical, translator);

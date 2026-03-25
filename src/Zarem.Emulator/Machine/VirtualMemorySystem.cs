@@ -10,13 +10,13 @@ namespace Zarem.Emulator.Machine;
 
 internal class VirtualMemorySystem : IVirtualMemoryAccessor
 {
-    private readonly IMemoryAccessor _physical;
+    private readonly PhysicalBus _physical;
     private readonly IAddressTranslator _translator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VirtualMemorySystem"/> class.
     /// </summary>
-    public VirtualMemorySystem(IMemoryAccessor physical, IAddressTranslator translator)
+    public VirtualMemorySystem(PhysicalBus physical, IAddressTranslator translator)
     {
         _physical = physical;
         _translator = translator;
