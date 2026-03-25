@@ -56,6 +56,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
                 : value;
         }
 
+        // Fallback: MMIO/Hardware registers
         return ReadSlow<T>(device, offset);
     }
 
@@ -65,10 +66,24 @@ public unsafe class PhysicalBus : IMemoryAccessor
     {
         CheckAlignment<T>(address);
 
-        Span<byte> buffer = stackalloc byte[sizeof(T)];
-        WriteEndianness(buffer, value);
+        var device = _mapper.Resolve(address, out var baseAddress);
+        ulong offset = address - baseAddress;
 
-        Write(address, buffer);
+        if (device is RamDevice memDevice)
+        {
+            byte* ptr = memDevice.GetPointer(offset);
+
+            // Handle endianness swap before writing to raw memory
+            if (_endianMismatch)
+            {
+                value = ReverseEndianness(value);
+            }
+
+            Unsafe.Write(ptr, value);
+            return;
+        }
+        // Fallback: MMIO/Hardware registers
+        WriteSlow(device, offset, value);
     }
 
     /// <inheritdoc/>
@@ -89,24 +104,9 @@ public unsafe class PhysicalBus : IMemoryAccessor
         T value = MemoryMarshal.Read<T>(buffer);
 
         // If the system endianness doesn't match the target MIPS endianness, swap it.
-        if (_endianMismatch)
-            return ReverseEndianness(value);
-
-        return value;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static T ReverseEndianness<T>(T value)
-        where T : unmanaged, IBinaryNumber<T>
-    {
-        // These 'if' checks on sizeof are resolved at COMPILE TIME by the JIT.
-        // The code for the "wrong" sizes is completely deleted from the final machine code.
-        if (sizeof(T) == 1) return value;
-        if (sizeof(T) == 2) return (T)(object)BinaryPrimitives.ReverseEndianness((ushort)(object)value);
-        if (sizeof(T) == 4) return (T)(object)BinaryPrimitives.ReverseEndianness((uint)(object)value);
-        if (sizeof(T) == 8) return (T)(object)BinaryPrimitives.ReverseEndianness((ulong)(object)value);
-
-        throw new NotSupportedException();
+            return _endianMismatch
+                ? ReverseEndianness(value)
+                : value;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -114,7 +114,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
         where T : unmanaged, IBinaryNumber<T>
     {
         // If host matches target, just write raw bytes
-        if (BitConverter.IsLittleEndian == (Endianness == Endianness.Little))
+        if (!_endianMismatch)
         {
             MemoryMarshal.Write(buffer, in value);
             return;
@@ -129,7 +129,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
         else if (sizeof(T) == 2)
         {
             ushort val = Unsafe.As<T, ushort>(ref value);
-            if (Endianness == Endianness.Big)
+            if (BitConverter.IsLittleEndian)
                 BinaryPrimitives.WriteUInt16BigEndian(buffer, val);
             else
                 BinaryPrimitives.WriteUInt16LittleEndian(buffer, val);
@@ -137,8 +137,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
         else if (sizeof(T) == 4)
         {
             uint val = Unsafe.As<T, uint>(ref value);
-            // Note: Using the 'Opposite' primitive is often faster than Manual Reverse + Write
-            if (Endianness == Endianness.Big)
+            if (BitConverter.IsLittleEndian)
                 BinaryPrimitives.WriteUInt32BigEndian(buffer, val);
             else
                 BinaryPrimitives.WriteUInt32LittleEndian(buffer, val);
@@ -146,7 +145,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
         else if (sizeof(T) == 8)
         {
             ulong val = Unsafe.As<T, ulong>(ref value);
-            if (Endianness == Endianness.Big)
+            if (BitConverter.IsLittleEndian)
                 BinaryPrimitives.WriteUInt64BigEndian(buffer, val);
             else
                 BinaryPrimitives.WriteUInt64LittleEndian(buffer, val);
@@ -155,6 +154,20 @@ public unsafe class PhysicalBus : IMemoryAccessor
         {
             throw new NotSupportedException();
         }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static T ReverseEndianness<T>(T value)
+        where T : unmanaged, IBinaryNumber<T>
+    {
+        // These 'if' checks on sizeof are resolved at COMPILE TIME by the JIT.
+        // The code for the "wrong" sizes is completely deleted from the final machine code.
+        if (sizeof(T) == 1) return value;
+        if (sizeof(T) == 2) return (T)(object)BinaryPrimitives.ReverseEndianness((ushort)(object)value);
+        if (sizeof(T) == 4) return (T)(object)BinaryPrimitives.ReverseEndianness((uint)(object)value);
+        if (sizeof(T) == 8) return (T)(object)BinaryPrimitives.ReverseEndianness((ulong)(object)value);
+
+        throw new NotSupportedException();
     }
 
     /// <inheritdoc/>
@@ -178,7 +191,6 @@ public unsafe class PhysicalBus : IMemoryAccessor
         device.Write(offset, buffer);
     }
 
-    [MethodImpl(MethodImplOptions.NoInlining)]
     private T ReadSlow<T>(IBusDevice device, ulong offset) where T : unmanaged, IBinaryNumber<T>
     {
         int size = sizeof(T);
@@ -188,5 +200,17 @@ public unsafe class PhysicalBus : IMemoryAccessor
 
         device.Read(offset, span);
         return ReadEndianness<T>(span);
+    }
+
+    private void WriteSlow<T>(IBusDevice device, ulong offset, T value)
+    where T : unmanaged, IBinaryNumber<T>
+    {
+        int size = sizeof(T);
+        byte* buffer = stackalloc byte[size];
+        var span = new Span<byte>(buffer, size);
+
+        WriteEndianness(span, value);
+
+        device.Write(offset, span);
     }
 }
