@@ -2,9 +2,11 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
+using Zarem.Debugger;
 using Zarem.DebugSessions;
 using Zarem.Helpers;
 using Zarem.IDE.Bindables;
+using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels.Pages;
@@ -14,11 +16,15 @@ namespace Zarem.IDE.ViewModels.Pages;
 /// </summary>
 public class RegisterViewerViewModel : DebugPageViewModel
 {
+    private IDispatcherService _dispatcherService;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterViewerViewModel"/> class.
     /// </summary>
-    public RegisterViewerViewModel(IMessenger messenger) : base(messenger)
+    public RegisterViewerViewModel(IMessenger messenger, IDispatcherService dispatcherService) : base(messenger)
     {
+        _dispatcherService = dispatcherService;
+
         Registers = [];
     }
 
@@ -46,14 +52,25 @@ public class RegisterViewerViewModel : DebugPageViewModel
         {
             Registers.Add(new BindableRegister(reg, viewer.Registers));
         }
+
+        session.Debugger?.Halted += Debugger_Halted;
     }
 
     /// <inheritdoc/>
     protected override void UnregisterSession()
     {
-        foreach (var reg in Registers)
-            reg.Dispose();
-
         Registers.Clear();
+        Session?.Debugger?.Halted -= Debugger_Halted;
+    }
+
+    private void Debugger_Halted(Zebugger sender, ulong e)
+    {
+        _dispatcherService.RunOnUIThread(() =>
+        {
+            foreach (var reg in Registers)
+            {
+                reg.Invalidate();
+            }
+        });
     }
 }

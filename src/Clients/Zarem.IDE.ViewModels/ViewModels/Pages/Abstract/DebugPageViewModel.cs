@@ -34,8 +34,8 @@ public abstract class DebugPageViewModel : PageViewModel
         });
         Messenger.Register<DebugPageViewModel, DebugSessionEndedMessage>(this, (r, m) =>
         {
-            Session = null;
             UnregisterSession();
+            Session = null;
         });
     }
 

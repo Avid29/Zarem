@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Collections.Generic;
 
 namespace Zarem.Debugger.Viewer;
@@ -10,11 +9,6 @@ namespace Zarem.Debugger.Viewer;
 /// </summary>
 public interface IRegisterGroup
 {
-    /// <summary>
-    /// An event invoked when a register is updated.
-    /// </summary>
-    event EventHandler<IRegisterGroup, string>? RegisterUpdated;
-
     /// <summary>
     /// Gets the names of the CPU registers.
     /// </summary>

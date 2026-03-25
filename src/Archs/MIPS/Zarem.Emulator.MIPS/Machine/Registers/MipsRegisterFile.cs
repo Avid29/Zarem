@@ -13,11 +13,6 @@ public class MipsRegisterFile
     private readonly uint[] _registers;
 
     /// <summary>
-    /// An event invoked when a register is changed.
-    /// </summary>
-    public event EventHandler<GPRegister>? RegisterChanged;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="MipsRegisterFile"/> class.
     /// </summary>
     public MipsRegisterFile(RegisterSet set, int count = 32)
@@ -65,7 +60,6 @@ public class MipsRegisterFile
                 return;
 
             _registers[register] = value;
-            RegisterChanged?.Invoke(this, (GPRegister)register);
         }
     }
 

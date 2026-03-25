@@ -161,10 +161,10 @@ public class Zaremulator : IDisposable
                     State = EmulatorState.Paused;
             }
         }
-        catch
+        catch (Exception e)
         {
             var localizer = new Localizer("Zarem.Emulator.Resources.Messages", typeof(Zaremulator).Assembly);
-            Console.WriteLine(localizer["ExceptionOccurred"]);
+            Console.WriteLine(localizer["ExceptionOccurred", e]);
         }
 
 //#if DEBUG
