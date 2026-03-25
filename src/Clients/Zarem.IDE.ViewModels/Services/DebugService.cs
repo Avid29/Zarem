@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.Messaging;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Zarem.Debugger;
@@ -9,7 +10,6 @@ using Zarem.DebugSessions;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Emulator.TrapHandlers;
 using Zarem.IDE.Messages.DebugSessions;
 using Zarem.IDE.Models.Enums;
 using Zarem.IDE.Services.Files;
@@ -121,15 +121,22 @@ public class DebugService : IDebugService
 
         _session.Emulator.StateChanged += MipsEmu_StateChanged;
         _session.Debugger?.Halted += Debugger_Halted;
+        _session.Debugger?.Resumed += DebugService_Resumed;
 
         _stateService.SetState(IdeState.Running);
         _messenger.Send(new DebugSessionStartedMessage(_session));
         _session.Emulator.Start();
     }
 
+    private void DebugService_Resumed(object? sender, EventArgs e)
+    {
+        _dispatcher.RunOnUIThread(() => _stateService.SetState(IdeState.Debugging));
+        ExecutingLocation = null;
+    }
+
     private void Debugger_Halted(Zebugger? sender, ulong e)
     {
-        // TODO: Handle app state transition
+        _dispatcher.RunOnUIThread(() => _stateService.SetState(IdeState.Paused));
 
         var location = _session?.LineResolver?.GetSourceLocation(e);
         if (location is null)
@@ -165,9 +172,10 @@ public class DebugService : IDebugService
     /// <inheritdoc/>
     public void Step(StepMode mode)
     {
-        _session?.Debugger?.Step(mode);
+        if (_session?.Debugger is null)
+            return;
 
-        ExecutingLocation = null;
+        _session.Debugger.Step(mode);
     }
 
     /// <inheritdoc/>
@@ -239,6 +247,7 @@ public class DebugService : IDebugService
                 _messenger.Send(new DebugSessionEndedMessage());
             });
             _session?.Debugger?.Halted -= Debugger_Halted;
+            _session?.Debugger?.Resumed -= DebugService_Resumed;
             _session?.Dispose();
             _session = null;
 

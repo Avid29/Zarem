@@ -33,6 +33,11 @@ public class Zebugger
     public event EventHandler<Zebugger, ulong>? Halted;
 
     /// <summary>
+    /// An invoked when the debugger resumes execution.
+    /// </summary>
+    public event EventHandler? Resumed;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="Zebugger"/> class.
     /// </summary>
     public Zebugger(IDebugHandler handler, IComputer computer)
@@ -193,6 +198,7 @@ public class Zebugger
             }
         }
 
+        Resumed?.Invoke(this, EventArgs.Empty);
         _trapEvent.Resume();
         _trapEvent = null;
         CurrentBreakpointPoint = null;

@@ -243,4 +243,7 @@
   <data name="SymbolBinding_Weak" xml:space="preserve">
     <value>Weak</value>
   </data>
+  <data name="IdeState_Paused" xml:space="preserve">
+    <value>Paused</value>
+  </data>
 </root>
