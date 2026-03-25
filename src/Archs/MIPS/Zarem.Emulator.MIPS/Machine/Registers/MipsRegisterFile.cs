@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using System;
+using System.Runtime.InteropServices;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine.Registers;
@@ -8,17 +9,16 @@ namespace Zarem.Emulator.Machine.Registers;
 /// <summary>
 /// A class representing a register file.
 /// </summary>
-public class MipsRegisterFile
+public unsafe class MipsRegisterFile : IDisposable
 {
-    private readonly uint[] _registers;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsRegisterFile"/> class.
     /// </summary>
     public MipsRegisterFile(RegisterSet set, int count = 32)
     {
         RegisterSet = set;
-        _registers = new uint[count];
+        Regs = (uint*)NativeMemory.AllocZeroed((nuint)count, sizeof(uint));
+        Count = count;
     }
 
     /// <summary>
@@ -29,26 +29,19 @@ public class MipsRegisterFile
     /// <summary>
     /// Gets the number of registers in the register file.
     /// </summary>
-    public int Count => _registers.Length;
+    public int Count { get; }
 
     /// <summary>
     /// Gets an unsafe point to the registers
     /// </summary>
-    public unsafe uint* Regs
-    {
-        get
-        {
-            fixed (uint* ptr = _registers)
-                return ptr;
-        }
-    }
+    public uint* Regs { get; }
 
     /// <summary>
     /// Gets or sets the value in a register.
     /// </summary>
     public uint this[int register]
     {
-        get => _registers[register];
+        get => Regs[register];
         set
         {
             // Cannot set the 0 GPR register
@@ -56,10 +49,10 @@ public class MipsRegisterFile
                 return;
 
             // Register is out of the indexable bounds. Do nothing.
-            if (register < 0 || register >= _registers.Length)
+            if (register < 0 || register >= Count)
                 return;
 
-            _registers[register] = value;
+            Regs[register] = value;
         }
     }
 
@@ -85,4 +78,7 @@ public class MipsRegisterFile
         get => this[(int)register];
         set => this[(int)register] = value;
     }
+
+    /// <inheritdoc/>
+    public void Dispose() => NativeMemory.Free(Regs);
 }

@@ -82,6 +82,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
             Unsafe.Write(ptr, value);
             return;
         }
+
         // Fallback: MMIO/Hardware registers
         WriteSlow(device, offset, value);
     }
@@ -222,7 +223,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
     }
 
     private void WriteSlow<T>(IBusDevice device, ulong offset, T value)
-    where T : unmanaged, IBinaryNumber<T>
+        where T : unmanaged, IBinaryNumber<T>
     {
         int size = sizeof(T);
         byte* buffer = stackalloc byte[size];
