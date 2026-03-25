@@ -160,14 +160,33 @@ public unsafe class PhysicalBus : IMemoryAccessor
     private static T ReverseEndianness<T>(T value)
         where T : unmanaged, IBinaryNumber<T>
     {
-        // These 'if' checks on sizeof are resolved at COMPILE TIME by the JIT.
-        // The code for the "wrong" sizes is completely deleted from the final machine code.
-        if (sizeof(T) == 1) return value;
-        if (sizeof(T) == 2) return (T)(object)BinaryPrimitives.ReverseEndianness((ushort)(object)value);
-        if (sizeof(T) == 4) return (T)(object)BinaryPrimitives.ReverseEndianness((uint)(object)value);
-        if (sizeof(T) == 8) return (T)(object)BinaryPrimitives.ReverseEndianness((ulong)(object)value);
+        // sizeof(T) is a JIT constant. No branches in the final assembly.
+        if (sizeof(T) == 1)
+            return value;
 
-        throw new NotSupportedException();
+        if (sizeof(T) == 2)
+        {
+            // Reinterprets the bytes of T as a ushort without boxing or conversion logic.
+            ushort val = Unsafe.As<T, ushort>(ref value);
+            ushort swapped = BinaryPrimitives.ReverseEndianness(val);
+            return Unsafe.As<ushort, T>(ref swapped);
+        }
+
+        if (sizeof(T) == 4)
+        {
+            uint val = Unsafe.As<T, uint>(ref value);
+            uint swapped = BinaryPrimitives.ReverseEndianness(val);
+            return Unsafe.As<uint, T>(ref swapped);
+        }
+
+        if (sizeof(T) == 8)
+        {
+            ulong val = Unsafe.As<T, ulong>(ref value);
+            ulong swapped = BinaryPrimitives.ReverseEndianness(val);
+            return Unsafe.As<ulong, T>(ref swapped);
+        }
+
+        throw new NotSupportedException($"Size {sizeof(T)} not supported for endianness swap.");
     }
 
     /// <inheritdoc/>
