@@ -136,6 +136,13 @@ public unsafe partial class InstructionServiceTable
         return MipsTrap.None;
     }
 
+    private static MipsTrap AluISigned<T>(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
+        where T : IAluLogic
+    {
+        exec = Execution.CreateWriteback(inst.RT, T.Compute(@this._regs[(int)inst.RS], (uint)(int)inst.ImmediateValue));
+        return MipsTrap.None;
+    }
+
     private static MipsTrap CheckedAluI<T>(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
         where T : ICheckedAluLogic
     {

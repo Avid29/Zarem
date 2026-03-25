@@ -55,7 +55,7 @@ public unsafe partial class InstructionServiceTable
         _opCodeTable[(int)OperationCode.AddImmediateUnsigned] = &AluI<AdduLogic>;
 
         // Compare
-        _opCodeTable[(int)OperationCode.SetLessThanImmediate] = &AluI<SltLogic>;
+        _opCodeTable[(int)OperationCode.SetLessThanImmediate] = &AluISigned<SltLogic>;
         _opCodeTable[(int)OperationCode.SetLessThanImmediateUnsigned] = &AluI<SltuLogic>;
 
         // Logical
