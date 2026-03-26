@@ -4,6 +4,8 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Extensions.System;
@@ -73,9 +75,11 @@ public readonly struct DirectiveParser
             ".space" => TryParseAlignOrSpace(token, line.Args, out directive, false),
 
             // Data
-            ".word" => TryParseData<int>(token, line.Args, out directive),
-            ".half" => TryParseData<short>(token, line.Args, out directive),
-            ".byte" => TryParseData<byte>(token, line.Args, out directive),
+            ".word" => TryParseInteger<int>(token, line.Args, out directive),
+            ".half" => TryParseInteger<short>(token, line.Args, out directive),
+            ".byte" => TryParseInteger<byte>(token, line.Args, out directive),
+            ".float" => TryParseFloat<float>(token, line.Args, out directive),
+            ".double" => TryParseFloat<double>(token, line.Args, out directive),
 
             // String
             ".ascii" => TryParseString(line.Args, Encoding.ASCII, false, out directive),
@@ -165,7 +169,7 @@ public readonly struct DirectiveParser
         }
 
         // Parse argument
-        if (!ExpressionParser.TryParse(args[0].Tokens, out var result, _symbols, _logger?.Parent))
+        if (!ExpressionParser.TryParse<long>(args[0].Tokens, out var result, _symbols, _logger?.Parent))
             return false;
 
         // Argument must not be relocatable
@@ -212,24 +216,21 @@ public readonly struct DirectiveParser
         return true;
     }
 
-    private bool TryParseData<T>(Token name, AssemblyLineArgs args, out Directive? directive)
+    private bool TryParseInteger<T>(Token name, AssemblyLineArgs args, out Directive? directive)
         where T : unmanaged, IBinaryInteger<T>
     {
         directive = null;
 
-        T value = default;
-        int argSize = value.GetByteCount();
-
-        int pos = 0;
-
         // Allocate space
+        int pos = 0;
+        int argSize = Unsafe.SizeOf<T>();
         var bytes = new byte[args.Count * argSize];
 
         for (int i = 0; i < args.Count; i++)
         {
             var arg = args[i];
 
-            if (!ExpressionParser.TryParse(arg.Tokens, out var result, _symbols, _logger?.Parent))
+            if (!ExpressionParser.TryParse<long>(arg.Tokens, out var result, _symbols, _logger?.Parent))
                 return false;
 
             if (result.IsSymbolic)
@@ -243,13 +244,60 @@ public readonly struct DirectiveParser
             var resultValue = result.Addend;
             
             // TODO: Double check the logic here. Does this always detect the error?
-            value = T.CreateTruncating(resultValue);
+            T value = T.CreateTruncating(resultValue);
             if (value != T.CreateSaturating(resultValue))
             {
                 _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg.Tokens, "DirectiveAllocationTruncated",  arg.Tokens.Print(), result.Addend, value);
             }
 
             value.WriteBigEndian(bytes, pos);
+            pos += argSize;
+        }
+
+        directive = new DataDirective(bytes);
+        return true;
+    }
+
+    private bool TryParseFloat<T>(Token name, AssemblyLineArgs args, out Directive? directive)
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        directive = null;
+
+        int argSize = Unsafe.SizeOf<T>();
+        int pos = 0;
+        var bytes = new byte[args.Count * argSize];
+
+        for (int i = 0; i < args.Count; i++)
+        {
+            var arg = args[i];
+
+            if (!ExpressionParser.TryParse<double>(arg.Tokens, out var result, _symbols, _logger?.Parent))
+                return false;
+
+            if (result.IsSymbolic)
+            {
+                _logger?.Log(Severity.Error, LogId.InvalidDirectiveDataArg, args[0].Tokens, "DirectiveAllocationNoRelocatableArguments", name);
+                return false;
+            }
+
+            Guard.IsNotNull(result.Addend);
+
+            T value = T.CreateTruncating(result.Addend);
+
+            // Precision check
+            if (double.CreateTruncating(value) != (double)result.Addend)
+            {
+                _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg.Tokens, "DirectiveAllocationTruncated", arg.Tokens.Print(), result.Addend, value);
+            }
+
+            // Write the raw memory representation of 'value' into the byte array
+            Span<byte> destination = bytes.AsSpan(pos, argSize);
+            MemoryMarshal.Write(destination, in value);
+
+            // If the host is Little Endian, flip to Big Endian for the directive
+            if (BitConverter.IsLittleEndian)
+                destination.Reverse();
+
             pos += argSize;
         }
 
@@ -281,7 +329,9 @@ public readonly struct DirectiveParser
 
             // Null terminate string conditionally
             if (terminate)
-                bytes.Add(0);
+            {
+                bytes.AddRange(encoding.GetBytes("\0"));
+            }
         }
 
         directive = new DataDirective([..bytes]);
@@ -320,7 +370,7 @@ public readonly struct DirectiveParser
         }
 
         var valueArg = args[1];
-        if (!ExpressionParser.TryParse(valueArg.Tokens, out var result, _symbols, _logger?.Parent))
+        if (!ExpressionParser.TryParse<long>(valueArg.Tokens, out var result, _symbols, _logger?.Parent))
             return false;
 
         var nameToken = nameArg.Tokens[0];

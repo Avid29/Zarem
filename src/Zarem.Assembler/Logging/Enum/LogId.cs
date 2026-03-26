@@ -37,6 +37,7 @@ public enum LogId : uint
     UnparsableExpression,
     InvalidExpressionOperation,
     UndeclaredSymbolReferenced,
+    InvalidCast,
 
     // Directive parser
     InvalidDirectiveName,

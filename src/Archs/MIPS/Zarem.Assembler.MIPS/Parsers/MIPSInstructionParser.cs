@@ -280,7 +280,7 @@ public struct MipsInstructionParser
     private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, Argument target)
     {
         // Attempt to parse expression
-        if (!ExpressionParser.TryParse(arg, out var expResult, _symbols, _logger?.Parent))
+        if (!ExpressionParser.TryParse<long>(arg, out var expResult, _symbols, _logger?.Parent))
             return false;
 
         if (expResult.IsSymbolic && target is Argument.Shift)

@@ -2,7 +2,9 @@
 
 using CommunityToolkit.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 using Zarem.Assembler.Models.Directives;
 using Zarem.Assembler.Models.Directives.Abstract;
@@ -27,8 +29,14 @@ public class DirectiveParserTests
             yield return [new DirectiveDataTestCase(".byte 10", 10)];
             yield return [new DirectiveDataTestCase(".word 10", 0, 0, 0, 10)];
             yield return [new DirectiveDataTestCase(".byte 10, 10", 10, 10)];
+            yield return [new DirectiveDataTestCase(".float 10", EnsureEndianness(BitConverter.GetBytes(10f)))];
+            yield return [new DirectiveDataTestCase(".float 1.5", EnsureEndianness(BitConverter.GetBytes(1.5f)))];
+            yield return [new DirectiveDataTestCase(".double 10", EnsureEndianness(BitConverter.GetBytes(10d)))];
+            yield return [new DirectiveDataTestCase(".double 1.5", EnsureEndianness(BitConverter.GetBytes(1.5d)))];
             yield return [new DirectiveDataTestCase(".ascii \"Test String\"", Encoding.ASCII.GetBytes("Test String"))];
             yield return [new DirectiveDataTestCase(".asciiz \"Test String\"", Encoding.ASCII.GetBytes("Test String\0"))];
+            yield return [new DirectiveDataTestCase(".utf16 \"Test String\"", Encoding.BigEndianUnicode.GetBytes("Test String"))];
+            yield return [new DirectiveDataTestCase(".utf16z \"Test String\"", Encoding.BigEndianUnicode.GetBytes("Test String\0"))];
         }
     }
 
@@ -109,5 +117,13 @@ public class DirectiveParserTests
 
         Assert.AreEqual(name, defDir.Name.Source);
         Assert.AreEqual(value, defDir.Value);
+    }
+
+    private static byte[] EnsureEndianness(byte[] bytes)
+    {
+        if (BitConverter.IsLittleEndian)
+            Array.Reverse(bytes);
+
+        return bytes;
     }
 }

@@ -23,15 +23,16 @@ public class SymbolNode : ValueNode<Symbol>
     public override ExpressionType Type => ExpressionType.Integer;
 
     /// <inheritdoc/>
-    public override bool TryEvaluate(Evaluator evaluator, out ExpressionResult result)
+    public override bool TryEvaluate<T>(Evaluator<T> evaluator, out ExpressionResult<T> result)
     {
         if (Value.IsDefined && !Value.Address.IsRelocatable)
         {
-            result = new ExpressionResult(Value.Address.Offset);
+            // TODO: Log cast errors
+            result = new ExpressionResult<T>(T.CreateTruncating(Value.Address.Offset));
             return true;
         }
 
-        result = new ExpressionResult(this);
+        result = new ExpressionResult<T>(this);
         return true;
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models.Tables;
 
@@ -9,19 +10,20 @@ namespace Zarem.Assembler.Parsers.Expressions;
 /// <summary>
 /// A struct for expression the results of parsing an expression.
 /// </summary>
-public readonly struct ExpressionResult
+public readonly struct ExpressionResult<T>
+    where T : unmanaged, IBinaryNumber<T>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExpressionResult"/> struct.
+    /// Initializes a new instance of the <see cref="ExpressionResult{T}"/> struct.
     /// </summary>
-    public ExpressionResult(long value, SymbolNode? reference = null)
+    public ExpressionResult(T value, SymbolNode? reference = null)
     {
         Addend = value;
         SymbolNode = reference;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExpressionResult"/> struct.
+    /// Initializes a new instance of the <see cref="ExpressionResult{T}"/> struct.
     /// </summary>
     public ExpressionResult(SymbolNode reference)
     {
@@ -32,7 +34,7 @@ public readonly struct ExpressionResult
     /// <summary>
     /// Gets the value of the parsed expression.
     /// </summary>
-    public long Addend { get; }
+    public T Addend { get; }
 
     /// <summary>
     /// Gets the symbol node referenced in the expression.

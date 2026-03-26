@@ -31,7 +31,7 @@ public class UnaryOperNode : OperNode
     public override ExpressionType Type => Child?.Type ?? ExpressionType.Invalid;
     
     /// <inheritdoc/>
-    public override bool TryEvaluate(Evaluator evaluator, out ExpressionResult result)
+    public override bool TryEvaluate<T>(Evaluator<T> evaluator, out ExpressionResult<T> result)
     {
         result = default;
 

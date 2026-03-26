@@ -101,9 +101,6 @@ public partial class Tokenizer
             // Handle chars
             TokenType.Char => TokenType.Immediate,
 
-            // Handle immediates
-            _ when current.IsNumeric() => TokenType.Immediate,
-
             // Handle operators
             _ => current.Source switch
             {
@@ -136,6 +133,32 @@ public partial class Tokenizer
     {
         var current = tokens[0];
         var peek = Peek(tokens);
+
+        // Handle merging immediates tokens
+        if (!start)
+        {
+            // 123.456 (Digits + Dot + Digits)
+            if (current.IsDigits() && peek?.Source == "." && Peek(tokens, 2)?.IsDigits() == true)
+            {
+                merged = Merge(TokenType.Immediate, current, peek, Peek(tokens, 2));
+                advance = 3;
+                return true;
+            }
+            // .456 (Dot + Digits)
+            if (current.Source == "." && peek?.IsDigits() == true)
+            {
+                merged = Merge(TokenType.Immediate, current, peek);
+                advance = 2;
+                return true;
+            }
+            // 123 (Digits)
+            if (current.IsInteger() == true)
+            {
+                merged = ReClassify(TokenType.Immediate, current);
+                advance = 1;
+                return true;
+            }
+        }
 
         // Determine appropriate type
         (var type, bool merge) = start switch

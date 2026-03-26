@@ -4,7 +4,10 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Numerics;
 using System.Security.AccessControl;
+using System.Text.RegularExpressions;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
@@ -21,8 +24,16 @@ namespace Zarem.Assembler.Parsers;
 /// <summary>
 /// Parses expressions
 /// </summary>
-public readonly ref struct ExpressionParser
+public readonly partial struct ExpressionParser
 {
+    // This regex matches: 
+    // Chars: 'a' or '\n' 
+    // Floats: 1.0, -0.5, 1e10
+    // Prefixed Ints: 0x, 0b, 0o
+    // Standard Ints: 123
+    [GeneratedRegex(@"^(?: '(?<char>.*)' | (?<float>[-+]?\d+\.\d+(?:[eE][-+]?\d+)?) | 0x(?<hex>[0-9a-fA-F]+) | 0b(?<bin>[01]+) | 0o(?<oct>[0-7]+) | (?<int>[-+]?\d+) )$", RegexOptions.IgnorePatternWhitespace)]
+    private static partial Regex ImmediateRegex();
+
     private readonly AssemblerLogger? _logger;
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly List<Symbol> _references; 
@@ -46,7 +57,8 @@ public readonly ref struct ExpressionParser
     /// <param name="symbols">The assembler context containing declared symbols, if desired.</param>
     /// <param name="logger">The logger to log errors or warnings, if desired.</param>
     /// <returns>Whether or not the expression could be parsed.</returns>
-    public static bool TryParse(ReadOnlySpan<Token> expression, out ExpressionResult result, IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
+    public static bool TryParse<T>(ReadOnlySpan<Token> expression, out ExpressionResult<T> result, IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
+        where T : unmanaged, IBinaryNumber<T>
     {
         result = default;
 
@@ -66,7 +78,7 @@ public readonly ref struct ExpressionParser
         }
 
         // Evaluate the address
-        var eval = new Evaluator(symbols, logger);
+        var eval = new Evaluator<T>(symbols, logger);
         if (!node.TryEvaluate(eval, out result))
             return false;
 
@@ -134,49 +146,55 @@ public readonly ref struct ExpressionParser
     private bool TryParseImmediate(Token token, [NotNullWhen(true)] out ExpNode? result)
     {
         result = null;
+        var match = ImmediateRegex().Match(token.Source);
 
-        long value;
-        if (token.Source.Length > 0 && token.Source[0] is '\'')
-        {
-            // Character literal
-            if (!StringParser.TryParseChar(token, out char c, _logger?.Parent))
-            {
-                _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token);
-                return false;
-            }
-
-            value = c;
-        }
-        else if (token.Source.Length >= 3 && !char.IsDigit(token.Source[1]))
-        {
-            // Binary, Oct, or Hex
-            int @base = token.Source[1] switch
-            {
-                'b' => 2,
-                'o' => 8,
-                'x' => 16,
-                _ => ThrowHelper.ThrowArgumentException<int>($"{token.Source[1]} is not a valid special immediate mode."),
-            };
-
-            // The tokenizer will allow bad immediates to be created. This is handled here when the convert throws an exception.
-            try
-            {
-                value = Convert.ToInt64(token.Source[2..], @base);
-            }
-            catch
-            {
-                _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token);
-                return false;
-            }
-        }
-        else if (!long.TryParse(token.Source, out value))
+        if (!match.Success)
         {
             _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token);
             return false;
         }
 
-        result = new AbsoluteNode(token, value);
-        return true;
+        if (match.Groups["char"].Success)
+        {
+            if (StringParser.TryParseChar(token, out char c, _logger?.Parent))
+            {
+                result = new IntegerNode(token, c);
+                return true;
+            }
+
+            // If StringParser fails, it has already logged the specific error.
+            return false;
+        }
+        else if (match.Groups["float"].Success)
+        {
+            if (double.TryParse(match.Groups["float"].Value, CultureInfo.InvariantCulture, out double d))
+            {
+                result = new FloatNode(token, d);
+                return true;
+            }
+        }
+        else
+        {
+            try
+            {
+                long value = 0;
+                if (match.Groups["int"].Success) value = long.Parse(match.Groups["int"].Value);
+                else if (match.Groups["hex"].Success) value = Convert.ToInt64(match.Groups["hex"].Value, 16);
+                else if (match.Groups["bin"].Success) value = Convert.ToInt64(match.Groups["bin"].Value, 2);
+                else if (match.Groups["oct"].Success) value = Convert.ToInt64(match.Groups["oct"].Value, 8);
+
+                result = new IntegerNode(token, value);
+                return true;
+            }
+            catch (OverflowException)
+            {
+                _logger?.Log(Severity.Error, LogId.IntegerTruncated, token, "ImmediateOverflow", token);
+                return false;
+            }
+        }
+
+        _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token);
+        return false;
     }
 
     private bool TryParseReference(Token token, [NotNullWhen(true)] out ExpNode? result)
