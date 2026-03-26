@@ -2,6 +2,7 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Numerics;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models.Enums;
@@ -11,7 +12,7 @@ namespace Test.Assembler.MIPS.Parsers;
 [TestClass]
 public class ExpressionParserTests
 {
-    public static IEnumerable<object[]> ExpressionSuccessTestsList =>
+    public static IEnumerable<object[]> IntegerSuccessTestsList =>
     [
         ["10", 10],
         ["-10", -10],
@@ -36,7 +37,18 @@ public class ExpressionParserTests
         ["'a' + 10", 'a' + 10],
     ];
 
-    public static IEnumerable<object[]> ExpressionFailureTestsList =>
+    public static IEnumerable<object[]> FloatSuccessTestsList =>
+    [
+        ["10", 10d],
+        ["-10", -10d],
+        ["1.0", 1.0],
+        ["1.4", 1.4],
+        ["-1.0", -1.0],
+        ["-1.4", -1.4],
+        ["2 - 1.4", 2 - 1.4],
+    ];
+
+    public static IEnumerable<object[]> IntegerFailureTestsList =>
     [
         ["+"],
         ["*10"],
@@ -48,22 +60,30 @@ public class ExpressionParserTests
         ["(4 + 2 * 2"],
         ["'abc'"],
         [@"'\x'"],
+        [@"3.0"],
+        [@"3.2"],
     ];
 
     [DataTestMethod]
-    [DynamicData(nameof(ExpressionSuccessTestsList))]
-    public void ExpressionSuccessTests(string input, int expected)
-        => RunTest(input, expected);
+    [DynamicData(nameof(IntegerSuccessTestsList))]
+    public void IntegerSuccessTests(string input, long expected)
+        => RunTest<long>(input, expected);
 
     [DataTestMethod]
-    [DynamicData(nameof(ExpressionFailureTestsList))]
-    public void ExpressionFailureTests(string input)
-        => RunTest(input);
+    [DynamicData(nameof(FloatSuccessTestsList))]
+    public void FloatSuccessTests(string input, double expected)
+        => RunTest<double>(input, expected);
 
-    private static void RunTest(string input, long? expected = null)
+    [DataTestMethod]
+    [DynamicData(nameof(IntegerFailureTestsList))]
+    public void IntegerFailureTests(string input)
+        => RunTest<long>(input);
+
+    private static void RunTest<T>(string input, T? expected = null)
+        where T : unmanaged, IBinaryNumber<T>
     {
         var line = Tokenizer.TokenizeLine(input, nameof(RunTest), TokenizerMode.Expression)[0];
-        bool success = ExpressionParser.TryParse<long>(line.Tokens, out var actual, null, null);
+        bool success = ExpressionParser.TryParse<T>(line.Tokens, out var actual, null, null);
         Assert.AreEqual(success, expected.HasValue);
         if (expected.HasValue)
         {
