@@ -1,184 +1,179 @@
 ﻿[
   {
+    "type": "coproc0",
     "name": "mfc0",
-    "op_code": 16,
-    "coproc0_rs": 0,
-    "args": [ 1, 2 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "rs_code": 0,
+    "args": [ "rt", "rd" ],
+    "added_in": "MipsI",
     "behavior": "GPR[$rt] = CPR[0, $rd, $sel]"
   },
   {
+    "type": "coproc0",
     "name": "mfhc0",
-    "op_code": 16,
-    "coproc0_rs": 2,
-    "args": [ 1, 2 ],
-    "versions": [ 11, 16 ],
+    "rs_code": 2,
+    "args": [ "rt", "rd" ],
+    "added_in": "Mips32R2",
     "behavior": "GPR[$rt] = CPR[0, $rd, $sel][63:32]"
   },
   {
+    "type": "coproc0",
     "name": "mtc0",
-    "op_code": 16,
-    "coproc0_rs": 4,
-    "args": [ 1, 2 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "rs_code": 4,
+    "args": [ "rt", "rd" ],
+    "added_in": "MipsI",
     "behavior": "CPR[0, $rd, $sel] = GPR[$rt]"
   },
   {
+    "type": "coproc0",
     "name": "mthc0",
-    "op_code": 16,
-    "coproc0_rs": 6,
-    "args": [ 1, 2 ],
-    "versions": [ 11, 16 ],
+    "rs_code": 6,
+    "args": [ "rt", "rd" ],
+    "added_in": "Mips32R2",
     "behavior": "CPR[0, $rd, $sel][63:32] = GPR[$rt]"
   },
   {
+    "type": "coproc0",
     "name": "tlbr",
-    "op_code": 16,
-    "co0_func_code": 1,
+    "rs_code": 16,
+    "func_code": 1,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "Read Indexed TLB Entry"
+    "added_in": "MipsI"
   },
   {
+    "type": "coproc0",
     "name": "tlbwi",
-    "op_code": 16,
-    "co0_func_code": 2,
+    "rs_code": 16,
+    "func_code": 2,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "Write Indexed TLB Entry"
+    "added_in": "MipsI"
   },
   {
+    "type": "coproc0",
     "name": "tlbinv",
-    "op_code": 16,
-    "co0_func_code": 3,
+    "rs_code": 16,
+    "func_code": 3,
     "args": [],
-    "versions": [ 11, 16 ],
-    "behavior": "TLB Invalidate"
+    "added_in": "Mips32R2"
   },
   {
+    "type": "coproc0",
     "name": "tlbinvf",
-    "op_code": 16,
-    "co0_func_code": 4,
+    "rs_code": 16,
+    "func_code": 4,
     "args": [],
-    "versions": [ 11, 16 ],
-    "behavior": "TLB Invalidate Flush"
+    "added_in": "Mips32R2"
   },
   {
+    "type": "coproc0",
     "name": "tlbwr",
-    "op_code": 16,
-    "co0_func_code": 6,
+    "rs_code": 16,
+    "func_code": 6,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
-    "behavior": "Write Random TLB Entry"
+    "added_in": "MipsI",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "coproc0",
     "name": "tlbp",
-    "op_code": 16,
-    "co0_func_code": 8,
+    "rs_code": 16,
+    "func_code": 8,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "Index = probe_tlb(EntryHi)"
+    "added_in": "MipsI"
   },
   {
+    "type": "coproc0",
     "name": "eret",
-    "op_code": 16,
-    "co0_func_code": 24,
-    "rd": 0,
+    "rs_code": 16,
+    "func_code": 24,
+    "rd_fixed": 0,
     "args": [],
-    "versions": [ 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "Exception Return"
+    "added_in": "MipsII"
   },
   {
+    "type": "coproc0",
     "name": "eretnc",
-    "op_code": 16,
-    "co0_func_code": 24,
-    "rd": 1,
+    "rs_code": 16,
+    "func_code": 24,
+    "rd_fixed": 1,
     "args": [],
-    "versions": [ 11, 16 ],
-    "behavior": "Exception Return No Clear"
+    "added_in": "Mips32R2"
   },
   {
+    "type": "coproc0",
     "name": "deret",
-    "op_code": 16,
-    "co0_func_code": 31,
+    "rs_code": 16,
+    "func_code": 31,
     "args": [],
-    "versions": [ 10, 11, 16 ],
-    "behavior": "Debug Exception Return"
+    "added_in": "Mips32R1"
   },
   {
+    "type": "coproc0",
     "name": "wait",
-    "op_code": 16,
-    "co0_func_code": 32,
+    "rs_code": 16,
+    "func_code": 32,
     "args": [],
-    "versions": [ 10, 11, 16 ],
-    "behavior": "Enter Standby Mode"
+    "added_in": "Mips32R1"
   },
   {
+    "type": "coproc0",
     "name": "di",
-    "op_code": 16,
-    "mfmc0_func_code": 0,
-    "rd": 12,
-    "args": [],
-    "versions": [ 11, 16 ],
-    "behavior": "Disable Interrupts"
+    "rs_code": 11,
+    "func_code": 0,
+    "rd_fixed": 12,
+    "args": []
   },
   {
+    "type": "coproc0",
     "name": "di",
-    "op_code": 16,
-    "mfmc0_func_code": 0,
-    "rd": 12,
-    "args": [ 1 ],
-    "versions": [ 11, 16 ],
-    "behavior": "Disable Interrupts"
+    "rs_code": 11,
+    "func_code": 0,
+    "rd_fixed": 12,
+    "args": [ "rt" ]
   },
   {
+    "type": "coproc0",
     "name": "ei",
-    "op_code": 16,
-    "mfmc0_func_code": 32,
-    "rd": 12,
-    "args": [],
-    "versions": [ 11, 16 ],
-    "behavior": "Enable Interrupts"
+    "rs_code": 11,
+    "func_code": 32,
+    "rd_fixed": 12,
+    "args": []
   },
   {
+    "type": "coproc0",
     "name": "ei",
-    "op_code": 16,
-    "mfmc0_func_code": 32,
-    "rd": 12,
-    "args": [ 1 ],
-    "versions": [ 11, 16 ],
-    "behavior": "Enable Interrupts"
+    "rs_code": 11,
+    "func_code": 32,
+    "rd_fixed": 12,
+    "args": [ "rt" ]
   },
   {
+    "type": "coproc0",
     "name": "dvp",
-    "op_code": 16,
-    "mfmc0_func_code": 11,
-    "args": [ 1 ],
-    "versions": [ 16 ],
-    "behavior": "Disable Virtual Processor"
+    "rs_code": 11,
+    "func_code": 11,
+    "args": [ "rt" ],
+    "added_in": "Mips32R6"
   },
   {
+    "type": "coproc0",
     "name": "evp",
-    "op_code": 16,
-    "mfmc0_func_code": 4,
-    "args": [ 1 ],
-    "versions": [ 16 ],
-    "behavior": "Enable Virtual Processor"
+    "rs_code": 11,
+    "func_code": 4,
+    "args": [ "rt" ],
+    "added_in": "Mips32R6"
   },
   {
+    "type": "coproc0",
     "name": "rdpgpr",
-    "op_code": 16,
-    "coproc0_rs": 10,
-    "args": [ 2, 1 ],
-    "versions": [ 11, 16 ],
-    "behavior": "Read Previous Shadow GPR"
+    "rs_code": 10,
+    "args": [ "rd", "rt" ],
+    "added_in": "Mips32R2"
   },
   {
+    "type": "coproc0",
     "name": "wrpgpr",
-    "op_code": 16,
-    "coproc0_rs": 14,
-    "args": [ 2, 1 ],
-    "versions": [ 11, 16 ],
-    "behavior": "Write Previous Shadow GPR"
+    "rs_code": 14,
+    "args": [ "rd", "rt" ],
+    "added_in": "Mips32R2"
   }
 ]

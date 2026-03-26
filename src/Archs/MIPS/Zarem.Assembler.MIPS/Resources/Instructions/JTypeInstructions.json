@@ -1,39 +1,43 @@
 ﻿[
   {
+    "type": "i-type",
     "name": "j",
     "op_code": 2,
-    "args": [ 6 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "PC = JumpAddress",
-    "obsolete": true
+    "args": [ "target" ],
+    "added_in": "MipsI",
+    "behavior": "PC = JumpAddress"
   },
   {
+    "type": "i-type",
     "name": "jal",
     "op_code": 3,
-    "args": [ 6 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "GPR[31] = PC + 8, PC = JumpAddress",
-    "obsolete": true
+    "args": [ "target" ],
+    "added_in": "MipsI",
+    "behavior": "GPR[31] = PC + 8, PC = JumpAddress"
   },
   {
+    "type": "i-type",
     "name": "jalx",
     "op_code": 29,
-    "args": [ 6 ],
-    "versions": [ 10, 11 ],
+    "args": [ "target" ],
+    "added_in": "Mips32R1",
+    "removed_in": "Mips32R6",
     "behavior": "Jump and Link Exchange (ISA Mode Switch)"
   },
   {
+    "type": "i-type",
     "name": "bc",
     "op_code": 50,
-    "args": [ 14 ],
-    "versions": [ 16 ],
+    "args": [ "offset26" ],
+    "added_in": "Mips32R6",
     "behavior": "PC = PC + 4 + (offset << 2)"
   },
   {
+    "type": "i-type",
     "name": "balc",
     "op_code": 58,
-    "args": [ 14 ],
-    "versions": [ 16 ],
+    "args": [ "offset26" ],
+    "added_in": "Mips32R6",
     "behavior": "GPR[31] = PC + 4, PC = PC + 4 + (offset << 2)"
   }
 ]

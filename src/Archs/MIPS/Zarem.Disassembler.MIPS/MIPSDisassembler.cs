@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using CommunityToolkit.Diagnostics;
 using System.Linq;
 using System.Text;
 using Zarem.Assembler.Config;
@@ -84,7 +85,7 @@ public class MipsDisassembler
 
         bool hasFormat = instruction.Type is InstructionType.Float;
         bool eretnc = funcCode2 is (byte)Co0FuncCode.ExceptionReturn && instruction.RD is (GPRegister)1;
-        var key = new DisassemblerLookup((byte)instruction.OpCode, funcCode, funcCode2, hasFormat || eretnc);
+        var key = new DisassemblerLookup((byte)instruction.OpCode, funcCode, funcCode2, eretnc ? (byte?)instruction.RD : null, hasFormat);
         if (!InstructionTable.TryGetInstruction(key, out var metas, out _, out _))
         {
             return "Unknown instruction";
@@ -94,6 +95,8 @@ public class MipsDisassembler
         var meta = metas
             .OrderByDescending(x => x.ArgumentPattern.Length)
             .FirstOrDefault();
+
+        Guard.IsNotNull(meta);
 
         // Apply the format to the name if it exists
         var name = meta.Name;
@@ -110,7 +113,7 @@ public class MipsDisassembler
                 Argument.RS => RegistersTable.GetRegisterString(instruction.RS),
                 Argument.RT => RegistersTable.GetRegisterString(instruction.RT),
                 Argument.RD => RegistersTable.GetRegisterString(instruction.RD),
-                Argument.Shift => instruction.ShiftAmount,
+                Argument.ShiftAmount => instruction.ShiftAmount,
                 Argument.Immediate => instruction.ImmediateValue,
                 Argument.Offset => instruction.Offset,
                 Argument.LargeOffset => instruction.Address,

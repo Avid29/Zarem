@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Abstract;
 using Zarem.IDE.Models.CheatSheet;
 using Zarem.IDE.Services;
 
@@ -42,24 +43,24 @@ public class UsagePatternsViewModel : CheatSheetSubPageViewModel
     /// <summary>
     /// Gets an <see cref="ObservableGroupedCollection{String, InstructionMetadata}"/> of common instruction metadatas, grouped by category.
     /// </summary>
-    public ObservableGroupedCollection<string, MipsInstructionMetadata>? CommonInstructions { get; }
+    public ObservableGroupedCollection<string, MipsInstructionMetaBase>? CommonInstructions { get; }
 
     /// <summary>
     /// Gets an <see cref="ObservableGroupedCollection{String, InstructionMetadata}"/> of floating-point instruction metadatas, grouped by category.
     /// </summary>
-    public ObservableGroupedCollection<string, MipsInstructionMetadata>? FloatInstructions { get; }
+    public ObservableGroupedCollection<string, MipsInstructionMetaBase>? FloatInstructions { get; }
 
     /// <summary>
     /// Gets an <see cref="ObservableGroupedCollection{String, InstructionMetadata}"/> of coproc0 instruction metadatas, grouped by category.
     /// </summary>
-    public ObservableGroupedCollection<string, MipsInstructionMetadata>? CoProc0Instructions { get; }
+    public ObservableGroupedCollection<string, MipsInstructionMetaBase>? CoProc0Instructions { get; }
 
     /// <summary>
     /// Gets an <see cref="ObservableGroupedCollection{String, InstructionMetadata}"/> of specialized instruction metadatas, grouped by category.
     /// </summary>
-    public ObservableGroupedCollection<string, MipsInstructionMetadata>? Specialized0Instructions { get; }
+    public ObservableGroupedCollection<string, MipsInstructionMetaBase>? Specialized0Instructions { get; }
 
-    private IEnumerable<IGrouping<string, MipsInstructionMetadata>>? LoadInstructionSet(string filename, MipsInstructionMetadata[] instructions)
+    private IEnumerable<IGrouping<string, MipsInstructionMetaBase>>? LoadInstructionSet(string filename, MipsInstructionMetaBase[] instructions)
     {
         // Load groupings
         var assembly = Assembly.GetExecutingAssembly();

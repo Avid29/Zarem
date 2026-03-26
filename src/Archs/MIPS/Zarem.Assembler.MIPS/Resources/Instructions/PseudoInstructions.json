@@ -1,73 +1,91 @@
 ﻿[
   {
+    "type": "pseudo",
     "name": "nop",
-    "pseudo_op": 0,
+    "pseudo_id": 0,
     "args": [],
-    "real_instruction_count": 1,
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
+    "added_in": "MipsI",
+    "expansion_count": 1,
+    "behavior": "sll zero, zero, 0"
   },
   {
+    "type": "pseudo",
     "name": "ssnop",
-    "pseudo_op": 1,
+    "pseudo_id": 1,
     "args": [],
-    "real_instruction_count": 1,
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
+    "added_in": "MipsI",
+    "expansion_count": 1,
+    "behavior": "sll zero, zero, 1 (Superscalar NOP)"
   },
   {
+    "type": "pseudo",
     "name": "b",
-    "pseudo_op": 2,
-    "args": [ 5 ],
-    "real_instruction_count": 1,
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
+    "pseudo_id": 2,
+    "args": [ "offset" ],
+    "added_in": "MipsI",
+    "expansion_count": 1,
+    "behavior": "beq zero, zero, offset"
   },
   {
+    "type": "pseudo",
     "name": "bal",
-    "pseudo_op": 3,
-    "args": [ 5 ],
-    "real_instruction_count": 1,
-    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
-    "obsolete": true
+    "pseudo_id": 3,
+    "args": [ "offset" ],
+    "added_in": "MipsI",
+    "removed_in": "Mips32R6",
+    "expansion_count": 1,
+    "behavior": "bgezal zero, offset"
   },
   {
+    "type": "pseudo",
     "name": "blt",
-    "pseudo_op": 4,
-    "args": [ 0, 1, 5 ],
-    "real_instruction_count": 2,
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
+    "pseudo_id": 4,
+    "args": [ "rs", "rt", "offset" ],
+    "added_in": "MipsI",
+    "expansion_count": 2,
+    "behavior": "slt at, rs, rt; bne at, zero, offset"
   },
   {
+    "type": "pseudo",
     "name": "li",
-    "pseudo_op": 5,
-    "args": [ 1, 8 ],
-    "real_instruction_count": 2,
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
+    "pseudo_id": 5,
+    "args": [ "rt", "immediate32" ],
+    "added_in": "MipsI",
+    "expansion_count": 2,
+    "behavior": "lui rt, upper; ori rt, rt, lower"
   },
   {
+    "type": "pseudo",
     "name": "abs",
-    "pseudo_op": 6,
-    "args": [ 1, 0 ],
-    "real_instruction_count": 3,
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
+    "pseudo_id": 6,
+    "args": [ "rd", "rs" ],
+    "added_in": "MipsI",
+    "expansion_count": 3
   },
   {
+    "type": "pseudo",
     "name": "move",
-    "pseudo_op": 7,
-    "args": [ 1, 0 ],
-    "real_instruction_count": 1,
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
+    "pseudo_id": 7,
+    "args": [ "rd", "rs" ],
+    "added_in": "MipsI",
+    "expansion_count": 1,
+    "behavior": "addu rd, rs, zero"
   },
   {
+    "type": "pseudo",
     "name": "la",
-    "pseudo_op": 8,
-    "args": [ 1, 8 ],
-    "real_instruction_count": 2,
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
+    "pseudo_id": 8,
+    "args": [ "rd", "immediate32" ],
+    "added_in": "MipsI",
+    "expansion_count": 2
   },
   {
+    "type": "pseudo",
     "name": "sge",
-    "pseudo_op": 9,
-    "args": [ 2, 0, 1 ],
-    "real_instruction_count": 2,
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
+    "pseudo_id": 9,
+    "args": [ "rd", "rs", "rt" ],
+    "added_in": "MipsI",
+    "expansion_count": 2,
+    "behavior": "slt rd, rs, rt; xori rd, rd, 1"
   }
 ]

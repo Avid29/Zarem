@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models;
@@ -43,7 +44,7 @@ public class MipsAssmblerHandler : IAssemblerHandler<MipsAssemblerConfig>
 
         if (_instructionTable.TryGetInstruction(line.Instruction.Source, line.Args.Count, out var meta, out _, out _))
         {
-            var count = meta.RealizedInstructionCount ?? 1;
+            var count = (meta as PseudoInstructionMeta)?.RealizedCount ?? 1;
             return count * 4;
         }
 

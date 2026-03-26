@@ -1,59 +1,62 @@
 ﻿// Avishai Dernis 2025
 
+using System.Text.Json.Serialization;
+
 namespace Zarem.Models.Instructions.Enums;
 
 /// <summary>
 /// An enum for potential argument types.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Argument
 {
-    #pragma warning disable CS1591
+#pragma warning disable CS1591
 
     // General Registers
-    RS,
-    RT,
-    RD,
+    [JsonStringEnumMemberName("rs")] RS,
+    [JsonStringEnumMemberName("rt")] RT,
+    [JsonStringEnumMemberName("rd")] RD,
 
-    Shift,
+    [JsonStringEnumMemberName("sa")] ShiftAmount,
 
     /// <summary>
     /// The 16 bit immediate value.
     /// </summary>
-    Immediate,
+    [JsonStringEnumMemberName("immediate")] Immediate,
 
     /// <summary>
     /// A branch's offset.
     /// </summary>
-    Offset,
+    [JsonStringEnumMemberName("offset")] Offset,
 
     /// <summary>
     /// The 26-bit immediate value.
     /// </summary>
-    Address,
+    [JsonStringEnumMemberName("target")] Address,
 
     /// <summary>
     /// An base memory address from a register, and a 16-bit offset.
     /// </summary>
-    AddressBase,
+    [JsonStringEnumMemberName("offset_rs")] AddressBase,
 
     /// <summary>
     /// A 32 bit immediate value.
     /// </summary>
-    FullImmediate,
+    [JsonStringEnumMemberName("immediate32")] FullImmediate,
 
     // Floating Point Registers
-    FS,
-    FT,
-    FD,
+    [JsonStringEnumMemberName("fs")] FS,
+    [JsonStringEnumMemberName("ft")] FT,
+    [JsonStringEnumMemberName("fd")] FD,
 
     // RS/RT Register argument for coprocessors. Must use numbered register name.
-    RS_Numbered,
-    RT_Numbered,
+    [JsonStringEnumMemberName("rs_num")] RS_Numbered,
+    [JsonStringEnumMemberName("rt_num")] RT_Numbered,
 
     /// <summary>
     /// A 26-bit branch offset.
     /// </summary>
-    LargeOffset,
+    [JsonStringEnumMemberName("offset26")] LargeOffset,
 
 #pragma warning restore CS1591
 }

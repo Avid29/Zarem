@@ -14,6 +14,7 @@ using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Models.Instructions.Enums;
 using Zarem.IDE.Controls.CheatSheet.Palettes;
 using Zarem.IDE.Services;
+using Zarem.Assembler.Models.Abstract;
 
 namespace Zarem.IDE.Controls.CheatSheet;
 
@@ -22,8 +23,6 @@ namespace Zarem.IDE.Controls.CheatSheet;
 /// </summary>
 public sealed partial class UsagePatternDisplay : UserControl
 {
-    private MipsInstructionMetadata? _metadata;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="UsagePatternDisplay"/> class.
     /// </summary>
@@ -32,12 +31,12 @@ public sealed partial class UsagePatternDisplay : UserControl
         InitializeComponent();
     }
 
-    public MipsInstructionMetadata? Metadata
+    public MipsInstructionMetaBase? Metadata
     {
-        get => _metadata;
+        get => field;
         set
         {
-            _metadata = value;
+            field = value;
             UpdateDisplay();
         }
     }
@@ -54,18 +53,16 @@ public sealed partial class UsagePatternDisplay : UserControl
 
     private void UpdateDisplay()
     {
-        if (!_metadata.HasValue)
+        if (Metadata is null)
             return;
 
         var localizer = App.Current.Services.GetRequiredService<ILocalizationService>();
-        var data = _metadata.Value;
-
-        UpdateNameDisplay(data, localizer);
-        UpdateUsageDisplay(data.ArgumentPattern, localizer);
-        UpdateBehaviorDisplay(data.Behavior, localizer);
+        UpdateNameDisplay(Metadata, localizer);
+        UpdateUsageDisplay(Metadata.ArgumentPattern, localizer);
+        UpdateBehaviorDisplay(Metadata.Behavior, localizer);
     }
 
-    private void UpdateNameDisplay(MipsInstructionMetadata data, ILocalizationService localizer)
+    private void UpdateNameDisplay(MipsInstructionMetaBase data, ILocalizationService localizer)
     {
         // Construct a new Paragraph with the instruction name
         var block = new Paragraph();
@@ -194,7 +191,7 @@ public sealed partial class UsagePatternDisplay : UserControl
                 Foreground = ArgumentBrushPalette?.CPRegisterBrush,
             },
             Argument.Immediate or Argument.Offset or Argument.Address or
-            Argument.Shift or Argument.FullImmediate => new Run
+            Argument.ShiftAmount or Argument.FullImmediate => new Run
             {
                 Text = localizer[$"/CheatSheet/Usage/{ArgumentTable.GetArgPatternString(arg)}"],
                 Foreground = ArgumentBrushPalette?.ImmediateValueBrush,

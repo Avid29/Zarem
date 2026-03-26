@@ -1,226 +1,235 @@
 ﻿[
   {
+    "type": "i-type",
     "name": "beq",
     "op_code": 4,
-    "args": [ 0, 1, 5 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "if ($rs == $rt) $pc = address"
+    "args": [ "rs", "rt", "offset" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "bne",
     "op_code": 5,
-    "args": [ 0, 1, 5 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "if ($rs != $rt) $pc = address"
+    "args": [ "rs", "rt", "offset" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "blez",
     "op_code": 6,
-    "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "if ($rs <= 0) $pc = address"
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "bgtz",
     "op_code": 7,
-    "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "if ($rs > 0) $pc = address"
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "addi",
     "op_code": 8,
-    "args": [ 1, 0, 4 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
-    "behavior": "$rt = $rs + immediate"
+    "args": [ "rt", "rs", "immediate" ],
+    "added_in": "MipsI",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "i-type",
     "name": "addiu",
     "op_code": 9,
-    "args": [ 1, 0, 4 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = $rs + immediate"
+    "args": [ "rt", "rs", "immediate" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "slti",
     "op_code": 10,
-    "args": [ 1, 0, 4 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = $rs < immediate ? 1 : 0"
+    "args": [ "rt", "rs", "immediate" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "sltiu",
     "op_code": 11,
-    "args": [ 1, 0, 4 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = $rs < immediate ? 1 : 0"
+    "args": [ "rt", "rs", "immediate" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "andi",
     "op_code": 12,
-    "args": [ 1, 0, 4 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = $rs & immediate"
+    "args": [ "rt", "rs", "immediate" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "ori",
     "op_code": 13,
-    "args": [ 1, 0, 4 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = $rs | immediate"
+    "args": [ "rt", "rs", "immediate" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "xori",
     "op_code": 14,
-    "args": [ 1, 0, 4 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = $rs ^ immediate"
+    "args": [ "rt", "rs", "immediate" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "lui",
     "op_code": 15,
-    "args": [ 1, 4 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = immediate << 16"
+    "args": [ "rt", "immediate" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "beql",
     "op_code": 20,
-    "args": [ 0, 1, 5 ],
-    "versions": [ 2, 3, 4, 5, 10, 11 ],
-    "obsolete": true
+    "args": [ "rs", "rt", "offset" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "i-type",
     "name": "bnel",
     "op_code": 21,
-    "args": [ 0, 1, 5 ],
-    "versions": [ 2, 3, 4, 5, 10, 11 ],
-    "obsolete": true
+    "args": [ "rs", "rt", "offset" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "i-type",
     "name": "blezl",
     "op_code": 22,
-    "args": [ 0, 5 ],
-    "versions": [ 2, 3, 4, 5, 10, 11 ],
-    "obsolete": true
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "i-type",
     "name": "bgtzl",
     "op_code": 23,
-    "args": [ 0, 5 ],
-    "versions": [ 2, 3, 4, 5, 10, 11 ],
-    "obsolete": true
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "i-type",
     "name": "lb",
     "op_code": 32,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = (sbyte)mem[$rs + offset]"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "lh",
     "op_code": 33,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = (short)mem[$rs + offset]"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "lwl",
     "op_code": 34,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
-    "behavior": "Load Word Left"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "i-type",
     "name": "lw",
     "op_code": 35,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = (int)mem[$rs + offset]"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "lbu",
     "op_code": 36,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = (byte)mem[$rs + offset]"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "lhu",
     "op_code": 37,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$rt = (ushort)mem[$rs + offset]"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "lwr",
     "op_code": 38,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
-    "behavior": "Load Word Right"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "i-type",
     "name": "sb",
     "op_code": 40,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "mem[$rs + offset] = (sbyte)$rt"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "sh",
     "op_code": 41,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "mem[$rs + offset] = (short)$rt"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "swl",
     "op_code": 42,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
-    "behavior": "Store Word Left"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "i-type",
     "name": "sw",
     "op_code": 43,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "mem[$rs + offset] = (int)$rt"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "swr",
     "op_code": 46,
-    "args": [ 1, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
-    "behavior": "Store Word Right"
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsI",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "i-type",
     "name": "lwc1",
     "op_code": 49,
-    "args": [ 10, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$ft = (int)mem[$rs + offset]"
+    "args": [ "ft", "offset_rs" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "ldc1",
     "op_code": 53,
-    "args": [ 10, 7 ],
-    "versions": [ 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "$ft = (long)mem[$rs + offset]"
+    "args": [ "ft", "offset_rs" ],
+    "added_in": "MipsII"
   },
   {
+    "type": "i-type",
     "name": "swc1",
     "op_code": 57,
-    "args": [ 10, 7 ],
-    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "mem[$rs + offset] = (int)$ft"
+    "args": [ "ft", "offset_rs" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "i-type",
     "name": "sdc1",
     "op_code": 61,
-    "args": [ 10, 7 ],
-    "versions": [ 2, 3, 4, 5, 10, 11, 16 ],
-    "behavior": "mem[$rs + offset] = (long)$ft"
+    "args": [ "ft", "offset_rs" ],
+    "added_in": "MipsII"
   }
 ]

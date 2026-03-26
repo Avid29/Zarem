@@ -20,6 +20,8 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
+using Zarem.Assembler.Models.Meta;
+
 
 #if DEBUG
 using Zarem.Disassembler.Services;
@@ -232,14 +234,14 @@ public class InstructionParserTests
         foreach (var instruction in table.GetInstructions())
         {
             // TODO: Disassembling pseudo instructions
-            if (instruction.IsPseudoInstruction)
+            if (instruction is PseudoInstructionMeta)
                 continue;
 
             // Apply format to instruction name, if applicable
             var name = instruction.Name;
-            if (name.EndsWith(".fmt"))
+            if (instruction is FloatInstructionMeta fMeta)
             {
-                name = FloatFormatTable.ApplyFormat(name, ArgGenerator.RandomFormat(instruction.FloatFormats));
+                name = FloatFormatTable.ApplyFormat(name, ArgGenerator.RandomFormat(fMeta.SupportedFormats));
             }
 
             // Generate instruction
@@ -254,9 +256,10 @@ public class InstructionParserTests
                     Argument.FS or Argument.FT or Argument.FD => RegistersTable.GetRegisterString(ArgGenerator.RandomRegister(), RegisterSet.FloatingPoints),
                     Argument.Immediate => $"{ArgGenerator.RandomImmediate()}",
                     Argument.Offset => $"{ArgGenerator.RandomOffset()}",
+                    Argument.LargeOffset => $"{ArgGenerator.RandomOffset()}",
                     Argument.Address => $"{ArgGenerator.RandomAddress()}",
                     Argument.AddressBase => $"{ArgGenerator.RandomImmediate()}({RegistersTable.GetRegisterString(ArgGenerator.RandomRegister())})",
-                    Argument.Shift => $"{ArgGenerator.RandomShift()}",
+                    Argument.ShiftAmount => $"{ArgGenerator.RandomShift()}",
                     Argument.FullImmediate => Random.Shared.Next(),
                     _ => throw new NotImplementedException(),
                 });

@@ -13,6 +13,8 @@ using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Abstract;
+using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers.Enums;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
@@ -40,7 +42,7 @@ public struct MipsInstructionParser
     private readonly InstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
 
-    private MipsInstructionMetadata _meta;
+    private MipsInstructionMetaBase? _meta;
 
     private GPRegister _rs;
     private GPRegister _rt;
@@ -82,9 +84,9 @@ public struct MipsInstructionParser
             return null;
 
         // Applies provided values
-        _rs = (GPRegister)(_meta.RS ?? default);
-        _rt = (GPRegister)(_meta.RT ?? default);
-        _rd = (GPRegister)(_meta.RD ?? default);
+        _rs = (GPRegister)(_meta.FixedRS ?? default);
+        _rt = (GPRegister)(_meta.FixedRT ?? default);
+        _rd = (GPRegister)(_meta.FixedRD ?? default);
 
         // Parse argument data according to pattern
         Argument[] pattern = _meta.ArgumentPattern;
@@ -108,13 +110,11 @@ public struct MipsInstructionParser
         // It's a pseudo instruction.
         // Create a pseudo-instruction and return with reference
         // as parsed instruction.
-        if (_meta.IsPseudoInstruction)
+        if (_meta is PseudoInstructionMeta pMeta)
         {
-            Guard.IsTrue(_meta.PseudoOp.HasValue);
-
             var pseudo = new PseudoInstruction
             {
-                PseudoOp = _meta.PseudoOp.Value,
+                PseudoOp = pMeta.PseudoOp,
                 RS = _rs,
                 RT = _rt,
                 RD = _rd,
@@ -147,6 +147,7 @@ public struct MipsInstructionParser
         return new MipsParsedInstruction(instruction, _references);
     }
 
+    [MemberNotNullWhen(true, nameof(_meta))]
     private bool TryParseInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
     {
         // Get instruction name and ensure it's not null
@@ -160,48 +161,29 @@ public struct MipsInstructionParser
 
         if (!_instructionTable.TryGetInstruction(name, out var metas, out var version, out var banned))
         {
-            // Select error message
             (LogId id, string message) = version switch
             {
-                not null when banned => 
-                    (LogId.DisabledFeatureInUse, "InstructionDisabled"),
-
-                // The instruction requires a higher MIPS version
-                not null when _config is null || version > _config.MipsVersion =>
-                    (LogId.NotInVersion, "RequiresVersion"),
-
-                // The instruction is deprecated
+                not null when banned => (LogId.DisabledFeatureInUse, "InstructionDisabled"),
+                not null when _config is null || version > _config.MipsVersion => (LogId.NotInVersion, "RequiresVersion"),
                 not null => (LogId.NotInVersion, "RemovedInVersion"),
-
-                // The instruction does not exist.
                 null => (LogId.InvalidInstructionName, "NoInstructionNamed")
             };
 
-            // Log the error
-            // TODO: Improve version formatting
             _logger?.Log(Severity.Error, id, line.Instruction, message, name, $"{version:d}");
             return false;
         }
 
-        // Assert instruction metadata with proper argument count exists
-        if (!metas.Any(x => x.ArgumentPattern.Length == line.Args.Count))
-        {
-            // TODO: Improve messaging
-            //var message = line.Args.Count < pattern.Length
-            //    ? $"Instruction '{name}' doesn't have enough arguments. Found {line.Args.Count} arguments when expecting {_meta.ArgumentPattern.Length}."
-            //    : $"Instruction '{name}' has too many arguments! Found {line.Args.Count} arguments when expecting {_meta.ArgumentPattern.Length}.";
+        _meta = metas.FirstOrDefault(x => x.ArgumentPattern.Length == line.Args.Count);
 
+        if (_meta is null)
+        {
             _logger?.Log(Severity.Error, LogId.InvalidInstructionArgCount, line.Instruction, "WrongArgumentCount", name, line.Args.Count);
             return false;
         }
 
-        // Find instruction pattern with matching argument count
-        _meta = metas.FirstOrDefault(x => x.ArgumentPattern.Length == line.Args.Count);
-
-        // Check that the float format is supported valid with the instruction, if applicable
-        if (_meta.FloatFormats is not null && !_meta.FloatFormats.Contains(_format))
+        // Check float format support via the specialized Float record
+        if (_meta is FloatInstructionMeta fMeta && fMeta.SupportedFormats is not null && !fMeta.SupportedFormats.Contains(_format))
         {
-            // TODO: Should float format be a separate token?
             _logger?.Log(Severity.Error, LogId.InvalidFloatFormat, line.Instruction, $"DoesNotSupportFormat{_format}", name);
             return false;
         }
@@ -219,7 +201,7 @@ public struct MipsInstructionParser
             Argument.RT_Numbered => TryParseRegisterArg(arg, type),
 
             // Expression arguments
-            Argument.Shift or Argument.Immediate or Argument.FullImmediate
+            Argument.ShiftAmount or Argument.Immediate or Argument.FullImmediate
             or Argument.Offset or Argument.LargeOffset or Argument.Address => TryParseExpressionArg(arg, type),
 
             // Address offset arguments
@@ -283,7 +265,7 @@ public struct MipsInstructionParser
         if (!ExpressionParser.TryParse<long>(arg, out var expResult, _symbols, _logger?.Parent))
             return false;
 
-        if (expResult.IsSymbolic && target is Argument.Shift)
+        if (expResult.IsSymbolic && target is Argument.ShiftAmount)
         {
             // TODO: Consider tracking ref symbol token
             _logger?.Log(Severity.Error, LogId.InvalidRelocatable, arg, "RelocatableShiftAmount");
@@ -338,7 +320,7 @@ public struct MipsInstructionParser
         // Assign to appropriate instruction argument
         switch (target)
         {
-            case Argument.Shift:
+            case Argument.ShiftAmount:
                 _shift = (byte)value;
                 return true;
             case Argument.Immediate:
@@ -459,7 +441,7 @@ public struct MipsInstructionParser
         // Determine casting details for the argument
         (int bitCount, int shiftAmount, bool signed) = target switch
         {
-            Argument.Shift => (5, 0, false),
+            Argument.ShiftAmount => (5, 0, false),
             Argument.Offset => (16, 2, false),
             Argument.Immediate => (16, 0, true),
             Argument.Address => (26, 2, false),
@@ -537,65 +519,37 @@ public struct MipsInstructionParser
 
     private readonly MipsInstruction BuildInstruction()
     {
-        // If it's not a pseudo instruction, there should be an OpCode
-        Guard.IsNotNull(_meta.OpCode);
+        Guard.IsNotNull(_meta);
 
-        // Create the instruction from its components based on the instruction type
-        return _meta.OpCode switch
+        return _meta switch
         {
-            // R Type
-            OperationCode.Special => _meta.FuncCode.HasValue ?                              // Special
-                MipsInstruction.Create(_meta.FuncCode.Value, _rs, _rt, _rd, _shift) :
-                _ = ThrowHelper.ThrowArgumentException<MipsInstruction>($"Instructions with OpCode:{_meta.OpCode} must have a {nameof(_meta.FuncCode)} value."),
-            OperationCode.Special2 => _meta.Function2Code.HasValue ?                        // Special 2
-                MipsInstruction.Create(_meta.Function2Code.Value, _rs, _rt, _rd, _shift) :
-                _ = ThrowHelper.ThrowArgumentException<MipsInstruction>($"Instructions with OpCode:{_meta.OpCode} must have a {nameof(_meta.Function2Code)} value."),
-            OperationCode.Special3 => _meta.Function3Code.HasValue ?                        // Special 3
-                MipsInstruction.Create(_meta.Function3Code.Value, _rs, _rt, _rd, _shift) :
-                _ = ThrowHelper.ThrowArgumentException<MipsInstruction>($"Instructions with OpCode:{_meta.OpCode} must have a {nameof(_meta.Function3Code)} value."),
+            RTypeInstructionMeta spec => MipsInstruction.Create((byte)spec.OperationCode, (byte)spec.FuncCode, _rs, _rt, _rd, _shift),
 
-            // J Type
-            OperationCode.Jump or OperationCode.JumpAndLink
-            or OperationCode.JumpAndLinkX => MipsInstruction.Create(_meta.OpCode.Value, _address),
+            RegImmInstructionMeta ri => (ri.RtCode is >= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink)
+                ? MipsInstruction.Create(ri.RtCode, _rs, _immediate)
+                : MipsInstruction.Create(ri.RtCode, _rs, (short)_immediate),
 
-            // Coprocessor0 instructions
-            OperationCode.Coprocessor0 when _meta.Co0FuncCode.HasValue                      // C0
-                => CoProc0Instruction.Create(_meta.Co0FuncCode.Value, _rd),
-            OperationCode.Coprocessor0 when _meta.Mfmc0FuncCode.HasValue                    // MFMC0
-                => CoProc0Instruction.Create(_meta.Mfmc0FuncCode.Value, _rt, _meta.RD),
-            OperationCode.Coprocessor0 => _meta.CoProc0RS.HasValue ?                        // Co0 RS
-                CoProc0Instruction.Create(_meta.CoProc0RS.Value, _rt, _rd) :
-                _ = ThrowHelper.ThrowArgumentException<MipsInstruction>($"Instructions with OpCode:{_meta.OpCode} must have a {nameof(_meta.CoProc0RS)}, {nameof(_meta.Co0FuncCode)}, or {nameof(_meta.Mfmc0FuncCode)} value."),
+            CoProc0InstructionsMeta c0 => c0.FuncCode.HasValue
+                ? CoProc0Instruction.Create(c0.FuncCode.Value, _rd)
+                : CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
 
-            // FloatingPoint instructions
-            OperationCode.Coprocessor1 when _meta.FloatFuncCode.HasValue && _meta.FloatFormats is not null  // Floating-Point
-                => FloatInstruction.Create(_meta.FloatFuncCode.Value, _format, (FloatRegister)_rs, (FloatRegister)_rd, (FloatRegister)_rt),
-            OperationCode.Coprocessor1 => _meta.CoProc1RS.HasValue ?                                    // CoProc1
-                FloatInstruction.Create(_meta.CoProc1RS.Value, _rt, (FloatRegister)_rs) :
-                _ = ThrowHelper.ThrowArgumentException<MipsInstruction>($"Instruction with OpCode:{_meta.OpCode} must have a {nameof(_meta.CoProc1RS)} or {nameof(_meta.FloatFuncCode)} value."),
+            CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (FloatRegister)_rs),
+            FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (FloatRegister)_rs, (FloatRegister)_rd, (FloatRegister)_rt),
 
-            // Register Immediate
-            OperationCode.RegisterImmediate => _meta.RegisterImmediateFuncCode switch
+            ITypeInstructionMeta std => std.OperationCode switch
             {
-                // Register Immediate Branching
-                (>= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely) or
-                (>= RegImmFuncCode.BranchOnLessThanZeroAndLink and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink)
-                    => MipsInstruction.Create(_meta.RegisterImmediateFuncCode.Value, _rs, _immediate),
+                OperationCode.Jump or OperationCode.JumpAndLink or OperationCode.JumpAndLinkX
+                    => MipsInstruction.Create(std.OperationCode, _address),
 
-                // Throw exception if null
-                null => ThrowHelper.ThrowArgumentException<MipsInstruction>($"Instruction with OpCode:{_meta.OpCode} must have a {nameof(_meta.RegisterImmediateFuncCode)} value."),
+                var op when 
+                    op is (>= OperationCode.BranchOnEquals and <= OperationCode.BranchOnGreaterThanZero) or
+                          (>= OperationCode.BranchOnEqualLikely and <= OperationCode.BranchOnGreaterThanZeroLikely)
+                    => MipsInstruction.Create(op, _rs, _rt, _immediate),
 
-                // Register Immediate
-                _ => MipsInstruction.Create(_meta.RegisterImmediateFuncCode.Value, _rs, (short)_immediate)
+                _ => MipsInstruction.Create(std.OperationCode, _rs, _rt, (short)_immediate)
             },
 
-            // I-Type Branch
-            (>= OperationCode.BranchOnEquals and <= OperationCode.BranchOnGreaterThanZero) or
-            (>= OperationCode.BranchOnEqualLikely and <= OperationCode.BranchOnGreaterThanZeroLikely)
-                    => MipsInstruction.Create(_meta.OpCode.Value, _rs, _rt, _immediate),
-
-            // Remaining I Type instructions
-            _ => MipsInstruction.Create(_meta.OpCode.Value, _rs, _rt, (short)_immediate),
+            _ => throw new NotSupportedException($"Metadata type {_meta.GetType().Name} is not supported for encoding.")
         };
     }
 }

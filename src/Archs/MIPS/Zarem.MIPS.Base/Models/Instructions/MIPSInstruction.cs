@@ -232,6 +232,21 @@ public struct MipsInstruction
     /// <summary>
     /// Creates a new <see cref="InstructionType.BasicR"/> instruction.
     /// </summary>
+    public static MipsInstruction Create(byte opCode, byte funcCode, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
+    {
+        MipsInstruction value = default;
+        value.OpCode = (OperationCode)opCode;
+        value.RS = rs;
+        value.RT = rt;
+        value.RD = rd;
+        value.ShiftAmount = shiftAmount;
+        value.FuncCode = (FunctionCode)funcCode;
+        return value;
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="InstructionType.BasicR"/> instruction.
+    /// </summary>
     public static MipsInstruction Create(FunctionCode funcCode, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
     {
         MipsInstruction value = default;
