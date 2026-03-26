@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2024
 
+using System.Numerics;
 using Zarem.Assembler.Parsers.Expressions.Enums;
 using Zarem.Assembler.Tokenization.Models;
 
@@ -36,8 +37,8 @@ public abstract class ExpNode
     /// <summary>
     /// Evaluate the expression tree as a type.
     /// </summary>
-    /// <param name="evaluator">The <see cref="Evaluator"/> to use in evaluating the tree.</param>
+    /// <param name="evaluator">The <see cref="Evaluator{T}"/> to use in evaluating the tree.</param>
     /// <param name="result">The evaluated expression tree.</param>
     /// <returns><see langword="true"/> when tree was successfully evaluated. <see langword="false"/> otherwise.</returns>
-    public abstract bool TryEvaluate(Evaluator evaluator, out ExpressionResult result);
+    public abstract bool TryEvaluate<T>(Evaluator<T> evaluator, out ExpressionResult<T> result) where T : unmanaged, IBinaryNumber<T>;
 }

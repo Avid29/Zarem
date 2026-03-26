@@ -115,7 +115,7 @@ public partial class Zarembler
             return;
         }
         
-        if (!ExpressionParser.TryParse(expression, out var result, _module.Symbols, _logger.Parent))
+        if (!ExpressionParser.TryParse<long>(expression, out var result, _module.Symbols, _logger.Parent))
             return;
         
         if (result.IsSymbolic)

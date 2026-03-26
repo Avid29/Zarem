@@ -50,7 +50,7 @@ public class BinaryOperNode : OperNode
     }
 
     /// <inheritdoc/>
-    public override bool TryEvaluate(Evaluator evaluator, out ExpressionResult result)
+    public override bool TryEvaluate<T>(Evaluator<T> evaluator, out ExpressionResult<T> result)
     {
         result = default;
 

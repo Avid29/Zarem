@@ -72,7 +72,7 @@ public class ElfTests : AssemblerTests
     public async Task CompositeFailTest() => await RunFileTest(TestFilePathing.CompositeFailTestFile,
         (LogId.InvalidInstructionArgCount, 13),
         (LogId.InvalidInstructionName, 15),
-        (LogId.UnparsableExpression, 18),
+        (LogId.UnexpectedToken, 18),
         (LogId.InvalidRegisterArgument, 23), // Debatably should be an InvalidAddressOffsetArgument error
         (LogId.ZeroRegWriteback, 28),
         (LogId.IntegerTruncated, 29),
