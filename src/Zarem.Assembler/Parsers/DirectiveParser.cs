@@ -296,9 +296,7 @@ public readonly struct DirectiveParser
 
             // If the host is Little Endian, flip to Big Endian for the directive
             if (BitConverter.IsLittleEndian)
-            {
                 destination.Reverse();
-            }
 
             pos += argSize;
         }
@@ -331,7 +329,9 @@ public readonly struct DirectiveParser
 
             // Null terminate string conditionally
             if (terminate)
-                bytes.Add(0);
+            {
+                bytes.AddRange(encoding.GetBytes("\0"));
+            }
         }
 
         directive = new DataDirective([..bytes]);
