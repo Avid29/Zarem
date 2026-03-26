@@ -203,6 +203,15 @@ public unsafe partial class InstructionServiceTable
         return MipsTrap.None;
     }
 
+    private static MipsTrap BranchLinkOn<T>(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
+        where T : ICondLogic
+    {
+        var rs = @this._regs[(int)inst.RS];
+        var rt = @this._regs[(int)inst.RT];
+        exec = T.Check(rs, rt) ? Execution.CreateJumpAndLink((uint)(@this._processor.ProgramCounter + inst.Offset + 4), @this._processor.ProgramCounter + 4) : default;
+        return MipsTrap.None;
+    }
+
     private static MipsTrap TrapOn<T>(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
         where T : ICondLogic
     {
@@ -321,9 +330,12 @@ public unsafe partial class InstructionServiceTable
         return MipsTrap.None;
     }
 
-    private static MipsTrap ReservedInstruction(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
+    private static MipsTrap Reserved(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
     {
         exec = default;
         return MipsTrap.ReservedInstruction;
     }
+
+    private static MipsTrap NotImplemented(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
+        => throw new NotImplementedException();
 }

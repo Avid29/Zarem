@@ -11,23 +11,19 @@ public enum MipsVersion : byte
 {
 #pragma warning disable CS1591
 
-    [XmlEnum(Name = "mips1")]
-    MipsI = 1,
+    // --- The Classic Era (MIPS I - V) ---
+    [XmlEnum("mips1")] MipsI = 1,   // Baseline (R2000/R3000)
+    [XmlEnum("mips2")] MipsII = 2,  // Added Traps, LL/SC, Likely Branches
+    [XmlEnum("mips3")] MipsIII = 3, // 64-bit support (R4000)
+    [XmlEnum("mips4")] MipsIV = 4,  // Added MOVZ/MOVN, Floating Point MADD
+    [XmlEnum("mips5")] MipsV = 5,   // Paired-Single Floats (Rarely used)
 
-    [XmlEnum(Name = "mips2")]
-    MipsII = 2,
+    // --- The Standardized Era ---
+    [XmlEnum("mips32r1")] Mips32R1 = 10, // Baseline for modern 32-bit (includes MUL, CLZ)
+    [XmlEnum("mips32r2")] Mips32R2 = 11, // Added EXT/INS (Bitfield ops)
 
-    [XmlEnum(Name = "mips3")]
-    MipsIII = 3,
-
-    [XmlEnum(Name = "mips4")]
-    MipsIV = 4,
-
-    [XmlEnum(Name = "mips5")]
-    MipsV = 5,
-
-    [XmlEnum(Name = "mips6")]
-    MipsVI = 6, 
+    // --- The "Breaking" Era ---
+    [XmlEnum("mips32r6")] Mips32R6 = 16  // REMOVED Delay Slots, reorganized opcodes
 
 #pragma warning restore CS1591
 }

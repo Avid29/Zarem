@@ -82,14 +82,14 @@
     "op_code": 1,
     "rt_func_code": 16,
     "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5 ]
   },
   {
     "name": "bgezal",
     "op_code": 1,
     "rt_func_code": 17,
     "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5 ]
   },
   {
     "name": "bltzall",

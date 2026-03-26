@@ -23,13 +23,13 @@
   {
     "name": "bc",
     "op_code": 50,
-    "args": [ 6 ],
-    "versions": [ 14 ]
+    "args": [ 14 ],
+    "versions": [ 6 ]
   },
   {
     "name": "balc",
     "op_code": 58,
-    "args": [ 6 ],
-    "versions": [ 14 ]
+    "args": [ 14 ],
+    "versions": [ 6 ]
   }
 ]

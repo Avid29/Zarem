@@ -87,28 +87,28 @@
         "name": "beql",
         "op_code": 20,
         "args": [ 0, 5 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
+        "versions": [ 2, 3, 4, 5 ],
         "obsolete": true
     },
     {
         "name": "bnel",
         "op_code": 21,
         "args": [ 0, 5 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
+        "versions": [ 2, 3, 4, 5 ],
         "obsolete": true
     },
     {
         "name": "blezl",
         "op_code": 22,
         "args": [ 0, 5 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
+        "versions": [ 2, 3, 4, 5 ],
         "obsolete": true
     },
     {
         "name": "bgtzl",
         "op_code": 23,
         "args": [ 0, 5 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
+        "versions": [ 2, 3, 4, 5 ],
         "obsolete": true
     },
     {
