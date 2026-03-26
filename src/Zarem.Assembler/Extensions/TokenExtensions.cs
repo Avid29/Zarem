@@ -29,9 +29,9 @@ public static partial class TokenExtensions
     public static bool IsDigits(this Token? token)
         => DigitsRegex().IsMatch(token?.Source ?? string.Empty);
 
-    [GeneratedRegex(@"^(?:0x[0-9a-fA-F]+|0b[01]+|0o[0-7]+|\d+)$")]
+    [GeneratedRegex(@"^(?:0x[0-9a-fA-F](?:_?[0-9a-fA-F])*|0b[01](?:_?[01])*|0o[0-7](?:_?[0-7])*|\d(?:_?\d)*)$")]
     private static partial Regex IntegerRegex();
 
-    [GeneratedRegex(@"^\d+$")]
+    [GeneratedRegex(@"^\d(?:_?\d)*$")]
     private static partial Regex DigitsRegex();
 }

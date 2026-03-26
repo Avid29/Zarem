@@ -137,10 +137,12 @@ public partial class Tokenizer
         // Handle merging immediates tokens
         if (!start)
         {
+            var peek2 = Peek(tokens, 2);
+
             // 123.456 (Digits + Dot + Digits)
-            if (current.IsDigits() && peek?.Source == "." && Peek(tokens, 2)?.IsDigits() == true)
+            if (current.IsDigits() && peek?.Source == "." && peek2?.IsDigits() == true)
             {
-                merged = Merge(TokenType.Immediate, current, peek, Peek(tokens, 2));
+                merged = Merge(TokenType.Immediate, current, peek, peek2);
                 advance = 3;
                 return true;
             }
@@ -152,7 +154,7 @@ public partial class Tokenizer
                 return true;
             }
             // 123 (Digits)
-            if (current.IsInteger() == true)
+            if (current.IsInteger())
             {
                 merged = ReClassify(TokenType.Immediate, current);
                 advance = 1;

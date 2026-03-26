@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Numerics;
 using System.Security.AccessControl;
 using System.Text.RegularExpressions;
@@ -26,13 +27,15 @@ namespace Zarem.Assembler.Parsers;
 /// </summary>
 public readonly partial struct ExpressionParser
 {
-    // This regex matches: 
     // Chars: 'a' or '\n' 
+    [GeneratedRegex(@"^'(?<char>.*)'$")]
+    private static partial Regex CharRegex();
+
     // Floats: 1.0, -0.5, 1e10
     // Prefixed Ints: 0x, 0b, 0o
     // Standard Ints: 123
-    [GeneratedRegex(@"^(?: '(?<char>.*)' | (?<float>[-+]?\d+\.\d+(?:[eE][-+]?\d+)?) | 0x(?<hex>[0-9a-fA-F]+) | 0b(?<bin>[01]+) | 0o(?<oct>[0-7]+) | (?<int>[-+]?\d+) )$", RegexOptions.IgnorePatternWhitespace)]
-    private static partial Regex ImmediateRegex();
+    [GeneratedRegex(@"^(?:(?<float>[-+]?\d+\.\d+(?:[eE][-+]?\d+)?) | 0x(?<hex>[0-9a-fA-F]+) | 0b(?<bin>[01]+) | 0o(?<oct>[0-7]+) | (?<int>[-+]?\d+))$", RegexOptions.IgnorePatternWhitespace)]
+    private static partial Regex NumberRegex();
 
     private readonly AssemblerLogger? _logger;
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
@@ -146,43 +149,44 @@ public readonly partial struct ExpressionParser
     private bool TryParseImmediate(Token token, [NotNullWhen(true)] out ExpNode? result)
     {
         result = null;
-        var match = ImmediateRegex().Match(token.Source);
 
-        if (!match.Success)
-        {
-            _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "UnparsableImmediate", token);
-            return false;
-        }
-
-        if (match.Groups["char"].Success)
+        var charMatch = CharRegex().Match(token.Source);
+        if (charMatch.Success)
         {
             if (StringParser.TryParseChar(token, out char c, _logger?.Parent))
             {
                 result = new IntegerNode(token, c);
                 return true;
             }
-
-            // If StringParser fails, it has already logged the specific error.
             return false;
         }
-        else if (match.Groups["float"].Success)
-        {
-            if (double.TryParse(match.Groups["float"].Value, CultureInfo.InvariantCulture, out double d))
-            {
-                result = new FloatNode(token, d);
-                return true;
-            }
-        }
-        else
+
+        string cleanSource = token.Source.Replace("_", "");
+        var numMatch = NumberRegex().Match(cleanSource);
+        if (numMatch.Success)
         {
             try
             {
-                long value = 0;
-                if (match.Groups["int"].Success) value = long.Parse(match.Groups["int"].Value);
-                else if (match.Groups["hex"].Success) value = Convert.ToInt64(match.Groups["hex"].Value, 16);
-                else if (match.Groups["bin"].Success) value = Convert.ToInt64(match.Groups["bin"].Value, 2);
-                else if (match.Groups["oct"].Success) value = Convert.ToInt64(match.Groups["oct"].Value, 8);
+                // Handle Floats separately due to double vs long
+                if (numMatch.Groups["float"].Success)
+                {
+                    result = new FloatNode(token, double.Parse(numMatch.Groups["float"].Value, CultureInfo.InvariantCulture));
+                    return true;
+                }
 
+                // Handle all Integer bases (hex, bin, oct, int)
+                var (groupName, radix) = numMatch.Groups.Values
+                    .Where(g => g.Success && g.Name != "0") // "0" is the full match
+                    .Select(g => (g.Name, Radix: g.Name switch
+                    {
+                        "hex" => 16,
+                        "bin" => 2,
+                        "oct" => 8,
+                        _ => 10
+                    }))
+                    .First();
+
+                long value = Convert.ToInt64(numMatch.Groups[groupName].Value, radix);
                 result = new IntegerNode(token, value);
                 return true;
             }
