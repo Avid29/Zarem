@@ -9,7 +9,7 @@ namespace Zarem.Assembler.Extensions;
 /// <summary>
 /// A static class containing extensions on the <see cref="Token"/> type.
 /// </summary>
-public static class TokenExtensions
+public static partial class TokenExtensions
 {
     /// <summary>
     /// Gets whether or not a token is numerical an identifier.
@@ -20,6 +20,18 @@ public static class TokenExtensions
     /// <summary>
     /// Gets whether or not a token is numerical.
     /// </summary>
-    public static bool IsNumeric(this Token? token)
-        => Regex.IsMatch(token?.Source ?? string.Empty, @"^[+-]?(?:0x[0-9a-fA-F]+|0b[01]+|0o[0-7]+|\d+)$");
+    public static bool IsInteger(this Token? token)
+        => IntegerRegex().IsMatch(token?.Source ?? string.Empty);
+
+    /// <summary>
+    /// Gets whether or not a token is numerical.
+    /// </summary>
+    public static bool IsDigits(this Token? token)
+        => DigitsRegex().IsMatch(token?.Source ?? string.Empty);
+
+    [GeneratedRegex(@"^(?:0x[0-9a-fA-F]+|0b[01]+|0o[0-7]+|\d+)$")]
+    private static partial Regex IntegerRegex();
+
+    [GeneratedRegex(@"^\d+$")]
+    private static partial Regex DigitsRegex();
 }
