@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using System.Diagnostics.Metrics;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Abstract;
@@ -44,8 +45,13 @@ public class InstructionTable : InstructionTableBase<DisassemblerLookup>
             CoProc0InstructionsMeta c0 => new DisassemblerLookup(
                 (byte)OperationCode.Coprocessor0,
                 (byte)c0.RSCode, // sub-opcode
-                (byte?)c0.FuncCode ?? 255,
-                c0.FixedRD), // Match specific RD (like 1 for eretnc)
+                c0.RSCode switch
+                {
+                    CoProc0RSCode.C0 => (byte?)c0.FuncCode,
+                    CoProc0RSCode.MFMC0 => (byte?)c0.Mfmc0FuncCode,
+                    _ => null,
+                } ?? 255,
+                IsFloat: c0.FixedRD is 1), // Match specific RD (like 1 for eretnc)
 
             CoProc1InstructionsMeta c1 => new DisassemblerLookup(
                 (byte)OperationCode.Coprocessor1,
@@ -54,7 +60,7 @@ public class InstructionTable : InstructionTableBase<DisassemblerLookup>
             FloatInstructionMeta f => new DisassemblerLookup(
                 (byte)OperationCode.Coprocessor1,
                 (byte)f.Function,
-                isFloatFunc: true), // New flag to check bits [5:0] instead of [25:21]
+                IsFloat: true), // New flag to check bits [5:0] instead of [25:21]
 
             ITypeInstructionMeta std => new DisassemblerLookup(
                 (byte)std.OperationCode),

@@ -118,49 +118,37 @@
     "type": "coproc0",
     "name": "di",
     "rs_code": 11,
-    "func_code": 0,
+    "mfmc0_code": 0,
     "rd_fixed": 12,
-    "args": []
+    "args": [],
+    "added_in": "Mips32R2"
   },
   {
     "type": "coproc0",
     "name": "di",
     "rs_code": 11,
-    "func_code": 0,
+    "mfmc0_code": 0,
     "rd_fixed": 12,
-    "args": [ "rt" ]
+    "args": [ "rt" ],
+    "added_in": "Mips32R2"
   },
   {
     "type": "coproc0",
     "name": "ei",
     "rs_code": 11,
-    "func_code": 32,
+    "mfmc0_code": 32,
     "rd_fixed": 12,
-    "args": []
+    "args": [],
+    "added_in": "Mips32R2"
   },
   {
     "type": "coproc0",
     "name": "ei",
     "rs_code": 11,
-    "func_code": 32,
+    "mfmc0_code": 32,
     "rd_fixed": 12,
-    "args": [ "rt" ]
-  },
-  {
-    "type": "coproc0",
-    "name": "dvp",
-    "rs_code": 11,
-    "func_code": 11,
     "args": [ "rt" ],
-    "added_in": "Mips32R6"
-  },
-  {
-    "type": "coproc0",
-    "name": "evp",
-    "rs_code": 11,
-    "func_code": 4,
-    "args": [ "rt" ],
-    "added_in": "Mips32R6"
+    "added_in": "Mips32R2"
   },
   {
     "type": "coproc0",

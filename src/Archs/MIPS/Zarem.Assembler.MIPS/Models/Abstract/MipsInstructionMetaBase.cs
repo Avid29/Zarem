@@ -42,20 +42,20 @@ public abstract record MipsInstructionMetaBase
     /// Gets a string describing the behavior of the instruction.
     /// </summary>
     [JsonPropertyName("behavior")]
-    public string? Behavior { get; }
+    public string? Behavior { get; init; }
 
     /// <summary>
     /// Gets the <see cref="MipsVersion"/> where the instruction was added.
     /// </summary>
     [JsonPropertyName("added_in")]
-    public MipsVersion AddedIn { get; }
+    public MipsVersion AddedIn { get; init; }
 
     /// <summary>
     /// Gets the <see cref="MipsVersion"/> where the instruction was removed, if application.
     /// </summary>
     [JsonPropertyName("removed_in")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public MipsVersion? RemovedIn { get; }
+    public MipsVersion? RemovedIn { get; init; }
 
     /// <summary>
     /// Gets the fixed $rs value, if applicable.
@@ -117,5 +117,5 @@ public abstract record MipsInstructionMetaBase
     /// <summary>
     /// Check if an instruction is valid for a given version.
     /// </summary>
-    public bool IsValidFor(MipsVersion version) => version >= AddedIn && (!RemovedIn.HasValue || version < RemovedIn);
+    public bool IsValidFor(MipsVersion version) => version >= AddedIn && !(RemovedIn.HasValue && version >= RemovedIn);
 }

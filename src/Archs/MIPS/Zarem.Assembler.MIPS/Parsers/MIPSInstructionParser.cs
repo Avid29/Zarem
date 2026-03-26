@@ -525,13 +525,15 @@ public struct MipsInstructionParser
         {
             RTypeInstructionMeta spec => MipsInstruction.Create((byte)spec.OperationCode, (byte)spec.FuncCode, _rs, _rt, _rd, _shift),
 
-            RegImmInstructionMeta ri => (ri.RtCode is >= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink)
+            RegImmInstructionMeta ri =>
+                (ri.RtCode is >= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely) ||
+                (ri.RtCode is >= RegImmFuncCode.BranchOnLessThanZeroAndLink and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink)
                 ? MipsInstruction.Create(ri.RtCode, _rs, _immediate)
                 : MipsInstruction.Create(ri.RtCode, _rs, (short)_immediate),
 
-            CoProc0InstructionsMeta c0 => c0.FuncCode.HasValue
-                ? CoProc0Instruction.Create(c0.FuncCode.Value, _rd)
-                : CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
+            CoProc0InstructionsMeta c0 when c0.Mfmc0FuncCode.HasValue => CoProc0Instruction.Create(c0.Mfmc0FuncCode.Value, _rt, (byte)_rd),
+            CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
+            CoProc0InstructionsMeta c0 => CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
 
             CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (FloatRegister)_rs),
             FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (FloatRegister)_rs, (FloatRegister)_rd, (FloatRegister)_rt),
@@ -540,6 +542,9 @@ public struct MipsInstructionParser
             {
                 OperationCode.Jump or OperationCode.JumpAndLink or OperationCode.JumpAndLinkX
                     => MipsInstruction.Create(std.OperationCode, _address),
+
+                OperationCode.BranchCompact or OperationCode.BranchAndLinkCompact
+                    => throw new NotImplementedException(),
 
                 var op when 
                     op is (>= OperationCode.BranchOnEquals and <= OperationCode.BranchOnGreaterThanZero) or

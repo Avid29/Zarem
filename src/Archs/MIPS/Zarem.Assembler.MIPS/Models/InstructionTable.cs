@@ -32,7 +32,6 @@ public class InstructionTable : InstructionTableBase<string>
     public override bool TryGetInstruction(string name, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsVersion? requiredVersion, out bool banned)
     {
         banned = _banned.Contains(name);
-        metadatas = null;
         requiredVersion = null;
 
         if (base.TryGetInstruction(name, out metadatas, out _, out _))
@@ -85,7 +84,8 @@ public class InstructionTable : InstructionTableBase<string>
 
     /// <inheritdoc/>
     protected override void LoadInstruction(MipsInstructionMetaBase metadata)
-    {// 1. Handle Banning (Pseudo-instruction logic)
+    {
+        // Handle Banning (Pseudo-instruction logic)
         if (metadata is PseudoInstructionMeta && Config.PseudoInstructionPermissibility is not null)
         {
             bool isBlacklist = Config.PseudoInstructionPermissibility == PseudoInstructionPermissibility.Blacklist;
@@ -98,7 +98,6 @@ public class InstructionTable : InstructionTableBase<string>
             }
         }
 
-        // 2. Lifecycle Check
         bool isSupported = metadata.IsValidFor(Config.MipsVersion);
         if (isSupported)
         {
@@ -106,7 +105,7 @@ public class InstructionTable : InstructionTableBase<string>
             LoadInstruction(metadata.Name, metadata);
         }
 
-        // 3. Track version ranges for error reporting/diagnostics
+        // Track version ranges for error reporting/diagnostics
         if (!_versionRanges.TryGetValue(metadata.Name, out var range))
         {
             _versionRanges[metadata.Name] = (metadata.AddedIn, metadata.RemovedIn);

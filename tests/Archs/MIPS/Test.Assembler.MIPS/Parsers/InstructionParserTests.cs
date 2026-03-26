@@ -21,6 +21,8 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Models.Meta;
+using System.Linq;
+
 
 
 #if DEBUG
@@ -231,7 +233,10 @@ public class InstructionParserTests
     private static IEnumerable<object[]> GenerateTestList(MipsVersion version)
     {
         var table = new InstructionTable(new(version));
-        foreach (var instruction in table.GetInstructions())
+        var instructions = table.GetInstructions()
+            .Where(i => i.IsValidFor(version));
+
+        foreach (var instruction in instructions)
         {
             // TODO: Disassembling pseudo instructions
             if (instruction is PseudoInstructionMeta)

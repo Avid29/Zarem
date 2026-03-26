@@ -1,11 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-using System.Reflection.Emit;
 using System.Text.Json.Serialization;
 using Zarem.Assembler.Models.Abstract;
-using Zarem.Helpers.Instructions;
 using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 namespace Zarem.Assembler.Models.Meta;
@@ -33,7 +30,7 @@ public record CoProc0InstructionsMeta : MipsInstructionMetaBase
     /// </summary>
     [JsonPropertyName("mfmc0_code")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public MFMC0FuncCode? Mfmc0FuncCode { get; }
+    public MFMC0FuncCode? Mfmc0FuncCode { get; init; }
 
     /// <inheritdoc/>
     public override InstructionType Type => InstructionType.Coproc0;

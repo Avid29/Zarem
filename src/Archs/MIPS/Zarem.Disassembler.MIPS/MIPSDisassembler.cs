@@ -51,10 +51,10 @@ public class MipsDisassembler
             InstructionType.BasicR => (byte)instruction.FuncCode,
             InstructionType.Special2R => (byte)instruction.Func2Code,
             InstructionType.Special3R => (byte)instruction.Func3Code,
-            
+
             InstructionType.BasicI or
             InstructionType.BasicJ => 0,
-            
+
             InstructionType.RegisterImmediate or
             InstructionType.RegisterImmediateBranch => (byte)instruction.RTFuncCode,
 
@@ -65,7 +65,6 @@ public class MipsDisassembler
 
             _ => 255,
         };
-
 
         byte funcCode2 = instruction.Type switch
         {
@@ -85,7 +84,7 @@ public class MipsDisassembler
 
         bool hasFormat = instruction.Type is InstructionType.Float;
         bool eretnc = funcCode2 is (byte)Co0FuncCode.ExceptionReturn && instruction.RD is (GPRegister)1;
-        var key = new DisassemblerLookup((byte)instruction.OpCode, funcCode, funcCode2, eretnc ? (byte?)instruction.RD : null, hasFormat);
+        var key = new DisassemblerLookup((byte)instruction.OpCode, funcCode, funcCode2, hasFormat || eretnc);
         if (!InstructionTable.TryGetInstruction(key, out var metas, out _, out _))
         {
             return "Unknown instruction";
