@@ -17,8 +17,6 @@ namespace Zarem.Assembler.Parsers.Expressions;
 public readonly struct Evaluator<T>
     where T : unmanaged, IBinaryNumber<T>
 {
-    private readonly AssemblerLogger? _logger;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Evaluator{T}"/> struct.
     /// </summary>
@@ -28,9 +26,11 @@ public readonly struct Evaluator<T>
 
         if (logger is not null)
         {
-            _logger = new AssemblerLogger(logger);
+            Logger = new AssemblerLogger(logger);
         }
     }
+
+    internal AssemblerLogger? Logger { get; }
 
     /// <summary>
     /// Gets the assembler content to use by the evaluator.
@@ -52,7 +52,7 @@ public readonly struct Evaluator<T>
         // If both address are relocatable
         if (left.IsSymbolic && right.IsSymbolic)
         {
-            _logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantAddRelocatables");
+            Logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantAddRelocatables");
             return false;
         }
 
@@ -78,7 +78,7 @@ public readonly struct Evaluator<T>
             // Absolute - Symbolic
             if (left.IsAbsolute)
             {
-                _logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantSubtractRelocatable");
+                Logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantSubtractRelocatable");
                 return false;
             }
 
@@ -87,7 +87,7 @@ public readonly struct Evaluator<T>
                 left.Symbol.IsDefined && right.Symbol.IsDefined)
             {
                 // TODO: Improve error message
-                _logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantSubtractRelocatable");
+                Logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "CantSubtractRelocatable");
                 return false;
             }
 
@@ -286,7 +286,7 @@ public readonly struct Evaluator<T>
 
         if (value.IsSymbolic)
         {
-            _logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, $"Cant{operation}Relocatable");
+            Logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, $"Cant{operation}Relocatable");
             return true;
         }
 

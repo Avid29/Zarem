@@ -24,7 +24,6 @@ public class IntegerNode : ValueNode<long>
     /// <inheritdoc/>
     public override bool TryEvaluate<T>(Evaluator<T> evaluator, out ExpressionResult<T> result)
     {
-        // TODO: Log cast errors
         result = new ExpressionResult<T>(T.CreateSaturating(Value));
         return true;
     }

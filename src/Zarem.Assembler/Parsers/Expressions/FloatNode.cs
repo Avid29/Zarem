@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2026
 
+using System.Numerics;
+using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Parsers.Expressions.Abstract;
 using Zarem.Assembler.Parsers.Expressions.Enums;
 using Zarem.Assembler.Tokenization.Models;
@@ -24,7 +26,25 @@ public class FloatNode : ValueNode<double>
     /// <inheritdoc/>
     public override bool TryEvaluate<T>(Evaluator<T> evaluator, out ExpressionResult<T> result)
     {
-        // TODO: Log cast errors
+        result = default;
+
+        // Check if T is an integer type (int, long, uint, etc.)
+        bool isIntegerTarget = typeof(IBinaryInteger<>).IsAssignableFrom(typeof(T));
+        if (isIntegerTarget)
+        {
+            evaluator.Logger?.Log(
+                Severity.Error,
+                LogId.InvalidCast,
+                ExpressionToken,
+                "FloatToIntegerConversionError",
+                Value,
+                typeof(T).Name
+            );
+            return false;
+        }
+
+        // T.CreateSaturating is safe here as we've validated the "integerness" 
+        // if necessary. For float -> float conversions, it handles Infinity/NaN.
         result = new ExpressionResult<T>(T.CreateSaturating(Value));
         return true;
     }
