@@ -28,9 +28,7 @@ public class FloatNode : ValueNode<double>
     {
         result = default;
 
-        // Check if T is an integer type (int, long, uint, etc.)
-        bool isIntegerTarget = typeof(IBinaryInteger<>).IsAssignableFrom(typeof(T));
-        if (isIntegerTarget)
+        if (typeof(T) == typeof(long))
         {
             evaluator.Logger?.Log(
                 Severity.Error,
