@@ -158,6 +158,18 @@ public partial class InstructionServiceTable
         public static uint Compute(uint rs, uint rt) => (uint)((int)rs < (int)rt ? 1 : 0);
     }
 
+    private struct MovzLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => rt == 0;
+    }
+
+    private struct MovnLogic : ICondLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(uint rs, uint rt) => rt != 0;
+    }
+
     private struct SltuLogic : IAluLogic
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

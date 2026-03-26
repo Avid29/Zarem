@@ -199,15 +199,7 @@ public unsafe partial class InstructionServiceTable
     {
         var rs = @this._regs[(int)inst.RS];
         var rt = @this._regs[(int)inst.RT];
-        if (T.Check(rs, rt))
-        {
-            exec = Execution.CreateJump((uint)(@this._processor.ProgramCounter + inst.Offset + 4));
-        }
-        else
-        {
-            exec = default;
-        }
-
+        exec = T.Check(rs, rt) ? Execution.CreateJump((uint)(@this._processor.ProgramCounter + inst.Offset + 4)) : default;
         return MipsTrap.None;
     }
 
@@ -225,6 +217,15 @@ public unsafe partial class InstructionServiceTable
     {
         exec = default;
         return T.Check(@this._regs[(int)inst.RS], (uint)(int)inst.ImmediateValue) ? MipsTrap.Trap : MipsTrap.None;
+    }
+
+    private static MipsTrap Move<T>(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
+        where T : ICondLogic
+    {
+        var rs = @this._regs[(int)inst.RS];
+        var rt = @this._regs[(int)inst.RT];
+        exec = T.Check(rs, rt) ? Execution.CreateWriteback(inst.RD, rs) : default;
+        return MipsTrap.None;
     }
 
     private static MipsTrap Load<T>(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
@@ -318,5 +319,11 @@ public unsafe partial class InstructionServiceTable
     {
         exec = Execution.CreateWriteback(inst.RT, (uint)(ushort)inst.ImmediateValue << 16);
         return MipsTrap.None;
+    }
+
+    private static MipsTrap ReservedInstruction(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
+    {
+        exec = default;
+        return MipsTrap.ReservedInstruction;
     }
 }
