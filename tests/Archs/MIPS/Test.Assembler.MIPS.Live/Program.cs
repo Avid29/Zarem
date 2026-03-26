@@ -13,6 +13,8 @@ using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Meta;
+
 
 #if DEBUG
 using Zarem.Disassembler.Services;
@@ -191,7 +193,7 @@ public class Program()
         Console.WriteLine($"Mode swapped to {_mode} mode");
     }
 
-    void Dump(string tableArg, MipsVersion version = MipsVersion.MipsII)
+    void Dump(string tableArg, MipsVersion version = MipsVersion.Mips32R2)
     {
         tableArg = tableArg.Trim().ToLower();
         switch (tableArg)
@@ -200,7 +202,7 @@ public class Program()
                 var instructions = new InstructionTable(new(version)).GetInstructions().OrderBy(x => x.Name);
                 foreach (var instr in instructions)
                 {
-                    if (instr.IsPseudoInstruction)
+                    if (instr is PseudoInstructionMeta)
                         Console.Write("* ");
 
                     Console.WriteLine(instr.UsagePattern);

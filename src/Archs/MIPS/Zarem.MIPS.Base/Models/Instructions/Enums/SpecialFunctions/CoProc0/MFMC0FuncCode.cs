@@ -10,11 +10,9 @@ public enum MFMC0FuncCode
     #pragma warning disable CS1591
 
     DisableInterrupts = 0x0,
-
-    EnableVirtualProcessor = 0x4,
-
+    DisableVirtualProcessor = 0x4,
     EnableInterrupts = 0x20,
-    DisableVirtualProcessor = 0x24,
+    EnableVirtualProcessor = 0x24,
 
     #pragma warning restore CS1591
 }

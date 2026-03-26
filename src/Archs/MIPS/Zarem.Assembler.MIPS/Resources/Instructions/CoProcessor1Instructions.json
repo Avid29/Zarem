@@ -1,48 +1,50 @@
 ﻿[
   {
+    "type": "coproc1",
     "name": "mfc1",
-    "op_code": 17,
-    "coproc1_rs": 0,
-    "args": [ 1, 9 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "GPR[$rt] = $fs"
+    "rs_code": 0,
+    "args": [ "rt", "fs" ],
+    "added_in": "MipsI",
+    "behavior": "GPR[$rt] = FPR[$fs]"
   },
   {
+    "type": "coproc1",
     "name": "cfc1",
-    "op_code": 17,
-    "coproc1_rs": 2,
-    "args": [ 1, 9 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "GPR[$rt] = FCSR[$fs]"
+    "rs_code": 2,
+    "args": [ "rt", "fs" ],
+    "added_in": "MipsI",
+    "behavior": "GPR[$rt] = FCR[$fs]"
   },
   {
+    "type": "coproc1",
     "name": "mfhc1",
-    "op_code": 17,
-    "coproc1_rs": 3,
-    "args": [ 1, 9 ],
-    "versions": [ 2, 3, 4, 5, 6 ]
+    "rs_code": 3,
+    "args": [ "rt", "fs" ],
+    "added_in": "Mips32R2",
+    "behavior": "GPR[$rt] = FPR[$fs][63:32]"
   },
   {
+    "type": "coproc1",
     "name": "mtc1",
-    "op_code": 17,
-    "coproc1_rs": 4,
-    "args": [ 1, 9 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "$fs = GPR[$rt]"
+    "rs_code": 4,
+    "args": [ "rt", "fs" ],
+    "added_in": "MipsI",
+    "behavior": "FPR[$fs] = GPR[$rt]"
   },
   {
+    "type": "coproc1",
     "name": "ctc1",
-    "op_code": 17,
-    "coproc1_rs": 6,
-    "args": [ 1, 9 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "FCSR[$fs] = GPR[$rt]"
+    "rs_code": 6,
+    "args": [ "rt", "fs" ],
+    "added_in": "MipsI",
+    "behavior": "FCR[$fs] = GPR[$rt]"
   },
   {
+    "type": "coproc1",
     "name": "mthc1",
-    "op_code": 17,
-    "coproc1_rs": 7,
-    "args": [ 1, 9 ],
-    "versions": [ 2, 3, 4, 5, 6 ]
+    "rs_code": 7,
+    "args": [ "rt", "fs" ],
+    "added_in": "Mips32R2",
+    "behavior": "FPR[$fs][63:32] = GPR[$rt]"
   }
 ]

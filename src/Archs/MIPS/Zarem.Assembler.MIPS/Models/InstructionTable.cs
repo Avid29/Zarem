@@ -1,11 +1,14 @@
 ﻿// Avishai Dernis 2024
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Enums;
+using Zarem.Assembler.Models.Meta;
+using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 
 namespace Zarem.Assembler.Models;
@@ -15,7 +18,7 @@ namespace Zarem.Assembler.Models;
 /// </summary>
 public class InstructionTable : InstructionTableBase<string>
 {
-    private readonly Dictionary<string, HashSet<MipsVersion>> _outOfVersion = [];
+    private readonly Dictionary<string, (MipsVersion Min, MipsVersion? Max)> _versionRanges = [];
     private readonly HashSet<string> _banned = [];
 
     /// <summary>
@@ -26,10 +29,9 @@ public class InstructionTable : InstructionTableBase<string>
     }
 
     /// <inheritdoc/>
-    public override bool TryGetInstruction(string name, [NotNullWhen(true)] out List<MipsInstructionMetadata>? metadatas, out MipsVersion? requiredVersion, out bool banned)
+    public override bool TryGetInstruction(string name, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsVersion? requiredVersion, out bool banned)
     {
         banned = _banned.Contains(name);
-        metadatas = null;
         requiredVersion = null;
 
         if (base.TryGetInstruction(name, out metadatas, out _, out _))
@@ -40,14 +42,19 @@ public class InstructionTable : InstructionTableBase<string>
             return false;
         }
 
-        if (_outOfVersion.TryGetValue(name, out var versions))
+        if (_versionRanges.TryGetValue(name, out var range))
         {
-            // Higher version instruction. Get the lowest version available.
-            if (Config.MipsVersion < versions.FirstOrDefault())
-                requiredVersion = versions.Min();
-            // Deprecated instruction. Get the highest version available.
-            else
-                requiredVersion = versions.Max();
+            if (Config.MipsVersion < range.Min)
+            {
+                // Instruction exists in a future version
+                requiredVersion = range.Min;
+            }
+            else if (range.Max.HasValue && Config.MipsVersion >= range.Max.Value)
+            {
+                // Instruction was removed/obsolete in a past version
+                // We return the last valid version it was in
+                requiredVersion = range.Max.Value;
+            }
         }
 
         return false;
@@ -62,50 +69,55 @@ public class InstructionTable : InstructionTableBase<string>
     /// <param name="requiredVersion">The required version to have this instruction, if there is one.</param>
     /// <param name="banned">Indicates if the instruction was found, but is banned according the config.</param>
     /// <returns>Whether or not an instruction exists by that name</returns>
-    public bool TryGetInstruction(string name, int argCount, out MipsInstructionMetadata metadata, out MipsVersion? requiredVersion, out bool banned)
+    public bool TryGetInstruction(string name, int argCount, out MipsInstructionMetaBase? metadata, out MipsVersion? requiredVersion, out bool banned)
     {
-        metadata = default;
+        metadata = null;
 
         if (TryGetInstruction(name, out var metadatas, out requiredVersion, out banned))
         {
-            if (metadatas is null)
-                return false;
-
-            if (!metadatas.Any(x => x.ArgumentPattern.Length == argCount))
-                return false;
-
             metadata = metadatas.FirstOrDefault(x => x.ArgumentPattern.Length == argCount);
-            return true;
+            return metadata is not null;
         }
 
         return false;
     }
 
     /// <inheritdoc/>
-    protected override void LoadInstruction(MipsInstructionMetadata metadata)
+    protected override void LoadInstruction(MipsInstructionMetaBase metadata)
     {
-        if (metadata.IsPseudoInstruction && Config.PseudoInstructionPermissibility is not null)
+        // Handle Banning (Pseudo-instruction logic)
+        if (metadata is PseudoInstructionMeta && Config.PseudoInstructionPermissibility is not null)
         {
-            var blacklist = Config.PseudoInstructionPermissibility is PseudoInstructionPermissibility.Blacklist;
-            var listed = Config.PseudoInstructionSet?.Contains(metadata.Name);
+            bool isBlacklist = Config.PseudoInstructionPermissibility == PseudoInstructionPermissibility.Blacklist;
+            bool isInList = Config.PseudoInstructionSet?.Contains(metadata.Name) ?? false;
 
-            // If blacklist and listed, ban it
-            // If whitelist and not listed, also ban it
-            // Otherwise, it's allowed
-            if (blacklist == listed)
+            if (isBlacklist == isInList)
             {
                 _banned.Add(metadata.Name);
+                return; // If banned, we don't even track it
             }
         }
 
-
-        if (metadata.MipsVersions.Contains(Config.MipsVersion))
+        bool isSupported = metadata.IsValidFor(Config.MipsVersion);
+        if (isSupported)
         {
+            // Add to the active lookup table in InstructionTableBase
             LoadInstruction(metadata.Name, metadata);
         }
-        else if (!_outOfVersion.ContainsKey(metadata.Name))
+
+        // Track version ranges for error reporting/diagnostics
+        if (!_versionRanges.TryGetValue(metadata.Name, out var range))
         {
-            _outOfVersion.Add(metadata.Name, metadata.MipsVersions);
+            _versionRanges[metadata.Name] = (metadata.AddedIn, metadata.RemovedIn);
+        }
+        else
+        {
+            // Expand the known range for this instruction name
+            var newMin = metadata.AddedIn < range.Min ? metadata.AddedIn : range.Min;
+            var newMax = (metadata.RemovedIn > range.Max || !metadata.RemovedIn.HasValue)
+                         ? metadata.RemovedIn
+                         : range.Max;
+            _versionRanges[metadata.Name] = (newMin, newMax);
         }
     }
 }

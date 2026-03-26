@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using CommunityToolkit.Diagnostics;
 using System.Linq;
 using System.Text;
 using Zarem.Assembler.Config;
@@ -50,10 +51,10 @@ public class MipsDisassembler
             InstructionType.BasicR => (byte)instruction.FuncCode,
             InstructionType.Special2R => (byte)instruction.Func2Code,
             InstructionType.Special3R => (byte)instruction.Func3Code,
-            
+
             InstructionType.BasicI or
             InstructionType.BasicJ => 0,
-            
+
             InstructionType.RegisterImmediate or
             InstructionType.RegisterImmediateBranch => (byte)instruction.RTFuncCode,
 
@@ -64,7 +65,6 @@ public class MipsDisassembler
 
             _ => 255,
         };
-
 
         byte funcCode2 = instruction.Type switch
         {
@@ -95,6 +95,8 @@ public class MipsDisassembler
             .OrderByDescending(x => x.ArgumentPattern.Length)
             .FirstOrDefault();
 
+        Guard.IsNotNull(meta);
+
         // Apply the format to the name if it exists
         var name = meta.Name;
         if (format is not null)
@@ -110,7 +112,7 @@ public class MipsDisassembler
                 Argument.RS => RegistersTable.GetRegisterString(instruction.RS),
                 Argument.RT => RegistersTable.GetRegisterString(instruction.RT),
                 Argument.RD => RegistersTable.GetRegisterString(instruction.RD),
-                Argument.Shift => instruction.ShiftAmount,
+                Argument.ShiftAmount => instruction.ShiftAmount,
                 Argument.Immediate => instruction.ImmediateValue,
                 Argument.Offset => instruction.Offset,
                 Argument.LargeOffset => instruction.Address,

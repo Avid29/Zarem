@@ -36,7 +36,7 @@ public abstract class InstructionTableBase<T>
     /// <summary>
     /// The table of elements in the instruction table.
     /// </summary>
-    protected Dictionary<T, List<MipsInstructionMetadata>> LookupTable { get; }
+    protected Dictionary<T, List<MipsInstructionMetaBase>> LookupTable { get; }
 
     /// <summary>
     /// Attempts to get an instruction by a key.
@@ -46,7 +46,7 @@ public abstract class InstructionTableBase<T>
     /// <param name="requiredVersion">The required version to have this instruction, if there is one.</param>
     /// <param name="banned">Indicates if the instruction was found, but is banned according the config.</param>
     /// <returns>Whether or not an instruction exists by that name</returns>
-    public virtual bool TryGetInstruction(T key, [NotNullWhen(true)] out List<MipsInstructionMetadata>? metadatas, out MipsVersion? requiredVersion, out bool banned)
+    public virtual bool TryGetInstruction(T key, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsVersion? requiredVersion, out bool banned)
     {
         requiredVersion = null;
         banned = false;
@@ -61,7 +61,7 @@ public abstract class InstructionTableBase<T>
     /// Gets all instructions in the instruction table.
     /// </summary>
     /// <returns>An array of the instructions in the table.</returns>
-    public MipsInstructionMetadata[] GetInstructions(bool maxArgs = true)
+    public MipsInstructionMetaBase[] GetInstructions(bool maxArgs = true)
     {
         if (maxArgs)
         {
@@ -95,14 +95,14 @@ public abstract class InstructionTableBase<T>
     /// Loads an instruction into the <see cref="LookupTable"/>.
     /// </summary>
     /// <param name="metadata">The metadata of the instruction.</param>
-    protected abstract void LoadInstruction(MipsInstructionMetadata metadata);
+    protected abstract void LoadInstruction(MipsInstructionMetaBase metadata);
 
     /// <summary>
     /// Loads an instruction into the <see cref="LookupTable"/>.
     /// </summary>
-    protected void LoadInstruction(T key, MipsInstructionMetadata metadata)
+    protected void LoadInstruction(T key, MipsInstructionMetaBase metadata)
     {
-        if (!LookupTable.TryGetValue(key, out List<MipsInstructionMetadata>? instructions))
+        if (!LookupTable.TryGetValue(key, out List<MipsInstructionMetaBase>? instructions))
         {
             instructions = [];
             LookupTable.Add(key, instructions);
@@ -111,13 +111,13 @@ public abstract class InstructionTableBase<T>
         instructions.Add(metadata);
     }
 
-    private static MipsInstructionMetadata[] LoadInstructionSet(Assembly assembly, string resourceName)
+    private static MipsInstructionMetaBase[] LoadInstructionSet(Assembly assembly, string resourceName)
     {
         using Stream? stream = assembly.GetManifestResourceStream(resourceName);
         if (stream is null)
             return [];
 
-        var instructions = JsonSerializer.Deserialize<MipsInstructionMetadata[]>(stream);
+        var instructions = JsonSerializer.Deserialize<MipsInstructionMetaBase[]>(stream);
         if (instructions is null)
             return [];
 

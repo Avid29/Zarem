@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Zarem.Assembler.Config;
 using Zarem.Config;
@@ -44,6 +45,8 @@ public partial class CreateProjectViewModel : PageViewModel
         _localizationService = localizationService;
         _fileSystemService = fileSystemService;
         _projectService = projectService;
+
+        ModuleFormat = AvailableModuleFormats.FirstOrDefault();
     }
 
     /// <inheritdoc/>
@@ -109,12 +112,21 @@ public partial class CreateProjectViewModel : PageViewModel
     {
         get => field;
         set => SetProperty(ref field, value);
-    } = MipsVersion.MipsIII;
+    } = MipsVersion.Mips32R2;
 
     /// <summary>
     /// Gets the list of available mips version options.
     /// </summary>
-    public IEnumerable<MipsVersion> MipsVersionOptions => Enum.GetValues<MipsVersion>();
+    public IEnumerable<MipsVersion> MipsVersionOptions =
+    [
+        MipsVersion.MipsI,
+        MipsVersion.MipsII,
+        MipsVersion.MipsIII,
+        MipsVersion.MipsIV,
+        MipsVersion.MipsV,
+        MipsVersion.Mips32R1,
+        MipsVersion.Mips32R2,
+    ];
 
     /// <summary>
     /// Gets or sets the selected module format for the project.

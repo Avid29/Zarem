@@ -15,14 +15,14 @@ public class MipsAssemblerConfig : AssemblerConfig
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsAssemblerConfig"/> class.
     /// </summary>
-    public MipsAssemblerConfig() : this(MipsVersion.MipsIII)
+    public MipsAssemblerConfig() : this(MipsVersion.Mips32R2)
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsAssemblerConfig"/> class.
     /// </summary>
-    public MipsAssemblerConfig(MipsVersion version = MipsVersion.MipsIII)
+    public MipsAssemblerConfig(MipsVersion version = MipsVersion.Mips32R2)
     {
         MipsVersion = version;
     }

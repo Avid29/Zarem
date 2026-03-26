@@ -13,14 +13,14 @@ public class MIPSEmulatorConfig : EmulatorConfig
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSEmulatorConfig"/> class.
     /// </summary>
-    public MIPSEmulatorConfig() : this(MipsVersion.MipsIII)
+    public MIPSEmulatorConfig() : this(MipsVersion.Mips32R2)
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MIPSEmulatorConfig"/> class.
     /// </summary>
-    public MIPSEmulatorConfig(MipsVersion mipsVersion = MipsVersion.MipsIII)
+    public MIPSEmulatorConfig(MipsVersion mipsVersion = MipsVersion.Mips32R2)
     {
         MipsVersion = mipsVersion;
     }

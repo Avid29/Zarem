@@ -1,8 +1,10 @@
 ﻿// Avishai Dernis 2025
 
+using System.Diagnostics.Metrics;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Abstract;
+using Zarem.Assembler.Models.Meta;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
@@ -14,7 +16,7 @@ namespace Zarem.Disassembler.Models.Instructions;
 /// A class for managing instruction lookup by opcode and function code.
 /// </summary>
 public class InstructionTable : InstructionTableBase<DisassemblerLookup>
-{   
+{
     /// <summary>
     /// Initializes a new instance of the <see cref="InstructionTable"/> class.
     /// </summary>
@@ -23,66 +25,52 @@ public class InstructionTable : InstructionTableBase<DisassemblerLookup>
     }
 
     /// <inheritdoc/>
-    protected override void LoadInstruction(MipsInstructionMetadata metadata)
+    protected override void LoadInstruction(MipsInstructionMetaBase metadata)
     {
-        if (!metadata.MipsVersions.Contains(Config.MipsVersion))
+        if (!metadata.IsValidFor(Config.MipsVersion))
             return;
 
-        byte? funcCode = metadata.Type switch
+        // We can simplify the logic by centralizing the key generation
+        // using a more descriptive set of fields in DisassemblerLookup.
+        DisassemblerLookup? key = metadata switch
         {
-            InstructionType.BasicR => (byte?)metadata.FuncCode,
+            RTypeInstructionMeta r => new DisassemblerLookup(
+                (byte)r.OperationCode,
+                (byte)r.FuncCode),
 
-            InstructionType.BasicI or
-            InstructionType.BasicJ => 0,
+            RegImmInstructionMeta ri => new DisassemblerLookup(
+                (byte)OperationCode.RegisterImmediate,
+                (byte)ri.RtCode),
 
-            InstructionType.Special2R => (byte?)metadata.Function2Code,
-            InstructionType.Special3R => (byte?)metadata.Function3Code,
+            CoProc0InstructionsMeta c0 => new DisassemblerLookup(
+                (byte)OperationCode.Coprocessor0,
+                (byte)c0.RSCode, // sub-opcode
+                c0.RSCode switch
+                {
+                    CoProc0RSCode.C0 => (byte?)c0.FuncCode,
+                    CoProc0RSCode.MFMC0 => (byte?)c0.Mfmc0FuncCode,
+                    _ => null,
+                } ?? 255,
+                IsFloat: c0.FixedRD is 1), // Match specific RD (like 1 for eretnc)
 
-            InstructionType.RegisterImmediate or
-            InstructionType.RegisterImmediateBranch => (byte?)metadata.RegisterImmediateFuncCode,
+            CoProc1InstructionsMeta c1 => new DisassemblerLookup(
+                (byte)OperationCode.Coprocessor1,
+                (byte)c1.RSCode),
 
-            InstructionType.Coproc0 => GetRSCode(metadata),
+            FloatInstructionMeta f => new DisassemblerLookup(
+                (byte)OperationCode.Coprocessor1,
+                (byte)f.Function,
+                IsFloat: true), // New flag to check bits [5:0] instead of [25:21]
 
-            InstructionType.Coproc1 => (byte?)metadata.CoProc1RS,
-            InstructionType.Float => (byte?)metadata.FloatFuncCode,
-            _ => 0,
+            ITypeInstructionMeta std => new DisassemblerLookup(
+                (byte)std.OperationCode),
+
+            _ => null
         };
 
-        byte? funcCode2 = metadata.Type switch
+        if (key is not null)
         {
-            InstructionType.Coproc0 => funcCode switch
-            {
-                (byte)CoProc0RSCode.C0 => (byte?)metadata.Co0FuncCode,
-                (byte)CoProc0RSCode.MFMC0 => (byte?)metadata.Mfmc0FuncCode,
-                _ => 255,
-            },
-            _ => 255,
-        };
-
-        if (metadata.OpCode is null || funcCode is null || funcCode2 is null)
-            return;
-
-        bool hasFormat = metadata.FloatFormats is not null;
-        bool eretnc = metadata.Co0FuncCode is Co0FuncCode.ExceptionReturn && metadata.RD is 1;
-
-        var key = new DisassemblerLookup((byte)metadata.OpCode, (byte)funcCode, (byte)funcCode2, hasFormat || eretnc);
-        LoadInstruction(key, metadata);
-    }
-
-    private static byte GetRSCode(MipsInstructionMetadata metadata)
-    {
-        if (metadata.OpCode is not OperationCode.Coprocessor0)
-            return 0;
-
-        if (metadata.CoProc0RS is not null)
-            return (byte)metadata.CoProc0RS;
-
-        if (metadata.Co0FuncCode is not null)
-            return (byte)CoProc0RSCode.C0;
-
-        if (metadata.Mfmc0FuncCode is not null)
-            return (byte)CoProc0RSCode.MFMC0;
-
-        return 0;
+            LoadInstruction(key.Value, metadata);
+        }
     }
 }

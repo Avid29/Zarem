@@ -15,16 +15,17 @@ This project is in pre-release stages of development. Changes to Project File fo
 
 # Assembly/Emulation Architectures
 
-Zarem is currently MIPS only, but support for other architectures is planned.
-
 | Architecture   | Assembling      | Emulation (Interpret) | Emulation (JIT) | Debugging      | Disassembly     | Static Analysis |
 | -------------- | --------------- | --------------------- | --------------- | -------------- | --------------- | --------------- |
-| MIPS32         | ✅ Supported   | ✅ Supported          | ⌛ Planned     | ✅ Supported   | ⚠️  WIP        | ⌛ Planned     |
-| RISC-V         | ⌛ Planned     | ⌛ Planned            | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     |
-| ARM            | ⌛ Planned     | ⌛ Planned            | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     |
-| ARM64          | ⌛ Planned     | ⌛ Planned            | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     |
-| MIPS64         | ❌ Not Planned | ❌ Not Planned        | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned |
-| x86_64         | ❌ Not Planned | ❌ Not Planned        | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned |
+| MIPS (I - V)   | ✅ Supported    | ✅ Supported         | ⌛ Planned      | ✅ Supported   | ⚠️  WIP        | ⌛ Planned     |
+| MIPS32*	     | ✅ Supported    | ✅ Supported         | ⌛ Planned      | ✅ Supported   | ⚠️  WIP        | ⌛ Planned     |
+| RISC-V         | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     |
+| ARM            | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     |
+| ARM64          | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned     |
+| MIPS64         | ❌ Not Planned  | ❌ Not Planned       | ❌ Not Planned  | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned |
+| x86_64         | ❌ Not Planned  | ❌ Not Planned       | ❌ Not Planned  | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned |
+
+\* *MIPS32 Release 6 is considerably different from every other version of mips and is not currently supported*.
 
 # Cross-Platform Support
 

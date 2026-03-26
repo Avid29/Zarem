@@ -20,6 +20,10 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
+using Zarem.Assembler.Models.Meta;
+using System.Linq;
+
+
 
 #if DEBUG
 using Zarem.Disassembler.Services;
@@ -94,7 +98,9 @@ public class InstructionParserTests
     public static IEnumerable<object[]> Generated_MIPS_III_List => GenerateTestList(MipsVersion.MipsIII);
     public static IEnumerable<object[]> Generated_MIPS_IV_List => GenerateTestList(MipsVersion.MipsIV);
     public static IEnumerable<object[]> Generated_MIPS_V_List => GenerateTestList(MipsVersion.MipsV);
-    public static IEnumerable<object[]> Generated_MIPS_VI_List => GenerateTestList(MipsVersion.MipsVI);
+    public static IEnumerable<object[]> Generated_MIPS32_R1_List => GenerateTestList(MipsVersion.Mips32R1);
+    public static IEnumerable<object[]> Generated_MIPS32_R2_List => GenerateTestList(MipsVersion.Mips32R2);
+    public static IEnumerable<object[]> Generated_MIPS32_R6_List => GenerateTestList(MipsVersion.Mips32R6);
 
     [DataTestMethod]
     [DynamicData(nameof(RawInstructionSuccessTestsList),
@@ -151,10 +157,20 @@ public class InstructionParserTests
     public void Generated_MIPS_V(string input)
         => AssembleDisassembleTest(input, MipsVersion.MipsV);
 
-    [TestMethod("MIPS VI")]
-    [DynamicData(nameof(Generated_MIPS_VI_List))]
-    public void Generated_MIPS_VI(string input)
-        => AssembleDisassembleTest(input, MipsVersion.MipsVI);
+    [TestMethod("MIPS32 R1")]
+    [DynamicData(nameof(Generated_MIPS32_R1_List))]
+    public void Generated_MIPS32_R1(string input)
+        => AssembleDisassembleTest(input, MipsVersion.Mips32R1);
+
+    [TestMethod("MIPS32 R2")]
+    [DynamicData(nameof(Generated_MIPS32_R2_List))]
+    public void Generated_MIPS32_R2(string input)
+        => AssembleDisassembleTest(input, MipsVersion.Mips32R2);
+
+    //[TestMethod("MIPS32 R6")]
+    //[DynamicData(nameof(Generated_MIPS32_R6_List))]
+    //public void Generated_MIPS32_R6(string input)
+    //    => AssembleDisassembleTest(input, MipsVersion.Mips32R6);
 
     private void AssembleDisassembleTest(string input, MipsVersion version)
     {
@@ -217,17 +233,20 @@ public class InstructionParserTests
     private static IEnumerable<object[]> GenerateTestList(MipsVersion version)
     {
         var table = new InstructionTable(new(version));
-        foreach (var instruction in table.GetInstructions())
+        var instructions = table.GetInstructions()
+            .Where(i => i.IsValidFor(version));
+
+        foreach (var instruction in instructions)
         {
             // TODO: Disassembling pseudo instructions
-            if (instruction.IsPseudoInstruction)
+            if (instruction is PseudoInstructionMeta)
                 continue;
 
             // Apply format to instruction name, if applicable
             var name = instruction.Name;
-            if (name.EndsWith(".fmt"))
+            if (instruction is FloatInstructionMeta fMeta)
             {
-                name = FloatFormatTable.ApplyFormat(name, ArgGenerator.RandomFormat(instruction.FloatFormats));
+                name = FloatFormatTable.ApplyFormat(name, ArgGenerator.RandomFormat(fMeta.SupportedFormats));
             }
 
             // Generate instruction
@@ -242,9 +261,10 @@ public class InstructionParserTests
                     Argument.FS or Argument.FT or Argument.FD => RegistersTable.GetRegisterString(ArgGenerator.RandomRegister(), RegisterSet.FloatingPoints),
                     Argument.Immediate => $"{ArgGenerator.RandomImmediate()}",
                     Argument.Offset => $"{ArgGenerator.RandomOffset()}",
+                    Argument.LargeOffset => $"{ArgGenerator.RandomOffset()}",
                     Argument.Address => $"{ArgGenerator.RandomAddress()}",
                     Argument.AddressBase => $"{ArgGenerator.RandomImmediate()}({RegistersTable.GetRegisterString(ArgGenerator.RandomRegister())})",
-                    Argument.Shift => $"{ArgGenerator.RandomShift()}",
+                    Argument.ShiftAmount => $"{ArgGenerator.RandomShift()}",
                     Argument.FullImmediate => Random.Shared.Next(),
                     _ => throw new NotImplementedException(),
                 });

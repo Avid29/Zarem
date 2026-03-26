@@ -1,109 +1,111 @@
 ﻿[
   {
+    "type": "reg_imm",
     "name": "bltz",
-    "op_code": 1,
-    "rt_func_code": 0,
-    "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "rt_code": 0,
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "reg_imm",
     "name": "bgez",
-    "op_code": 1,
-    "rt_func_code": 1,
-    "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "rt_code": 1,
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "reg_imm",
     "name": "bltzl",
-    "op_code": 1,
-    "rt_func_code": 2,
-    "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
-    "obsolete": true
+    "rt_code": 2,
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "reg_imm",
     "name": "bgezl",
-    "op_code": 1,
-    "rt_func_code": 3,
-    "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
-    "obsolete": true
+    "rt_code": 3,
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
-    "name": "tegi",
-    "op_code": 1,
-    "rt_func_code": 8,
-    "args": [ 0, 4 ],
-    "versions": [ 2, 3, 4, 5 ],
-    "obsolete": true
+    "type": "reg_imm",
+    "name": "tgei",
+    "rt_code": 8,
+    "args": [ "rs", "immediate" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
-    "name": "tegiu",
-    "op_code": 1,
-    "rt_func_code": 9,
-    "args": [ 0, 4 ],
-    "versions": [ 2, 3, 4, 5 ],
-    "obsolete": true
+    "type": "reg_imm",
+    "name": "tgeiu",
+    "rt_code": 9,
+    "args": [ "rs", "immediate" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "reg_imm",
     "name": "tlti",
-    "op_code": 1,
-    "rt_func_code": 10,
-    "args": [ 0, 4 ],
-    "versions": [ 2, 3, 4, 5 ],
-    "obsolete": true
+    "rt_code": 10,
+    "args": [ "rs", "immediate" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "reg_imm",
     "name": "tltiu",
-    "op_code": 1,
-    "rt_func_code": 11,
-    "args": [ 0, 4 ],
-    "versions": [ 2, 3, 4, 5 ],
-    "obsolete": true
+    "rt_code": 11,
+    "args": [ "rs", "immediate" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "reg_imm",
     "name": "teqi",
-    "op_code": 1,
-    "rt_func_code": 12,
-    "args": [ 0, 4 ],
-    "versions": [ 2, 3, 4, 5 ],
-    "obsolete": true
+    "rt_code": 12,
+    "args": [ "rs", "immediate" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "reg_imm",
     "name": "tnei",
-    "op_code": 1,
-    "rt_func_code": 14,
-    "args": [ 0, 4 ],
-    "versions": [ 2, 3, 4, 5 ],
-    "obsolete": true
+    "rt_code": 14,
+    "args": [ "rs", "immediate" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "reg_imm",
     "name": "bltzal",
-    "op_code": 1,
-    "rt_func_code": 16,
-    "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "rt_code": 16,
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsI",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "reg_imm",
     "name": "bgezal",
-    "op_code": 1,
-    "rt_func_code": 17,
-    "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "rt_code": 17,
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsI"
   },
   {
+    "type": "reg_imm",
     "name": "bltzall",
-    "op_code": 1,
-    "rt_func_code": 18,
-    "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5 ]
+    "rt_code": 18,
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   },
   {
+    "type": "reg_imm",
     "name": "bgezall",
-    "op_code": 1,
-    "rt_func_code": 19,
-    "args": [ 0, 5 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
-    "obsolete": true
+    "rt_code": 19,
+    "args": [ "rs", "offset" ],
+    "added_in": "MipsII",
+    "removed_in": "Mips32R6"
   }
 ]

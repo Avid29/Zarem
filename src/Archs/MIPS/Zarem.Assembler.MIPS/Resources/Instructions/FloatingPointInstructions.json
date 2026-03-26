@@ -1,191 +1,170 @@
 ﻿[
-    {
-        "name": "add.fmt",
-        "op_code": 17,
-        "float_func_code": 0,
-        "float_formats": [ 16, 17, 22 ],
-        "args": [ 11, 9, 10 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = $fs + $ft"
-    },
-    {
-        "name": "sub.fmt",
-        "op_code": 17,
-        "float_func_code": 1,
-        "float_formats": [ 16, 17, 22 ],
-        "args": [ 11, 9, 10 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = $fs - $ft"
-    },
-    {
-        "name": "mul.fmt",
-        "op_code": 17,
-        "float_func_code": 2,
-        "float_formats": [ 16, 17, 22 ],
-        "args": [ 11, 9, 10 ],
-        "versions": [ 1, 2, 3, 4, 5 ],
-        "behavior": "$fd = $fs * $ft"
-    },
-    {
-        "name": "div.fmt",
-        "op_code": 17,
-        "float_func_code": 3,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9, 10 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = $fs / $ft"
-    },
-    {
-        "name": "sqrt.fmt",
-        "op_code": 17,
-        "float_func_code": 4,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = sqrt($fs)"
-    },
-    {
-        "name": "abs.fmt",
-        "op_code": 17,
-        "float_func_code": 5,
-        "float_formats": [ 16, 17, 22 ],
-        "args": [ 11, 9 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = abs($fs)"
-    },
-    {
-        "name": "mov.fmt",
-        "op_code": 17,
-        "float_func_code": 6,
-        "float_formats": [ 16, 17, 22 ],
-        "args": [ 11, 9 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = $fs"
-    },
-    {
-        "name": "neg.fmt",
-        "op_code": 17,
-        "float_func_code": 7,
-        "float_formats": [ 16, 17, 22 ],
-        "args": [ 11, 9 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = -($fs)"
-    },
-    {
-        "name": "round.L.fmt",
-        "op_code": 17,
-        "float_func_code": 8,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (long)round($fs)"
-    },
-    {
-        "name": "trunc.L.fmt",
-        "op_code": 17,
-        "float_func_code": 9,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (long)trunc($fs)"
-    },
-    {
-        "name": "ceil.L.fmt",
-        "op_code": 17,
-        "float_func_code": 10,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (long)ceil($fs)"
-    },
-    {
-        "name": "floor.L.fmt",
-        "op_code": 17,
-        "float_func_code": 11,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (long)floor($fs)"
-    },
-    {
-        "name": "round.W.fmt",
-        "op_code": 17,
-        "float_func_code": 12,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (int)round($fs)"
-    },
-    {
-        "name": "trunc.W.fmt",
-        "op_code": 17,
-        "float_func_code": 13,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (int)trunc($fs)"
-    },
-    {
-        "name": "ceil.W.fmt",
-        "op_code": 17,
-        "float_func_code": 14,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (int)ceil($fs)"
-    },
-    {
-        "name": "floor.W.fmt",
-        "op_code": 17,
-        "float_func_code": 15,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (int)floor($fs)"
-    },
-    {
-        "name": "recip.fmt",
-        "op_code": 17,
-        "float_func_code": 21,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = 1 / $fs"
-    },
-    {
-        "name": "cvt.S.fmt",
-        "op_code": 17,
-        "float_func_code": 32,
-        "float_formats": [ 17, 20, 21 ],
-        "args": [ 11, 9 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (float)$fs"
-    },
-    {
-        "name": "cvt.D.fmt",
-        "op_code": 17,
-        "float_func_code": 33,
-        "float_formats": [ 16, 20, 21 ],
-        "args": [ 11, 9 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (double)$fs"
-    },
-    {
-        "name": "cvt.W.fmt",
-        "op_code": 17,
-        "float_func_code": 36,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (int)$fs"
-    },
-    {
-        "name": "cvt.L.fmt",
-        "op_code": 17,
-        "float_func_code": 37,
-        "float_formats": [ 16, 17 ],
-        "args": [ 11, 9 ],
-        "versions": [ 2, 3, 4, 5, 6 ],
-        "behavior": "$fd = (long)$fs"
-    }
+  {
+    "type": "float",
+    "name": "add.fmt",
+    "float_func": 0,
+    "formats": [ 16, 17, 22 ],
+    "args": [ "fd", "fs", "ft" ],
+    "added_in": "MipsI"
+  },
+  {
+    "type": "float",
+    "name": "sub.fmt",
+    "float_func": 1,
+    "formats": [ 16, 17, 22 ],
+    "args": [ "fd", "fs", "ft" ],
+    "added_in": "MipsI"
+  },
+  {
+    "type": "float",
+    "name": "mul.fmt",
+    "float_func": 2,
+    "formats": [ 16, 17, 22 ],
+    "args": [ "fd", "fs", "ft" ],
+    "added_in": "MipsI"
+  },
+  {
+    "type": "float",
+    "name": "div.fmt",
+    "float_func": 3,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs", "ft" ],
+    "added_in": "MipsI"
+  },
+  {
+    "type": "float",
+    "name": "sqrt.fmt",
+    "float_func": 4,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsII"
+  },
+  {
+    "type": "float",
+    "name": "abs.fmt",
+    "float_func": 5,
+    "formats": [ 16, 17, 22 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsI"
+  },
+  {
+    "type": "float",
+    "name": "mov.fmt",
+    "float_func": 6,
+    "formats": [ 16, 17, 22 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsI"
+  },
+  {
+    "type": "float",
+    "name": "neg.fmt",
+    "float_func": 7,
+    "formats": [ 16, 17, 22 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsI"
+  },
+  {
+    "type": "float",
+    "name": "round.L.fmt",
+    "float_func": 8,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsIII"
+  },
+  {
+    "type": "float",
+    "name": "trunc.L.fmt",
+    "float_func": 9,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsIII"
+  },
+  {
+    "type": "float",
+    "name": "ceil.L.fmt",
+    "float_func": 10,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsIII"
+  },
+  {
+    "type": "float",
+    "name": "floor.L.fmt",
+    "float_func": 11,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsIII"
+  },
+  {
+    "type": "float",
+    "name": "round.W.fmt",
+    "float_func": 12,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsII"
+  },
+  {
+    "type": "float",
+    "name": "trunc.W.fmt",
+    "float_func": 13,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsII"
+  },
+  {
+    "type": "float",
+    "name": "ceil.W.fmt",
+    "float_func": 14,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsII"
+  },
+  {
+    "type": "float",
+    "name": "floor.W.fmt",
+    "float_func": 15,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsII"
+  },
+  {
+    "type": "float",
+    "name": "recip.fmt",
+    "float_func": 21,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsIV"
+  },
+  {
+    "type": "float",
+    "name": "cvt.S.fmt",
+    "float_func": 32,
+    "formats": [ 17, 20, 21 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsI"
+  },
+  {
+    "type": "float",
+    "name": "cvt.D.fmt",
+    "float_func": 33,
+    "formats": [ 16, 20, 21 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsI"
+  },
+  {
+    "type": "float",
+    "name": "cvt.W.fmt",
+    "float_func": 36,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsI"
+  },
+  {
+    "type": "float",
+    "name": "cvt.L.fmt",
+    "float_func": 37,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "MipsIII"
+  }
 ]
