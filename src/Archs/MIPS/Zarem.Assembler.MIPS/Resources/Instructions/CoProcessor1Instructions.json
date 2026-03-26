@@ -4,45 +4,47 @@
     "op_code": 17,
     "coproc1_rs": 0,
     "args": [ 1, 9 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "GPR[$rt] = $fs"
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "GPR[$rt] = FPR[$fs]"
   },
   {
     "name": "cfc1",
     "op_code": 17,
     "coproc1_rs": 2,
     "args": [ 1, 9 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "GPR[$rt] = FCSR[$fs]"
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "GPR[$rt] = FCR[$fs]"
   },
   {
     "name": "mfhc1",
     "op_code": 17,
     "coproc1_rs": 3,
     "args": [ 1, 9 ],
-    "versions": [ 2, 3, 4, 5, 6 ]
+    "versions": [ 11, 16 ],
+    "behavior": "GPR[$rt] = FPR[$fs][63:32]"
   },
   {
     "name": "mtc1",
     "op_code": 17,
     "coproc1_rs": 4,
     "args": [ 1, 9 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "$fs = GPR[$rt]"
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "FPR[$fs] = GPR[$rt]"
   },
   {
     "name": "ctc1",
     "op_code": 17,
     "coproc1_rs": 6,
     "args": [ 1, 9 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "FCSR[$fs] = GPR[$rt]"
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "FCR[$fs] = GPR[$rt]"
   },
   {
     "name": "mthc1",
     "op_code": 17,
     "coproc1_rs": 7,
     "args": [ 1, 9 ],
-    "versions": [ 2, 3, 4, 5, 6 ]
+    "versions": [ 11, 16 ],
+    "behavior": "FPR[$fs][63:32] = GPR[$rt]"
   }
 ]

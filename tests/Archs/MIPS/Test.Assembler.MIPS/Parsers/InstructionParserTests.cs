@@ -94,7 +94,9 @@ public class InstructionParserTests
     public static IEnumerable<object[]> Generated_MIPS_III_List => GenerateTestList(MipsVersion.MipsIII);
     public static IEnumerable<object[]> Generated_MIPS_IV_List => GenerateTestList(MipsVersion.MipsIV);
     public static IEnumerable<object[]> Generated_MIPS_V_List => GenerateTestList(MipsVersion.MipsV);
-    public static IEnumerable<object[]> Generated_MIPS_VI_List => GenerateTestList(MipsVersion.MipsVI);
+    public static IEnumerable<object[]> Generated_MIPS32_R1_List => GenerateTestList(MipsVersion.Mips32R1);
+    public static IEnumerable<object[]> Generated_MIPS32_R2_List => GenerateTestList(MipsVersion.Mips32R2);
+    public static IEnumerable<object[]> Generated_MIPS32_R6_List => GenerateTestList(MipsVersion.Mips32R6);
 
     [DataTestMethod]
     [DynamicData(nameof(RawInstructionSuccessTestsList),
@@ -151,10 +153,20 @@ public class InstructionParserTests
     public void Generated_MIPS_V(string input)
         => AssembleDisassembleTest(input, MipsVersion.MipsV);
 
-    [TestMethod("MIPS VI")]
-    [DynamicData(nameof(Generated_MIPS_VI_List))]
-    public void Generated_MIPS_VI(string input)
-        => AssembleDisassembleTest(input, MipsVersion.MipsVI);
+    [TestMethod("MIPS32 R1")]
+    [DynamicData(nameof(Generated_MIPS32_R1_List))]
+    public void Generated_MIPS32_R1(string input)
+        => AssembleDisassembleTest(input, MipsVersion.Mips32R1);
+
+    [TestMethod("MIPS32 R2")]
+    [DynamicData(nameof(Generated_MIPS32_R2_List))]
+    public void Generated_MIPS32_R2(string input)
+        => AssembleDisassembleTest(input, MipsVersion.Mips32R2);
+
+    //[TestMethod("MIPS32 R6")]
+    //[DynamicData(nameof(Generated_MIPS32_R6_List))]
+    //public void Generated_MIPS32_R6(string input)
+    //    => AssembleDisassembleTest(input, MipsVersion.Mips32R6);
 
     private void AssembleDisassembleTest(string input, MipsVersion version)
     {

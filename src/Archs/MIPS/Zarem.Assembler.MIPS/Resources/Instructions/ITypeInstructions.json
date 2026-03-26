@@ -1,224 +1,226 @@
 ﻿[
-    {
-        "name": "beq",
-        "op_code": 4,
-        "args": [ 0, 1, 5 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "if ($rs == $rt) $pc = address"
-    },
-    {
-        "name": "bne",
-        "op_code": 5,
-        "args": [ 0, 1, 5 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "if ($rs != $rt) $pc = address"
-    },
-    {
-        "name": "blez",
-        "op_code": 6,
-        "args": [ 0, 5 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "if ($rs <= 0) $pc = address"
-    },
-    {
-        "name": "bgtz",
-        "op_code": 7,
-        "args": [ 0, 5 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "if ($rs > 0) $pc = address"
-    },
-    {
-        "name": "addi",
-        "op_code": 8,
-        "args": [ 1, 0, 4 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = $rs + immediate"
-    },
-    {
-        "name": "addiu",
-        "op_code": 9,
-        "args": [ 1, 0, 4 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = $rs + immediate"
-    },
-    {
-        "name": "slti",
-        "op_code": 10,
-        "args": [ 1, 0, 4 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = $rs < immediate ? 1 : 0"
-    },
-    {
-        "name": "sltiu",
-        "op_code": 11,
-        "args": [ 1, 0, 4 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = $rs < immediate ? 1 : 0"
-    },
-    {
-        "name": "andi",
-        "op_code": 12,
-        "args": [ 1, 0, 4 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = $rs & immediate"
-    },
-    {
-        "name": "ori",
-        "op_code": 13,
-        "args": [ 1, 0, 4 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = $rs | immediate"
-    },
-    {
-        "name": "xori",
-        "op_code": 14,
-        "args": [ 1, 0, 4 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = $rs ^ immediate"
-    },
-    {
-        "name": "lui",
-        "op_code": 15,
-        "args": [ 1, 4 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = immediate << 16"
-    },
-    {
-        "name": "beql",
-        "op_code": 20,
-        "args": [ 0, 5 ],
-        "versions": [ 2, 3, 4, 5 ],
-        "obsolete": true
-    },
-    {
-        "name": "bnel",
-        "op_code": 21,
-        "args": [ 0, 5 ],
-        "versions": [ 2, 3, 4, 5 ],
-        "obsolete": true
-    },
-    {
-        "name": "blezl",
-        "op_code": 22,
-        "args": [ 0, 5 ],
-        "versions": [ 2, 3, 4, 5 ],
-        "obsolete": true
-    },
-    {
-        "name": "bgtzl",
-        "op_code": 23,
-        "args": [ 0, 5 ],
-        "versions": [ 2, 3, 4, 5 ],
-        "obsolete": true
-    },
-    {
-        "name": "lb",
-        "op_code": 32,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = (sbyte)mem[$rs + offset]"
-    },
-    {
-        "name": "lh",
-        "op_code": 33,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = (short)mem[$rs + offset]"
-    },
-    {
-        "name": "lwl",
-        "op_code": 34,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ]
-    },
-    {
-        "name": "lw",
-        "op_code": 35,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = (int)mem[$rs + offset]"
-    },
-    {
-        "name": "lbu",
-        "op_code": 36,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$rt = (byte)mem[$rs + offset]"
-    },
-    {
-        "name": "lhu",
-        "op_code": 37,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "mem[$rs + offset] = (ushort)$rt"
-    },
-    {
-        "name": "lwr",
-        "op_code": 38,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ]
-    },
-    {
-        "name": "sb",
-        "op_code": 40,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "mem[$rs + offset] = (sbyte)$rt"
-    },
-    {
-        "name": "sh",
-        "op_code": 41,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "mem[$rs + offset] = (short)$rt"
-    },
-    {
-        "name": "swl",
-        "op_code": 42,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": ""
-    },
-    {
-        "name": "sw",
-        "op_code": 43,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "mem[$rs + offset] = (int)$rt "
-    },
-    {
-        "name": "swr",
-        "op_code": 46,
-        "args": [ 1, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": ""
-    },
-    {
-        "name": "lwc1",
-        "op_code": 49,
-        "args": [ 10, 7 ],
-        "versions": [ 1, 2, 3, 4, 5 ],
-        "behavior": "$ft = (int)mem[$rs + offset]"
-    },
-    {
-        "name": "ldc1",
-        "op_code": 53,
-        "args": [ 10, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$ft = (long)mem[$rs + offset]"
-    },
-    {
-        "name": "swc1",
-        "op_code": 57,
-        "args": [ 10, 7 ],
-        "versions": [ 1, 2, 3, 4, 5 ],
-        "behavior": "mem[$rs + offset] = (int)$ft"
-    },
-    {
-        "name": "sdc1",
-        "op_code": 61,
-        "args": [ 10, 7 ],
-        "versions": [ 1, 2, 3, 4, 5, 6 ],
-        "behavior": "$ft = (long)mem[$rs + offset]"
-    }
+  {
+    "name": "beq",
+    "op_code": 4,
+    "args": [ 0, 1, 5 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "if ($rs == $rt) $pc = address"
+  },
+  {
+    "name": "bne",
+    "op_code": 5,
+    "args": [ 0, 1, 5 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "if ($rs != $rt) $pc = address"
+  },
+  {
+    "name": "blez",
+    "op_code": 6,
+    "args": [ 0, 5 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "if ($rs <= 0) $pc = address"
+  },
+  {
+    "name": "bgtz",
+    "op_code": 7,
+    "args": [ 0, 5 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "if ($rs > 0) $pc = address"
+  },
+  {
+    "name": "addi",
+    "op_code": 8,
+    "args": [ 1, 0, 4 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
+    "behavior": "$rt = $rs + immediate"
+  },
+  {
+    "name": "addiu",
+    "op_code": 9,
+    "args": [ 1, 0, 4 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = $rs + immediate"
+  },
+  {
+    "name": "slti",
+    "op_code": 10,
+    "args": [ 1, 0, 4 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = $rs < immediate ? 1 : 0"
+  },
+  {
+    "name": "sltiu",
+    "op_code": 11,
+    "args": [ 1, 0, 4 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = $rs < immediate ? 1 : 0"
+  },
+  {
+    "name": "andi",
+    "op_code": 12,
+    "args": [ 1, 0, 4 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = $rs & immediate"
+  },
+  {
+    "name": "ori",
+    "op_code": 13,
+    "args": [ 1, 0, 4 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = $rs | immediate"
+  },
+  {
+    "name": "xori",
+    "op_code": 14,
+    "args": [ 1, 0, 4 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = $rs ^ immediate"
+  },
+  {
+    "name": "lui",
+    "op_code": 15,
+    "args": [ 1, 4 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = immediate << 16"
+  },
+  {
+    "name": "beql",
+    "op_code": 20,
+    "args": [ 0, 1, 5 ],
+    "versions": [ 2, 3, 4, 5, 10, 11 ],
+    "obsolete": true
+  },
+  {
+    "name": "bnel",
+    "op_code": 21,
+    "args": [ 0, 1, 5 ],
+    "versions": [ 2, 3, 4, 5, 10, 11 ],
+    "obsolete": true
+  },
+  {
+    "name": "blezl",
+    "op_code": 22,
+    "args": [ 0, 5 ],
+    "versions": [ 2, 3, 4, 5, 10, 11 ],
+    "obsolete": true
+  },
+  {
+    "name": "bgtzl",
+    "op_code": 23,
+    "args": [ 0, 5 ],
+    "versions": [ 2, 3, 4, 5, 10, 11 ],
+    "obsolete": true
+  },
+  {
+    "name": "lb",
+    "op_code": 32,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = (sbyte)mem[$rs + offset]"
+  },
+  {
+    "name": "lh",
+    "op_code": 33,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = (short)mem[$rs + offset]"
+  },
+  {
+    "name": "lwl",
+    "op_code": 34,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
+    "behavior": "Load Word Left"
+  },
+  {
+    "name": "lw",
+    "op_code": 35,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = (int)mem[$rs + offset]"
+  },
+  {
+    "name": "lbu",
+    "op_code": 36,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = (byte)mem[$rs + offset]"
+  },
+  {
+    "name": "lhu",
+    "op_code": 37,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$rt = (ushort)mem[$rs + offset]"
+  },
+  {
+    "name": "lwr",
+    "op_code": 38,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
+    "behavior": "Load Word Right"
+  },
+  {
+    "name": "sb",
+    "op_code": 40,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "mem[$rs + offset] = (sbyte)$rt"
+  },
+  {
+    "name": "sh",
+    "op_code": 41,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "mem[$rs + offset] = (short)$rt"
+  },
+  {
+    "name": "swl",
+    "op_code": 42,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
+    "behavior": "Store Word Left"
+  },
+  {
+    "name": "sw",
+    "op_code": 43,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "mem[$rs + offset] = (int)$rt"
+  },
+  {
+    "name": "swr",
+    "op_code": 46,
+    "args": [ 1, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
+    "behavior": "Store Word Right"
+  },
+  {
+    "name": "lwc1",
+    "op_code": 49,
+    "args": [ 10, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$ft = (int)mem[$rs + offset]"
+  },
+  {
+    "name": "ldc1",
+    "op_code": 53,
+    "args": [ 10, 7 ],
+    "versions": [ 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "$ft = (long)mem[$rs + offset]"
+  },
+  {
+    "name": "swc1",
+    "op_code": 57,
+    "args": [ 10, 7 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "mem[$rs + offset] = (int)$ft"
+  },
+  {
+    "name": "sdc1",
+    "op_code": 61,
+    "args": [ 10, 7 ],
+    "versions": [ 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "mem[$rs + offset] = (long)$ft"
+  }
 ]

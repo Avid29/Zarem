@@ -431,10 +431,10 @@ public class ExecutionTests
         get
         {
             // movz/movn
-            yield return [new ExecutionTestCase("movz $k0, $t0, $k1", GPRegister.Kernel0, K1)];
-            yield return [new ExecutionTestCase("movz $k0, $t1, $k1", GPRegister.Zero)];
-            yield return [new ExecutionTestCase("movn $k0, $t0, $k1", GPRegister.Zero)];
-            yield return [new ExecutionTestCase("movn $k0, $t1, $k1", GPRegister.Kernel0, K1)];
+            yield return [new ExecutionTestCase("movz $k0, $k1, $t0", GPRegister.Kernel0, K1)];
+            yield return [new ExecutionTestCase("movz $k0, $k1, $t1", GPRegister.Zero)];
+            yield return [new ExecutionTestCase("movn $k0, $k1, $t0", GPRegister.Zero)];
+            yield return [new ExecutionTestCase("movn $k0, $k1, $t1", GPRegister.Kernel0, K1)];
 
             // lui
             yield return [new ExecutionTestCase("lui $v0, 0x1234", 0x12340000)];

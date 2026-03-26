@@ -191,7 +191,7 @@ public class Program()
         Console.WriteLine($"Mode swapped to {_mode} mode");
     }
 
-    void Dump(string tableArg, MipsVersion version = MipsVersion.MipsII)
+    void Dump(string tableArg, MipsVersion version = MipsVersion.Mips32R2)
     {
         tableArg = tableArg.Trim().ToLower();
         switch (tableArg)

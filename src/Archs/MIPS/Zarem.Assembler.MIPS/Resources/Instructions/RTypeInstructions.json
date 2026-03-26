@@ -4,7 +4,7 @@
     "op_code": 0,
     "func_code": 0,
     "args": [ 2, 1, 3 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rt << sa"
   },
   {
@@ -12,7 +12,7 @@
     "op_code": 0,
     "func_code": 2,
     "args": [ 2, 1, 3 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rt >> sa"
   },
   {
@@ -20,7 +20,7 @@
     "op_code": 0,
     "func_code": 3,
     "args": [ 2, 1, 3 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rt >> sa"
   },
   {
@@ -28,7 +28,7 @@
     "op_code": 0,
     "func_code": 4,
     "args": [ 2, 1, 0 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rt << $rs"
   },
   {
@@ -36,7 +36,7 @@
     "op_code": 0,
     "func_code": 6,
     "args": [ 2, 1, 0 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rt >> $rs"
   },
   {
@@ -44,7 +44,7 @@
     "op_code": 0,
     "func_code": 7,
     "args": [ 2, 1, 0 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rt >> $rs"
   },
   {
@@ -52,7 +52,7 @@
     "op_code": 0,
     "func_code": 8,
     "args": [ 0 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$pc = $rs"
   },
   {
@@ -61,31 +61,31 @@
     "func_code": 9,
     "args": [ 0 ],
     "rd": 31,
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$pc = $rs, $ra = ret_addr"
   },
   {
     "name": "jalr",
     "op_code": 0,
     "func_code": 9,
-    "args": [ 0, 2 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "args": [ 2, 0 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$pc = $rs, $rd = ret_addr"
   },
   {
     "name": "movz",
     "op_code": 0,
     "func_code": 10,
-    "args": [ 2, 1, 0 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
+    "args": [ 2, 0, 1 ],
+    "versions": [ 4, 5, 10, 11 ],
     "behavior": "if ($rt == 0) $rd = $rs"
   },
   {
     "name": "movn",
     "op_code": 0,
     "func_code": 11,
-    "args": [ 2, 1, 0 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
+    "args": [ 2, 0, 1 ],
+    "versions": [ 4, 5, 10, 11 ],
     "behavior": "if ($rt != 0) $rd = $rs"
   },
   {
@@ -93,7 +93,7 @@
     "op_code": 0,
     "func_code": 12,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "Make a syscall interrupt"
   },
   {
@@ -101,7 +101,7 @@
     "op_code": 0,
     "func_code": 13,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "Make a breakpoint exception"
   },
   {
@@ -109,14 +109,14 @@
     "op_code": 0,
     "func_code": 15,
     "args": [],
-    "versions": [ 2, 3, 4, 5, 6 ]
+    "versions": [ 2, 3, 4, 5, 10, 11, 16 ]
   },
   {
     "name": "mfhi",
     "op_code": 0,
     "func_code": 16,
     "args": [ 2 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
     "behavior": "$rd = $Hi"
   },
   {
@@ -124,7 +124,7 @@
     "op_code": 0,
     "func_code": 17,
     "args": [ 0 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
     "behavior": "$Hi = $rs"
   },
   {
@@ -132,7 +132,7 @@
     "op_code": 0,
     "func_code": 18,
     "args": [ 2 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
     "behavior": "$rd = $Lo"
   },
   {
@@ -140,7 +140,7 @@
     "op_code": 0,
     "func_code": 19,
     "args": [ 0 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
     "behavior": "$Lo = $rs"
   },
   {
@@ -148,7 +148,7 @@
     "op_code": 0,
     "func_code": 24,
     "args": [ 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
     "behavior": "($Hi,$Lo) = $rs * $rt"
   },
   {
@@ -156,7 +156,7 @@
     "op_code": 0,
     "func_code": 25,
     "args": [ 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
     "behavior": "($Hi,$Lo) = $rs * $rt"
   },
   {
@@ -164,7 +164,7 @@
     "op_code": 0,
     "func_code": 26,
     "args": [ 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
     "behavior": "$Lo = $rs / $rt, $Hi = $rs % $rt"
   },
   {
@@ -172,7 +172,7 @@
     "op_code": 0,
     "func_code": 27,
     "args": [ 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
     "behavior": "$Lo = $rs / $rt, $Hi = $rs % $rt"
   },
   {
@@ -180,7 +180,7 @@
     "op_code": 0,
     "func_code": 32,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rs + $rt"
   },
   {
@@ -188,7 +188,7 @@
     "op_code": 0,
     "func_code": 33,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rs + $rt"
   },
   {
@@ -196,7 +196,7 @@
     "op_code": 0,
     "func_code": 34,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rs - $rt"
   },
   {
@@ -204,7 +204,7 @@
     "op_code": 0,
     "func_code": 35,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rs - $rt"
   },
   {
@@ -212,7 +212,7 @@
     "op_code": 0,
     "func_code": 36,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rs & $rt"
   },
   {
@@ -220,7 +220,7 @@
     "op_code": 0,
     "func_code": 37,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rs | $rt"
   },
   {
@@ -228,7 +228,7 @@
     "op_code": 0,
     "func_code": 38,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rs ^ $rt"
   },
   {
@@ -236,7 +236,7 @@
     "op_code": 0,
     "func_code": 39,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = ~($rs | $rt)"
   },
   {
@@ -244,7 +244,7 @@
     "op_code": 0,
     "func_code": 42,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rs < $rt ? 1 : 0"
   },
   {
@@ -252,7 +252,7 @@
     "op_code": 0,
     "func_code": 43,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "$rd = $rs < $rt ? 1 : 0"
   },
   {
@@ -260,7 +260,7 @@
     "op_code": 0,
     "func_code": 48,
     "args": [ 0, 1 ],
-    "versions": [ 2, 3, 4, 5, 6 ],
+    "versions": [ 2, 3, 4, 5, 10, 11 ],
     "behavior": "if ($rs >= $rt) Invoke Trap"
   },
   {
@@ -268,7 +268,7 @@
     "op_code": 0,
     "func_code": 49,
     "args": [ 0, 1 ],
-    "versions": [ 2, 3, 4, 5, 6 ],
+    "versions": [ 2, 3, 4, 5, 10, 11 ],
     "behavior": "if ($rs >= $rt) Invoke Trap"
   },
   {
@@ -276,7 +276,7 @@
     "op_code": 0,
     "func_code": 50,
     "args": [ 0, 1 ],
-    "versions": [ 2, 3, 4, 5, 6 ],
+    "versions": [ 2, 3, 4, 5, 10, 11 ],
     "behavior": "if ($rs < $rt) Invoke Trap"
   },
   {
@@ -284,7 +284,7 @@
     "op_code": 0,
     "func_code": 51,
     "args": [ 0, 1 ],
-    "versions": [ 2, 3, 4, 5, 6 ],
+    "versions": [ 2, 3, 4, 5, 10, 11 ],
     "behavior": "if ($rs < $rt) Invoke Trap"
   },
   {
@@ -292,31 +292,31 @@
     "op_code": 0,
     "func_code": 52,
     "args": [ 0, 1 ],
-    "versions": [ 2, 3, 4, 5, 6 ],
+    "versions": [ 2, 3, 4, 5, 10, 11 ],
     "behavior": "if ($rs == $rt) Invoke Trap"
   },
   {
     "name": "seleqz",
     "op_code": 0,
     "func_code": 53,
-    "args": [ 0, 1 ],
-    "versions": [ 6 ],
-    "behavior": "$rd = $rt ? 0 : $rs"
+    "args": [ 2, 0, 1 ],
+    "versions": [ 16 ],
+    "behavior": "$rd = $rt == 0 ? $rs : 0"
   },
   {
     "name": "tne",
     "op_code": 0,
     "func_code": 54,
     "args": [ 0, 1 ],
-    "versions": [ 2, 3, 4, 5, 6 ],
+    "versions": [ 2, 3, 4, 5, 10, 11 ],
     "behavior": "if ($rs != $rt) Invoke Trap"
   },
   {
     "name": "selnez",
     "op_code": 0,
     "func_code": 55,
-    "args": [ 2, 1, 0 ],
-    "versions": [ 6 ],
-    "behavior": "$rd = $rt ? $rs : 0"
+    "args": [ 2, 0, 1 ],
+    "versions": [ 16 ],
+    "behavior": "$rd = $rt != 0 ? $rs : 0"
   }
 ]

@@ -128,7 +128,6 @@ public unsafe partial class InstructionServiceTable
         _specialTable[(int)FunctionCode.ShiftLeftLogicalVariable] = &ShiftVar<SllLogic>;
         _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = &ShiftVar<SrlLogic>;
         _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = &ShiftVar<SraLogic>;
-        _specialTable[(int)FunctionCode.JumpRegister] = &JumpR;
         _specialTable[(int)FunctionCode.JumpAndLinkRegister] = &JumpLinkR;
         _specialTable[(int)FunctionCode.SystemCall] = &Trap<SyscallLogic>;
         _specialTable[(int)FunctionCode.Break] = &Trap<BreakLogic>;
@@ -152,7 +151,6 @@ public unsafe partial class InstructionServiceTable
             _specialTable[(int)FunctionCode.TrapOnLessThanUnsigned] = &TrapOn<XltuLogic>;
             _specialTable[(int)FunctionCode.TrapOnEquals] = &TrapOn<XeqLogic>;
             _specialTable[(int)FunctionCode.TrapOnNotEquals] = &TrapOn<XneLogic>;
-
         }
 
         if (version is >= MipsVersion.MipsIV and < MipsVersion.Mips32R6)
@@ -163,6 +161,7 @@ public unsafe partial class InstructionServiceTable
 
         if (version is < MipsVersion.Mips32R6)
         {
+            _specialTable[(int)FunctionCode.JumpRegister] = &JumpR;
             _specialTable[(int)FunctionCode.Multiply] = &MultR<MultLogic>;
             _specialTable[(int)FunctionCode.MultiplyUnsigned] = &MultR<MultuLogic>;
             _specialTable[(int)FunctionCode.Divide] = &DivR<DivLogic>;

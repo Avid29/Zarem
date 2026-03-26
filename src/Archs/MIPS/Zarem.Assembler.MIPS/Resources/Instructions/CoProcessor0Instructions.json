@@ -4,37 +4,39 @@
     "op_code": 16,
     "coproc0_rs": 0,
     "args": [ 1, 2 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "GPR[$rt] = CPR[0, $rd, 0]"
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "GPR[$rt] = CPR[0, $rd, $sel]"
   },
   {
     "name": "mfhc0",
     "op_code": 16,
     "coproc0_rs": 2,
     "args": [ 1, 2 ],
-    "versions": [ 5, 6 ]
+    "versions": [ 11, 16 ],
+    "behavior": "GPR[$rt] = CPR[0, $rd, $sel][63:32]"
   },
   {
     "name": "mtc0",
     "op_code": 16,
     "coproc0_rs": 4,
     "args": [ 1, 2 ],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "GPR[$rt] = CPR[0, $rd, 0]"
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "CPR[0, $rd, $sel] = GPR[$rt]"
   },
   {
     "name": "mthc0",
     "op_code": 16,
     "coproc0_rs": 6,
     "args": [ 1, 2 ],
-    "versions": [ 5, 6 ]
+    "versions": [ 11, 16 ],
+    "behavior": "CPR[0, $rd, $sel][63:32] = GPR[$rt]"
   },
   {
     "name": "tlbr",
     "op_code": 16,
     "co0_func_code": 1,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "Read Indexed TLB Entry"
   },
   {
@@ -42,7 +44,7 @@
     "op_code": 16,
     "co0_func_code": 2,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
     "behavior": "Write Indexed TLB Entry"
   },
   {
@@ -50,21 +52,23 @@
     "op_code": 16,
     "co0_func_code": 3,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 11, 16 ],
+    "behavior": "TLB Invalidate"
   },
   {
     "name": "tlbinvf",
     "op_code": 16,
     "co0_func_code": 4,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 11, 16 ],
+    "behavior": "TLB Invalidate Flush"
   },
   {
     "name": "tlbwr",
     "op_code": 16,
     "co0_func_code": 6,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
     "behavior": "Write Random TLB Entry"
   },
   {
@@ -72,16 +76,17 @@
     "op_code": 16,
     "co0_func_code": 8,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "$Index = probe_tlb($EntryHi)"
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "Index = probe_tlb(EntryHi)"
   },
   {
     "name": "eret",
     "op_code": 16,
     "co0_func_code": 24,
+    "rd": 0,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "Return from interrupt, exception, or trap"
+    "versions": [ 2, 3, 4, 5, 10, 11, 16 ],
+    "behavior": "Exception Return"
   },
   {
     "name": "eretnc",
@@ -89,22 +94,23 @@
     "co0_func_code": 24,
     "rd": 1,
     "args": [],
-    "versions": [ 5 ]
+    "versions": [ 11, 16 ],
+    "behavior": "Exception Return No Clear"
   },
   {
     "name": "deret",
     "op_code": 16,
     "co0_func_code": 31,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
-    "behavior": "$PC = $DEPC"
+    "versions": [ 10, 11, 16 ],
+    "behavior": "Debug Exception Return"
   },
   {
     "name": "wait",
     "op_code": 16,
     "co0_func_code": 32,
     "args": [],
-    "versions": [ 1, 2, 3, 4, 5, 6 ],
+    "versions": [ 10, 11, 16 ],
     "behavior": "Enter Standby Mode"
   },
   {
@@ -112,31 +118,18 @@
     "op_code": 16,
     "mfmc0_func_code": 0,
     "rd": 12,
-    "args": [ 1 ],
-    "versions": [ 2, 3, 4, 5, 6 ]
+    "args": [],
+    "versions": [ 11, 16 ],
+    "behavior": "Disable Interrupts"
   },
   {
     "name": "di",
     "op_code": 16,
     "mfmc0_func_code": 0,
     "rd": 12,
-    "args": [],
-    "versions": [ 2, 3, 4, 5, 6 ]
-  },
-  {
-    "name": "evp",
-    "op_code": 16,
-    "mfmc0_func_code": 4,
     "args": [ 1 ],
-    "versions": [ 6 ]
-  },
-  {
-    "name": "ei",
-    "op_code": 16,
-    "mfmc0_func_code": 32,
-    "rd": 12,
-    "args": [ 1 ],
-    "versions": [ 2, 3, 4, 5, 6 ]
+    "versions": [ 11, 16 ],
+    "behavior": "Disable Interrupts"
   },
   {
     "name": "ei",
@@ -144,27 +137,48 @@
     "mfmc0_func_code": 32,
     "rd": 12,
     "args": [],
-    "versions": [ 2, 3, 4, 5, 6 ]
+    "versions": [ 11, 16 ],
+    "behavior": "Enable Interrupts"
+  },
+  {
+    "name": "ei",
+    "op_code": 16,
+    "mfmc0_func_code": 32,
+    "rd": 12,
+    "args": [ 1 ],
+    "versions": [ 11, 16 ],
+    "behavior": "Enable Interrupts"
   },
   {
     "name": "dvp",
     "op_code": 16,
     "mfmc0_func_code": 11,
     "args": [ 1 ],
-    "versions": [ 6 ]
+    "versions": [ 16 ],
+    "behavior": "Disable Virtual Processor"
+  },
+  {
+    "name": "evp",
+    "op_code": 16,
+    "mfmc0_func_code": 4,
+    "args": [ 1 ],
+    "versions": [ 16 ],
+    "behavior": "Enable Virtual Processor"
   },
   {
     "name": "rdpgpr",
     "op_code": 16,
     "coproc0_rs": 10,
     "args": [ 2, 1 ],
-    "versions": [ 2, 3, 4, 5, 6 ]
+    "versions": [ 11, 16 ],
+    "behavior": "Read Previous Shadow GPR"
   },
   {
     "name": "wrpgpr",
     "op_code": 16,
     "coproc0_rs": 14,
     "args": [ 2, 1 ],
-    "versions": [ 2, 3, 4, 5, 6 ]
+    "versions": [ 11, 16 ],
+    "behavior": "Write Previous Shadow GPR"
   }
 ]

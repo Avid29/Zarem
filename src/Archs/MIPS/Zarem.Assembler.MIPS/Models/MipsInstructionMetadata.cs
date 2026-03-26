@@ -21,7 +21,8 @@ namespace Zarem.Assembler.Models;
 /// </remarks>
 public readonly struct MipsInstructionMetadata
 {
-    private static readonly MipsVersion[] AllVersions = [MipsVersion.MipsI, MipsVersion.MipsII, MipsVersion.MipsIII, MipsVersion.MipsIV, MipsVersion.MipsV, MipsVersion.MipsVI];
+    private static readonly MipsVersion[] AllVersions =
+        [MipsVersion.MipsI, MipsVersion.MipsII, MipsVersion.MipsIII, MipsVersion.MipsIV, MipsVersion.MipsV, MipsVersion.Mips32R1, MipsVersion.Mips32R2, MipsVersion.Mips32R6];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionMetadata"/> struct.
@@ -35,7 +36,7 @@ public readonly struct MipsInstructionMetadata
         if (versions.Length is 0)
             versions = AllVersions;
 
-        MipsVersions = [..versions];
+        MipsVersions = [.. versions];
     }
 
     /// <summary>
@@ -51,7 +52,7 @@ public readonly struct MipsInstructionMetadata
         if (versions.Length is 0)
             versions = AllVersions;
 
-        MipsVersions = [..versions];
+        MipsVersions = [.. versions];
     }
 
     /// <summary>
@@ -66,8 +67,8 @@ public readonly struct MipsInstructionMetadata
 
         if (versions.Length is 0)
             versions = AllVersions;
-        
-        MipsVersions = [..versions];
+
+        MipsVersions = [.. versions];
     }
 
     /// <summary>
@@ -82,8 +83,8 @@ public readonly struct MipsInstructionMetadata
 
         if (versions.Length is 0)
             versions = AllVersions;
-        
-        MipsVersions = [..versions];
+
+        MipsVersions = [.. versions];
     }
 
     /// <summary>
@@ -101,10 +102,10 @@ public readonly struct MipsInstructionMetadata
 
         if (versions.Length is 0)
             versions = AllVersions;
-        
-        MipsVersions = [..versions];
+
+        MipsVersions = [.. versions];
     }
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionMetadata"/> struct.
     /// </summary>
@@ -127,7 +128,7 @@ public readonly struct MipsInstructionMetadata
         PseudoOp? pseudoOp,
         Argument[] argumentPattern,
         int? realizedInstructionCount,
-        HashSet<MipsVersion> mIPSVersions,
+        HashSet<MipsVersion> mipsVersions,
         bool obsolete,
         string behavior)
     {
@@ -148,7 +149,7 @@ public readonly struct MipsInstructionMetadata
         PseudoOp = pseudoOp;
         ArgumentPattern = argumentPattern;
         RealizedInstructionCount = realizedInstructionCount;
-        MipsVersions = mIPSVersions;
+        MipsVersions = mipsVersions;
         Obsolete = obsolete;
         Behavior = behavior;
     }
@@ -194,14 +195,14 @@ public readonly struct MipsInstructionMetadata
     [JsonPropertyName("rt_func_code")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public RegImmFuncCode? RegisterImmediateFuncCode { get; }
-    
+
     /// <summary>
     /// Gets the instruction rs function code for a coproc0 instruction.
     /// </summary>
     [JsonPropertyName("coproc0_rs")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public CoProc0RSCode? CoProc0RS { get; }
-    
+
     /// <summary>
     /// Gets the instruction rs function code for a float instruction.
     /// </summary>

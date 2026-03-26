@@ -4,57 +4,55 @@
     "op_code": 28,
     "func2_code": 32,
     "args": [ 2, 0 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
-    "behavior": "$rd = leading_zeros($rs)",
-    "obsolete": true
+    "versions": [ 10, 11 ],
+    "behavior": "$rd = leading_zeros($rs)"
   },
   {
     "name": "clo",
     "op_code": 28,
     "func2_code": 33,
     "args": [ 2, 0 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
-    "behavior": "$rd = leading_ones($rs)",
-    "obsolete": true
+    "versions": [ 10, 11 ],
+    "behavior": "$rd = leading_ones($rs)"
   },
   {
     "name": "madd",
     "op_code": 28,
     "func2_code": 0,
     "args": [ 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
-    "obsolete": true
+    "versions": [ 10, 11 ],
+    "behavior": "($Hi, $Lo) = ($Hi, $Lo) + ($rs * $rt)"
   },
   {
     "name": "maddu",
     "op_code": 28,
     "func2_code": 1,
     "args": [ 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
-    "obsolete": true
+    "versions": [ 10, 11 ],
+    "behavior": "($Hi, $Lo) = ($Hi, $Lo) + ($rs * $rt)"
   },
   {
     "name": "msub",
     "op_code": 28,
     "func2_code": 4,
     "args": [ 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
-    "obsolete": true
+    "versions": [ 10, 11 ],
+    "behavior": "($Hi, $Lo) = ($Hi, $Lo) - ($rs * $rt)"
   },
   {
     "name": "msubu",
     "op_code": 28,
     "func2_code": 5,
     "args": [ 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
-    "obsolete": true
+    "versions": [ 10, 11 ],
+    "behavior": "($Hi, $Lo) = ($Hi, $Lo) - ($rs * $rt)"
   },
   {
     "name": "mul",
     "op_code": 28,
     "func2_code": 2,
     "args": [ 2, 0, 1 ],
-    "versions": [ 1, 2, 3, 4, 5 ],
-    "obsolete": true
+    "versions": [ 10, 11 ],
+    "behavior": "$rd = $rs * $rt"
   }
 ]

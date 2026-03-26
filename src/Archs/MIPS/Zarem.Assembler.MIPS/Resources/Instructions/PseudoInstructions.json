@@ -4,69 +4,70 @@
     "pseudo_op": 0,
     "args": [],
     "real_instruction_count": 1,
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
   },
   {
     "name": "ssnop",
     "pseudo_op": 1,
     "args": [],
     "real_instruction_count": 1,
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
   },
   {
     "name": "b",
     "pseudo_op": 2,
     "args": [ 5 ],
     "real_instruction_count": 1,
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
   },
   {
     "name": "bal",
     "pseudo_op": 3,
     "args": [ 5 ],
     "real_instruction_count": 1,
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5, 10, 11 ],
+    "obsolete": true
   },
   {
     "name": "blt",
     "pseudo_op": 4,
     "args": [ 0, 1, 5 ],
     "real_instruction_count": 2,
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
   },
   {
     "name": "li",
     "pseudo_op": 5,
     "args": [ 1, 8 ],
     "real_instruction_count": 2,
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
   },
   {
     "name": "abs",
     "pseudo_op": 6,
     "args": [ 1, 0 ],
     "real_instruction_count": 3,
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
   },
   {
     "name": "move",
     "pseudo_op": 7,
     "args": [ 1, 0 ],
     "real_instruction_count": 1,
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
   },
   {
     "name": "la",
     "pseudo_op": 8,
     "args": [ 1, 8 ],
     "real_instruction_count": 2,
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
   },
   {
     "name": "sge",
     "pseudo_op": 9,
     "args": [ 2, 0, 1 ],
     "real_instruction_count": 2,
-    "versions": [ 1, 2, 3, 4, 5, 6 ]
+    "versions": [ 1, 2, 3, 4, 5, 10, 11, 16 ]
   }
 ]

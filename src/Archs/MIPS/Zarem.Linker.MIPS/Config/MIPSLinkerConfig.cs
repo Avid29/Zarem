@@ -13,14 +13,14 @@ public class MipsLinkerConfig : LinkerConfig
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsLinkerConfig"/> class.
     /// </summary>
-    public MipsLinkerConfig() : this(MipsVersion.MipsIII)
+    public MipsLinkerConfig() : this(MipsVersion.Mips32R2)
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsLinkerConfig"/> class.
     /// </summary>
-    public MipsLinkerConfig(MipsVersion version = MipsVersion.MipsIII)
+    public MipsLinkerConfig(MipsVersion version = MipsVersion.Mips32R2)
     {
         MipsVersion = version;
     }
