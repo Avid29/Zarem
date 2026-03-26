@@ -189,9 +189,6 @@
   <data name="MipsVersion_MipsV" xml:space="preserve">
     <value>MIPS V</value>
   </data>
-  <data name="MipsVersion_MipsVI" xml:space="preserve">
-    <value>MIPS VI</value>
-  </data>
   <data name="BuildStatus/Succeeded" xml:space="preserve">
     <value>{0} הצליחו</value>
   </data>
@@ -245,5 +242,11 @@
   </data>
   <data name="IdeState_Paused" xml:space="preserve">
     <value>Paused</value>
+  </data>
+  <data name="MipsVersion_Mips32R1" xml:space="preserve">
+    <value>Mips32 Release 1</value>
+  </data>
+  <data name="MipsVersion_Mips32R2" xml:space="preserve">
+    <value>Mips32 Release 2</value>
   </data>
 </root>
