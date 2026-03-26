@@ -381,15 +381,12 @@ public class ExecutionTests
             yield return [new ExecutionTestCase("slti $v0, $t1, 10", (uint)0)];
 
             // Signed (with signs)
-            unchecked
-            {
-                yield return [new ExecutionTestCase("slt $v0, $t7, $t6", 1)];
-                yield return [new ExecutionTestCase("slt $v0, $t6, $t7", (uint)0)];
-                yield return [new ExecutionTestCase("slt $v0, $t5, $t5", (uint)0)];
-                yield return [new ExecutionTestCase("slti $v0, $t7, -20", 1)];
-                yield return [new ExecutionTestCase("slti $v0, $t6, -30", (uint)0)];
-                yield return [new ExecutionTestCase("slti $v0, $t5, -10", (uint)0)];
-            }
+            yield return [new ExecutionTestCase("slt $v0, $t7, $t6", 1)];
+            yield return [new ExecutionTestCase("slt $v0, $t6, $t7", (uint)0)];
+            yield return [new ExecutionTestCase("slt $v0, $t5, $t5", (uint)0)];
+            yield return [new ExecutionTestCase("slti $v0, $t7, -20", 1)];
+            yield return [new ExecutionTestCase("slti $v0, $t6, -30", (uint)0)];
+            yield return [new ExecutionTestCase("slti $v0, $t5, -10", (uint)0)];
         }
     }
 
@@ -433,6 +430,12 @@ public class ExecutionTests
     {
         get
         {
+            // movz/movn
+            yield return [new ExecutionTestCase("movz $k0, $t0, $k1", GPRegister.Kernel0, K1)];
+            yield return [new ExecutionTestCase("movz $k0, $t1, $k1", GPRegister.Zero)];
+            yield return [new ExecutionTestCase("movn $k0, $t0, $k1", GPRegister.Zero)];
+            yield return [new ExecutionTestCase("movn $k0, $t1, $k1", GPRegister.Kernel0, K1)];
+
             // lui
             yield return [new ExecutionTestCase("lui $v0, 0x1234", 0x12340000)];
 

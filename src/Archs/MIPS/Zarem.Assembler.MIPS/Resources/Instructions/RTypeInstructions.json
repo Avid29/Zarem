@@ -77,7 +77,7 @@
     "op_code": 0,
     "func_code": 10,
     "args": [ 2, 1, 0 ],
-    "versions": [ 6 ],
+    "versions": [ 1, 2, 3, 4, 5 ],
     "behavior": "if ($rt == 0) $rd = $rs"
   },
   {
@@ -85,7 +85,7 @@
     "op_code": 0,
     "func_code": 11,
     "args": [ 2, 1, 0 ],
-    "versions": [ 6 ],
+    "versions": [ 1, 2, 3, 4, 5 ],
     "behavior": "if ($rt != 0) $rd = $rs"
   },
   {

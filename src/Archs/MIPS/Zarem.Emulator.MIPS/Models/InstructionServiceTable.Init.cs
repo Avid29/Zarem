@@ -11,6 +11,27 @@ public unsafe partial class InstructionServiceTable
 {
     private void InitTables(MIPSEmulatorConfig config)
     {
+        // Set default behavior to reserve instruction trap
+        for (int i = 0; i < 64; i++)
+        {
+            _opCodeTable[i] = &ReservedInstruction;
+            _specialTable[i] = &ReservedInstruction;
+            _special2Table[i] = &ReservedInstruction;
+        }
+
+        for (int i = 0; i < 32; i++)
+        {
+            _regImmTable[i] = &ReservedInstruction;
+        }
+
+        // Populate tables
+        InitRoot(config);
+        InitSpecial(config);
+        InitRegImm(config);
+    }
+
+    private void InitRoot(MIPSEmulatorConfig config)
+    {
         // Special and RegImmediate (R and B types)
         _opCodeTable[(int)OperationCode.Special] = &DispatchSpecial;
         _opCodeTable[(int)OperationCode.RegisterImmediate] = &DispatchRegImm;
@@ -19,29 +40,8 @@ public unsafe partial class InstructionServiceTable
         _opCodeTable[(int)OperationCode.Jump] = &Jump;
         _opCodeTable[(int)OperationCode.JumpAndLink] = &JumpLink;
 
-        // CoProcessor Instructions
-        _opCodeTable[(int)OperationCode.Coprocessor0] = &CreateCoProc0Execution;
-        _opCodeTable[(int)OperationCode.Coprocessor1] = &CreateCoProc1Execution;
-
-        // Complete Root Table
-        InitITypes(config);
-        InitMemTypes(config);
-
-        // Initialize sub tables
-        InitSpecial(config);
-        InitRegImm(config);
-
-        if (config.MipsVersion is <= MipsVersion.MipsV)
-        {
-            InitSpecial2(config);
-            _opCodeTable[(int)OperationCode.Special2] = &DispatchSpecial2;
-        }
-    }
-
-    private void InitITypes(MIPSEmulatorConfig config)
-    {
         // Branch
-        _opCodeTable[(int)OperationCode.BranchOnEquals] = 
+        _opCodeTable[(int)OperationCode.BranchOnEquals] =
         _opCodeTable[(int)OperationCode.BranchOnEqualLikely] = &BranchOn<XeqLogic>;
         _opCodeTable[(int)OperationCode.BranchOnNotEquals] =
         _opCodeTable[(int)OperationCode.BranchOnNotEqualLikely] = &BranchOn<XneLogic>;
@@ -66,12 +66,20 @@ public unsafe partial class InstructionServiceTable
         // Load Upper Immediate
         _opCodeTable[(int)OperationCode.LoadUpperImmediate] = &Lui;
 
+        // CoProcessor Instructions
+        _opCodeTable[(int)OperationCode.Coprocessor0] = &CreateCoProc0Execution;
+        _opCodeTable[(int)OperationCode.Coprocessor1] = &CreateCoProc1Execution;
+
         // Trap
         _opCodeTable[(int)OperationCode.Trap] = &Trap<TrapLogic>;
-    }
 
-    private void InitMemTypes(MIPSEmulatorConfig config)
-    {
+        // Initialize sub tables
+        if (config.MipsVersion is <= MipsVersion.MipsV)
+        {
+            InitSpecial2(config);
+            _opCodeTable[(int)OperationCode.Special2] = &DispatchSpecial2;
+        }
+
         // Load
         _opCodeTable[(int)OperationCode.LoadByte] = &Load<sbyte>;
         _opCodeTable[(int)OperationCode.LoadHalfWord] = &Load<short>;
@@ -99,15 +107,36 @@ public unsafe partial class InstructionServiceTable
         _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = &ShiftVar<SrlLogic>;
         _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = &ShiftVar<SraLogic>;
 
+        // Jump Register
+        _specialTable[(int)FunctionCode.JumpRegister] = &JumpR;
+        _specialTable[(int)FunctionCode.JumpAndLinkRegister] = &JumpLinkR;
+
+        // System
+        _specialTable[(int)FunctionCode.SystemCall] = &Trap<SyscallLogic>;
+        _specialTable[(int)FunctionCode.Break] = &Trap<BreakLogic>;
+        //_specialTable[(int)FunctionCode.Sync] = NotImplemented;
+
+        if (config.MipsVersion is <= MipsVersion.MipsV)
+        {
+            _specialTable[(int)FunctionCode.MoveOnZero] = &Move<MovzLogic>;
+            _specialTable[(int)FunctionCode.MoveOnNotZero] = &Move<MovnLogic>;
+        }
+
+        // Hi/Low
+        _specialTable[(int)FunctionCode.MoveFromHigh] = &Mfhi;
+        _specialTable[(int)FunctionCode.MoveToHigh] = &Mthi;
+        _specialTable[(int)FunctionCode.MoveFromLow] = &Mflo;
+        _specialTable[(int)FunctionCode.MoveToLow] = &Mtlo;
+
         // Arithmetic
-        _specialTable[(int)FunctionCode.Add] = &CheckedAluR<AddLogic>;
-        _specialTable[(int)FunctionCode.AddUnsigned] = &AluR<AdduLogic>;
-        _specialTable[(int)FunctionCode.Subtract] = &CheckedAluR<SubLogic>;
-        _specialTable[(int)FunctionCode.SubtractUnsigned] = &AluR<SubuLogic>;
         _specialTable[(int)FunctionCode.Multiply] = &MultR<MultLogic>;
         _specialTable[(int)FunctionCode.MultiplyUnsigned] = &MultR<MultuLogic>;
         _specialTable[(int)FunctionCode.Divide] = &DivR<DivLogic>;
         _specialTable[(int)FunctionCode.DivideUnsigned] = &DivR<DivuLogic>;
+        _specialTable[(int)FunctionCode.Add] = &CheckedAluR<AddLogic>;
+        _specialTable[(int)FunctionCode.AddUnsigned] = &AluR<AdduLogic>;
+        _specialTable[(int)FunctionCode.Subtract] = &CheckedAluR<SubLogic>;
+        _specialTable[(int)FunctionCode.SubtractUnsigned] = &AluR<SubuLogic>;
 
         // Logical
         _specialTable[(int)FunctionCode.And] = &AluR<AndLogic>;
@@ -119,28 +148,16 @@ public unsafe partial class InstructionServiceTable
         _specialTable[(int)FunctionCode.SetLessThan] = &AluR<SltLogic>;
         _specialTable[(int)FunctionCode.SetLessThanUnsigned] = &AluR<SltuLogic>;
 
-        // Jump Register
-        _specialTable[(int)FunctionCode.JumpRegister] = &JumpR;
-        _specialTable[(int)FunctionCode.JumpAndLinkRegister] = &JumpLinkR;
-
-        // System
-        _specialTable[(int)FunctionCode.SystemCall] = &Trap<SyscallLogic>;
-        _specialTable[(int)FunctionCode.Break] = &Trap<BreakLogic>;
-        //_specialTable[(int)FunctionCode.Sync] = NotImplemented;
-
-        // Hi/Low
-        _specialTable[(int)FunctionCode.MoveFromHigh] = &Mfhi;
-        _specialTable[(int)FunctionCode.MoveToHigh] = &Mthi;
-        _specialTable[(int)FunctionCode.MoveFromLow] = &Mflo;
-        _specialTable[(int)FunctionCode.MoveToLow] = &Mtlo;
-
-        // Trap
-        _specialTable[(int)FunctionCode.TrapOnGreaterOrEqual] = &TrapOn<XgeLogic>;
-        _specialTable[(int)FunctionCode.TrapOnGreaterOrEqualUnsigned] = &TrapOn<XgeuLogic>;
-        _specialTable[(int)FunctionCode.TrapOnLessThan] = &TrapOn<XltLogic>;
-        _specialTable[(int)FunctionCode.TrapOnLessThanUnsigned] = &TrapOn<XltuLogic>;
-        _specialTable[(int)FunctionCode.TrapOnEquals] = &TrapOn<XeqLogic>;
-        _specialTable[(int)FunctionCode.TrapOnNotEquals] = &TrapOn<XneLogic>;
+        if (config.MipsVersion is >= MipsVersion.MipsII)
+        {
+            // Trap
+            _specialTable[(int)FunctionCode.TrapOnGreaterOrEqual] = &TrapOn<XgeLogic>;
+            _specialTable[(int)FunctionCode.TrapOnGreaterOrEqualUnsigned] = &TrapOn<XgeuLogic>;
+            _specialTable[(int)FunctionCode.TrapOnLessThan] = &TrapOn<XltLogic>;
+            _specialTable[(int)FunctionCode.TrapOnLessThanUnsigned] = &TrapOn<XltuLogic>;
+            _specialTable[(int)FunctionCode.TrapOnEquals] = &TrapOn<XeqLogic>;
+            _specialTable[(int)FunctionCode.TrapOnNotEquals] = &TrapOn<XneLogic>;
+        }
     }
 
     private void InitRegImm(MIPSEmulatorConfig config)
