@@ -39,14 +39,14 @@ public unsafe class RegisterFile<T> : IRegisterFile, IDisposable
         get
         {
 #if DEBUG
-            Guard.IsBetween(register, 0, Count);
+            Guard.IsInRange(register, 0, Count);
 #endif
             return Regs[register];
         }
         set
         {
 #if DEBUG
-            Guard.IsBetween(register, 0, Count);
+            Guard.IsInRange(register, 0, Count);
 #endif
             Regs[register] = value;
         }

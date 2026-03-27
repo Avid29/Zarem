@@ -650,30 +650,32 @@ public class ExecutionTests
         var computer = new MipsComputer(emulatorConfig);
         var emulator = new Zaremulator(computer);
 
+        var cpu = (MipsCpu<uint>)computer.Processor;
+
         // Initialize the status register
-        computer.Processor.CoProcessor0.StatusRegister = @case.Status;
+        cpu.CoProcessor0.StatusRegister = @case.Status;
 
         // Initialize the register file with the provided values
         foreach (var (reg, value) in @case.RegisterInitialization)
-            computer.Processor[reg] = value;
+            cpu[(int)reg] = value;
 
         foreach (var (reg, value) in @case.FPRInitialization)
         {
-            computer.Processor.FloatProcessor[reg] = value;
+            cpu.FloatProcessor[reg] = value;
         }
 
         // Initialize the high and low registers if specified in the test case
         if (@case.InitialHighLow.HasValue)
         {
-            computer.Processor.Low = @case.InitialHighLow.Value.Low;
-            computer.Processor.High = @case.InitialHighLow.Value.High;
+            cpu.RegisterFile.Low = @case.InitialHighLow.Value.Low;
+            cpu.RegisterFile.High = @case.InitialHighLow.Value.High;
         }
 
         // Initialize the memory, if specified in the test case
         foreach (var (address, data) in @case.MemoryInitialization)
             computer.Memory.Write(address, data);
 
-        computer.Processor.Insert(instruction, out var execution, out var trap);
+        cpu.Insert(instruction, out var execution, out var trap);
 
         // Ensure that the expected trap was raised (if any)
         Assert.AreEqual(@case.ExpectedTrap, trap);
@@ -687,7 +689,7 @@ public class ExecutionTests
             var writeBackValue = writeback.Value.Value;
             if (writeBackValue.HasValue)
             {
-                Assert.AreEqual(writeBackValue.Value, computer.Processor.RegisterFile[execution.GPR]);
+                Assert.AreEqual(writeBackValue.Value, computer.Processor.RegisterFile[(int)execution.GPR]);
             }
         }
         else
@@ -699,8 +701,8 @@ public class ExecutionTests
         var highLow = @case.ExpectedHighLow;
         if (highLow.HasValue)
         {
-            Assert.AreEqual(highLow.Value.Low, computer.Processor.Low);
-            Assert.AreEqual(highLow.Value.High, computer.Processor.High);
+            Assert.AreEqual(highLow.Value.Low, cpu.RegisterFile.Low);
+            Assert.AreEqual(highLow.Value.High, cpu.RegisterFile.High);
         }
 
         var expectedMemory = @case.ExpectedMemory;

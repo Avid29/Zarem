@@ -23,10 +23,10 @@ public partial class MipsCpu<T> : MipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private readonly InstructionServiceTable<T> _instructionServiceTable;
+    private T? _delaySlot;
 
     /// <inheritdoc/>
     public override event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu"/> class.
@@ -42,10 +42,8 @@ public partial class MipsCpu<T> : MipsCpu
             : new InstructionServiceTable<T, int>(this);
     }
 
-    /// <summary>
-    /// Gets the cpu's general purpose register file.
-    /// </summary>
-    public MipsGpRegisterFile<T> RegisterFile { get; }
+    /// <inheritdoc/>
+    public override MipsGpRegisterFile<T> RegisterFile { get; }
 
     /// <inheritdoc cref="ProgramCounter"/>
     public T PC { get; set; }
@@ -62,15 +60,15 @@ public partial class MipsCpu<T> : MipsCpu
     /// </summary>
     public CoProcessor0<T> CoProcessor0 { get; }
 
-    /// <summary>
-    /// Gets the floating-point coprocessor of the computer system.
-    /// </summary>
-    public FloatProcessor<T> FloatProcessor { get; }
+    /// <inheritdoc/>
+    public override FloatProcessor<T> FloatProcessor { get; }
 
     /// <summary>
     /// Gets the jump address in the delay slot.
     /// </summary>
-    public T? DelaySlot { get; private set; } = null;
+    public override ulong? DelaySlot => _delaySlot.HasValue
+        ? ulong.CreateTruncating(_delaySlot.Value)
+        : null ;
 
     /// <inheritdoc cref="this[int]"/>
     public T this[GPRegister reg]
@@ -196,8 +194,8 @@ public partial class MipsCpu<T> : MipsCpu
         // Calculate what the next pc will be.
         // If a previous instruction set a DelaySlot, we go there.
         // Otherwise, we move forward.
-        T nextPc = DelaySlot ?? (PC + T.CreateTruncating(4));
-        DelaySlot = null;
+        T nextPc = _delaySlot ?? (PC + T.CreateTruncating(4));
+        _delaySlot = null;
 
         // Handle gpr writeback
         if (execution.SideEffect is not (SideEffect.ReadMemory or SideEffect.WriteMemory))
@@ -250,7 +248,7 @@ public partial class MipsCpu<T> : MipsCpu
         }
 
         // Store the branch offset in the delay slot
-        DelaySlot = targetPc;
+        _delaySlot = targetPc;
     }
 
     private void HandleTrap(MipsTrap trap)

@@ -108,7 +108,7 @@ public abstract class MipsTrapHandler : ITrapHandler
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected static void Shutdown(MipsTrapContext context) => context.Cpu.RequestShutdown();
 
-    private static byte[] ReadString(Encoding encoding, uint maxBytes)
+    private static byte[] ReadString(Encoding encoding, ulong maxBytes)
     {
         var str = Console.ReadLine() ?? string.Empty;
 

@@ -9,7 +9,7 @@ namespace Zarem.Emulator.Machine.CoProcessors;
 /// <summary>
 /// a class representing the floating-point coprocessor unit.
 /// </summary>
-public unsafe class FloatProcessor<T>
+public unsafe class FloatProcessor<T> : IFloatProcessor
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <summary>
@@ -66,7 +66,6 @@ public unsafe class FloatProcessor<T>
         get => RegisterFile[(int)reg];
         set => RegisterFile[(int)reg] = value;
     }
-
 
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.
@@ -197,19 +196,4 @@ public unsafe class FloatProcessor<T>
             }
         }
     }
-}
-
-/// <summary>
-/// An interface for indexing the FPU registers with different formats.
-/// </summary>
-/// <typeparam name="T">The indexer's format.</typeparam>
-public interface IFloatRegisterIndexer<T>
-    where T : INumber<T>
-{
-    /// <summary>
-    /// Gets or sets the value of a register on the coprocessor as a <typeparamref name="T"/>.
-    /// </summary>
-    /// <param name="reg">The register to get or set.</param>
-    /// <returns>The value of the register.</returns>
-    T this[FloatRegister reg] { get; set; }
 }

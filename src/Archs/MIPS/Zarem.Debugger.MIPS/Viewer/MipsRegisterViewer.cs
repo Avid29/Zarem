@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using Zarem.Assembler.Helpers.Tables;
-using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models.Instructions.Enums.Registers;
 

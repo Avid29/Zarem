@@ -83,7 +83,7 @@ public class MipsDebugHandler : IDebugHandler
     public ulong GetStepOutAddress(IComputer computer)
     {
         var mipsCpu = (MipsCpu)computer.Cpu;
-        return mipsCpu[GPRegister.ReturnAddress];
+        return mipsCpu[(int)GPRegister.ReturnAddress];
     }
 
     /// <inheritdoc/>

@@ -3,10 +3,10 @@
 using System;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
+using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models.Enum;
 using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine;
 
@@ -33,6 +33,16 @@ public abstract partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     }
 
     /// <summary>
+    /// Gets the cpu's general purpose register file.
+    /// </summary>
+    public abstract IRegisterFile RegisterFile { get; }
+
+    /// <summary>
+    /// Gets the floating-point coprocessor.
+    /// </summary>
+    public abstract IFloatProcessor FloatProcessor { get; }
+
+    /// <summary>
     /// Gets the translation look-aside buffer.
     /// </summary>
     public MipsTlb Tlb { get; }
@@ -52,6 +62,11 @@ public abstract partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 
     /// <inheritdoc cref="ICpu.ProgramCounter"/>
     public abstract ulong ProgramCounter { get; set; }
+
+    /// <summary>
+    /// Gets the jump address in the delay slot.
+    /// </summary>
+    public abstract ulong? DelaySlot { get; }
 
     /// <summary>
     /// Gets or sets the value of a general-purpose register on the processor.

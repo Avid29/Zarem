@@ -3,7 +3,7 @@
 namespace Zarem.Emulator.Models.Enum;
 
 /// <summary>
-/// An enum describing the secondary effect of an <see cref="Execution"/>.
+/// An enum describing the secondary effect of an <see cref="Execution{T}"/>.
 /// </summary>
 public enum SideEffect
 {
