@@ -6,6 +6,7 @@ using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Extensions;
 
 namespace Zarem.Emulator.Machine;
 
@@ -29,7 +30,10 @@ public class MipsComputer : ComputerBase
         MapDevices(_memoryMapper);
 
         // Initialize the components
-        Processor = new MipsCpu(config, bus);
+        Processor = config.MipsVersion.Is64Bit()
+            ? new MipsCpu<ulong>(config, bus)
+            : new MipsCpu<uint>(config, bus);
+
         Memory = new MemorySystem(bus, Processor.Tlb);
 
         // Hook the virtual memory system into the Cpu
