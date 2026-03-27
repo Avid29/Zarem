@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2024
 
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Zarem.Helpers;
@@ -17,18 +18,19 @@ public static class BitField
     /// <param name="offset">The offset of the bitfield</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static uint GetField(uint value, int size, int offset)
+    public unsafe static T GetField<T>(T value, int size, int offset)
+        where T : unmanaged, IBinaryInteger<T>
     {
         if (offset is 0)
         {
-            return value & ((1u << size) - 1);
+            return value & ((T.One << size) - T.One);
         }
-        else if (size + offset == sizeof(uint) * 8)
+        else if (size + offset == sizeof(T) * 8)
         {
             return value >> offset;
         }
 
-        return (value >> offset) & ((1u << size) - 1);
+        return (value >> offset) & ((T.One << size) - T.One);
     }
 
     /// <summary>
@@ -39,9 +41,10 @@ public static class BitField
     /// <param name="offset">The offset of the bitfield.</param>
     /// <param name="value">The value to set in the bitfield.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetField(ref uint target, int size, int offset, uint value)
+    public static void SetField<T>(ref T target, int size, int offset, T value)
+        where T : unmanaged, IBinaryInteger<T>
     {
-        uint mask = ((1u << size) - 1) << offset;
+        T mask = ((T.One << size) - T.One) << offset;
         target = (target & ~mask) | ((value << offset) & mask);
     }
 
@@ -52,7 +55,9 @@ public static class BitField
     /// <param name="bit">The bit to check</param>
     /// <returns>Whether or not the bit is flagged.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool GetBit(uint value, int bit) => ((value >> bit) & 1) != 0;
+    public static bool GetBit<T>(T value, int bit)
+        where T : unmanaged, IBinaryInteger<T>
+        => ((value >> bit) & T.One) != T.Zero;
 
     /// <summary>
     /// Sets a single bit in a uint bitfield.
@@ -61,9 +66,10 @@ public static class BitField
     /// <param name="bit">The bit to <see langword="set"/>.</param>
     /// <param name="value">Whether or not the but is on.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetBit(ref uint target, int bit, bool value)
+    public static void SetBit<T>(ref T target, int bit, bool value)
+        where T : unmanaged, IBinaryInteger<T>
     {
-        uint mask = (uint)1 << bit;
+        T mask = T.One << bit;
         target = value
             ? target |= mask
             : target &= ~mask;
