@@ -136,10 +136,10 @@
     <value>'{0}' only takes one argument.</value>
   </data>
   <data name="DirectiveNonSymbolArgument" xml:space="preserve">
-    <value>'{0}' only take a symbol for an argument. Cannot parse '{1}' as a symbol.</value>
+    <value>'{0}' only takes a symbol for an argument. Cannot parse '{1}' as a symbol.</value>
   </data>
   <data name="DirectiveNonSymbolArgumentSmall" xml:space="preserve">
-    <value>'{0}' only take a symbol for an argument.</value>
+    <value>'{0}' only takes a symbol for an argument.</value>
   </data>
   <data name="DirectiveNoRelocatableArguments" xml:space="preserve">
     <value>'{0}' argument cannot be relocatable.</value>
@@ -296,5 +296,8 @@
   </data>
   <data name="DirectiveTakesTwoArguments" xml:space="preserve">
     <value>'{0]' only takes two arguments.</value>
+  </data>
+  <data name="ImmediateOverflow" xml:space="preserve">
+    <value>Constant '{0}' is too large.</value>
   </data>
 </root>

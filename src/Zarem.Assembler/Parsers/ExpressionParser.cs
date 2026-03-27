@@ -207,7 +207,6 @@ public readonly partial struct ExpressionParser
 
         if (_symbols?.TryGetValue(token.Source, out var symbol) is not true)
         {
-
             _logger?.Log(Severity.Error, LogId.UndeclaredSymbolReferenced, token, "UndeclaredSymbolReferenced", token);
             return false;
         }
