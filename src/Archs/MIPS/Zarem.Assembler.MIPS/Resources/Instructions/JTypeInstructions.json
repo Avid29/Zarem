@@ -5,7 +5,7 @@
     "op_code": 2,
     "args": [ "target" ],
     "added_in": "MipsI",
-    "behavior": "PC = JumpAddress"
+    "behavior": "$pc = address"
   },
   {
     "type": "i-type",
@@ -13,7 +13,7 @@
     "op_code": 3,
     "args": [ "target" ],
     "added_in": "MipsI",
-    "behavior": "GPR[31] = PC + 8, PC = JumpAddress"
+    "behavior": "$ra = ret_addr; $pc = address"
   },
   {
     "type": "i-type",
@@ -22,7 +22,7 @@
     "args": [ "target" ],
     "added_in": "Mips32R1",
     "removed_in": "Mips32R6",
-    "behavior": "Jump and Link Exchange (ISA Mode Switch)"
+    "behavior": "$ra = ret_addr; $pc = address (ISA Mode Switch)"
   },
   {
     "type": "i-type",
@@ -30,7 +30,7 @@
     "op_code": 50,
     "args": [ "offset26" ],
     "added_in": "Mips32R6",
-    "behavior": "PC = PC + 4 + (offset << 2)"
+    "behavior": "$pc = $pc + 4 + (offset << 2)"
   },
   {
     "type": "i-type",
@@ -38,6 +38,6 @@
     "op_code": 58,
     "args": [ "offset26" ],
     "added_in": "Mips32R6",
-    "behavior": "GPR[31] = PC + 4, PC = PC + 4 + (offset << 2)"
+    "behavior": "$ra = ret_addr; $pc = $pc + 4 + (offset << 2)"
   }
 ]

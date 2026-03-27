@@ -157,12 +157,12 @@ public sealed partial class UsagePatternDisplay : UserControl
         BehaviorTextBlock.Blocks.Add(paragraph);
     }
 
-    private Inline CreateTokenRun(Token token, ILocalizationService localizer)
+    private Inline CreateTokenRun(Token token, ILocalizationService? localizer = null)
     {
         // Handle strict argument tokens
         if (ArgumentTable.TryGetArgument(token.Source, out var arg))
             return CreateArgumentRun(arg, localizer);
-        
+
         var run = new Run
         {
             Text = token.Source,
@@ -176,7 +176,7 @@ public sealed partial class UsagePatternDisplay : UserControl
         return run;
     }
 
-    private Inline CreateArgumentRun(Argument arg, ILocalizationService localizer)
+    private Inline CreateArgumentRun(Argument arg, ILocalizationService? localizer = null)
     {
         return arg switch
         {
@@ -193,7 +193,9 @@ public sealed partial class UsagePatternDisplay : UserControl
             Argument.Immediate or Argument.Offset or Argument.Address or
             Argument.ShiftAmount or Argument.FullImmediate => new Run
             {
-                Text = localizer[$"/CheatSheet/Usage/{ArgumentTable.GetArgPatternString(arg)}"],
+                Text = localizer is not null
+                        ? localizer[$"/CheatSheet/Usage/{ArgumentTable.GetArgPatternString(arg)}"]
+                        : ArgumentTable.GetArgPatternString(arg),
                 Foreground = ArgumentBrushPalette?.ImmediateValueBrush,
             },
             Argument.AddressBase => new Span
@@ -202,7 +204,9 @@ public sealed partial class UsagePatternDisplay : UserControl
                 {
                     new Run
                     {
-                        Text = localizer[$"/CheatSheet/Usage/{ArgumentTable.GetArgPatternString(Argument.Offset)}"],
+                        Text = localizer is not null
+                        ? localizer[$"/CheatSheet/Usage/{ArgumentTable.GetArgPatternString(Argument.Offset)}"]
+                        : ArgumentTable.GetArgPatternString(Argument.Offset),
                         Foreground = ArgumentBrushPalette?.ImmediateValueBrush,
                     },
                     new Run { Text = "(" },

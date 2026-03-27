@@ -6,7 +6,8 @@
     "func_code": 32,
     "args": [ "rd", "rs" ],
     "added_in": "Mips32R1",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "$rd = leading_zeros($rs)"
   },
   {
     "type": "r-type",
@@ -15,7 +16,8 @@
     "func_code": 33,
     "args": [ "rd", "rs" ],
     "added_in": "Mips32R1",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "$rd = leading_ones($rs)"
   },
   {
     "type": "r-type",
@@ -24,7 +26,8 @@
     "func_code": 0,
     "args": [ "rs", "rt" ],
     "added_in": "Mips32R1",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "($Hi,$Lo) += $rs * $rt"
   },
   {
     "type": "r-type",
@@ -33,7 +36,8 @@
     "func_code": 1,
     "args": [ "rs", "rt" ],
     "added_in": "Mips32R1",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "($Hi,$Lo) += $rs * $rt"
   },
   {
     "type": "r-type",
@@ -42,7 +46,8 @@
     "func_code": 4,
     "args": [ "rs", "rt" ],
     "added_in": "Mips32R1",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "($Hi,$Lo) -= $rs * $rt"
   },
   {
     "type": "r-type",
@@ -51,7 +56,8 @@
     "func_code": 5,
     "args": [ "rs", "rt" ],
     "added_in": "Mips32R1",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "($Hi,$Lo) -= $rs * $rt"
   },
   {
     "type": "r-type",
@@ -60,6 +66,7 @@
     "func_code": 2,
     "args": [ "rd", "rs", "rt" ],
     "added_in": "Mips32R1",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "$rd = $rs * $rt"
   }
 ]

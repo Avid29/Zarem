@@ -4,28 +4,32 @@
     "name": "beq",
     "op_code": 4,
     "args": [ "rs", "rt", "offset" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "if ($rs == $rt) $pc = address"
   },
   {
     "type": "i-type",
     "name": "bne",
     "op_code": 5,
     "args": [ "rs", "rt", "offset" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "if ($rs != $rt) $pc = address"
   },
   {
     "type": "i-type",
     "name": "blez",
     "op_code": 6,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "if ($rs <= 0) $pc = address"
   },
   {
     "type": "i-type",
     "name": "bgtz",
     "op_code": 7,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "if ($rs > 0) $pc = address"
   },
   {
     "type": "i-type",
@@ -33,56 +37,64 @@
     "op_code": 8,
     "args": [ "rt", "rs", "immediate" ],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "$rt = $rs + immediate"
   },
   {
     "type": "i-type",
     "name": "addiu",
     "op_code": 9,
     "args": [ "rt", "rs", "immediate" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = $rs + immediate"
   },
   {
     "type": "i-type",
     "name": "slti",
     "op_code": 10,
     "args": [ "rt", "rs", "immediate" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = $rs < immediate ? 1 : 0"
   },
   {
     "type": "i-type",
     "name": "sltiu",
     "op_code": 11,
     "args": [ "rt", "rs", "immediate" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = $rs < immediate ? 1 : 0"
   },
   {
     "type": "i-type",
     "name": "andi",
     "op_code": 12,
     "args": [ "rt", "rs", "immediate" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = $rs & immediate"
   },
   {
     "type": "i-type",
     "name": "ori",
     "op_code": 13,
     "args": [ "rt", "rs", "immediate" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = $rs | immediate"
   },
   {
     "type": "i-type",
     "name": "xori",
     "op_code": 14,
     "args": [ "rt", "rs", "immediate" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = $rs ^ immediate"
   },
   {
     "type": "i-type",
     "name": "lui",
     "op_code": 15,
     "args": [ "rt", "immediate" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = immediate << 16"
   },
   {
     "type": "i-type",
@@ -121,14 +133,16 @@
     "name": "lb",
     "op_code": 32,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = (sbyte)mem[$rs + offset]"
   },
   {
     "type": "i-type",
     "name": "lh",
     "op_code": 33,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = (short)mem[$rs + offset]"
   },
   {
     "type": "i-type",
@@ -143,21 +157,24 @@
     "name": "lw",
     "op_code": 35,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = (int)mem[$rs + offset]"
   },
   {
     "type": "i-type",
     "name": "lbu",
     "op_code": 36,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rt = (byte)mem[$rs + offset]"
   },
   {
     "type": "i-type",
     "name": "lhu",
     "op_code": 37,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "mem[$rs + offset] = (ushort)$rt"
   },
   {
     "type": "i-type",
@@ -172,14 +189,16 @@
     "name": "sb",
     "op_code": 40,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "mem[$rs + offset] = (sbyte)$rt"
   },
   {
     "type": "i-type",
     "name": "sh",
     "op_code": 41,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "mem[$rs + offset] = (short)$rt"
   },
   {
     "type": "i-type",
@@ -194,7 +213,8 @@
     "name": "sw",
     "op_code": 43,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "mem[$rs + offset] = (int)$rt "
   },
   {
     "type": "i-type",
@@ -209,27 +229,31 @@
     "name": "lwc1",
     "op_code": 49,
     "args": [ "ft", "offset_rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$ft = (int)mem[$rs + offset]"
   },
   {
     "type": "i-type",
     "name": "ldc1",
     "op_code": 53,
     "args": [ "ft", "offset_rs" ],
-    "added_in": "MipsII"
+    "added_in": "MipsII",
+    "behavior": "$ft = (long)mem[$rs + offset]"
   },
   {
     "type": "i-type",
     "name": "swc1",
     "op_code": 57,
     "args": [ "ft", "offset_rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "mem[$rs + offset] = (int)$ft"
   },
   {
     "type": "i-type",
     "name": "sdc1",
     "op_code": 61,
     "args": [ "ft", "offset_rs" ],
-    "added_in": "MipsII"
+    "added_in": "MipsII",
+    "behavior": "$ft = (long)mem[$rs + offset]"
   }
 ]

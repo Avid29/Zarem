@@ -6,7 +6,7 @@
     "args": [],
     "added_in": "MipsI",
     "expansion_count": 1,
-    "behavior": "sll zero, zero, 0"
+    "behavior": "sll $zero, $zero, 0"
   },
   {
     "type": "pseudo",
@@ -15,7 +15,7 @@
     "args": [],
     "added_in": "MipsI",
     "expansion_count": 1,
-    "behavior": "sll zero, zero, 1 (Superscalar NOP)"
+    "behavior": "sll $zero, $zero, 1"
   },
   {
     "type": "pseudo",
@@ -24,7 +24,7 @@
     "args": [ "offset" ],
     "added_in": "MipsI",
     "expansion_count": 1,
-    "behavior": "beq zero, zero, offset"
+    "behavior": "beq $zero,$ zero, offset"
   },
   {
     "type": "pseudo",
@@ -34,7 +34,7 @@
     "added_in": "MipsI",
     "removed_in": "Mips32R6",
     "expansion_count": 1,
-    "behavior": "bgezal zero, offset"
+    "behavior": "bgezal $zero, offset"
   },
   {
     "type": "pseudo",
@@ -43,7 +43,7 @@
     "args": [ "rs", "rt", "offset" ],
     "added_in": "MipsI",
     "expansion_count": 2,
-    "behavior": "slt at, rs, rt; bne at, zero, offset"
+    "behavior": "slt $at, $rs, $rt; bne $at, $zero, offset"
   },
   {
     "type": "pseudo",
@@ -52,7 +52,7 @@
     "args": [ "rt", "immediate32" ],
     "added_in": "MipsI",
     "expansion_count": 2,
-    "behavior": "lui rt, upper; ori rt, rt, lower"
+    "behavior": "lui $rt, upper; ori $rt, $rt, lower"
   },
   {
     "type": "pseudo",
@@ -69,7 +69,7 @@
     "args": [ "rd", "rs" ],
     "added_in": "MipsI",
     "expansion_count": 1,
-    "behavior": "addu rd, rs, zero"
+    "behavior": "addu $rd, $rs, zero"
   },
   {
     "type": "pseudo",
@@ -86,6 +86,6 @@
     "args": [ "rd", "rs", "rt" ],
     "added_in": "MipsI",
     "expansion_count": 2,
-    "behavior": "slt rd, rs, rt; xori rd, rd, 1"
+    "behavior": "slt $rd, $rs, $rt; xori $rd, $rd, 1"
   }
 ]

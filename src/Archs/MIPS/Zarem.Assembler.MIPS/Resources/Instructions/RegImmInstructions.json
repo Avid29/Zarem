@@ -4,14 +4,16 @@
     "name": "bltz",
     "rt_code": 0,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "if ($rs < 0) $pc = address"
   },
   {
     "type": "reg_imm",
     "name": "bgez",
     "rt_code": 1,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "if ($rs >= 0) $pc = address"
   },
   {
     "type": "reg_imm",
@@ -19,7 +21,8 @@
     "rt_code": 2,
     "args": [ "rs", "offset" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs < 0) $pc = address"
   },
   {
     "type": "reg_imm",
@@ -27,7 +30,8 @@
     "rt_code": 3,
     "args": [ "rs", "offset" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs >= 0) $pc = address"
   },
   {
     "type": "reg_imm",
@@ -35,7 +39,8 @@
     "rt_code": 8,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs >= immediate) trap"
   },
   {
     "type": "reg_imm",
@@ -43,7 +48,8 @@
     "rt_code": 9,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs >= immediate) trap"
   },
   {
     "type": "reg_imm",
@@ -51,7 +57,8 @@
     "rt_code": 10,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs < immediate) trap"
   },
   {
     "type": "reg_imm",
@@ -59,7 +66,8 @@
     "rt_code": 11,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs < immediate) trap"
   },
   {
     "type": "reg_imm",
@@ -67,7 +75,8 @@
     "rt_code": 12,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs == immediate) trap"
   },
   {
     "type": "reg_imm",
@@ -75,7 +84,8 @@
     "rt_code": 14,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs != immediate) trap"
   },
   {
     "type": "reg_imm",
