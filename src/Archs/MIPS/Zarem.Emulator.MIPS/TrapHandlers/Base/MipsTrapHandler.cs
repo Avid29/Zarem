@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
@@ -30,12 +31,14 @@ public abstract class MipsTrapHandler : ITrapHandler
     /// <param name="context">The context of the trap.</param>
     protected virtual void HandleTrap(MipsTrapContext context)
     {
-        if ((MipsTrap)context.TrapCode is MipsTrap.Syscall)
+        switch ((MipsTrap)context.TrapCode)
         {
-            HandleSyscall(context.V0, context);
-
-            // Increment the PC
-            context.Cpu.ProgramCounter += 4;
+            case MipsTrap.Syscall:
+                HandleSyscall(context.V0, context);
+                context.Cpu.ProgramCounter += 4;
+                break;
+            case MipsTrap.ReservedInstruction:
+                throw new ReservedInstructionException(context.Cpu.ProgramCounter);
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Text;
+using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.TrapHandlers.Base;
 
 namespace Zarem.Emulator.TrapHandlers;
@@ -25,7 +25,7 @@ public class SpimTrapHandler : MipsTrapHandler
             case 7:     ReadDouble(context); break;
             case 8:     ReadString(context, Encoding.ASCII); break;
             case 10:    Shutdown(context); break;
-            default:    throw new NotImplementedException();
+            default: throw new InvalidSyscallException(context.Cpu.ProgramCounter, code);
         }
     }
 }

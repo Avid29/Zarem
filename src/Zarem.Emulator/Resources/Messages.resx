@@ -120,4 +120,10 @@
   <data name="ExceptionOccurred" xml:space="preserve">
     <value>An exception occurred during execution.</value>
   </data>
+  <data name="InvalidSyscallException" xml:space="preserve">
+    <value>An invalid syscall was made (id: {0}).</value>
+  </data>
+  <data name="ReservedInstructionException" xml:space="preserve">
+    <value>An invalid instruction attempted to execute.</value>
+  </data>
 </root>

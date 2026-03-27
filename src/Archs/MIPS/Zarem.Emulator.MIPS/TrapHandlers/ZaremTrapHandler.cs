@@ -2,6 +2,7 @@
 
 using System;
 using System.Text;
+using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.TrapHandlers.Base;
 
 namespace Zarem.Emulator.TrapHandlers;
@@ -27,7 +28,7 @@ public class ZaremTrapHandler : MipsTrapHandler
             case 10:    Shutdown(context); break;
             case 80:    PrintString(context, Encoding.BigEndianUnicode); break;
             case 81:    ReadString(context, Encoding.BigEndianUnicode); break;
-            default:    throw new NotImplementedException();
+            default:    throw new InvalidSyscallException(context.Cpu.ProgramCounter, code);
         }
     }
 }
