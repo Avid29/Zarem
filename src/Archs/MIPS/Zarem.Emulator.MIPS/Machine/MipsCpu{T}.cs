@@ -68,20 +68,23 @@ public partial class MipsCpu<T> : MipsCpu
     public FloatProcessor<T> FloatProcessor { get; }
 
     /// <summary>
-    /// Gets or sets the value of a general-purpose register on the processor.
+    /// Gets the jump address in the delay slot.
     /// </summary>
-    /// <param name="reg">The register to get or set.</param>
-    /// <returns>The value of the register.</returns>
+    public T? DelaySlot { get; private set; } = null;
+
+    /// <inheritdoc cref="this[int]"/>
     public T this[GPRegister reg]
     {
         get => RegisterFile[(int)reg];
         set => RegisterFile[(int)reg] = value;
     }
 
-    /// <summary>
-    /// Gets the jump address in the delay slot.
-    /// </summary>
-    public T? DelaySlot { get; private set; } = null;
+    /// <inheritdoc/>
+    public override ulong this[int reg]
+    {
+        get => ulong.CreateTruncating(RegisterFile[reg]);
+        set => RegisterFile[reg] = T.CreateTruncating(value);
+    }
 
     /// <inheritdoc/>
     public override void Step()

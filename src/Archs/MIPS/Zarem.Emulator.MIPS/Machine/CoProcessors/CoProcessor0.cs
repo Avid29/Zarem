@@ -81,7 +81,7 @@ public class CoProcessor0<T>
     /// <summary>
     /// Handles entering a trap.
     /// </summary>
-    public void EnterTrap(MipsTrap trap, T programCounter, T faultAddr, bool isDelaySlot)
+    public void EnterTrap(MipsTrap trap, T programCounter, bool isDelaySlot)
     {
         // Don't overwrite EPC if we are already in an exception (nested exception logic)
         if (!StatusRegister.ExceptionLevel)

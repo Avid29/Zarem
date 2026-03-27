@@ -4,13 +4,14 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Emulator.Machine;
 
 /// <summary>
 /// A register file.
 /// </summary>
-public unsafe class RegisterFile<T> : IDisposable
+public unsafe class RegisterFile<T> : IRegisterFile, IDisposable
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <summary>
@@ -23,14 +24,12 @@ public unsafe class RegisterFile<T> : IDisposable
     }
 
     /// <summary>
-    /// Gets the number of registers in the register file.
-    /// </summary>
-    public int Count { get; }
-
-    /// <summary>
     /// Gets an unsafe point to the registers
     /// </summary>
     public T* Regs { get; }
+
+    /// <inheritdoc/>
+    public int Count { get; }
 
     /// <summary>
     /// Gets or sets the value in a register.
@@ -51,6 +50,13 @@ public unsafe class RegisterFile<T> : IDisposable
 #endif
             Regs[register] = value;
         }
+    }
+
+    /// <inheritdoc/>
+    ulong IRegisterFile.this[int register]
+    {
+        get => ulong.CreateTruncating(this[register]);
+        set => this[register] = T.CreateTruncating(value);
     }
 
     /// <inheritdoc/>
