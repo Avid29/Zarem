@@ -2,26 +2,26 @@
 
 using System;
 using System.Numerics;
+using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Models.Enum;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
-using static Zarem.Emulator.Machine.CoProcessors.FloatProcessor;
 
 namespace Zarem.Emulator.Models;
 
-public partial class InstructionServiceTable
+public partial class InstructionServiceTable<T, TSigned, TLong>
 {
-    private static MipsTrap CreateCoProc1Execution(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
+    private static MipsTrap CreateCoProc1Execution(InstructionServiceTable<T, TSigned, TLong> @this, MipsInstruction inst, out Execution<T> exec)
     {
         var floatInstruction = (FloatInstruction)inst;
 
         exec = floatInstruction.CoProc1RSCode switch
         {
-            CoProc1RSCode.MFC1 => Execution.CreateWriteback(floatInstruction.RT, @this._processor.FloatProcessor[floatInstruction.FS]),
+            CoProc1RSCode.MFC1 => Execution<T>.CreateWriteback(floatInstruction.RT, T.CreateTruncating(@this._processor.FloatProcessor[floatInstruction.FS])),
             CoProc1RSCode.CFC1 => throw new NotImplementedException(),
             CoProc1RSCode.MFHC1 => throw new NotImplementedException(),
-            CoProc1RSCode.MTC1 => Execution.CreateFloatWriteback(floatInstruction.FS, @this._processor[floatInstruction.RT]),
+            CoProc1RSCode.MTC1 => Execution<T>.CreateFloatWriteback(floatInstruction.FS, @this._processor[floatInstruction.RT]),
             CoProc1RSCode.CTC1 => throw new NotImplementedException(),
             CoProc1RSCode.MTHC1 => throw new NotImplementedException(),
             CoProc1RSCode.BC1 => throw new NotImplementedException(),
@@ -52,42 +52,42 @@ public partial class InstructionServiceTable
         return MipsTrap.None;
     }
 
-    private static Execution CreateFloatExecution<T>(FloatInstruction inst, IFloatRegisterIndexer<T> indexer)
-        where T : unmanaged, IFloatingPointIeee754<T>
+    private static Execution<T> CreateFloatExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
+        where T2 : unmanaged, IFloatingPointIeee754<T2>
     {
         return inst.FloatFuncCode switch
         {
-            FloatFuncCode.ConvertToDouble => CreateConvertExecution<T, double>(inst, indexer),
-            FloatFuncCode.ConvertToSingle => CreateConvertExecution<T, float>(inst, indexer),
-            FloatFuncCode.ConvertToWord => CreateConvertExecution<T, int>(inst, indexer),
-            FloatFuncCode.ConvertToLong => CreateConvertExecution<T, long>(inst, indexer),
+            FloatFuncCode.ConvertToDouble => CreateConvertExecution<T2, double>(inst, indexer),
+            FloatFuncCode.ConvertToSingle => CreateConvertExecution<T2, float>(inst, indexer),
+            FloatFuncCode.ConvertToWord => CreateConvertExecution<T2, int>(inst, indexer),
+            FloatFuncCode.ConvertToLong => CreateConvertExecution<T2, long>(inst, indexer),
 
             FloatFuncCode.Round_L or FloatFuncCode.Truncate_L or
-            FloatFuncCode.Ceiling_L or FloatFuncCode.Floor_L => CreateFloatRoundExecution<T, long>(inst, indexer),
+            FloatFuncCode.Ceiling_L or FloatFuncCode.Floor_L => CreateFloatRoundExecution<T2, long>(inst, indexer),
 
             FloatFuncCode.Round_W or FloatFuncCode.Truncate_W or
-            FloatFuncCode.Ceiling_W or FloatFuncCode.Floor_W => CreateFloatRoundExecution<T, int>(inst, indexer),
+            FloatFuncCode.Ceiling_W or FloatFuncCode.Floor_W => CreateFloatRoundExecution<T2, int>(inst, indexer),
 
             _ => CreateFloatArithmeticExecution(inst, indexer)
         };
     }
 
-    private static Execution CreateFloatIntExecution<T>(FloatInstruction inst, IFloatRegisterIndexer<T> indexer)
-        where T : unmanaged, INumber<T>
+    private static Execution<T> CreateFloatIntExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
+        where T2 : unmanaged, INumber<T2>
     {
         return inst.FloatFuncCode switch
         {
-            FloatFuncCode.ConvertToDouble => CreateConvertExecution<T, double>(inst, indexer),
-            FloatFuncCode.ConvertToSingle => CreateConvertExecution<T, float>(inst, indexer),
-            FloatFuncCode.ConvertToWord => CreateConvertExecution<T, int>(inst, indexer),
-            FloatFuncCode.ConvertToLong => CreateConvertExecution<T, long>(inst, indexer),
+            FloatFuncCode.ConvertToDouble => CreateConvertExecution<T2, double>(inst, indexer),
+            FloatFuncCode.ConvertToSingle => CreateConvertExecution<T2, float>(inst, indexer),
+            FloatFuncCode.ConvertToWord => CreateConvertExecution<T2, int>(inst, indexer),
+            FloatFuncCode.ConvertToLong => CreateConvertExecution<T2, long>(inst, indexer),
             _ => throw new NotImplementedException(),
         };
     }
 
-    private static Execution CreateFloatRoundExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
+    private static Execution<T> CreateFloatRoundExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
         where TFrom : unmanaged, IFloatingPointIeee754<TFrom>
-        where TTo : INumber<TTo>, IMinMaxValue<TTo>
+        where TTo : unmanaged, INumber<TTo>, IMinMaxValue<TTo>
     {
         var destination = inst.FD;
 
@@ -124,11 +124,11 @@ public partial class InstructionServiceTable
         }
 
 
-        return Execution.CreateFloatWriteback(destination, finalResult);
+        return Execution<T>.CreateFloatWriteback(destination, finalResult);
     }
 
-    private static Execution CreateFloatArithmeticExecution<T>(FloatInstruction inst, IFloatRegisterIndexer<T> indexer)
-        where T : unmanaged, IFloatingPointIeee754<T>
+    private static Execution<T> CreateFloatArithmeticExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
+        where T2 : unmanaged, IFloatingPointIeee754<T2>
     {
         var destination = inst.FD;
 
@@ -142,25 +142,25 @@ public partial class InstructionServiceTable
             FloatFuncCode.Subtract => fs - ft,
             FloatFuncCode.Multiply => fs * ft,
             FloatFuncCode.Divide => fs / ft,
-            FloatFuncCode.SquareRoot => T.Sqrt(fs),
-            FloatFuncCode.AbsoluteValue => T.Abs(fs),
+            FloatFuncCode.SquareRoot => T2.Sqrt(fs),
+            FloatFuncCode.AbsoluteValue => T2.Abs(fs),
             FloatFuncCode.Move => fs,
             FloatFuncCode.Negate => -fs,
 
-            FloatFuncCode.Reciprical => T.ReciprocalEstimate(fs),
+            FloatFuncCode.Reciprical => T2.ReciprocalEstimate(fs),
 
             _ => throw new NotImplementedException($"FPU instruction {inst.FloatFuncCode} not implemented."),
         };
 
-        return Execution.CreateFloatWriteback(destination, value);
+        return Execution<T>.CreateFloatWriteback(destination, value);
     }
 
-    private static Execution CreateConvertExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
-        where TFrom : INumber<TFrom>
-        where TTo : INumber<TTo>
+    private static Execution<T> CreateConvertExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
+        where TFrom : unmanaged, INumber<TFrom>
+        where TTo : unmanaged, INumber<TTo>
     {
         var source = indexer[inst.FS];
         var result = TTo.CreateTruncating(source);
-        return Execution.CreateFloatWriteback(inst.FD, result);
+        return Execution<T>.CreateFloatWriteback(inst.FD, result);
     }
 }

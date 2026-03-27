@@ -22,7 +22,6 @@ public partial class MipsCpu<T> : MipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private readonly InstructionServiceTable<T> _instructionServiceTable;
-    private T _programCounter;
 
     /// <inheritdoc/>
     public override event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
@@ -45,13 +44,14 @@ public partial class MipsCpu<T> : MipsCpu
     /// </summary>
     public MipsGpRegisterFile<T> RegisterFile { get; }
 
-    /// <summary>
-    /// Gets or sets the value in the program counter register.
-    /// </summary>
+    /// <inheritdoc cref="ProgramCounter"/>
+    public T PC { get; set; }
+
+    /// <inheritdoc/>
     public override ulong ProgramCounter
     {
-        get => ulong.CreateTruncating(_programCounter);
-        set => _programCounter = T.CreateTruncating(value);
+        get => ulong.CreateTruncating(PC);
+        set => PC = T.CreateTruncating(value);
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ public partial class MipsCpu<T> : MipsCpu
     {
         instruction = default;
 
-        if (_programCounter % T.CreateTruncating(4) != T.Zero)
+        if (PC % T.CreateTruncating(4) != T.Zero)
             return MipsTrap.AddressErrorLoad;
 
         instruction = (MipsInstruction)Memory.Read<uint>(ProgramCounter);
@@ -190,7 +190,7 @@ public partial class MipsCpu<T> : MipsCpu
         // Calculate what the next pc will be.
         // If a previous instruction set a DelaySlot, we go there.
         // Otherwise, we move forward.
-        T nextPc = DelaySlot ?? (_programCounter + T.CreateTruncating(4));
+        T nextPc = DelaySlot ?? (PC + T.CreateTruncating(4));
         DelaySlot = null;
 
         // Handle gpr writeback
@@ -230,7 +230,7 @@ public partial class MipsCpu<T> : MipsCpu
         }
 
         // Apply the program counter update
-        _programCounter = nextPc;
+        PC = nextPc;
         return MipsTrap.None;
     }
 
@@ -269,8 +269,8 @@ public partial class MipsCpu<T> : MipsCpu
         }
         else
         {
-            CoProcessor0.EnterTrap(trap, _programCounter, DelaySlot.HasValue);
-            _programCounter = CoProcessor0.ExceptionVector;
+            CoProcessor0.EnterTrap(trap, PC, DelaySlot.HasValue);
+            PC = CoProcessor0.ExceptionVector;
         }
     }
 

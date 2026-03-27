@@ -9,9 +9,9 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 namespace Zarem.Emulator.Models;
 
-public partial class InstructionServiceTable
+public partial class InstructionServiceTable<T, TSigned, TLong>
 {
-    private static MipsTrap CreateCoProc0Execution(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
+    private static MipsTrap CreateCoProc0Execution(InstructionServiceTable<T> @this, MipsInstruction inst, out Execution<T> exec)
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?
@@ -28,10 +28,10 @@ public partial class InstructionServiceTable
             CoProc0RSCode.C0 => coInst.Co0FuncCode switch
             {
                 Co0FuncCode.ExceptionReturn => @this.Eret(),
-                Co0FuncCode.ReadIndexedTLBEntry => Execution.CreateEffect(SideEffect.TLBRead),
-                Co0FuncCode.WriteIndexedTLBEntry => Execution.CreateEffect(SideEffect.TLBWriteIndexed),
-                Co0FuncCode.WriteRandomTLBEntry => Execution.CreateEffect(SideEffect.TLBWriteRandom),
-                Co0FuncCode.ProbeTLBForMatch => Execution.CreateEffect(SideEffect.TLBProbe),
+                Co0FuncCode.ReadIndexedTLBEntry => Execution<T>.CreateEffect(SideEffect.TLBRead),
+                Co0FuncCode.WriteIndexedTLBEntry => Execution<T>.CreateEffect(SideEffect.TLBWriteIndexed),
+                Co0FuncCode.WriteRandomTLBEntry => Execution<T>.CreateEffect(SideEffect.TLBWriteRandom),
+                Co0FuncCode.ProbeTLBForMatch => Execution<T>.CreateEffect(SideEffect.TLBProbe),
 
                 _ => throw new NotImplementedException()
             },
@@ -46,8 +46,8 @@ public partial class InstructionServiceTable
             },
 
             // Move instructions
-            CoProc0RSCode.MFC0 => Execution.CreateWriteback(inst.RT, @this._processor.CoProcessor0[(CP0Registers)inst.RD]),
-            CoProc0RSCode.MTC0 => Execution.CreateWriteback((CP0Registers)inst.RD, @this._processor[inst.RT]),
+            CoProc0RSCode.MFC0 => Execution<T>.CreateWriteback(inst.RT, @this._processor.CoProcessor0[(CP0Registers)inst.RD]),
+            CoProc0RSCode.MTC0 => Execution<T>.CreateWriteback((CP0Registers)inst.RD, @this._processor[inst.RT]),
 
             _ => throw new NotImplementedException()
         };
@@ -55,13 +55,13 @@ public partial class InstructionServiceTable
         return MipsTrap.None;
     }
 
-    private Execution Eret()
+    private Execution<T> Eret()
     {
         // Retrieve the status register value
         var status = _processor.CoProcessor0.StatusRegister;
 
         // Determine the target program counter based on the error level
-        uint targetPC = status.ErrorLevel
+        T targetPC = status.ErrorLevel
             ? _processor.CoProcessor0[CP0Registers.ErrorEPC]
             : _processor.CoProcessor0[CP0Registers.ExceptionPC];
 
@@ -77,15 +77,15 @@ public partial class InstructionServiceTable
 
         // TODO: Explorer special commit phase to avoid setting
         // the status register as a writeback
-        return new Execution
+        return new Execution<T>
         {
             CoProc0Reg = CP0Registers.Status,
-            CoProcWriteBack = (uint)status,
+            CoProcWriteBack = T.CreateTruncating((uint)status),
             ProgramCounter = targetPC,
         };
     }
 
-    private Execution SetInterrupts(CoProc0Instruction inst, bool enabled)
+    private Execution<T> SetInterrupts(CoProc0Instruction inst, bool enabled)
     {
         // Retrieve the status register
         var status = _processor.CoProcessor0.StatusRegister;
@@ -96,15 +96,15 @@ public partial class InstructionServiceTable
         if (inst.RT is not GPRegister.Zero)
         {
             // Write the updated status register value back to the specified GPR
-            return new Execution
+            return new Execution<T>
             {
                 CoProc0Reg = CP0Registers.Status,
-                CoProcWriteBack = (uint)status,
-                WriteBack = (uint)status,
+                CoProcWriteBack = T.CreateTruncating((uint)status),
+                WriteBack = T.CreateTruncating((uint)status),
                 GPR = inst.RT,
             };
         }
 
-        return Execution.CreateWriteback(CP0Registers.Status, (uint)status);
+        return Execution<T>.CreateWriteback(CP0Registers.Status, T.CreateTruncating((uint)status));
     }
 }

@@ -43,6 +43,11 @@ public enum SideEffect
     ReadMemory,
 
     /// <summary>
+    /// Reads from memory, preserving the sign.
+    /// </summary>
+    ReadMemorySigned,
+
+    /// <summary>
     /// Writes to memory.
     /// </summary>
     WriteMemory,

@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Zarem.Assembler.Helpers.Tables;
+using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Instructions.Enums.Registers;
 
@@ -12,12 +13,12 @@ namespace Zarem.Debugger.Viewer;
 /// </summary>
 public class MipsRegisterViewer : IRegisterGroup
 {
-    private readonly MipsRegisterFile _registers;
+    private readonly MipsGpRegisterFile _registers;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsRegisterViewer"/> class.
     /// </summary>
-    public MipsRegisterViewer(MipsRegisterFile registerFile)
+    public MipsRegisterViewer(RegisterFile registerFile)
     {
         _registers = registerFile;
     }

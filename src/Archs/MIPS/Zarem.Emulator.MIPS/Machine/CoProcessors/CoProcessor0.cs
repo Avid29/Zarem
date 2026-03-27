@@ -1,8 +1,9 @@
 ﻿// Avishai Dernis 2024
 
-using Zarem.Emulator.Models.Enum;
+using System.Numerics;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
+using Zarem.Emulator.Models.Enum;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine.CoProcessors;
@@ -10,23 +11,24 @@ namespace Zarem.Emulator.Machine.CoProcessors;
 /// <summary>
 /// A class representing the status/control coprocessor unit.
 /// </summary>
-public class CoProcessor0
+public class CoProcessor0<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private const uint NORMAL_EXCEPTION_VECTOR = 0x8000_0180;
     private const uint BOOT_STRAPPING_EXCEPTION_VECTOR = 0xBFC0_0180;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CoProcessor0"/> class.
+    /// Initializes a new instance of the <see cref="CoProcessor0{T}"/> class.
     /// </summary>
     public CoProcessor0()
     {
-        RegisterFile = new(RegisterSet.CoProc0);
+        RegisterFile = new(32);
     }
 
     /// <summary>
     /// Gets the coprocessor0's register file.
     /// </summary>
-    internal MipsRegisterFile RegisterFile { get; }
+    internal RegisterFile<T> RegisterFile { get; }
 
     /// <summary>
     /// Gets the processor's current privilege mode.
@@ -43,9 +45,9 @@ public class CoProcessor0
     /// <summary>
     /// Gets the current exception vector.
     /// </summary>
-    public uint ExceptionVector => StatusRegister.BootStrapping
+    public T ExceptionVector => T.CreateTruncating(StatusRegister.BootStrapping
         ? BOOT_STRAPPING_EXCEPTION_VECTOR
-        : NORMAL_EXCEPTION_VECTOR;
+        : NORMAL_EXCEPTION_VECTOR);
 
     /// <summary>
     /// Gets or sets the status register.
@@ -61,8 +63,8 @@ public class CoProcessor0
     /// </summary>
     public CauseRegister CauseRegister
     {
-        get => (CauseRegister)RegisterFile[CP0Registers.Cause];
-        set => RegisterFile[CP0Registers.Cause] = (uint)value;
+        get => (CauseRegister)RegisterFile[(int)CP0Registers.Cause];
+        set => RegisterFile[(int)CP0Registers.Cause] = (uint)value;
     }
 
     /// <summary>
@@ -70,16 +72,16 @@ public class CoProcessor0
     /// </summary>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
-    public uint this[CP0Registers reg]
+    public T this[CP0Registers reg]
     {
-        get => RegisterFile[reg];
-        set => RegisterFile[reg] = value;
+        get => RegisterFile[(int)reg];
+        set => RegisterFile[(int)reg] = value;
     }
 
     /// <summary>
     /// Handles entering a trap.
     /// </summary>
-    public void EnterTrap(MipsTrap trap, uint programCounter, bool isDelaySlot)
+    public void EnterTrap(MipsTrap trap, T programCounter, bool isDelaySlot)
     {
         StatusRegister = StatusRegister with { ExceptionLevel = true };
         CauseRegister = CauseRegister with
