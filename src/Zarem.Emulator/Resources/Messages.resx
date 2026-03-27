@@ -126,4 +126,7 @@
   <data name="ReservedInstructionException" xml:space="preserve">
     <value>An invalid instruction attempted to execute.</value>
   </data>
+  <data name="UnimplementedInstructionException" xml:space="preserve">
+    <value>An unimplemented instruction was encountered.</value>
+  </data>
 </root>

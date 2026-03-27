@@ -8,7 +8,7 @@ namespace Zarem.Emulator.Exceptions;
 public class ReservedInstructionException : EmulationException
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="InvalidSyscallException"/> class.
+    /// Initializes a new instance of the <see cref="ReservedInstructionException"/> class.
     /// </summary>
     public ReservedInstructionException(ulong address)
         : base(address, "ReservedInstructionException")

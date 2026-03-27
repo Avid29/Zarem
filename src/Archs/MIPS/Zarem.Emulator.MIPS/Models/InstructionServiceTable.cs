@@ -3,8 +3,9 @@
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Models.Enum;
+using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Models.Enum;
 using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.Models;
@@ -337,5 +338,5 @@ public unsafe partial class InstructionServiceTable
     }
 
     private static MipsTrap NotImplemented(InstructionServiceTable @this, MipsInstruction inst, out Execution exec)
-        => throw new NotImplementedException();
+        => throw new UnimplementedInstructionException(@this._processor.ProgramCounter);
 }
