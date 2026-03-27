@@ -1,17 +1,17 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Emulator.Models.Enum;
 using Zarem.Emulator.Machine.Enums;
+using Zarem.Emulator.Models.Enum;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 namespace Zarem.Emulator.Models;
 
-public partial class InstructionServiceTable<T, TSigned, TLong>
+public partial class InstructionServiceTable<T, TSigned>
 {
-    private static MipsTrap CreateCoProc0Execution(InstructionServiceTable<T> @this, MipsInstruction inst, out Execution<T> exec)
+    private static MipsTrap CreateCoProc0Execution(InstructionServiceTable<T, TSigned> @this, MipsInstruction inst, out Execution<T> exec)
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?

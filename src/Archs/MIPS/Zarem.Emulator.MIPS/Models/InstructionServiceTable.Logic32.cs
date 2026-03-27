@@ -2,11 +2,10 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Models.Enum;
 
 namespace Zarem.Emulator.Models;
 
-public partial class InstructionServiceTable<T, TSigned, TLong>
+public partial class InstructionServiceTable<T, TSigned>
 {
     private struct SllLogic32 : IShiftLogic<uint>
     {
@@ -62,7 +61,7 @@ public partial class InstructionServiceTable<T, TSigned, TLong>
         public static (uint, uint) Compute(uint rs, uint rt)
         {
             var value = (ulong)((long)(int)rs * (int)rt);
-            return (((uint)value >> 32), (uint)value);
+            return ((uint)(value >> 32), (uint)value);
         }
     }
 
@@ -72,7 +71,7 @@ public partial class InstructionServiceTable<T, TSigned, TLong>
         public static (uint, uint) Compute(uint rs, uint rt)
         {
             var value = (ulong)rs * rt;
-            return (((uint) value >> 32), (uint)(value & 0xFFFF_FFF));
+            return ((uint)(value >> 32), (uint)value);
         }
 }
 
@@ -94,88 +93,10 @@ public partial class InstructionServiceTable<T, TSigned, TLong>
         public static uint Remainder(uint rs, uint rt) => rt is not 0 ? rs % rt : rs;
     }
 
-    private struct XgeLogic32 : ICondLogic<uint>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs >= (int)rt;
-    }
-
-    private struct XgeuLogic32 : ICondLogic<uint>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => rs >= rt;
-    }
-
-    private struct XltLogic32 : ICondLogic<uint>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs < (int)rt;
-    }
-
-    private struct XltuLogic32 : ICondLogic<uint>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => rs < rt;
-    }
-
-    private struct XeqLogic32 : ICondLogic<uint>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => rs == rt;
-    }
-
-    private struct XneLogic32 : ICondLogic<uint>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => rs != rt;
-    }
-
-    private struct XlezLogic32 : ICondLogic<uint>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs <= 0;
-    }
-
-    private struct XltzLogic32 : ICondLogic<uint>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs < 0;
-    }
-
-    private struct XgezLogic32 : ICondLogic<uint>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs >= 0;
-    }
-
-    private struct XgtzLogic32 : ICondLogic<uint>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs > 0;
-    }
-
-    private struct SyscallLogic : ITrapLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static MipsTrap Trap() => MipsTrap.Syscall;
-    }
-
-    private struct BreakLogic : ITrapLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static MipsTrap Trap() => MipsTrap.Breakpoint;
-    }
-
-    private struct TrapLogic : ITrapLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static MipsTrap Trap() => MipsTrap.Trap;
-    }
-
     private struct MulLogic32 : IAluLogic<uint>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => (uint)((long)(int)rs * (int)rt);
+        public static uint Compute(uint rs, uint rt) => (uint)((int)rs * (int)rt);
     }
 
     private struct MultAddLogic32 : IMultAddLogic<uint>
@@ -194,7 +115,7 @@ public partial class InstructionServiceTable<T, TSigned, TLong>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static (uint, uint) Compute(uint rs, uint rt, uint hi, uint low)
         {
-            ulong acc = (hi << 32) | low;
+            ulong acc = ((ulong)hi << 32) | low;
             acc += rs * rt;
             return ((uint)(acc >> 32), (uint)acc);
         }
@@ -216,7 +137,7 @@ public partial class InstructionServiceTable<T, TSigned, TLong>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static (uint, uint) Compute(uint rs, uint rt, uint hi, uint low)
         {
-            ulong acc = (hi << 32) | low;
+            ulong acc = ((ulong)hi << 32) | low;
             acc -= rs * rt;
             return ((uint)(acc >> 32), (uint)acc);
         }

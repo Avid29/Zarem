@@ -10,6 +10,7 @@ using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enum;
+using Zarem.Extensions;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
@@ -36,7 +37,9 @@ public partial class MipsCpu<T> : MipsCpu
         CoProcessor0 = new();
         FloatProcessor = new();
 
-        _instructionServiceTable = new InstructionServiceTable<T>(this);
+        _instructionServiceTable = config.MipsVersion.Is64Bit()
+            ? new InstructionServiceTable<T, long>(this)
+            : new InstructionServiceTable<T, int>(this);
     }
 
     /// <summary>

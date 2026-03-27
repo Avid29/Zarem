@@ -6,7 +6,7 @@ using Zarem.Emulator.Models.Enum;
 
 namespace Zarem.Emulator.Models;
 
-public partial class InstructionServiceTable<T, TSigned, TLong>
+public partial class InstructionServiceTable<T, TSigned>
 {
     private interface IShiftLogic<T2>
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
@@ -82,6 +82,66 @@ public partial class InstructionServiceTable<T, TSigned, TLong>
         public static T Compute(T rs, T rt) => ~(rs | rt);
     }
 
+    private struct XgeLogic : ICondLogic<T>
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) >= TSigned.CreateSaturating(rt);
+    }
+
+    private struct XgeuLogic : ICondLogic<T>
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(T rs, T rt) => rs >= rt;
+    }
+
+    private struct XltLogic : ICondLogic<T>
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) < TSigned.CreateSaturating(rt);
+    }
+
+    private struct XltuLogic : ICondLogic<T>
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(T rs, T rt) => rs < rt;
+    }
+
+    private struct XeqLogic : ICondLogic<T>
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(T rs, T rt) => rs == rt;
+    }
+
+    private struct XneLogic : ICondLogic<T>
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(T rs, T rt) => rs != rt;
+    }
+
+    private struct XlezLogic : ICondLogic<T>
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) <= TSigned.Zero;
+    }
+
+    private struct XltzLogic : ICondLogic<T>
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) < TSigned.Zero;
+    }
+
+    private struct XgezLogic : ICondLogic<T>
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) >= TSigned.Zero;
+    }
+
+    private struct XgtzLogic : ICondLogic<T>
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) > TSigned.Zero;
+    }
+
     private struct MovzLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -99,10 +159,29 @@ public partial class InstructionServiceTable<T, TSigned, TLong>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Compute(T rs, T rt) => TSigned.CreateSaturating(rs) < TSigned.CreateSaturating(rt) ? T.One : T.Zero;
     }
-    private struct SltuLogic32 : IAluLogic<T>
+
+    private struct SltuLogic : IAluLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Compute(T rs, T rt) => rs < rt ? T.One : T.Zero;
+    }
+
+    private struct SyscallLogic : ITrapLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static MipsTrap Trap() => MipsTrap.Syscall;
+    }
+
+    private struct BreakLogic : ITrapLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static MipsTrap Trap() => MipsTrap.Breakpoint;
+    }
+
+    private struct TrapLogic : ITrapLogic
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static MipsTrap Trap() => MipsTrap.Trap;
     }
 
 }
