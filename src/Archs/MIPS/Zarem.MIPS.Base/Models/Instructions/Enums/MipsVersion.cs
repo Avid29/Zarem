@@ -21,14 +21,19 @@ public enum MipsVersion : byte
     [XmlEnum("mips5")] [JsonStringEnumMemberName("MipsV")] MipsV = 5,
 
     // --- The MIPS 32/64 Era ---
-    [XmlEnum("mips32r1")] [JsonStringEnumMemberName("Mips32R1")] Mips32R1 = 11,
+    [XmlEnum("mips32r1")] [JsonStringEnumMemberName("Mips32R1")] Mips32R1 = 10,
+    [XmlEnum("mips64r1")] [JsonStringEnumMemberName("Mips64R1")] Mips64R1 = 11,
     [XmlEnum("mips32r2")] [JsonStringEnumMemberName("Mips32R2")] Mips32R2 = 12,
-    [XmlEnum("mips32r3")] [JsonStringEnumMemberName("Mips32R3")] Mips32R3 = 13,
+    [XmlEnum("mips64r2")] [JsonStringEnumMemberName("Mips64R2")] Mips64R2 = 13,
+    [XmlEnum("mips32r3")] [JsonStringEnumMemberName("Mips32R3")] Mips32R3 = 14,
+    [XmlEnum("mips64r3")] [JsonStringEnumMemberName("Mips64R3")] Mips64R3 = 15,
     // There is no R4
-    [XmlEnum("mips32r5")] [JsonStringEnumMemberName("Mips32R5")] Mips32R5 = 15,
+    [XmlEnum("mips32r5")] [JsonStringEnumMemberName("Mips32R5")] Mips32R5 = 16,
+    [XmlEnum("mips64r5")] [JsonStringEnumMemberName("Mips64R5")] Mips64R5 = 17,
 
     // --- The "Breaking" Era ---
-    [XmlEnum("mips32r6")] [JsonStringEnumMemberName("Mips32R6")] Mips32R6 = 16,
+    [XmlEnum("mips32r6")] [JsonStringEnumMemberName("Mips32R6")] Mips32R6 = 18,
+    [XmlEnum("mips64r6")] [JsonStringEnumMemberName("Mips64R6")] Mips64R6 = 19,
 
 #pragma warning restore CS1591
 }
