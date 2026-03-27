@@ -37,7 +37,8 @@
     "rs_code": 16,
     "func_code": 1,
     "args": [],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "Read Indexed TLB Entry"
   },
   {
     "type": "coproc0",
@@ -45,7 +46,8 @@
     "rs_code": 16,
     "func_code": 2,
     "args": [],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "Write Indexed TLB Entry"
   },
   {
     "type": "coproc0",
@@ -53,7 +55,8 @@
     "rs_code": 16,
     "func_code": 3,
     "args": [],
-    "added_in": "Mips32R2"
+    "added_in": "Mips32R2",
+    "behavior": "TLB Invalidate"
   },
   {
     "type": "coproc0",
@@ -61,7 +64,8 @@
     "rs_code": 16,
     "func_code": 4,
     "args": [],
-    "added_in": "Mips32R2"
+    "added_in": "Mips32R2",
+    "behavior": "TLB Invalidate Flush"
   },
   {
     "type": "coproc0",
@@ -70,7 +74,8 @@
     "func_code": 6,
     "args": [],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "Write Random TLB Entry"
   },
   {
     "type": "coproc0",
@@ -78,7 +83,8 @@
     "rs_code": 16,
     "func_code": 8,
     "args": [],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "Index = probe_tlb(EntryHi)"
   },
   {
     "type": "coproc0",
@@ -87,7 +93,8 @@
     "func_code": 24,
     "rd_fixed": 0,
     "args": [],
-    "added_in": "MipsII"
+    "added_in": "MipsII",
+    "behavior": "Exception Return"
   },
   {
     "type": "coproc0",
@@ -96,7 +103,8 @@
     "func_code": 24,
     "rd_fixed": 1,
     "args": [],
-    "added_in": "Mips32R2"
+    "added_in": "Mips32R2",
+    "behavior": "Exception Return No Clear"
   },
   {
     "type": "coproc0",
@@ -104,7 +112,8 @@
     "rs_code": 16,
     "func_code": 31,
     "args": [],
-    "added_in": "Mips32R1"
+    "added_in": "Mips32R1",
+    "behavior": "Debug Exception Return"
   },
   {
     "type": "coproc0",
@@ -112,7 +121,8 @@
     "rs_code": 16,
     "func_code": 32,
     "args": [],
-    "added_in": "Mips32R1"
+    "added_in": "Mips32R1",
+    "behavior": "Enter Standby Mode"
   },
   {
     "type": "coproc0",
@@ -121,7 +131,8 @@
     "mfmc0_code": 0,
     "rd_fixed": 12,
     "args": [],
-    "added_in": "Mips32R2"
+    "added_in": "Mips32R2",
+    "behavior": "Disable Interrupts"
   },
   {
     "type": "coproc0",
@@ -130,7 +141,8 @@
     "mfmc0_code": 0,
     "rd_fixed": 12,
     "args": [ "rt" ],
-    "added_in": "Mips32R2"
+    "added_in": "Mips32R2",
+    "behavior": "Disable Interrupts"
   },
   {
     "type": "coproc0",
@@ -139,7 +151,8 @@
     "mfmc0_code": 32,
     "rd_fixed": 12,
     "args": [],
-    "added_in": "Mips32R2"
+    "added_in": "Mips32R2",
+    "behavior": "Enable Interrupts"
   },
   {
     "type": "coproc0",
@@ -148,20 +161,23 @@
     "mfmc0_code": 32,
     "rd_fixed": 12,
     "args": [ "rt" ],
-    "added_in": "Mips32R2"
+    "added_in": "Mips32R2",
+    "behavior": "Enable Interrupts"
   },
   {
     "type": "coproc0",
     "name": "rdpgpr",
     "rs_code": 10,
     "args": [ "rd", "rt" ],
-    "added_in": "Mips32R2"
+    "added_in": "Mips32R2",
+    "behavior": "Read Previous Shadow GPR"
   },
   {
     "type": "coproc0",
     "name": "wrpgpr",
     "rs_code": 14,
     "args": [ "rd", "rt" ],
-    "added_in": "Mips32R2"
+    "added_in": "Mips32R2",
+    "behavior": "Write Previous Shadow GPR"
   }
 ]

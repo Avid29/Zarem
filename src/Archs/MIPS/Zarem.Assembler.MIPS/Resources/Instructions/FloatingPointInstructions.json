@@ -5,7 +5,8 @@
     "float_func": 0,
     "formats": [ 16, 17, 22 ],
     "args": [ "fd", "fs", "ft" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$fd = $fs + $ft"
   },
   {
     "type": "float",
@@ -13,7 +14,8 @@
     "float_func": 1,
     "formats": [ 16, 17, 22 ],
     "args": [ "fd", "fs", "ft" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$fd = $fs - $ft"
   },
   {
     "type": "float",
@@ -21,7 +23,8 @@
     "float_func": 2,
     "formats": [ 16, 17, 22 ],
     "args": [ "fd", "fs", "ft" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$fd = $fs * $ft"
   },
   {
     "type": "float",
@@ -29,7 +32,8 @@
     "float_func": 3,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs", "ft" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$fd = $fs / $ft"
   },
   {
     "type": "float",
@@ -37,7 +41,8 @@
     "float_func": 4,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsII"
+    "added_in": "MipsII",
+    "behavior": "$fd = sqrt($fs)"
   },
   {
     "type": "float",
@@ -45,7 +50,8 @@
     "float_func": 5,
     "formats": [ 16, 17, 22 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$fd = abs($fs)"
   },
   {
     "type": "float",
@@ -53,7 +59,8 @@
     "float_func": 6,
     "formats": [ 16, 17, 22 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$fd = $fs"
   },
   {
     "type": "float",
@@ -61,7 +68,8 @@
     "float_func": 7,
     "formats": [ 16, 17, 22 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$fd = -($fs)"
   },
   {
     "type": "float",
@@ -69,7 +77,8 @@
     "float_func": 8,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsIII"
+    "added_in": "MipsIII",
+    "behavior": "$fd = (long)round($fs)"
   },
   {
     "type": "float",
@@ -77,7 +86,8 @@
     "float_func": 9,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsIII"
+    "added_in": "MipsIII",
+    "behavior": "$fd = (long)trunc($fs)"
   },
   {
     "type": "float",
@@ -85,7 +95,8 @@
     "float_func": 10,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsIII"
+    "added_in": "MipsIII",
+    "behavior": "$fd = (long)ceil($fs)"
   },
   {
     "type": "float",
@@ -93,7 +104,8 @@
     "float_func": 11,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsIII"
+    "added_in": "MipsIII",
+    "behavior": "$fd = (long)floor($fs)"
   },
   {
     "type": "float",
@@ -101,7 +113,8 @@
     "float_func": 12,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsII"
+    "added_in": "MipsII",
+    "behavior": "$fd = (int)round($fs)"
   },
   {
     "type": "float",
@@ -109,7 +122,8 @@
     "float_func": 13,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsII"
+    "added_in": "MipsII",
+    "behavior": "$fd = (int)trunc($fs)"
   },
   {
     "type": "float",
@@ -117,7 +131,8 @@
     "float_func": 14,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsII"
+    "added_in": "MipsII",
+    "behavior": "$fd = (int)ceil($fs)"
   },
   {
     "type": "float",
@@ -125,7 +140,8 @@
     "float_func": 15,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsII"
+    "added_in": "MipsII",
+    "behavior": "$fd = (int)floor($fs)"
   },
   {
     "type": "float",
@@ -133,7 +149,8 @@
     "float_func": 21,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsIV"
+    "added_in": "MipsIV",
+    "behavior": "$fd = 1 / $fs"
   },
   {
     "type": "float",
@@ -141,7 +158,8 @@
     "float_func": 32,
     "formats": [ 17, 20, 21 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$fd = (float)$fs"
   },
   {
     "type": "float",
@@ -149,7 +167,8 @@
     "float_func": 33,
     "formats": [ 16, 20, 21 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$fd = (double)$fs"
   },
   {
     "type": "float",
@@ -157,7 +176,8 @@
     "float_func": 36,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$fd = (int)$fs"
   },
   {
     "type": "float",
@@ -165,6 +185,7 @@
     "float_func": 37,
     "formats": [ 16, 17 ],
     "args": [ "fd", "fs" ],
-    "added_in": "MipsIII"
+    "added_in": "MipsIII",
+    "behavior": "$fd = (long)$fs"
   }
 ]

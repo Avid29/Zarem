@@ -4,49 +4,56 @@
     "name": "sll",
     "func_code": 0,
     "args": [ "rd", "rt", "sa" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rt << shift"
   },
   {
     "type": "r-type",
     "name": "srl",
     "func_code": 2,
     "args": [ "rd", "rt", "sa" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rt >> shift"
   },
   {
     "type": "r-type",
     "name": "sra",
     "func_code": 3,
     "args": [ "rd", "rt", "sa" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rt >> shift"
   },
   {
     "type": "r-type",
     "name": "sllv",
     "func_code": 4,
     "args": [ "rd", "rt", "rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rt << $rs"
   },
   {
     "type": "r-type",
     "name": "srlv",
     "func_code": 6,
     "args": [ "rd", "rt", "rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rt >> $rs"
   },
   {
     "type": "r-type",
     "name": "srav",
     "func_code": 7,
     "args": [ "rd", "rt", "rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rt >> $rs"
   },
   {
     "type": "r-type",
     "name": "jr",
     "func_code": 8,
     "args": [ "rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$pc = $rs"
   },
   {
     "type": "r-type",
@@ -54,14 +61,16 @@
     "func_code": 9,
     "args": [ "rs" ],
     "rd_fixed": 31,
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$ra = ret_addr; $pc = $rs"
   },
   {
     "type": "r-type",
     "name": "jalr",
     "func_code": 9,
     "args": [ "rd", "rs" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = ret_addr; $pc = $rs"
   },
   {
     "type": "r-type",
@@ -69,7 +78,8 @@
     "func_code": 10,
     "args": [ "rd", "rs", "rt" ],
     "added_in": "MipsIV",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rt == 0) $rd = $rs"
   },
   {
     "type": "r-type",
@@ -77,21 +87,24 @@
     "func_code": 11,
     "args": [ "rd", "rs", "rt" ],
     "added_in": "MipsIV",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rt != 0) $rd = $rs"
   },
   {
     "type": "r-type",
     "name": "syscall",
     "func_code": 12,
     "args": [],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "Make a syscall interrupt"
   },
   {
     "type": "r-type",
     "name": "break",
     "func_code": 13,
     "args": [],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "Make a breakpoint exception"
   },
   {
     "type": "r-type",
@@ -106,7 +119,8 @@
     "func_code": 16,
     "args": [ "rd" ],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "$rd = $Hi"
   },
   {
     "type": "r-type",
@@ -114,7 +128,8 @@
     "func_code": 17,
     "args": [ "rs" ],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "$Hi = $rs"
   },
   {
     "type": "r-type",
@@ -122,7 +137,8 @@
     "func_code": 18,
     "args": [ "rd" ],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "$rd = $Lo"
   },
   {
     "type": "r-type",
@@ -130,7 +146,8 @@
     "func_code": 19,
     "args": [ "rs" ],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "$Lo = $rs"
   },
   {
     "type": "r-type",
@@ -138,7 +155,8 @@
     "func_code": 24,
     "args": [ "rs", "rt" ],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "($Hi,$Lo) = $rs * $rt"
   },
   {
     "type": "r-type",
@@ -146,7 +164,8 @@
     "func_code": 25,
     "args": [ "rs", "rt" ],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "($Hi,$Lo) = $rs * $rt"
   },
   {
     "type": "r-type",
@@ -154,7 +173,8 @@
     "func_code": 26,
     "args": [ "rs", "rt" ],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "$Lo = $rs / $rt; $Hi = $rs % $rt"
   },
   {
     "type": "r-type",
@@ -162,77 +182,88 @@
     "func_code": 27,
     "args": [ "rs", "rt" ],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "$Lo = $rs / $rt; $Hi = $rs % $rt"
   },
   {
     "type": "r-type",
     "name": "add",
     "func_code": 32,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rs + $rt"
   },
   {
     "type": "r-type",
     "name": "addu",
     "func_code": 33,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rs + $rt"
   },
   {
     "type": "r-type",
     "name": "sub",
     "func_code": 34,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rs - $rt"
   },
   {
     "type": "r-type",
     "name": "subu",
     "func_code": 35,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rs - $rt"
   },
   {
     "type": "r-type",
     "name": "and",
     "func_code": 36,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rs & $rt"
   },
   {
     "type": "r-type",
     "name": "or",
     "func_code": 37,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rs | $rt"
   },
   {
     "type": "r-type",
     "name": "xor",
     "func_code": 38,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rs ^ $rt"
   },
   {
     "type": "r-type",
     "name": "nor",
     "func_code": 39,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = ~($rs | $rt)"
   },
   {
     "type": "r-type",
     "name": "slt",
     "func_code": 42,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rs < $rt ? 1 : 0"
   },
   {
     "type": "r-type",
     "name": "sltu",
     "func_code": 43,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI"
+    "added_in": "MipsI",
+    "behavior": "$rd = $rs < $rt ? 1 : 0"
   },
   {
     "type": "r-type",
@@ -240,7 +271,8 @@
     "func_code": 48,
     "args": [ "rs", "rt" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs >= $rt) Invoke Trap"
   },
   {
     "type": "r-type",
@@ -248,7 +280,8 @@
     "func_code": 49,
     "args": [ "rs", "rt" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs >= $rt) Invoke Trap"
   },
   {
     "type": "r-type",
@@ -256,7 +289,8 @@
     "func_code": 50,
     "args": [ "rs", "rt" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs < $rt) Invoke Trap"
   },
   {
     "type": "r-type",
@@ -264,7 +298,8 @@
     "func_code": 51,
     "args": [ "rs", "rt" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs < $rt) Invoke Trap"
   },
   {
     "type": "r-type",
@@ -272,14 +307,16 @@
     "func_code": 52,
     "args": [ "rs", "rt" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs == $rt) Invoke Trap"
   },
   {
     "type": "r-type",
     "name": "seleqz",
     "func_code": 53,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "Mips32R6"
+    "added_in": "Mips32R6",
+    "behavior": "$rd = $rt ? 0 : $rs"
   },
   {
     "type": "r-type",
@@ -287,13 +324,15 @@
     "func_code": 54,
     "args": [ "rs", "rt" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "removed_in": "Mips32R6",
+    "behavior": "if ($rs != $rt) Invoke Trap"
   },
   {
     "type": "r-type",
     "name": "selnez",
     "func_code": 55,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "Mips32R6"
+    "added_in": "Mips32R6",
+    "behavior": "$rd = $rt ? $rs : 0"
   }
 ]
