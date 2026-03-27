@@ -646,7 +646,6 @@ public class ExecutionTests
         var emulatorConfig = new MIPSEmulatorConfig()
         {
             DisableDelaySlots = !delaysSlots,
-            TrapHost = new ZaremTrapHandler(),
         };
         var computer = new MipsComputer(emulatorConfig);
         var emulator = new Zaremulator(computer);

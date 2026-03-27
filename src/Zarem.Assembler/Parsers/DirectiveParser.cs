@@ -65,7 +65,7 @@ public readonly struct DirectiveParser
             ".data" => TryParseSection(token, line.Args, out directive),
 
             // Global References
-            ".globl" => TryParseGlobal(token, line.Args, out directive),
+            ".globl" or ".global" => TryParseGlobal(token, line.Args, out directive),
 
             // Define
             ".def" or ".define" => TryParseDefine(token, line.Args, out directive),
@@ -117,7 +117,7 @@ public readonly struct DirectiveParser
         // Global requires an argument
         if (args.Count is 0)
         {
-            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArgCount, token, "DirectiveRequiresAnArgument", ".globl");
+            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArgCount, token, "DirectiveRequiresAnArgument", token.Source);
             return false;
         }
 
@@ -125,14 +125,14 @@ public readonly struct DirectiveParser
         if (args.Count is > 1)
         {
             // TODO: Improve token range message
-            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArgCount, args[1].Tokens, "DirectiveTakesOneArgument", ".globl");
+            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArgCount, args[1].Tokens, "DirectiveTakesOneArgument", token.Source);
             return false;
         }
 
         if (args[0].Tokens.Length is not 1)
         {
             // TODO: Improve message
-            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArg, args[0].Tokens, "DirectiveNonSymbolArgumentSmall", ".globl");
+            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArg, args[0].Tokens, "DirectiveNonSymbolArgumentSmall", token.Source);
             return false;
         }
 
@@ -142,7 +142,7 @@ public readonly struct DirectiveParser
         // Global only takes references as an argument
         if (arg.Type is not TokenType.Reference)
         {
-            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArg, arg, "DirectiveNonSymbolArgument", ".globl", arg.Source);
+            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArg, arg, "DirectiveNonSymbolArgument", token.Source, arg.Source);
         }
 
         directive = new GlobalDirective(arg.Source);
@@ -152,7 +152,7 @@ public readonly struct DirectiveParser
     private bool TryParseAlignOrSpace(Token token, AssemblyLineArgs args, out Directive? directive, bool align)
     {
         directive = null;
-        string directiveName = align ? ".align" : ".space";
+        string directiveName = token.Source;
 
         // Space and Align require an argument
         if (args.Count is 0)
