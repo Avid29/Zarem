@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Diagnostics;
 using System.Threading;
+using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Localization;
@@ -161,9 +162,16 @@ public class Zaremulator : IDisposable
                     State = EmulatorState.Paused;
             }
         }
+        catch (EmulationException e)
+        {
+            Console.WriteLine();
+            Console.WriteLine(e.Message);
+        }
         catch (Exception e)
         {
             var localizer = new Localizer("Zarem.Emulator.Resources.Messages", typeof(Zaremulator).Assembly);
+
+            Console.WriteLine();
             Console.WriteLine(localizer["ExceptionOccurred", e]);
         }
 

@@ -55,7 +55,7 @@ skip_buzz:
     # Neither Fizz nor Buzz
     # Print the number
     xor     $a0,    $zero,  $s0
-    xori    $v0,    $zero,  1
+    xori    $v0,    $zero,  SYS_PRINT_INT
     syscall
     
 newline:
@@ -71,7 +71,7 @@ loop_check:
     # Increment in the delay slot
     slti    $t0,    $s0,    100
     bgtz    $t0,    loop
-    addi    $s0,    $s0,    SYS_PRINT_INT
+    addi    $s0,    $s0,    1
     
 loop_end:
 
