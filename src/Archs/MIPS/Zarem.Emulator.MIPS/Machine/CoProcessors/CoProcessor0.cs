@@ -54,8 +54,8 @@ public class CoProcessor0<T>
     /// </summary>
     public StatusRegister StatusRegister
     {
-        get => (StatusRegister)RegisterFile[CP0Registers.Status];
-        set => RegisterFile[CP0Registers.Status] = (uint)value;
+        get => (StatusRegister)uint.CreateTruncating(RegisterFile[(int)CP0Registers.Status]);
+        set => RegisterFile[(int)CP0Registers.Status] = T.CreateTruncating((uint)value);
     }
 
     /// <summary>
@@ -63,8 +63,8 @@ public class CoProcessor0<T>
     /// </summary>
     public CauseRegister CauseRegister
     {
-        get => (CauseRegister)RegisterFile[(int)CP0Registers.Cause];
-        set => RegisterFile[(int)CP0Registers.Cause] = (uint)value;
+        get => (CauseRegister)uint.CreateTruncating(RegisterFile[(int)CP0Registers.Cause]);
+        set => RegisterFile[(int)CP0Registers.Cause] = T.CreateTruncating((uint)value);
     }
 
     /// <summary>
@@ -81,17 +81,22 @@ public class CoProcessor0<T>
     /// <summary>
     /// Handles entering a trap.
     /// </summary>
-    public void EnterTrap(MipsTrap trap, T programCounter, bool isDelaySlot)
+    public void EnterTrap(MipsTrap trap, T programCounter, T faultAddr, bool isDelaySlot)
     {
-        StatusRegister = StatusRegister with { ExceptionLevel = true };
+        // Don't overwrite EPC if we are already in an exception (nested exception logic)
+        if (!StatusRegister.ExceptionLevel)
+        {
+            this[CP0Registers.ExceptionPC] = isDelaySlot
+                ? programCounter - T.CreateTruncating(4)
+                : programCounter;
+
+            StatusRegister = StatusRegister with { ExceptionLevel = true };
+        }
+
         CauseRegister = CauseRegister with
         {
             ExecptionCode = trap,
             IsBranchDelayed = isDelaySlot,
         };
-
-        // Track the current program counter in the EPC register
-        // before jumping to the exception handler
-        this[CP0Registers.ExceptionPC] = programCounter;
     }
 }

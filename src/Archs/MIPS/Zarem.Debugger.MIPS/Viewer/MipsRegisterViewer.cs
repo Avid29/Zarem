@@ -2,8 +2,6 @@
 
 using System.Collections.Generic;
 using Zarem.Assembler.Helpers.Tables;
-using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Debugger.Viewer;
