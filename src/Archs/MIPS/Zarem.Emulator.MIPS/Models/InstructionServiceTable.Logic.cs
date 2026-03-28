@@ -85,7 +85,7 @@ public partial class InstructionServiceTable<T, TSigned>
     private struct XgeLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) >= TSigned.CreateSaturating(rt);
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) >= TSigned.CreateTruncating(rt);
     }
 
     private struct XgeuLogic : ICondLogic<T>
@@ -97,7 +97,7 @@ public partial class InstructionServiceTable<T, TSigned>
     private struct XltLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) < TSigned.CreateSaturating(rt);
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) < TSigned.CreateTruncating(rt);
     }
 
     private struct XltuLogic : ICondLogic<T>
@@ -121,25 +121,25 @@ public partial class InstructionServiceTable<T, TSigned>
     private struct XlezLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) <= TSigned.Zero;
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) <= TSigned.Zero;
     }
 
     private struct XltzLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) < TSigned.Zero;
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) < TSigned.Zero;
     }
 
     private struct XgezLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) >= TSigned.Zero;
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) >= TSigned.Zero;
     }
 
     private struct XgtzLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(T rs, T rt) => TSigned.CreateSaturating(rs) > TSigned.Zero;
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) > TSigned.Zero;
     }
 
     private struct MovzLogic : ICondLogic<T>
@@ -157,7 +157,7 @@ public partial class InstructionServiceTable<T, TSigned>
     private struct SltLogic : IAluLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T rs, T rt) => TSigned.CreateSaturating(rs) < TSigned.CreateSaturating(rt) ? T.One : T.Zero;
+        public static T Compute(T rs, T rt) => TSigned.CreateTruncating(rs) < TSigned.CreateTruncating(rt) ? T.One : T.Zero;
     }
 
     private struct SltuLogic : IAluLogic<T>
