@@ -41,6 +41,15 @@ public class RegisterViewerViewModel : DebugPageViewModel
     /// </summary>
     public ObservableCollection<BindableRegister> Registers { get; }
 
+    /// <summary>
+    /// Gets or sets whether or not the debugger is halted.
+    /// </summary>
+    public bool IsHalted
+    {
+        get => field;
+        set => SetProperty(ref field, value);
+    }
+
     /// <inheritdoc/>
     protected override void RegisterSession(DebugSession session)
     {
@@ -54,6 +63,7 @@ public class RegisterViewerViewModel : DebugPageViewModel
         }
 
         session.Debugger?.Halted += Debugger_Halted;
+        session.Debugger?.Resumed += Debugger_Resumed;
     }
 
     /// <inheritdoc/>
@@ -61,6 +71,7 @@ public class RegisterViewerViewModel : DebugPageViewModel
     {
         Registers.Clear();
         Session?.Debugger?.Halted -= Debugger_Halted;
+        Session?.Debugger?.Resumed -= Debugger_Resumed;
     }
 
     private void Debugger_Halted(Zebugger sender, ulong e)
@@ -71,6 +82,13 @@ public class RegisterViewerViewModel : DebugPageViewModel
             {
                 reg.Invalidate();
             }
+
+            IsHalted = true;
         });
+    }
+
+    private void Debugger_Resumed(object? sender, System.EventArgs e)
+    {
+        _dispatcherService.RunOnUIThread(() => IsHalted = false);
     }
 }

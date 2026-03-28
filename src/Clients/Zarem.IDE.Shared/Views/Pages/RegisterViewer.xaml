@@ -13,9 +13,10 @@
 
     <GridView
         Padding="12"
-        IsItemClickEnabled="True"
+        IsItemClickEnabled="{x:Bind ViewModel.IsHalted, Mode=OneWay}"
         ItemClick="GridView_ItemClick"
         ItemsSource="{x:Bind ViewModel.Registers, Mode=OneWay}"
+        Opacity="{x:Bind local:RegisterViewer.GetOpacityByHalted(ViewModel.IsHalted), Mode=OneWay}"
         SelectionMode="None">
         <GridView.ItemsPanel>
             <ItemsPanelTemplate>
