@@ -26,6 +26,7 @@ public class DirectiveParserTests
     {
         get
         {
+            yield return [new DirectiveDataTestCase(".space 10", new byte[10])];
             yield return [new DirectiveDataTestCase(".byte 10", 10)];
             yield return [new DirectiveDataTestCase(".word 10", 0, 0, 0, 10)];
             yield return [new DirectiveDataTestCase(".byte 10, 10", 10, 10)];
