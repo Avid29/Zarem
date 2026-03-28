@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -47,7 +48,9 @@ public static partial class ProjectSerializer
         {
             var prop = obj.GetType().GetProperty(child.Name.LocalName);
             if (prop == null)
-                continue;
+            {
+                throw new Exception();
+            }
 
             // Select deserialization function
             // TODO: Dynamically lookup config type
