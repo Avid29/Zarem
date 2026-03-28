@@ -20,7 +20,7 @@
     "name": "mfhc1",
     "rs_code": 3,
     "args": [ "rt", "fs" ],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "GPR[$rt] = FPR[$fs][63:32]"
   },
   {
@@ -44,7 +44,7 @@
     "name": "mthc1",
     "rs_code": 7,
     "args": [ "rt", "fs" ],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "FPR[$fs][63:32] = GPR[$rt]"
   }
 ]

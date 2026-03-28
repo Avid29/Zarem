@@ -3,7 +3,7 @@
 namespace Zarem.Emulator.Models.Enum;
 
 /// <summary>
-/// An enum describing the secondary effect of an <see cref="Execution"/>.
+/// An enum describing the secondary effect of an <see cref="Execution{T}"/>.
 /// </summary>
 public enum SideEffect
 {
@@ -43,6 +43,11 @@ public enum SideEffect
     ReadMemory,
 
     /// <summary>
+    /// Reads from memory, preserving the sign.
+    /// </summary>
+    ReadMemorySigned,
+
+    /// <summary>
     /// Writes to memory.
     /// </summary>
     WriteMemory,
@@ -55,16 +60,22 @@ public enum SideEffect
     /// <summary>
     /// Writes to co-processor.
     /// </summary>
-    WriteCoProc,
+    WriteCoProc0,
 
     /// <summary>
-    /// Writes to the floating-point processor.
+    /// Writes a word to the floating-point processor.
     /// </summary>
+    /// <remarks>
+    /// Could be a float, could be an int.
+    /// </remarks>
     WriteFloat,
 
     /// <summary>
-    /// Writes to the floating-point processor.
+    /// Writes a dword to the floating-point processor.
     /// </summary>
+    /// <remarks>
+    /// Could be a double, could be a long.
+    /// </remarks>
     WriteDouble,
 
     /// <summary>

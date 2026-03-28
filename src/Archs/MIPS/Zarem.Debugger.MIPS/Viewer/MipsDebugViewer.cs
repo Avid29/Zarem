@@ -2,6 +2,7 @@
 
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Debugger.Viewer;
 
@@ -16,7 +17,7 @@ public class MipsDebugViewer : IDebugViewer
     {
         _mipsComputer = mipsComputer;
 
-        Registers = new MipsRegisterViewer(_mipsComputer.Processor.RegisterFile);
+        Registers = new MipsRegisterViewer(_mipsComputer.Processor.RegisterFile, RegisterSet.GeneralPurpose);
     }
 
     /// <inheritdoc/>

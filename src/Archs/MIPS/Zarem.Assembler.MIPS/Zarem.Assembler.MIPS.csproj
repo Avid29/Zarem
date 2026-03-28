@@ -5,15 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Instructions\CoProcessor1Instructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\FloatingPointInstructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\CoProcessor0Instructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\ITypeInstructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\JTypeInstructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\PseudoInstructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\RegImmInstructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\RTypeInstructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\Special2Instructions.json" />
+    <EmbeddedResource Include="Resources\Instructions\CoProcessor1.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\FloatingPoint.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\CoProcessor0.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\IType64.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\IType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\JType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Pseudo.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\RegImm.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\RType64.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\RType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Special2.inst.json" />
   </ItemGroup>
 
   <ItemGroup>

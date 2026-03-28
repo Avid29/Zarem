@@ -20,8 +20,8 @@
     "name": "jalx",
     "op_code": 29,
     "args": [ "target" ],
-    "added_in": "Mips32R1",
-    "removed_in": "Mips32R6",
+    "added_in": "Mips_R1",
+    "removed_in": "Mips_R6",
     "behavior": "$ra = ret_addr; $pc = address (ISA Mode Switch)"
   },
   {
@@ -29,7 +29,7 @@
     "name": "bc",
     "op_code": 50,
     "args": [ "offset26" ],
-    "added_in": "Mips32R6",
+    "added_in": "Mips_R6",
     "behavior": "$pc = $pc + 4 + (offset << 2)"
   },
   {
@@ -37,7 +37,7 @@
     "name": "balc",
     "op_code": 58,
     "args": [ "offset26" ],
-    "added_in": "Mips32R6",
+    "added_in": "Mips_R6",
     "behavior": "$ra = ret_addr; $pc = $pc + 4 + (offset << 2)"
   }
 ]

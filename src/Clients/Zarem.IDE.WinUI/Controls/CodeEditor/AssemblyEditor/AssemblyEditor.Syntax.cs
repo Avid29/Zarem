@@ -139,7 +139,7 @@ public partial class AssemblyEditor
                 var style = token.Type switch
                 {
                     TokenType.Instruction when _instructionTable is not null =>
-                        _instructionTable.TryGetInstruction(FloatFormatTable.TryGetFloatFormat(token.Source, out _, out var lookup) ? lookup : token.Source, out _, out _, out var banned) ? InstructionStyleIndex : InvalidInstructionStyleIndex,
+                        _instructionTable.TryGetInstruction(FloatFormatTable.TryGetFloatFormat(token.Source, out _, out var lookup) ? lookup : token.Source, out _, out _, out _, out var banned) ? InstructionStyleIndex : InvalidInstructionStyleIndex,
 
                     TokenType.Instruction => InstructionStyleIndex,
                     TokenType.Register => RegisterStyleIndex,

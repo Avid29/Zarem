@@ -1,0 +1,63 @@
+﻿[
+  {
+    "type": "i-type",
+    "name": "daddi",
+    "op_code": 24,
+    "args": [ "rt", "rs", "immediate" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rt = $rs + immediate"
+  },
+  {
+    "type": "i-type",
+    "name": "daddiu",
+    "op_code": 25,
+    "args": [ "rt", "rs", "immediate" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rt = $rs + immediate"
+  },
+  {
+    "type": "i-type",
+    "name": "ldl",
+    "op_code": 26,
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsIII",
+    "64bit": true
+  },
+  {
+    "type": "i-type",
+    "name": "ldr",
+    "op_code": 27,
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsIII",
+    "64bit": true
+  },
+  {
+    "type": "i-type",
+    "name": "lwu",
+    "op_code": 39,
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rt = (uint)mem[rs + offset]"
+  },
+  {
+    "type": "i-type",
+    "name": "ld",
+    "op_code": 55,
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rt = (long)mem[rs + offset]"
+  },
+  {
+    "type": "i-type",
+    "name": "sd",
+    "op_code": 63,
+    "args": [ "rt", "offset_rs" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "mem[rs + offset] = (long)$rt"
+  }
+]

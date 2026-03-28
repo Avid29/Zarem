@@ -43,9 +43,8 @@ public enum GPRegister : byte
     ReturnAddress = 31,
 
     // Non-indexable registers
-    High,
-    Low,
-    ProgramCounter,
+    High = 32,
+    Low = 33,
 
 #pragma warning restore CS1591
 }

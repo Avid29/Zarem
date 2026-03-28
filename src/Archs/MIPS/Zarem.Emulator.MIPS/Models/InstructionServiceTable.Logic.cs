@@ -6,38 +6,45 @@ using Zarem.Emulator.Models.Enum;
 
 namespace Zarem.Emulator.Models;
 
-public partial class InstructionServiceTable
+public partial class InstructionServiceTable<T, TSigned>
 {
-    private interface IShiftLogic
+    private interface IShiftLogic<T2>
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
-        static abstract uint Execute(uint rt, int sa);
+        static abstract T2 Execute(T2 rt, int sa);
     }
 
-    private interface IAluLogic
+    private interface IAluLogic<T2>
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
-        static abstract uint Compute(uint rs, uint rt);
+        static abstract T2 Compute(T2 rs, T2 rt);
     }
 
-    private interface ICheckedAluLogic : IAluLogic
+    private interface ICheckedAluLogic<T2, TSigned2> : IAluLogic<T2>
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
+        where TSigned2 : unmanaged, IBinaryInteger<TSigned2>, ISignedNumber<TSigned2>
     {
-        static abstract bool Overflow(int a, int b, int r);
+        static abstract bool Overflow(TSigned2 a, TSigned2 b, TSigned2 r);
     }
 
-    private interface IMultLogic
+    private interface IMultLogic<T2>
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
-        static abstract ulong Compute(uint rs, uint rt);
+        static abstract (T2, T2) Compute(T2 rs, T2 rt);
     }
 
-    private interface IMultAddLogic
+    private interface IMultAddLogic<T2>
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
-        static abstract ulong Compute(uint rs, uint rt, uint hi, uint lo);
+        static abstract (T2, T2) Compute(T2 rs, T2 rt, T2 hi, T2 lo);
     }
 
-    private interface IDivLogic
+    private interface IDivLogic<T2>
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
-        static abstract uint Divisor(uint rs, uint rt);
+        static abstract T2 Divisor(T2 rs, T2 rt);
 
-        static abstract uint Remainder(uint rs, uint rt);
+        static abstract T2 Remainder(T2 rs, T2 rt);
     }
 
     private interface ITrapLogic
@@ -45,195 +52,118 @@ public partial class InstructionServiceTable
         static abstract MipsTrap Trap();
     }
 
-    private interface ICondLogic
+    private interface ICondLogic<T2>
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
-        static abstract bool Check(uint rs, uint rt);
+        static abstract bool Check(T2 rs, T2 rt);
     }
 
-    private struct SllLogic : IShiftLogic
+    private struct AndLogic : IAluLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Execute(uint rt, int sa) => rt << sa;
+        public static T Compute(T rs, T rt) => rs & rt;
     }
 
-    private struct SrlLogic : IShiftLogic
+    private struct OrLogic : IAluLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Execute(uint rt, int sa) => rt >> sa;
+        public static T Compute(T rs, T rt) => rs | rt;
     }
 
-    private struct SraLogic : IShiftLogic
+    private struct XorLogic : IAluLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Execute(uint rt, int sa) => (uint)((int)rt >> sa);
+        public static T Compute(T rs, T rt) => rs ^ rt;
     }
 
-    private struct AddLogic : ICheckedAluLogic
+    private struct NorLogic : IAluLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => (uint)((int)rs + (int)rt);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Overflow(int a, int b, int r) => ((a ^ r) & (b ^ r)) < 0;
+        public static T Compute(T rs, T rt) => ~(rs | rt);
     }
 
-    private struct AdduLogic : IAluLogic
+    private struct XgeLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => rs + rt;
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) >= TSigned.CreateTruncating(rt);
     }
 
-    private struct SubLogic : ICheckedAluLogic
+    private struct XgeuLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => (uint)((int)rs - (int)rt);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Overflow(int a, int b, int r) => ((a ^ b) & (a ^ r)) < 0;
+        public static bool Check(T rs, T rt) => rs >= rt;
     }
 
-    private struct SubuLogic : IAluLogic
+    private struct XltLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => rs - rt;
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) < TSigned.CreateTruncating(rt);
     }
 
-    private struct MultLogic : IMultLogic
+    private struct XltuLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Compute(uint rs, uint rt) => (ulong)((long)(int)rs * (int)rt);
+        public static bool Check(T rs, T rt) => rs < rt;
     }
 
-    private struct MultuLogic : IMultLogic
+    private struct XeqLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Compute(uint rs, uint rt) => (ulong)rs * rt;
+        public static bool Check(T rs, T rt) => rs == rt;
     }
 
-    private struct DivLogic : IDivLogic
+    private struct XneLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Divisor(uint rs, uint rt) => rt is not 0 ? (uint)((int)rs / (int)rt) : 0;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Remainder(uint rs, uint rt) => rt is not 0 ? (uint)((int)rs % (int)rt) : rs;
+        public static bool Check(T rs, T rt) => rs != rt;
     }
 
-    private struct DivuLogic : IDivLogic
+    private struct XlezLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Divisor(uint rs, uint rt) => rt is not 0 ? rs / rt : 0;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Remainder(uint rs, uint rt) => rt is not 0 ? rs % rt : rs;
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) <= TSigned.Zero;
     }
 
-    private struct AndLogic : IAluLogic
+    private struct XltzLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => rs & rt;
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) < TSigned.Zero;
     }
 
-    private struct OrLogic : IAluLogic
+    private struct XgezLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => rs | rt;
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) >= TSigned.Zero;
     }
 
-    private struct XorLogic : IAluLogic
+    private struct XgtzLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => rs ^ rt;
+        public static bool Check(T rs, T rt) => TSigned.CreateTruncating(rs) > TSigned.Zero;
     }
 
-    private struct NorLogic : IAluLogic
+    private struct MovzLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => ~(rs | rt);
+        public static bool Check(T rs, T rt) => rt == T.Zero;
     }
 
-    private struct SltLogic : IAluLogic
+    private struct MovnLogic : ICondLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => (uint)((int)rs < (int)rt ? 1 : 0);
+        public static bool Check(T rs, T rt) => rt != T.Zero;
     }
 
-    private struct MovzLogic : ICondLogic
+    private struct SltLogic : IAluLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => rt == 0;
+        public static T Compute(T rs, T rt) => TSigned.CreateTruncating(rs) < TSigned.CreateTruncating(rt) ? T.One : T.Zero;
     }
 
-    private struct MovnLogic : ICondLogic
+    private struct SltuLogic : IAluLogic<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => rt != 0;
-    }
-
-    private struct SltuLogic : IAluLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => (uint)(rs < rt ? 1 : 0);
-    }
-
-    private struct XgeLogic : ICondLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs >= (int)rt;
-    }
-
-    private struct XgeuLogic : ICondLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => rs >= rt;
-    }
-
-    private struct XltLogic : ICondLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs < (int)rt;
-    }
-
-    private struct XltuLogic : ICondLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => rs < rt;
-    }
-
-    private struct XeqLogic : ICondLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => rs == rt;
-    }
-
-    private struct XneLogic : ICondLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => rs != rt;
-    }
-
-    private struct XlezLogic : ICondLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs <= 0;
-    }
-
-    private struct XltzLogic : ICondLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs < 0;
-    }
-
-    private struct XgezLogic : ICondLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs >= 0;
-    }
-
-    private struct XgtzLogic : ICondLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Check(uint rs, uint rt) => (int)rs > 0;
+        public static T Compute(T rs, T rt) => rs < rt ? T.One : T.Zero;
     }
 
     private struct SyscallLogic : ITrapLogic
@@ -254,65 +184,4 @@ public partial class InstructionServiceTable
         public static MipsTrap Trap() => MipsTrap.Trap;
     }
 
-    private struct MulLogic : IAluLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => (uint)((long)(int)rs * (int)rt);
-    }
-
-    private struct MultAddLogic : IMultAddLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Compute(uint rs, uint rt, uint hi, uint low)
-        {
-            long sum = ((long)(int)hi << 32) + (int)low;
-            sum += (long)(int)rs * (int)rt;
-            return (ulong)sum;
-        }
-    }
-
-    private struct MultAdduLogic : IMultAddLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Compute(uint rs, uint rt, uint hi, uint low)
-        {
-            ulong sum = ((ulong)hi << 32) + low;
-            sum += (ulong)rs * rt;
-            return sum;
-        }
-    }
-
-    private struct MultSubLogic : IMultAddLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Compute(uint rs, uint rt, uint hi, uint low)
-        {
-            long diff = ((long)(int)hi << 32) + (int)low;
-            diff -= (long)(int)rs * (int)rt;
-            return (ulong)diff;
-        }
-    }
-
-    private struct MultSubuLogic : IMultAddLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Compute(uint rs, uint rt, uint hi, uint low)
-        {
-            ulong diff = ((ulong)hi << 32) + low;
-            diff -= (ulong)rs * rt;
-            return diff;
-        }
-    }
-
-    private struct ClzLogic : IAluLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => (uint)BitOperations.LeadingZeroCount(rs);
-    }
-
-    private struct CloLogic : IAluLogic
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Compute(uint rs, uint rt) => (uint)BitOperations.LeadingZeroCount(~rs);
-    }
 }

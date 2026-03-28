@@ -154,6 +154,15 @@
   },
   {
     "type": "float",
+    "name": "rsqrt.fmt",
+    "float_func": 22,
+    "formats": [ 16, 17 ],
+    "args": [ "fd", "fs" ],
+    "added_in": "Mips_R2",
+    "behavior": "$fd = 1 / sqrt($fs)"
+  },
+  {
+    "type": "float",
     "name": "cvt.S.fmt",
     "float_func": 32,
     "formats": [ 17, 20, 21 ],

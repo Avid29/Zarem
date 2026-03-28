@@ -12,7 +12,7 @@
     "name": "mfhc0",
     "rs_code": 2,
     "args": [ "rt", "rd" ],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "GPR[$rt] = CPR[0, $rd, $sel][63:32]"
   },
   {
@@ -28,7 +28,7 @@
     "name": "mthc0",
     "rs_code": 6,
     "args": [ "rt", "rd" ],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "CPR[0, $rd, $sel][63:32] = GPR[$rt]"
   },
   {
@@ -55,7 +55,7 @@
     "rs_code": 16,
     "func_code": 3,
     "args": [],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "TLB Invalidate"
   },
   {
@@ -64,7 +64,7 @@
     "rs_code": 16,
     "func_code": 4,
     "args": [],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "TLB Invalidate Flush"
   },
   {
@@ -74,7 +74,7 @@
     "func_code": 6,
     "args": [],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6",
+    "removed_in": "Mips_R6",
     "behavior": "Write Random TLB Entry"
   },
   {
@@ -103,7 +103,7 @@
     "func_code": 24,
     "rd_fixed": 1,
     "args": [],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "Exception Return No Clear"
   },
   {
@@ -112,7 +112,7 @@
     "rs_code": 16,
     "func_code": 31,
     "args": [],
-    "added_in": "Mips32R1",
+    "added_in": "Mips_R1",
     "behavior": "Debug Exception Return"
   },
   {
@@ -121,7 +121,7 @@
     "rs_code": 16,
     "func_code": 32,
     "args": [],
-    "added_in": "Mips32R1",
+    "added_in": "Mips_R1",
     "behavior": "Enter Standby Mode"
   },
   {
@@ -131,7 +131,7 @@
     "mfmc0_code": 0,
     "rd_fixed": 12,
     "args": [],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "Disable Interrupts"
   },
   {
@@ -141,7 +141,7 @@
     "mfmc0_code": 0,
     "rd_fixed": 12,
     "args": [ "rt" ],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "Disable Interrupts"
   },
   {
@@ -151,7 +151,7 @@
     "mfmc0_code": 32,
     "rd_fixed": 12,
     "args": [],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "Enable Interrupts"
   },
   {
@@ -161,7 +161,7 @@
     "mfmc0_code": 32,
     "rd_fixed": 12,
     "args": [ "rt" ],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "Enable Interrupts"
   },
   {
@@ -169,7 +169,7 @@
     "name": "rdpgpr",
     "rs_code": 10,
     "args": [ "rd", "rt" ],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "Read Previous Shadow GPR"
   },
   {
@@ -177,7 +177,7 @@
     "name": "wrpgpr",
     "rs_code": 14,
     "args": [ "rd", "rt" ],
-    "added_in": "Mips32R2",
+    "added_in": "Mips_R2",
     "behavior": "Write Previous Shadow GPR"
   }
 ]

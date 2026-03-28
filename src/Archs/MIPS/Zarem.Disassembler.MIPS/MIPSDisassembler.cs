@@ -85,7 +85,7 @@ public class MipsDisassembler
         bool hasFormat = instruction.Type is InstructionType.Float;
         bool eretnc = funcCode2 is (byte)Co0FuncCode.ExceptionReturn && instruction.RD is (GPRegister)1;
         var key = new DisassemblerLookup((byte)instruction.OpCode, funcCode, funcCode2, hasFormat || eretnc);
-        if (!InstructionTable.TryGetInstruction(key, out var metas, out _, out _))
+        if (!InstructionTable.TryGetInstruction(key, out var metas, out _, out _, out _))
         {
             return "Unknown instruction";
         }

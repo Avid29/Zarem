@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Models.Meta;
+using Zarem.Extensions;
 using Zarem.Helpers.Instructions;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
@@ -56,6 +57,13 @@ public abstract record MipsInstructionMetaBase
     [JsonPropertyName("removed_in")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public MipsVersion? RemovedIn { get; init; }
+
+    /// <summary>
+    /// Gets whether or not the instruction only exists in 64-bit MIPS.
+    /// </summary>
+    [JsonPropertyName("64bit")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Is64Bit { get; init; }
 
     /// <summary>
     /// Gets the fixed $rs value, if applicable.
@@ -117,5 +125,10 @@ public abstract record MipsInstructionMetaBase
     /// <summary>
     /// Check if an instruction is valid for a given version.
     /// </summary>
-    public bool IsValidFor(MipsVersion version) => version >= AddedIn && !(RemovedIn.HasValue && version >= RemovedIn);
+    public bool IsValidFor(MipsVersion version)
+    {
+        bool inRange = version >= AddedIn && !(RemovedIn.HasValue && version >= RemovedIn);
+        bool sufficientRegisterSize = !Is64Bit || version.Is64Bit();
+        return inRange && sufficientRegisterSize;
+    }
 }

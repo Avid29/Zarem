@@ -20,7 +20,7 @@ public static class MemoryExtensions
     /// <param name="encoding">The encoding to use when reading the string.</param>
     /// <param name="maxBytes">The max size of the string to read.</param>
     /// <returns>The string located at that address.</returns>
-    public static string ReadString(this IMemoryAccessor memory, uint address, Encoding encoding, int maxBytes = 0)
+    public static string ReadString(this IMemoryAccessor memory, ulong address, Encoding encoding, int maxBytes = 0)
     {
         int stride = encoding.GetByteCount("\0");
         Span<byte> unitBuffer = stackalloc byte[stride];
@@ -39,7 +39,7 @@ public static class MemoryExtensions
                 bool isNull = true;
                 for (int i = 0; i < stride; i++)
                 {
-                    byte b = memory.Read<byte>(address + (uint)i);
+                    byte b = memory.Read<byte>(address + (ulong)i);
                     unitBuffer[i] = b;
                     if (b != 0)
                     {
@@ -66,7 +66,7 @@ public static class MemoryExtensions
                 // Copy unitBuffer into the main buffer
                 unitBuffer.CopyTo(rentedArray.AsSpan(totalBytesRead));
                 totalBytesRead += stride;
-                address += (uint)stride;
+                address += (ulong)stride;
             }
 
             // Decode and return the string
