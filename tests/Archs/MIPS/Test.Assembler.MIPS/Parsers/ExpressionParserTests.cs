@@ -28,6 +28,7 @@ public class ExpressionParserTests
         ["~10", ~10],
         ["10 * -10", 10 * -10],
         ["0b1010", 0b1010],
+        ["0b10_10", 0b10_10],
         ["0o12", 10], // C# Doesn't support oct
         ["0xa", 0xa],
         ["0xff_00", 0xff_00],
@@ -36,6 +37,8 @@ public class ExpressionParserTests
         ["(4 + 2) * 2", (4 + 2) * 2],
         ["'a'", 'a'],
         [@"'\n'", '\n'],
+        [@"'\\'", '\\'],
+        [@"'\0'", '\0'],
         ["'a' + 10", 'a' + 10],
     ];
 
