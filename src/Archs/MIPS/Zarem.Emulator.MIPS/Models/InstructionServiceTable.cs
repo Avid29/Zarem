@@ -92,6 +92,15 @@ public unsafe partial class InstructionServiceTable<T, TSigned> : InstructionSer
         return MipsTrap.None;
     }
 
+    private static MipsTrap ShiftPlus32<TLogic, T2>(InstructionServiceTable<T, TSigned> @this, MipsInstruction inst, out Execution<T> exec)
+        where TLogic : IShiftLogic<T2>
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
+    {
+        var rt = T2.CreateTruncating(@this._regs[(int)inst.RT]);
+        exec = Execution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Execute(rt, inst.ShiftAmount + 32)));
+        return MipsTrap.None;
+    }
+
     private static MipsTrap ShiftVar<TLogic, T2>(InstructionServiceTable<T, TSigned> @this, MipsInstruction inst, out Execution<T> exec)
         where TLogic : IShiftLogic<T2>
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>

@@ -50,7 +50,6 @@ public enum OperationCode : byte
     DoubleWordAddImmediateUnsigned = 0x19,
     LoadDoubleWordLeft = 0x1a,
     LoadDoubleWordRight = 0x1b,
-    Trap = 0x1a,
     Special2 = 0x1c,
     JumpAndLinkX = 0x1d,
     SIMD = 0x1e,
@@ -86,7 +85,6 @@ public enum OperationCode : byte
     StoreDoubleWordCoprocessor2 = 0x3e,
     StoreDoubleWordCoprocessor3 = 0x3f,
     StoreDoubleWord = 0x37,
-
 
 #pragma warning restore CS1591
 }

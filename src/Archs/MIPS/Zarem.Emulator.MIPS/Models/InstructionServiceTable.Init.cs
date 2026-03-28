@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Emulator.Config;
+using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
@@ -76,6 +77,16 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
                 _opCodeTable[(int)OperationCode.StoreDoubleWordCoprocessor3] = &NotImplemented; // TODO
             }
         }
+        
+        if (version is >= MipsVersion.MipsIII && version.Is64Bit())
+        {
+            _opCodeTable[(int)OperationCode.DoubleWordAddImmediate] = &CheckedAluI<AddLogic64, ulong, long>;
+            _opCodeTable[(int)OperationCode.DoubleWordAddImmediateUnsigned] = &AluI<AddLogic64, ulong>;
+            _opCodeTable[(int)OperationCode.LoadDoubleWordLeft] = &NotImplemented;
+            _opCodeTable[(int)OperationCode.LoadDoubleWordRight] = &NotImplemented;
+            _opCodeTable[(int)OperationCode.LoadDoubleWord] = &Load<long>;
+            _opCodeTable[(int)OperationCode.StoreDoubleWord] = &Store<long>;
+        }
 
         if (version is < MipsVersion.Mips_R6)
         {
@@ -89,7 +100,6 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
 
         if (version is >= MipsVersion.MipsII)
         {
-            _opCodeTable[(int)OperationCode.Trap] = &Trap<TrapLogic>;
             _opCodeTable[(int)OperationCode.LoadLinkedWord] = &NotImplemented; // TODO
             _opCodeTable[(int)OperationCode.StoreConditionalWord] = &NotImplemented; // TODO
         }
@@ -151,6 +161,27 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
             _specialTable[(int)FunctionCode.TrapOnLessThanUnsigned] = &TrapOn<XltuLogic>;
             _specialTable[(int)FunctionCode.TrapOnEquals] = &TrapOn<XeqLogic>;
             _specialTable[(int)FunctionCode.TrapOnNotEquals] = &TrapOn<XneLogic>;
+        }
+
+        if (version is >= MipsVersion.MipsIII && version.Is64Bit())
+        {
+            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalVariable] = &ShiftVar<SllLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalVariable] = &ShiftVar<SrlLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticVariable] = &ShiftVar<SraLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordMultiply] = &MultR<MultLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordMultiplyUnsigned] = &MultR<MultuLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordDivide] = &DivR<DivLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordDivideUnsigned] = &DivR<DivuLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordAdd] = &AluR<AddLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordAddUnsigned] = &AluR<AdduLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordSubtract] = &AluR<SubLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordSubtractUnsigned] = &AluR<SubuLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogical] = &Shift<SllLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogical] = &Shift<SrlLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmetic] = &Shift<SraLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalPlus32] = &ShiftPlus32<SllLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalPlus32] = &ShiftPlus32<SrlLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticPlus32] = &ShiftPlus32<SraLogic64, ulong>;
         }
 
         if (version is >= MipsVersion.MipsIV and < MipsVersion.Mips_R6)

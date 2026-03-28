@@ -86,7 +86,7 @@ public partial class ExecutionTests
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input)[0];
-        var table = new InstructionTable(new());
+        var table = new InstructionTable(new(version));
         var parser = new MipsInstructionParser(new(), table, default, null, null);
         var parsed = parser.Parse(tokenized);
         if (parsed is null)

@@ -183,6 +183,35 @@ public partial class ExecutionTests
             yield return [new ExecutionTestCase<T>("clz $v0, $k0", T.CreateTruncating(BitOperations.LeadingZeroCount(K0)))];
             yield return [new ExecutionTestCase<T>("clo $v0, $k0", T.CreateTruncating(BitOperations.LeadingZeroCount(~K0)))];
         }
+
+        if (version is >= MipsVersion.MipsIII && version.Is64Bit())
+        {
+            // Unsigned
+            yield return [new ExecutionTestCase<T>("daddu $v0, $t2, $t1", T.CreateTruncating(30))];
+            yield return [new ExecutionTestCase<T>("daddiu $v0, $t2, 10", T.CreateTruncating(30))];
+            yield return [new ExecutionTestCase<T>("dsubu $v0, $t3, $t2", T.CreateTruncating(30 - 20))];
+            yield return [new ExecutionTestCase<T>("dmultu $t3, $t2", Split<T, UInt128>(30 * 20))];
+            yield return [new ExecutionTestCase<T>("ddivu $t3, $t2", (T.CreateTruncating(30 % 20), T.CreateTruncating(30 / 20)))];
+
+            // Signed (without signs)
+            yield return [new ExecutionTestCase<T>("dadd $v0, $t2, $t1", T.CreateTruncating(30))];
+            yield return [new ExecutionTestCase<T>("daddi $v0, $t2, 10", T.CreateTruncating(30))];
+            yield return [new ExecutionTestCase<T>("dsub $v0, $t3, $t2", T.CreateTruncating(30 - 20))];
+            yield return [new ExecutionTestCase<T>("dmult $t3, $t2", Split<T, UInt128>(30 * 20))];
+            yield return [new ExecutionTestCase<T>("ddiv $t3, $t2", (T.CreateTruncating(30 % 20), T.CreateTruncating(30 / 20)))];
+            yield return [new ExecutionTestCase<T>("dsra $v0, $t8, 4", T.CreateTruncating(101 >> 4))];
+            yield return [new ExecutionTestCase<T>("dsrav $v0, $t8, $s4", T.CreateTruncating(101 >> 4))];
+
+            // Signed (with signs)
+            unchecked
+            {
+                yield return [new ExecutionTestCase<T>("dadd $v0, $t3, $t5", T.CreateTruncating(30 + (-10)))];
+                yield return [new ExecutionTestCase<T>("daddi $v0, $t3, -10", T.CreateTruncating(30 + (-10)))];
+                yield return [new ExecutionTestCase<T>("dsub $v0, $t2, $t5", T.CreateTruncating(20 - (-10)))];
+                yield return [new ExecutionTestCase<T>("dmult $t3, $t6", Split<T, UInt128>((UInt128)(30 * -20)))];
+                yield return [new ExecutionTestCase<T>("ddiv $t3, $t6", (T.CreateTruncating((ulong)(30 % -20)), T.CreateTruncating((ulong)(30 / -20))))];
+            }
+        }
     }
 
     private static IEnumerable<object[]> GetLogicalInstructionTests<T>(MipsVersion version)
