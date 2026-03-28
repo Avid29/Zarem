@@ -6,10 +6,9 @@ using System.Numerics;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models.Enum;
+using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Extensions;
-using Microsoft.Testing.Extensions;
 
 namespace Test.Emulator.MIPS;
 
@@ -450,6 +449,12 @@ public partial class ExecutionTests
         {
             yield return [new ExecutionTestCase<T>("recip.S $f16, $f9", FloatRegister.F16, float.ReciprocalEstimate(2.5f))];
             yield return [new ExecutionTestCase<T>("recip.D $f16, $f12", FloatRegister.F16, double.ReciprocalEstimate(2d))];
+        }
+
+        if (version is >= MipsVersion.Mips_R2)
+        {
+            yield return [new ExecutionTestCase<T>("rsqrt.S $f16, $f9", FloatRegister.F16, float.ReciprocalSqrtEstimate(2.5f))];
+            yield return [new ExecutionTestCase<T>("rsqrt.D $f16, $f12", FloatRegister.F16, double.ReciprocalSqrtEstimate(2d))];
         }
     }
 

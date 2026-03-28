@@ -146,8 +146,8 @@ public partial class InstructionServiceTable<T, TSigned>
             FloatFuncCode.AbsoluteValue => T2.Abs(fs),
             FloatFuncCode.Move => fs,
             FloatFuncCode.Negate => -fs,
-
             FloatFuncCode.Reciprical => T2.ReciprocalEstimate(fs),
+            FloatFuncCode.RecipricalSquareRoot => T2.ReciprocalSqrtEstimate(fs),
 
             _ => throw new NotImplementedException($"FPU instruction {inst.FloatFuncCode} not implemented."),
         };
