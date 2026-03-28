@@ -171,4 +171,10 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="CouldNotOpenProjectTitle" xml:space="preserve">
+    <value>Could not open the project.</value>
+  </data>
+  <data name="CouldNotOpenProjectDescription" xml:space="preserve">
+    <value>The project could not be opened. This is likely because the project format has changed since the Zarem version this project was created in. </value>
+  </data>
 </root>

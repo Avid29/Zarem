@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Mvvm.Messaging;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Zarem.Config;
@@ -11,6 +12,8 @@ using Zarem.IDE.Models.Cache;
 using Zarem.IDE.Models.Enums;
 using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Files.Models;
+using Zarem.IDE.Services.Popup;
+using Zarem.IDE.Services.Popup.Models;
 using Zarem.MIPS;
 using Zarem.MIPS.TrapHandlers;
 using Zarem.Models.Files;
@@ -29,6 +32,8 @@ public class ProjectService : IProjectService
     private readonly IMessenger _messenger;
     private readonly ICacheService _cacheService;
     private readonly IFileSystemService _fileSystemService;
+    private readonly ILocalizationService _localizationService;
+    private readonly IPopupService _popupService;
     private readonly IStateService _stateService;
 
     /// <summary>
@@ -38,11 +43,15 @@ public class ProjectService : IProjectService
         IMessenger messenger,
         ICacheService cacheService,
         IFileSystemService fileSystemService,
+        ILocalizationService localizationService,
+        IPopupService popupService,
         IStateService stateService)
     {
         _messenger = messenger;
         _cacheService = cacheService;
         _fileSystemService = fileSystemService;
+        _localizationService = localizationService;
+        _popupService = popupService;
         _stateService = stateService;
 
         // Populate
@@ -152,10 +161,23 @@ public class ProjectService : IProjectService
         if (file is null)
             return false;
 
-        var project = ProjectFactory.Load(path);
+        try
+        {
+            var project = ProjectFactory.Load(path);
 
-        // Open the project
-        return await OpenProjectAsync(project.Config, cacheState);
+            // Open the project
+            return await OpenProjectAsync(project.Config, cacheState);
+        }
+        catch (Exception)
+        {
+            var popup = new PopupDetails(_localizationService["/Popups/CouldNotOpenProjectTitle"])
+            {
+                Description = _localizationService["/Popups/CouldNotOpenProjectDescription"],
+                CloseButtonText = _localizationService["/Popups/Close"],
+            };
+            await _popupService.ShowPopupAsync(popup);
+            return false;
+        }
     }
 
     /// <inheritdoc/>

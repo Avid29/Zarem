@@ -2,8 +2,6 @@
 
 using System.IO;
 using System.Xml.Serialization;
-using Zarem.Assembler.Config;
-using Zarem.Emulator.Config;
 
 namespace Zarem.Config;
 
