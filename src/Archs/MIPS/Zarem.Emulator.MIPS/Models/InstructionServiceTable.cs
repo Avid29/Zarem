@@ -23,9 +23,6 @@ public unsafe partial class InstructionServiceTable<T, TSigned> : InstructionSer
     private readonly MipsCpu<T> _processor;
     private readonly T* _regs;
 
-    // Execution<T> delegate
-    delegate MipsTrap ExecutionDelegate(MipsInstruction inst, out Execution<T> execution);
-
     /// <summary>
     /// Initializes a new instance of the <see cref="InstructionServiceTable{T, TSigned}"/> struct.
     /// </summary>

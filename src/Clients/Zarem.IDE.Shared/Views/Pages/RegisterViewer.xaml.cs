@@ -32,6 +32,8 @@ public sealed partial class RegisterViewer : UserControl
         };
     }
 
+    private static double GetOpacityByHalted(bool isHalted) => isHalted ? 1 : 0.5;
+
     private void GridView_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is not BindableRegister reg)

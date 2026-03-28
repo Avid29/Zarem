@@ -10,7 +10,7 @@
 .text
 entry:
 
-    # Begin loop at zero
+    # Begin loop at one
     addi    $s0,    $zero, 1
 
 loop:

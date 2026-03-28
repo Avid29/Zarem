@@ -44,10 +44,6 @@ public static class RegistersTable
         // Check for numerical register
         if (byte.TryParse(name, out var num))
         {
-            // Lowest register enum to highest register enum
-            if (num is < (byte)GPRegister.Zero or > (byte)GPRegister.ReturnAddress)
-                return false;
-
             // Cast num to register
             register = (GPRegister)num;
             return true;
@@ -89,17 +85,13 @@ public static class RegistersTable
     private static readonly Dictionary<string, GPRegister> _gpRegisterTable = new()
     {
         { "zero", GPRegister.Zero },
-
         { "at", GPRegister.AssemblerTemporary },
-
         { "v0", GPRegister.ReturnValue0 },
         { "v1", GPRegister.ReturnValue1 },
-
         { "a0", GPRegister.Argument0 },
         { "a1", GPRegister.Argument1 },
         { "a2", GPRegister.Argument2 },
         { "a3", GPRegister.Argument3 },
-
         { "t0", GPRegister.Temporary0 },
         { "t1", GPRegister.Temporary1 },
         { "t2", GPRegister.Temporary2 },
@@ -108,7 +100,6 @@ public static class RegistersTable
         { "t5", GPRegister.Temporary5 },
         { "t6", GPRegister.Temporary6 },
         { "t7", GPRegister.Temporary7 },
-
         { "s0", GPRegister.Saved0 },
         { "s1", GPRegister.Saved1 },
         { "s2", GPRegister.Saved2 },
@@ -117,17 +108,15 @@ public static class RegistersTable
         { "s5", GPRegister.Saved5 },
         { "s6", GPRegister.Saved6 },
         { "s7", GPRegister.Saved7 },
-
         { "t8", GPRegister.Temporary8 },
         { "t9", GPRegister.Temporary9 },
-
         { "k0", GPRegister.Kernel0 },
         { "k1", GPRegister.Kernel1 },
-
         { "gp", GPRegister.GlobalPointer },
         { "sp", GPRegister.StackPointer },
         { "fp", GPRegister.FramePointer },
-
         { "ra", GPRegister.ReturnAddress },
+        { "hi", GPRegister.High },
+        { "lo", GPRegister.Low },
     };
 }
