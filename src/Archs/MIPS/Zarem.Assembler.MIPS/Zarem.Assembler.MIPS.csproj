@@ -8,6 +8,7 @@
     <EmbeddedResource Include="Resources\Instructions\CoProcessor1.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\FloatingPoint.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\CoProcessor0.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\IType64.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\IType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\JType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Pseudo.inst.json" />
