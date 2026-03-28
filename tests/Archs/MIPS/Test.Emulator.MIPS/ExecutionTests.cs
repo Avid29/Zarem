@@ -22,35 +22,54 @@ public partial class ExecutionTests
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips1))]
-    public void InstructionTests_Mips1(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.MipsI);
+    public void InstructionTests_Mips1(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsI);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips2))]
-    public void InstructionTests_Mips2(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.MipsII);
+    public void InstructionTests_Mips2(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsII);
+
+    [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_Mips3))]
+    public void InstructionTests_Mips3(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.MipsIII);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips3_32Bit))]
-    public void InstructionTests_Mips3_32Bit(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.MipsIII_32Bit);
+    public void InstructionTests_Mips3_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsIII_32Bit);
+
+    [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_Mips4))]
+    public void InstructionTests_Mips4(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.MipsIV);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips4_32Bit))]
-    public void InstructionTests_Mips4_32Bit(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.MipsIV_32Bit);
+    public void InstructionTests_Mips4_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsIV_32Bit);
+
+    [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_Mips5))]
+    public void InstructionTests_Mips5(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.MipsV);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips5_32Bit))]
-    public void InstructionTests_Mips5_32Bit(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.MipsV_32Bit);
+    public void InstructionTests_Mips5_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsV_32Bit);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips32R1))]
-    public void InstructionTests_Mips32R1(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.Mips32R1);
+    public void InstructionTests_Mips32R1(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.Mips32R1);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips32R1))]
-    public void InstructionTests_Mips32R2(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.Mips32R1);
+    [DynamicData(nameof(InstructionTestList_Mips64R1))]
+    public void InstructionTests_Mips64R1(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.Mips64R1);
 
-    private static void RunTest<T, TSigned>(ExecutionTestCase<T, TSigned> @case, MipsVersion version)
+    [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_Mips32R2))]
+    public void InstructionTests_Mips32R2(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.Mips32R1);
+
+    [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_Mips64R2))]
+    public void InstructionTests_Mips64R2(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.Mips64R2);
+
+    private static void RunTest<T>(ExecutionTestCase<T> @case, MipsVersion version)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
-        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
     {
         // Run with delay slots by default
         RunTest(@case, version, true);
@@ -62,9 +81,8 @@ public partial class ExecutionTests
         }
     }
 
-    private static void RunTest<T, TSigned>(ExecutionTestCase<T, TSigned> @case, MipsVersion version, bool delaysSlots)
+    private static void RunTest<T>(ExecutionTestCase<T> @case, MipsVersion version, bool delaysSlots)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
-        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input)[0];
@@ -94,7 +112,7 @@ public partial class ExecutionTests
 
         foreach (var (reg, value) in @case.FPRInitialization)
         {
-            cpu.FloatProcessor.Words[reg] = (int)value;
+            cpu.FloatProcessor[reg] = value;
         }
 
         // Initialize the high and low registers if specified in the test case
