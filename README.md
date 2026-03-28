@@ -17,17 +17,13 @@ This project is in pre-release stages of development. Changes to Project File fo
 
 | Architecture   | Assembling      | Emulation (Interpret) | Emulation (JIT) | Debugging      | Disassembly     | Static Analysis |
 | -------------- | --------------- | --------------------- | --------------- | -------------- | --------------- | --------------- |
-| MIPS (I - V)*   | ✅ Supported    | ✅ Supported         | ⌛ Planned      | ✅ Supported   | ⚠️ WIP         | ⌛ Planned      |
-| MIPS32**	     | ✅ Supported    | ✅ Supported         | ⌛ Planned      | ✅ Supported   | ⚠️ WIP         | ⌛ Planned      |
-| MIPS64         | ⚠️ WIP	       | ⚠️ WIP               | ⌛ Planned       | ⚠️ WIP        | ⚠️ WIP         | ⌛ Planned      |
+| MIPS*          | ✅ Supported    | ✅ Supported         | ⌛ Planned      | ✅ Supported   | ⚠️ WIP         | ⌛ Planned      |
 | RISC-V         | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
 | ARM            | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
 | ARM64          | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
 | x86_64         | ❌ Not Planned  | ❌ Not Planned       | ❌ Not Planned  | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned  |
 
-\* *MIPS III+ 64-bit operations not currently supported.*
-
-\*\* *MIPS32 Release 6 is considerably different from every other version of mips and is not currently supported*.
+\* *MIPS32/64 Release 6 is considerably different from every other version of mips and is not currently supported*.
 
 # Cross-Platform Support
 
