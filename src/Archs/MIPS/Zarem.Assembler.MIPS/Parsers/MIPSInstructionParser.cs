@@ -387,6 +387,18 @@ public struct MipsInstructionParser
             return false;
         }
 
+        if (register is >= (GPRegister)32)
+        {
+            var (message, msgArg) = parsedSet switch
+            {
+                RegisterSet.Numbered => ("RegisterNumberNotFound", (object)(int)register),
+                _ => ("RegisterNotIndexable", arg)
+            };
+
+            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, message, msgArg);
+            return false;
+        }
+
         // Match register set
         if (parsedSet != RegisterSet.Numbered && parsedSet != set)
         {

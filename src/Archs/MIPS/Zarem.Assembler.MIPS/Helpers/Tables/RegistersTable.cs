@@ -44,10 +44,6 @@ public static class RegistersTable
         // Check for numerical register
         if (byte.TryParse(name, out var num))
         {
-            // Lowest register enum to highest register enum
-            if (num is < (byte)GPRegister.Zero or > (byte)GPRegister.ReturnAddress)
-                return false;
-
             // Cast num to register
             register = (GPRegister)num;
             return true;
