@@ -28,13 +28,13 @@ namespace Zarem.Assembler.Parsers;
 public readonly struct DirectiveParser
 {
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
-    private readonly AssemblerConfig _config;
+    private readonly AssemblerConfig? _config;
     private readonly AssemblerLogger? _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DirectiveParser"/> struct.
     /// </summary>
-    public DirectiveParser(IReadOnlyDictionary<string, Symbol>? symbols, AssemblerConfig config, ILogger? logger)
+    public DirectiveParser(IReadOnlyDictionary<string, Symbol>? symbols, AssemblerConfig? config, ILogger? logger)
     {
         _symbols = symbols;
         _config = config;
@@ -186,12 +186,11 @@ public readonly struct DirectiveParser
 
         if (align)
         {
-
             // Kinda unique behavior here warrants a comment.
             // Any int? comparison operator involving a null returns false, so
-            // if there's no context or threshold value this never executes.
-            var alignWarningThreshold = _config.AlignWarningThreshold;
-            var alignMessageThreshold = _config.AlignMessageThreshold;
+            // if there's no config or threshold value this never executes.
+            var alignWarningThreshold = _config?.AlignWarningThreshold;
+            var alignMessageThreshold = _config?.AlignMessageThreshold;
             if (value >= alignWarningThreshold)
             {
                 _logger?.Log(Severity.Warning, LogId.LargeAlignment, args[0].Tokens, "DirectiveLargeAlignWarning", value, alignWarningThreshold);
@@ -205,7 +204,7 @@ public readonly struct DirectiveParser
         }
         else
         {
-            var spaceMessageThreshold = _config.SpaceMessageThreshold;
+            var spaceMessageThreshold = _config?.SpaceMessageThreshold;
             if (value >= spaceMessageThreshold)
             {
                 _logger?.Log(Severity.Message, LogId.LargeSpacing, args[0].Tokens, "DirectiveLargeAlignMessage", value, spaceMessageThreshold);

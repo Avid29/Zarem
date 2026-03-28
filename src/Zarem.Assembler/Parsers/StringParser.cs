@@ -136,6 +136,7 @@ public ref struct StringParser
     {
         char e = c switch
         {
+            '0' => '\0',
             'a' => '\a',
             'b' => '\b',
             'f' => '\f',
@@ -146,10 +147,10 @@ public ref struct StringParser
             '\\' => '\\',
             '\'' => '\'',
             '"' => '\"',
-            _ => (char)0,
+            _ => 'a', // 'a' is used as a sentinel value, since 'a' does not need an escape sequence to generate.
         };
 
-        if (e == (char)0)
+        if (e == 'a')
         {
             _logger?.Log(Severity.Error, LogId.UnrecognizedEscapeSequence, _token, "UnrecognizedEscapeSequence", @$"\{c}");
             return false;
