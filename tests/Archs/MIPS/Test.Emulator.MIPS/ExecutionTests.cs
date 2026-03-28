@@ -53,7 +53,19 @@ public partial class ExecutionTests
     [DynamicData(nameof(InstructionTestList_Mips32R1))]
     public void InstructionTests_Mips32R2(ExecutionTestCase @case) => RunTest(@case, MipsVersion.Mips32R1);
 
-    private static void RunTest(ExecutionTestCase @case, MipsVersion version, bool delaysSlots = true)
+    private static void RunTest(ExecutionTestCase @case, MipsVersion version)
+    {
+        // Run with delay slots by default
+        RunTest(@case, version, true);
+
+        // Run again without if jump/branch instruction
+        if (@case.ExpectedPC.HasValue)
+        {
+            RunTest(@case, version, false);
+        }
+    }
+
+    private static void RunTest(ExecutionTestCase @case, MipsVersion version, bool delaysSlots)
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input)[0];
