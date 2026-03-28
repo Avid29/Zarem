@@ -77,7 +77,7 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
             }
         }
 
-        if (version is < MipsVersion.Mips32R6)
+        if (version is < MipsVersion.Mips_R6)
         {
             _opCodeTable[(int)OperationCode.LoadWordLeft] = &NotImplemented; // TODO
             _opCodeTable[(int)OperationCode.LoadWordRight] = &NotImplemented;
@@ -94,7 +94,7 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
             _opCodeTable[(int)OperationCode.StoreConditionalWord] = &NotImplemented; // TODO
         }
 
-        if (version is >= MipsVersion.MipsII and < MipsVersion.Mips32R6)
+        if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
         {
             _opCodeTable[(int)OperationCode.BranchOnEqualLikely] = &NotImplemented; // TODO
             _opCodeTable[(int)OperationCode.BranchOnNotEqualLikely] = &NotImplemented; // TODO
@@ -107,13 +107,13 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
             _opCodeTable[(int)OperationCode.StoreDoubleWordCoprocessor2] = &NotImplemented; // TODO
         }
 
-        if (version is >= MipsVersion.Mips32R1 and < MipsVersion.Mips32R6)
+        if (version is >= MipsVersion.Mips_R1 and < MipsVersion.Mips_R6)
         {
             InitSpecial2();
             _opCodeTable[(int)OperationCode.Special2] = &DispatchSpecial2;
         }
 
-        if (version is >= MipsVersion.Mips32R6)
+        if (version is >= MipsVersion.Mips_R6)
         {
             _opCodeTable[(int)OperationCode.BranchCompact] = &NotImplemented; // TODO
             _opCodeTable[(int)OperationCode.BranchAndLinkCompact] = &NotImplemented; // TODO
@@ -153,13 +153,13 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
             _specialTable[(int)FunctionCode.TrapOnNotEquals] = &TrapOn<XneLogic>;
         }
 
-        if (version is >= MipsVersion.MipsIV and < MipsVersion.Mips32R6)
+        if (version is >= MipsVersion.MipsIV and < MipsVersion.Mips_R6)
         {
             _specialTable[(int)FunctionCode.MoveOnZero] = &Move<MovzLogic>;
             _specialTable[(int)FunctionCode.MoveOnNotZero] = &Move<MovnLogic>;
         }
 
-        if (version is < MipsVersion.Mips32R6)
+        if (version is < MipsVersion.Mips_R6)
         {
             _specialTable[(int)FunctionCode.JumpRegister] = &JumpR;
             _specialTable[(int)FunctionCode.Multiply] = &MultR<MultLogic32, uint>;
@@ -172,7 +172,7 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
             _specialTable[(int)FunctionCode.MoveToLow] = &Mtlo;
         }
 
-        if (version is >= MipsVersion.Mips32R6)
+        if (version is >= MipsVersion.Mips_R6)
         {
             _specialTable[(int)FunctionCode.SelectOnEquals] = &NotImplemented;
             _specialTable[(int)FunctionCode.SelectOnNotEquals] = &NotImplemented;
@@ -185,7 +185,7 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
         _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = &BranchOn<XgezLogic>;
 
 
-        if (version is >= MipsVersion.MipsII and < MipsVersion.Mips32R6)
+        if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
         {
             _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediate] = &TrapOnI<XgeLogic>;
             _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediateUnsigned] = &TrapOnI<XgeuLogic>;
@@ -199,13 +199,13 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
             _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink] = &NotImplemented; // TODO
         }
 
-        if (version is < MipsVersion.Mips32R6)
+        if (version is < MipsVersion.Mips_R6)
         {
             _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroAndLink] = &BranchLinkOn<XltzLogic>;
             _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroAndLink] = &BranchLinkOn<XgezLogic>;
         }
 
-        if (version >= MipsVersion.Mips32R6)
+        if (version >= MipsVersion.Mips_R6)
         {
             _regImmTable[(int)RegImmFuncCode.NoOpAndLink] = &NotImplemented; // TODO
             _regImmTable[(int)RegImmFuncCode.BranchAndLink] = &NotImplemented; // TODO
