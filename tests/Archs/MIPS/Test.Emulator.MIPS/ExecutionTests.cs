@@ -461,7 +461,7 @@ public class ExecutionTests
 
             // Exception Return
             yield return [new ExecutionTestCase("eret", MipsTrap.ReservedInstruction)];
-            yield return [new ExecutionTestCase("eret", SideEffect.WriteCoProc)
+            yield return [new ExecutionTestCase("eret", SideEffect.WriteCoProc0)
             {
                 Status = new StatusRegister
                 {
@@ -471,25 +471,25 @@ public class ExecutionTests
 
             // Enable Interrupts
             yield return [new ExecutionTestCase("ei", MipsTrap.ReservedInstruction)];
-            yield return [new ExecutionTestCase("ei", SideEffect.WriteCoProc)
+            yield return [new ExecutionTestCase("ei", SideEffect.WriteCoProc0)
             {
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
             yield return [new ExecutionTestCase("ei $v0", GPRegister.ReturnValue0)
             {
-                ExpectedSideEffect = SideEffect.WriteCoProc,
+                ExpectedSideEffect = SideEffect.WriteCoProc0,
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
 
             // Disable Interrupts
             yield return [new ExecutionTestCase("di", MipsTrap.ReservedInstruction)];
-            yield return [new ExecutionTestCase("di", SideEffect.WriteCoProc)
+            yield return [new ExecutionTestCase("di", SideEffect.WriteCoProc0)
             {
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
             yield return [new ExecutionTestCase("di $v1", GPRegister.ReturnValue1)
             {
-                ExpectedSideEffect = SideEffect.WriteCoProc,
+                ExpectedSideEffect = SideEffect.WriteCoProc0,
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
         }

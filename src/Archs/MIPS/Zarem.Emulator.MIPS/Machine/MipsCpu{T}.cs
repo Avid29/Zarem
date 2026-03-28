@@ -221,8 +221,8 @@ public partial class MipsCpu<T> : MipsCpu
             case SideEffect.ReadMemory:
                 RegisterFile[(int)execution.GPR] = memRead;
                 break;
-            case SideEffect.WriteCoProc:
-                CoProcessor0[execution.CoProc0Reg] = execution.CoProcWriteBack;
+            case SideEffect.WriteCoProc0:
+                CoProcessor0[execution.CoProc0Reg] = execution.CoProc0WriteBack;
                 break;
             case SideEffect.WriteFloat:
                 FloatProcessor.Words[execution.FloatReg] = execution.FWordWriteBack;

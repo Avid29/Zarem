@@ -44,7 +44,7 @@ public readonly struct Execution<T>
         return new Execution<T>
         {
             CoProc0Reg = dest,
-            CoProcWriteBack = writeBack,
+            CoProc0WriteBack = writeBack,
         };
     }
 
@@ -263,11 +263,11 @@ public readonly struct Execution<T>
     /// </summary>
     public readonly GPRegister CoProcReg
     {
-        get => (GPRegister)BitField.GetField(_secondary2, REG_BITCOUNT, 0);
+        get => (GPRegister)byte.CreateTruncating(BitField.GetField(_secondary1, REG_BITCOUNT, 0));
         init
         {
-            BitField.SetField(ref _secondary2, REG_BITCOUNT, 0, (uint)value);
-            SideEffect = SideEffect.WriteCoProc;
+            BitField.SetField(ref _secondary1, REG_BITCOUNT, 0, T.CreateTruncating((byte)value));
+            SideEffect = SideEffect.WriteCoProc0;
         }
     }
 
@@ -290,28 +290,15 @@ public readonly struct Execution<T>
     }
 
     /// <summary>
-    /// Gets the register set to writeback to for co-process writeback.
+    /// Gets the value writing back to co-processor0.
     /// </summary>
-    public readonly RegisterSet CoProcRegisterSet
-    {
-        get => (RegisterSet)BitField.GetField(_secondary2, REGSET_BITCOUNT, REGSET_OFFSET);
-        init
-        {
-            BitField.SetField(ref _secondary2, REGSET_BITCOUNT, REGSET_OFFSET, (uint)value);
-            SideEffect = SideEffect.WriteCoProc;
-        }
-    }
-
-    /// <summary>
-    /// Gets the value writing back to a co-processor.
-    /// </summary>
-    public readonly T CoProcWriteBack
+    public readonly T CoProc0WriteBack
     {
         get => T.CreateTruncating(_secondary2);
         init
         {
             _secondary2 = ulong.CreateTruncating(value);
-            SideEffect = SideEffect.WriteCoProc;
+            SideEffect = SideEffect.WriteCoProc0;
         }
     }
 
@@ -329,7 +316,7 @@ public readonly struct Execution<T>
     }
 
     /// <summary>
-    /// Gets the value being written to the float processor  as a <see cref="long"/>.
+    /// Gets the value being written to the float processor as a <see cref="long"/>.
     /// </summary>
     public readonly long FLongWriteBack
     {

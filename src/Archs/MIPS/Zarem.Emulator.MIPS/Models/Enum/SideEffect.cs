@@ -60,16 +60,22 @@ public enum SideEffect
     /// <summary>
     /// Writes to co-processor.
     /// </summary>
-    WriteCoProc,
+    WriteCoProc0,
 
     /// <summary>
-    /// Writes to the floating-point processor.
+    /// Writes a word to the floating-point processor.
     /// </summary>
+    /// <remarks>
+    /// Could be a float, could be an int.
+    /// </remarks>
     WriteFloat,
 
     /// <summary>
-    /// Writes to the floating-point processor.
+    /// Writes a dword to the floating-point processor.
     /// </summary>
+    /// <remarks>
+    /// Could be a double, could be a long.
+    /// </remarks>
     WriteDouble,
 
     /// <summary>

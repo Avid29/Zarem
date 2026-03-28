@@ -80,7 +80,7 @@ public partial class InstructionServiceTable<T, TSigned>
         return new Execution<T>
         {
             CoProc0Reg = CP0Registers.Status,
-            CoProcWriteBack = T.CreateTruncating((uint)status),
+            CoProc0WriteBack = T.CreateTruncating((uint)status),
             ProgramCounter = targetPC,
         };
     }
@@ -99,7 +99,7 @@ public partial class InstructionServiceTable<T, TSigned>
             return new Execution<T>
             {
                 CoProc0Reg = CP0Registers.Status,
-                CoProcWriteBack = T.CreateTruncating((uint)status),
+                CoProc0WriteBack = T.CreateTruncating((uint)status),
                 WriteBack = T.CreateTruncating((uint)status),
                 GPR = inst.RT,
             };
