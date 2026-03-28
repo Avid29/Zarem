@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2024
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -8,7 +7,6 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Enums;
 using Zarem.Assembler.Models.Meta;
-using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 
 namespace Zarem.Assembler.Models;
@@ -20,6 +18,7 @@ public class InstructionTable : InstructionTableBase<string>
 {
     private readonly Dictionary<string, (MipsVersion Min, MipsVersion? Max)> _versionRanges = [];
     private readonly HashSet<string> _banned = [];
+    private readonly HashSet<string> _is64bitLookup = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InstructionTable"/> class.
@@ -29,18 +28,14 @@ public class InstructionTable : InstructionTableBase<string>
     }
 
     /// <inheritdoc/>
-    public override bool TryGetInstruction(string name, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsVersion? requiredVersion, out bool banned)
+    public override bool TryGetInstruction(string name, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsVersion? requiredVersion, out bool is64bit, out bool banned)
     {
         banned = _banned.Contains(name);
+        is64bit = _is64bitLookup.Contains(name);
         requiredVersion = null;
 
-        if (base.TryGetInstruction(name, out metadatas, out _, out _))
+        if (base.TryGetInstruction(name, out metadatas, out _, out _, out _))
             return true;
-
-        if (banned)
-        {
-            return false;
-        }
 
         if (_versionRanges.TryGetValue(name, out var range))
         {
@@ -67,13 +62,14 @@ public class InstructionTable : InstructionTableBase<string>
     /// <param name="argCount">The number of arguments for the instruction.</param>
     /// <param name="metadata">The instruction metadatas.</param>
     /// <param name="requiredVersion">The required version to have this instruction, if there is one.</param>
+    /// <param name="is64bit">Whether or not the instruction requires 64-bit MIPS.</param>
     /// <param name="banned">Indicates if the instruction was found, but is banned according the config.</param>
     /// <returns>Whether or not an instruction exists by that name</returns>
-    public bool TryGetInstruction(string name, int argCount, out MipsInstructionMetaBase? metadata, out MipsVersion? requiredVersion, out bool banned)
+    public bool TryGetInstruction(string name, int argCount, out MipsInstructionMetaBase? metadata, out MipsVersion? requiredVersion, out bool is64bit, out bool banned)
     {
         metadata = null;
 
-        if (TryGetInstruction(name, out var metadatas, out requiredVersion, out banned))
+        if (TryGetInstruction(name, out var metadatas, out requiredVersion, out is64bit, out banned))
         {
             metadata = metadatas.FirstOrDefault(x => x.ArgumentPattern.Length == argCount);
             return metadata is not null;
@@ -103,6 +99,11 @@ public class InstructionTable : InstructionTableBase<string>
         {
             // Add to the active lookup table in InstructionTableBase
             LoadInstruction(metadata.Name, metadata);
+        }
+
+        if (metadata.Is64Bit)
+        {
+            _is64bitLookup.Add(metadata.Name);
         }
 
         // Track version ranges for error reporting/diagnostics

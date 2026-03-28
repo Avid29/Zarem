@@ -159,13 +159,14 @@ public struct MipsInstructionParser
         if (FloatFormatTable.TryGetFloatFormat(name, out _format, out var formattedName))
             name = formattedName;
 
-        if (!_instructionTable.TryGetInstruction(name, out var metas, out var version, out var banned))
+        if (!_instructionTable.TryGetInstruction(name, out var metas, out var version, out var is64bit, out var banned))
         {
             (LogId id, string message) = version switch
             {
                 not null when banned => (LogId.DisabledFeatureInUse, "InstructionDisabled"),
                 not null when _config is null || version > _config.MipsVersion => (LogId.NotInVersion, "RequiresVersion"),
                 not null => (LogId.NotInVersion, "RemovedInVersion"),
+                null when _config is not null && is64bit && !_config.MipsVersion.Is64Bit() => (LogId.NotInVersion, "Needs64BitVersion"),
                 null => (LogId.InvalidInstructionName, "NoInstructionNamed")
             };
 

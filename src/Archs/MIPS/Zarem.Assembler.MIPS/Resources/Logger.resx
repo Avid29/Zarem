@@ -201,4 +201,7 @@
   <data name="EmptyArgument" xml:space="preserve">
     <value>Argument is empty.</value>
   </data>
+  <data name="Needs64BitVersion" xml:space="preserve">
+    <value>The instruction '{0}' is only available in 64-bit versions of MIPS.</value>
+  </data>
 </root>

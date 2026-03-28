@@ -32,7 +32,7 @@
     "pseudo_id": 3,
     "args": [ "offset" ],
     "added_in": "MipsI",
-    "removed_in": "Mips32R6",
+    "removed_in": "Mips_R6",
     "expansion_count": 1,
     "behavior": "bgezal $zero, offset"
   },

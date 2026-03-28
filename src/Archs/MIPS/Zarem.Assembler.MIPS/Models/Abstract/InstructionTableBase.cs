@@ -44,11 +44,13 @@ public abstract class InstructionTableBase<T>
     /// <param name="key">The key to lookup the instruction.</param>
     /// <param name="metadatas">The metadatas of matching instructions.</param>
     /// <param name="requiredVersion">The required version to have this instruction, if there is one.</param>
+    /// <param name="is64bit">Whether or not the instruction requires 64-bit MIPS.</param>
     /// <param name="banned">Indicates if the instruction was found, but is banned according the config.</param>
     /// <returns>Whether or not an instruction exists by that name</returns>
-    public virtual bool TryGetInstruction(T key, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsVersion? requiredVersion, out bool banned)
+    public virtual bool TryGetInstruction(T key, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsVersion? requiredVersion, out bool is64bit, out bool banned)
     {
         requiredVersion = null;
+        is64bit = false;
         banned = false;
 
         if (LookupTable.TryGetValue(key, out metadatas))
@@ -78,7 +80,7 @@ public abstract class InstructionTableBase<T>
     {
         var assembly = Assembly.GetExecutingAssembly();
         var resources = assembly.GetManifestResourceNames();
-        resources = [..resources.Where(x => x.EndsWith("Instructions.json"))];
+        resources = [..resources.Where(x => x.EndsWith("inst.json"))];
 
         foreach (var resource in resources)
         {

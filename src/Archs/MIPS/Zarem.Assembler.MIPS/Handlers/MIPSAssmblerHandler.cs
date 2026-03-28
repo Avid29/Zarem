@@ -42,13 +42,13 @@ public class MipsAssmblerHandler : IAssemblerHandler<MipsAssemblerConfig>
         Guard.IsNotNull(_instructionTable);
         Guard.IsNotNull(line.Instruction);
 
-        if (_instructionTable.TryGetInstruction(line.Instruction.Source, line.Args.Count, out var meta, out _, out _))
+        if (_instructionTable.TryGetInstruction(line.Instruction.Source, line.Args.Count, out var meta, out _, out _, out _))
         {
             var count = (meta as PseudoInstructionMeta)?.RealizedCount ?? 1;
             return count * 4;
         }
 
-        // Instruction note found.
+        // Instruction not found.
         // Add a nop and less the second pass handle the error
         return 4;
     }

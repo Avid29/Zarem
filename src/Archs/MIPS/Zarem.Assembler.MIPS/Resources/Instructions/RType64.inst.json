@@ -1,0 +1,155 @@
+﻿[
+  {
+    "type": "r-type",
+    "name": "dsllv",
+    "func_code": 20,
+    "args": [ "rd", "rt", "rs" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = $rt << $rs[5:0]"
+  },
+  {
+    "type": "r-type",
+    "name": "dsrlv",
+    "func_code": 22,
+    "args": [ "rd", "rt", "rs" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = $rt >> $rs[5:0]"
+  },
+  {
+    "type": "r-type",
+    "name": "dsrav",
+    "func_code": 23,
+    "args": [ "rd", "rt", "rs" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = (long)$rt >> $rs[5:0]"
+  },
+  {
+    "type": "r-type",
+    "name": "dmult",
+    "func_code": 28,
+    "args": [ "rs", "rt" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "(hi, lo) = (Int128)$rs * $rt"
+  },
+  {
+    "type": "r-type",
+    "name": "dmultu",
+    "func_code": 29,
+    "args": [ "rs", "rt" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "(hi, lo) = (UInt128)$rs * $rt"
+  },
+  {
+    "type": "r-type",
+    "name": "ddiv",
+    "func_code": 30,
+    "args": [ "rs", "rt" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "lo = (long)$rs / (long)$rt; hi = (long)$rs % (long)$rt"
+  },
+  {
+    "type": "r-type",
+    "name": "ddivu",
+    "func_code": 31,
+    "args": [ "rs", "rt" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "lo = $rs / $rt; hi = $rs % $rt"
+  },
+  {
+    "type": "r-type",
+    "name": "dadd",
+    "func_code": 44,
+    "args": [ "rd", "rs", "rt" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = (long)$rs + (long)$rt; trap on overflow"
+  },
+  {
+    "type": "r-type",
+    "name": "daddu",
+    "func_code": 45,
+    "args": [ "rd", "rs", "rt" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = $rs + $rt"
+  },
+  {
+    "type": "r-type",
+    "name": "dsub",
+    "func_code": 46,
+    "args": [ "rd", "rs", "rt" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = (long)$rs - (long)$rt; trap on overflow"
+  },
+  {
+    "type": "r-type",
+    "name": "dsubu",
+    "func_code": 47,
+    "args": [ "rd", "rs", "rt" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = $rs - $rt"
+  },
+  {
+    "type": "r-type",
+    "name": "dsll",
+    "func_code": 56,
+    "args": [ "rd", "rt", "sa" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = $rt << sa"
+  },
+  {
+    "type": "r-type",
+    "name": "dsrl",
+    "func_code": 58,
+    "args": [ "rd", "rt", "sa" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = $rt >> sa"
+  },
+  {
+    "type": "r-type",
+    "name": "dsra",
+    "func_code": 59,
+    "args": [ "rd", "rt", "sa" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = (long)$rt >> sa"
+  },
+  {
+    "type": "r-type",
+    "name": "dsll32",
+    "func_code": 60,
+    "args": [ "rd", "rt", "sa" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = $rt << (sa + 32)"
+  },
+  {
+    "type": "r-type",
+    "name": "dsrl32",
+    "func_code": 62,
+    "args": [ "rd", "rt", "sa" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = $rt >> (sa + 32)"
+  },
+  {
+    "type": "r-type",
+    "name": "dsra32",
+    "func_code": 63,
+    "args": [ "rd", "rt", "sa" ],
+    "added_in": "MipsIII",
+    "64bit": true,
+    "behavior": "$rd = (long)$rt >> (sa + 32)"
+  }
+]

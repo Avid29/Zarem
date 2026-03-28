@@ -21,7 +21,7 @@
     "rt_code": 2,
     "args": [ "rs", "offset" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6",
+    "removed_in": "Mips_R6",
     "behavior": "if ($rs < 0) $pc = address"
   },
   {
@@ -30,7 +30,7 @@
     "rt_code": 3,
     "args": [ "rs", "offset" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6",
+    "removed_in": "Mips_R6",
     "behavior": "if ($rs >= 0) $pc = address"
   },
   {
@@ -39,7 +39,7 @@
     "rt_code": 8,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6",
+    "removed_in": "Mips_R6",
     "behavior": "if ($rs >= immediate) trap"
   },
   {
@@ -48,7 +48,7 @@
     "rt_code": 9,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6",
+    "removed_in": "Mips_R6",
     "behavior": "if ($rs >= immediate) trap"
   },
   {
@@ -57,7 +57,7 @@
     "rt_code": 10,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6",
+    "removed_in": "Mips_R6",
     "behavior": "if ($rs < immediate) trap"
   },
   {
@@ -66,7 +66,7 @@
     "rt_code": 11,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6",
+    "removed_in": "Mips_R6",
     "behavior": "if ($rs < immediate) trap"
   },
   {
@@ -75,7 +75,7 @@
     "rt_code": 12,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6",
+    "removed_in": "Mips_R6",
     "behavior": "if ($rs == immediate) trap"
   },
   {
@@ -84,7 +84,7 @@
     "rt_code": 14,
     "args": [ "rs", "immediate" ],
     "added_in": "MipsII",
-    "removed_in": "Mips32R6",
+    "removed_in": "Mips_R6",
     "behavior": "if ($rs != immediate) trap"
   },
   {
