@@ -62,7 +62,7 @@ public partial class ExecutionTests
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips32R2))]
-    public void InstructionTests_Mips32R2(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.Mips32R1);
+    public void InstructionTests_Mips32R2(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.Mips32R2);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips64R2))]

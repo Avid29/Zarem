@@ -62,7 +62,7 @@ namespace Test.Emulator.MIPS
                     [
                         // F0 - F3: Simple Integers (for CVT.S.W or CVT.D.L tests)
                         (FloatRegister.F0, T.CreateTruncating(2)),
-                        (FloatRegister.F1, T.CreateTruncating(0)),      // Note: F0 is 2 as a long or as a word
+                        (FloatRegister.F1, T.CreateTruncating(0)),
                         (FloatRegister.F2, T.CreateTruncating(10)),
                         (FloatRegister.F3, T.CreateTruncating((uint)-10)),
 
