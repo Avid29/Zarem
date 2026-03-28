@@ -122,10 +122,15 @@ public partial class CreateProjectViewModel : PageViewModel
         MipsVersion.MipsI,
         MipsVersion.MipsII,
         MipsVersion.MipsIII,
+        MipsVersion.MipsIII_32Bit,
         MipsVersion.MipsIV,
+        MipsVersion.MipsIV_32Bit,
         MipsVersion.MipsV,
+        MipsVersion.MipsV_32Bit,
         MipsVersion.Mips32R1,
+        MipsVersion.Mips64R1,
         MipsVersion.Mips32R2,
+        MipsVersion.Mips64R2,
     ];
 
     /// <summary>
