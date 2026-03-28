@@ -1,7 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers;
@@ -9,10 +7,7 @@ using Zarem.Assembler.Tokenization;
 using Zarem.Emulator;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models.Enum;
-using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -27,33 +22,35 @@ public partial class ExecutionTests
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips1))]
-    public void InstructionTests_Mips1(ExecutionTestCase @case) => RunTest(@case, MipsVersion.MipsI);
+    public void InstructionTests_Mips1(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.MipsI);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips2))]
-    public void InstructionTests_Mips2(ExecutionTestCase @case) => RunTest(@case, MipsVersion.MipsII);
+    public void InstructionTests_Mips2(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.MipsII);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips3_32Bit))]
-    public void InstructionTests_Mips3_32Bit(ExecutionTestCase @case) => RunTest(@case, MipsVersion.MipsIII_32Bit);
+    public void InstructionTests_Mips3_32Bit(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.MipsIII_32Bit);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips4_32Bit))]
-    public void InstructionTests_Mips4_32Bit(ExecutionTestCase @case) => RunTest(@case, MipsVersion.MipsIV_32Bit);
+    public void InstructionTests_Mips4_32Bit(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.MipsIV_32Bit);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips5_32Bit))]
-    public void InstructionTests_Mips5_32Bit(ExecutionTestCase @case) => RunTest(@case, MipsVersion.MipsV_32Bit);
+    public void InstructionTests_Mips5_32Bit(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.MipsV_32Bit);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips32R1))]
-    public void InstructionTests_Mips32R1(ExecutionTestCase @case) => RunTest(@case, MipsVersion.Mips32R1);
+    public void InstructionTests_Mips32R1(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.Mips32R1);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips32R1))]
-    public void InstructionTests_Mips32R2(ExecutionTestCase @case) => RunTest(@case, MipsVersion.Mips32R1);
+    public void InstructionTests_Mips32R2(ExecutionTestCase<uint, int> @case) => RunTest(@case, MipsVersion.Mips32R1);
 
-    private static void RunTest(ExecutionTestCase @case, MipsVersion version)
+    private static void RunTest<T, TSigned>(ExecutionTestCase<T, TSigned> @case, MipsVersion version)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
     {
         // Run with delay slots by default
         RunTest(@case, version, true);
@@ -65,7 +62,9 @@ public partial class ExecutionTests
         }
     }
 
-    private static void RunTest(ExecutionTestCase @case, MipsVersion version, bool delaysSlots)
+    private static void RunTest<T, TSigned>(ExecutionTestCase<T, TSigned> @case, MipsVersion version, bool delaysSlots)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input)[0];
@@ -84,18 +83,18 @@ public partial class ExecutionTests
         var computer = new MipsComputer(emulatorConfig);
         var emulator = new Zaremulator(computer);
 
-        var cpu = (MipsCpu<uint>)computer.Processor;
+        var cpu = (MipsCpu<T>)computer.Processor;
 
         // Initialize the status register
         cpu.CoProcessor0.StatusRegister = @case.Status;
 
         // Initialize the register file with the provided values
         foreach (var (reg, value) in @case.RegisterInitialization)
-            cpu[(int)reg] = value;
+            cpu[reg] = value;
 
         foreach (var (reg, value) in @case.FPRInitialization)
         {
-            cpu.FloatProcessor[reg] = value;
+            cpu.FloatProcessor.Words[reg] = (int)value;
         }
 
         // Initialize the high and low registers if specified in the test case
@@ -107,7 +106,7 @@ public partial class ExecutionTests
 
         // Initialize the memory, if specified in the test case
         foreach (var (address, data) in @case.MemoryInitialization)
-            computer.Memory.Write(address, data);
+            computer.Memory.Write(ulong.CreateTruncating(address), data);
 
         cpu.Insert(instruction, out var execution, out var trap);
 
@@ -123,7 +122,7 @@ public partial class ExecutionTests
             var writeBackValue = writeback.Value.Value;
             if (writeBackValue.HasValue)
             {
-                Assert.AreEqual(writeBackValue.Value, computer.Processor.RegisterFile[(int)execution.GPR]);
+                Assert.AreEqual(writeBackValue.Value, cpu[execution.GPR]);
             }
         }
         else
@@ -143,7 +142,7 @@ public partial class ExecutionTests
         if (expectedMemory is not null)
         {
             var buffer = new byte[expectedMemory.Value.Data.Length];
-            computer.Memory.Read(expectedMemory.Value.Address, buffer);
+            computer.Memory.Read(ulong.CreateTruncating(expectedMemory.Value.Address), buffer);
             CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
         }
 
@@ -173,7 +172,7 @@ public partial class ExecutionTests
                 computer.Processor.Insert(MipsInstruction.NOP, out _);
             }
 
-            Assert.AreEqual(expectedPC.Value, computer.Processor.ProgramCounter);
+            Assert.AreEqual(expectedPC.Value, cpu.PC);
         }
     }
 }

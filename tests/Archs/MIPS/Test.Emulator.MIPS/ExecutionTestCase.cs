@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Numerics;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models.Enum;
@@ -8,7 +9,9 @@ using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Test.Emulator.MIPS
 {
-    public sealed record ExecutionTestCase
+    public sealed record ExecutionTestCase<T, TSigned>
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
     {
         public ExecutionTestCase(string input)
         {
@@ -22,38 +25,38 @@ namespace Test.Emulator.MIPS
                     [
                         // Max/Min values to test edge cases, as well as some arbitrary non-edge-case values for good measure
                         // Stored in the argument registers
-                        (GPRegister.Argument0, int.MaxValue),
-                        (GPRegister.Argument1, (uint)int.MinValue),
-                        (GPRegister.Argument2, uint.MaxValue),
-                        (GPRegister.Argument3, uint.MinValue),
+                        (GPRegister.Argument0, T.CreateTruncating(TSigned.MaxValue)),
+                        (GPRegister.Argument1, T.CreateTruncating(TSigned.MinValue)),
+                        (GPRegister.Argument2, T.MaxValue),
+                        (GPRegister.Argument3, T.MinValue),
 
                         // Saved 1 - 4 are assigned to 1 through 4 respectively,
                         // while saved 5 and 6 are assigned to -1 and -2 (to test sign handling in arithmetic instructions)
-                        (GPRegister.Saved1, 1),
-                        (GPRegister.Saved2, 2),
-                        (GPRegister.Saved3, 3),
-                        (GPRegister.Saved4, 4),
-                        (GPRegister.Saved5, (uint)-1),
-                        (GPRegister.Saved6, (uint)-2),
+                        (GPRegister.Saved1, T.CreateTruncating(1)),
+                        (GPRegister.Saved2, T.CreateTruncating(2)),
+                        (GPRegister.Saved3, T.CreateTruncating(3)),
+                        (GPRegister.Saved4, T.CreateTruncating(4)),
+                        (GPRegister.Saved5, T.CreateTruncating(-1)),
+                        (GPRegister.Saved6, T.CreateTruncating(-2)),
 
                         // Temp 1 - 4 are assigned to 10, 20, 30, 40 respectively,
                         // while temp 5 and 6 are assigned to -10 and -20 (to test sign handling in arithmetic instructions)
-                        (GPRegister.Temporary1, 10),
-                        (GPRegister.Temporary2, 20),
-                        (GPRegister.Temporary3, 30),
-                        (GPRegister.Temporary4, 40),
-                        (GPRegister.Temporary5, (uint)-10),
-                        (GPRegister.Temporary6, (uint)-20),
-                        (GPRegister.Temporary7, (uint)-30),
+                        (GPRegister.Temporary1, T.CreateTruncating(10)),
+                        (GPRegister.Temporary2, T.CreateTruncating(20)),
+                        (GPRegister.Temporary3, T.CreateTruncating(30)),
+                        (GPRegister.Temporary4, T.CreateTruncating(40)),
+                        (GPRegister.Temporary5, T.CreateTruncating(-10)),
+                        (GPRegister.Temporary6, T.CreateTruncating(-20)),
+                        (GPRegister.Temporary7, T.CreateTruncating(-30)),
 
                         // Assign some arbitrary values to the rest of the registers as well, just in case
-                        (GPRegister.Temporary8, 101),
-                        (GPRegister.AssemblerTemporary, 0x89ab_cdef),
-                        (GPRegister.Kernel0, ExecutionTests.K0),
-                        (GPRegister.Kernel1, ExecutionTests.K1),
+                        (GPRegister.Temporary8, T.CreateTruncating(101)),
+                        (GPRegister.AssemblerTemporary, T.CreateTruncating(0x89ab_cdef)),
+                        (GPRegister.Kernel0, T.CreateTruncating(ExecutionTests.K0)),
+                        (GPRegister.Kernel1, T.CreateTruncating(ExecutionTests.K1)),
 
                         // Print integer
-                        (GPRegister.ReturnValue0, 1),
+                        (GPRegister.ReturnValue0, T.One),
                     ];
 
                 FPRInitialization =
@@ -106,10 +109,10 @@ namespace Test.Emulator.MIPS
                         (FloatRegister.F31, 0xFFFFFFFF) // All bits set
                     ];
 
-                InitialHighLow = (0x1234, 0x5678);
+                InitialHighLow = (T.CreateTruncating(0x1234), T.CreateTruncating(0x5678));
 
                 MemoryInitialization =
-                    [(0x1000, [0x12, 0x34, 0x56, 0x78])];
+                    [(T.CreateTruncating(0x1000), [0x12, 0x34, 0x56, 0x78])];
             }
         }
 
@@ -118,12 +121,12 @@ namespace Test.Emulator.MIPS
             ExpectedTrap = trap;
         }
 
-        public ExecutionTestCase(string input, uint writeBack) : this(input)
+        public ExecutionTestCase(string input, T writeBack) : this(input)
         {
             ExpectedWriteBack = (GPRegister.ReturnValue0, writeBack);
         }
 
-        public ExecutionTestCase(string input, GPRegister reg, uint? writeBack = null) : this(input)
+        public ExecutionTestCase(string input, GPRegister reg, T? writeBack = null) : this(input)
         {
             ExpectedWriteBack = (reg, writeBack);
         }
@@ -146,17 +149,12 @@ namespace Test.Emulator.MIPS
             ExpectedLongFloatWriteBack = (reg, writeBack);
         }
 
-        public ExecutionTestCase(string input, (uint, byte[]) memory) : this(input)
+        public ExecutionTestCase(string input, (T, byte[]) memory) : this(input)
         {
             ExpectedMemory = memory;
         }
 
-        public ExecutionTestCase(string input, ulong highLow) : this(input)
-        {
-            ExpectedHighLow = ((uint)(highLow >> 32), (uint)highLow);
-        }
-
-        public ExecutionTestCase(string input, (uint, uint) highLow) : this(input)
+        public ExecutionTestCase(string input, (T, T) highLow) : this(input)
         {
             ExpectedHighLow = highLow;
         }
@@ -170,27 +168,27 @@ namespace Test.Emulator.MIPS
 
         public MipsTrap ExpectedTrap { get; init; } = MipsTrap.None;
 
-        public (GPRegister Regiter, uint? Value)? ExpectedWriteBack { get; init; } = null;
+        public (GPRegister Regiter, T? Value)? ExpectedWriteBack { get; init; } = null;
 
         public (FloatRegister Register, int Value)? ExpectedWordFloatWriteBack { get; init; } = null;
 
         public (FloatRegister Register, long Value)? ExpectedLongFloatWriteBack { get; init; } = null;
 
-        public uint? ExpectedPC { get; init; } = null;
+        public T? ExpectedPC { get; init; } = null;
 
         public SideEffect? ExpectedSideEffect { get; init; }
 
-        public (uint Address, byte[] Data)? ExpectedMemory { get; init; }
+        public (T Address, byte[] Data)? ExpectedMemory { get; init; }
 
-        public (uint High, uint Low)? ExpectedHighLow { get; init; }
+        public (T High, T Low)? ExpectedHighLow { get; init; }
 
-        public (GPRegister Register, uint Value)[] RegisterInitialization { get; init; } = [];
+        public (GPRegister Register, T Value)[] RegisterInitialization { get; init; } = [];
 
         public (FloatRegister Register, uint Value)[] FPRInitialization { get; init; } = [];
 
-        public (uint Address, byte[] Data)[] MemoryInitialization { get; init; } = [];
+        public (T Address, byte[] Data)[] MemoryInitialization { get; init; } = [];
 
-        public (uint High, uint Low)? InitialHighLow { get; init; }
+        public (T High, T Low)? InitialHighLow { get; init; }
 
         public PrivilegeMode PrivilegeMode
         {
