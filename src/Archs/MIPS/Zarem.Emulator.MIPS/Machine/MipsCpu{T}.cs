@@ -219,6 +219,7 @@ public partial class MipsCpu<T> : MipsCpu
                 ApplyJump(execution.ProgramCounter, ref nextPc);
                 break;
             case SideEffect.ReadMemory:
+            case SideEffect.ReadMemorySigned:
                 RegisterFile[(int)execution.GPR] = memRead;
                 break;
             case SideEffect.WriteCoProc0:
