@@ -249,4 +249,19 @@
   <data name="MipsVersion_Mips32R2" xml:space="preserve">
     <value>Mips32 Release 2</value>
   </data>
+  <data name="MipsVersion_MipsIII_32Bit" xml:space="preserve">
+    <value>MIPS III (32-Bit)</value>
+  </data>
+  <data name="MipsVersion_MipsIV_32Bit" xml:space="preserve">
+    <value>MIPS IV (32-Bit)</value>
+  </data>
+  <data name="MipsVersion_MipsV_32Bit" xml:space="preserve">
+    <value>MIPS V (32-Bit)</value>
+  </data>
+  <data name="MipsVersion_Mips64R2" xml:space="preserve">
+    <value>Mips64 Release 2</value>
+  </data>
+  <data name="MipsVersion_Mips64R1" xml:space="preserve">
+    <value>Mips64 Release 1</value>
+  </data>
 </root>
