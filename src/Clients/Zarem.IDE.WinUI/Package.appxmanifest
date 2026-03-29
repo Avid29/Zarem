@@ -11,7 +11,7 @@
 	<Identity
 	  Name="38062AvishaiDernis.Zarem"
 	  Publisher="CN=43D24869-0557-46C9-8B30-13C6ACFDB86B"
-	  Version="0.2.60320.0" />
+	  Version="0.3.60329.0" />
 
 	<mp:PhoneIdentity PhoneProductId="e294f103-ed56-4067-bdc1-56756ead9fe8" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
