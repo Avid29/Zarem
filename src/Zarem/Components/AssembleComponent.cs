@@ -20,7 +20,7 @@ public class AssembleComponent<THandler, TConfig> : IAssembleComponent
     where THandler : IAssemblerHandler<TConfig>
     where TConfig : AssemblerConfig
 {
-    private THandler _handler;
+    private readonly THandler _handler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssembleComponent{TAssembler, TConfig}"/> class.

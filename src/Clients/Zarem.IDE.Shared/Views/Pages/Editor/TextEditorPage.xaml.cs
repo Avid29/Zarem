@@ -183,7 +183,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
     private async Task LoadContentAsync()
     {
         // Defer until loaded
-        if (ActiveCodeEditor is null)
+        if (ZaremEditor is null)
             return;
 
         var file = ViewModel?.File;
@@ -203,7 +203,6 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
 
         OriginalText = text;
         ActiveCodeEditor?.ResetHistory();
-
     }
 
     private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
