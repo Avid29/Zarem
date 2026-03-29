@@ -10,18 +10,14 @@
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
 		<PublishProfile>$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
+		<WindowsPackageType>MSIX</WindowsPackageType>
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<Configurations>Debug;Alpha;Release</Configurations>
 	</PropertyGroup>
+	
 	<ItemGroup>
-	  <AppxManifest Include="Package.appxmanifest" Condition="'$(Configuration)' == 'Release'">
-	    <SubType>Designer</SubType>
-	  </AppxManifest>
-	  <AppxManifest Include="Package-Alpha.appxmanifest" Condition="'$(Configuration)' == 'Alpha'">
-	    <SubType>Designer</SubType>
-	  </AppxManifest>
-	  <AppxManifest Include="Package-Dev.appxmanifest" Condition="'$(Configuration)' == 'Debug'">
+	  <AppxManifest Include="Package-$(Configuration).appxmanifest">
 	    <SubType>Designer</SubType>
 	  </AppxManifest>
 	</ItemGroup>
@@ -88,5 +84,9 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Zarem.IDE.ViewModels\Zarem.IDE.ViewModels.csproj" />
 	</ItemGroup>
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	  <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(SolutionDir)UpdateVersion.ps1&quot; -ManifestPath &quot;$(ProjectDir)Package-$(Configuration).appxmanifest&quot;" />
+	</Target>
 
 </Project>
