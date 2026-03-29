@@ -1,11 +1,14 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Zarem.Assembler.Logging.Interfaces;
+using Zarem.Assembler.Tokenization;
+using Zarem.Assembler.Tokenization.Models.Enums;
 
 namespace Zarem.IDE.Controls.CodeEditor.Zarem;
 
@@ -77,31 +80,31 @@ public partial class ZaremCodeEditor
         lineRange.CharacterFormat.ForegroundColor = Colors.White;
 
         // Tokenize the line
-        //var tokenized = Tokenizer.TokenizeLine(line, mode: TokenizerMode.IDE);
-        //foreach (var token in tokenized.Tokens)
-        //{
-        //    var tokenStart = lineStart + token.Location.Column - 1;
-        //    var tokenEnd = tokenStart + token.Source.Length;
-        //    var tokenDocumentRange = Document.GetRange(tokenStart, tokenEnd);
+        var tokenized = Tokenizer.TokenizeLine(line, mode: TokenizerMode.IDE);
+        foreach (var token in tokenized[0].Tokens)
+        {
+            var tokenStart = lineStart + token.Location.Column;
+            var tokenEnd = tokenStart + token.Source.Length;
+            var tokenDocumentRange = Document.GetRange(tokenStart, tokenEnd);
 
-        //    tokenDocumentRange.CharacterFormat.ForegroundColor = token.Type switch
-        //    {
-        //        TokenType.Instruction => "#A7FA95".ToColor(),
-        //        TokenType.Register => "#FE8482".ToColor(),
-        //        TokenType.Immediate => "#F8FC8B".ToColor(),
+            tokenDocumentRange.CharacterFormat.ForegroundColor = token.Type switch
+            {
+                TokenType.Instruction => "#A7FA95".ToColor(),
+                TokenType.Register => "#FE8482".ToColor(),
+                TokenType.Immediate => "#F8FC8B".ToColor(),
 
-        //        TokenType.Reference or
-        //        TokenType.LabelDeclaration => "#73EEFD".ToColor(),
+                TokenType.Reference or
+                TokenType.LabelDeclaration => "#73EEFD".ToColor(),
 
-        //        TokenType.Operator => "#77A7FD".ToColor(),
+                TokenType.Operator => "#77A7FD".ToColor(),
 
-        //        TokenType.Directive => "#FA9EF6".ToColor(),
-        //        TokenType.Comma => "#77A7FD".ToColor(),
-        //        TokenType.String => "#FFC47A".ToColor(),
-        //        TokenType.Comment => "#9B88FC".ToColor(),
-        //        _ => Colors.White,
-        //    };
-        //}
+                TokenType.Directive => "#FA9EF6".ToColor(),
+                TokenType.Comma => "#77A7FD".ToColor(),
+                TokenType.String => "#FFC47A".ToColor(),
+                TokenType.Comment => "#9B88FC".ToColor(),
+                _ => Colors.White,
+            };
+        }
 
         // Apply display updates
         Document.ApplyDisplayUpdates();
