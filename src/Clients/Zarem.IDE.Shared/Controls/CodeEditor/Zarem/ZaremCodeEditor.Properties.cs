@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using System;
 
@@ -11,34 +12,46 @@ public partial class ZaremCodeEditor
     /// A <see cref="DependencyProperty"/> for the <see cref="Text"/> property.
     /// </summary>
     public static readonly DependencyProperty TextProperty =
-        DependencyProperty.Register(nameof(Text), typeof(string), typeof(ZaremCodeEditor), new PropertyMetadata(string.Empty));
+        DependencyProperty.Register(nameof(Text), typeof(string), typeof(ZaremCodeEditor), new PropertyMetadata(string.Empty, OnTextPropertyChanged));
 
-    /// <summary>
-    /// A <see cref="DependencyProperty"/> for the <see cref="SelectedRange"/> property.
-    /// </summary>
+    public static readonly DependencyProperty LineProperty =
+        DependencyProperty.Register(nameof(Line), typeof(long), typeof(ZaremCodeEditor), new PropertyMetadata(0L, OnPositionPropertyChanged));
+
+    public static readonly DependencyProperty ColumnProperty =
+        DependencyProperty.Register(nameof(Column), typeof(long), typeof(ZaremCodeEditor), new PropertyMetadata(0L, OnPositionPropertyChanged));
+
+    public static readonly DependencyProperty ZoomProperty =
+        DependencyProperty.Register(nameof(Zoom), typeof(int), typeof(ZaremCodeEditor), new PropertyMetadata(100, OnZoomPropertyChanged));
+
     public static readonly DependencyProperty SelectionRangeProperty =
         DependencyProperty.Register(nameof(SelectedRange), typeof(Range), typeof(ZaremCodeEditor), new PropertyMetadata(new Range(0, 0)));
 
-    /// <summary>
-    /// Gets or sets the text contained in the editbox.
-    /// </summary>
+    /// <inheritdoc/>
     public string Text
     {
         get => (string)GetValue(TextProperty);
-        set
-        {
-            if (Text == value)
-                return;
+        set => SetValue(TextProperty, value);
+    }
 
-            // Do not use the setter internally.
-            // That causes unneccesary looping
+    /// <inheritdoc/>
+    public long Line
+    {
+        get => (long)GetValue(LineProperty);
+        set => SetValue(LineProperty, value);
+    }
 
-            SetValue(TextProperty, value);
-            Document.SetText(Microsoft.UI.Text.TextSetOptions.None, value);
+    /// <inheritdoc/>
+    public long Column
+    {
+        get => (long)GetValue(ColumnProperty);
+        set => SetValue(ColumnProperty, value);
+    }
 
-            // TODO: Improve
-            _ = UpdateSyntaxHighlightingAsync();
-        }
+    /// <inheritdoc/>
+    public int Zoom
+    {
+        get => (int)GetValue(ZoomProperty);
+        set => SetValue(ZoomProperty, value);
     }
 
     /// <summary>
@@ -50,5 +63,42 @@ public partial class ZaremCodeEditor
         set => SetValue(SelectionRangeProperty, value);
     }
 
-    private void UpdateTextProperty(string value) => SetValue(TextProperty, value);
+    private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
+    {
+        if (d is not ZaremCodeEditor codeEditor)
+            return;
+
+        codeEditor.UpdateText();
+    }
+
+    private static void OnPositionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
+    {
+        if (d is not ZaremCodeEditor codeEditor)
+            return;
+
+        //codeEditor.UpdatePosition();
+    }
+
+    private static void OnZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
+    {
+        if (d is not ZaremCodeEditor codeEditor)
+            return;
+
+        //codeEditor.UpdateZoom();
+    }
+
+    private void UpdateText()
+    {
+        // Get current text, and check if it matches
+        // Nothing to be done if the text is unchanged.
+        Document.GetText(TextGetOptions.None, out var curr);
+        if (Text == curr)
+            return;
+
+        // Set the text
+        Document.SetText(TextSetOptions.None, Text);
+
+        // TODO: Improve
+        _ = UpdateSyntaxHighlightingAsync();
+    }
 }

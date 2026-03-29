@@ -2,11 +2,12 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor.Zarem;
 
 [TemplatePart(Name = SelectedLineHighlightBorderPartName, Type = typeof(Border))]
-public partial class ZaremCodeEditor : RichEditBox
+public partial class ZaremCodeEditor : RichEditBox, ICodeEditor
 {
     private const string SelectedLineHighlightBorderPartName = "SelectedLineHighlightBorder";
 
@@ -18,6 +19,15 @@ public partial class ZaremCodeEditor : RichEditBox
     public ZaremCodeEditor()
     {
         DefaultStyleKey = typeof(ZaremCodeEditor);
+    }
+
+    public void NavigateToToken(SourceLocation location)
+    {
+    }
+
+    public void ResetHistory()
+    {
+        Document.ClearUndoRedoHistory();
     }
 
     /// <inheritdoc/>

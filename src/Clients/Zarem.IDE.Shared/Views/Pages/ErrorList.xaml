@@ -6,10 +6,10 @@
     xmlns:behaviors="using:CommunityToolkit.WinUI.Behaviors"
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ilogger="using:Zarem.Assembler.Logging.Interfaces"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:Zarem.IDE.Views.Pages"
     xmlns:logenum="using:Zarem.Assembler.Logging.Enum"
-    xmlns:ilogger="using:Zarem.Assembler.Logging.Interfaces"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
@@ -43,8 +43,8 @@
 
                     <ctc:DataColumn
                         x:Uid="/ErrorList/CodeDC"
-                        Content="Code"
                         MinWidth="48"
+                        Content="Code"
                         DesiredWidth="80" />
                     <ctc:DataColumn
                         x:Uid="/ErrorList/MessageDC"
@@ -84,10 +84,10 @@
                         Text="{x:Bind Code, Mode=OneWay}" />
                     <TextBlock
                         Margin="8,0"
-                        FontSize="12"
-                        TextReadingOrder="UseFlowDirection"
                         FlowDirection="{Binding DataContext.MessageFlowDirection, ElementName=ListView, Mode=OneWay}"
-                        Text="{x:Bind Message, Mode=OneWay}" />
+                        FontSize="12"
+                        Text="{x:Bind Message, Mode=OneWay}"
+                        TextReadingOrder="UseFlowDirection" />
                     <TextBlock
                         Margin="8,0"
                         FontSize="12"

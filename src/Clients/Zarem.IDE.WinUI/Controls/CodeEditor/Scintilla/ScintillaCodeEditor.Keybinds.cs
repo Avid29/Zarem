@@ -4,9 +4,9 @@ using System;
 using WinUIEditor;
 using Zarem.IDE.Messages.Editor.Enums;
 
-namespace Zarem.IDE.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
-public partial class CodeEditor
+public partial class ScintillaCodeEditor
 {
     private void SetupKeybinds()
     {
@@ -66,7 +66,7 @@ public partial class CodeEditor
     public void ApplyOperation(EditorOperation operation)
     {
         // Get the editor
-        var editor = ChildEditor?.Editor;
+        var editor = _childEditor?.Editor;
         if (editor is null)
             return;
 
@@ -135,7 +135,7 @@ public partial class CodeEditor
     /// </summary>
     /// <param name="operation">The operation requested.</param>
     /// <returns>Null if default behavior should be used.</returns>
-    protected virtual Action? GetOperationAction(EditorOperation operation) => null;
+    private Action? GetOperationAction(EditorOperation operation) => null;
 
     private int KeyDef(char key, KeyMod mod = KeyMod.Norm)
     {

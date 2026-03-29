@@ -8,6 +8,7 @@
     xmlns:editor="using:Zarem.IDE.Controls.CodeEditor"
     xmlns:local="using:Zarem.IDE.Views.Pages.Editor"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:seditor="using:Zarem.IDE.Controls.CodeEditor.Scintilla"
     xmlns:zeditor="using:Zarem.IDE.Controls.CodeEditor.Zarem"
     mc:Ignorable="d">
 
@@ -36,18 +37,8 @@
         <!--  Editor  -->
         <editor:CodeEditor
             x:Name="CodeEditor"
-            x:Load="False"
-            Text="{x:Bind Text, Mode=TwoWay}" />
-        <editor:AssemblyEditor
-            x:Name="AssemblyEditor"
-            x:Load="False"
-            AnnotationThreshold="{x:Bind ViewModel.AnnotationThreshold, Mode=OneWay}"
-            AssemblerConfig="{x:Bind ViewModel.AssemblerConfig, Mode=OneWay}"
-            ExecutingLocation="{x:Bind ViewModel.ExecutingLocation, Mode=OneWay}"
-            RealTimeAssembly="{x:Bind ViewModel.AssembleRealTime, Mode=OneWay}"
-            SyntaxHighlightingTheme="{StaticResource SyntaxHighlighting}"
-            Text="{x:Bind Text, Mode=TwoWay}" />
-        <zeditor:ZaremCodeEditor x:Name="ZaremEditor" Text="{x:Bind Text, Mode=OneWay}" />
+            Style="{StaticResource ScintillaCodeEditorStyle}"
+            Text="{x:Bind Text, Mode=OneWay}" />
 
         <!--  Status Bar  -->
         <Grid
@@ -64,21 +55,21 @@
                 VerticalAlignment="Center"
                 FontSize="12"
                 Opacity=".5"
-                Text="{x:Bind local:TextEditorPage.GetPositionText(ActiveCodeEditor.Line, ActiveCodeEditor.Column), Mode=OneWay}" />
+                Text="{x:Bind local:TextEditorPage.GetPositionText(CodeEditor.Line, CodeEditor.Column), Mode=OneWay}" />
 
-            <TextBlock
+            <!--<TextBlock
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 FontSize="12"
                 Opacity=".5"
-                Text="{x:Bind FormatAddres(AssemblyEditor.PositionAddress), Mode=OneWay}" />
+                Text="{x:Bind FormatAddres(AssemblyEditor.PositionAddress), Mode=OneWay}" />-->
 
             <ComboBox
                 Grid.Column="2"
                 VerticalAlignment="Center"
                 IsEditable="True"
-                SelectedItem="{x:Bind ActiveCodeEditor.Zoom, Mode=TwoWay}"
-                Text="{x:Bind ActiveCodeEditor.Zoom, Mode=OneWay, Converter={StaticResource PercentConverter}}"
+                SelectedItem="{x:Bind CodeEditor.Zoom, Mode=TwoWay}"
+                Text="{x:Bind CodeEditor.Zoom, Mode=OneWay, Converter={StaticResource PercentConverter}}"
                 TextSubmitted="ZoomComboBox_TextSubmitted">
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="x:Int32">

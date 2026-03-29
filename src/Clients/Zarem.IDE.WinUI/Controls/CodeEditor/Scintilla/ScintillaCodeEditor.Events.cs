@@ -1,11 +1,11 @@
-﻿// Avishai Dernis 2025
+﻿// Avishai Dernis 2026
 
 using Microsoft.UI.Xaml;
 using WinUIEditor;
 
-namespace Zarem.IDE.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
-public partial class CodeEditor
+public partial class ScintillaCodeEditor
 {
     private void CodeEditor_Loaded(object sender, RoutedEventArgs e)
     {
@@ -16,7 +16,7 @@ public partial class CodeEditor
         if (!TryGetEditor(out var editor))
             return;
 
-        ChildEditor.Focus(FocusState.Keyboard);
+        _childEditor.Focus(FocusState.Keyboard);
 
         editor.Modified += Editor_Modified;
         editor.ZoomChanged += Editor_ZoomChanged;

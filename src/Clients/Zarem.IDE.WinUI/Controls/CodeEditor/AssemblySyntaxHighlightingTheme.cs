@@ -1,4 +1,4 @@
-﻿// Avishai Dernis 2025
+﻿// Avishai Dernis 2026
 
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI;

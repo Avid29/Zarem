@@ -36,7 +36,7 @@ public partial class ZaremCodeEditor
             return;
 
         Document.GetText(TextGetOptions.None, out var str);
-        UpdateTextProperty(str);
+        Text = str;
 
         await UpdateSyntaxHighlightingAsync();
     }

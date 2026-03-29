@@ -3,24 +3,24 @@
 using Microsoft.UI.Xaml;
 using System;
 
-namespace Zarem.IDE.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
-public partial class CodeEditor
+public partial class ScintillaCodeEditor
 {
     /// <summary>
     /// A <see cref="DependencyProperty"/> for the <see cref="Text"/> property.
     /// </summary>
     public static readonly DependencyProperty TextProperty =
-        DependencyProperty.Register(nameof(Text), typeof(string), typeof(CodeEditor), new PropertyMetadata(string.Empty, OnTextChanged));
+        DependencyProperty.Register(nameof(Text), typeof(string), typeof(ScintillaCodeEditor), new PropertyMetadata(string.Empty, OnTextPropertyChanged));
 
     public static readonly DependencyProperty LineProperty =
-        DependencyProperty.Register(nameof(Line), typeof(long), typeof(CodeEditor), new PropertyMetadata(0L, OnPositionPropertyChanged));
+        DependencyProperty.Register(nameof(Line), typeof(long), typeof(ScintillaCodeEditor), new PropertyMetadata(0L, OnPositionPropertyChanged));
 
     public static readonly DependencyProperty ColumnProperty =
-        DependencyProperty.Register(nameof(Column), typeof(long), typeof(CodeEditor), new PropertyMetadata(0L, OnPositionPropertyChanged));
+        DependencyProperty.Register(nameof(Column), typeof(long), typeof(ScintillaCodeEditor), new PropertyMetadata(0L, OnPositionPropertyChanged));
 
     public static readonly DependencyProperty ZoomProperty =
-        DependencyProperty.Register(nameof(Zoom), typeof(int), typeof(CodeEditor), new PropertyMetadata(100, OnZoomPropertyChanged));
+        DependencyProperty.Register(nameof(Zoom), typeof(int), typeof(ScintillaCodeEditor), new PropertyMetadata(100, OnZoomPropertyChanged));
 
     /// <summary>
     /// Gets or sets the text contained in the editbox.
@@ -58,9 +58,9 @@ public partial class CodeEditor
         set => SetValue(ZoomProperty, value);
     }
 
-    private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
+    private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
     {
-        if (d is not CodeEditor codeEditor)
+        if (d is not ScintillaCodeEditor codeEditor)
             return;
 
         codeEditor.UpdateText();
@@ -68,7 +68,7 @@ public partial class CodeEditor
 
     private static void OnPositionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
     {
-        if (d is not CodeEditor codeEditor)
+        if (d is not ScintillaCodeEditor codeEditor)
             return;
 
         codeEditor.UpdatePosition();
@@ -76,7 +76,7 @@ public partial class CodeEditor
 
     private static void OnZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
     {
-        if (d is not CodeEditor codeEditor)
+        if (d is not ScintillaCodeEditor codeEditor)
             return;
 
         codeEditor.UpdateZoom();
@@ -85,7 +85,7 @@ public partial class CodeEditor
     private void UpdateText()
     {
         // Retrieve the editor
-        var editor = ChildEditor?.Editor;
+        var editor = _childEditor?.Editor;
         if (editor is null)
             return;
 
@@ -105,7 +105,7 @@ public partial class CodeEditor
     private void UpdatePosition()
     {
         // Retrieve the editor
-        var editor = ChildEditor?.Editor;
+        var editor = _childEditor?.Editor;
         if (editor is null)
             return;
 
@@ -127,7 +127,7 @@ public partial class CodeEditor
     private void UpdateZoom()
     {
         // Retrieve the editor
-        var editor = ChildEditor?.Editor;
+        var editor = _childEditor?.Editor;
         if (editor is null)
             return;
 
