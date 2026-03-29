@@ -43,6 +43,6 @@ public class RecentFileItemsCache
         }
 
         while (Paths.Count > maxSize)
-            Paths.RemoveFirst();
+            Paths.RemoveLast();
     }
 }
