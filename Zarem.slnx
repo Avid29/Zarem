@@ -71,6 +71,7 @@
     <File Path="global.json" />
     <File Path="nuget.config" />
     <File Path="README.md" />
+    <File Path="UpdateVersion.ps1" />
   </Folder>
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Plugins/">
