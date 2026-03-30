@@ -2,7 +2,17 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Zarem.Assembler;
+using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
+using Zarem.Assembler.Logging;
+using Zarem.Helpers;
+using Zarem.IDE.Controls.CodeEditor.Scintilla;
 using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor;
@@ -11,7 +21,7 @@ namespace Zarem.IDE.Controls.CodeEditor;
 public sealed partial class CodeEditor : Control, ICodeEditor
 {
     public static readonly DependencyProperty TextProperty =
-        DependencyProperty.Register(nameof(Text), typeof(string), typeof(CodeEditor), new PropertyMetadata(string.Empty));
+        DependencyProperty.Register(nameof(Text), typeof(string), typeof(CodeEditor), new PropertyMetadata(string.Empty, OnTextPropertyChanged));
 
     public static readonly DependencyProperty LineProperty =
         DependencyProperty.Register(nameof(Line), typeof(long), typeof(CodeEditor), new PropertyMetadata(0L));
@@ -25,8 +35,11 @@ public sealed partial class CodeEditor : Control, ICodeEditor
     public static readonly DependencyProperty ColorSchemeProperty =
         DependencyProperty.Register(nameof(ColorScheme), typeof(AssemblySyntaxColorScheme), typeof(CodeEditor), new PropertyMetadata(null));
 
+    public static readonly DependencyProperty RealTimeAssemblyProperty
+        = DependencyProperty.Register(nameof(RealTimeAssembly), typeof(bool), typeof(CodeEditor), new PropertyMetadata(true, OnRealTimeAssemblyPropertyChanged));
+
     public static readonly DependencyProperty AnnotationThresholdProperty =
-        DependencyProperty.Register(nameof(AnnotationThreshold), typeof(AnnotationThreshold), typeof(CodeEditor), new PropertyMetadata(AnnotationThreshold.Errors));
+        DependencyProperty.Register(nameof(AnnotationThreshold), typeof(AnnotationThreshold), typeof(CodeEditor), new PropertyMetadata(AnnotationThreshold.Errors, OnLogAnnotationsChanged));
 
     private const string ICodeEditorPartName = "PART_ICodeEditor";
 
@@ -77,6 +90,15 @@ public sealed partial class CodeEditor : Control, ICodeEditor
         set => SetValue(ColorSchemeProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether or not to check assembly errors in real-time.
+    /// </summary>
+    public bool RealTimeAssembly
+    {
+        get => (bool)GetValue(RealTimeAssemblyProperty);
+        set => SetValue(RealTimeAssemblyProperty, value);
+    }
+
     /// <inheritdoc/>
     public AnnotationThreshold AnnotationThreshold
     {
@@ -84,7 +106,64 @@ public sealed partial class CodeEditor : Control, ICodeEditor
         set => SetValue(AnnotationThresholdProperty, value);
     }
 
+    public SymbolResolver? SymbolResolver { get; private set; }
+
     public void NavigateToToken(SourceLocation location) => _codeEditor?.NavigateToToken(location);
 
     public void ResetHistory() => _codeEditor?.ResetHistory();
+
+    /// <inheritdoc/>
+    public void ApplyLogHighlights(IReadOnlyList<AssemblerEntry> logs) => _codeEditor?.ApplyLogHighlights(logs);
+
+    /// <inheritdoc/>
+    public void ClearLogHighlights() => _codeEditor?.ClearLogHighlights();
+
+    public static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not CodeEditor codeEditor)
+            return;
+
+        _ = codeEditor.RunAssemblerAsync();
+    }
+
+    private static void OnRealTimeAssemblyPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
+    {
+        if (d is not CodeEditor codeEditor)
+            return;
+
+        codeEditor.ClearLogHighlights();
+        _ = codeEditor.RunAssemblerAsync();
+    }
+
+    private static void OnLogAnnotationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+    {
+        if (d is not CodeEditor codeEditor)
+            return;
+
+        // TODO: This is dirty. Change this
+        codeEditor._codeEditor?.AnnotationThreshold = codeEditor.AnnotationThreshold;
+
+        codeEditor.ClearLogHighlights();
+        _ = codeEditor.RunAssemblerAsync();
+    }
+
+    private async Task RunAssemblerAsync()
+    {
+        if (!RealTimeAssembly)
+            return;
+
+        // Run assembler and show errors
+        try
+        {
+            var config = new MipsAssemblerConfig(MipsVersion.MipsIII);
+            var result = await Zarembler.AssembleAsync(Text, "editor", new MipsAssmblerHandler(config), config);
+            SymbolResolver = new SymbolResolver(result.Symbols);
+
+            ApplyLogHighlights(result.Logs);
+        }
+        catch (Exception)
+        {
+            // TODO: Notify exception occured
+        }
+    }
 }

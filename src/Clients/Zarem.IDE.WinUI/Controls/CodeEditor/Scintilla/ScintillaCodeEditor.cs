@@ -61,6 +61,7 @@ public sealed partial class ScintillaCodeEditor : Control, ICodeEditor
         this.Loaded += CodeEditor_Loaded;
 
         SetUpHighlighting();
+        SetupIndicators();
 
         // Apply the current text
         UpdateText();

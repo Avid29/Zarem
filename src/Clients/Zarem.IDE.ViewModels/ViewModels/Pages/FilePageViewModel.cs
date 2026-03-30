@@ -96,7 +96,7 @@ public partial class FilePageViewModel : PageViewModel
     /// <summary>
     /// Gets whether or not the file should be assembled in real-time.
     /// </summary>
-    public bool AssembleRealTime => _settingsService.Local.GetValue<bool>(SettingsKeys.RealTimeAssembly);
+    public bool RealTimeAssembly => _settingsService.Local.GetValue<bool>(SettingsKeys.RealTimeAssembly);
 
     /// <summary>
     /// Gets the threshold for showing logs as annotations.
@@ -142,7 +142,7 @@ public partial class FilePageViewModel : PageViewModel
             if (m.Key != SettingsKeys.RealTimeAssembly)
                 return;
 
-            OnPropertyChanged(nameof(AssembleRealTime));
+            OnPropertyChanged(nameof(RealTimeAssembly));
         });
     }
 

@@ -24,9 +24,11 @@
 
         <editor:CodeEditor
             Height="250"
+            AnnotationThreshold="{x:Bind ViewModel.AnnotationThreshold, Mode=OneWay}"
             ColorScheme="{StaticResource SyntaxHighlighting}"
             CornerRadius="4"
             FlowDirection="LeftToRight"
+            RealTimeAssembly="{x:Bind ViewModel.RealTimeAssembly, Mode=OneWay}"
             Text="{x:Bind DemoText}" />
 
         <!--<editor:AssemblyEditor

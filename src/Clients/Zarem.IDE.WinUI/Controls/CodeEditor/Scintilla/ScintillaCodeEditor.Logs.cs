@@ -18,9 +18,7 @@ public sealed partial class ScintillaCodeEditor
     // Debugging
     private const int ExecutingLineIndicatorIndex = 15;
 
-    /// <summary>
-    /// Applies formatting based on a log messages.
-    /// </summary>
+    /// <inheritdoc/>
     public void ApplyLogHighlights(IReadOnlyList<AssemblerEntry> logs)
     {
         if (!TryGetEditor(out var editor))
@@ -81,9 +79,7 @@ public sealed partial class ScintillaCodeEditor
         editor.AnnotationVisible = AnnotationVisible.Boxed;
     }
 
-    /// <summary>
-    /// Clears formatting based on a log messages.
-    /// </summary>
+    /// <inheritdoc/>
     public void ClearLogHighlights()
     {
         if (!TryGetEditor(out var editor))

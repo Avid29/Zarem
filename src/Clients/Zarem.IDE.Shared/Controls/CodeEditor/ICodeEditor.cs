@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2026
 
+using System.Collections.Generic;
+using Zarem.Assembler.Logging;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Models.Tables;
 
@@ -42,6 +44,16 @@ public interface ICodeEditor
     /// Gets or sets the color scheme used for syntax highlighting in assembly code.
     /// </summary>
     public AssemblySyntaxColorScheme? ColorScheme { get; set;  }
+
+    /// <summary>
+    /// Applies formatting based on a log messages.
+    /// </summary>
+    public void ApplyLogHighlights(IReadOnlyList<AssemblerEntry> logs);
+
+    /// <summary>
+    /// Clears formatting based on a log messages.
+    /// </summary>
+    public void ClearLogHighlights();
 
     void NavigateToToken(SourceLocation location);
 

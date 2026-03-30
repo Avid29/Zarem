@@ -25,7 +25,7 @@ public partial class ScintillaCodeEditor
         DependencyProperty.Register(nameof(ColorScheme), typeof(AssemblySyntaxColorScheme), typeof(ScintillaCodeEditor), new PropertyMetadata(null, OnColorSchemePropertyChanged));
 
     public static readonly DependencyProperty AnnotationThresholdProperty =
-        DependencyProperty.Register(nameof(AnnotationThreshold), typeof(AnnotationThreshold), typeof(ScintillaCodeEditor), new PropertyMetadata(AnnotationThreshold.Errors, OnLogAnnotationsChanged));
+        DependencyProperty.Register(nameof(AnnotationThreshold), typeof(AnnotationThreshold), typeof(ScintillaCodeEditor), new PropertyMetadata(AnnotationThreshold.Errors));
 
     /// <summary>
     /// Gets or sets the text contained in the editbox.
@@ -116,12 +116,6 @@ public partial class ScintillaCodeEditor
         // Apply new color scheme and subscribe to updates
         codeEditor.UpdateColorScheme();
         codeEditor.ColorScheme?.Updated += UpdateHandled;
-    }
-
-    private static void OnLogAnnotationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
-    {
-        if (d is not ScintillaCodeEditor codeEditor)
-            return;
     }
 
     private void UpdateText()
