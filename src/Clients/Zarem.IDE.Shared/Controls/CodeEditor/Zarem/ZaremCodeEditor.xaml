@@ -35,8 +35,9 @@
                             x:Name="SelectedLineHighlightBorder"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
-                            BorderBrush="#30FFFFFF"
-                            BorderThickness="2"
+                            Background="#05FFFFFF"
+                            BorderBrush="#20FFFFFF"
+                            BorderThickness="1"
                             Visibility="Collapsed">
                             <Border.RenderTransform>
                                 <TranslateTransform />
@@ -58,6 +59,12 @@
                             VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                             VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
                             ZoomMode="Disabled" />
+
+                        <Canvas
+                            x:Name="DiagnosticOverlay"
+                            Margin="{TemplateBinding Padding}"
+                            IsHitTestVisible="False" />
+
                         <TextBlock
                             x:Name="PlaceholderTextContentPresenter"
                             Margin="{TemplateBinding BorderThickness}"

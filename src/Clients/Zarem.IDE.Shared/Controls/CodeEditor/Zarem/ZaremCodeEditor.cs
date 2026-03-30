@@ -11,11 +11,14 @@ using Zarem.Models.Tables;
 namespace Zarem.IDE.Controls.CodeEditor.Zarem;
 
 [TemplatePart(Name = SelectedLineHighlightBorderPartName, Type = typeof(Border))]
+[TemplatePart(Name = SelectedLineHighlightBorderPartName, Type = typeof(Border))]
 public partial class ZaremCodeEditor : RichEditBox, ICodeEditor
 {
     private const string SelectedLineHighlightBorderPartName = "SelectedLineHighlightBorder";
+    private const string DiagnosticOverlayPartName = "DiagnosticOverlay";
 
     private Border? _selectedLineHighlightBorder;
+    private Canvas? _diagnosticOverlay;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblyEditBox"/> class.
@@ -26,10 +29,6 @@ public partial class ZaremCodeEditor : RichEditBox, ICodeEditor
     }
 
     public void ApplyOperation(EditorOperation operation)
-    {
-    }
-
-    public void ApplyLogHighlights(IReadOnlyList<AssemblerEntry> logs)
     {
     }
 
@@ -60,6 +59,7 @@ public partial class ZaremCodeEditor : RichEditBox, ICodeEditor
         base.OnApplyTemplate();
 
         _selectedLineHighlightBorder = GetTemplateChild(SelectedLineHighlightBorderPartName) as Border;
+        _diagnosticOverlay = GetTemplateChild(DiagnosticOverlayPartName) as Canvas;
 
         this.Loaded += ZaremCodeEditor_Loaded;
     }
