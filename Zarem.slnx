@@ -53,6 +53,11 @@
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
   </Folder>
+  <Folder Name="/Plugins/Archs/RiscV/">
+    <Project Path="src/Archs/RiscV/Zarem.RiscV.Base/Zarem.RiscV.Base.csproj" Id="32597ba3-5177-4db4-8541-6e800567872d">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Plugins/ModuleFormats/">
     <Project Path="src/ModuleFormats/Zarem.ELF/Zarem.ELF.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />

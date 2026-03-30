@@ -198,7 +198,7 @@ namespace Zarem.Models.Instructions;
 // ------- + -------------------------------------- +
 
 /// <summary>
-/// A struct representing an instruction.
+/// A struct representing a MIPS instruction.
 /// </summary>
 [DebuggerDisplay("{Disassembled}")]
 public struct MipsInstruction
