@@ -2,6 +2,7 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor;
@@ -23,6 +24,9 @@ public sealed partial class CodeEditor : Control, ICodeEditor
 
     public static readonly DependencyProperty ColorSchemeProperty =
         DependencyProperty.Register(nameof(ColorScheme), typeof(AssemblySyntaxColorScheme), typeof(CodeEditor), new PropertyMetadata(null));
+
+    public static readonly DependencyProperty AnnotationThresholdProperty =
+        DependencyProperty.Register(nameof(AnnotationThreshold), typeof(AnnotationThreshold), typeof(CodeEditor), new PropertyMetadata(AnnotationThreshold.Errors));
 
     private const string ICodeEditorPartName = "PART_ICodeEditor";
 
@@ -71,6 +75,13 @@ public sealed partial class CodeEditor : Control, ICodeEditor
     {
         get => (AssemblySyntaxColorScheme?)GetValue(ColorSchemeProperty);
         set => SetValue(ColorSchemeProperty, value);
+    }
+
+    /// <inheritdoc/>
+    public AnnotationThreshold AnnotationThreshold
+    {
+        get => (AnnotationThreshold)GetValue(AnnotationThresholdProperty);
+        set => SetValue(AnnotationThresholdProperty, value);
     }
 
     public void NavigateToToken(SourceLocation location) => _codeEditor?.NavigateToToken(location);

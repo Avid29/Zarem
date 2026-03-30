@@ -1,4 +1,7 @@
-﻿using Zarem.Models.Tables;
+﻿// Avishai Dernis 2026
+
+using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor;
 
@@ -29,6 +32,11 @@ public interface ICodeEditor
     /// Gets or sets the current zoom percentage.
     /// </summary>
     public int Zoom { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating the severity threshold to show log annotations below indicators.
+    /// </summary>
+    public AnnotationThreshold AnnotationThreshold { get; set; }
 
     /// <summary>
     /// Gets or sets the color scheme used for syntax highlighting in assembly code.

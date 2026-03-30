@@ -4,7 +4,7 @@ using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
-using Zarem.IDE.Models.EditorConfig.ColorScheme;
+using Zarem.IDE.Services.Settings.Enums;
 
 namespace Zarem.IDE.Controls.CodeEditor.Zarem;
 
@@ -24,6 +24,9 @@ public partial class ZaremCodeEditor
 
     public static readonly DependencyProperty ColorSchemeProperty =
         DependencyProperty.Register(nameof(ColorScheme), typeof(AssemblySyntaxColorScheme), typeof(ZaremCodeEditor), new PropertyMetadata(null, OnColorSchemePropertyChanged));
+
+    public static readonly DependencyProperty AnnotationThresholdProperty =
+        DependencyProperty.Register(nameof(AnnotationThreshold), typeof(AnnotationThreshold), typeof(ZaremCodeEditor), new PropertyMetadata(AnnotationThreshold.Errors, OnLogAnnotationsChanged));
 
     public static readonly DependencyProperty SelectionRangeProperty =
         DependencyProperty.Register(nameof(SelectedRange), typeof(Range), typeof(ZaremCodeEditor), new PropertyMetadata(new Range(0, 0)));
@@ -61,6 +64,13 @@ public partial class ZaremCodeEditor
     {
         get => (AssemblySyntaxColorScheme?)GetValue(ColorSchemeProperty);
         set => SetValue(ColorSchemeProperty, value);
+    }
+
+    /// <inheritdoc/>
+    public AnnotationThreshold AnnotationThreshold
+    {
+        get => (AnnotationThreshold)GetValue(AnnotationThresholdProperty);
+        set => SetValue(AnnotationThresholdProperty, value);
     }
 
     /// <summary>
@@ -111,6 +121,12 @@ public partial class ZaremCodeEditor
         // Apply new color scheme and subscribe to updates
         codeEditor.UpdateColorScheme();
         codeEditor.ColorScheme?.Updated += UpdateHandled;
+    }
+
+    private static void OnLogAnnotationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+    {
+        if (d is not ZaremCodeEditor codeEditor)
+            return;
     }
 
     private void UpdateText()

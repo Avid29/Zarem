@@ -11,6 +11,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:CodeEditor">
                     <zeditor:ZaremCodeEditor
+                        AnnotationThreshold="{TemplateBinding AnnotationThreshold}"
                         ColorScheme="{TemplateBinding ColorScheme}"
                         Column="{Binding Column, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         Line="{Binding Line, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
@@ -25,6 +26,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:CodeEditor">
                     <scintilla:ScintillaCodeEditor
+                        AnnotationThreshold="{TemplateBinding AnnotationThreshold}"
                         ColorScheme="{TemplateBinding ColorScheme}"
                         Column="{Binding Column, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         Line="{Binding Line, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
