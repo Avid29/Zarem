@@ -2,7 +2,7 @@
 
 using System.Text.RegularExpressions;
 
-namespace Zarem.Assembler.Tokenization.Interfaces;
+namespace Zarem.Assembler.Tokenization.Profiles;
 
 /// <summary>
 /// An interface for a tokenizer profile, which provides information about the syntax of the assembly language being tokenized.

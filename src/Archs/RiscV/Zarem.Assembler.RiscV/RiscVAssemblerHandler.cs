@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
-using Zarem.Assembler.Tokenization.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
 using Zarem.Models.Tables;
 

@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.RegularExpressions;
-using Zarem.Assembler.Tokenization.Interfaces;
+using Zarem.Assembler.Tokenization.Profiles;
 
 namespace Zarem.Assembler;
 

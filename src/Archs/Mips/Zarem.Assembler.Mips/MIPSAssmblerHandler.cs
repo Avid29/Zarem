@@ -8,8 +8,8 @@ using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
-using Zarem.Assembler.Tokenization.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
 using Zarem.Models.Tables;
 

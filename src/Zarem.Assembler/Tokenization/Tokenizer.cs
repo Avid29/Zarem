@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Zarem.Assembler.Tokenization.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Tokenization;
