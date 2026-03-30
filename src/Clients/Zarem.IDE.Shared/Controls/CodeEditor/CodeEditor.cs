@@ -129,6 +129,8 @@ public sealed partial class CodeEditor : Control, ICodeEditor
         set => SetValue(ExecutingLocationProperty, value);
     }
 
+    public MipsAssemblerConfig? AssemblerConfig { get; set; }
+
     public SymbolResolver? SymbolResolver { get; private set; }
 
     public void NavigateToToken(SourceLocation location) => _codeEditor?.NavigateToToken(location);
@@ -193,7 +195,7 @@ public sealed partial class CodeEditor : Control, ICodeEditor
         // Run assembler and show errors
         try
         {
-            var config = new MipsAssemblerConfig(MipsVersion.MipsIII);
+            var config = AssemblerConfig ?? new MipsAssemblerConfig(MipsVersion.Mips32R1);
             var result = await Zarembler.AssembleAsync(Text, "editor", new MipsAssmblerHandler(config), config);
             SymbolResolver = new SymbolResolver(result.Symbols);
             _tokenizedAssembly = result.Tokens;
@@ -211,7 +213,7 @@ public sealed partial class CodeEditor : Control, ICodeEditor
         if (_tokenizedAssembly is null || _tokenizedAssembly.LineCount is 0)
             return;
 
-        var line = Math.Min(Line + 1, _tokenizedAssembly.LineCount - 1);
+        var line = Math.Min(Line, _tokenizedAssembly.LineCount - 1);
         var asmLine = _tokenizedAssembly[(int)line];
         PositionAddress = asmLine.Address;
     }
