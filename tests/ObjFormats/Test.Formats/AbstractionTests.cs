@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Test.MIPS.Helpers;
 using Zarem.Assembler;
-using Zarem.Assembler.Config;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Models;
 using Zarem.Config;

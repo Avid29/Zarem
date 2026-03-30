@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Zarem.Assembler.Config;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;

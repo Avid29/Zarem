@@ -2,7 +2,7 @@
 
 #if DEBUG
 
-using Zarem.Assembler.Config;
+using Zarem.Assembler;
 using Zarem.Models.Instructions;
 using Zarem.Services.Interfaces;
 

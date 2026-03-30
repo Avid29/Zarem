@@ -3,7 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System.Linq;
 using System.Text;
-using Zarem.Assembler.Config;
+using Zarem.Assembler;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Disassembler.Models;
 using Zarem.Disassembler.Models.Instructions;

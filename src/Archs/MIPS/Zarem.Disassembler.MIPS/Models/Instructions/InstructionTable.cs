@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Assembler.Config;
+using Zarem.Assembler;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Models.Instructions.Enums.Operations;

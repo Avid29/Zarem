@@ -3,7 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
-using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Meta;
@@ -12,10 +12,10 @@ using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
-namespace Zarem.Assembler.Handlers;
+namespace Zarem.Assembler;
 
 /// <summary>
-/// An <see cref="IAssemblerHandler"/> for the mips architecture.
+/// An <see cref="IAssemblerHandler"/> for the MIPS architecture.
 /// </summary>
 public class MipsAssmblerHandler : IAssemblerHandler<MipsAssemblerConfig>
 {

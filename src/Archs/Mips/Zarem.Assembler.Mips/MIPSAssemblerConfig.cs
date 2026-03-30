@@ -2,13 +2,14 @@
 
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using Zarem.Assembler.Config;
 using Zarem.Assembler.Models.Enums;
 using Zarem.Models.Instructions.Enums;
 
-namespace Zarem.Assembler.Config;
+namespace Zarem.Assembler;
 
 /// <summary>
-/// A class containing assembler configurations.
+/// A class containing MIPS assembler configuration info.
 /// </summary>
 public class MipsAssemblerConfig : AssemblerConfig
 {
