@@ -23,7 +23,7 @@ public class InstructionTable : MipsInstructionTableBase<DisassemblerLookup>
     /// <inheritdoc/>
     protected override void LoadInstruction(MipsInstructionMetaBase metadata)
     {
-        if (!metadata.IsValidFor(Config.MipsVersion))
+        if (!metadata.IsValidFor(Config.Version))
             return;
 
         // We can simplify the logic by centralizing the key generation

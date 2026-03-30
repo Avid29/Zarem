@@ -15,8 +15,8 @@ namespace Zarem.Assembler.Models.Abstract;
 [JsonDerivedType(typeof(RTypeInstructionMeta), "r-type")]
 [JsonDerivedType(typeof(ITypeInstructionMeta), "i-type")]
 [JsonDerivedType(typeof(STypeInstructionMeta), "s-type")]
-//[JsonDerivedType(typeof(BTypeInstructionMeta), "b-type")]
-//[JsonDerivedType(typeof(UTypeInstructionMeta), "u-type")]
+[JsonDerivedType(typeof(BTypeInstructionMeta), "b-type")]
+[JsonDerivedType(typeof(UTypeInstructionMeta), "u-type")]
 [JsonDerivedType(typeof(JTypeInstructionMeta), "j-type")]
 //[JsonDerivedType(typeof(PseudoInstructionMeta), "pseudo")]
 public abstract record RiscVInstructionMetaBase : InstructionMetaBase
@@ -51,7 +51,7 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase
     /// <summary>
     /// Checks if an instruction is valid for the provided processor configuration.
     /// </summary>
-    public bool IsValidFor(RiscVVersion config)
+    public bool IsValidFor(RiscVVersionInfo config)
     {
         // 1. Check if the required extension is enabled in the flags
         if (!config.Extensions.HasFlag(Extension))

@@ -14,6 +14,7 @@ using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Meta;
+using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Parsers.Enums;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
@@ -28,7 +29,7 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions;
 using Zarem.Models.Tables;
 using Zarem.Models.Tables.Enums;
 
-namespace Zarem.Assembler.Parsers;
+namespace Zarem.Assembler;
 
 /// <summary>
 /// A struct for parsing instructions.
@@ -163,9 +164,9 @@ public struct MipsInstructionParser
             (LogId id, string message) = version switch
             {
                 not null when banned => (LogId.DisabledFeatureInUse, "InstructionDisabled"),
-                not null when _config is null || version > _config.MipsVersion => (LogId.NotInVersion, "RequiresVersion"),
+                not null when _config is null || version > _config.Version => (LogId.NotInVersion, "RequiresVersion"),
                 not null => (LogId.NotInVersion, "RemovedInVersion"),
-                null when _config is not null && is64bit && !_config.MipsVersion.Is64Bit() => (LogId.NotInVersion, "Needs64BitVersion"),
+                null when _config is not null && is64bit && !_config.Version.Is64Bit() => (LogId.NotInVersion, "Needs64BitVersion"),
                 null => (LogId.InvalidInstructionName, "NoInstructionNamed")
             };
 

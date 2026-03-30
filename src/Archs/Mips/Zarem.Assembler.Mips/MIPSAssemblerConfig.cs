@@ -25,14 +25,14 @@ public class MipsAssemblerConfig : AssemblerConfig
     /// </summary>
     public MipsAssemblerConfig(MipsVersion version = MipsVersion.Mips32R2)
     {
-        MipsVersion = version;
+        Version = version;
     }
 
     /// <summary>
-    /// Gets or sets the mips version to assemble with.
+    /// Gets or sets the mips version to use for assembly.
     /// </summary>
     [XmlIgnore]
-    public MipsVersion MipsVersion { get; internal set; }
+    public MipsVersion Version { get; internal set; }
 
     /// <summary>
     /// Gets whether the <see cref="PseudoInstructionSet"/> is a blacklist or whitelist.

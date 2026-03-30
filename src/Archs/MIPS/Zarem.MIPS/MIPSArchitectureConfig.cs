@@ -24,7 +24,7 @@ public sealed class MipsArchitectureConfig : IArchitectureConfig
         {
             field = value;
 
-            AssemblerConfig?.MipsVersion = value;
+            AssemblerConfig?.Version = value;
             EmulatorConfig?.MipsVersion = value;
         }
     }

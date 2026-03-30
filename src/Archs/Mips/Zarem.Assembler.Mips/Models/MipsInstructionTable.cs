@@ -33,17 +33,17 @@ public class MipsInstructionTable : MipsInstructionTableBase<string>
         is64bit = _is64bitLookup.Contains(name);
         requiredVersion = null;
 
-        if (base.TryGetInstruction(name, out metadatas, out _, out _, out _))
+        if (base.TryGetInstruction(name, out metadatas))
             return true;
 
         if (_versionRanges.TryGetValue(name, out var range))
         {
-            if (Config.MipsVersion < range.Min)
+            if (Config.Version < range.Min)
             {
                 // Instruction exists in a future version
                 requiredVersion = range.Min;
             }
-            else if (range.Max.HasValue && Config.MipsVersion >= range.Max.Value)
+            else if (range.Max.HasValue && Config.Version >= range.Max.Value)
             {
                 // Instruction was removed/obsolete in a past version
                 // We return the last valid version it was in
@@ -93,8 +93,7 @@ public class MipsInstructionTable : MipsInstructionTableBase<string>
             }
         }
 
-        bool isSupported = metadata.IsValidFor(Config.MipsVersion);
-        if (isSupported)
+        if (metadata.IsValidFor(Config.Version))
         {
             // Add to the active lookup table in InstructionTableBase
             LoadInstruction(metadata.Name, metadata);
