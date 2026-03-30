@@ -18,7 +18,7 @@ This project is in pre-release stages of development. Changes to Project File fo
 | Architecture   | Assembling      | Emulation (Interpret) | Emulation (JIT) | Debugging      | Disassembly     | Static Analysis |
 | -------------- | --------------- | --------------------- | --------------- | -------------- | --------------- | --------------- |
 | MIPS*          | ✅ Supported    | ✅ Supported         | ⌛ Planned      | ✅ Supported   | ⚠️ WIP         | ⌛ Planned      |
-| RISC-V         | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
+| RISC-V         | ⚠️ WIP          | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
 | ARM            | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
 | ARM64          | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
 | x86_64         | ❌ Not Planned  | ❌ Not Planned       | ❌ Not Planned  | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned  |
