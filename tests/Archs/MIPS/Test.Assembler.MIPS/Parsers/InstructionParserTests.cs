@@ -207,7 +207,7 @@ public class InstructionParserTests
         ServiceCollection.DisassemblerService = new MipsDisassemblerService(config);
 #endif
 
-        var table = new InstructionTable(config);
+        var table = new MipsInstructionTable(config);
         var parser = new MipsInstructionParser(config, null, default, null, null);
 
         var tokenized = Tokenizer.TokenizeLine(input, nameof(RunTest))[0];
@@ -260,7 +260,7 @@ public class InstructionParserTests
 
     private static IEnumerable<object[]> GenerateTestList(MipsVersion version)
     {
-        var table = new InstructionTable(new(version));
+        var table = new MipsInstructionTable(new(version));
         var instructions = table.GetInstructions()
             .Where(i => i.IsValidFor(version));
 

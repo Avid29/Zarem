@@ -199,7 +199,7 @@ public class Program()
         switch (tableArg)
         {
             case "instructions":
-                var instructions = new InstructionTable(new(version)).GetInstructions().OrderBy(x => x.Name);
+                var instructions = new MipsInstructionTable(new(version)).GetInstructions().OrderBy(x => x.Name);
                 foreach (var instr in instructions)
                 {
                     if (instr is PseudoInstructionMeta)

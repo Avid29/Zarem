@@ -14,16 +14,16 @@ namespace Zarem.Assembler.Models;
 /// <summary>
 /// A class for managing instruction lookup by name.
 /// </summary>
-public class InstructionTable : InstructionTableBase<string>
+public class MipsInstructionTable : MipsInstructionTableBase<string>
 {
     private readonly Dictionary<string, (MipsVersion Min, MipsVersion? Max)> _versionRanges = [];
     private readonly HashSet<string> _banned = [];
     private readonly HashSet<string> _is64bitLookup = [];
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionTable"/> class.
+    /// Initializes a new instance of the <see cref="MipsInstructionTable"/> class.
     /// </summary>
-    public InstructionTable(MipsAssemblerConfig config) : base(config)
+    public MipsInstructionTable(MipsAssemblerConfig config) : base(config)
     {
     }
 

@@ -19,7 +19,7 @@ namespace Zarem.Assembler.Handlers;
 /// </summary>
 public class MipsAssmblerHandler : IAssemblerHandler<MipsAssemblerConfig>
 {
-    private readonly InstructionTable _instructionTable;
+    private readonly MipsInstructionTable _instructionTable;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsAssmblerHandler"/> class.

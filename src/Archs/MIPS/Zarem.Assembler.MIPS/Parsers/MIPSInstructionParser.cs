@@ -39,7 +39,7 @@ public struct MipsInstructionParser
     private readonly MipsAssemblerConfig? _config;
     private readonly Address _currentAddress;
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
-    private readonly InstructionTable _instructionTable;
+    private readonly MipsInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
 
     private MipsInstructionMetaBase? _meta;
@@ -56,14 +56,14 @@ public struct MipsInstructionParser
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionParser"/> struct.
     /// </summary>
-    public MipsInstructionParser(MipsAssemblerConfig config, InstructionTable? table, Address address, IReadOnlyDictionary<string, Symbol>? symbols,  ILogger? logger)
+    public MipsInstructionParser(MipsAssemblerConfig config, MipsInstructionTable? table, Address address, IReadOnlyDictionary<string, Symbol>? symbols,  ILogger? logger)
     {
         _config = config;
         _currentAddress = address;
         _symbols = symbols;
         _references = [];
 
-        _instructionTable = table ?? new InstructionTable(config);
+        _instructionTable = table ?? new MipsInstructionTable(config);
 
         if (logger is not null)
         {
