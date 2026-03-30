@@ -56,7 +56,7 @@ public partial class Tokenizer
         status = _state switch
         {
             // LineBegin
-            TokenizerState.TokenBegin when c is '#' => AppendCharacter(c, TokenizerState.Comment),                      // Begin a comment
+            TokenizerState.TokenBegin when c == _profile.CommentPrefix => AppendCharacter(c, TokenizerState.Comment),   // Begin a comment
             TokenizerState.TokenBegin when c is '"' => AppendCharacter(c, TokenizerState.StringLiteral),                // Begin a string
             TokenizerState.TokenBegin when c is '\'' => AppendCharacter(c, TokenizerState.CharLiteral),                 // Begin a char
             TokenizerState.TokenBegin when char.IsWhiteSpace(c) => AppendCharacter(c, TokenizerState.Whitespace),       // Begin whitespace

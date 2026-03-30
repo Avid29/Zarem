@@ -19,6 +19,12 @@ public partial class MipsTokenizerProfile : ITokenizerProfile
     public char RegisterPrefix => '$';
 
     /// <inheritdoc/>
+    public char ImmediatePrefix => '\0';
+
+    /// <inheritdoc/>
+    public char CommentPrefix => '#';
+
+    /// <inheritdoc/>
     /// <remarks>
     /// Validates the register name after the '$'.
     /// Note: This is used for validation/highlighting, not initial merging.

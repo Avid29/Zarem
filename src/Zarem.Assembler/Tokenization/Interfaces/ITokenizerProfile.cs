@@ -10,10 +10,23 @@ namespace Zarem.Assembler.Tokenization.Interfaces;
 public interface ITokenizerProfile
 {
     /// <summary>
+    /// Gets the charachter prefix that indicates the start of a comment in the assembly language.
+    /// </summary>
+    char CommentPrefix { get; }
+
+    /// <summary>
+    /// Gets the character prefix to an immediate value in the for the tokenizer.
+    /// </summary>
+    /// <remarks>
+    /// For exmaple, # in ARM or $ in AT-T x86. If the ISA does not use a prefix, this should be set to the null character '\0'.
+    /// </remarks>
+    char ImmediatePrefix { get; }
+
+    /// <summary>
     /// Gets the character prefix to a register in the for the tokenizer.
     /// </summary>
     /// <remarks>
-    /// For example, % in x86 or $ in MIPS. If the ISA does not use a prefix, this should be set to the null character '\0'.
+    /// For example, % in AT-T x86 or $ in MIPS. If the ISA does not use a prefix, this should be set to the null character '\0'.
     /// Also, alpha-numerical characters such as the 'x' in x0 from RISC-V should not be included in the prefix and instead be handled by the regex.
     /// </remarks>
     char RegisterPrefix { get; }

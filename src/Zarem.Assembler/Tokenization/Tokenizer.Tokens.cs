@@ -7,6 +7,7 @@ using System.Text;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Tokenization.Models;
+using System.Runtime.CompilerServices;
 
 namespace Zarem.Assembler.Tokenization;
 
@@ -161,27 +162,36 @@ public partial class Tokenizer
         // Handle merging immediates tokens
         if (!start)
         {
-            var peek2 = Peek(tokens, 2);
+            Unsafe.SkipInit(out int numericAdvance);
 
-            // 123.456 (Digits + Dot + Digits)
-            if (current.IsDigits() && peek?.Source == "." && peek2?.IsDigits() == true)
+            // Check for Prefixed Immediates (e.g., AT&T '$')
+            if (_profile.ImmediatePrefix != '\0' &&
+                current.Source.Length == 1 &&
+                current.Source[0] == _profile.ImmediatePrefix)
             {
-                merged = Merge(TokenType.Immediate, current, peek, peek2);
-                advance = 3;
-                return true;
+                // We found a prefix; try to consume the numeric body starting at the next token (index 1)
+                if (TryConsumeNumericBody(tokens[1..], out var mergedNumeric, out numericAdvance))
+                {
+                    // Successfully consumed a numeric body after the prefix; merge it with the prefix token
+                    merged = Merge(TokenType.Immediate, current, mergedNumeric);
+                    advance = numericAdvance + 1;
+                    return true;
+                }
+
+                // If it's a reference immediate (e.g. AT&T "$label")
+                var next = Peek(tokens, 1);
+                if (next != null && next.IsIdentifier())
+                {
+                    merged = Merge(TokenType.Reference, current, next);
+                    advance = 2;
+                    return true;
+                }
             }
-            // .456 (Dot + Digits)
-            if (current.Source == "." && peek?.IsDigits() == true)
+
+            // Check for Standard Immediates (Starting at index 0)
+            if (TryConsumeNumericBody(tokens, out merged, out numericAdvance))
             {
-                merged = Merge(TokenType.Immediate, current, peek);
-                advance = 2;
-                return true;
-            }
-            // 123 (Digits)
-            if (current.IsInteger())
-            {
-                merged = ReClassify(TokenType.Immediate, current);
-                advance = 1;
+                advance = numericAdvance;
                 return true;
             }
         }
@@ -245,6 +255,7 @@ public partial class Tokenizer
             // Handle references
             result = ReClassify(TokenType.Reference, current);
         }
+
         return true;
     }
 
@@ -304,5 +315,48 @@ public partial class Tokenizer
             Location = original.Location,
             Type = type
         };
+    }
+
+    /// <summary>
+    /// Attempts to consume a numeric pattern (Decimal or Integer) starting at a specific token offset.
+    /// </summary>
+    private bool TryConsumeNumericBody(ReadOnlySpan<Token> tokens, out Token? merged, out int advance)
+    {
+        merged = null;
+        advance = 0;
+
+        var baseToken = tokens[0];
+        if (baseToken == null)
+            return false;
+
+        var secondary = Peek(tokens);
+        var tertiary = Peek(tokens, 2);
+
+        // Case: 123.456 (Digits + Dot + Digits)
+        if (baseToken.IsDigits() && secondary?.Source == "." && tertiary?.IsDigits() == true)
+        {
+            // Merge the prefix (if any) plus the 3 numeric tokens
+            merged = Merge(TokenType.Immediate, baseToken, secondary, tertiary);
+            advance = 3;
+            return true;
+        }
+
+        // Case: .456 (Dot + Digits)
+        if (baseToken.Source == "." && secondary?.IsDigits() == true)
+        {
+            merged = Merge(TokenType.Immediate, baseToken, secondary);
+            advance = 2;
+            return true;
+        }
+
+        // Case: 123 (Integer)
+        if (baseToken.IsInteger())
+        {
+            merged = Merge(TokenType.Immediate, baseToken);
+            advance = 1;
+            return true;
+        }
+
+        return false;
     }
 }
