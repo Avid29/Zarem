@@ -12,9 +12,9 @@
                 <ControlTemplate TargetType="local:CodeEditor">
                     <zeditor:ZaremCodeEditor
                         ColorScheme="{TemplateBinding ColorScheme}"
-                        Column="{TemplateBinding Column}"
-                        Line="{TemplateBinding Line}"
-                        Text="{TemplateBinding Text}" />
+                        Column="{Binding Column, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        Line="{Binding Line, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -26,14 +26,14 @@
                 <ControlTemplate TargetType="local:CodeEditor">
                     <scintilla:ScintillaCodeEditor
                         ColorScheme="{TemplateBinding ColorScheme}"
-                        Column="{TemplateBinding Column}"
-                        Line="{TemplateBinding Line}"
-                        Text="{TemplateBinding Text}" />
+                        Column="{Binding Column, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        Line="{Binding Line, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style BasedOn="{StaticResource ZaremCodeEditorStyle}" TargetType="local:CodeEditor" />
+    <Style BasedOn="{StaticResource ScintillaCodeEditorStyle}" TargetType="local:CodeEditor" />
 
 </ResourceDictionary>
