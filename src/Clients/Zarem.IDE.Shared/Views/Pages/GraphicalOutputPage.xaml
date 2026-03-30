@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <Grid>
-        <controls:GraphicsViewer Device="{x:Bind ViewModel.GraphicsDevice, Mode=OneWay}" />
+        <!--<controls:GraphicsViewer Device="{x:Bind ViewModel.GraphicsDevice, Mode=OneWay}" />-->
     </Grid>
 
 </UserControl>
