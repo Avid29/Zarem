@@ -38,6 +38,7 @@
         <editor:CodeEditor
             x:Name="CodeEditor"
             AnnotationThreshold="{x:Bind ViewModel.AnnotationThreshold, Mode=OneWay}"
+            AssemblerConfig="{x:Bind ViewModel.AssemblerConfig, Mode=OneWay}"
             ColorScheme="{StaticResource SyntaxHighlighting}"
             ExecutingLocation="{x:Bind ViewModel.ExecutingLocation, Mode=OneWay}"
             RealTimeAssembly="{x:Bind ViewModel.RealTimeAssembly, Mode=OneWay}"

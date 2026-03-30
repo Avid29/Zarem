@@ -195,7 +195,7 @@ public sealed partial class CodeEditor : Control, ICodeEditor
         // Run assembler and show errors
         try
         {
-            var config = AssemblerConfig ?? new MipsAssemblerConfig(MipsVersion.Mips32R1);
+            var config = AssemblerConfig ?? new MipsAssemblerConfig(MipsVersion.Mips32R2);
             var result = await Zarembler.AssembleAsync(Text, "editor", new MipsAssmblerHandler(config), config);
             SymbolResolver = new SymbolResolver(result.Symbols);
             _tokenizedAssembly = result.Tokens;
