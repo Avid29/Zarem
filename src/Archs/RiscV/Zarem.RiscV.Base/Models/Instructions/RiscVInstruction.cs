@@ -1,11 +1,11 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Helpers;
-using Zarem.Models.Enums.Functions;
-using Zarem.Models.Enums.Operations;
-using Zarem.Models.Enums.Registers;
+using Zarem.Models.Instructions.Enums.Functions;
+using Zarem.Models.Instructions.Enums.Operations;
+using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Models;
+namespace Zarem.Models.Instructions;
 
 /// <summary>
 /// A struct representing a RISC-V instruction.

@@ -1,16 +1,11 @@
 ﻿// Avishai Dernis 2026
 
-using System.Reflection.Emit;
 using System.Text;
 using System.Text.Json.Serialization;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Extensions;
-using Zarem.Helpers.Instructions;
-using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 namespace Zarem.Assembler.Models.Abstract;
 

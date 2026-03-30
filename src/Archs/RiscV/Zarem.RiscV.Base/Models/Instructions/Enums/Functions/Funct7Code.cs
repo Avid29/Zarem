@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Models.Enums.Functions;
+namespace Zarem.Models.Instructions.Enums.Functions;
 
 /// <summary>
 /// An enum representing the funct7 field of a RISC-V instruction.

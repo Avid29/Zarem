@@ -1,0 +1,33 @@
+﻿// Avishai Dernis 2026
+
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
+
+namespace Zarem.Models.Versioning.Enums;
+/// <summary>
+/// An enum for which RISC-V Base ISA or major version a feature is supported.
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum RiscVBaseVersion : byte
+{
+#pragma warning disable CS1591
+
+    // --- Base Integer Sets (The Foundation) ---
+    // RV32I is the most common target for hobbyist emulators.
+    [XmlEnum("rv32i")][JsonStringEnumMemberName("RV32I")] RV32I = 1,
+
+    // RV32E is the "Embedded" variant with only 16 registers (x0-x15).
+    [XmlEnum("rv32e")][JsonStringEnumMemberName("RV32E")] RV32E = 2,
+
+    // 64-bit and 128-bit base sets.
+    [XmlEnum("rv64i")][JsonStringEnumMemberName("RV64I")] RV64I = 10,
+    [XmlEnum("rv128i")][JsonStringEnumMemberName("RV128I")] RV128I = 20,
+
+    // --- Historical / Profile Versions ---
+    // RISC-V now uses "Profiles" (e.g., RVA20, RVA22) for platform compatibility.
+    [XmlEnum("rva20")][JsonStringEnumMemberName("RVA20")] RVA20 = 40,
+    [XmlEnum("rva22")][JsonStringEnumMemberName("RVA22")] RVA22 = 41,
+    [XmlEnum("rvm23")][JsonStringEnumMemberName("RVM23")] RVM23 = 42,
+
+#pragma warning restore CS1591
+}

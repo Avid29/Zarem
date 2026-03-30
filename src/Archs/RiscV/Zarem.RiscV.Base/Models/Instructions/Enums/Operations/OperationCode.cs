@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Models.Enums.Operations;
+namespace Zarem.Models.Instructions.Enums.Operations;
 
 /// <summary>
 /// An enum representing the operation code (opcode) of a RISC-V instruction.
