@@ -1,12 +1,12 @@
 ﻿// Avishai Dernis 2024
 
-using Test.MIPS.Helpers;
+using Test.Mips.Helpers;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
-namespace Test.MIPS;
+namespace Test.Mips;
 
 [TestClass]
 public class InstructionTests

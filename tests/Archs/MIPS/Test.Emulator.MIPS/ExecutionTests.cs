@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
+using Zarem.Assembler;
 using Zarem.Assembler.Models;
-using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator;
 using Zarem.Emulator.Config;

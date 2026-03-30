@@ -5,12 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using Test.MIPS.Helpers;
-using Zarem.Assembler.Config;
+using Test.Mips.Helpers;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.Parsers;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
@@ -22,6 +20,8 @@ using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Models.Meta;
 using System.Linq;
+using Zarem.Assembler;
+
 
 
 

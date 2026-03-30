@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Zarem.Assembler;
 using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Descriptors;

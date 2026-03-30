@@ -3,7 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System.IO;
 
-namespace Test.MIPS.Helpers;
+namespace Test.Mips.Helpers;
 
 public static class TestFilePathing
 {

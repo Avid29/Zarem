@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2024
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Test.MIPS.Helpers;
+using Test.Mips.Helpers;
 using System.IO;
 using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization;

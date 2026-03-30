@@ -8,27 +8,51 @@ using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
-namespace Test.MIPS.Helpers;
+namespace Test.Mips.Helpers;
 
 public class ArgGenerator
 {
-    /// <remarks>
-    /// Safe constrains the value to within the 16 bit range.
-    /// For good testing purposes, this shouldn't always be used as the masking should fix overflowing immediates.
-    /// </remarks>
-    public static short RandomImmediate(bool safe = true) => (short)Random.Shared.Next(safe ? short.MaxValue : int.MaxValue);
+    private static Random Rnd => Random.Shared;
 
-    public static byte RandomShift(bool safe = true) => (byte)Random.Shared.Next(safe ? (1 << 5)-1 : int.MaxValue);
+    // Use the full range of short (-32768 to 32767)
+    public static short RandomImmediate(bool safe = true)
+            => safe ? (short)Rnd.Next(short.MinValue, short.MaxValue + 1)
+                    : (short)Rnd.Next(int.MinValue, int.MaxValue);
 
-    public static int RandomOffset(bool safe = true) => Random.Shared.Next(safe ? (1 << 17)-1 : int.MaxValue) & ~0b11;
+    // Shifts are exactly 5 bits. Next(32) gives 0-31.
+    public static byte RandomShift(bool safe = true)
+            => (byte)(safe ? Rnd.Next(0, 32) : Rnd.Next(32, 256));
 
-    public static uint RandomAddress(bool safe = true) => (uint)Random.Shared.Next(safe ? (1 << 26)-1 : int.MaxValue) & ~(uint)0b11;
+    public static int RandomOffset(bool safe = true)
+    {
+        if (!safe)
+        {
+            return Rnd.Next(int.MinValue, int.MaxValue);
+        }
 
-    public static GPRegister RandomRegister(bool safe = true) => (GPRegister)Random.Shared.Next(safe ? (int)GPRegister.ReturnAddress : int.MaxValue);
+        // Range: [-32768, 32767] but masked for 4-byte alignment
+        return Rnd.Next(short.MinValue, short.MaxValue + 1) & ~0b11;
+    }
 
-    public static OperationCode RandomOpCode(bool safe = true) => (OperationCode)Random.Shared.Next(safe ? (int)OperationCode.StoreWordCoprocessor3 : int.MaxValue);
+    public static uint RandomAddress(bool safe = true)
+    {
+        if (!safe)
+        {
+            return (uint)Rnd.NextInt64(0, uint.MaxValue);
+        }
 
-    public static FunctionCode RandomFuncCode(bool safe = true) => (FunctionCode)Random.Shared.Next(safe ? (int)FunctionCode.SetLessThanUnsigned : int.MaxValue);
+        // 26-bit range: [0, 67108863]
+        return (uint)Rnd.Next(0, 1 << 26) & ~0b11u;
+    }
+
+    public static GPRegister RandomRegister(bool safe = true)
+            => (GPRegister)(safe ? Rnd.Next(0, 32) : Rnd.Next(32, 256));
+
+    public static OperationCode RandomOpCode(bool safe = true)
+            => (OperationCode)(safe ? Rnd.Next(0, 64) : Rnd.Next(64, 256));
+
+    public static FunctionCode RandomFuncCode(bool safe = true)
+            => (FunctionCode)(safe ? Rnd.Next(0, 64) : Rnd.Next(64, 256));
 
     public static FloatFormat RandomFormat(HashSet<FloatFormat>? set) => set?.ElementAt(Random.Shared.Next(set.Count-1)) ?? FloatFormat.Single;
 }

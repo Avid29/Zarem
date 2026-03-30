@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using System.Threading.Tasks;
-using Test.MIPS.Helpers;
+using Test.Mips.Helpers;
 using Test.ObjFormats;
 using Zarem.Elf;
 using Zarem.Elf.Config;
