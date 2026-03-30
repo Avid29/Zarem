@@ -85,6 +85,18 @@
 		<ProjectReference Include="..\Zarem.IDE.ViewModels\Zarem.IDE.ViewModels.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Controls\GraphicsViewer.xaml.cs">
+	    <DependentUpon>GraphicsViewer.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Controls\GraphicsViewer.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	</ItemGroup>
+
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 	  <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(SolutionDir)UpdateVersion.ps1&quot; -ManifestPath &quot;$(ProjectDir)Package-$(Configuration).appxmanifest&quot;" />
 	</Target>

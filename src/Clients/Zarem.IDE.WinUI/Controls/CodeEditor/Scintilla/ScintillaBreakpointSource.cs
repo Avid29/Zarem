@@ -2,11 +2,9 @@
 
 using System.Collections.Generic;
 using WinUIEditor;
-using Zarem.IDE.Controls.CodeEditor;
-using Zarem.IDE.Controls.CodeEditor.Scintilla;
 using Zarem.Models.Breakpoints;
 
-namespace Zarem.IDE.Controls;
+namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
 public class ScintillaBreakpointSource : IBreakpointSource
 {

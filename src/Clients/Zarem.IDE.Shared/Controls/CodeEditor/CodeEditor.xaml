@@ -24,7 +24,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ScintillaCodeEditorStyle" TargetType="local:CodeEditor">
+    <!--<Style x:Key="ScintillaCodeEditorStyle" TargetType="local:CodeEditor">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:CodeEditor">
@@ -40,8 +40,8 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
-    <Style BasedOn="{StaticResource ScintillaCodeEditorStyle}" TargetType="local:CodeEditor" />
+    <Style BasedOn="{StaticResource ZaremCodeEditorStyle}" TargetType="local:CodeEditor" />
 
 </ResourceDictionary>

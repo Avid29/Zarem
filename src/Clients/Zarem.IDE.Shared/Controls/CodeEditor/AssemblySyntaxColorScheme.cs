@@ -15,7 +15,7 @@ namespace Zarem.IDE.Controls.CodeEditor;
 /// <summary>
 /// A collection of colors to use for syntax highlighting.
 /// </summary>
-public class AssemblySyntaxColorScheme : DependencyObject
+public partial class AssemblySyntaxColorScheme : DependencyObject
 {
     public event EventHandler? Updated;
 
