@@ -32,7 +32,7 @@
                 <ControlTemplate TargetType="local:ZaremCodeEditor">
                     <Grid Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
                         <Border
-                            x:Name="SelectedLineHighlightBorder"
+                            x:Name="HighlightBorder"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
                             Background="#05FFFFFF"

@@ -29,9 +29,6 @@ public partial class ZaremCodeEditor
     public static readonly DependencyProperty AnnotationThresholdProperty =
         DependencyProperty.Register(nameof(AnnotationThreshold), typeof(AnnotationThreshold), typeof(ZaremCodeEditor), new PropertyMetadata(AnnotationThreshold.Errors, OnLogAnnotationsChanged));
 
-    public static readonly DependencyProperty SelectionRangeProperty =
-        DependencyProperty.Register(nameof(SelectedRange), typeof(Range), typeof(ZaremCodeEditor), new PropertyMetadata(new Range(0, 0)));
-
     public static readonly DependencyProperty ExecutingLocationProperty =
         DependencyProperty.Register(nameof(ExecutingLocation), typeof(SourceRange?), typeof(ZaremCodeEditor), new PropertyMetadata(null));
 
@@ -81,15 +78,6 @@ public partial class ZaremCodeEditor
     {
         get => (SourceRange?)GetValue(ExecutingLocationProperty);
         set => SetValue(ExecutingLocationProperty, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the selected range.
-    /// </summary>
-    public Range SelectedRange
-    {
-        get => (Range)GetValue(SelectionRangeProperty);
-        set => SetValue(SelectionRangeProperty, value);
     }
 
     private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
