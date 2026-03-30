@@ -20,20 +20,22 @@ public class AssembleComponent<THandler, TConfig> : IAssembleComponent
     where THandler : IAssemblerHandler<TConfig>
     where TConfig : AssemblerConfig
 {
-    private readonly THandler _handler;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="AssembleComponent{TAssembler, TConfig}"/> class.
     /// </summary>
     public AssembleComponent(THandler handler, TConfig config, IAssemblerDescriptor descriptor)
     {
-        _handler = handler;
+        Handler = handler;
         Config = config;
     }
 
     /// <inheritdoc/>
     public TConfig Config { get; }
 
+    /// <inheritdoc/>
+    public IAssemblerHandler Handler { get; }
+
+    /// <inheritdoc/>
     AssemblerConfig IAssembleComponent.Config => Config;
 
     /// <inheritdoc/>
@@ -45,7 +47,7 @@ public class AssembleComponent<THandler, TConfig> : IAssembleComponent
 
         Guard.IsNotNull(Config);
 
-        var result = await Zarembler.AssembleAsync(file.FullPath, _handler, Config, logger);
+        var result = await Zarembler.AssembleAsync(file.FullPath, Handler, Config, logger);
         return result;
     }
 }
