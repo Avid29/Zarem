@@ -79,8 +79,8 @@ public class ScintillaBreakpointSource : IBreakpointSource
 
     private void MarkBreakpoint(BreakpointIdentity bp)
     {
-        //int handle = _editor.MarkerAdd((long)bp.Line, ScintillaCodeEditor.BreakpointMarkerIndex);
-        //_idToHandle[bp] = handle;
-        //_handleToId[handle] = bp;
+        int handle = _editor.MarkerAdd((long)bp.Line, ScintillaCodeEditor.BreakpointMarkerIndex);
+        _idToHandle[bp] = handle;
+        _handleToId[handle] = bp;
     }
 }

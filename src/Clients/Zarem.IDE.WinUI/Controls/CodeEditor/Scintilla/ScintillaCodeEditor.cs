@@ -6,6 +6,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using WinUIEditor;
+using Zarem.Debugger.Models;
+using Zarem.Models.Breakpoints;
 using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
@@ -17,6 +19,7 @@ public sealed partial class ScintillaCodeEditor : Control, ICodeEditor
     private const int BaseFontSize = 11;
 
     private CodeEditorControl? _childEditor;
+    private ScintillaBreakpointSource? _breakpoints;
 
     /// <summary>
     /// An event invoked when the <see cref="Text"/> property changes
@@ -62,16 +65,25 @@ public sealed partial class ScintillaCodeEditor : Control, ICodeEditor
 
         SetUpHighlighting();
         SetupIndicators();
+        SetupMargins();
 
         // Apply the current text
         UpdateText();
     }
 
-    [MemberNotNullWhen(true, nameof(_childEditor))]
-    private bool TryGetEditor([NotNullWhen(true)] out Editor? editor)
+    public void RegisterBreakpointSource(BreakpointCollection breakpoints)
     {
-        editor = _childEditor?.Editor;
-        return editor is not null;
+        if (!TryGetEditor(out var editor))
+            return;
+
+        editor.MarkerDeleteAll(BreakpointMarkerIndex);
+        _breakpoints = new ScintillaBreakpointSource(editor, breakpoints);
+    }
+
+    public void UnregisterBreakpointSource()
+    {
+        _breakpoints?.BreakpointCollection.Source = null;
+        _breakpoints = null;
     }
 
     public void ResetHistory()
@@ -80,6 +92,13 @@ public sealed partial class ScintillaCodeEditor : Control, ICodeEditor
             return;
 
         editor.EmptyUndoBuffer();
+    }
+
+    [MemberNotNullWhen(true, nameof(_childEditor))]
+    private bool TryGetEditor([NotNullWhen(true)] out Editor? editor)
+    {
+        editor = _childEditor?.Editor;
+        return editor is not null;
     }
 
     private long GetMappedIndex(SourceLocation location) => GetMappedIndex(location.Line, location.Column);

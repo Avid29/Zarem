@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using Zarem.Assembler.Logging;
+using Zarem.Models.Breakpoints;
 using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor.Zarem;
@@ -32,6 +33,14 @@ public partial class ZaremCodeEditor : RichEditBox, ICodeEditor
     }
 
     public void NavigateToToken(SourceLocation location)
+    {
+    }
+
+    public void RegisterBreakpointSource(BreakpointCollection breakpoints)
+    {
+    }
+
+    public void UnregisterBreakpointSource()
     {
     }
 

@@ -129,34 +129,32 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
 
     public string FormatAddres(Address? address)
     {
-        return string.Empty;
+        if (CodeEditor is null || !address.HasValue)
+            return string.Empty;
 
-        //    if (AssemblyEditor is null || !address.HasValue)
-        //        return string.Empty;
+        var addr = address.Value;
 
-        //    var addr = address.Value;
+        // Phrase the location in terms of the section
+        string sectionOffsetStr = $"{address?.Section?.Name}:0x{addr.Offset:X8}";
 
-        //    // Phrase the location in terms of the section
-        //    string sectionOffsetStr = $"{address?.Section?.Name}:0x{addr.Offset:X8}";
+        // Attempt to phrase location in terms of a symbol
+        string? symbolOffsetStr = null;
+        var symbol = CodeEditor.SymbolResolver?.FindNearest(addr, out _);
+        if (symbol is not null)
+        {
+            var symOffset = addr.Offset - symbol.Address.Offset;
+            symbolOffsetStr = $"{symbol.Name}+0x{symOffset:X4}";
+        }
 
-        //    // Attempt to phrase location in terms of a symbol
-        //    string? symbolOffsetStr = null;
-        //    var symbol = AssemblyEditor.SymbolResolver?.FindNearest(addr, out _);
-        //    if (symbol is not null)
-        //    {
-        //        var symOffset = addr.Offset - symbol.Address.Offset;
-        //        symbolOffsetStr = $"{symbol.Name}+0x{symOffset:X4}";
-        //    }
-
-        //    // Format the string based on available info
-        //    if (symbolOffsetStr is not null)
-        //    {
-        //        return $"{symbolOffsetStr} ({sectionOffsetStr})";
-        //    }
-        //    else
-        //    {
-        //        return sectionOffsetStr;
-        //    }
+        // Format the string based on available info
+        if (symbolOffsetStr is not null)
+        {
+            return $"{symbolOffsetStr} ({sectionOffsetStr})";
+        }
+        else
+        {
+            return sectionOffsetStr;
+        }
     }
 
     public static string GetPositionText(long line, long column)
@@ -180,10 +178,10 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
             using var reader = new StreamReader(stream);
             text = await reader.ReadToEndAsync();
 
-            //if (UseAssemblyEditor && file.SourceFile is not null)
-            //{
-            //    AssemblyEditor?.RegisterBreakpointSource(file.SourceFile.Breakpoints);
-            //}
+            if (file.SourceFile is not null)
+            {
+                CodeEditor?.RegisterBreakpointSource(file.SourceFile.Breakpoints);
+            }
         }
 
         OriginalText = text;

@@ -12,6 +12,7 @@ using Zarem.Assembler.Logging;
 using Zarem.Helpers;
 using Zarem.IDE.Controls.CodeEditor.Scintilla;
 using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Models.Breakpoints;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Tables;
 
@@ -166,4 +167,8 @@ public sealed partial class CodeEditor : Control, ICodeEditor
             // TODO: Notify exception occured
         }
     }
+
+    public void RegisterBreakpointSource(BreakpointCollection breakpoints) => _codeEditor?.RegisterBreakpointSource(breakpoints);
+
+    public void UnregisterBreakpointSource() => _codeEditor?.UnregisterBreakpointSource();
 }

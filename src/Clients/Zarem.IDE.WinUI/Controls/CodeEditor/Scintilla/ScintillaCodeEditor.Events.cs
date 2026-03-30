@@ -22,6 +22,7 @@ public partial class ScintillaCodeEditor
         editor.ZoomChanged += OnZoomChanged;
         editor.UpdateUI += OnUpdateUI;
         editor.StyleNeeded += OnStyleNeeded;
+        editor.MarginClick += OnMarginClicked;
         _childEditor.SyntaxHighlightingApplied += OnSyntaxHighlightingApplied; ;
         _childEditor.HighlightingLanguage = "asm";
     }
@@ -53,6 +54,21 @@ public partial class ScintillaCodeEditor
 
         Line = sender.LineFromPosition(pos);
         Column = sender.GetColumn(pos);
+    }
+
+    private void OnMarginClicked(Editor sender, MarginClickEventArgs args)
+    {
+        if (_breakpoints is null)
+            return;
+
+        var line = sender.LineFromPosition(args.Position);
+
+        switch (args.Margin)
+        {
+            case 0:
+                ToggleBreakpoint(line);
+                break;
+        }
     }
 
     private void CodeEditor_Unloaded(object sender, RoutedEventArgs e)
