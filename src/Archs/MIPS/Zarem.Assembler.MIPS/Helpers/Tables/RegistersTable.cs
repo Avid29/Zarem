@@ -22,10 +22,6 @@ public static class RegistersTable
     {
         register = GPRegister.Zero;
         set = RegisterSet.Numbered;
-        
-        // Trim the '$' prefix
-        if (name.StartsWith('$'))
-            name = name[1..];
 
         // Check for empty register
         if (name.Length == 0)

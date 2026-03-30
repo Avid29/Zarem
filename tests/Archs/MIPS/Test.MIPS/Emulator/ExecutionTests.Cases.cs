@@ -10,40 +10,40 @@ using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Test.Emulator.MIPS;
+namespace Test.MIPS.Emulator;
 
 public partial class ExecutionTests
 {
     public static IEnumerable<object[]> InstructionTestList_Mips1
         => GetVersionTests<uint, int, ulong>(MipsVersion.MipsI);
-    
+
     public static IEnumerable<object[]> InstructionTestList_Mips2
         => GetVersionTests<uint, int, ulong>(MipsVersion.MipsII);
-    
+
     public static IEnumerable<object[]> InstructionTestList_Mips3
         => GetVersionTests<ulong, long, UInt128>(MipsVersion.MipsIII);
-    
+
     public static IEnumerable<object[]> InstructionTestList_Mips3_32Bit
         => GetVersionTests<uint, int, ulong>(MipsVersion.MipsIII_32Bit);
-    
+
     public static IEnumerable<object[]> InstructionTestList_Mips4
         => GetVersionTests<ulong, long, UInt128>(MipsVersion.MipsIV);
-    
+
     public static IEnumerable<object[]> InstructionTestList_Mips4_32Bit
         => GetVersionTests<uint, int, ulong>(MipsVersion.MipsIV_32Bit);
-    
+
     public static IEnumerable<object[]> InstructionTestList_Mips5
         => GetVersionTests<ulong, long, UInt128>(MipsVersion.MipsV);
-    
+
     public static IEnumerable<object[]> InstructionTestList_Mips5_32Bit
         => GetVersionTests<uint, int, ulong>(MipsVersion.MipsV_32Bit);
-    
+
     public static IEnumerable<object[]> InstructionTestList_Mips32R1
         => GetVersionTests<uint, int, ulong>(MipsVersion.Mips32R1);
-    
+
     public static IEnumerable<object[]> InstructionTestList_Mips64R1
         => GetVersionTests<ulong, long, UInt128>(MipsVersion.Mips64R1);
-    
+
     public static IEnumerable<object[]> InstructionTestList_Mips32R2
         => GetVersionTests<uint, int, ulong>(MipsVersion.Mips32R2);
 

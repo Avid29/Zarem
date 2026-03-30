@@ -372,15 +372,14 @@ public struct MipsInstructionParser
         register = GPRegister.Zero;
 
         // Check that argument is register argument
-        var regStr = arg.Source;
-        if (regStr[0] != '$')
+        if (arg.Type is not TokenType.Register)
         {
             _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "ArgumentNotARegister", arg);
             return false;
         }
 
         // Get named register from table
-        if (!RegistersTable.TryGetRegister(regStr, out register, out RegisterSet parsedSet))
+        if (!RegistersTable.TryGetRegister(arg.Source, out register, out RegisterSet parsedSet))
         {
             // Register does not exist in table
             _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "RegisterNotFound", arg);

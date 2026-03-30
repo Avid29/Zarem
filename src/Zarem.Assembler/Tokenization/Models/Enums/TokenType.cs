@@ -18,7 +18,9 @@ public enum TokenType
 
     // Second pass
     Instruction,
+    RegisterPrefix,
     Register,
+    ImmediatePrefix,
     Immediate,
     Directive,
     Operator,

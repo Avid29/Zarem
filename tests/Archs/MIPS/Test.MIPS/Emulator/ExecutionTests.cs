@@ -12,7 +12,7 @@ using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Test.Emulator.MIPS;
+namespace Test.MIPS.Emulator;
 
 [TestClass]
 public partial class ExecutionTests

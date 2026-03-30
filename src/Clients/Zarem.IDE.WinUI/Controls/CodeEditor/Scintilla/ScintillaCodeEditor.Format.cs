@@ -90,8 +90,8 @@ public partial class ScintillaCodeEditor
                 var style = token.Type switch
                 {
                     TokenType.Instruction => InstructionStyleIndex,
-                    TokenType.Register => RegisterStyleIndex,
-                    TokenType.Immediate => ImmediateStyleIndex,
+                    TokenType.Register or TokenType.RegisterPrefix => RegisterStyleIndex,
+                    TokenType.Immediate or TokenType.ImmediatePrefix => ImmediateStyleIndex,
 
                     TokenType.Reference or
                     TokenType.LabelDeclaration => ReferenceStyleIndex,

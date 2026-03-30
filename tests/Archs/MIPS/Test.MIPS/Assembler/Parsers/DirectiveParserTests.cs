@@ -1,10 +1,8 @@
 ﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Text;
 using Zarem.Assembler;
 using Zarem.Assembler.Models.Directives;
@@ -12,7 +10,7 @@ using Zarem.Assembler.Models.Directives.Abstract;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization;
 
-namespace Test.Assembler.MIPS.Parsers;
+namespace Test.MIPS.Assembler.Parsers;
 
 // TODO: Test expressions in directive args
 

@@ -20,22 +20,21 @@ public partial class Tokenizer
         List<Token> classified = [];
         lines = [];
 
-        bool start = true;
         if (_mode is TokenizerMode.BehaviorExpression or TokenizerMode.Expression)
-            start = false;
+            _state = TokenizerState.ArgumentPhase;
 
         // Reclassify each token
         var span = CollectionsMarshal.AsSpan(raw);
         while (!span.IsEmpty)
         {
-            var newToken = ReTokenizeSpan(start, span, out var advance);
+            var newToken = ReTokenizeSpan(span, out var advance);
 
             // TODO: Handle invalid state
             if (newToken is null)
                 return false;
 
             // Track if the new token is meaningful
-            bool meaningful = newToken.Type is not TokenType.Comment and not TokenType.Whitespace;
+            bool meaningful = newToken.Type is not (TokenType.Comment or TokenType.Whitespace or TokenType.RegisterPrefix or TokenType.ImmediatePrefix);
 
             if (meaningful || _mode is TokenizerMode.IDE or TokenizerMode.BehaviorExpression)
                 classified.Add(newToken);
@@ -48,13 +47,13 @@ public partial class Tokenizer
 
                 // Begin new assembly line
                 classified = [];
-                start = true;
+                _state = TokenizerState.LineBegin;
             }
-            else
+            else if (meaningful && newToken.Type is not (TokenType.LabelDeclaration or TokenType.RegisterPrefix or TokenType.ImmediatePrefix))
             {
                 // If a meaningful token was appended, we are no longer at the start. 
                 // we also remain at the start after label declarations
-                start = start && (!meaningful || newToken.Type is TokenType.LabelDeclaration);
+                _state = TokenizerState.ArgumentPhase;
             }
 
             // Advance the appropriate number of tokens
@@ -66,7 +65,7 @@ public partial class Tokenizer
         return true;
     }
 
-    private Token? ReTokenizeSpan(bool start, ReadOnlySpan<Token> tokens, out int advance)
+    private Token? ReTokenizeSpan(ReadOnlySpan<Token> tokens, out int advance)
     {
         advance = 1;
 
@@ -75,11 +74,11 @@ public partial class Tokenizer
             return simple;
 
         // Stage 2: Multi-token merges (registers, directives, and labels)
-        if (TryMergeTokens(start, tokens, out var merged, ref advance))
+        if (TryMergeTokens(tokens, out var merged, ref advance))
             return merged;
 
         // Stage 3: Check for either references or instruction names
-        if (TryInstructionOrReference(start, tokens, out var result, ref advance))
+        if (TryInstructionOrReference(tokens, out var result, ref advance))
             return result;
 
         // Token could not be classified
@@ -87,7 +86,7 @@ public partial class Tokenizer
         return tokens[0];
     }
 
-    private static bool TrySimpleReclass(Token current, out Token? classified)
+    private bool TrySimpleReclass(Token current, out Token? classified)
     {
         classified = null;
 
@@ -121,6 +120,22 @@ public partial class Tokenizer
             },
         };
 
+        // Handle prefixes
+        if (current.Source.Length is 1)
+        {
+            if (_profile.RegisterPrefix != '\0' && current.Source[0] == _profile.RegisterPrefix)
+            {
+                type = TokenType.RegisterPrefix;
+                _state = TokenizerState.RegisterPrefixed;
+            }
+
+            else if (_profile.ImmediatePrefix != '\0' && current.Source[0] == _profile.ImmediatePrefix)
+            {
+                type = TokenType.ImmediatePrefix;
+                _state = TokenizerState.ImmediatePrefixed;
+            }
+        }
+
         // Type not found. Return false
         if (type is TokenType.Unknown)
             return false;
@@ -130,27 +145,15 @@ public partial class Tokenizer
         return true;
     }
 
-    private bool TryMergeTokens(bool start, ReadOnlySpan<Token> tokens, out Token? merged, ref int advance)
+    private bool TryMergeTokens(ReadOnlySpan<Token> tokens, out Token? merged, ref int advance)
     {
         var current = tokens[0];
         var peek = Peek(tokens);
 
         // Handle register 
-        if (!start)
+        if (_profile.RegisterPrefix is '\0' && _state is not TokenizerState.LineBegin)
         {
-            if (_profile.RegisterPrefix is not '\0' &&
-                current.Source.Length == 1 &&
-                current.Source[0] == _profile.RegisterPrefix &&
-                peek?.IsIdentifier() == true)
-            {
-                // Handle prefixed registers
-                merged = Merge(TokenType.Register, current, peek); ;
-                advance = 2;
-                return true;
-            }
-            else if (_profile.RegisterPrefix is '\0' &&
-                     current.IsIdentifier() &&
-                     _profile.RegisterRegex.IsMatch(current.Source))
+            if (_profile.RegisterRegex.IsMatch(current.Source))
             {
                 // Handle non-prefixed registers
                 merged = ReClassify(TokenType.Register, current);
@@ -158,38 +161,18 @@ public partial class Tokenizer
                 return true;
             }
         }
+        else if (_state is TokenizerState.RegisterPrefixed)
+        {
+            merged = ReClassify(TokenType.Register, current);
+            advance = 1;
+            return true;
+        }
 
         // Handle merging immediates tokens
-        if (!start)
+        if (_state is not TokenizerState.LineBegin)
         {
-            Unsafe.SkipInit(out int numericAdvance);
-
-            // Check for Prefixed Immediates (e.g., AT&T '$')
-            if (_profile.ImmediatePrefix != '\0' &&
-                current.Source.Length == 1 &&
-                current.Source[0] == _profile.ImmediatePrefix)
-            {
-                // We found a prefix; try to consume the numeric body starting at the next token (index 1)
-                if (TryConsumeNumericBody(tokens[1..], out var mergedNumeric, out numericAdvance))
-                {
-                    // Successfully consumed a numeric body after the prefix; merge it with the prefix token
-                    merged = Merge(TokenType.Immediate, current, mergedNumeric);
-                    advance = numericAdvance + 1;
-                    return true;
-                }
-
-                // If it's a reference immediate (e.g. AT&T "$label")
-                var next = Peek(tokens, 1);
-                if (next != null && next.IsIdentifier())
-                {
-                    merged = Merge(TokenType.Reference, current, next);
-                    advance = 2;
-                    return true;
-                }
-            }
-
-            // Check for Standard Immediates (Starting at index 0)
-            if (TryConsumeNumericBody(tokens, out merged, out numericAdvance))
+            // Check for Standard Immediates
+            if (TryConsumeNumericBody(tokens, out merged, out var numericAdvance))
             {
                 advance = numericAdvance;
                 return true;
@@ -197,11 +180,11 @@ public partial class Tokenizer
         }
 
         // Determine appropriate type
-        (var type, bool merge) = start switch
+        (var type, bool merge) = _state switch
         {
-            true when Peek(tokens, skipWhitespace: true)?.Source is "=" => (TokenType.MacroDeclaration, false),
-            true when current.Source is "." => (TokenType.Directive, true),
-            true when peek?.Source is ":" => (TokenType.LabelDeclaration, true),
+            TokenizerState.LineBegin when Peek(tokens, skipWhitespace: true)?.Source is "=" => (TokenType.MacroDeclaration, false),
+            TokenizerState.LineBegin when current.Source is "." => (TokenType.Directive, true),
+            TokenizerState.LineBegin when peek?.Source is ":" => (TokenType.LabelDeclaration, true),
             _ => (TokenType.Unknown, false),
         };
 
@@ -221,7 +204,7 @@ public partial class Tokenizer
         return TryMerge(tokens, type, out merged, ref advance); 
     }
 
-    private static bool TryInstructionOrReference(bool start, ReadOnlySpan<Token> tokens, out Token? result, ref int advance)
+    private bool TryInstructionOrReference(ReadOnlySpan<Token> tokens, out Token? result, ref int advance)
     {
         // Grab the current token
         var current = tokens[0];
@@ -230,7 +213,7 @@ public partial class Tokenizer
         if (!current.IsIdentifier())
             return false;
 
-        if (start)
+        if (_state is TokenizerState.LineBegin)
         {
             // Handle instructions
             result = ReClassify(TokenType.Instruction, current);
