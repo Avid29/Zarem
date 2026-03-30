@@ -47,6 +47,8 @@ public interface ICodeEditor
     /// </summary>
     AssemblySyntaxColorScheme? ColorScheme { get; set;  }
 
+    SourceRange? ExecutingLocation { get; set; }
+
     void ApplyOperation(EditorOperation operation);
 
     /// <summary>

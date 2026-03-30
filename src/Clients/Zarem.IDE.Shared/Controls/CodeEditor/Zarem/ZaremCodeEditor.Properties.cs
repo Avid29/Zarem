@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
 using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor.Zarem;
 
@@ -30,6 +31,9 @@ public partial class ZaremCodeEditor
 
     public static readonly DependencyProperty SelectionRangeProperty =
         DependencyProperty.Register(nameof(SelectedRange), typeof(Range), typeof(ZaremCodeEditor), new PropertyMetadata(new Range(0, 0)));
+
+    public static readonly DependencyProperty ExecutingLocationProperty =
+        DependencyProperty.Register(nameof(ExecutingLocation), typeof(SourceRange?), typeof(ZaremCodeEditor), new PropertyMetadata(null));
 
     /// <inheritdoc/>
     public string Text
@@ -71,6 +75,12 @@ public partial class ZaremCodeEditor
     {
         get => (AnnotationThreshold)GetValue(AnnotationThresholdProperty);
         set => SetValue(AnnotationThresholdProperty, value);
+    }
+
+    public SourceRange? ExecutingLocation
+    {
+        get => (SourceRange?)GetValue(ExecutingLocationProperty);
+        set => SetValue(ExecutingLocationProperty, value);
     }
 
     /// <summary>

@@ -15,6 +15,7 @@
                         AnnotationThreshold="{TemplateBinding AnnotationThreshold}"
                         ColorScheme="{TemplateBinding ColorScheme}"
                         Column="{Binding Column, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        ExecutingLocation="{TemplateBinding ExecutingLocation}"
                         Line="{Binding Line, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         Zoom="{Binding Zoom, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
@@ -32,6 +33,7 @@
                         AnnotationThreshold="{TemplateBinding AnnotationThreshold}"
                         ColorScheme="{TemplateBinding ColorScheme}"
                         Column="{Binding Column, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        ExecutingLocation="{TemplateBinding ExecutingLocation}"
                         Line="{Binding Line, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         Zoom="{Binding Zoom, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />

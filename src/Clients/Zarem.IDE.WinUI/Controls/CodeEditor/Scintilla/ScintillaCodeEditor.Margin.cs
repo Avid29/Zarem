@@ -1,13 +1,14 @@
 // Avishai Dernis 2026
 
 using Microsoft.UI;
+using System;
 using WinUIEditor;
 
 namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
 public sealed partial class ScintillaCodeEditor
 {
-    //private int _executionHandle = -1;
+    private int _executionHandle = -1;
 
     public const int BreakpointMarkerIndex = 2;
     public const int ExecutionPointIndex = 3;
@@ -65,45 +66,42 @@ public sealed partial class ScintillaCodeEditor
         }
     }
 
-    //private void UpdateExecutingLine()
-    //{
-    //    if (!TryGetEditor(out var editor))
-    //        return;
+    private void UpdateExecutingLine()
+    {
+        if (!TryGetEditor(out var editor))
+            return;
 
-    //    // Clear existing marker
-    //    editor.MarkerDeleteHandle(_executionHandle);
-    //    _executionHandle = -1;
+        // Clear existing marker
+        editor.MarkerDeleteHandle(_executionHandle);
+        _executionHandle = -1;
 
-    //    // Clear existing highlight
-    //    editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
-    //    editor.IndicatorClearRange(0, editor.TextLength);
+        // Clear existing highlight
+        editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
+        editor.IndicatorClearRange(0, editor.TextLength);
 
-    //    if (ExecutingLocation.HasValue)
-    //    {
-    //        // Get line range info
-    //        var location = _locationMapper.Translate(ExecutingLocation.Value);
-    //        var line = location.Start.Line;
+        if (ExecutingLocation.HasValue)
+        {
+            // Get line range info
+            var location = ExecutingLocation.Value;
+            var line = location.Start.Line;
+            var lineStart = GetMappedIndex(ExecutingLocation.Value, out var length);
 
-    //        // Set new marker
-    //        _executionHandle = editor.MarkerAdd(line, ExecutionPointIndex);
+            // Set new marker
+            _executionHandle = editor.MarkerAdd(line, ExecutionPointIndex);
 
-    //        // Find the position to highlight the executing line
-    //        var lineStart = location.Start.Index;
-    //        var length = location.Size;
+            // Apply the new highlight
+            editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
+            editor.IndicatorFillRange(lineStart, length);
 
-    //        // Apply the new highlight
-    //        editor.IndicatorCurrent = ExecutingLineIndicatorIndex;
-    //        editor.IndicatorFillRange(lineStart, length);
-
-    //        // Adjust view to ensure the line is comfortably on screen
-    //        editor.EnsureVisible(line);
-    //        long firstVisible = editor.FirstVisibleLine;
-    //        long lastVisible = firstVisible + editor.LinesOnScreen;
-    //        if (line <= firstVisible + 2 || line > lastVisible - 2)
-    //        {
-    //            long targetFirstLine = line - (editor.LinesOnScreen / 2);
-    //            editor.FirstVisibleLine = Math.Max(0, targetFirstLine);
-    //        }
-    //    }
-    //}
+            // Adjust view to ensure the line is comfortably on screen
+            editor.EnsureVisible(line);
+            long firstVisible = editor.FirstVisibleLine;
+            long lastVisible = firstVisible + editor.LinesOnScreen;
+            if (line <= firstVisible + 2 || line > lastVisible - 2)
+            {
+                long targetFirstLine = line - (editor.LinesOnScreen / 2);
+                editor.FirstVisibleLine = Math.Max(0, targetFirstLine);
+            }
+        }
+    }
 }

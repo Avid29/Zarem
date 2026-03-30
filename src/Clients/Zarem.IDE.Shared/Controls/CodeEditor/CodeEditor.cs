@@ -49,6 +49,9 @@ public sealed partial class CodeEditor : Control, ICodeEditor
     public static readonly DependencyProperty PositionAddressProperty =
         DependencyProperty.Register(nameof(PositionAddress), typeof(Address?),typeof(CodeEditor), new PropertyMetadata(null));
 
+    public static readonly DependencyProperty ExecutingLocationProperty =
+        DependencyProperty.Register(nameof(ExecutingLocation), typeof(SourceRange?), typeof(CodeEditor), new PropertyMetadata(null));
+
     private const string ICodeEditorPartName = "PART_ICodeEditor";
 
     private ICodeEditor? _codeEditor;
@@ -118,6 +121,12 @@ public sealed partial class CodeEditor : Control, ICodeEditor
     {
         get => (Address?)GetValue(PositionAddressProperty);
         set => SetValue(PositionAddressProperty, value);
+    }
+
+    public SourceRange? ExecutingLocation
+    {
+        get => (SourceRange?)GetValue(ExecutingLocationProperty);
+        set => SetValue(ExecutingLocationProperty, value);
     }
 
     public SymbolResolver? SymbolResolver { get; private set; }

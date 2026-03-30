@@ -103,22 +103,33 @@ public sealed partial class ScintillaCodeEditor : Control, ICodeEditor
         return editor is not null;
     }
 
-    private long GetMappedIndex(SourceLocation location) => GetMappedIndex(location.Line, location.Column);
+    private long GetMappedIndex(SourceLocation location) => GetMappedIndex(location.Line, location.Column, 1, out _);
 
-    private long GetMappedIndex(long line, long column)
+    private long GetMappedIndex(SourceRange location, out long end)
+        => GetMappedIndex(location.Start.Line, location.Start.Column, (int)location.Size, out end);
+
+    private long GetMappedIndex(long line, int column) => GetMappedIndex(line, column, 1, out _);
+
+    private long GetMappedIndex(long line, int column, int sizeIn, out long sizeOut)
     {
+        sizeOut = -1;
         if (!TryGetEditor(out var editor))
             return -1;
 
         // Get the utf8 index of the start of the line
         var lineStartUtf8 = editor.PositionFromLine(line);
-
-        // Get the text of the line and calculate the utf8 length of the text before the column
         string lineText = editor.GetLine(line);
-        long safeColumn = Math.Min(column, lineText.Length);
-        int columnOffsetUtf8 = Encoding.UTF8.GetByteCount(lineText[..(int)safeColumn]);
 
-        return lineStartUtf8 + columnOffsetUtf8;
+        // Get the safe margins to avoid out of range errors, and calculate the utf8 offset of the column
+        int safeColumn = Math.Min(column, lineText.Length);
+        int safeSize = Math.Min(sizeIn, lineText.Length - safeColumn);
+
+        // Get the utf8 offset of the column, and calculate the utf8 length of the token
+        int columnOffsetUtf8 = Encoding.UTF8.GetByteCount(lineText[..safeColumn]);
+        long startUtf8 = lineStartUtf8 + columnOffsetUtf8;
+        sizeOut = Encoding.UTF8.GetByteCount(lineText.AsSpan(safeColumn, safeSize));
+
+        return startUtf8;
     }
 
     private static int ZoomPercentageToFactor(int baseSize, int percentage)

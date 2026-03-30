@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
 using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
@@ -26,6 +27,9 @@ public partial class ScintillaCodeEditor
 
     public static readonly DependencyProperty AnnotationThresholdProperty =
         DependencyProperty.Register(nameof(AnnotationThreshold), typeof(AnnotationThreshold), typeof(ScintillaCodeEditor), new PropertyMetadata(AnnotationThreshold.Errors));
+
+    public static readonly DependencyProperty ExecutingLocationProperty =
+        DependencyProperty.Register(nameof(ExecutingLocation), typeof(SourceRange?), typeof(ScintillaCodeEditor), new PropertyMetadata(null, OnExecutingLineChanged));
 
     /// <summary>
     /// Gets or sets the text contained in the editbox.
@@ -77,6 +81,12 @@ public partial class ScintillaCodeEditor
         set => SetValue(AnnotationThresholdProperty, value);
     }
 
+    public SourceRange? ExecutingLocation
+    {
+        get => (SourceRange?)GetValue(ExecutingLocationProperty);
+        set => SetValue(ExecutingLocationProperty, value);
+    }
+
     private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
     {
         if (d is not ScintillaCodeEditor codeEditor)
@@ -116,6 +126,14 @@ public partial class ScintillaCodeEditor
         // Apply new color scheme and subscribe to updates
         codeEditor.UpdateColorScheme();
         codeEditor.ColorScheme?.Updated += UpdateHandled;
+    }
+
+    private static void OnExecutingLineChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+    {
+        if (d is not ScintillaCodeEditor codeEditor)
+            return;
+
+        codeEditor.UpdateExecutingLine();
     }
 
     private void UpdateText()
