@@ -63,6 +63,8 @@ public sealed partial class ScintillaCodeEditor : Control, ICodeEditor
         // Setup events
         this.Loaded += CodeEditor_Loaded;
 
+        SetupKeybinds();
+
         SetUpHighlighting();
         SetupIndicators();
         SetupMargins();

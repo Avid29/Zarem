@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using Zarem.Assembler.Logging;
+using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.Models.Breakpoints;
 using Zarem.Models.Tables;
 
@@ -22,6 +23,10 @@ public partial class ZaremCodeEditor : RichEditBox, ICodeEditor
     public ZaremCodeEditor()
     {
         DefaultStyleKey = typeof(ZaremCodeEditor);
+    }
+
+    public void ApplyOperation(EditorOperation operation)
+    {
     }
 
     public void ApplyLogHighlights(IReadOnlyList<AssemblerEntry> logs)

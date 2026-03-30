@@ -11,6 +11,7 @@ using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Helpers;
+using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Models;
 using Zarem.Models.Breakpoints;
@@ -124,6 +125,9 @@ public sealed partial class CodeEditor : Control, ICodeEditor
     public void NavigateToToken(SourceLocation location) => _codeEditor?.NavigateToToken(location);
 
     public void ResetHistory() => _codeEditor?.ResetHistory();
+
+    /// <inheritdoc/>
+    public void ApplyOperation(EditorOperation operation) => _codeEditor?.ApplyOperation(operation);
 
     /// <inheritdoc/>
     public void ApplyLogHighlights(IReadOnlyList<AssemblerEntry> logs) => _codeEditor?.ApplyLogHighlights(logs);

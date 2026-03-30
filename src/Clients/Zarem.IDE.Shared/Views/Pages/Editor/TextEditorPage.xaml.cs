@@ -118,14 +118,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
         => CodeEditor?.NavigateToToken(e);
 
     private void ViewModel_EditorOperationRequested(object? sender, EditorOperation e)
-    {
-        //// Find editbox
-        //var codeEditor = this.FindDescendant<CodeEditor>();
-        //if (codeEditor is null)
-        //    return;
-
-        //codeEditor.ApplyOperation(e);
-    }
+        => CodeEditor?.ApplyOperation(e);
 
     public string FormatAddres(Address? address)
     {
@@ -198,9 +191,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
     {
         text = text.Trim().Trim('%').Trim();
         if (int.TryParse(text, out int percent))
-        {
             CodeEditor?.Zoom = percent;
-        }
     }
 
     private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)

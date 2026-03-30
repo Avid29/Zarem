@@ -16,7 +16,8 @@
                         ColorScheme="{TemplateBinding ColorScheme}"
                         Column="{Binding Column, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         Line="{Binding Line, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                        Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                        Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        Zoom="{Binding Zoom, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -32,7 +33,8 @@
                         ColorScheme="{TemplateBinding ColorScheme}"
                         Column="{Binding Column, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         Line="{Binding Line, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                        Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                        Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        Zoom="{Binding Zoom, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

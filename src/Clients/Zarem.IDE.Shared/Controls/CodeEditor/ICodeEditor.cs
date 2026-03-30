@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Zarem.Assembler.Logging;
+using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Models.Breakpoints;
 using Zarem.Models.Tables;
@@ -45,6 +46,8 @@ public interface ICodeEditor
     /// Gets or sets the color scheme used for syntax highlighting in assembly code.
     /// </summary>
     AssemblySyntaxColorScheme? ColorScheme { get; set;  }
+
+    void ApplyOperation(EditorOperation operation);
 
     /// <summary>
     /// Applies formatting based on a log messages.

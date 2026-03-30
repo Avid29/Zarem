@@ -70,11 +70,8 @@ public partial class ScintillaCodeEditor
         if (editor is null)
             return;
 
-        // Get action from child type
-        var action = GetOperationAction(operation);
-
         // Select default behaviors if not overriden
-        action ??= operation switch
+        Action? action = operation switch
         {
             EditorOperation.Undo => editor.Undo,
             EditorOperation.Redo => editor.Redo,
@@ -83,6 +80,8 @@ public partial class ScintillaCodeEditor
             EditorOperation.Paste => editor.Paste,
             EditorOperation.Duplicate => editor.SelectionEmpty ? editor.LineDuplicate : editor.SelectionDuplicate,
             EditorOperation.SelectAll => editor.SelectAll,
+            EditorOperation.ToggleBreakpoint => () => ToggleBreakpoint(Line),
+            EditorOperation.ClearBreakpoints => () => _breakpoints?.ClearBreakpoints(),
             EditorOperation.TransposeUp => () =>
             {
                 editor.LineTranspose();
@@ -129,13 +128,6 @@ public partial class ScintillaCodeEditor
         // Perform the action
         action();
     }
-
-    /// <summary>
-    /// Gets the action for a given a <see cref="EditorOperation"/>.
-    /// </summary>
-    /// <param name="operation">The operation requested.</param>
-    /// <returns>Null if default behavior should be used.</returns>
-    private Action? GetOperationAction(EditorOperation operation) => null;
 
     private int KeyDef(char key, KeyMod mod = KeyMod.Norm)
     {
