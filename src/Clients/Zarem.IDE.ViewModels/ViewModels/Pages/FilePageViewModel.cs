@@ -5,7 +5,9 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Components.Interfaces;
 using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Messages;
 using Zarem.IDE.Messages.DebugSessions;
@@ -106,14 +108,14 @@ public partial class FilePageViewModel : PageViewModel
     /// <summary>
     /// Gets the config to use for assembler checking.
     /// </summary>
-    public MipsAssemblerConfig? AssemblerConfig
+    public IAssembleComponent? Assembler
     {
         get
         {
-            if (_projectService.Project?.Config?.ArchitectureConfig is MipsArchitectureConfig mips)
-                return mips.AssemblerConfig;
+            if (_projectService.Project is not Project project)
+                return null;
 
-            return null;
+            return project.Assemble;
         }
     }
 

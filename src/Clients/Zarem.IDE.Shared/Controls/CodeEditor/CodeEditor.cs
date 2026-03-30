@@ -10,6 +10,7 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Components.Interfaces;
 using Zarem.Helpers;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Services.Settings.Enums;
@@ -129,7 +130,7 @@ public sealed partial class CodeEditor : Control, ICodeEditor
         set => SetValue(ExecutingLocationProperty, value);
     }
 
-    public MipsAssemblerConfig? AssemblerConfig { get; set; }
+    public IAssembleComponent? Assembler { get; set; }
 
     public SymbolResolver? SymbolResolver { get; private set; }
 
@@ -189,14 +190,13 @@ public sealed partial class CodeEditor : Control, ICodeEditor
 
     private async Task RunAssemblerAsync()
     {
-        if (!RealTimeAssembly)
+        if (!RealTimeAssembly || Assembler is null)
             return;
 
         // Run assembler and show errors
         try
         {
-            var config = AssemblerConfig ?? new MipsAssemblerConfig(MipsVersion.Mips32R2);
-            var result = await Zarembler.AssembleAsync(Text, "editor", new MipsAssmblerHandler(config), config);
+            var result = await Zarembler.AssembleAsync(Text, "editor", Assembler.Handler, Assembler.Config);
             SymbolResolver = new SymbolResolver(result.Symbols);
             _tokenizedAssembly = result.Tokens;
 

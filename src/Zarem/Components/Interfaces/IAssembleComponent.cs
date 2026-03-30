@@ -2,6 +2,7 @@
 
 using System.Threading.Tasks;
 using Zarem.Assembler.Config;
+using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Models;
 using Zarem.Models.Files;
@@ -17,6 +18,11 @@ public interface IAssembleComponent : IProjectComponent
     /// Gets the assembler config settings.
     /// </summary>
     AssemblerConfig Config { get; }
+
+    /// <summary>
+    /// Gets the assembler handler.
+    /// </summary>
+    IAssemblerHandler Handler { get; }
 
     /// <summary>
     /// Assembles a file.
