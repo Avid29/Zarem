@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
+using Zarem.Assembler.Tokenization.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models;
 using Zarem.Models.Tables;
@@ -26,6 +27,9 @@ public class RiscVAssemblerHandler : IAssemblerHandler<RiscVAssemblerConfig>
 
     /// <inheritdoc/>
     public RiscVAssemblerConfig Config { get; }
+
+    /// <inheritdoc/>
+    public ITokenizerProfile TokenizerProfile => new RiscVTokenizerProfile();
 
     /// <inheritdoc/>
     public string GetArchitectureName() => "RISC-V";

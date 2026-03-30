@@ -65,7 +65,7 @@ public partial class Tokenizer
         return true;
     }
 
-    private static Token? ReTokenizeSpan(bool start, ReadOnlySpan<Token> tokens, out int advance)
+    private Token? ReTokenizeSpan(bool start, ReadOnlySpan<Token> tokens, out int advance)
     {
         advance = 1;
 
@@ -129,10 +129,34 @@ public partial class Tokenizer
         return true;
     }
 
-    private static bool TryMergeTokens(bool start, ReadOnlySpan<Token> tokens, out Token? merged, ref int advance)
+    private bool TryMergeTokens(bool start, ReadOnlySpan<Token> tokens, out Token? merged, ref int advance)
     {
         var current = tokens[0];
         var peek = Peek(tokens);
+
+        // Handle register 
+        if (!start)
+        {
+            if (_profile.RegisterPrefix is not '\0' &&
+                current.Source.Length == 1 &&
+                current.Source[0] == _profile.RegisterPrefix &&
+                peek?.IsIdentifier() == true)
+            {
+                // Handle prefixed registers
+                merged = Merge(TokenType.Register, current, peek); ;
+                advance = 2;
+                return true;
+            }
+            else if (_profile.RegisterPrefix is '\0' &&
+                     current.IsIdentifier() &&
+                     _profile.RegisterRegex.IsMatch(current.Source))
+            {
+                // Handle non-prefixed registers
+                merged = ReClassify(TokenType.Register, current);
+                advance = 1;
+                return true;
+            }
+        }
 
         // Handle merging immediates tokens
         if (!start)
@@ -165,7 +189,6 @@ public partial class Tokenizer
         // Determine appropriate type
         (var type, bool merge) = start switch
         {
-            false when current.Source is "$" && peek.IsIdentifier() => (TokenType.Register, true),
             true when Peek(tokens, skipWhitespace: true)?.Source is "=" => (TokenType.MacroDeclaration, false),
             true when current.Source is "." => (TokenType.Directive, true),
             true when peek?.Source is ":" => (TokenType.LabelDeclaration, true),

@@ -25,7 +25,7 @@ public enum TokenType
 
     LabelDeclaration,
     MacroDeclaration,
-    Reference,          // This could be either a label or a macro
+    Reference,
 
     OpenParenthesis,
     CloseParenthesis,

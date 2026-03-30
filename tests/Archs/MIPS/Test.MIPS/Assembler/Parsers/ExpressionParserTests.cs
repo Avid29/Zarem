@@ -3,6 +3,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Numerics;
+using Zarem.Assembler;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models.Enums;
@@ -91,7 +92,7 @@ public class ExpressionParserTests
     private static void RunTest<T>(string input, T? expected = null)
         where T : unmanaged, IBinaryNumber<T>
     {
-        var line = Tokenizer.TokenizeLine(input, nameof(RunTest), TokenizerMode.Expression)[0];
+        var line = Tokenizer.TokenizeLine(input, MipsTokenizerProfile.Default, nameof(RunTest), TokenizerMode.Expression)[0];
         bool success = ExpressionParser.TryParse<T>(line.Tokens, out var actual, null, null);
         Assert.AreEqual(success, expected.HasValue);
         if (expected.HasValue)

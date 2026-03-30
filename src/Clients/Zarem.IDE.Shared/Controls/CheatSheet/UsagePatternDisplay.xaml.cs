@@ -15,6 +15,7 @@ using Zarem.Models.Instructions.Enums;
 using Zarem.IDE.Controls.CheatSheet.Palettes;
 using Zarem.IDE.Services;
 using Zarem.Assembler.Models.Abstract;
+using Zarem.Assembler;
 
 namespace Zarem.IDE.Controls.CheatSheet;
 
@@ -144,7 +145,7 @@ public sealed partial class UsagePatternDisplay : UserControl
         // Create a new Paragraph for the behavior text
         // Tokenize the behavior string
         var paragraph = new Paragraph();
-        var tokens = Tokenizer.TokenizeLine(behavior, null, TokenizerMode.BehaviorExpression);
+        var tokens = Tokenizer.TokenizeLine(behavior, MipsTokenizerProfile.Default, null, TokenizerMode.BehaviorExpression);
 
         // TODO: Can there be multi-line behavioral expressions?
 

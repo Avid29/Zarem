@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Zarem.Assembler.Tokenization.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Models.Tables;
@@ -17,6 +18,7 @@ namespace Zarem.Assembler.Tokenization;
 public partial class Tokenizer
 {
     private readonly TokenizerMode _mode;
+    private readonly ITokenizerProfile _profile;
     private readonly StringBuilder _cache;
 
     private TokenizerState _state;
@@ -27,10 +29,11 @@ public partial class Tokenizer
     /// <summary>
     /// Initializes a new instance of the <see cref="Tokenizer"/> class.
     /// </summary>
-    private Tokenizer(string? filename, TokenizerMode mode = TokenizerMode.Assembly)
+    private Tokenizer(string? filename, ITokenizerProfile profile, TokenizerMode mode = TokenizerMode.Assembly)
     {
         TokenLines = [];
         _mode = mode;
+        _profile = profile;
         _state = TokenizerState.TokenBegin;
         _cache = new();
         _location = new SourceLocation(filename);
@@ -40,22 +43,19 @@ public partial class Tokenizer
     private List<AssemblyLine> TokenLines { get; }
 
     /// <inheritdoc/>
-    public static async Task<TokenizedAssembly> TokenizeAsync(Stream stream, string? filePath = null)
+    public static async Task<TokenizedAssembly> TokenizeAsync(Stream stream, ITokenizerProfile profile, string? filePath = null)
     {
         using var reader = new StreamReader(stream);
-        return await TokenizeAsync(reader, filePath);
+        return await TokenizeAsync(reader, profile, filePath);
     }
 
     /// <summary>
     /// Tokenizes a stream of assembly code.
     /// </summary>
-    /// <param name="reader">The stream of code.</param>
-    /// <param name="filePath">The filename of the stream.</param>
-    /// <returns>A list of tokens.</returns>
-    public static async Task<TokenizedAssembly> TokenizeAsync(TextReader reader, string? filePath = null)
+    public static async Task<TokenizedAssembly> TokenizeAsync(TextReader reader, ITokenizerProfile profile, string? filePath = null)
     {
         // Create tokenizer
-        Tokenizer tokenizer = new(filePath);
+        Tokenizer tokenizer = new(filePath, profile);
 
         // Parse line by line from stream
         while (true)
@@ -73,9 +73,9 @@ public partial class Tokenizer
     /// <summary>
     /// Tokenizes a single line of assembly code.
     /// </summary>
-    public static List<AssemblyLine> TokenizeLine(string line, string? filePath = null, TokenizerMode mode = TokenizerMode.Assembly)
+    public static List<AssemblyLine> TokenizeLine(string line, ITokenizerProfile profile, string? filePath = null, TokenizerMode mode = TokenizerMode.Assembly)
     {
-        Tokenizer tokenizer = new(filePath, mode: mode);
+        Tokenizer tokenizer = new(filePath, profile, mode: mode);
 
         if (line.Contains('\n'))
             ThrowHelper.ThrowArgumentException("Single line tokenizer cannot contain a new line.");

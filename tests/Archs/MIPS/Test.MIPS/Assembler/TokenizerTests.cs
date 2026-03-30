@@ -5,6 +5,7 @@ using Test.Mips.Helpers;
 using System.IO;
 using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization;
+using Zarem.Assembler;
 
 namespace Test.Assembler.MIPS;
 
@@ -31,7 +32,7 @@ public class TokenizerTests
     private static async Task RunTest(Stream stream, string[] canon, string? fileName = null)
     {
         // Run the test and assert the expected number of tokens came back
-        var results = await Tokenizer.TokenizeAsync(stream, fileName);
+        var results = await Tokenizer.TokenizeAsync(stream, MipsTokenizerProfile.Default, fileName);
         Assert.AreEqual(canon.Length, results.TokenCount);
 
         // Assert token strings match

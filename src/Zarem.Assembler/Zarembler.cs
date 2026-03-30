@@ -121,7 +121,7 @@ public partial class Zarembler
         logger?.Flush();
 
         var assembler = new Zarembler(archHandler, config, filePath, logger);
-        var tokens = await Tokenizer.TokenizeAsync(reader, filePath);
+        var tokens = await Tokenizer.TokenizeAsync(reader, archHandler.TokenizerProfile, filePath);
 
         // Run the alignment pass on each line
         for (int i = 0; i < tokens.LineCount; i++)

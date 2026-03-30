@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using Zarem.Assembler;
 using Zarem.Assembler.Models.Directives;
 using Zarem.Assembler.Models.Directives.Abstract;
 using Zarem.Assembler.Parsers;
@@ -60,7 +61,7 @@ public class DirectiveParserTests
         var parser = new DirectiveParser();
 
         // Tokenize directive
-        var line = Tokenizer.TokenizeLine(input, nameof(RunGlobalTest))[0];
+        var line = Tokenizer.TokenizeLine(input, MipsTokenizerProfile.Default, nameof(RunGlobalTest))[0];
         if (line.Directive is null)
             Assert.Fail();
 

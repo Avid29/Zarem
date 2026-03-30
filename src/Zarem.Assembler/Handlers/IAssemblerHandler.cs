@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
+using Zarem.Assembler.Tokenization.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models;
 using Zarem.Models.Tables;
@@ -19,6 +20,11 @@ public interface IAssemblerHandler
     /// Gets the name of the architecture.
     /// </summary>
     string GetArchitectureName();
+
+    /// <summary>
+    /// Gets the tokenizer profile for the architecture.
+    /// </summary>
+    ITokenizerProfile TokenizerProfile { get; }
 
     /// <summary>
     /// Gets the size of an instruction.

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Windows.UI;
 using WinUIEditor;
+using Zarem.Assembler;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
@@ -76,7 +77,7 @@ public partial class ScintillaCodeEditor
         var text = editor.GetLine(line).Trim('\n', '\r');
 
         // Tokenize the line
-        var tokenized = Tokenizer.TokenizeLine(text, mode: TokenizerMode.IDE);
+        var tokenized = Tokenizer.TokenizeLine(text, MipsTokenizerProfile.Default, mode: TokenizerMode.IDE);
 
         // Track the position
         long pos = GetMappedIndex(line, 0);
