@@ -18,23 +18,36 @@ public partial class ScintillaCodeEditor
 
         _childEditor.Focus(FocusState.Keyboard);
 
-        editor.Modified += Editor_Modified;
-        editor.ZoomChanged += Editor_ZoomChanged;
-        editor.UpdateUI += Editor_UpdateUI;
+        editor.Modified += OnModified;
+        editor.ZoomChanged += OnZoomChanged;
+        editor.UpdateUI += OnUpdateUI;
+        editor.StyleNeeded += OnStyleNeeded;
+        _childEditor.SyntaxHighlightingApplied += OnSyntaxHighlightingApplied; ;
+        _childEditor.HighlightingLanguage = "asm";
     }
 
-    private void Editor_ZoomChanged(Editor sender, ZoomChangedEventArgs args)
+    private void OnSyntaxHighlightingApplied(object? sender, ElementTheme e)
+    {
+        SetUpHighlighting();
+    }
+
+    private void OnStyleNeeded(Editor sender, StyleNeededEventArgs args)
+    {
+        UpdateSyntaxHighlighting();
+    }
+
+    private void OnZoomChanged(Editor sender, ZoomChangedEventArgs args)
     {
         var factor = sender.Zoom;
         Zoom = ZoomFactorToPercentage(BaseFontSize, factor);
     }
 
-    private void Editor_Modified(Editor sender, ModifiedEventArgs args)
+    private void OnModified(Editor sender, ModifiedEventArgs args)
     {
         Text = sender.GetText(sender.Length);
     }
 
-    private void Editor_UpdateUI(Editor sender, UpdateUIEventArgs args)
+    private void OnUpdateUI(Editor sender, UpdateUIEventArgs args)
     {
         var pos = sender.CurrentPos;
 

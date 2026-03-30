@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using WinUIEditor;
-using Zarem.Helpers;
 using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
@@ -27,6 +26,7 @@ public sealed partial class ScintillaCodeEditor : Control, ICodeEditor
     public ScintillaCodeEditor()
     {
         DefaultStyleKey = typeof(ScintillaCodeEditor);
+
     }
 
     /// <summary>
@@ -60,8 +60,7 @@ public sealed partial class ScintillaCodeEditor : Control, ICodeEditor
         // Setup events
         this.Loaded += CodeEditor_Loaded;
 
-        // Setup keybinds
-        SetupKeybinds();
+        SetUpHighlighting();
 
         // Apply the current text
         UpdateText();
@@ -82,18 +81,20 @@ public sealed partial class ScintillaCodeEditor : Control, ICodeEditor
         editor.EmptyUndoBuffer();
     }
 
-    private long GetMappedIndex(SourceLocation location)
+    private long GetMappedIndex(SourceLocation location) => GetMappedIndex(location.Line, location.Column);
+
+    private long GetMappedIndex(long line, long column)
     {
         if (!TryGetEditor(out var editor))
             return -1;
 
         // Get the utf8 index of the start of the line
-        var lineStartUtf8 = editor.PositionFromLine(location.Line);
+        var lineStartUtf8 = editor.PositionFromLine(line);
 
         // Get the text of the line and calculate the utf8 length of the text before the column
-        string lineText = editor.GetLine(location.Line);
-        int safeColumn = Math.Min(location.Column, lineText.Length);
-        int columnOffsetUtf8 = Encoding.UTF8.GetByteCount(lineText[..safeColumn]);
+        string lineText = editor.GetLine(line);
+        long safeColumn = Math.Min(column, lineText.Length);
+        int columnOffsetUtf8 = Encoding.UTF8.GetByteCount(lineText[..(int)safeColumn]);
 
         return lineStartUtf8 + columnOffsetUtf8;
     }

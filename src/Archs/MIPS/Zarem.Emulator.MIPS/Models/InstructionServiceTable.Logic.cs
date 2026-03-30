@@ -183,5 +183,4 @@ public partial class InstructionServiceTable<T, TSigned>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static MipsTrap Trap() => MipsTrap.Trap;
     }
-
 }
