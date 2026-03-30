@@ -1,15 +1,14 @@
 ﻿// Avishai Dernis 2025
 
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using System;
+using Zarem.IDE.Controls.CodeEditor.Zarem;
 
 namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
 public partial class ScintillaCodeEditor
 {
-    /// <summary>
-    /// A <see cref="DependencyProperty"/> for the <see cref="Text"/> property.
-    /// </summary>
     public static readonly DependencyProperty TextProperty =
         DependencyProperty.Register(nameof(Text), typeof(string), typeof(ScintillaCodeEditor), new PropertyMetadata(string.Empty, OnTextPropertyChanged));
 
@@ -21,6 +20,9 @@ public partial class ScintillaCodeEditor
 
     public static readonly DependencyProperty ZoomProperty =
         DependencyProperty.Register(nameof(Zoom), typeof(int), typeof(ScintillaCodeEditor), new PropertyMetadata(100, OnZoomPropertyChanged));
+
+    public static readonly DependencyProperty ColorSchemeProperty =
+        DependencyProperty.Register(nameof(ColorScheme), typeof(AssemblySyntaxColorScheme), typeof(ScintillaCodeEditor), new PropertyMetadata(null, OnColorSchemePropertyChanged));
 
     /// <summary>
     /// Gets or sets the text contained in the editbox.
@@ -58,6 +60,13 @@ public partial class ScintillaCodeEditor
         set => SetValue(ZoomProperty, value);
     }
 
+    /// <inheritdoc/>
+    public AssemblySyntaxColorScheme? ColorScheme
+    {
+        get => (AssemblySyntaxColorScheme?)GetValue(ColorSchemeProperty);
+        set => SetValue(ColorSchemeProperty, value);
+    }
+
     private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
     {
         if (d is not ScintillaCodeEditor codeEditor)
@@ -80,6 +89,23 @@ public partial class ScintillaCodeEditor
             return;
 
         codeEditor.UpdateZoom();
+    }
+
+    private static void OnColorSchemePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
+    {
+        if (d is not ScintillaCodeEditor codeEditor)
+            return;
+
+        // Local handler to update colors
+        void UpdateHandled(object? sender, EventArgs e) => codeEditor.UpdateColorScheme();
+
+        // Unsubscribe from old value
+        if (arg.OldValue is AssemblySyntaxColorScheme old)
+            old.Updated -= UpdateHandled;
+
+        // Apply new color scheme and subscribe to updates
+        codeEditor.UpdateColorScheme();
+        codeEditor.ColorScheme?.Updated += UpdateHandled;
     }
 
     private void UpdateText()
@@ -139,5 +165,17 @@ public partial class ScintillaCodeEditor
         {
             editor?.Zoom = ZoomPercentageToFactor(BaseFontSize, Zoom);
         }
+    }
+
+    private void UpdateColorScheme()
+    {
+        if (ColorScheme is null)
+            return;
+
+        // This is not great
+        Background = new SolidColorBrush(ColorScheme.BackgroundColor);
+
+        SetUpHighlighting();
+        UpdateSyntaxHighlighting();
     }
 }

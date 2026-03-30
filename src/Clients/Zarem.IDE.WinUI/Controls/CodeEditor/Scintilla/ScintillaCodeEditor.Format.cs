@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.WinUI.Helpers;
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI;
@@ -13,8 +12,6 @@ namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
 public partial class ScintillaCodeEditor
 {
-    private bool @lock = false;
-
     private const int InstructionStyleIndex = 1;
     private const int RegisterStyleIndex = 2;
     private const int ImmediateStyleIndex = 3;
@@ -36,26 +33,27 @@ public partial class ScintillaCodeEditor
         if (!TryGetEditor(out var editor))
             return;
 
-        editor.StyleSetFore(InstructionStyleIndex, ToInt("#A7FA95".ToColor()));
-        editor.StyleSetFore(RegisterStyleIndex, ToInt("#FE8482".ToColor()));
-        editor.StyleSetFore(ImmediateStyleIndex, ToInt("#F8FC8B".ToColor()));
-        editor.StyleSetFore(ReferenceStyleIndex, ToInt("#73EEFD".ToColor()));
-        editor.StyleSetFore(OperatorStyleIndex, ToInt("#77A7FD".ToColor()));
-        editor.StyleSetFore(DirectiveStyleIndex, ToInt("#FA9EF6".ToColor()));
-        editor.StyleSetFore(StringStyleIndex, ToInt("#77A7FD".ToColor()));
-        editor.StyleSetFore(CommentStyleIndex, ToInt("#9B88FC".ToColor()));
+        if (ColorScheme is null)
+            return;
 
-        editor.StyleSetFore(ErrorAnnotationStyleIndex, ToInt("#FF0000".ToColor()));
-        editor.StyleSetFore(WarningAnnotationStyleIndex, ToInt("#FFAA00".ToColor()));
-        editor.StyleSetFore(MessageAnnotationStyleIndex, ToInt("#00AAFF".ToColor()));
+        editor.StyleSetFore(InstructionStyleIndex, ToInt(ColorScheme.InstructionHighlightColor));
+        editor.StyleSetFore(RegisterStyleIndex, ToInt(ColorScheme.RegisterHighlightColor));
+        editor.StyleSetFore(ImmediateStyleIndex, ToInt(ColorScheme.ImmediateHighlightColor));
+        editor.StyleSetFore(ReferenceStyleIndex, ToInt(ColorScheme.ReferenceHighlightColor));
+        editor.StyleSetFore(OperatorStyleIndex, ToInt(ColorScheme.OperatorHighlightColor));
+        editor.StyleSetFore(DirectiveStyleIndex, ToInt(ColorScheme.DirectiveHighlightColor));
+        editor.StyleSetFore(StringStyleIndex, ToInt(ColorScheme.StringHighlightColor));
+        editor.StyleSetFore(CommentStyleIndex, ToInt(ColorScheme.CommentHighlightColor));
+
+        editor.StyleSetFore(ErrorAnnotationStyleIndex, ToInt(ColorScheme.ErrorUnderlineColor));
+        editor.StyleSetFore(WarningAnnotationStyleIndex, ToInt(ColorScheme.WarningUnderlineColor));
+        editor.StyleSetFore(MessageAnnotationStyleIndex, ToInt(ColorScheme.MessageUnderlineColor));
     }
 
     private void UpdateSyntaxHighlighting()
     {
-        if (@lock || !TryGetEditor(out var editor))
+        if (!TryGetEditor(out var editor))
             return;
-
-        @lock = true;
 
         // Clear the style
         editor.StartStyling(0, 0);
@@ -67,8 +65,6 @@ public partial class ScintillaCodeEditor
             // TODO: Check if the line has been updated
             FormatLine(i, foldLabels);
         }
-
-        @lock = false;
     }
 
     private void FormatLine(long line, Stack<string> foldLabels)

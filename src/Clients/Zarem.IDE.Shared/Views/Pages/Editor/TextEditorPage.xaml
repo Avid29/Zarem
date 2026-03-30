@@ -13,7 +13,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <editor:AssemblySyntaxHighlightingTheme x:Name="SyntaxHighlighting" />
+        <editor:AssemblySyntaxColorScheme x:Name="SyntaxHighlighting" />
         <convert:PercentageStringConverter x:Key="PercentConverter" />
 
         <Style TargetType="ComboBox">
@@ -37,7 +37,7 @@
         <!--  Editor  -->
         <editor:CodeEditor
             x:Name="CodeEditor"
-            Style="{StaticResource ScintillaCodeEditorStyle}"
+            ColorScheme="{StaticResource SyntaxHighlighting}"
             Text="{x:Bind Text, Mode=OneWay}" />
 
         <!--  Status Bar  -->

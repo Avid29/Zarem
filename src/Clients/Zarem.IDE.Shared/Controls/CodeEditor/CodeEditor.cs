@@ -1,9 +1,7 @@
-﻿// The Templated Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234235
+﻿// Avishai Dernis 2026
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Zarem.IDE.Controls.CodeEditor.Scintilla;
-using Zarem.IDE.Controls.CodeEditor.Zarem;
 using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor;
@@ -23,6 +21,8 @@ public sealed partial class CodeEditor : Control, ICodeEditor
     public static readonly DependencyProperty ZoomProperty =
         DependencyProperty.Register(nameof(Zoom), typeof(int), typeof(CodeEditor), new PropertyMetadata(100));
 
+    public static readonly DependencyProperty ColorSchemeProperty =
+        DependencyProperty.Register(nameof(ColorScheme), typeof(AssemblySyntaxColorScheme), typeof(CodeEditor), new PropertyMetadata(null));
 
     private const string ICodeEditorPartName = "PART_ICodeEditor";
 
@@ -64,6 +64,13 @@ public sealed partial class CodeEditor : Control, ICodeEditor
     {
         get => (int)GetValue(ZoomProperty);
         set => SetValue(ZoomProperty, value);
+    }
+
+    /// <inheritdoc/>
+    public AssemblySyntaxColorScheme? ColorScheme
+    {
+        get => (AssemblySyntaxColorScheme?)GetValue(ColorSchemeProperty);
+        set => SetValue(ColorSchemeProperty, value);
     }
 
     public void NavigateToToken(SourceLocation location) => _codeEditor?.NavigateToToken(location);

@@ -14,13 +14,29 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <editor:AssemblySyntaxHighlightingTheme x:Name="SyntaxHighlighting" />
+        <editor:AssemblySyntaxColorScheme x:Name="SyntaxHighlighting" />
     </UserControl.Resources>
 
     <StackPanel>
         <StackPanel.ChildrenTransitions>
             <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True" />
         </StackPanel.ChildrenTransitions>
+
+        <editor:CodeEditor
+            Height="250"
+            ColorScheme="{StaticResource SyntaxHighlighting}"
+            CornerRadius="4"
+            FlowDirection="LeftToRight"
+            Text="{x:Bind DemoText}" />
+
+        <!--<editor:AssemblyEditor
+            Height="250"
+            AnnotationThreshold="{x:Bind ViewModel.AnnotationThreshold, Mode=OneWay}"
+            CornerRadius="4"
+            FlowDirection="LeftToRight"
+            RealTimeAssembly="{x:Bind ViewModel.RealTimeAssembly, Mode=OneWay}"
+            SyntaxHighlightingTheme="{StaticResource SyntaxHighlighting}"
+            Text="{x:Bind DemoText}" />-->
 
         <ctc:SettingsCard
             x:Uid="/Settings/RealTimeAssemblySC"

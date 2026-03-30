@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using System.Collections.Generic;
@@ -72,6 +71,9 @@ public partial class ZaremCodeEditor
 
     private void FormatLine(int lineStart, string line)
     {
+        if (ColorScheme is null)
+            return;
+
         // Batch the following display updates
         Document.BatchDisplayUpdates();
 
@@ -89,19 +91,18 @@ public partial class ZaremCodeEditor
 
             tokenDocumentRange.CharacterFormat.ForegroundColor = token.Type switch
             {
-                TokenType.Instruction => "#A7FA95".ToColor(),
-                TokenType.Register => "#FE8482".ToColor(),
-                TokenType.Immediate => "#F8FC8B".ToColor(),
+                TokenType.Instruction => ColorScheme.InstructionHighlightColor,
+                TokenType.Register => ColorScheme.RegisterHighlightColor,
+                TokenType.Immediate => ColorScheme.ImmediateHighlightColor,
 
                 TokenType.Reference or
-                TokenType.LabelDeclaration => "#73EEFD".ToColor(),
+                TokenType.LabelDeclaration => ColorScheme.ReferenceHighlightColor,
 
-                TokenType.Operator => "#77A7FD".ToColor(),
+                TokenType.Operator => ColorScheme.OperatorHighlightColor,
 
-                TokenType.Directive => "#FA9EF6".ToColor(),
-                TokenType.Comma => "#77A7FD".ToColor(),
-                TokenType.String => "#FFC47A".ToColor(),
-                TokenType.Comment => "#9B88FC".ToColor(),
+                TokenType.Directive => ColorScheme.DirectiveHighlightColor,
+                TokenType.String => ColorScheme.StringHighlightColor,
+                TokenType.Comment => ColorScheme.CommentHighlightColor,
                 _ => Colors.White,
             };
         }

@@ -450,6 +450,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\UsagePatternDisplay.xaml.cs">
       <DependentUpon>UsagePatternDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\AssemblySyntaxColorScheme.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\CodeEditor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\ICodeEditor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\Zarem\ZaremCodeEditor.cs" />

@@ -1,12 +1,15 @@
 // Avishai Dernis 2025
 
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.IO;
 using System.Threading.Tasks;
-using Zarem.IDE.Controls.CodeEditor;
+using Zarem.IDE.Messages;
 using Zarem.IDE.Messages.Editor.Enums;
+using Zarem.IDE.Models.EditorConfig.ColorScheme;
 using Zarem.IDE.Services;
+using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.Interfaces;
 using Zarem.Models;
@@ -26,8 +29,8 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
     {
         InitializeComponent();
 
-        //Service.Get<IMessenger>().Register<TextEditorPage, SettingChangedMessage<Theme>>(this, (r, m) => SyntaxHighlighting.ReloadFromSettings());
-        //Service.Get<IMessenger>().Register<TextEditorPage, SettingChangedMessage<EditorColorScheme>>(this, (r, m) => SyntaxHighlighting.ReloadFromSettings());
+        Service.Get<IMessenger>().Register<TextEditorPage, SettingChangedMessage<Theme>>(this, (r, m) => SyntaxHighlighting.ReloadFromSettings());
+        Service.Get<IMessenger>().Register<TextEditorPage, SettingChangedMessage<EditorColorScheme>>(this, (r, m) => SyntaxHighlighting.ReloadFromSettings());
 
         Loaded += TextEditorPage_Loaded;
     }
@@ -76,10 +79,6 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
             }
         }
     }
-
-    private bool UseAssemblyEditor => ViewModel?.File?.Name.EndsWith(".asm") ?? false;
-
-    private bool UseTextEditor => !UseAssemblyEditor;
 
     /// <inheritdoc/>
     public bool IsDirty => Text != OriginalText;

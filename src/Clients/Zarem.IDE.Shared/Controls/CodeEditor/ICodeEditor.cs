@@ -30,6 +30,10 @@ public interface ICodeEditor
     /// </summary>
     public int Zoom { get; set; }
 
+    /// <summary>
+    /// Gets or sets the color scheme used for syntax highlighting in assembly code.
+    /// </summary>
+    public AssemblySyntaxColorScheme? ColorScheme { get; set;  }
 
     void NavigateToToken(SourceLocation location);
 

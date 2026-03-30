@@ -24,6 +24,9 @@
         <Setter Property="ContextFlyout" Value="{StaticResource TextControlCommandBarContextFlyout}" />
         <Setter Property="SelectionFlyout" Value="{x:Null}" />
         <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="TextReadingOrder" Value="UseFlowDirection" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="FlowDirection" Value="LeftToRight" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ZaremCodeEditor">

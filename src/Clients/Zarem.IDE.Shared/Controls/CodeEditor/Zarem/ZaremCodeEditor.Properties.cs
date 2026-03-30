@@ -2,15 +2,14 @@
 
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using System;
+using Zarem.IDE.Models.EditorConfig.ColorScheme;
 
 namespace Zarem.IDE.Controls.CodeEditor.Zarem;
 
 public partial class ZaremCodeEditor
 {
-    /// <summary>
-    /// A <see cref="DependencyProperty"/> for the <see cref="Text"/> property.
-    /// </summary>
     public static readonly DependencyProperty TextProperty =
         DependencyProperty.Register(nameof(Text), typeof(string), typeof(ZaremCodeEditor), new PropertyMetadata(string.Empty, OnTextPropertyChanged));
 
@@ -22,6 +21,9 @@ public partial class ZaremCodeEditor
 
     public static readonly DependencyProperty ZoomProperty =
         DependencyProperty.Register(nameof(Zoom), typeof(int), typeof(ZaremCodeEditor), new PropertyMetadata(100, OnZoomPropertyChanged));
+
+    public static readonly DependencyProperty ColorSchemeProperty =
+        DependencyProperty.Register(nameof(ColorScheme), typeof(AssemblySyntaxColorScheme), typeof(ZaremCodeEditor), new PropertyMetadata(null, OnColorSchemePropertyChanged));
 
     public static readonly DependencyProperty SelectionRangeProperty =
         DependencyProperty.Register(nameof(SelectedRange), typeof(Range), typeof(ZaremCodeEditor), new PropertyMetadata(new Range(0, 0)));
@@ -52,6 +54,13 @@ public partial class ZaremCodeEditor
     {
         get => (int)GetValue(ZoomProperty);
         set => SetValue(ZoomProperty, value);
+    }
+
+    /// <inheritdoc/>
+    public AssemblySyntaxColorScheme? ColorScheme
+    {
+        get => (AssemblySyntaxColorScheme?)GetValue(ColorSchemeProperty);
+        set => SetValue(ColorSchemeProperty, value);
     }
 
     /// <summary>
@@ -87,6 +96,23 @@ public partial class ZaremCodeEditor
         //codeEditor.UpdateZoom();
     }
 
+    private static void OnColorSchemePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
+    {
+        if (d is not ZaremCodeEditor codeEditor)
+            return;
+
+        // Local handler to update colors
+        void UpdateHandled(object? sender, EventArgs e) => codeEditor.UpdateColorScheme();
+
+        // Unsubscribe from old value
+        if (arg.OldValue is AssemblySyntaxColorScheme old)
+            old.Updated -= UpdateHandled;
+
+        // Apply new color scheme and subscribe to updates
+        codeEditor.UpdateColorScheme();
+        codeEditor.ColorScheme?.Updated += UpdateHandled;
+    }
+
     private void UpdateText()
     {
         // Get current text, and check if it matches
@@ -100,5 +126,16 @@ public partial class ZaremCodeEditor
 
         // TODO: Improve
         _ = UpdateSyntaxHighlightingAsync();
+    }
+
+    private async void UpdateColorScheme()
+    {
+        if (ColorScheme is null)
+            return;
+
+        // This is not great
+        Background = new SolidColorBrush(ColorScheme.BackgroundColor);
+
+        await UpdateSyntaxHighlightingAsync();
     }
 }
