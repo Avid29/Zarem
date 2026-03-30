@@ -1,21 +1,15 @@
-﻿// Avishai Dernis 2025
+// Avishai Dernis 2026
 
 using Microsoft.UI;
-using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using WinUIEditor;
-using Zarem.Assembler;
-using Zarem.Assembler.Config;
-using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Models.Instructions.Enums;
 
-namespace Zarem.IDE.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
-public partial class AssemblyEditor
+public sealed partial class ScintillaCodeEditor
 {
     private const int ErrorIndicatorIndex = 8;
     private const int WarningIndicatorIndex = 9;
@@ -24,9 +18,7 @@ public partial class AssemblyEditor
     // Debugging
     private const int ExecutingLineIndicatorIndex = 15;
 
-    /// <summary>
-    /// Applies formatting based on a log messages.
-    /// </summary>
+    /// <inheritdoc/>
     public void ApplyLogHighlights(IReadOnlyList<AssemblerEntry> logs)
     {
         if (!TryGetEditor(out var editor))
@@ -41,7 +33,8 @@ public partial class AssemblyEditor
                 continue;
 
             // Get the token's start location in utf8
-            var utf8Location = _locationMapper.Translate(log.Location.Value);
+            var location = log.Location.Value;
+            var start = GetMappedIndex(location);
 
             // Get the token's string
             var highlightString = new StringBuilder();
@@ -51,8 +44,7 @@ public partial class AssemblyEditor
             }
 
             // Find the start and length, using the string's length
-            var tokenLength = GetEncodingSize($"{highlightString}");
-            var start = utf8Location.Index;
+            var tokenLength = Encoding.UTF8.GetByteCount($"{highlightString}");
 
             // Select the indictor
             editor.IndicatorCurrent = log.Severity switch
@@ -79,7 +71,7 @@ public partial class AssemblyEditor
                 _ => ErrorAnnotationStyleIndex,
             };
 
-            var line = utf8Location.Line;
+            var line = location.Line;
             editor.AnnotationSetStyle(line, annotationStyle);
             editor.AnnotationSetText(line, log.Message);
         }
@@ -87,13 +79,10 @@ public partial class AssemblyEditor
         editor.AnnotationVisible = AnnotationVisible.Boxed;
     }
 
-    /// <summary>
-    /// Clears formatting based on a log messages.
-    /// </summary>
+    /// <inheritdoc/>
     public void ClearLogHighlights()
     {
-        var editor = ChildEditor?.Editor;
-        if (editor is null)
+        if (!TryGetEditor(out var editor))
             return;
 
         // Clear underlines
@@ -107,44 +96,26 @@ public partial class AssemblyEditor
         editor.AnnotationClearAll();
     }
 
-    private async Task RunAssemblerAsync()
-    {
-        // Skip assembling if disabled
-        if (!RealTimeAssembly)
-            return;
-
-        // Run assembler and show errors
-        try
-        {
-            var config = AssemblerConfig ?? new MipsAssemblerConfig(MipsVersion.MipsIII);
-            AssemblerResult = await Zarembler.AssembleAsync(Text, "editor", new MipsAssmblerHandler(config), config);
-            ApplyLogHighlights(AssemblerResult.Logs);
-            UpdateSymbols(AssemblerResult.Symbols);
-            _tokenizedAssembly = AssemblerResult.Tokens;
-        }
-        catch (Exception)
-        {
-            // TODO: Notify exception occured
-        }
-    }
-
     private void SetupIndicators()
     {
         if (!TryGetEditor(out var editor))
             return;
 
+        if (ColorScheme is null)
+            return;
+
         //editor.IndicSetStyle(ErrorIndicatorIndex, IndicatorStyle.Squiggle);
         editor.IndicSetStyle(ErrorIndicatorIndex, IndicatorStyle.SquigglePixmap);
-        editor.IndicSetFore(ErrorIndicatorIndex, ToInt(SyntaxHighlightingTheme.ErrorUnderlineColor));
+        editor.IndicSetFore(ErrorIndicatorIndex, ToInt(ColorScheme.ErrorUnderlineColor));
         editor.IndicSetUnder(ErrorIndicatorIndex, true);
 
         //editor.IndicSetStyle(WarningIndicatorIndex, IndicatorStyle.Diagonal);
         editor.IndicSetStyle(WarningIndicatorIndex, IndicatorStyle.SquigglePixmap);
-        editor.IndicSetFore(WarningIndicatorIndex, ToInt(SyntaxHighlightingTheme.WarningUnderlineColor));
+        editor.IndicSetFore(WarningIndicatorIndex, ToInt(ColorScheme.WarningUnderlineColor));
         editor.IndicSetUnder(WarningIndicatorIndex, true);
 
         editor.IndicSetStyle(MessageIndicatorIndex, IndicatorStyle.Plain);
-        editor.IndicSetFore(MessageIndicatorIndex, ToInt(SyntaxHighlightingTheme.MessageUnderlineColor));
+        editor.IndicSetFore(MessageIndicatorIndex, ToInt(ColorScheme.MessageUnderlineColor));
         editor.IndicSetUnder(MessageIndicatorIndex, true);
 
         editor.IndicSetStyle(ExecutingLineIndicatorIndex, IndicatorStyle.StraightBox);

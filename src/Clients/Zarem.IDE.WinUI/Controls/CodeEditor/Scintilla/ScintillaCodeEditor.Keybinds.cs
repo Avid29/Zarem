@@ -4,9 +4,9 @@ using System;
 using WinUIEditor;
 using Zarem.IDE.Messages.Editor.Enums;
 
-namespace Zarem.IDE.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
-public partial class CodeEditor
+public partial class ScintillaCodeEditor
 {
     private void SetupKeybinds()
     {
@@ -66,15 +66,12 @@ public partial class CodeEditor
     public void ApplyOperation(EditorOperation operation)
     {
         // Get the editor
-        var editor = ChildEditor?.Editor;
+        var editor = _childEditor?.Editor;
         if (editor is null)
             return;
 
-        // Get action from child type
-        var action = GetOperationAction(operation);
-
         // Select default behaviors if not overriden
-        action ??= operation switch
+        Action? action = operation switch
         {
             EditorOperation.Undo => editor.Undo,
             EditorOperation.Redo => editor.Redo,
@@ -83,6 +80,8 @@ public partial class CodeEditor
             EditorOperation.Paste => editor.Paste,
             EditorOperation.Duplicate => editor.SelectionEmpty ? editor.LineDuplicate : editor.SelectionDuplicate,
             EditorOperation.SelectAll => editor.SelectAll,
+            EditorOperation.ToggleBreakpoint => () => ToggleBreakpoint(Line),
+            EditorOperation.ClearBreakpoints => () => _breakpoints?.ClearBreakpoints(),
             EditorOperation.TransposeUp => () =>
             {
                 editor.LineTranspose();
@@ -129,13 +128,6 @@ public partial class CodeEditor
         // Perform the action
         action();
     }
-
-    /// <summary>
-    /// Gets the action for a given a <see cref="EditorOperation"/>.
-    /// </summary>
-    /// <param name="operation">The operation requested.</param>
-    /// <returns>Null if default behavior should be used.</returns>
-    protected virtual Action? GetOperationAction(EditorOperation operation) => null;
 
     private int KeyDef(char key, KeyMod mod = KeyMod.Norm)
     {

@@ -272,6 +272,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\CodeEditor.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\Zarem\ZaremCodeEditor.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Controls\GraphicsViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -440,6 +450,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Controls\CheatSheet\UsagePatternDisplay.xaml.cs">
       <DependentUpon>UsagePatternDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\AssemblySyntaxColorScheme.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\CodeEditor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\ICodeEditor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\Zarem\ZaremCodeEditor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\Zarem\ZaremCodeEditor.Events.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\Zarem\ZaremCodeEditor.Format.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\Zarem\ZaremCodeEditor.Properties.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\EditableTextBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\GraphicsViewer.xaml.cs">
       <DependentUpon>GraphicsViewer.xaml</DependentUpon>

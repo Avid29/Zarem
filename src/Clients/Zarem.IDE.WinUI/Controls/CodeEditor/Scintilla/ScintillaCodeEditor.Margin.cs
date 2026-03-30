@@ -1,12 +1,12 @@
-﻿// Avishai Dernis 2026
+// Avishai Dernis 2026
 
 using Microsoft.UI;
 using System;
 using WinUIEditor;
 
-namespace Zarem.IDE.Controls.CodeEditor;
+namespace Zarem.IDE.Controls.CodeEditor.Scintilla;
 
-public partial class AssemblyEditor
+public sealed partial class ScintillaCodeEditor
 {
     private int _executionHandle = -1;
 
@@ -82,15 +82,12 @@ public partial class AssemblyEditor
         if (ExecutingLocation.HasValue)
         {
             // Get line range info
-            var location = _locationMapper.Translate(ExecutingLocation.Value);
+            var location = ExecutingLocation.Value;
             var line = location.Start.Line;
+            var lineStart = GetMappedIndex(ExecutingLocation.Value, out var length);
 
             // Set new marker
             _executionHandle = editor.MarkerAdd(line, ExecutionPointIndex);
-
-            // Find the position to highlight the executing line
-            var lineStart = location.Start.Index;
-            var length = location.Size;
 
             // Apply the new highlight
             editor.IndicatorCurrent = ExecutingLineIndicatorIndex;

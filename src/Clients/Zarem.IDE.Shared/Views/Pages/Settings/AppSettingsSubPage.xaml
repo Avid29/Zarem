@@ -39,7 +39,7 @@
             <ToggleSwitch IsOn="{x:Bind ViewModel.RestoreOpenProject, Mode=TwoWay}"/>
         </ctc:SettingsCard>-->
 
-        <ctc:SettingsExpander 
+        <ctc:SettingsExpander
             x:Uid="/Settings/AppLanguageSE"
             Description="Set the app's display language. (Requires a restart to take effect)."
             Header="App Language">

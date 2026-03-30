@@ -1,13 +1,10 @@
 // Avishai Dernis 2025
 
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.IO;
 using System.Threading.Tasks;
-using Zarem.Helpers;
-using Zarem.IDE.Controls.CodeEditor;
 using Zarem.IDE.Messages;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
@@ -63,8 +60,6 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
         }
     }
 
-    public CodeEditor? ActiveCodeEditor => UseAssemblyEditor ? AssemblyEditor : CodeEditor;
-
     public string Text
     {
         get => (string)GetValue(TextProperty);
@@ -84,10 +79,6 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
             }
         }
     }
-
-    private bool UseAssemblyEditor => ViewModel?.File?.Name.EndsWith(".asm") ?? false;
-
-    private bool UseTextEditor => !UseAssemblyEditor;
 
     /// <inheritdoc/>
     public bool IsDirty => Text != OriginalText;
@@ -124,29 +115,14 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
     }
 
     private void ViewModel_NavigateToTokenEvent(object? sender, SourceLocation e)
-    {
-        // Find editbox
-        var asmEditor = this.FindDescendant<AssemblyEditor>();
-        if (asmEditor is null)
-            return;
-
-        // Navigate to location
-        asmEditor.NavigateToToken(e);
-    }
+        => CodeEditor?.NavigateToToken(e);
 
     private void ViewModel_EditorOperationRequested(object? sender, EditorOperation e)
-    {
-        // Find editbox
-        var codeEditor = this.FindDescendant<CodeEditor>();
-        if (codeEditor is null)
-            return;
-
-        codeEditor.ApplyOperation(e);
-    }
+        => CodeEditor?.ApplyOperation(e);
 
     public string FormatAddres(Address? address)
     {
-        if (AssemblyEditor is null || !address.HasValue)
+        if (CodeEditor is null || !address.HasValue)
             return string.Empty;
 
         var addr = address.Value;
@@ -156,13 +132,13 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
 
         // Attempt to phrase location in terms of a symbol
         string? symbolOffsetStr = null;
-        var symbol = AssemblyEditor.SymbolResolver?.FindNearest(addr, out _);
+        var symbol = CodeEditor.SymbolResolver?.FindNearest(addr, out _);
         if (symbol is not null)
         {
             var symOffset = addr.Offset - symbol.Address.Offset;
             symbolOffsetStr = $"{symbol.Name}+0x{symOffset:X4}";
         }
-        
+
         // Format the string based on available info
         if (symbolOffsetStr is not null)
         {
@@ -183,7 +159,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
     private async Task LoadContentAsync()
     {
         // Defer until loaded
-        if (ActiveCodeEditor is null)
+        if (CodeEditor is null)
             return;
 
         var file = ViewModel?.File;
@@ -195,15 +171,14 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
             using var reader = new StreamReader(stream);
             text = await reader.ReadToEndAsync();
 
-            if (UseAssemblyEditor && file.SourceFile is not null)
+            if (file.SourceFile is not null)
             {
-                AssemblyEditor?.RegisterBreakpointSource(file.SourceFile.Breakpoints);
+                CodeEditor?.RegisterBreakpointSource(file.SourceFile.Breakpoints);
             }
         }
 
         OriginalText = text;
-        ActiveCodeEditor?.ResetHistory();
-
+        CodeEditor?.ResetHistory();
     }
 
     private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
@@ -216,9 +191,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
     {
         text = text.Trim().Trim('%').Trim();
         if (int.TryParse(text, out int percent))
-        {
-            ActiveCodeEditor?.Zoom = percent;
-        }
+            CodeEditor?.Zoom = percent;
     }
 
     private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)

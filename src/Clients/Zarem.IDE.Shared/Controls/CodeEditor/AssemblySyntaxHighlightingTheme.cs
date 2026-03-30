@@ -1,4 +1,4 @@
-﻿// Avishai Dernis 2025
+﻿// Avishai Dernis 2026
 
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI;
@@ -15,7 +15,7 @@ namespace Zarem.IDE.Controls.CodeEditor;
 /// <summary>
 /// A collection of colors to use for syntax highlighting.
 /// </summary>
-public class AssemblySyntaxHighlightingTheme : DependencyObject
+public class AssemblySyntaxColorScheme : DependencyObject
 {
     public event EventHandler? Updated;
 
@@ -31,14 +31,14 @@ public class AssemblySyntaxHighlightingTheme : DependencyObject
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblySyntaxHighlightingTheme"/> class.
     /// </summary>
-    public AssemblySyntaxHighlightingTheme() : this(CurrentScheme)
+    public AssemblySyntaxColorScheme() : this(CurrentScheme)
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblySyntaxHighlightingTheme"/> class.
     /// </summary>
-    public AssemblySyntaxHighlightingTheme(EditorColorScheme? scheme)
+    public AssemblySyntaxColorScheme(EditorColorScheme? scheme)
     {
         if (scheme is not null)
         {
