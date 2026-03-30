@@ -20,6 +20,8 @@ public partial class ZaremCodeEditor
         TextChanging += ZaremCodeEditor_TextChanging;
         TextChanged += ZaremCodeEditor_TextChanged;
         SelectionChanged += ZaremCodeEditor_SelectionChanged;
+
+        NormalizeLineSpacing();
     }
 
     private void ZaremCodeEditor_Unloaded(object sender, RoutedEventArgs e)
@@ -42,6 +44,7 @@ public partial class ZaremCodeEditor
 
     private void ZaremCodeEditor_TextChanged(object sender, RoutedEventArgs e)
     {
+        RefreshLineNumbers();
     }
 
     private void ZaremCodeEditor_SelectionChanged(object sender, RoutedEventArgs e)

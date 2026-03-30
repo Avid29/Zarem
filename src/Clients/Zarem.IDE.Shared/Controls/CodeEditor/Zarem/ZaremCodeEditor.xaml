@@ -31,8 +31,14 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ZaremCodeEditor">
                     <Grid Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
                         <Border
                             x:Name="HighlightBorder"
+                            Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
                             Background="#05FFFFFF"
@@ -45,25 +51,39 @@
                         </Border>
 
                         <ScrollViewer
-                            x:Name="ContentElement"
-                            Margin="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}"
-                            AutomationProperties.AccessibilityView="Raw"
-                            Foreground="{TemplateBinding Foreground}"
-                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                            HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                            IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                            IsTabStop="False"
-                            IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                            VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                            ZoomMode="Disabled" />
+                            x:Name="GutterScrollViewer"
+                            Padding="0,4,0,4"
+                            HorizontalScrollBarVisibility="Hidden"
+                            VerticalScrollBarVisibility="Hidden"
+                            VerticalScrollMode="Disabled">
+                            <StackPanel
+                                x:Name="LineNumberContainer"
+                                Width="45"
+                                Padding="0,0,8,0" />
+                        </ScrollViewer>
 
-                        <Canvas
-                            x:Name="DiagnosticOverlay"
-                            Margin="{TemplateBinding Padding}"
-                            IsHitTestVisible="False" />
+                        <Grid Grid.Column="1">
+                            <ScrollViewer
+                                x:Name="ContentElement"
+                                Margin="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                IsTabStop="False"
+                                IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                ZoomMode="Disabled" />
+
+                            <Canvas
+                                x:Name="DiagnosticOverlay"
+                                Margin="{TemplateBinding Padding}"
+                                IsHitTestVisible="False" />
+                        </Grid>
 
                         <TextBlock
                             x:Name="PlaceholderTextContentPresenter"
@@ -75,6 +95,7 @@
                             Text="{TemplateBinding PlaceholderText}"
                             TextAlignment="{TemplateBinding TextAlignment}"
                             TextWrapping="{TemplateBinding TextWrapping}" />
+
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Disabled">
