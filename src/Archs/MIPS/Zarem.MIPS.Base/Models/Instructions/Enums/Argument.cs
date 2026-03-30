@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace Zarem.Models.Instructions.Enums;
 
 /// <summary>
-/// An enum for potential argument types.
+/// An enum for argument types.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Argument
