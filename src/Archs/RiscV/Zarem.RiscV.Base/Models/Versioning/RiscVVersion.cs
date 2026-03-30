@@ -10,6 +10,15 @@ namespace Zarem.Models.Versioning;
 public readonly struct RiscVVersion
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVVersion"/> struct.
+    /// </summary>
+    public RiscVVersion(RiscVBaseVersion @base, RiscVExtensions extensions)
+    {
+        Base = @base;
+        Extensions = extensions | RiscVExtensions.Integers; // 'I' is always required
+    }
+
+    /// <summary>
     /// Gets the base RISC-V ISA version.
     /// </summary>
     public RiscVBaseVersion Base { get; }
@@ -20,11 +29,12 @@ public readonly struct RiscVVersion
     public RiscVExtensions Extensions { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RiscVVersion"/> struct.
+    /// Gets the major version number of the RISC-V specification.
     /// </summary>
-    public RiscVVersion(RiscVBaseVersion @base, RiscVExtensions extensions)
-    {
-        Base = @base;
-        Extensions = extensions | RiscVExtensions.Integers; // 'I' is always required
-    }
+    public byte SpecMajor { get; }
+
+    /// <summary>
+    /// Gets the minor version number of the RISC-V specification.
+    /// </summary>
+    public byte SpecMinor { get; }
 }

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.Assembler</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Zarem.Assembler\Zarem.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Base\Zarem.RiscV.Base.csproj" />
+  </ItemGroup>
+
+</Project>

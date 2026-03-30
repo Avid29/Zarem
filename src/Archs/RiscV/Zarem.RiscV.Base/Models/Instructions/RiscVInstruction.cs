@@ -85,7 +85,7 @@ public struct RiscVInstruction
     /// I-Type Immediates (12-bit, simple contiguous)
     /// Used for: addi, lw, jalr
     /// </summary>
-    public short Imm12_I
+    public short Immediate
     {
         readonly get => (short)((int)_inst >> 20); // Sign extended shift
         set => BitField.SetField(ref _inst, 12, 20, (uint)value & 0xFFF);
@@ -95,7 +95,7 @@ public struct RiscVInstruction
     /// S-Type Immediates (12-bit, split across two fields)
     /// Used for: sw, sb, sh
     /// </summary>
-    public short Imm12_S
+    public short StoreOffset
     {
         readonly get
         {
@@ -115,7 +115,7 @@ public struct RiscVInstruction
     /// B-Type Immediates (13-bit, scrambled, bit 0 is always 0)
     /// Used for: beq, bne, blt
     /// </summary>
-    public int Imm13_B
+    public int BranchOffset
     {
         readonly get
         {

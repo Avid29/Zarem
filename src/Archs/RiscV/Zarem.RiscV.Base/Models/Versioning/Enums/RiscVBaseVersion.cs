@@ -14,14 +14,14 @@ public enum RiscVBaseVersion : byte
 
     // --- Base Integer Sets (The Foundation) ---
     // RV32I is the most common target for hobbyist emulators.
-    [XmlEnum("rv32i")][JsonStringEnumMemberName("RV32I")] RV32I = 1,
+    [XmlEnum("rv32")][JsonStringEnumMemberName("RV32")] RV32 = 1,
 
     // RV32E is the "Embedded" variant with only 16 registers (x0-x15).
     [XmlEnum("rv32e")][JsonStringEnumMemberName("RV32E")] RV32E = 2,
 
     // 64-bit and 128-bit base sets.
-    [XmlEnum("rv64i")][JsonStringEnumMemberName("RV64I")] RV64I = 10,
-    [XmlEnum("rv128i")][JsonStringEnumMemberName("RV128I")] RV128I = 20,
+    [XmlEnum("rv64")][JsonStringEnumMemberName("RV64I")] RV64 = 10,
+    [XmlEnum("rv128")][JsonStringEnumMemberName("RV128I")] RV128 = 20,
 
     // --- Historical / Profile Versions ---
     // RISC-V now uses "Profiles" (e.g., RVA20, RVA22) for platform compatibility.

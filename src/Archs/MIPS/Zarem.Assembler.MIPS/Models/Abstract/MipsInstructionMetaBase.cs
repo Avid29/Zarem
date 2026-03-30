@@ -10,7 +10,7 @@ using Zarem.Models.Instructions.Enums;
 namespace Zarem.Assembler.Models.Abstract;
 
 /// <summary>
-/// A base type for an instruction 
+/// A base type for a MIPS instruction meta defintion
 /// </summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(RTypeInstructionMeta), "r-type")]

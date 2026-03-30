@@ -54,6 +54,9 @@
     </Project>
   </Folder>
   <Folder Name="/Plugins/Archs/RiscV/">
+    <Project Path="src/Archs/RiscV/Zarem.Assembler.RiscV/Zarem.Assembler.RiscV.csproj" Id="3d911770-bf60-4cd7-a0ec-e64bf829fe95">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
     <Project Path="src/Archs/RiscV/Zarem.RiscV.Base/Zarem.RiscV.Base.csproj" Id="32597ba3-5177-4db4-8541-6e800567872d">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
