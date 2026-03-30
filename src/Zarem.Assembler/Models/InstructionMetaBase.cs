@@ -16,6 +16,12 @@ public abstract record InstructionMetaBase
     public required string Name { get; init; }
 
     /// <summary>
+    /// Gets a string describing the behavior of the instruction.
+    /// </summary>
+    [JsonPropertyName("behavior")]
+    public string? Behavior { get; init; }
+
+    /// <summary>
     /// Gets the number of argument required by the instruction.
     /// </summary>
     [JsonIgnore]

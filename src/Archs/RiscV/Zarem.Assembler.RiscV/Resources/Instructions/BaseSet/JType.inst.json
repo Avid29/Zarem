@@ -1,0 +1,10 @@
+[
+  {
+    "type": "j-type",
+    "name": "jal",
+    "opcode": 111,
+    "args": [ "rd", "jump_offset" ],
+    "extension": "I",
+    "behavior": "$rd = $pc + 4; $pc += imm"
+  }
+]

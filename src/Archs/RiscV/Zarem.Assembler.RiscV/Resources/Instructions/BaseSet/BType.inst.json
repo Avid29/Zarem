@@ -1,0 +1,50 @@
+[
+  {
+    "type": "b-type",
+    "name": "beq",
+    "funct3": 0,
+    "args": [ "rs1", "rs2", "branch_offset" ],
+    "extension": "I",
+    "behavior": "if ($rs1 == $rs2) $pc += imm"
+  },
+  {
+    "type": "b-type",
+    "name": "bne",
+    "funct3": 1,
+    "args": [ "rs1", "rs2", "branch_offset" ],
+    "extension": "I",
+    "behavior": "if ($rs1 != $rs2) $pc += imm"
+  },
+  {
+    "type": "b-type",
+    "name": "blt",
+    "funct3": 4,
+    "args": [ "rs1", "rs2", "branch_offset" ],
+    "extension": "I",
+    "behavior": "if ($rs1 < $rs2) $pc += imm"
+  },
+  {
+    "type": "b-type",
+    "name": "bge",
+    "funct3": 5,
+    "args": [ "rs1", "rs2", "branch_offset" ],
+    "extension": "I",
+    "behavior": "if ($rs1 >= $rs2) $pc += imm"
+  },
+  {
+    "type": "b-type",
+    "name": "bltu",
+    "funct3": 6,
+    "args": [ "rs1", "rs2", "branch_offset" ],
+    "extension": "I",
+    "behavior": "if ((unsigned)$rs1 < (unsigned)$rs2) $pc += imm"
+  },
+  {
+    "type": "b-type",
+    "name": "bgeu",
+    "funct3": 7,
+    "args": [ "rs1", "rs2", "branch_offset" ],
+    "extension": "I",
+    "behavior": "if ((unsigned)$rs1 >= (unsigned)$rs2) $pc += imm"
+  }
+]

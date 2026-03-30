@@ -32,12 +32,6 @@ public abstract record MipsInstructionMetaBase : InstructionMetaBase
     public override int ArgumentCount => ArgumentPattern.Length;
 
     /// <summary>
-    /// Gets a string describing the behavior of the instruction.
-    /// </summary>
-    [JsonPropertyName("behavior")]
-    public string? Behavior { get; init; }
-
-    /// <summary>
     /// Gets the <see cref="MipsVersion"/> where the instruction was added.
     /// </summary>
     [JsonPropertyName("added_in")]

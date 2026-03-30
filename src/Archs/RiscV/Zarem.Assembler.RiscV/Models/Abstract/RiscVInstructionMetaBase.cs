@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.Json.Serialization;
+using Zarem.Assembler.Models.Meta;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Versioning;
 using Zarem.Models.Versioning.Enums;
@@ -10,25 +11,24 @@ namespace Zarem.Assembler.Models.Abstract;
 /// <summary>
 /// A base type for a RISC-V instruction meta definition.
 /// </summary>
-public abstract record RiscVInstructionMetaBase
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+[JsonDerivedType(typeof(RTypeInstructionMeta), "r-type")]
+[JsonDerivedType(typeof(ITypeInstructionMeta), "i-type")]
+[JsonDerivedType(typeof(STypeInstructionMeta), "s-type")]
+//[JsonDerivedType(typeof(BTypeInstructionMeta), "b-type")]
+//[JsonDerivedType(typeof(UTypeInstructionMeta), "u-type")]
+[JsonDerivedType(typeof(JTypeInstructionMeta), "j-type")]
+//[JsonDerivedType(typeof(PseudoInstructionMeta), "pseudo")]
+public abstract record RiscVInstructionMetaBase : InstructionMetaBase
 {
-    /// <summary>
-    /// Gets the name of the instruction.
-    /// </summary>
-    [JsonPropertyName("name")]
-    public required string Name { get; init; }
-
     /// <summary>
     /// Gets the instruction argument pattern for parsing.
     /// </summary>
     [JsonPropertyName("args")]
     public required Argument[] ArgumentPattern { get; init; }
 
-    /// <summary>
-    /// Gets a string describing the behavior of the instruction.
-    /// </summary>
-    [JsonPropertyName("behavior")]
-    public string? Behavior { get; init; }
+    /// <inheritdoc/>
+    public override int ArgumentCount =>  ArgumentPattern.Length;
 
     /// <summary>
     /// Gets the extension required to execute this instruction (e.g., M, A, F).

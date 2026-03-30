@@ -1,0 +1,143 @@
+[
+  {
+    "type": "i-type",
+    "name": "addi",
+    "opcode": 19,
+    "funct3": 0,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 + imm"
+  },
+  {
+    "type": "i-type",
+    "name": "slti",
+    "opcode": 19,
+    "funct3": 2,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "I",
+    "behavior": "$rd = ($rs1 < imm) ? 1 : 0"
+  },
+  {
+    "type": "i-type",
+    "name": "sltiu",
+    "opcode": 19,
+    "funct3": 3,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "I",
+    "behavior": "$rd = (unsigned)$rs1 < (unsigned)imm ? 1 : 0"
+  },
+  {
+    "type": "i-type",
+    "name": "xori",
+    "opcode": 19,
+    "funct3": 4,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 ^ imm"
+  },
+  {
+    "type": "i-type",
+    "name": "ori",
+    "opcode": 19,
+    "funct3": 6,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 | imm"
+  },
+  {
+    "type": "i-type",
+    "name": "andi",
+    "opcode": 19,
+    "funct3": 7,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 & imm"
+  },
+  {
+    "type": "i-type",
+    "name": "slli",
+    "opcode": 19,
+    "funct3": 1,
+    "is_shift": true,
+    "special": 0,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 << imm[4:0]"
+  },
+  {
+    "type": "i-type",
+    "name": "srli",
+    "opcode": 19,
+    "funct3": 5,
+    "is_shift": true,
+    "special": 0,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 >> imm[4:0] (Logical)"
+  },
+  {
+    "type": "i-type",
+    "name": "srai",
+    "opcode": 19,
+    "funct3": 5,
+    "is_shift": true,
+    "special": 32,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 >> imm[4:0] (Arithmetic)"
+  },
+  {
+    "type": "i-type",
+    "name": "lb",
+    "opcode": 3,
+    "funct3": 0,
+    "args": [ "rd", "mem" ],
+    "extension": "I",
+    "behavior": "$rd = sign_extend(Mem8($rs1 + imm))"
+  },
+  {
+    "type": "i-type",
+    "name": "lh",
+    "opcode": 3,
+    "funct3": 1,
+    "args": [ "rd", "mem" ],
+    "extension": "I",
+    "behavior": "$rd = sign_extend(Mem16($rs1 + imm))"
+  },
+  {
+    "type": "i-type",
+    "name": "lw",
+    "opcode": 3,
+    "funct3": 2,
+    "args": [ "rd", "mem" ],
+    "extension": "I",
+    "behavior": "$rd = Mem32($rs1 + imm)"
+  },
+  {
+    "type": "i-type",
+    "name": "lbu",
+    "opcode": 3,
+    "funct3": 4,
+    "args": [ "rd", "mem" ],
+    "extension": "I",
+    "behavior": "$rd = zero_extend(Mem8($rs1 + imm))"
+  },
+  {
+    "type": "i-type",
+    "name": "lhu",
+    "opcode": 3,
+    "funct3": 5,
+    "args": [ "rd", "mem" ],
+    "extension": "I",
+    "behavior": "$rd = zero_extend(Mem16($rs1 + imm))"
+  },
+  {
+    "type": "i-type",
+    "name": "jalr",
+    "opcode": 103,
+    "funct3": 0,
+    "args": [ "rd", "mem" ],
+    "extension": "I",
+    "behavior": "$rd = $pc + 4; $pc = ($rs1 + imm) & ~1"
+  }
+]
