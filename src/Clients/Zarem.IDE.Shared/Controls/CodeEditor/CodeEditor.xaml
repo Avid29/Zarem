@@ -42,6 +42,6 @@
         </Setter>
     </Style>
 
-    <Style BasedOn="{StaticResource ScintillaCodeEditorStyle}" TargetType="local:CodeEditor" />
+    <Style BasedOn="{StaticResource ZaremCodeEditorStyle}" TargetType="local:CodeEditor" />
 
 </ResourceDictionary>

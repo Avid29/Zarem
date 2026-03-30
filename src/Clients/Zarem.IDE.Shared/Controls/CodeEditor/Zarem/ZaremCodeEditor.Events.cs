@@ -19,8 +19,9 @@ public partial class ZaremCodeEditor
 
         TextChanging += ZaremCodeEditor_TextChanging;
         TextChanged += ZaremCodeEditor_TextChanged;
-        SelectionChanging += ZaremCodeEditor_SelectionChanging;
         SelectionChanged += ZaremCodeEditor_SelectionChanged;
+
+        NormalizeLineSpacing();
     }
 
     private void ZaremCodeEditor_Unloaded(object sender, RoutedEventArgs e)
@@ -43,33 +44,29 @@ public partial class ZaremCodeEditor
 
     private void ZaremCodeEditor_TextChanged(object sender, RoutedEventArgs e)
     {
-    }
-
-    private void ZaremCodeEditor_SelectionChanging(RichEditBox sender, RichEditBoxSelectionChangingEventArgs args)
-    {
-        var start = args.SelectionStart;
-        var end = start + args.SelectionLength;
-        SelectedRange = new Range(start, end);
+        RefreshLineNumbers();
     }
 
     private void ZaremCodeEditor_SelectionChanged(object sender, RoutedEventArgs e)
     {
-        Document.Selection.GetRect(PointOptions.Transform, out Rect rect, out _);
+        Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out _);
 
-        if (SelectedRange.End.Value - SelectedRange.Start.Value == 0)
+        if (Document.Selection.Length == 0)
         {
             // Highlight the line
-            if (_selectedLineHighlightBorder is not null && _selectedLineHighlightBorder?.RenderTransform is TranslateTransform tt)
+            if (_highlightBorder is not null && _highlightBorder?.RenderTransform is TranslateTransform tt)
             {
-                _selectedLineHighlightBorder.Visibility = Visibility.Visible;
-                tt.Y = rect.Top + Padding.Top;
-                _selectedLineHighlightBorder.Height = rect.Height + 2; // TODO: Remove 2 as a magic number
+                _highlightBorder.Visibility = Visibility.Visible;
+                _currentLineLogicalY = rect.Top + Padding.Top;
+                tt.Y = _currentLineLogicalY - _scrollViewer?.VerticalOffset ?? 0;
+
+                _highlightBorder.Height = rect.Height;
             }
         }
-        else if (_selectedLineHighlightBorder is not null)
+        else if (_highlightBorder is not null)
         {
             // Hide the line highlight
-            _selectedLineHighlightBorder.Visibility = Visibility.Collapsed;
+            _highlightBorder.Visibility = Visibility.Collapsed;
         }
     }
 }

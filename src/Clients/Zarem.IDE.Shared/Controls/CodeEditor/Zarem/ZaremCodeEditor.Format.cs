@@ -2,9 +2,18 @@
 
 using Microsoft.UI;
 using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
+using Zarem.Assembler.Logging;
+using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models.Enums;
@@ -18,31 +27,57 @@ public partial class ZaremCodeEditor
     /// <summary>
     /// Applies formatting based on a log messages.
     /// </summary>
-    public void ApplyLogHighlights(IReadOnlyList<ILog> logs)
+    public void ApplyLogHighlights(IReadOnlyList<AssemblerEntry> logs)
     {
-        Document.BatchDisplayUpdates();
+        if (_diagnosticOverlay is null)
+            return;
 
-        // Clear underlines
-        Document.GetText(TextGetOptions.None, out var temp);
-        var range = Document.GetRange(0, temp.Length - 1);
-        range.CharacterFormat.Underline = UnderlineType.None;
+        _diagnosticOverlay.Children.Clear();
 
-        //foreach (var log in logs)
-        //{
-        //    // Get log range
-        //    range = Document.GetRange(log, log);
+        foreach (var log in logs)
+        {
+            if (log.Location is null)
+                continue;
 
-        //    // Underline range
-        //    range.CharacterFormat.Underline = log.Severity switch
-        //    {
-        //        Severity.Message => UnderlineType.ThickDotted,
-        //        Severity.Warning => UnderlineType.Wave,
-        //        Severity.Error => UnderlineType.Wave,
-        //        _ => UnderlineType.Undefined,
-        //    };
-        //}
+            // Get the range of the log's tokens
+            int start = (int)log.Location.Value.Index;
+            int length = log.Tokens.Sum(t => t.Source.Length);
+            var range = Document.GetRange(start, start + length);
 
-        Document.ApplyDisplayUpdates();
+            // Get the range's rectangle
+            range.GetRect(PointOptions.ClientCoordinates | PointOptions.NoHorizontalScroll, out Rect rect, out _);
+
+            if (rect.Width <= 0)
+                continue;
+
+            var squiggle = CreateSquigglePath(rect.Width, log.Severity);
+
+            Canvas.SetLeft(squiggle, rect.Left);
+            Canvas.SetTop(squiggle, rect.Bottom - 2);
+
+            _diagnosticOverlay.Children.Add(squiggle);
+        }
+    }
+
+    private FrameworkElement CreateSquigglePath(double width, Severity severity)
+    {
+        var polyline = new Polyline
+        {
+            Stroke = severity == Severity.Error ? new SolidColorBrush(Colors.Red)
+                                                : new SolidColorBrush(Colors.Orange),
+            StrokeThickness = 1,
+            Points = []
+        };
+
+        // Generate a simple zig-zag wave
+        double step = 2;        // Width of one zig
+        double amplitude = 2;   // Height of the zig
+        for (double x = 0; x <= width; x += step)
+        {
+            polyline.Points.Add(new Point(x, (x / step) % 2 == 0 ? 0 : amplitude));
+        }
+
+        return polyline;
     }
 
     private async Task UpdateSyntaxHighlightingAsync()
