@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using System.Threading.Tasks;
-using Test.MIPS.Helpers;
+using Test.Mips.Helpers;
 using Test.ObjFormats;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Models.Enums;

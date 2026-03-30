@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Zarem.Assembler.Config;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
@@ -15,6 +14,7 @@ using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Meta;
+using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Parsers.Enums;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
@@ -29,7 +29,7 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions;
 using Zarem.Models.Tables;
 using Zarem.Models.Tables.Enums;
 
-namespace Zarem.Assembler.Parsers;
+namespace Zarem.Assembler;
 
 /// <summary>
 /// A struct for parsing instructions.
@@ -39,7 +39,7 @@ public struct MipsInstructionParser
     private readonly MipsAssemblerConfig? _config;
     private readonly Address _currentAddress;
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
-    private readonly InstructionTable _instructionTable;
+    private readonly MipsInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
 
     private MipsInstructionMetaBase? _meta;
@@ -56,14 +56,14 @@ public struct MipsInstructionParser
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionParser"/> struct.
     /// </summary>
-    public MipsInstructionParser(MipsAssemblerConfig config, InstructionTable? table, Address address, IReadOnlyDictionary<string, Symbol>? symbols,  ILogger? logger)
+    public MipsInstructionParser(MipsAssemblerConfig config, MipsInstructionTable? table, Address address, IReadOnlyDictionary<string, Symbol>? symbols,  ILogger? logger)
     {
         _config = config;
         _currentAddress = address;
         _symbols = symbols;
         _references = [];
 
-        _instructionTable = table ?? new InstructionTable(config);
+        _instructionTable = table ?? new MipsInstructionTable(config);
 
         if (logger is not null)
         {
@@ -164,9 +164,9 @@ public struct MipsInstructionParser
             (LogId id, string message) = version switch
             {
                 not null when banned => (LogId.DisabledFeatureInUse, "InstructionDisabled"),
-                not null when _config is null || version > _config.MipsVersion => (LogId.NotInVersion, "RequiresVersion"),
+                not null when _config is null || version > _config.Version => (LogId.NotInVersion, "RequiresVersion"),
                 not null => (LogId.NotInVersion, "RemovedInVersion"),
-                null when _config is not null && is64bit && !_config.MipsVersion.Is64Bit() => (LogId.NotInVersion, "Needs64BitVersion"),
+                null when _config is not null && is64bit && !_config.Version.Is64Bit() => (LogId.NotInVersion, "Needs64BitVersion"),
                 null => (LogId.InvalidInstructionName, "NoInstructionNamed")
             };
 

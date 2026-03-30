@@ -28,7 +28,7 @@ public class UsagePatternsViewModel : CheatSheetSubPageViewModel
         _localizationService = localizationService;
 
         // TODO: Load the instruction metadata from a service.
-        var table = new InstructionTable(new());
+        var table = new MipsInstructionTable(new());
         var instructions = table.GetInstructions(false);
 
         CommonInstructions = new(LoadInstructionSet("CommonInstructions.json", instructions) ?? []);

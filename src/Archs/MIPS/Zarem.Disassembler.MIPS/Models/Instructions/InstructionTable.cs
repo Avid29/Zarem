@@ -1,12 +1,8 @@
 ﻿// Avishai Dernis 2025
 
-using System.Diagnostics.Metrics;
-using Zarem.Assembler.Config;
-using Zarem.Assembler.Models;
+using Zarem.Assembler;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Meta;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
@@ -15,7 +11,7 @@ namespace Zarem.Disassembler.Models.Instructions;
 /// <summary>
 /// A class for managing instruction lookup by opcode and function code.
 /// </summary>
-public class InstructionTable : InstructionTableBase<DisassemblerLookup>
+public class InstructionTable : MipsInstructionTableBase<DisassemblerLookup>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="InstructionTable"/> class.
@@ -27,7 +23,7 @@ public class InstructionTable : InstructionTableBase<DisassemblerLookup>
     /// <inheritdoc/>
     protected override void LoadInstruction(MipsInstructionMetaBase metadata)
     {
-        if (!metadata.IsValidFor(Config.MipsVersion))
+        if (!metadata.IsValidFor(Config.Version))
             return;
 
         // We can simplify the logic by centralizing the key generation

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "u-type",
+    "name": "lui",
+    "opcode": 55,
+    "args": [ "rd", "upper_imm" ],
+    "extension": "I",
+    "behavior": "$rd = imm << 12"
+  },
+  {
+    "type": "u-type",
+    "name": "auipc",
+    "opcode": 23,
+    "args": [ "rd", "upper_imm" ],
+    "extension": "I",
+    "behavior": "$rd = $pc + (imm << 12)"
+  }
+]

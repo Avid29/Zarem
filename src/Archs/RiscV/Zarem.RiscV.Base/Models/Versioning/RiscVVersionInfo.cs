@@ -7,12 +7,12 @@ namespace Zarem.Models.Versioning;
 /// <summary>
 /// A struct definig a RISC-V version, including the base ISA and supported extensions.
 /// </summary>
-public readonly struct RiscVVersion
+public readonly struct RiscVVersionInfo
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="RiscVVersion"/> struct.
+    /// Initializes a new instance of the <see cref="RiscVVersionInfo"/> struct.
     /// </summary>
-    public RiscVVersion(RiscVBaseVersion @base, RiscVExtensions extensions)
+    public RiscVVersionInfo(RiscVBaseVersion @base, RiscVExtensions extensions)
     {
         Base = @base;
         Extensions = extensions | RiscVExtensions.Integers; // 'I' is always required

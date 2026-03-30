@@ -14,6 +14,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Assembler.MIPS\Zarem.Assembler.MIPS.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Debugger.MIPS\Zarem.Debugger.MIPS.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Disassembler.MIPS\Zarem.Disassembler.MIPS.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Emulator.MIPS\Zarem.Emulator.MIPS.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Linker.MIPS\Zarem.Linker.MIPS.csproj" />
 	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.MIPS.Base\Zarem.MIPS.Base.csproj" />
 	</ItemGroup>
 

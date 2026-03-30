@@ -14,7 +14,7 @@ namespace Zarem.Assembler.Models.Meta;
 public record RTypeInstructionMeta : MipsInstructionMetaBase
 {
     /// <summary>
-    /// Gets the instruction function code.
+    /// Gets the instruction operation code.
     /// </summary>
     [JsonPropertyName("op_code")]
     public OperationCode OperationCode { get; init; } = OperationCode.Special;

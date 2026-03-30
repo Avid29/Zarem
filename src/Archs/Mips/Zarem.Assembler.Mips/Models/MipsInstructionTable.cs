@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Zarem.Assembler.Config;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Enums;
 using Zarem.Assembler.Models.Meta;
@@ -14,16 +13,16 @@ namespace Zarem.Assembler.Models;
 /// <summary>
 /// A class for managing instruction lookup by name.
 /// </summary>
-public class InstructionTable : InstructionTableBase<string>
+public class MipsInstructionTable : MipsInstructionTableBase<string>
 {
     private readonly Dictionary<string, (MipsVersion Min, MipsVersion? Max)> _versionRanges = [];
     private readonly HashSet<string> _banned = [];
     private readonly HashSet<string> _is64bitLookup = [];
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionTable"/> class.
+    /// Initializes a new instance of the <see cref="MipsInstructionTable"/> class.
     /// </summary>
-    public InstructionTable(MipsAssemblerConfig config) : base(config)
+    public MipsInstructionTable(MipsAssemblerConfig config) : base(config)
     {
     }
 
@@ -34,17 +33,17 @@ public class InstructionTable : InstructionTableBase<string>
         is64bit = _is64bitLookup.Contains(name);
         requiredVersion = null;
 
-        if (base.TryGetInstruction(name, out metadatas, out _, out _, out _))
+        if (base.TryGetInstruction(name, out metadatas))
             return true;
 
         if (_versionRanges.TryGetValue(name, out var range))
         {
-            if (Config.MipsVersion < range.Min)
+            if (Config.Version < range.Min)
             {
                 // Instruction exists in a future version
                 requiredVersion = range.Min;
             }
-            else if (range.Max.HasValue && Config.MipsVersion >= range.Max.Value)
+            else if (range.Max.HasValue && Config.Version >= range.Max.Value)
             {
                 // Instruction was removed/obsolete in a past version
                 // We return the last valid version it was in
@@ -94,8 +93,7 @@ public class InstructionTable : InstructionTableBase<string>
             }
         }
 
-        bool isSupported = metadata.IsValidFor(Config.MipsVersion);
-        if (isSupported)
+        if (metadata.IsValidFor(Config.Version))
         {
             // Add to the active lookup table in InstructionTableBase
             LoadInstruction(metadata.Name, metadata);

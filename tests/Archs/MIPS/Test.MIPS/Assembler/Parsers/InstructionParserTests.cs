@@ -1,16 +1,13 @@
 // Avishai Dernis 2024
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using Test.MIPS.Helpers;
-using Zarem.Assembler.Config;
+using Test.Mips.Helpers;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.Parsers;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
@@ -22,8 +19,7 @@ using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Models.Meta;
 using System.Linq;
-
-
+using Zarem.Assembler;
 
 #if DEBUG
 using Zarem.Disassembler.Services;
@@ -207,7 +203,7 @@ public class InstructionParserTests
         ServiceCollection.DisassemblerService = new MipsDisassemblerService(config);
 #endif
 
-        var table = new InstructionTable(config);
+        var table = new MipsInstructionTable(config);
         var parser = new MipsInstructionParser(config, null, default, null, null);
 
         var tokenized = Tokenizer.TokenizeLine(input, nameof(RunTest))[0];
@@ -260,7 +256,7 @@ public class InstructionParserTests
 
     private static IEnumerable<object[]> GenerateTestList(MipsVersion version)
     {
-        var table = new InstructionTable(new(version));
+        var table = new MipsInstructionTable(new(version));
         var instructions = table.GetInstructions()
             .Where(i => i.IsValidFor(version));
 

@@ -1,0 +1,84 @@
+[
+  {
+    "type": "r-type",
+    "name": "add",
+    "funct3": 0,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 + $rs2"
+  },
+  {
+    "type": "r-type",
+    "name": "sub",
+    "funct3": 0,
+    "funct7": 32,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 - $rs2"
+  },
+  {
+    "type": "r-type",
+    "name": "sll",
+    "funct3": 1,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 << ($rs2 & 0x1F)"
+  },
+  {
+    "type": "r-type",
+    "name": "slt",
+    "funct3": 2,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "I",
+    "behavior": "$rd = ($rs1 < $rs2) ? 1 : 0"
+  },
+  {
+    "type": "r-type",
+    "name": "sltu",
+    "funct3": 3,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "I",
+    "behavior": "$rd = (unsigned)$rs1 < (unsigned)$rs2 ? 1 : 0"
+  },
+  {
+    "type": "r-type",
+    "name": "xor",
+    "funct3": 4,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 ^ $rs2"
+  },
+  {
+    "type": "r-type",
+    "name": "srl",
+    "funct3": 5,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 >> ($rs2 & 0x1F) (Logical)"
+  },
+  {
+    "type": "r-type",
+    "name": "sra",
+    "funct3": 5,
+    "funct7": 32,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 >> ($rs2 & 0x1F) (Arithmetic)"
+  },
+  {
+    "type": "r-type",
+    "name": "or",
+    "funct3": 6,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 | $rs2"
+  },
+  {
+    "type": "r-type",
+    "name": "and",
+    "funct3": 7,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "I",
+    "behavior": "$rd = $rs1 & $rs2"
+  }
+]

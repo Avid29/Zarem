@@ -10,7 +10,7 @@ using Zarem.Models.Instructions.Enums;
 namespace Zarem.Assembler.Models.Abstract;
 
 /// <summary>
-/// A base type for a MIPS instruction meta defintion
+/// A base type for a MIPS instruction meta defintion.
 /// </summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(RTypeInstructionMeta), "r-type")]
@@ -20,25 +20,16 @@ namespace Zarem.Assembler.Models.Abstract;
 [JsonDerivedType(typeof(CoProc1InstructionsMeta), "coproc1")]
 [JsonDerivedType(typeof(FloatInstructionMeta), "float")]
 [JsonDerivedType(typeof(PseudoInstructionMeta), "pseudo")]
-public abstract record MipsInstructionMetaBase
+public abstract record MipsInstructionMetaBase : InstructionMetaBase
 {
-    /// <summary>
-    /// Gets the name of the instruction.
-    /// </summary>
-    [JsonPropertyName("name")]
-    public required string Name { get; init; }
-
     /// <summary>
     /// Gets the instruction parse type
     /// </summary>
     [JsonPropertyName("args")]
     public required Argument[] ArgumentPattern { get; init; }
 
-    /// <summary>
-    /// Gets a string describing the behavior of the instruction.
-    /// </summary>
-    [JsonPropertyName("behavior")]
-    public string? Behavior { get; init; }
+    /// <inheritdoc/>
+    public override int ArgumentCount => ArgumentPattern.Length;
 
     /// <summary>
     /// Gets the <see cref="MipsVersion"/> where the instruction was added.

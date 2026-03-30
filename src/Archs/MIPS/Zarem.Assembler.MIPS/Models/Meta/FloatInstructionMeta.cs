@@ -3,10 +3,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Zarem.Assembler.Models.Abstract;
-using Zarem.Helpers.Instructions;
 using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Assembler.Models.Meta;

@@ -5,9 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Test.MIPS.Helpers;
+using Test.Mips.Helpers;
 using Zarem.Assembler;
-using Zarem.Assembler.Config;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Enum;
 

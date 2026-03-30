@@ -4,7 +4,6 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Zarem.Assembler.Parsers;
 using Zarem.Models.Instructions;
 using Zarem.Models.Tables;
 

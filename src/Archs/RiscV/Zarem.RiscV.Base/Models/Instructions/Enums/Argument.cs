@@ -18,18 +18,18 @@ public enum Argument : byte
     [JsonStringEnumMemberName("rs2")] RS2,
 
     // Immediates
-    Immediate,
-    StoreOffset,
-    BranchOffset,
-    UpperImmediate,
-    JumpOffset,
+    [JsonStringEnumMemberName("imm")] Immediate,
+    [JsonStringEnumMemberName("store_offset")] StoreOffset,
+    [JsonStringEnumMemberName("branch_offset")] BranchOffset,
+    [JsonStringEnumMemberName("upper_imm")] UpperImmediate,
+    [JsonStringEnumMemberName("jump_offset")] JumpOffset,
 
     // System
-    Csr,      // 12-bit CSR address
-    UImm5,    // 5-bit immediate for CSRI
+    [JsonStringEnumMemberName("csr")] Csr,      // 12-bit CSR address
+    [JsonStringEnumMemberName("csri")] UImm5,    // 5-bit immediate for CSRI
 
     // Memory syntax (e.g., 8(sp))
-    Memory    // This would be a combination of Imm12I + Rs1
+    [JsonStringEnumMemberName("mem")] Memory    // This would be a combination of Imm12I + Rs1
 
 #pragma warning restore CS1591
 }

@@ -92,18 +92,14 @@
     <Project Path="tests/Archs/MIPS/Test.Assembler.MIPS.Live/Test.Assembler.MIPS.Live.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
-    <Project Path="tests/Archs/MIPS/Test.Assembler.MIPS/Test.Assembler.MIPS.csproj">
-      <BuildType Solution="Alpha|*" Project="Release" />
-    </Project>
-    <Project Path="tests/Archs/MIPS/Test.Emulator.MIPS/Test.Emulator.MIPS.csproj">
-      <BuildType Solution="Alpha|*" Project="Release" />
-    </Project>
-    <Project Path="tests/Archs/MIPS/Test.Linker.MIPS/Test.Linker.MIPS.csproj" Id="b0b53632-43f3-4673-97e3-58d4b3dcb3e1">
-      <BuildType Solution="Alpha|*" Project="Release" />
-    </Project>
     <Project Path="tests/Archs/MIPS/Test.MIPS.Asms/Test.MIPS.Asms.vcxitems" Id="f152d20e-aa8a-4d50-9852-0eb0b4a962c4" />
     <Project Path="tests/Archs/MIPS/Test.MIPS/Test.MIPS.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tests/Plugins/Archs/RiscV/">
+    <Project Path="tests/Archs/RiscV/Test.RiscV/Test.RiscV.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Tests/Plugins/ModuleFormats/">

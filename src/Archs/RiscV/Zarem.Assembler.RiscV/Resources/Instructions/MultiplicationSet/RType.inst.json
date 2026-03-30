@@ -1,0 +1,82 @@
+[
+  {
+    "type": "r-type",
+    "name": "mul",
+    "opcode": 51,
+    "funct3": 0,
+    "funct7": 1,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "M",
+    "behavior": "$rd = ($rs1 * $rs2)[31:0]"
+  },
+  {
+    "type": "r-type",
+    "name": "mulh",
+    "opcode": 51,
+    "funct3": 1,
+    "funct7": 1,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "M",
+    "behavior": "$rd = ($rs1 * $rs2)[63:32] (Signed)"
+  },
+  {
+    "type": "r-type",
+    "name": "mulhsu",
+    "opcode": 51,
+    "funct3": 2,
+    "funct7": 1,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "M",
+    "behavior": "$rd = ($rs1 * (unsigned)$rs2)[63:32]"
+  },
+  {
+    "type": "r-type",
+    "name": "mulhu",
+    "opcode": 51,
+    "funct3": 3,
+    "funct7": 1,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "M",
+    "behavior": "$rd = ($rs1 * $rs2)[63:32] (Unsigned)"
+  },
+  {
+    "type": "r-type",
+    "name": "div",
+    "opcode": 51,
+    "funct3": 4,
+    "funct7": 1,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "M",
+    "behavior": "$rd = $rs1 / $rs2 (Signed)"
+  },
+  {
+    "type": "r-type",
+    "name": "divu",
+    "opcode": 51,
+    "funct3": 5,
+    "funct7": 1,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "M",
+    "behavior": "$rd = $rs1 / $rs2 (Unsigned)"
+  },
+  {
+    "type": "r-type",
+    "name": "rem",
+    "opcode": 51,
+    "funct3": 6,
+    "funct7": 1,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "M",
+    "behavior": "$rd = $rs1 % $rs2 (Signed)"
+  },
+  {
+    "type": "r-type",
+    "name": "remu",
+    "opcode": 51,
+    "funct3": 7,
+    "funct7": 1,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "M",
+    "behavior": "$rd = $rs1 % $rs2 (Unsigned)"
+  }
+]
