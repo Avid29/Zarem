@@ -377,7 +377,7 @@ public struct MipsInstructionParser
         }
 
         // Get named register from table
-        if (!RegistersTable.TryGetRegister(arg.Source, out register, out RegisterSet parsedSet))
+        if (!MipsRegisterTable.Instance.TryGetRegister(arg.Source, out register, out RegisterSet parsedSet))
         {
             // Register does not exist in table
             _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "RegisterNotFound", arg);
