@@ -21,10 +21,7 @@ public sealed partial class ScintillaCodeEditor : Control, ICodeEditor
     private CodeEditorControl? _childEditor;
     private ScintillaBreakpointSource? _breakpoints;
 
-    /// <summary>
-    /// An event invoked when the <see cref="Text"/> property changes
-    /// </summary>
-    public event EventHandler? TextChanged;
+    private bool _isUpdatingText;
 
     public ScintillaCodeEditor()
     {

@@ -138,22 +138,30 @@ public partial class ScintillaCodeEditor
 
     private void UpdateText()
     {
+        if (_isUpdatingText)
+            return;
+
         // Retrieve the editor
         var editor = _childEditor?.Editor;
         if (editor is null)
             return;
 
-        // Get current text, and check if it matches
-        // Nothing to be done if the text is unchanged.
-        var text = editor.GetText(editor.Length);
-        if (Text == text)
-            return;
-        
-        // Set the text and ensure proper line endings
-        editor.SetText(Text);
-        editor.ConvertEOLs(WinUIEditor.EndOfLine.CrLf);
+        try
+        {
+            // Get current text, and check if it matches
+            // Nothing to be done if the text is unchanged.
+            var text = editor.GetText(editor.Length);
+            if (Text == text)
+                return;
 
-        TextChanged?.Invoke(this, EventArgs.Empty);
+            // Set the text and ensure proper line endings
+            editor.SetText(Text);
+            editor.ConvertEOLs(WinUIEditor.EndOfLine.CrLf);
+        }
+        finally
+        {
+            _isUpdatingText = false;
+        }
     }
 
     private void UpdatePosition()

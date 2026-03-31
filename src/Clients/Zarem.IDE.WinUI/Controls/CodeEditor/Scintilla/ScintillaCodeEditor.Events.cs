@@ -45,7 +45,17 @@ public partial class ScintillaCodeEditor
 
     private void OnModified(Editor sender, ModifiedEventArgs args)
     {
-        Text = sender.GetText(sender.Length);
+        if (_isUpdatingText) return;
+
+        try
+        {
+            _isUpdatingText = true;
+            Text = sender.GetText(sender.Length);
+        }
+        finally
+        {
+            _isUpdatingText = false;
+        }
     }
 
     private void OnUpdateUI(Editor sender, UpdateUIEventArgs args)
