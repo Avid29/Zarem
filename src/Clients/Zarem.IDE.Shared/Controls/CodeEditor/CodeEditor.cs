@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Zarem.Assembler;
 using Zarem.Assembler.Config;
@@ -24,7 +25,10 @@ namespace Zarem.IDE.Controls.CodeEditor;
 [TemplatePart(Name = ICodeEditorPartName, Type = typeof(ICodeEditor))]
 public sealed partial class CodeEditor : Control, ICodeEditor
 {
+    private const int ThrottleThresholdMs = 250;
+    private readonly Stopwatch _throttleStopwatch = Stopwatch.StartNew();
     private TokenizedAssembly? _tokenizedAssembly;
+    private bool _isAssemblerQueued;
 
     public static readonly DependencyProperty TextProperty =
         DependencyProperty.Register(nameof(Text), typeof(string), typeof(CodeEditor), new PropertyMetadata(string.Empty, OnTextPropertyChanged));
@@ -156,7 +160,7 @@ public sealed partial class CodeEditor : Control, ICodeEditor
         if (d is not CodeEditor codeEditor)
             return;
 
-        _ = codeEditor.RunAssemblerAsync();
+        codeEditor.RequestThrottledAssembly();
     }
 
     private static void OnRealTimeAssemblyPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)
@@ -190,6 +194,8 @@ public sealed partial class CodeEditor : Control, ICodeEditor
 
     private async Task RunAssemblerAsync()
     {
+        _throttleStopwatch.Restart();
+
         if (!RealTimeAssembly || Assembler is null)
             return;
 
@@ -216,5 +222,28 @@ public sealed partial class CodeEditor : Control, ICodeEditor
         var line = Math.Min(Line, _tokenizedAssembly.LineCount - 1);
         var asmLine = _tokenizedAssembly[(int)line];
         PositionAddress = asmLine.Address;
+    }
+
+    private async void RequestThrottledAssembly()
+    {
+        // If a run is already queued to happen, don't stack more
+        if (_isAssemblerQueued)
+            return;
+
+        long elapsed = _throttleStopwatch.ElapsedMilliseconds;
+
+        if (elapsed >= ThrottleThresholdMs)
+        {
+            // It's been long enough, run immediately
+            await RunAssemblerAsync();
+        }
+        else
+        {
+            // Too soon. Queue a run for the remaining time
+            _isAssemblerQueued = true;
+            await Task.Delay((int)(ThrottleThresholdMs - elapsed));
+            await RunAssemblerAsync();
+            _isAssemblerQueued = false;
+        }
     }
 }
