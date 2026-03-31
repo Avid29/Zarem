@@ -128,7 +128,7 @@ public class Program()
 
     private bool TestExpression(string line)
     {
-        var tokens = Tokenizer.TokenizeLine(line, mode: TokenizerMode.Expression);
+        var tokens = Tokenizer.TokenizeLine(line, new MipsTokenizerProfile(), mode: TokenizerMode.Expression);
         bool success = ExpressionParser.TryParse<long>(tokens[0].Tokens, out var result, null, null);
 
         var message = success ? $"{line} evaluated to {result}" :

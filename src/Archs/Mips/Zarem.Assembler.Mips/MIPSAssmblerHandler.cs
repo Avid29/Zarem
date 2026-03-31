@@ -9,6 +9,7 @@ using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
@@ -35,6 +36,9 @@ public class MipsAssmblerHandler : IAssemblerHandler<MipsAssemblerConfig>
 
     /// <inheritdoc/>
     public MipsAssemblerConfig Config { get; }
+
+    /// <inheritdoc/>
+    public ITokenizerProfile TokenizerProfile => MipsTokenizerProfile.Default;
 
     /// <inheritdoc/>
     public int GetInstructionSize(AssemblyLine line)

@@ -7,6 +7,7 @@ using System.Text;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Tokenization.Models;
+using System.Runtime.CompilerServices;
 
 namespace Zarem.Assembler.Tokenization;
 
@@ -19,22 +20,21 @@ public partial class Tokenizer
         List<Token> classified = [];
         lines = [];
 
-        bool start = true;
         if (_mode is TokenizerMode.BehaviorExpression or TokenizerMode.Expression)
-            start = false;
+            _state = TokenizerState.ArgumentPhase;
 
         // Reclassify each token
         var span = CollectionsMarshal.AsSpan(raw);
         while (!span.IsEmpty)
         {
-            var newToken = ReTokenizeSpan(start, span, out var advance);
+            var newToken = ReTokenizeSpan(span, out var advance);
 
             // TODO: Handle invalid state
             if (newToken is null)
                 return false;
 
             // Track if the new token is meaningful
-            bool meaningful = newToken.Type is not TokenType.Comment and not TokenType.Whitespace;
+            bool meaningful = newToken.Type is not (TokenType.Comment or TokenType.Whitespace or TokenType.RegisterPrefix or TokenType.ImmediatePrefix);
 
             if (meaningful || _mode is TokenizerMode.IDE or TokenizerMode.BehaviorExpression)
                 classified.Add(newToken);
@@ -47,13 +47,13 @@ public partial class Tokenizer
 
                 // Begin new assembly line
                 classified = [];
-                start = true;
+                _state = TokenizerState.LineBegin;
             }
-            else
+            else if (meaningful && newToken.Type is not (TokenType.LabelDeclaration or TokenType.RegisterPrefix or TokenType.ImmediatePrefix))
             {
                 // If a meaningful token was appended, we are no longer at the start. 
                 // we also remain at the start after label declarations
-                start = start && (!meaningful || newToken.Type is TokenType.LabelDeclaration);
+                _state = TokenizerState.ArgumentPhase;
             }
 
             // Advance the appropriate number of tokens
@@ -65,7 +65,7 @@ public partial class Tokenizer
         return true;
     }
 
-    private static Token? ReTokenizeSpan(bool start, ReadOnlySpan<Token> tokens, out int advance)
+    private Token? ReTokenizeSpan(ReadOnlySpan<Token> tokens, out int advance)
     {
         advance = 1;
 
@@ -74,11 +74,11 @@ public partial class Tokenizer
             return simple;
 
         // Stage 2: Multi-token merges (registers, directives, and labels)
-        if (TryMergeTokens(start, tokens, out var merged, ref advance))
+        if (TryMergeTokens(tokens, out var merged, ref advance))
             return merged;
 
         // Stage 3: Check for either references or instruction names
-        if (TryInstructionOrReference(start, tokens, out var result, ref advance))
+        if (TryInstructionOrReference(tokens, out var result, ref advance))
             return result;
 
         // Token could not be classified
@@ -86,7 +86,7 @@ public partial class Tokenizer
         return tokens[0];
     }
 
-    private static bool TrySimpleReclass(Token current, out Token? classified)
+    private bool TrySimpleReclass(Token current, out Token? classified)
     {
         classified = null;
 
@@ -120,6 +120,22 @@ public partial class Tokenizer
             },
         };
 
+        // Handle prefixes
+        if (current.Source.Length is 1)
+        {
+            if (_profile.RegisterPrefix != '\0' && current.Source[0] == _profile.RegisterPrefix)
+            {
+                type = TokenType.RegisterPrefix;
+                _state = TokenizerState.RegisterPrefixed;
+            }
+
+            else if (_profile.ImmediatePrefix != '\0' && current.Source[0] == _profile.ImmediatePrefix)
+            {
+                type = TokenType.ImmediatePrefix;
+                _state = TokenizerState.ImmediatePrefixed;
+            }
+        }
+
         // Type not found. Return false
         if (type is TokenType.Unknown)
             return false;
@@ -129,46 +145,46 @@ public partial class Tokenizer
         return true;
     }
 
-    private static bool TryMergeTokens(bool start, ReadOnlySpan<Token> tokens, out Token? merged, ref int advance)
+    private bool TryMergeTokens(ReadOnlySpan<Token> tokens, out Token? merged, ref int advance)
     {
         var current = tokens[0];
         var peek = Peek(tokens);
 
-        // Handle merging immediates tokens
-        if (!start)
+        // Handle register 
+        if (_profile.RegisterPrefix is '\0' && _state is not TokenizerState.LineBegin)
         {
-            var peek2 = Peek(tokens, 2);
-
-            // 123.456 (Digits + Dot + Digits)
-            if (current.IsDigits() && peek?.Source == "." && peek2?.IsDigits() == true)
+            if (_profile.RegisterRegex.IsMatch(current.Source))
             {
-                merged = Merge(TokenType.Immediate, current, peek, peek2);
-                advance = 3;
-                return true;
-            }
-            // .456 (Dot + Digits)
-            if (current.Source == "." && peek?.IsDigits() == true)
-            {
-                merged = Merge(TokenType.Immediate, current, peek);
-                advance = 2;
-                return true;
-            }
-            // 123 (Digits)
-            if (current.IsInteger())
-            {
-                merged = ReClassify(TokenType.Immediate, current);
+                // Handle non-prefixed registers
+                merged = ReClassify(TokenType.Register, current);
                 advance = 1;
+                return true;
+            }
+        }
+        else if (_state is TokenizerState.RegisterPrefixed)
+        {
+            merged = ReClassify(TokenType.Register, current);
+            advance = 1;
+            return true;
+        }
+
+        // Handle merging immediates tokens
+        if (_state is not TokenizerState.LineBegin)
+        {
+            // Check for Standard Immediates
+            if (TryConsumeNumericBody(tokens, out merged, out var numericAdvance))
+            {
+                advance = numericAdvance;
                 return true;
             }
         }
 
         // Determine appropriate type
-        (var type, bool merge) = start switch
+        (var type, bool merge) = _state switch
         {
-            false when current.Source is "$" && peek.IsIdentifier() => (TokenType.Register, true),
-            true when Peek(tokens, skipWhitespace: true)?.Source is "=" => (TokenType.MacroDeclaration, false),
-            true when current.Source is "." => (TokenType.Directive, true),
-            true when peek?.Source is ":" => (TokenType.LabelDeclaration, true),
+            TokenizerState.LineBegin when Peek(tokens, skipWhitespace: true)?.Source is "=" => (TokenType.MacroDeclaration, false),
+            TokenizerState.LineBegin when current.Source is "." => (TokenType.Directive, true),
+            TokenizerState.LineBegin when peek?.Source is ":" => (TokenType.LabelDeclaration, true),
             _ => (TokenType.Unknown, false),
         };
 
@@ -188,7 +204,7 @@ public partial class Tokenizer
         return TryMerge(tokens, type, out merged, ref advance); 
     }
 
-    private static bool TryInstructionOrReference(bool start, ReadOnlySpan<Token> tokens, out Token? result, ref int advance)
+    private bool TryInstructionOrReference(ReadOnlySpan<Token> tokens, out Token? result, ref int advance)
     {
         // Grab the current token
         var current = tokens[0];
@@ -197,7 +213,7 @@ public partial class Tokenizer
         if (!current.IsIdentifier())
             return false;
 
-        if (start)
+        if (_state is TokenizerState.LineBegin)
         {
             // Handle instructions
             result = ReClassify(TokenType.Instruction, current);
@@ -222,6 +238,7 @@ public partial class Tokenizer
             // Handle references
             result = ReClassify(TokenType.Reference, current);
         }
+
         return true;
     }
 
@@ -281,5 +298,48 @@ public partial class Tokenizer
             Location = original.Location,
             Type = type
         };
+    }
+
+    /// <summary>
+    /// Attempts to consume a numeric pattern (Decimal or Integer) starting at a specific token offset.
+    /// </summary>
+    private static bool TryConsumeNumericBody(ReadOnlySpan<Token> tokens, out Token? merged, out int advance)
+    {
+        merged = null;
+        advance = 0;
+
+        var baseToken = tokens[0];
+        if (baseToken == null)
+            return false;
+
+        var secondary = Peek(tokens);
+        var tertiary = Peek(tokens, 2);
+
+        // Case: 123.456 (Digits + Dot + Digits)
+        if (baseToken.IsDigits() && secondary?.Source == "." && tertiary?.IsDigits() == true)
+        {
+            // Merge the prefix (if any) plus the 3 numeric tokens
+            merged = Merge(TokenType.Immediate, baseToken, secondary, tertiary);
+            advance = 3;
+            return true;
+        }
+
+        // Case: .456 (Dot + Digits)
+        if (baseToken.Source == "." && secondary?.IsDigits() == true)
+        {
+            merged = Merge(TokenType.Immediate, baseToken, secondary);
+            advance = 2;
+            return true;
+        }
+
+        // Case: 123 (Integer)
+        if (baseToken.IsInteger())
+        {
+            merged = Merge(TokenType.Immediate, baseToken);
+            advance = 1;
+            return true;
+        }
+
+        return false;
     }
 }

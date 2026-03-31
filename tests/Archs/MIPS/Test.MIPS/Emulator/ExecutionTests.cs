@@ -12,7 +12,7 @@ using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Test.Emulator.MIPS;
+namespace Test.MIPS.Emulator;
 
 [TestClass]
 public partial class ExecutionTests
@@ -85,7 +85,7 @@ public partial class ExecutionTests
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
-        var tokenized = Tokenizer.TokenizeLine(@case.Input)[0];
+        var tokenized = Tokenizer.TokenizeLine(@case.Input, MipsTokenizerProfile.Default)[0];
         var table = new MipsInstructionTable(new(version));
         var parser = new MipsInstructionParser(new(), table, default, null, null);
         var parsed = parser.Parse(tokenized);

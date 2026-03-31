@@ -19,6 +19,10 @@ public enum TokenizerState
 
     // Second pass
     LineBegin,
+    ArgumentPhase,
+    RegisterPrefixed,
+    ImmediatePrefixed,
+
 
 
 #pragma warning restore CS1591

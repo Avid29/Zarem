@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
@@ -9,7 +8,7 @@ using Zarem.Linker.Config;
 using Zarem.Linker.Handler;
 using Zarem.Models;
 
-namespace Test.Linker.MIPS;
+namespace Test.MIPS.Linker;
 
 [TestClass]
 public class LinkerTests

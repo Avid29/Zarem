@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
@@ -15,7 +16,6 @@ using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
-using Zarem.Assembler.Parsers.Enums;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Extensions;
@@ -372,15 +372,14 @@ public struct MipsInstructionParser
         register = GPRegister.Zero;
 
         // Check that argument is register argument
-        var regStr = arg.Source;
-        if (regStr[0] != '$')
+        if (arg.Type is not TokenType.Register)
         {
             _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "ArgumentNotARegister", arg);
             return false;
         }
 
         // Get named register from table
-        if (!RegistersTable.TryGetRegister(regStr, out register, out RegisterSet parsedSet))
+        if (!RegistersTable.TryGetRegister(arg.Source, out register, out RegisterSet parsedSet))
         {
             // Register does not exist in table
             _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "RegisterNotFound", arg);
@@ -464,70 +463,12 @@ public struct MipsInstructionParser
         };
 
         // Clean integer to fit within argument bit size and match signs
-        long original = value;
-        var cleanStatus = CastInteger(ref value, bitCount, shiftAmount, signed);
-
         // Log a message if the value was truncated and/or had its sign changed
-        if (cleanStatus is not CastingChanges.None)
+        long original = value;
+        if (!long.TryCast(ref value, bitCount, shiftAmount, signed, out var changes))
         {
-            _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg, $"CastWarning{cleanStatus}", arg.Print(), original, value, bitCount, shiftAmount);
+            _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg, $"CastWarning{changes}", arg.Print(), original, value, bitCount, shiftAmount);
         }
-    }
-
-    /// <remarks>
-    /// This does not apply the <paramref name="shiftAmount"/>! It only masks the lower bits.
-    /// </remarks>
-    /// <param name="integer">A reference to the integer to modify.</param>
-    /// <param name="bitCount">The number of bits after casting.</param>
-    /// <param name="shiftAmount">The number of bits that will drop from the bottom.</param>
-    /// <param name="signed">Whether or not the new value should be signed.</param>
-    /// <returns>The changes made to the integer.</returns>
-    private static CastingChanges CastInteger(ref long integer, int bitCount, int shiftAmount, bool signed = false)
-    {
-        var original = integer;
-
-        Guard.IsGreaterThan(bitCount, 1);
-        Guard.IsLessThanOrEqualTo(bitCount + shiftAmount, 64);
-
-        // Create a masks for the high and low truncating bits,
-        // as well as an overall remaining bits map
-        var upperMask = bitCount == 64 ? -1L : (1L << (bitCount + shiftAmount)) - 1;
-        var lowerMask = ~((1L << shiftAmount) - 1);
-        var mask = (upperMask & lowerMask);
-
-        // Truncate mask upper and lower bits
-        long truncated = integer & mask;
-
-        // Sign extend if signed and not full width
-        if (signed && bitCount < 64)
-        {
-            long signBit = 1L << (bitCount - 1);
-            if ((truncated & signBit) != 0)
-                truncated |= ~upperMask; // Sign extend
-        }
-
-        integer = truncated;
-
-        // Compute changes
-        var changes = CastingChanges.None;
-
-        // Check if the sign was dropped
-        if (!signed && original < 0)
-            changes |= CastingChanges.SignChanged;
-
-        // Check for upper truncation
-        long upperBits = original & ~upperMask;
-        if (upperBits != 0 && upperBits != ~upperMask)
-            changes |= CastingChanges.TruncatedHigh;
-
-        // Check for lower truncation
-        if ((original & ~lowerMask) != 0)
-        {
-            changes |= CastingChanges.TruncatedLow;
-        }
-
-        // Return combined code
-        return changes;
     }
 
     private readonly MipsInstruction BuildInstruction()

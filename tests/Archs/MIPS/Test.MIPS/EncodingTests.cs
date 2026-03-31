@@ -9,7 +9,7 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions;
 namespace Test.Mips;
 
 [TestClass]
-public class InstructionTests
+public class EncodingTests
 {
     [TestMethod("Set OpCode")]
     public void SetOpCodeTest()

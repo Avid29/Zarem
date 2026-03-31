@@ -18,14 +18,16 @@ public enum TokenType
 
     // Second pass
     Instruction,
+    RegisterPrefix,
     Register,
+    ImmediatePrefix,
     Immediate,
     Directive,
     Operator,
 
     LabelDeclaration,
     MacroDeclaration,
-    Reference,          // This could be either a label or a macro
+    Reference,
 
     OpenParenthesis,
     CloseParenthesis,
