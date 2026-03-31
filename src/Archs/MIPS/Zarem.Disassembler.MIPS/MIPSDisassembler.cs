@@ -109,21 +109,21 @@ public class MipsDisassembler
         {
             pattern.Append(meta.ArgumentPattern[i] switch
             {
-                Argument.RS => RegistersTable.GetRegisterString(instruction.RS),
-                Argument.RT => RegistersTable.GetRegisterString(instruction.RT),
-                Argument.RD => RegistersTable.GetRegisterString(instruction.RD),
+                Argument.RS => GetRegisterString(instruction.RS, RegisterSet.GeneralPurpose),
+                Argument.RT => GetRegisterString(instruction.RT, RegisterSet.GeneralPurpose),
+                Argument.RD => GetRegisterString(instruction.RD, RegisterSet.GeneralPurpose),
                 Argument.ShiftAmount => instruction.ShiftAmount,
                 Argument.Immediate => instruction.ImmediateValue,
                 Argument.Offset => instruction.Offset,
                 Argument.LargeOffset => instruction.Address,
                 Argument.Address => instruction.Address,
-                Argument.AddressBase => $"{instruction.ImmediateValue}({RegistersTable.GetRegisterString(instruction.RS)})",
+                Argument.AddressBase => $"{instruction.ImmediateValue}({GetRegisterString(instruction.RS, RegisterSet.GeneralPurpose)})",
                 Argument.FullImmediate => 0, // Won't happen until pseudo-instruction disassembly
-                Argument.FS => RegistersTable.GetRegisterString((GPRegister)((FloatInstruction)instruction).FS, RegisterSet.FloatingPoints),
-                Argument.FT => RegistersTable.GetRegisterString((GPRegister)((FloatInstruction)instruction).FT, RegisterSet.FloatingPoints),
-                Argument.FD => RegistersTable.GetRegisterString((GPRegister)((FloatInstruction)instruction).FD, RegisterSet.FloatingPoints),
-                Argument.RS_Numbered => RegistersTable.GetRegisterString(instruction.RS, RegisterSet.Numbered),
-                Argument.RT_Numbered => RegistersTable.GetRegisterString(instruction.RT, RegisterSet.Numbered),
+                Argument.FS => GetRegisterString((GPRegister)((FloatInstruction)instruction).FS, RegisterSet.FloatingPoints),
+                Argument.FT => GetRegisterString((GPRegister)((FloatInstruction)instruction).FT, RegisterSet.FloatingPoints),
+                Argument.FD => GetRegisterString((GPRegister)((FloatInstruction)instruction).FD, RegisterSet.FloatingPoints),
+                Argument.RS_Numbered => GetRegisterString(instruction.RS, RegisterSet.Numbered),
+                Argument.RT_Numbered => GetRegisterString(instruction.RT, RegisterSet.Numbered),
                 _ => "unknown",
             });
 
@@ -135,4 +135,6 @@ public class MipsDisassembler
 
         return $"{pattern}";
     }
+
+    private static string GetRegisterString(GPRegister register, RegisterSet set) => $"${MipsRegisterTable.Instance.GetRegisterString(register, set)}";
 }

@@ -1,24 +1,23 @@
-﻿// Avishai Dernis 2026
+﻿// Avishai Dernis 2025
 
 namespace Zarem.Models.Instructions.Enums.Registers;
 
 /// <summary>
-/// An enum representing the general-purpose registers in RISC-V.
+/// An enum for floating-point co-processor registers.
 /// </summary>
-public enum GPRegister : byte
+public enum FloatRegister : byte
 {
 #pragma warning disable CS1591
 
-    Zero = 0,
-    ReturnAddress = 1,
-    StackPointer = 2,
-    GlobalPointer = 3,
-    ThreadPointer = 4,
-    Temporary0 = 5,
-    Temporary1 = 6,
-    Temporary2 = 7,
+    Temporary0 = 0,
+    Temporary1 = 1,
+    Temporary2 = 2,
+    Temporary3 = 3,
+    Temporary4 = 4,
+    Temporary5 = 5,
+    Temporary6 = 6,
+    Temporary7 = 7,
     Saved0 = 8,
-    FramePointer = 8,
     Saved1 = 9,
     Argument0 = 10,
     Argument1 = 11,
@@ -38,10 +37,10 @@ public enum GPRegister : byte
     Saved9 = 25,
     Saved10 = 26,
     Saved11 = 27,
-    Temporary3 = 28,
-    Temporary4 = 29,
-    Temporary5 = 30,
-    Temporary6 = 31
+    Temporary8 = 28,
+    Temporary9 = 29,
+    Temporary10 = 30,
+    Temporary11 = 31,
 
 #pragma warning restore CS1591
 }

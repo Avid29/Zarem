@@ -48,7 +48,7 @@
                         FontFamily="{StaticResource HappyMonkey}"
                         FontSize="18"
                         Foreground="Black"
-                        Text="{x:Bind tables:RegistersTable.GetRegisterString((reg:GPRegister), reg:RegisterSet.GeneralPurpose)}" />
+                        Text="{x:Bind tables:MipsRegisterTable.Instance.GetRegisterString((reg:GPRegister), reg:RegisterSet.GeneralPurpose)}" />
                 </Border>
             </DataTemplate>
         </ResourceDictionary>

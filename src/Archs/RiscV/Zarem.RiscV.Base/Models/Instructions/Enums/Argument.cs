@@ -12,10 +12,16 @@ public enum Argument : byte
 {
 #pragma warning disable CS1591
 
-    // Registers
+    // Integer Registers
     [JsonStringEnumMemberName("rd")] RD,
     [JsonStringEnumMemberName("rs1")] RS1,
     [JsonStringEnumMemberName("rs2")] RS2,
+
+    // Floating-Point Registers
+    [JsonStringEnumMemberName("frd")] FRD,
+    [JsonStringEnumMemberName("frs1")] FRS1,
+    [JsonStringEnumMemberName("frs2")] FRS2,
+    [JsonStringEnumMemberName("frs3")] FRS3,
 
     // Immediates
     [JsonStringEnumMemberName("imm")] Immediate,

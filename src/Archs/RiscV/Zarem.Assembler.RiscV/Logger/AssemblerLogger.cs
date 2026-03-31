@@ -2,11 +2,12 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
 
-namespace Zarem.Assembler.Logging;
+namespace Zarem.Assembler.Logger;
 
 /// <summary>
 /// A logger which simplifies logging events in the assembler.
@@ -26,7 +27,7 @@ internal class AssemblerLogger : LocalLogger
         var message = Localizer[messageKey, args];
         Guard.IsNotNull(message);
 
-        return Parent.Log(new AssemblerEntry(severity, new("ASM", (uint)id), message, [.. tokens]));
+        return Parent.Log(new AssemblerEntry(severity, new("RSCV_ASM", (uint)id), message, [.. tokens]));
     }
 
     public bool Log(Severity severity, LogId id, Token token, string messageKey, params object?[] args)

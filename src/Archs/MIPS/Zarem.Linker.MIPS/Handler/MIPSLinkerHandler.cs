@@ -3,13 +3,13 @@
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
+using Zarem.Assembler.Models.Enums;
 using Zarem.Extensions.System.IO;
 using Zarem.Linker.Config;
 using Zarem.Linker.Handlers;
 using Zarem.Linker.Logging;
 using Zarem.Models.Instructions;
 using Zarem.Models.Tables;
-using Zarem.Models.Tables.Enums;
 
 namespace Zarem.Linker.Handler;
 
