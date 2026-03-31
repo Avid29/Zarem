@@ -32,7 +32,7 @@ using Zarem.Models.Tables.Enums;
 namespace Zarem.Assembler;
 
 /// <summary>
-/// A struct for parsing instructions.
+/// A struct for parsing MIPS instructions.
 /// </summary>
 public struct MipsInstructionParser
 {
@@ -48,9 +48,7 @@ public struct MipsInstructionParser
     private GPRegister _rt;
     private GPRegister _rd;
     private FloatFormat _format;
-    private byte _shift;
     private int _immediate;
-    private uint _address;
     private List<RelocationEntry>? _references;
 
     /// <summary>
@@ -119,7 +117,7 @@ public struct MipsInstructionParser
                 RT = _rt,
                 RD = _rd,
                 Immediate = _immediate,
-                Address = _address,
+                Address = (uint)_immediate,
             };
 
             return new MipsParsedInstruction(pseudo, _references);
@@ -322,7 +320,7 @@ public struct MipsInstructionParser
         switch (target)
         {
             case Argument.ShiftAmount:
-                _shift = (byte)value;
+                _immediate = (byte)value;
                 return true;
             case Argument.Immediate:
                 _immediate = (short)value;
@@ -331,7 +329,7 @@ public struct MipsInstructionParser
                 _immediate = (int)value;
                 return true;
             case Argument.Address:
-                _address = (uint)value;
+                _immediate = (int)(uint)value;
                 return true;
             case Argument.Offset:
             case Argument.LargeOffset:
@@ -477,7 +475,7 @@ public struct MipsInstructionParser
 
         return _meta switch
         {
-            RTypeInstructionMeta spec => MipsInstruction.Create((byte)spec.OperationCode, (byte)spec.FuncCode, _rs, _rt, _rd, _shift),
+            RTypeInstructionMeta spec => MipsInstruction.Create((byte)spec.OperationCode, (byte)spec.FuncCode, _rs, _rt, _rd, (byte)_immediate),
 
             RegImmInstructionMeta ri =>
                 (ri.RtCode is >= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely) ||
@@ -495,7 +493,7 @@ public struct MipsInstructionParser
             ITypeInstructionMeta std => std.OperationCode switch
             {
                 OperationCode.Jump or OperationCode.JumpAndLink or OperationCode.JumpAndLinkX
-                    => MipsInstruction.Create(std.OperationCode, _address),
+                    => MipsInstruction.Create(std.OperationCode, (uint)_immediate),
 
                 OperationCode.BranchCompact or OperationCode.BranchAndLinkCompact
                     => throw new NotImplementedException(),
