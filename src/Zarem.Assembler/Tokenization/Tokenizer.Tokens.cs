@@ -303,7 +303,7 @@ public partial class Tokenizer
     /// <summary>
     /// Attempts to consume a numeric pattern (Decimal or Integer) starting at a specific token offset.
     /// </summary>
-    private bool TryConsumeNumericBody(ReadOnlySpan<Token> tokens, out Token? merged, out int advance)
+    private static bool TryConsumeNumericBody(ReadOnlySpan<Token> tokens, out Token? merged, out int advance)
     {
         merged = null;
         advance = 0;
