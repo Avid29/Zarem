@@ -9,11 +9,15 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Zarem.Assembler;
+using Zarem.Components;
+using Zarem.Components.Interfaces;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
+using Zarem.MIPS;
 
 namespace Zarem.IDE.ViewModels.Pages.Settings;
 
@@ -96,6 +100,11 @@ public partial class EditorSettingsViewModel : SettingsSubPageViewModel
     /// </summary>
     public ObservableCollection<EditorColorScheme> EditorColorSchemeOptions { get; }
 
+    /// <summary>
+    /// Gets the demo assembler component for the editor settings page.
+    /// </summary>
+    public IAssembleComponent? DemoAssembler { get; } = CreateDemoAssembler();
+
     private List<EditorColorScheme> LoadEditorSchemes()
     {
         // Get resources
@@ -150,5 +159,12 @@ public partial class EditorSettingsViewModel : SettingsSubPageViewModel
         // Apply loaded scheme
         EditorColorSchemeOptions.Add(scheme);
         EditorColorScheme = scheme;
+    }
+
+    private static IAssembleComponent CreateDemoAssembler()
+    {
+        var config = new MipsAssemblerConfig();
+        var handler = new MipsAssmblerHandler(config);
+        return new AssembleComponent<MipsAssmblerHandler, MipsAssemblerConfig>(handler, config, new MipsAssemblerDescriptor());
     }
 }
