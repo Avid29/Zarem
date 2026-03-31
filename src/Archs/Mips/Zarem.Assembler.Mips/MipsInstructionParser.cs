@@ -40,6 +40,7 @@ public struct MipsInstructionParser
     private readonly Address _currentAddress;
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly MipsInstructionTable _instructionTable;
+    private readonly RegisterParser<GPRegister, RegisterSet> _registerParser;
     private readonly AssemblerLogger? _logger;
 
     private MipsInstructionMetaBase? _meta;
@@ -62,6 +63,7 @@ public struct MipsInstructionParser
         _references = [];
 
         _instructionTable = table ?? new MipsInstructionTable(config);
+        _registerParser = new RegisterParser<GPRegister, RegisterSet>(MipsRegisterTable.Instance, logger);
 
         if (logger is not null)
         {
@@ -135,7 +137,7 @@ public struct MipsInstructionParser
             // Only log if the token can be parsed, and is not 0 for other reasons
             // TODO: Is this true for move operations? Double check
             var writebackArg = line.Args[0].Tokens;
-            if (writebackArg.Length is 1 && TryParseRegister(writebackArg[0], out var reg) && reg is GPRegister.Zero)
+            if (writebackArg.Length is 1 && _registerParser.TryParseRegister(writebackArg[0], out var reg, RegisterSet.GeneralPurpose, 32) && reg is GPRegister.Zero)
             {
                 _logger?.Log(Severity.Message, LogId.ZeroRegWriteback, writebackArg, "ZeroRegisterWriteback");
             }
@@ -241,7 +243,7 @@ public struct MipsInstructionParser
         (Ref<GPRegister> regRef, RegisterSet set) = pair;
         ref GPRegister reg = ref regRef.Value;
 
-        if (!TryParseRegister(arg[0], out var register, set))
+        if (!_registerParser.TryParseRegister(arg[0], out var register, set, 32))
         {
             // Register could not be parsed.
             // Error already logged.
@@ -361,47 +363,6 @@ public struct MipsInstructionParser
         // Parse register component into $rs, return false if failed
         if (!TryParseRegisterArg(regStr, Argument.RS))
             return false;
-
-        return true;
-    }
-
-    private readonly bool TryParseRegister(Token arg, out GPRegister register, RegisterSet set = RegisterSet.GeneralPurpose)
-    {
-        register = GPRegister.Zero;
-
-        // Check that argument is register argument
-        if (arg.Type is not TokenType.Register)
-        {
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "ArgumentNotARegister", arg);
-            return false;
-        }
-
-        // Get named register from table
-        if (!MipsRegisterTable.Instance.TryGetRegister(arg.Source, out register, out RegisterSet parsedSet))
-        {
-            // Register does not exist in table
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "RegisterNotFound", arg);
-            return false;
-        }
-
-        if (register is >= (GPRegister)32)
-        {
-            var (message, msgArg) = parsedSet switch
-            {
-                RegisterSet.Numbered => ("RegisterNumberNotFound", (object)(int)register),
-                _ => ("RegisterNotIndexable", arg)
-            };
-
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, message, msgArg);
-            return false;
-        }
-
-        // Match register set
-        if (parsedSet != RegisterSet.Numbered && parsedSet != set)
-        {
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, $"RegisterMustBeIn{set}Set", arg);
-            return false;
-        }
 
         return true;
     }

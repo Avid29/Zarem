@@ -117,14 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="RegisterNumberNotFound" xml:space="preserve">
-    <value>לא קיים אוגר במספר ‎'{0}'.</value>
-  </data>
   <data name="PseudoInstructionsDisabled" xml:space="preserve">
     <value>פסאודו־הוראות מנוטרלות.</value>
-  </data>
-  <data name="RegisterNotFound" xml:space="preserve">
-    <value>לא קיים אוגר בשם ‎'{0}'.</value>
   </data>
   <data name="RequiresVersion" xml:space="preserve">
     <value>ההוראה ‎'{0}'‎ דורשת גרסת MIPS ‎{1}.</value>
@@ -146,18 +140,6 @@
   </data>
   <data name="DoesNotSupportFormatPairedSingle" xml:space="preserve">
     <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Paired Single'‎ (זוג דיוק יחיד).</value>
-  </data>
-  <data name="ArgumentNotARegister" xml:space="preserve">
-    <value>‎'{0}'‎ אינו ארגומנט אוגר תקין.</value>
-  </data>
-  <data name="RegisterMustBeInGeneralPurposeSet" xml:space="preserve">
-    <value>ארגומנט האוגר ‎'{0}'‎ אינו תקין. עליו להיות באוסף האוגרים הכלליים.</value>
-  </data>
-  <data name="RegisterMustBeInCoProc0Set" xml:space="preserve">
-    <value>ארגומנט האוגר ‎'{0}'‎ אינו תקין. עליו להיות באוסף האוגרים של Coprocessor0.</value>
-  </data>
-  <data name="RegisterMustBeInFloatingPointsSet" xml:space="preserve">
-    <value>ארגומנט האוגר ‎'{0}'‎ אינו תקין. עליו להיות באוסף האוגרים של נקודה צפה.</value>
   </data>
   <data name="InvalidAddressOffsetArgument" xml:space="preserve">
     <value>הארגומנט ‎'{0}'‎ אינו היסט כתובת תקין.</value>
@@ -203,8 +185,5 @@
   </data>
   <data name="Needs64BitVersion" xml:space="preserve">
     <value>The instruction '{0}' is only available in 64-bit versions of MIPS.</value>
-  </data>
-  <data name="RegisterNotIndexable" xml:space="preserve">
-    <value>Register '{0}' cannot be indexed.</value>
   </data>
 </root>

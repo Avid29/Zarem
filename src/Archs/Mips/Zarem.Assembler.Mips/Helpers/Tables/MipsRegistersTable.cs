@@ -56,6 +56,7 @@ public partial class MipsRegisterTable : RegisterTable<GPRegister, RegisterSet>
     /// <inheritdoc/>
     protected override Dictionary<RegisterSet, Regex> NumericalSetRegexTable { get; } = new()
     {
+        { RegisterSet.Numbered, GetGPRegisterRegex() },
         { RegisterSet.GeneralPurpose, GetGPRegisterRegex() },
         { RegisterSet.FloatingPoints, GetFloatRegisterRegex() }
     };
@@ -63,6 +64,7 @@ public partial class MipsRegisterTable : RegisterTable<GPRegister, RegisterSet>
     /// <inheritdoc/>
     protected override Dictionary<RegisterSet, string> NumericalSetFormatTable { get; } = new()
     {
+        { RegisterSet.Numbered, "{0}" },
         { RegisterSet.GeneralPurpose, "{0}" },
         { RegisterSet.FloatingPoints, "f{0}" }
     };

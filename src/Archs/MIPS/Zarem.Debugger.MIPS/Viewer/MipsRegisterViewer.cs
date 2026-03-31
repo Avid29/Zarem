@@ -27,10 +27,10 @@ public class MipsRegisterViewer : IRegisterGroup
     /// <inheritdoc/>
     public ulong? this[string registerName]
     {
-        get => MipsRegisterTable.Instance.TryGetRegister(registerName, out var reg, out var set) && set == _set ? _registers[(int)reg] : null;
+        get => MipsRegisterTable.Instance.TryGetRegister(registerName, out var reg, out var set, out _) && set == _set ? _registers[(int)reg] : null;
         set
         {
-            if (value.HasValue && MipsRegisterTable.Instance.TryGetRegister(registerName, out var reg, out var set) && set == _set)
+            if (value.HasValue && MipsRegisterTable.Instance.TryGetRegister(registerName, out var reg, out var set, out _) && set == _set)
                 _registers[(int)reg] = (uint)value.Value;
         }
     }

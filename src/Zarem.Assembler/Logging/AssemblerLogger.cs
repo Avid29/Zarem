@@ -5,7 +5,6 @@ using System;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
-using Zarem.Localization;
 
 namespace Zarem.Assembler.Logging;
 

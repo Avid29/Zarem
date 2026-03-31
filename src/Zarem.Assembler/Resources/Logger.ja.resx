@@ -300,4 +300,19 @@
   <data name="ImmediateOverflow" xml:space="preserve">
     <value>Constant '{0}' is too large.</value>
   </data>
+  <data name="RegisterNotFound" xml:space="preserve">
+    <value>No register '{0}' exists.</value>
+  </data>
+  <data name="RegisterNotIndexable" xml:space="preserve">
+    <value>Register '{0}' cannot be indexed.</value>
+  </data>
+  <data name="RegisterNumberNotFound" xml:space="preserve">
+    <value>No register of number '{0}' exists.</value>
+  </data>
+  <data name="RegisterWrongSet" xml:space="preserve">
+    <value>Register '{0}' belongs to the wrong register set.</value>
+  </data>
+  <data name="ArgumentNotARegister" xml:space="preserve">
+    <value>'{0}' is not a valid register argument.</value>
+  </data>
 </root>

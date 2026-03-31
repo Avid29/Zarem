@@ -21,11 +21,13 @@ public abstract class RegisterTable<TRegister, TSet>
     /// <param name="name">The name of the register.</param>
     /// <param name="register">The register's index.</param>
     /// <param name="registerSet">Which register set the discovered register belongs to.</param>
+    /// <param name="indexed">Whether or not the register was named by index.</param>
     /// <returns>Whether or not an register exists by that name.</returns>
-    public bool TryGetRegister(string name, out TRegister register, out TSet registerSet)
+    public bool TryGetRegister(string name, out TRegister register, out TSet registerSet, out bool indexed)
     {
         register = default;
         registerSet = default;
+        indexed = false;
 
         // Check for empty register
         if (name.Length == 0)
@@ -52,6 +54,7 @@ public abstract class RegisterTable<TRegister, TSet>
                 {
                     register = Unsafe.As<byte, TRegister>(ref num);
                     registerSet = set;
+                    indexed = true;
                     return true;
                 }
             }

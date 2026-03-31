@@ -117,14 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="RegisterNumberNotFound" xml:space="preserve">
-    <value>No register of number '{0}' exists.</value>
-  </data>
   <data name="PseudoInstructionsDisabled" xml:space="preserve">
     <value>Pseudo instructions are disabled.</value>
-  </data>
-  <data name="RegisterNotFound" xml:space="preserve">
-    <value>No register '{0}' exists.</value>
   </data>
   <data name="RequiresVersion" xml:space="preserve">
     <value>The instruction '{0}' requires mips version {1}.</value>
@@ -146,18 +140,6 @@
   </data>
   <data name="DoesNotSupportFormatPairedSingle" xml:space="preserve">
     <value>Instruction '{0}' does not support the format 'Paired Single'.</value>
-  </data>
-  <data name="ArgumentNotARegister" xml:space="preserve">
-    <value>'{0}' is not a valid register argument.</value>
-  </data>
-  <data name="RegisterMustBeInGeneralPurposeSet" xml:space="preserve">
-    <value>Invalid register argument '{0}'. Must be in general purpose register set.</value>
-  </data>
-  <data name="RegisterMustBeInCoProc0Set" xml:space="preserve">
-    <value>Invalid register argument '{0}'. Must be in coprocessor0 register set.</value>
-  </data>
-  <data name="RegisterMustBeInFloatingPointsSet" xml:space="preserve">
-    <value>Invalid register argument '{0}'. Must be in floating-point register set.</value>
   </data>
   <data name="InvalidAddressOffsetArgument" xml:space="preserve">
     <value>Argument '{0}' is not a valid address offset.</value>
@@ -203,8 +185,5 @@
   </data>
   <data name="Needs64BitVersion" xml:space="preserve">
     <value>The instruction '{0}' is only available in 64-bit versions of MIPS.</value>
-  </data>
-  <data name="RegisterNotIndexable" xml:space="preserve">
-    <value>Register '{0}' cannot be indexed.</value>
   </data>
 </root>
