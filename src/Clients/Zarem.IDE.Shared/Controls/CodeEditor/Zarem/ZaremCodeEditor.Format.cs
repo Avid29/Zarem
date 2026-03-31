@@ -128,8 +128,8 @@ public partial class ZaremCodeEditor
             tokenDocumentRange.CharacterFormat.ForegroundColor = token.Type switch
             {
                 TokenType.Instruction => ColorScheme.InstructionHighlightColor,
-                TokenType.Register => ColorScheme.RegisterHighlightColor,
-                TokenType.Immediate => ColorScheme.ImmediateHighlightColor,
+                TokenType.Register or TokenType.RegisterPrefix => ColorScheme.RegisterHighlightColor,
+                TokenType.Immediate or TokenType.ImmediatePrefix => ColorScheme.ImmediateHighlightColor,
 
                 TokenType.Reference or
                 TokenType.LabelDeclaration => ColorScheme.ReferenceHighlightColor,
