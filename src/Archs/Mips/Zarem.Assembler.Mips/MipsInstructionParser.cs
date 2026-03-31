@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Zarem.Assembler.Config;
 using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Helpers.Tables;
@@ -14,6 +15,7 @@ using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Abstract;
+using Zarem.Assembler.Models.Enums;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
@@ -27,20 +29,17 @@ using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
 using Zarem.Models.Tables;
-using Zarem.Models.Tables.Enums;
 
 namespace Zarem.Assembler;
 
 /// <summary>
 /// A struct for parsing MIPS instructions.
 /// </summary>
-public struct MipsInstructionParser
+public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterSet>
 {
-    private readonly MipsAssemblerConfig? _config;
     private readonly Address _currentAddress;
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly MipsInstructionTable _instructionTable;
-    private readonly RegisterParser<GPRegister, RegisterSet> _registerParser;
     private readonly AssemblerLogger? _logger;
 
     private MipsInstructionMetaBase? _meta;
@@ -55,21 +54,29 @@ public struct MipsInstructionParser
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionParser"/> struct.
     /// </summary>
-    public MipsInstructionParser(MipsAssemblerConfig config, MipsInstructionTable? table, Address address, IReadOnlyDictionary<string, Symbol>? symbols,  ILogger? logger)
+    public MipsInstructionParser(
+        MipsAssemblerConfig config,
+        MipsInstructionTable? table,
+        Address address,
+        IReadOnlyDictionary<string, Symbol>? symbols, 
+        ILogger? logger) : base(MipsRegisterTable.Instance, logger)
     {
-        _config = config;
+        Config = config;
+
         _currentAddress = address;
         _symbols = symbols;
         _references = [];
 
         _instructionTable = table ?? new MipsInstructionTable(config);
-        _registerParser = new RegisterParser<GPRegister, RegisterSet>(MipsRegisterTable.Instance, logger);
 
         if (logger is not null)
         {
             _logger = new AssemblerLogger(logger);
         }
     }
+
+    /// <inheritdoc/>
+    public override MipsAssemblerConfig Config { get; }
 
     /// <summary>
     /// Attempts to parse an instruction from a name and a list of arguments.
@@ -137,7 +144,7 @@ public struct MipsInstructionParser
             // Only log if the token can be parsed, and is not 0 for other reasons
             // TODO: Is this true for move operations? Double check
             var writebackArg = line.Args[0].Tokens;
-            if (writebackArg.Length is 1 && _registerParser.TryParseRegister(writebackArg[0], out var reg, RegisterSet.GeneralPurpose, 32) && reg is GPRegister.Zero)
+            if (writebackArg.Length is 1 && TryParseRegister(writebackArg[0], out var reg, RegisterSet.GeneralPurpose, 32) && reg is GPRegister.Zero)
             {
                 _logger?.Log(Severity.Message, LogId.ZeroRegWriteback, writebackArg, "ZeroRegisterWriteback");
             }
@@ -164,9 +171,9 @@ public struct MipsInstructionParser
             (LogId id, string message) = version switch
             {
                 not null when banned => (LogId.DisabledFeatureInUse, "InstructionDisabled"),
-                not null when _config is null || version > _config.Version => (LogId.NotInVersion, "RequiresVersion"),
+                not null when Config is null || version > Config.Version => (LogId.NotInVersion, "RequiresVersion"),
                 not null => (LogId.NotInVersion, "RemovedInVersion"),
-                null when _config is not null && is64bit && !_config.Version.Is64Bit() => (LogId.NotInVersion, "Needs64BitVersion"),
+                null when Config is not null && is64bit && !Config.Version.Is64Bit() => (LogId.NotInVersion, "Needs64BitVersion"),
                 null => (LogId.InvalidInstructionName, "NoInstructionNamed")
             };
 
@@ -243,7 +250,7 @@ public struct MipsInstructionParser
         (Ref<GPRegister> regRef, RegisterSet set) = pair;
         ref GPRegister reg = ref regRef.Value;
 
-        if (!_registerParser.TryParseRegister(arg[0], out var register, set, 32))
+        if (!TryParseRegister(arg[0], out var register, set, 32))
         {
             // Register could not be parsed.
             // Error already logged.
@@ -315,33 +322,22 @@ public struct MipsInstructionParser
 
         long value = expResult.IsAbsolute ? expResult.Addend : 0;
 
-        // Truncates the value to fit the target argument
-        CleanInteger(ref value, arg, target);
-
-        // Assign to appropriate instruction argument
-        switch (target)
+        // Determine casting details for the argument
+        (int bitCount, int shiftAmount, bool signed) = target switch
         {
-            case Argument.ShiftAmount:
-                _immediate = (byte)value;
-                return true;
-            case Argument.Immediate:
-                _immediate = (short)value;
-                return true;
-            case Argument.FullImmediate:
-                _immediate = (int)value;
-                return true;
-            case Argument.Address:
-                _immediate = (int)(uint)value;
-                return true;
-            case Argument.Offset:
-            case Argument.LargeOffset:
-                _immediate = (int)value;
-                return true;
+            Argument.ShiftAmount => (5, 0, false),
+            Argument.Offset => (16, 2, false),
+            Argument.Immediate => (16, 0, true),
+            Argument.Address => (26, 2, false),
+            Argument.LargeOffset => (26, 2, true),
+            Argument.FullImmediate => (32, 0, true),
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<(byte, byte, bool)>($"Argument of type '{target}' attempted to parse as an expression."),
+        };
 
-            // Invalid target type
-            default:
-                return ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument '{arg.Print()}' of type '{target}' attempted to parse as an expression.");
-        }
+        // Truncates the value to fit the target argument
+        CleanInteger(ref value, arg, bitCount, shiftAmount, signed);
+        _immediate = (int)value;
+        return true;
     }
 
     /// <summary>
@@ -375,7 +371,7 @@ public struct MipsInstructionParser
     /// The register is just the component in parenthesis. The offset is just the component before the parenthesis.
     /// Nothing may follow the parenthesis.
     /// </remarks>
-    private readonly bool SplitAddressOffset(ReadOnlySpan<Token> arg, out ReadOnlySpan<Token> offset, out ReadOnlySpan<Token> register)
+    private bool SplitAddressOffset(ReadOnlySpan<Token> arg, out ReadOnlySpan<Token> offset, out ReadOnlySpan<Token> register)
     {
         offset = arg;
         register = [];
@@ -407,30 +403,7 @@ public struct MipsInstructionParser
         return true;
     }
 
-    private readonly void CleanInteger(ref long value, ReadOnlySpan<Token> arg, Argument target)
-    {
-        // Determine casting details for the argument
-        (int bitCount, int shiftAmount, bool signed) = target switch
-        {
-            Argument.ShiftAmount => (5, 0, false),
-            Argument.Offset => (16, 2, false),
-            Argument.Immediate => (16, 0, true),
-            Argument.Address => (26, 2, false),
-            Argument.LargeOffset => (26, 2, true),
-            Argument.FullImmediate => (32, 0, true),
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<(byte, byte, bool)>($"Argument of type '{target}' attempted to parse as an expression."),
-        };
-
-        // Clean integer to fit within argument bit size and match signs
-        // Log a message if the value was truncated and/or had its sign changed
-        long original = value;
-        if (!long.TryCast(ref value, bitCount, shiftAmount, signed, out var changes))
-        {
-            _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg, $"CastWarning{changes}", arg.Print(), original, value, bitCount, shiftAmount);
-        }
-    }
-
-    private readonly MipsInstruction BuildInstruction()
+    private MipsInstruction BuildInstruction()
     {
         Guard.IsNotNull(_meta);
 

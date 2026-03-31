@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2024
 
-namespace Zarem.Models.Tables.Enums;
+namespace Zarem.Assembler.Models.Enums;
 
 /// <summary>
 /// An enum for the type of references and relocations.
