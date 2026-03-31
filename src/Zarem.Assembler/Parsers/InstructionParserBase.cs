@@ -12,9 +12,11 @@ using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers.Enums;
+using Zarem.Assembler.Parsers.Expressions;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Models;
+using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Parsers;
 
@@ -25,15 +27,20 @@ public abstract class InstructionParserBase<TRegister, TSet>
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
 {
-    private readonly RegisterTable<TRegister, TSet> _table;
+    private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
+    private readonly RegisterTable<TRegister, TSet> _registerTable;
     private readonly AssemblerLogger? _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterParser{TRegister, TSet}"/> struct.
     /// </summary>
-    public InstructionParserBase(RegisterTable<TRegister, TSet> table, ILogger? logger)
+    public InstructionParserBase(Address address, IReadOnlyDictionary<string, Symbol>? symbols, RegisterTable<TRegister, TSet> registerTable, ILogger? logger)
     {
-        _table = table;
+        CurrentAddress = address;
+        _symbols = symbols;
+        _registerTable = registerTable;
+
+        References = [];
 
         if (logger is not null)
         {
@@ -44,7 +51,22 @@ public abstract class InstructionParserBase<TRegister, TSet>
     /// <summary>
     /// Gets the assembler configuration.
     /// </summary>
-    public abstract AssemblerConfig Config { get; }
+    protected abstract AssemblerConfig Config { get; }
+
+    /// <summary>
+    /// Gets the list of relocation entries 
+    /// </summary>
+    protected List<RelocationEntry> References { get; }
+
+    /// <summary>
+    /// Gets the current address.
+    /// </summary>
+    protected Address CurrentAddress { get; }
+
+    /// <summary>
+    /// Gets the immediate value component of the instruction, if applicable.
+    /// </summary>
+    protected int Immediate { get; private set; }
 
     /// <summary>
     /// Attempts to parse a register.
@@ -54,22 +76,29 @@ public abstract class InstructionParserBase<TRegister, TSet>
     /// <param name="set">The register set the register needs to belong ot.</param>
     /// <param name="bounds">The bounds of a numerical register in the set.</param>
     /// <returns>Whether or not a register was successfuly parsed.</returns>
-    public bool TryParseRegister(Token arg, out TRegister register, TSet set, int bounds)
+    protected bool TryParseRegister(ReadOnlySpan<Token> arg, out TRegister register, TSet set, int bounds)
     {
         register = default;
 
-        // Check that argument is register argument
-        if (arg.Type is not TokenType.Register)
+        if (arg.Length is not 1)
         {
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "ArgumentNotARegister", arg);
+            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "ArgumentNotARegister", arg.Print());
+            return false;
+        }
+
+        // Check that argument is register argument
+        var token = arg[0];
+        if (token.Type is not TokenType.Register)
+        {
+            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, token, "ArgumentNotARegister", token);
             return false;
         }
 
         // Get named register from table
-        if (!_table.TryGetRegister(arg.Source, out register, out TSet parsedSet, out bool indexed))
+        if (!_registerTable.TryGetRegister(token.Source, out register, out TSet parsedSet, out bool indexed))
         {
             // Register does not exist in table
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "RegisterNotFound", arg);
+            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, token, "RegisterNotFound", token);
             return false;
         }
 
@@ -79,7 +108,7 @@ public abstract class InstructionParserBase<TRegister, TSet>
             var (message, msgArg) = indexed switch
             {
                 true => ("RegisterNumberNotFound", (object)index),
-                false => ("RegisterNotIndexable", arg)
+                false => ("RegisterNotIndexable", token)
             };
 
             _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, message, msgArg);
@@ -89,10 +118,24 @@ public abstract class InstructionParserBase<TRegister, TSet>
         // Match register set
         if (!EqualityComparer<TSet>.Default.Equals(parsedSet, default) && !EqualityComparer<TSet>.Default.Equals(parsedSet, set))
         {
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, $"RegisterWrongSet", arg);
+            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, $"RegisterWrongSet", token);
             return false;
         }
 
+        return true;
+    }
+
+    /// <summary>
+    /// Attempts to parse an expression.
+    /// </summary>
+    protected bool TryParseExpression(ReadOnlySpan<Token> tokens, int bitCount, int shift, bool signed, out ExpressionResult<long> expResult)
+    {
+        if (!ExpressionParser.TryParse(tokens, out expResult, _symbols, _logger?.Parent))
+            return false;
+
+        long val = expResult.IsAbsolute ? expResult.Addend : 0;
+        CleanInteger(ref val, tokens, bitCount, shift, signed);
+        Immediate = (int)val;
         return true;
     }
 
@@ -108,7 +151,7 @@ public abstract class InstructionParserBase<TRegister, TSet>
     /// <param name="shiftAmount">The number of bits that will drop from the bottom.</param>
     /// <param name="signed">Whether or not the new value should be signed.</param>
     /// <returns>Whether or not the value can be safely cast.</returns>
-    public void CleanInteger(ref long value, ReadOnlySpan<Token> arg, int bitCount, int shiftAmount, bool signed)
+    private void CleanInteger(ref long value, ReadOnlySpan<Token> arg, int bitCount, int shiftAmount, bool signed)
     {
         var original = value;
 

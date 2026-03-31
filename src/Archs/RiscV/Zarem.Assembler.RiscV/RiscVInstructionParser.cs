@@ -32,8 +32,6 @@ namespace Zarem.Assembler;
 /// </summary>
 public class RiscVInstructionParser : InstructionParserBase<GPRegister, RegisterSet>
 {
-    private readonly Address _currentAddress;
-    private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
 
@@ -42,8 +40,6 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
     private GPRegister _rd;
     private GPRegister _rs1;
     private GPRegister _rs2;
-    private int _immediate;
-    private List<RelocationEntry>? _references;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVInstructionParser"/> struct.
@@ -53,13 +49,9 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
         RiscVInstructionTable? table,
         Address address,
         IReadOnlyDictionary<string, Symbol>? symbols,
-        ILogger? logger) : base(RiscVRegisterTable.Instance, logger)
+        ILogger? logger) : base(address, symbols, RiscVRegisterTable.Instance, logger)
     {
         Config = config;
-
-        _currentAddress = address;
-        _symbols = symbols;
-        _references = [];
 
         _instructionTable = table ?? new RiscVInstructionTable(config);
 
@@ -70,7 +62,7 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
     }
 
     /// <inheritdoc/>
-    public override RiscVAssemblerConfig Config { get; }
+    protected override RiscVAssemblerConfig Config { get; }
 
     /// <summary>
     /// Attempts to parse an instruction from a name and a list of arguments.
@@ -158,12 +150,6 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
     /// </summary>
     private bool TryParseRegisterArg(ReadOnlySpan<Token> arg, Argument target)
     {
-        if (arg.Length is not 1)
-        {
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "ArgumentNotARegister", arg.Print());
-            return false;
-        }
-
         // Get reference to selected register argument
         RefTuple<Ref<GPRegister>, RegisterSet> pair = target switch
         {
@@ -171,6 +157,7 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
             Argument.RD => new(new(ref _rd), RegisterSet.GeneralPurpose),
             Argument.RS1 => new(new(ref _rs1), RegisterSet.GeneralPurpose),
             Argument.RS2 => new(new(ref _rs2), RegisterSet.GeneralPurpose),
+
             // Float Registers
             Argument.FRD => new(new(ref _rd), RegisterSet.FloatingPoints),
             Argument.FRS1 => new(new(ref _rs1), RegisterSet.FloatingPoints),
@@ -183,13 +170,8 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
         (Ref<GPRegister> regRef, RegisterSet set) = pair;
         ref GPRegister reg = ref regRef.Value;
 
-        if (!TryParseRegister(arg[0], out var register, set, 32))
-        {
-            // Register could not be parsed.
-            // Error already logged.
-
+        if (!TryParseRegister(arg, out var register, set, 32))
             return false;
-        }
 
         // Cache register as appropriate argument type
         reg = register;
@@ -202,78 +184,41 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
     /// </summary>
     private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, Argument target)
     {
-        // Attempt to parse expression
-        if (!ExpressionParser.TryParse<long>(arg, out var expResult, _symbols, _logger?.Parent))
-            return false;
-
-        if (expResult.IsSymbolic)
+        var type = target switch
         {
-            // NOTE: If it were possible to have an undeclared local system reference,
-            // it would be here. However, since there's not forward declaration of local
-            // symbols, that's not a consider
-            // Map RISC-V target arguments to the specific relocation types
-
-            var type = target switch
-            {
-                Argument.JumpOffset => RiscVReferenceType.Jump20,
-                Argument.BranchOffset => RiscVReferenceType.Branch20,
-                Argument.Immediate => RiscVReferenceType.Low12,
-                Argument.UpperImmediate => RiscVReferenceType.High20,
-                // 'Memory' in RISC-V loads/stores uses a 12-bit offset (%lo)
-                Argument.StoreOffset or Argument.Memory => RiscVReferenceType.Low12,
-                _ => ThrowHelper.ThrowArgumentOutOfRangeException<RiscVReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
-            };
-
-            _references ??= [];
-            var symbol = expResult.Symbol;
-            var addend = (uint)expResult.Addend;
-
-            _references.Add(new RelocationEntry(symbol.Name, _currentAddress, (uint)type, addend));
-        }
-
-        // NOTE: Casting might truncate the value to fit the bit size.
-        // This is the desired behavior, but when logging errors this
-        // should be handled explicitly and drop an assembler warning.
-        //
-        // ALSO NOTE: The linker will fill in the added if the value
-        // is symbolic (not absolute)
-
-        long value = expResult.IsAbsolute ? expResult.Addend : 0;
+            Argument.JumpOffset => RiscVReferenceType.Jump20,
+            Argument.BranchOffset => RiscVReferenceType.Branch20,
+            Argument.Immediate => RiscVReferenceType.Low12,
+            Argument.UpperImmediate => RiscVReferenceType.High20,
+            // 'Memory' in RISC-V loads/stores uses a 12-bit offset (%lo)
+            Argument.StoreOffset or Argument.Memory => RiscVReferenceType.Low12,
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<RiscVReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
+        };
 
         // Determine casting details for the RISC-V argument
         (int bitCount, int shiftAmount, bool signed) = target switch
         {
             // 5-bit unsigned immediate (e.g., vsetvli or CSRI)
             Argument.UImm5 => (5, 1, false),
-
-            // 12-bit signed immediate (I-type, S-type, and Load/Store offsets)
-            Argument.Immediate or
-            Argument.StoreOffset or
+            Argument.Immediate or Argument.StoreOffset or
             Argument.Memory => (12, 0, true),
-
-            // 12-bit signed branch offset (B-type)
-            // Range is 13 bits total, but bit 0 is omitted (shifted by 1)
             Argument.BranchOffset => (12, 1, true),
-
-            // 20-bit signed jump offset (J-type / JAL)
-            // Range is 21 bits total, bit 0 omitted (shifted by 1)
             Argument.JumpOffset => (20, 1, true),
-
-            // 20-bit unsigned upper immediate (U-type / LUI / AUIPC)
-            // These are logically shifted left by 12 in the hardware, 
-            // but the instruction carries the 20-bit raw value.
             Argument.UpperImmediate => (20, 0, false),
-
-            // 12-bit CSR address (usually treated as an unsigned immediate)
             Argument.Csr => (12, 0, false),
 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<(int, int, bool)>(
                 $"Argument of type '{target}' attempted to parse as an expression.")
         };
 
-        // Truncates the value to fit the target argument
-        CleanInteger(ref value, arg, bitCount, shiftAmount, signed);
-        _immediate = (int)value;
+        if (!TryParseExpression(arg, bitCount, shiftAmount, signed, out var expResult))
+            return false;
+
+        if (expResult.IsSymbolic)
+        {
+            References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
+        }
+
         return true;
     }
 }

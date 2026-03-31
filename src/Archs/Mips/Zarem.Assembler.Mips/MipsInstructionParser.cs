@@ -37,8 +37,6 @@ namespace Zarem.Assembler;
 /// </summary>
 public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterSet>
 {
-    private readonly Address _currentAddress;
-    private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly MipsInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
 
@@ -48,8 +46,6 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
     private GPRegister _rt;
     private GPRegister _rd;
     private FloatFormat _format;
-    private int _immediate;
-    private List<RelocationEntry>? _references;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionParser"/> struct.
@@ -59,13 +55,9 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
         MipsInstructionTable? table,
         Address address,
         IReadOnlyDictionary<string, Symbol>? symbols, 
-        ILogger? logger) : base(MipsRegisterTable.Instance, logger)
+        ILogger? logger) : base(address, symbols, MipsRegisterTable.Instance, logger)
     {
         Config = config;
-
-        _currentAddress = address;
-        _symbols = symbols;
-        _references = [];
 
         _instructionTable = table ?? new MipsInstructionTable(config);
 
@@ -76,7 +68,7 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
     }
 
     /// <inheritdoc/>
-    public override MipsAssemblerConfig Config { get; }
+    protected override MipsAssemblerConfig Config { get; }
 
     /// <summary>
     /// Attempts to parse an instruction from a name and a list of arguments.
@@ -125,11 +117,11 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
                 RS = _rs,
                 RT = _rt,
                 RD = _rd,
-                Immediate = _immediate,
-                Address = (uint)_immediate,
+                Immediate = Immediate,
+                Address = (uint)Immediate,
             };
 
-            return new MipsParsedInstruction(pseudo, _references);
+            return new MipsParsedInstruction(pseudo, References);
         }
 
         // Build an instruction using the information from
@@ -144,14 +136,14 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
             // Only log if the token can be parsed, and is not 0 for other reasons
             // TODO: Is this true for move operations? Double check
             var writebackArg = line.Args[0].Tokens;
-            if (writebackArg.Length is 1 && TryParseRegister(writebackArg[0], out var reg, RegisterSet.GeneralPurpose, 32) && reg is GPRegister.Zero)
+            if (writebackArg.Length is 1 && TryParseRegister(writebackArg, out var reg, RegisterSet.GeneralPurpose, 32) && reg is GPRegister.Zero)
             {
                 _logger?.Log(Severity.Message, LogId.ZeroRegWriteback, writebackArg, "ZeroRegisterWriteback");
             }
 
         }
 
-        return new MipsParsedInstruction(instruction, _references);
+        return new MipsParsedInstruction(instruction, References);
     }
 
     [MemberNotNullWhen(true, nameof(_meta))]
@@ -224,12 +216,6 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
     /// </summary>
     private bool TryParseRegisterArg(ReadOnlySpan<Token> arg, Argument target)
     {
-        if (arg.Length is not 1)
-        {
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "ArgumentNotARegister", arg.Print());
-            return false;
-        }
-
         // Get reference to selected register argument
         RefTuple<Ref<GPRegister>, RegisterSet> pair = target switch
         {
@@ -250,13 +236,8 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
         (Ref<GPRegister> regRef, RegisterSet set) = pair;
         ref GPRegister reg = ref regRef.Value;
 
-        if (!TryParseRegister(arg[0], out var register, set, 32))
-        {
-            // Register could not be parsed.
-            // Error already logged.
-
+        if (!TryParseRegister(arg, out var register, set, 32))
             return false;
-        }
 
         // Cache register as appropriate argument type
         reg = register;
@@ -269,58 +250,16 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
     /// </summary>
     private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, Argument target)
     {
-        // Attempt to parse expression
-        if (!ExpressionParser.TryParse<long>(arg, out var expResult, _symbols, _logger?.Parent))
-            return false;
-
-        if (expResult.IsSymbolic && target is Argument.ShiftAmount)
+        var type = target switch
         {
-            // TODO: Consider tracking ref symbol token
-            _logger?.Log(Severity.Error, LogId.InvalidRelocatable, arg, "RelocatableShiftAmount");
-            return false;
-        }
-
-        if (expResult.IsSymbolic)
-        {
-            // NOTE: If it were possible to have an undeclared local system reference,
-            // it would be here. However, since there's not forward declaration of local
-            // symbols, that's not a consider
-
-            var type = target switch
-            {
-                Argument.Address => MipsReferenceType.JumpTarget26,
-                Argument.Immediate => MipsReferenceType.Low16,
-                Argument.Offset => MipsReferenceType.PCRelative16,
-                Argument.LargeOffset => MipsReferenceType.PCRelative26,
-                // FullImmediate triggers a HI/LO pair
-                Argument.FullImmediate => MipsReferenceType.High16,
-                _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
-            };
-
-            _references ??= [];
-            var symbol = expResult.Symbol;
-            var addend = (uint)expResult.Addend;
-
-            if (target is Argument.FullImmediate)
-            {
-                _references.Add(new RelocationEntry(symbol.Name, _currentAddress, (uint)MipsReferenceType.High16, addend));
-                _references.Add(new RelocationEntry(symbol.Name, _currentAddress + 4, (uint)MipsReferenceType.Low16, addend));
-            }
-            else
-            {
-                // Standard single relocation
-                _references.Add(new RelocationEntry(symbol.Name, _currentAddress, (uint)type, addend));
-            }
-        }
-
-        // NOTE: Casting might truncate the value to fit the bit size.
-        // This is the desired behavior, but when logging errors this
-        // should be handled explicitly and drop an assembler warning.
-        //
-        // ALSO NOTE: The linker will fill in the added if the value
-        // is symbolic (not absolute)
-
-        long value = expResult.IsAbsolute ? expResult.Addend : 0;
+            Argument.Address => MipsReferenceType.JumpTarget26,
+            Argument.Immediate => MipsReferenceType.Low16,
+            Argument.Offset => MipsReferenceType.PCRelative16,
+            Argument.LargeOffset => MipsReferenceType.PCRelative26,
+            // FullImmediate triggers a HI/LO pair
+            Argument.FullImmediate => MipsReferenceType.High16,
+            _ => MipsReferenceType.None,
+        };
 
         // Determine casting details for the argument
         (int bitCount, int shiftAmount, bool signed) = target switch
@@ -334,9 +273,22 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<(byte, byte, bool)>($"Argument of type '{target}' attempted to parse as an expression."),
         };
 
-        // Truncates the value to fit the target argument
-        CleanInteger(ref value, arg, bitCount, shiftAmount, signed);
-        _immediate = (int)value;
+        if (!TryParseExpression(arg, bitCount, shiftAmount, signed, out var expResult))
+            return false;
+
+        if (expResult.IsSymbolic)
+        {
+            if (target is Argument.FullImmediate)
+            {
+                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)MipsReferenceType.High16, default));
+                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress + 4, (uint)MipsReferenceType.Low16, default));
+            }
+            else
+            {
+                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
+            }
+        }
+
         return true;
     }
 
@@ -409,13 +361,13 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
 
         return _meta switch
         {
-            RTypeInstructionMeta spec => MipsInstruction.Create((byte)spec.OperationCode, (byte)spec.FuncCode, _rs, _rt, _rd, (byte)_immediate),
+            RTypeInstructionMeta spec => MipsInstruction.Create((byte)spec.OperationCode, (byte)spec.FuncCode, _rs, _rt, _rd, (byte)Immediate),
 
             RegImmInstructionMeta ri =>
                 (ri.RtCode is >= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely) ||
                 (ri.RtCode is >= RegImmFuncCode.BranchOnLessThanZeroAndLink and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink)
-                ? MipsInstruction.Create(ri.RtCode, _rs, _immediate)
-                : MipsInstruction.Create(ri.RtCode, _rs, (short)_immediate),
+                ? MipsInstruction.Create(ri.RtCode, _rs, Immediate)
+                : MipsInstruction.Create(ri.RtCode, _rs, (short)Immediate),
 
             CoProc0InstructionsMeta c0 when c0.Mfmc0FuncCode.HasValue => CoProc0Instruction.Create(c0.Mfmc0FuncCode.Value, _rt, (byte)_rd),
             CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
@@ -427,7 +379,7 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
             ITypeInstructionMeta std => std.OperationCode switch
             {
                 OperationCode.Jump or OperationCode.JumpAndLink or OperationCode.JumpAndLinkX
-                    => MipsInstruction.Create(std.OperationCode, (uint)_immediate),
+                    => MipsInstruction.Create(std.OperationCode, (uint)Immediate),
 
                 OperationCode.BranchCompact or OperationCode.BranchAndLinkCompact
                     => throw new NotImplementedException(),
@@ -435,9 +387,9 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
                 var op when 
                     op is (>= OperationCode.BranchOnEquals and <= OperationCode.BranchOnGreaterThanZero) or
                           (>= OperationCode.BranchOnEqualLikely and <= OperationCode.BranchOnGreaterThanZeroLikely)
-                    => MipsInstruction.Create(op, _rs, _rt, _immediate),
+                    => MipsInstruction.Create(op, _rs, _rt, Immediate),
 
-                _ => MipsInstruction.Create(std.OperationCode, _rs, _rt, (short)_immediate)
+                _ => MipsInstruction.Create(std.OperationCode, _rs, _rt, (short)Immediate)
             },
 
             _ => throw new NotSupportedException($"Metadata type {_meta.GetType().Name} is not supported for encoding.")
