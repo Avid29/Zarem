@@ -41,13 +41,33 @@ public class InstructionParserTests
     public static string InstructionParsingTestCaseDisplayName(MethodInfo _, object[] data)
         => $"{(InstructionParsingTestCase)data[0]}";
 
-
     public static IEnumerable<object[]> Generated_RV32_I_List => GenerateTestList(new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
+
+    public static IEnumerable<object[]> Generated_RV64_I_List => GenerateTestList(new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
+
+    public static IEnumerable<object[]> Generated_RV32_G_List => GenerateTestList(new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.General));
+
+    public static IEnumerable<object[]> Generated_RV64_G_List => GenerateTestList(new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.General));
 
     [TestMethod("RV32-I")]
     [DynamicData(nameof(Generated_RV32_I_List))]
-    public void Generated_RISCV_I(string input)
+    public void Generated_RV32_I(string input)
         => AssembleDisassembleTest(input, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
+
+    [TestMethod("RV64-I")]
+    [DynamicData(nameof(Generated_RV64_I_List))]
+    public void Generated_RV64_I(string input)
+        => AssembleDisassembleTest(input, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
+
+    [TestMethod("RV32-G")]
+    [DynamicData(nameof(Generated_RV32_G_List))]
+    public void Generated_RV32_G(string input)
+        => AssembleDisassembleTest(input, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.General));
+
+    [TestMethod("RV64-G")]
+    [DynamicData(nameof(Generated_RV64_G_List))]
+    public void Generated_RV64_G(string input)
+        => AssembleDisassembleTest(input, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.General));
 
     private void AssembleDisassembleTest(string input, RiscVVersionInfo version)
     {
