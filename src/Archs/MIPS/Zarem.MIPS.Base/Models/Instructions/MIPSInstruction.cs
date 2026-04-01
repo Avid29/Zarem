@@ -230,142 +230,46 @@ public struct MipsInstruction
     private uint _inst;
 
     /// <summary>
-    /// Creates a new <see cref="InstructionType.BasicR"/> instruction.
+    /// Creates an R-Type instruction.
     /// </summary>
-    public static MipsInstruction Create(byte opCode, byte funcCode, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
-    {
-        MipsInstruction value = default;
-        value.OpCode = (OperationCode)opCode;
-        value.RS = rs;
-        value.RT = rt;
-        value.RD = rd;
-        value.ShiftAmount = shiftAmount;
-        value.FuncCode = (FunctionCode)funcCode;
-        return value;
-    }
+    public static MipsInstruction CreateR(FunctionCode func, GPRegister rs, GPRegister rt, GPRegister rd, byte sa = 0)
+        => CreateR(OperationCode.Special, func, rs, rt, rd, sa);
 
     /// <summary>
-    /// Creates a new <see cref="InstructionType.BasicR"/> instruction.
+    /// Creates an R-Type instruction.
     /// </summary>
-    public static MipsInstruction Create(FunctionCode funcCode, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
-    {
-        MipsInstruction value = default;
-        value.OpCode = OperationCode.Special;
-        value.RS = rs;
-        value.RT = rt;
-        value.RD = rd;
-        value.ShiftAmount = shiftAmount;
-        value.FuncCode = funcCode;
-        return value;
-    }
-    
-    /// <summary>
-    /// Creates a new <see cref="InstructionType.Special2R"/> instruction.
-    /// </summary>
-    public static MipsInstruction Create(Func2Code func2Code, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
-    {
-        MipsInstruction value = default;
-        value.OpCode = OperationCode.Special2;
-        value.RS = rs;
-        value.RT = rt;
-        value.RD = rd;
-        value.ShiftAmount = shiftAmount;
-        value.Func2Code = func2Code;
-        return value;
-    }
-    
-    /// <summary>
-    /// Creates a new <see cref="InstructionType.Special3R"/> instruction.
-    /// </summary>
-    public static MipsInstruction Create(Func3Code func3Code, GPRegister rs, GPRegister rt, GPRegister rd, byte shiftAmount = 0)
-    {
-        MipsInstruction value = default;
-        value.OpCode = OperationCode.Special3;
-        value.RS = rs;
-        value.RT = rt;
-        value.RD = rd;
-        value.ShiftAmount = shiftAmount;
-        value.Func3Code = func3Code;
-        return value;
-    }
+    public static MipsInstruction CreateR(OperationCode op, FunctionCode func, GPRegister rs, GPRegister rt, GPRegister rd, byte sa = 0)
+        => new() { OpCode = op, FuncCode = func, RS = rs, RT = rt, RD = rd, ShiftAmount = sa };
 
     /// <summary>
-    /// Creates a new <see cref="InstructionType.BasicI"/> instruction.
+    /// Creates an I-Type instruction.
     /// </summary>
-    public static MipsInstruction Create(OperationCode opCode, GPRegister rs, GPRegister rt, short immediate)
-    {
-        MipsInstruction value = default;
-        value.OpCode = opCode;
-        value.RS = rs;
-        value.RT = rt;
-        value.ImmediateValue = immediate;
-        return value;
-    }
+    public static MipsInstruction CreateI(OperationCode op, GPRegister rs, GPRegister rt, short imm)
+        => new() { OpCode = op, RS = rs, RT = rt, ImmediateValue = imm };
 
     /// <summary>
-    /// Creates a new <see cref="InstructionType.BasicI"/> instruction.
+    /// Creates a J-Type instruction.
     /// </summary>
-    public static MipsInstruction Create(OperationCode opCode, GPRegister rs, GPRegister rt, int offset)
-    {
-        MipsInstruction value = default;
-        value.OpCode = opCode;
-        value.RS = rs;
-        value.RT = rt;
-        value.Offset = offset;
-        return value;
-    }
+    public static MipsInstruction CreateJ(OperationCode op, uint address)
+        => new() { OpCode = op, Address = address };
 
     /// <summary>
-    /// Creates a new <see cref="InstructionType.BasicI"/> instruction.
+    /// Creates a J-Type instruction.
     /// </summary>
-    /// <remarks>
-    /// This is just for load upper immediate.
-    /// </remarks>
-    public static MipsInstruction Create(OperationCode opCode, GPRegister rt, short immediate)
-    {
-        MipsInstruction value = default;
-        value.OpCode = opCode;
-        value.RT = rt;
-        value.ImmediateValue = immediate;
-        return value;
-    }
+    public static MipsInstruction CreateBranch(OperationCode op, GPRegister rs, GPRegister rt, int offset)
+        => new() { OpCode = op, RS = rs, RT = rt, Offset = offset };
 
     /// <summary>
-    /// Creates a new <see cref="InstructionType.BasicJ"/> instruction.
+    /// Creates a J-Type instruction.
     /// </summary>
-    public static MipsInstruction Create(OperationCode opCode, uint address)
-    {
-        MipsInstruction value = default;
-        value.OpCode = opCode;
-        value.Address = address;
-        return value;
-    }
-    
-    /// <summary>
-    /// Creates a new <see cref="InstructionType.RegisterImmediate"/> instruction.
-    /// </summary>
-    public static MipsInstruction Create(RegImmFuncCode code, GPRegister rs, short immediate)
-    {
-        MipsInstruction value = default;
-        value.OpCode = OperationCode.RegisterImmediate;
-        value.RTFuncCode = code;
-        value.RS = rs;
-        value.ImmediateValue = immediate;
-        return value;
-    }
+    public static MipsInstruction CreateBranch(RegImmFuncCode rtFunc, GPRegister rs, int offset)
+        => new() { OpCode = OperationCode.RegisterImmediate, RTFuncCode = rtFunc, RS = rs, Offset = offset };
 
     /// <summary>
-    /// Creates a new <see cref="InstructionType.RegisterImmediateBranch"/> branch instruction.
+    /// Creates a J-Type instruction.
     /// </summary>
-    public static MipsInstruction Create(RegImmFuncCode code, GPRegister rs, int offset)
-    {
-        MipsInstruction value = default;
-        value.OpCode = OperationCode.RegisterImmediate;
-        value.RTFuncCode = code;
-        value.RS = rs;
-        value.Offset = offset;
-        return value;
-    }
+    public static MipsInstruction CreateTrap(RegImmFuncCode rtFunc, GPRegister rs, short immediate)
+        => new() { OpCode = OperationCode.RegisterImmediate, RTFuncCode = rtFunc, RS = rs, ImmediateValue = immediate };
 
     /// <summary>
     /// Gets a no operation instruction.

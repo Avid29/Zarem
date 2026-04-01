@@ -34,6 +34,9 @@ public class InstructionTable : MipsInstructionTableBase<DisassemblerLookup>
                 (byte)r.OperationCode,
                 (byte)r.FuncCode),
 
+            JTypeInstructionMeta j => new DisassemblerLookup(
+                (byte)j.OperationCode),
+
             RegImmInstructionMeta ri => new DisassemblerLookup(
                 (byte)OperationCode.RegisterImmediate,
                 (byte)ri.RtCode),

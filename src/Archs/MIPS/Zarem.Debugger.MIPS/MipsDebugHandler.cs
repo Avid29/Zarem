@@ -24,7 +24,7 @@ public class MipsDebugHandler : IDebugHandler
     /// </summary>
     public MipsDebugHandler()
     {
-        var breakInstruction = MipsInstruction.Create(FunctionCode.Break, GPRegister.Zero, GPRegister.Zero, GPRegister.Zero);
+        var breakInstruction = MipsInstruction.CreateR(FunctionCode.Break, GPRegister.Zero, GPRegister.Zero, GPRegister.Zero);
         _breakPointBytes = BitConverter.GetBytes((uint)breakInstruction);
 
         if (BitConverter.IsLittleEndian)

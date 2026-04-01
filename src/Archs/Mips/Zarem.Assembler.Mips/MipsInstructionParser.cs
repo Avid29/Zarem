@@ -320,13 +320,13 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
 
         return _meta switch
         {
-            RTypeInstructionMeta spec => MipsInstruction.Create((byte)spec.OperationCode, (byte)spec.FuncCode, _rs, _rt, _rd, (byte)Immediate),
+            RTypeInstructionMeta r => MipsInstruction.CreateR(r.OperationCode, r.FuncCode, _rs, _rt, _rd, (byte)Immediate),
+            JTypeInstructionMeta j => MipsInstruction.CreateJ(j.OperationCode, (uint)Immediate),
 
-            RegImmInstructionMeta ri =>
-                (ri.RtCode is >= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely) ||
-                (ri.RtCode is >= RegImmFuncCode.BranchOnLessThanZeroAndLink and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink)
-                ? MipsInstruction.Create(ri.RtCode, _rs, Immediate)
-                : MipsInstruction.Create(ri.RtCode, _rs, (short)Immediate),
+            RegImmInstructionMeta ri
+                => ri.Type is InstructionType.RegisterImmediateBranch
+                ? MipsInstruction.CreateBranch(ri.RtCode, _rs, Immediate)
+                : MipsInstruction.CreateTrap(ri.RtCode, _rs, (short)Immediate),
 
             CoProc0InstructionsMeta c0 when c0.Mfmc0FuncCode.HasValue => CoProc0Instruction.Create(c0.Mfmc0FuncCode.Value, _rt, (byte)_rd),
             CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
@@ -335,21 +335,9 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
             CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (FloatRegister)_rs),
             FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (FloatRegister)_rs, (FloatRegister)_rd, (FloatRegister)_rt),
 
-            ITypeInstructionMeta std => std.OperationCode switch
-            {
-                OperationCode.Jump or OperationCode.JumpAndLink or OperationCode.JumpAndLinkX
-                    => MipsInstruction.Create(std.OperationCode, (uint)Immediate),
-
-                OperationCode.BranchCompact or OperationCode.BranchAndLinkCompact
-                    => throw new NotImplementedException(),
-
-                var op when 
-                    op is (>= OperationCode.BranchOnEquals and <= OperationCode.BranchOnGreaterThanZero) or
-                          (>= OperationCode.BranchOnEqualLikely and <= OperationCode.BranchOnGreaterThanZeroLikely)
-                    => MipsInstruction.Create(op, _rs, _rt, Immediate),
-
-                _ => MipsInstruction.Create(std.OperationCode, _rs, _rt, (short)Immediate)
-            },
+            ITypeInstructionMeta i => i.Type is InstructionType.IBranch 
+            ? MipsInstruction.CreateBranch(i.OperationCode, _rs, _rt, Immediate)
+            : MipsInstruction.CreateI(i.OperationCode, _rs, _rt, (short)Immediate),
 
             _ => throw new NotSupportedException($"Metadata type {_meta.GetType().Name} is not supported for encoding.")
         };

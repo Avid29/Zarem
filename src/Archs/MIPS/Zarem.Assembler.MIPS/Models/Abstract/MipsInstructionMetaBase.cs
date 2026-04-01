@@ -14,6 +14,7 @@ namespace Zarem.Assembler.Models.Abstract;
 /// </summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(RTypeInstructionMeta), "r-type")]
+[JsonDerivedType(typeof(JTypeInstructionMeta), "j-type")]
 [JsonDerivedType(typeof(ITypeInstructionMeta), "i-type")]
 [JsonDerivedType(typeof(RegImmInstructionMeta), "reg_imm")]
 [JsonDerivedType(typeof(CoProc0InstructionsMeta), "coproc0")]

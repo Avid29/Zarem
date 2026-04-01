@@ -56,13 +56,13 @@ public class InstructionParserTests
         get
         {
             yield return [new InstructionParsingTestCase("nop", MipsInstruction.NOP)];
-            yield return [new InstructionParsingTestCase("add $t0, $s0, $s1", MipsInstruction.Create(FunctionCode.Add, GPRegister.Saved0, GPRegister.Saved1, GPRegister.Temporary0))];
-            yield return [new InstructionParsingTestCase("addi $t0, $s0, 100", MipsInstruction.Create(OperationCode.AddImmediate, GPRegister.Saved0, GPRegister.Temporary0, (short)100))];
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, 3", MipsInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 3))];
-            yield return [new InstructionParsingTestCase("lw $t0, 100($s0)", MipsInstruction.Create(OperationCode.LoadWord, GPRegister.Saved0, GPRegister.Temporary0, (short)100))];
-            yield return [new InstructionParsingTestCase("sb $t0, -100($s0)", MipsInstruction.Create(OperationCode.StoreByte, GPRegister.Saved0, GPRegister.Temporary0, (short)-100))];
-            yield return [new InstructionParsingTestCase("j 1000", MipsInstruction.Create(OperationCode.Jump, 1000))];
-            yield return [new InstructionParsingTestCase("j 10*10", MipsInstruction.Create(OperationCode.Jump, 10 * 10))];
+            yield return [new InstructionParsingTestCase("add $t0, $s0, $s1", MipsInstruction.CreateR(FunctionCode.Add, GPRegister.Saved0, GPRegister.Saved1, GPRegister.Temporary0))];
+            yield return [new InstructionParsingTestCase("addi $t0, $s0, 100", MipsInstruction.CreateI(OperationCode.AddImmediate, GPRegister.Saved0, GPRegister.Temporary0, (short)100))];
+            yield return [new InstructionParsingTestCase("sll $t0, $s0, 3", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 3))];
+            yield return [new InstructionParsingTestCase("lw $t0, 100($s0)", MipsInstruction.CreateI(OperationCode.LoadWord, GPRegister.Saved0, GPRegister.Temporary0, (short)100))];
+            yield return [new InstructionParsingTestCase("sb $t0, -100($s0)", MipsInstruction.CreateI(OperationCode.StoreByte, GPRegister.Saved0, GPRegister.Temporary0, (short)-100))];
+            yield return [new InstructionParsingTestCase("j 1000", MipsInstruction.CreateJ(OperationCode.Jump, 1000))];
+            yield return [new InstructionParsingTestCase("j 10*10", MipsInstruction.CreateJ(OperationCode.Jump, 10 * 10))];
             yield return [new InstructionParsingTestCase("di", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, GPRegister.Zero, 12))];
             yield return [new InstructionParsingTestCase("di $t1", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, GPRegister.Temporary1, 12))];
             yield return [new InstructionParsingTestCase("ei", CoProc0Instruction.Create(MFMC0FuncCode.EnableInterrupts, GPRegister.Zero, 12))];
@@ -84,9 +84,9 @@ public class InstructionParserTests
     {
         get
         {
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, 33", MipsInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 1), LogId.IntegerTruncated)];
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, -1", MipsInstruction.Create(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 31), LogId.IntegerTruncated)];
-            yield return [new InstructionParsingTestCase("j 0x1", MipsInstruction.Create(OperationCode.Jump, 0x1), LogId.IntegerTruncated)];
+            yield return [new InstructionParsingTestCase("sll $t0, $s0, 33", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 1), LogId.IntegerTruncated)];
+            yield return [new InstructionParsingTestCase("sll $t0, $s0, -1", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 31), LogId.IntegerTruncated)];
+            yield return [new InstructionParsingTestCase("j 0x1", MipsInstruction.CreateJ(OperationCode.Jump, 0x1), LogId.IntegerTruncated)];
         }
     }
 
