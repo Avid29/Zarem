@@ -16,43 +16,6 @@ public partial class RiscVRegisterTable : RegisterTable<GPRegister, RegisterSet>
 {
     private static readonly Lazy<RiscVRegisterTable> _instance = new();
 
-    [GeneratedRegex(@"^x([0-9]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
-    private static partial Regex GetGPRegisterRegex();
-
-    [GeneratedRegex(@"^f([0-9]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
-    private static partial Regex GetFloatRegisterRegex();
-
-    private RiscVRegisterTable()
-    {
-    }
-
-    /// <summary>
-    /// Gets an instance of the <see cref="RiscVRegisterTable"/>.
-    /// </summary>
-    public static RiscVRegisterTable Instance { get; } = _instance.Value;
-
-    /// <inheritdoc/>
-    protected override Dictionary<RegisterSet, Dictionary<string, GPRegister>> NamedRegisterTables { get; } = new()
-    {
-        { RegisterSet.GeneralPurpose, GPRegisterTable },
-        { RegisterSet.FloatingPoints, FloatRegisterTable.ToDictionary(x => x.Key, x => (GPRegister)x.Value) },
-    };
-    
-    /// <inheritdoc/>
-    protected override Dictionary<RegisterSet, Regex> NumericalSetRegexTable { get; } = new()
-    {
-        { RegisterSet.GeneralPurpose, GetGPRegisterRegex() },
-        { RegisterSet.FloatingPoints, GetFloatRegisterRegex() }
-    };
-
-    /// <inheritdoc/>
-    protected override Dictionary<RegisterSet, string> NumericalSetFormatTable { get; } = new()
-    {
-        { RegisterSet.GeneralPurpose, "x{0}" },
-        { RegisterSet.FloatingPoints, "f{0}" },
-        { RegisterSet.Numbered, "x{0}" }
-    };
-
     private static Dictionary<string, GPRegister> GPRegisterTable { get; } = new(StringComparer.OrdinalIgnoreCase)
     {
         { "zero", GPRegister.Zero }, { "ra", GPRegister.ReturnAddress },
@@ -94,4 +57,36 @@ public partial class RiscVRegisterTable : RegisterTable<GPRegister, RegisterSet>
         { "ft10", FloatRegister.Temporary10 }, { "ft11", FloatRegister.Temporary11 },
     };
 
+    [GeneratedRegex(@"^x([0-9]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    private static partial Regex GetGPRegisterRegex();
+
+    [GeneratedRegex(@"^f([0-9]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    private static partial Regex GetFloatRegisterRegex();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="RiscVRegisterTable"/>.
+    /// </summary>
+    public static RiscVRegisterTable Instance { get; } = _instance.Value;
+
+    /// <inheritdoc/>
+    protected override Dictionary<RegisterSet, Dictionary<string, GPRegister>> NamedRegisterTables { get; } = new()
+    {
+        { RegisterSet.GeneralPurpose, GPRegisterTable },
+        { RegisterSet.FloatingPoints, FloatRegisterTable.ToDictionary(x => x.Key, x => (GPRegister)x.Value) },
+    };
+    
+    /// <inheritdoc/>
+    protected override Dictionary<RegisterSet, Regex> NumericalSetRegexTable { get; } = new()
+    {
+        { RegisterSet.GeneralPurpose, GetGPRegisterRegex() },
+        { RegisterSet.FloatingPoints, GetFloatRegisterRegex() }
+    };
+
+    /// <inheritdoc/>
+    protected override Dictionary<RegisterSet, string> NumericalSetFormatTable { get; } = new()
+    {
+        { RegisterSet.GeneralPurpose, "x{0}" },
+        { RegisterSet.FloatingPoints, "f{0}" },
+        { RegisterSet.Numbered, "x{0}" }
+    };
 }

@@ -31,10 +31,10 @@ public readonly struct RiscVVersionInfo
     /// <summary>
     /// Gets the major version number of the RISC-V specification.
     /// </summary>
-    public byte SpecMajor { get; }
+    public byte SpecMajor { get; } = 2;
 
     /// <summary>
     /// Gets the minor version number of the RISC-V specification.
     /// </summary>
-    public byte SpecMinor { get; }
+    public byte SpecMinor { get; } = 0;
 }

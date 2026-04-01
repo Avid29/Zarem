@@ -16,7 +16,7 @@ public record STypeInstructionMeta : RiscVInstructionMetaBase
     /// Gets the instruction operation code.
     /// </summary>
     [JsonPropertyName("op_code")]
-    public required OperationCode OpCode { get; init; } = OperationCode.Store;
+    public OperationCode OpCode { get; init; } = OperationCode.Store;
 
     /// <summary>
     /// Gets the instruction function3 code.

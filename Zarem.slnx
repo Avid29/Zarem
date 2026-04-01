@@ -81,13 +81,17 @@
     <File Path="README.md" />
     <File Path="UpdateVersion.ps1" />
   </Folder>
-  <Folder Name="/Tests/" />
-  <Folder Name="/Tests/Plugins/">
+  <Folder Name="/Tests/">
     <Project Path="tests/Test.Zarem/Test.Zarem.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
   </Folder>
-  <Folder Name="/Tests/Plugins/Archs/" />
+  <Folder Name="/Tests/Plugins/" />
+  <Folder Name="/Tests/Plugins/Archs/">
+    <Project Path="tests/Archs/Test.Archs/Test.Archs.csproj" Id="bf7bf7a4-1a9d-4e5c-888b-c1ce8b8aff6e">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Tests/Plugins/Archs/MIPS/">
     <Project Path="tests/Archs/MIPS/Test.Assembler.MIPS.Live/Test.Assembler.MIPS.Live.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />

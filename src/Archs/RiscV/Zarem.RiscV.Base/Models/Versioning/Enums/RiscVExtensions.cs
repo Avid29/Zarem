@@ -9,6 +9,7 @@ namespace Zarem.Models.Versioning.Enums;
 /// An enum for RISC-V extensions groups.
 /// </summary>
 [Flags]
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum RiscVExtensions : uint
 {
 #pragma warning disable CS1591
