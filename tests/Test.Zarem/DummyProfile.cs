@@ -5,13 +5,24 @@ using Zarem.Assembler.Tokenization.Profiles;
 
 namespace Test.Zarem;
 
-internal class DummyProfile : ITokenizerProfile
+internal partial class DummyProfile : ITokenizerProfile
 {
-    public char CommentPrefix => '\0';
+    /// <inheritdoc/>
+    public char RegisterPrefix => '$';
 
+    /// <inheritdoc/>
     public char ImmediatePrefix => '\0';
 
-    public char RegisterPrefix => '\0';
+    /// <inheritdoc/>
+    public char CommentPrefix => '#';
 
-    public Regex RegisterRegex => throw new System.NotImplementedException();
+    /// <inheritdoc/>
+    /// <remarks>
+    /// Validates the register name after the '$'.
+    /// Note: This is used for validation/highlighting, not initial merging.
+    /// </remarks>
+    public Regex RegisterRegex { get; } = GetRegisterRegex();
+
+    [GeneratedRegex(@"^\$(zero|at|v[0-1]|a[0-3]|t[0-9]|s[0-7]|k[0-1]|gp|sp|fp|ra|[0-9]|[1-2][0-9]|3[0-1])$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    private static partial Regex GetRegisterRegex();
 }

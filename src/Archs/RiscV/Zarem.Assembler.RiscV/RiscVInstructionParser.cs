@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Zarem.Assembler.Extensions;
-using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logger;
 using Zarem.Assembler.Logging.Enum;
@@ -15,14 +13,16 @@ using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Enums;
+using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Helpers;
 using Zarem.Models;
+using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
+using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Tables;
-using Zarem.Models.Tables.Enums;
 
 namespace Zarem.Assembler;
 
@@ -68,13 +68,13 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
     /// Attempts to parse an instruction from a name and a list of arguments.
     /// </summary>
     /// <param name="line">The assembly line to parse.</param>
-    /// <returns>The parser instruction.</returns>
-    public void Parse(AssemblyLine line)
+    /// <returns>The parsed instruction.</returns>
+    public RiscVParsedInstruction? Parse(AssemblyLine line)
     {
         // Attempt to load the instruction
         // If successful, this will set the _meta and _format
         if (!TryParseInstruction(line, out var name))
-            return;
+            return null;
 
         // Parse argument data according to pattern
         Argument[] pattern = _meta.ArgumentPattern;
@@ -94,6 +94,11 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
 
             TryParseArg(arg.Tokens, pattern[i]);
         }
+
+        // Build an instruction using the information from
+        // _meta and all the parsed arguments
+        var instruction = BuildInstruction();
+        return new RiscVParsedInstruction(instruction, References);
     }
 
     [MemberNotNullWhen(true, nameof(_meta))]
@@ -139,7 +144,7 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
             (>= Argument.Immediate and <= Argument.JumpOffset) => TryParseExpressionArg(arg, type),
 
             //// Address offset arguments
-            //Argument.AddressBase => TryParseAddressOffsetArg(arg),
+            Argument.Memory => TryParseAddressOffsetArg(arg),
 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
@@ -220,5 +225,45 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Parses an argument as an address offset, assigning its components to immediate and $rs.
+    /// </summary>
+    private bool TryParseAddressOffsetArg(ReadOnlySpan<Token> arg)
+    {
+        // NOTE: Be careful about forwards to other parse functions with regards to 
+        // error logging. Address offset argument errors might be inappropriately logged.
+
+        // Split the string into an offset and a register, return false if failed
+        if (!SplitOffsetBase(arg, out var offsetStr, out var regStr))
+            return false;
+
+        // Try parse offset component into immediate, return false if failed
+        if (!TryParseExpressionArg(offsetStr, Argument.Immediate))
+            return false;
+
+        // Parse register component into $rs, return false if failed
+        if (!TryParseRegisterArg(regStr, Argument.RS1))
+            return false;
+
+        return true;
+    }
+
+    private RiscVInstruction BuildInstruction()
+    {
+        Guard.IsNotNull(_meta);
+
+        return _meta switch
+        {
+            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, _rd, _rs1, _rs2),
+            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, _rd, _rs1, (short)Immediate),
+            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, _rd, Immediate),
+            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, _rs1, _rs2, Immediate),
+            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
+            JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
+
+            _ => throw new NotSupportedException($"Metadata type {_meta.GetType().Name} is not supported for encoding.")
+        };
     }
 }

@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System.Runtime.CompilerServices;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Functions;
 using Zarem.Models.Instructions.Enums.Operations;
@@ -26,6 +27,93 @@ public struct RiscVInstruction
     private const int FUNCT7_OFFSET = 25;
 
     private uint _inst;
+
+    /// <summary>
+    /// Creates an R-Type instruction.
+    /// </summary>
+    public static RiscVInstruction CreateR(OperationCode op, Funct3Code f3, Funct7Code f7, GPRegister rd, GPRegister rs1, GPRegister rs2)
+    {
+        return new()
+        {
+            OpCode = op,
+            Funct3 = f3,
+            Funct7 = f7,
+            RD = rd,
+            RS1 = rs1,
+            RS2 = rs2
+        };
+    }
+
+    /// <summary>
+    /// Creates an I-Type instruction.
+    /// </summary>
+    public static RiscVInstruction CreateI(OperationCode op, Funct3Code f3, GPRegister rd, GPRegister rs1, short imm)
+    {
+        return new()
+        {
+            OpCode = op,
+            Funct3 = f3,
+            RD = rd,
+            RS1 = rs1,
+            Immediate = imm
+        };
+    }
+
+    /// <summary>
+    /// Creates an S-Type instruction (Store).
+    /// </summary>
+    public static RiscVInstruction CreateS(OperationCode op, Funct3Code f3, GPRegister rs1, GPRegister rs2, short offset)
+    {
+        return new RiscVInstruction
+        {
+            OpCode = op,
+            Funct3 = f3,
+            RS1 = rs1,
+            RS2 = rs2,
+            StoreOffset = offset
+        };
+    }
+
+    /// <summary>
+    /// Creates a B-Type instruction (Branch).
+    /// </summary>
+    public static RiscVInstruction CreateB(OperationCode op, Funct3Code f3, GPRegister rs1, GPRegister rs2, int offset)
+    {
+        return new()
+        {
+            OpCode = op,
+            Funct3 = f3,
+            RS1 = rs1,
+            RS2 = rs2,
+            BranchOffset = offset
+        };
+    }
+
+    /// <summary>
+    /// Creates a U-Type instruction (Upper Immediate).
+    /// </summary>
+    public static RiscVInstruction CreateU(OperationCode op, GPRegister rd, int imm20)
+    {
+        return new()
+        {
+            OpCode = op,
+            RD = rd,
+            UpperImmediate = imm20
+        };
+    }
+
+    /// <summary>
+    /// Creates a J-Type instruction (Jump and Link).
+    /// </summary>
+    public static RiscVInstruction CreateJ(OperationCode op, GPRegister rd, int offset)
+    {
+        return new()
+        {
+            OpCode = op,
+            RD = rd,
+            JumpOffset = offset
+        };
+    }
 
     /// <summary>
     /// Gets or sets the instruction's operation code.
@@ -142,4 +230,55 @@ public struct RiscVInstruction
             BitField.SetField(ref _inst, 1, 31, (val >> 12) & 0x1); // bit 12
         }
     }
+
+    /// <summary>
+    /// U-Type Immediates (20-bit, bits 31:12)
+    /// Used for: lui, auipc
+    /// </summary>
+    public int UpperImmediate
+    {
+        readonly get => (int)BitField.GetField(_inst, 20, 12);
+        set => BitField.SetField(ref _inst, 20, 12, (uint)value & 0xFFFFF);
+    }
+
+    /// <summary>
+    /// J-Type Immediates (21-bit, scrambled, bit 0 is always 0)
+    /// Used for: jal
+    /// </summary>
+    public int JumpOffset
+    {
+        readonly get
+        {
+            // Extract the 4 scrambled parts
+            uint j1_10 = BitField.GetField(_inst, 10, 21);  // Inst[30:21] -> Imm[10:1]
+            uint j11 = BitField.GetField(_inst, 1, 20);      // Inst[20]    -> Imm[11]
+            uint j12_19 = BitField.GetField(_inst, 8, 12);   // Inst[19:12] -> Imm[19:12]
+            uint j20 = BitField.GetField(_inst, 1, 31);      // Inst[31]    -> Imm[20] (Sign)
+
+            // Assemble into a 21-bit raw value
+            uint raw = (j20 << 20) | (j12_19 << 12) | (j11 << 11) | (j1_10 << 1);
+
+            // Sign extend from bit 20 to 32 bits
+            return (int)(raw << 11) >> 11;
+        }
+        set
+        {
+            uint val = (uint)value;
+            // Map logical bits to instruction positions
+            BitField.SetField(ref _inst, 10, 21, (val >> 1) & 0x3FF);  // bits 1-10
+            BitField.SetField(ref _inst, 1, 20, (val >> 11) & 0x1);    // bit 11
+            BitField.SetField(ref _inst, 8, 12, (val >> 12) & 0xFF);   // bits 12-19
+            BitField.SetField(ref _inst, 1, 31, (val >> 20) & 0x1);    // bit 20
+        }
+    }
+
+    /// <summary>
+    /// Casts a <see cref="uint"/> to a <see cref="RiscVInstruction"/>.
+    /// </summary>
+    public static explicit operator RiscVInstruction(uint value) => Unsafe.As<uint, RiscVInstruction>(ref value);
+
+    /// <summary>
+    /// Casts a <see cref="RiscVInstruction"/> to a <see cref="uint"/>.
+    /// </summary>
+    public static explicit operator uint(RiscVInstruction value) => Unsafe.As<RiscVInstruction, uint>(ref value);
 }

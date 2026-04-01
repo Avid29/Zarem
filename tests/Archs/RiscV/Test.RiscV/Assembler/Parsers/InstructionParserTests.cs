@@ -57,17 +57,16 @@ public class InstructionParserTests
         //#endif
 
         var table = new RiscVInstructionTable(config);
-        var parser = new RiscVInstructionParser(config, null, default, null, null);
+        var parser = new RiscVInstructionParser(config, table, default, null, null);
 
         var tokenized = Tokenizer.TokenizeLine(input, RiscVTokenizerProfile.Default)[0];
-        parser.Parse(tokenized);
-        //var actual = parser.Parse(tokenized);
+        var actual = parser.Parse(tokenized);
 
         // Validate execution
-        //Assert.IsNotNull(actual);
+        Assert.IsNotNull(actual);
 
-        //var result = actual?.Realize()[0];
-        //Assert.IsTrue(result.HasValue);
+        var result = actual?.Realize()[0];
+        Assert.IsTrue(result.HasValue);
 
         //#if DEBUG
         //        Assert.AreEqual(input, result.Value.Disassembled);

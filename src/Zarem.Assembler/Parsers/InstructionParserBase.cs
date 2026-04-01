@@ -140,6 +140,46 @@ public abstract class InstructionParserBase<TRegister, TSet>
     }
 
     /// <summary>
+    /// Splits an address offset argument into a token span for the offset and the address register token.
+    /// </summary>
+    /// <remarks>
+    /// Upon return offset and register do not need to be valid offset and register strings.
+    /// The register is just the component in parenthesis. The offset is just the component before the parenthesis.
+    /// Nothing may follow the parenthesis.
+    /// </remarks>
+    protected bool SplitOffsetBase(ReadOnlySpan<Token> arg, out ReadOnlySpan<Token> offset, out ReadOnlySpan<Token> register)
+    {
+        offset = arg;
+        register = [];
+
+        // Find matched parenthesis start and end
+        var parIndex = arg.FindNext(TokenType.OpenParenthesis, out _);
+        var closeIndex = arg.FindNext(TokenType.CloseParenthesis, out _);
+        if (parIndex is -1 || closeIndex is -1)
+        {
+            // TODO: Improve messaging
+            _logger?.Log(Severity.Error, LogId.InvalidAddressOffsetArgument, arg, "InvalidAddressOffsetArgument", arg.Print());
+            return false;
+        }
+
+        // Offset is everything before the parenthesis
+        offset = arg[..parIndex];
+
+        // Register is everything between the parenthesis
+        register = arg[(parIndex + 1)..closeIndex];
+
+        // Ensure there's no content following the parenthesis.
+        if (!arg[(closeIndex + 1)..].IsEmpty)
+        {
+            // TODO: Improve messaging
+            _logger?.Log(Severity.Error, LogId.InvalidAddressOffsetArgument, arg, "InvalidAddressOffsetArgument", arg.Print());
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
     /// Cleans a value to a specified bit count and shift amount, while also checking for any changes that occured during the cast.
     /// </summary>
     /// <remarks>
