@@ -74,7 +74,7 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
     /// Attempts to parse an instruction from a name and a list of arguments.
     /// </summary>
     /// <param name="line">The assembly line to parse.</param>
-    /// <returns>The parser instruction.</returns>
+    /// <returns>The parsed instruction.</returns>
     public MipsParsedInstruction? Parse(AssemblyLine line)
     {
         // Attempt to load the instruction
@@ -140,7 +140,6 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
             {
                 _logger?.Log(Severity.Message, LogId.ZeroRegWriteback, writebackArg, "ZeroRegisterWriteback");
             }
-
         }
 
         return new MipsParsedInstruction(instruction, References);
@@ -301,7 +300,7 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
         // error logging. Address offset argument errors might be inappropriately logged.
 
         // Split the string into an offset and a register, return false if failed
-        if (!SplitAddressOffset(arg, out var offsetStr, out var regStr))
+        if (!SplitOffsetBase(arg, out var offsetStr, out var regStr))
             return false;
 
         // Try parse offset component into immediate, return false if failed
@@ -311,46 +310,6 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
         // Parse register component into $rs, return false if failed
         if (!TryParseRegisterArg(regStr, Argument.RS))
             return false;
-
-        return true;
-    }
-
-    /// <summary>
-    /// Splits an address offset argument into a token span for the offset and the address register token.
-    /// </summary>
-    /// <remarks>
-    /// Upon return offset and register do not need to be valid offset and register strings.
-    /// The register is just the component in parenthesis. The offset is just the component before the parenthesis.
-    /// Nothing may follow the parenthesis.
-    /// </remarks>
-    private bool SplitAddressOffset(ReadOnlySpan<Token> arg, out ReadOnlySpan<Token> offset, out ReadOnlySpan<Token> register)
-    {
-        offset = arg;
-        register = [];
-
-        // Find matched parenthesis start and end
-        var parIndex = arg.FindNext(TokenType.OpenParenthesis, out _);
-        var closeIndex = arg.FindNext(TokenType.CloseParenthesis, out _);
-        if (parIndex is -1 || closeIndex is -1)
-        {
-            // TODO: Improve messaging
-            _logger?.Log(Severity.Error, LogId.InvalidAddressOffsetArgument, arg, "InvalidAddressOffsetArgument", arg.Print());
-            return false;
-        }
-
-        // Offset is everything before the parenthesis
-        offset = arg[..parIndex];
-
-        // Register is everything between the parenthesis
-        register = arg[(parIndex + 1)..closeIndex];
-
-        // Ensure there's no content following the parenthesis.
-        if (!arg[(closeIndex + 1)..].IsEmpty)
-        {
-            // TODO: Improve messaging
-            _logger?.Log(Severity.Error, LogId.InvalidAddressOffsetArgument, arg, "InvalidAddressOffsetArgument", arg.Print());
-            return false;
-        }
 
         return true;
     }

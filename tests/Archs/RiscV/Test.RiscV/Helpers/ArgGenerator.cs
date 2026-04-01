@@ -1,8 +1,9 @@
 ﻿// Avishai Dernis 2025
 
 using System;
+using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Test.Mips.Helpers;
+namespace Test.RiscV.Helpers;
 
 public class ArgGenerator
 {
@@ -14,8 +15,8 @@ public class ArgGenerator
     public static int RandomImm20(bool safe = true)
         => safe ? Rnd.Next(-(1 << 19), 1 << 19) : Rnd.Next(int.MinValue, int.MaxValue);
 
-    public static byte RandomRegIndex(bool safe = true)
-        => (byte)(safe ? Rnd.Next(0, 32) : Rnd.Next(32, 256));
+    public static GPRegister RandomRegister(bool safe = true)
+        => (GPRegister)(safe ? Rnd.Next(0, 32) : Rnd.Next(32, 256));
 
     public static byte RandomShamt(bool safe = true)
         => (byte)(safe ? Rnd.Next(0, 32) : Rnd.Next(32, 256));

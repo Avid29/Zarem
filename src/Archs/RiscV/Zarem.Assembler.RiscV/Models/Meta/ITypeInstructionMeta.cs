@@ -16,7 +16,7 @@ public record ITypeInstructionMeta : RiscVInstructionMetaBase
     /// Gets the instruction operation code.
     /// </summary>
     [JsonPropertyName("op_code")]
-    public required OperationCode OpCode { get; init; } = OperationCode.AluImmediate;
+    public OperationCode OpCode { get; init; } = OperationCode.AluImmediate;
 
     /// <summary>
     /// Gets the instruction function3 code.
@@ -37,6 +37,6 @@ public record ITypeInstructionMeta : RiscVInstructionMetaBase
     /// for shift instructions.
     /// </summary>
     [JsonPropertyName("special")]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public byte Special { get; init; } = 0;
 }

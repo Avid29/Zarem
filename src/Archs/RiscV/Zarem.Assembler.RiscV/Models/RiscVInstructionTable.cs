@@ -70,8 +70,6 @@ public class RiscVInstructionTable : RiscVInstructionTableBase<string>
         return false;
     }
 
-
-
     /// <inheritdoc/>
     protected override void LoadInstruction(RiscVInstructionMetaBase metadata)
     {
