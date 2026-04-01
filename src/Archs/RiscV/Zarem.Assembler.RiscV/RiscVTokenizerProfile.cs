@@ -10,6 +10,11 @@ namespace Zarem.Assembler;
 /// </summary>
 public partial class RiscVTokenizerProfile : ITokenizerProfile
 {
+    /// <summary>
+    /// Gets the default tokenizer profile for the MIPS architecture.
+    /// </summary>
+    public static RiscVTokenizerProfile Default { get; } = new();
+
     /// <inheritdoc/>
     public char RegisterPrefix => '\0';
 

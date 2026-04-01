@@ -74,9 +74,9 @@ public class InstructionParserTests
     {
         get
         {
-            yield return [new InstructionParsingTestCase("xkcd $t0, $s0, $s1", Zarem.Assembler.Logging.Enum.LogId.InvalidInstructionName)];
-            yield return [new InstructionParsingTestCase("add $t0, $s0", Zarem.Assembler.Logging.Enum.LogId.InvalidInstructionArgCount)];
-            yield return [new InstructionParsingTestCase("add $t0, $s0, $s1, $s1", Zarem.Assembler.Logging.Enum.LogId.InvalidInstructionArgCount)];
+            yield return [new InstructionParsingTestCase("xkcd $t0, $s0, $s1", LogId.InvalidInstructionName)];
+            yield return [new InstructionParsingTestCase("add $t0, $s0", LogId.InvalidInstructionArgCount)];
+            yield return [new InstructionParsingTestCase("add $t0, $s0, $s1, $s1", LogId.InvalidInstructionArgCount)];
         }
     }
 
