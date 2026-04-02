@@ -97,7 +97,7 @@ public partial class MipsCpu<T> : MipsCpu
         => Insert(instruction, out _, out trap);
 
     /// <inheritdoc cref="MipsCpu.Insert(MipsInstruction, out MipsTrap)"/>
-    public void Insert(MipsInstruction instruction, out Execution<T> execution, out MipsTrap trap)
+    public void Insert(MipsInstruction instruction, out MipsExecution<T> execution, out MipsTrap trap)
         => trap = ExecuteAndApply(instruction, out execution);
 
     /// <remarks>
@@ -118,7 +118,7 @@ public partial class MipsCpu<T> : MipsCpu
     /// Wraps the last 3 stages of the instruction pipeline.
     /// This allows for executing instructions that were not fetched.
     /// </remarks>
-    private MipsTrap ExecuteAndApply(MipsInstruction instruction, out Execution<T> execution, MipsTrap proceedingTrap = MipsTrap.None)
+    private MipsTrap ExecuteAndApply(MipsInstruction instruction, out MipsExecution<T> execution, MipsTrap proceedingTrap = MipsTrap.None)
     {
         // Pre-define everything to avoid unset variable accusations
         MipsTrap trap = proceedingTrap;
@@ -140,10 +140,10 @@ public partial class MipsCpu<T> : MipsCpu
     /// <summary>
     /// Immitates the execute step in a MIPS cpu, constructing the modifications to apply in the following stages.
     /// </summary>
-    private MipsTrap Execute(MipsInstruction instruction, out Execution<T> execution)
+    private MipsTrap Execute(MipsInstruction instruction, out MipsExecution<T> execution)
         => _instructionServiceTable.Execute(instruction, out execution);
 
-    private MipsTrap MemAccess(Execution<T> execution, out T read)
+    private MipsTrap MemAccess(MipsExecution<T> execution, out T read)
     {
         read = default;
 
@@ -189,7 +189,7 @@ public partial class MipsCpu<T> : MipsCpu
         return MipsTrap.None;
     }
 
-    private MipsTrap WriteBack(Execution<T> execution, T memRead)
+    private MipsTrap WriteBack(MipsExecution<T> execution, T memRead)
     {
         // Calculate what the next pc will be.
         // If a previous instruction set a DelaySlot, we go there.

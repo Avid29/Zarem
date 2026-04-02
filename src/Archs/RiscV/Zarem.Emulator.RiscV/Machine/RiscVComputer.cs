@@ -1,4 +1,4 @@
-﻿// Avishai Dernis 2025
+﻿// Avishai Dernis 2026
 
 using System;
 using System.Collections.Generic;
@@ -6,21 +6,21 @@ using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
-using Zarem.Extensions;
+using Zarem.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Machine;
 
 /// <summary>
-/// A class representing a computer system in the MIPS interpreter.
+/// A class representing a computer system in the RISC-V interpreter.
 /// </summary>
-public class MipsComputer : ComputerBase
+public class RiscVComputer : ComputerBase
 {
     private readonly MemoryMapper _memoryMapper;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MipsComputer"/> class.
+    /// Initializes a new instance of the <see cref="RiscVComputer"/> class.
     /// </summary>
-    public MipsComputer(MIPSEmulatorConfig config)
+    public RiscVComputer(RiscVEmulatorConfig config)
     {
         Config = config;
 
@@ -29,27 +29,25 @@ public class MipsComputer : ComputerBase
         var bus = new PhysicalBus(_memoryMapper);
         MapDevices(_memoryMapper);
 
-        // Initialize the components
-        Cpu = config.MipsVersion.Is64Bit()
-            ? new MipsCpu<ulong>(config, bus)
-            : new MipsCpu<uint>(config, bus);
+        Cpu = config.VersionInfo.Base switch
+        {
+            RiscVBaseVersion.RV128 => new RiscVCpu<UInt128>(config, bus),
+            RiscVBaseVersion.RV64 => new RiscVCpu<ulong>(config, bus),
+            RiscVBaseVersion.RV32 => new RiscVCpu<uint>(config, bus),
+            _ => throw new NotImplementedException()
+        };
 
-        Memory = new MemorySystem(bus, Cpu.Tlb);
-
-        // Hook the virtual memory system into the Cpu
         Cpu.Memory = Memory;
-
-        Cpu.ShutdownRequested += Processor_ShutdownRequested;
     }
 
     /// <inheritdoc/>
-    public override MIPSEmulatorConfig Config { get; }
+    public override RiscVEmulatorConfig Config { get; }
 
     /// <inheritdoc/>
-    public override MipsCpu Cpu { get; }
+    public override IRiscVCpu Cpu { get; }
 
     /// <inheritdoc/>
-    public override IMemorySystem Memory { get; }
+    public override IMemorySystem Memory => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;
@@ -62,14 +60,5 @@ public class MipsComputer : ComputerBase
     {
         // System RAM
         mapper.MapDevice(0x0000_0000, new RamDevice(1024 * 1024 * 1024)); // TODO: Config ram size
-
-        // Graphics Buffer 
-        //mapper.MapDevice(0x1300_0000, new ZaremGBU());
-    }
-
-    private void Processor_ShutdownRequested(object? sender, EventArgs e)
-    {
-        Cpu.ShutdownRequested -= Processor_ShutdownRequested;
-        RequestShutdown();
     }
 }

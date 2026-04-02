@@ -2,7 +2,6 @@
 
 using System;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using Zarem.Emulator.Models.Enum;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -12,12 +11,10 @@ namespace Zarem.Emulator.Models;
 /// <summary>
 /// A struct representing the results of an instruction's execution.
 /// </summary>
-public readonly struct Execution<T>
+public readonly struct MipsExecution<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private const int REG_BITCOUNT = 5;
-    private const int REGSET_OFFSET = REG_BITCOUNT;
-    private const int REGSET_BITCOUNT = 4;
 
     // These values are used for secondary effects
     // They can be (low, high), (memAddress, size*(-signed)), (pc, _), (writeback, register|regset)
@@ -25,11 +22,11 @@ public readonly struct Execution<T>
     private readonly ulong _secondary2;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static Execution<T> CreateWriteback(GPRegister dest, T writeBack)
+    public static MipsExecution<T> CreateWriteback(GPRegister dest, T writeBack)
     {
-        return new Execution<T>
+        return new MipsExecution<T>
         {
             GPR = dest,
             WriteBack = writeBack,
@@ -37,11 +34,11 @@ public readonly struct Execution<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static Execution<T> CreateWriteback(CP0Registers dest, T writeBack)
+    public static MipsExecution<T> CreateWriteback(CP0Registers dest, T writeBack)
     {
-        return new Execution<T>
+        return new MipsExecution<T>
         {
             CoProc0Reg = dest,
             CoProc0WriteBack = writeBack,
@@ -49,9 +46,9 @@ public readonly struct Execution<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public unsafe static Execution<T> CreateFloatWriteback<TFloat>(FloatRegister dest, TFloat writeBack)
+    public unsafe static MipsExecution<T> CreateFloatWriteback<TFloat>(FloatRegister dest, TFloat writeBack)
         where TFloat : unmanaged, INumber<TFloat>
     {
         long longValue = writeBack switch
@@ -67,7 +64,7 @@ public readonly struct Execution<T>
 
         if (sizeof(TFloat) == sizeof(float))
         {
-            return new Execution<T>
+            return new MipsExecution<T>
             {
                 FloatReg = dest,
                 FWordWriteBack = (int)longValue,
@@ -75,7 +72,7 @@ public readonly struct Execution<T>
         }
         else
         {
-            return new Execution<T>
+            return new MipsExecution<T>
             {
                 FloatReg = dest,
                 FLongWriteBack = longValue,
@@ -84,11 +81,11 @@ public readonly struct Execution<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static Execution<T> CreateMemRead(GPRegister dest, T address, int size, bool signed = true)
+    public static MipsExecution<T> CreateMemRead(GPRegister dest, T address, int size, bool signed = true)
     {
-        return new Execution<T>
+        return new MipsExecution<T>
         {
             GPR = dest,
             MemAddress = address,
@@ -98,11 +95,11 @@ public readonly struct Execution<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static Execution<T> CreateMemWrite(T writeBack, T address, int size)
+    public static MipsExecution<T> CreateMemWrite(T writeBack, T address, int size)
     {
-        return new Execution<T>
+        return new MipsExecution<T>
         {
             WriteBack = writeBack,
             MemAddress = address,
@@ -112,22 +109,22 @@ public readonly struct Execution<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static Execution<T> CreateJump(T absolutePC)
+    public static MipsExecution<T> CreateJump(T absolutePC)
     {
-        return new Execution<T>
+        return new MipsExecution<T>
         {
             ProgramCounter = absolutePC,
         };
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static Execution<T> CreateJumpAndLink(T absolutePC, T returnAddress, GPRegister raReg = GPRegister.ReturnAddress)
+    public static MipsExecution<T> CreateJumpAndLink(T absolutePC, T returnAddress, GPRegister raReg = GPRegister.ReturnAddress)
     {
-        return new Execution<T>
+        return new MipsExecution<T>
         {
             ProgramCounter = absolutePC,
             WriteBack = returnAddress,
@@ -136,11 +133,11 @@ public readonly struct Execution<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static Execution<T> CreateHighLow((T High, T Low) highLow)
+    public static MipsExecution<T> CreateHighLow((T High, T Low) highLow)
     {
-        return new Execution<T>
+        return new MipsExecution<T>
         {
             High = highLow.High,
             Low = highLow.Low,
@@ -148,33 +145,33 @@ public readonly struct Execution<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static Execution<T> CreateLow(T low)
+    public static MipsExecution<T> CreateLow(T low)
     {
-        return new Execution<T>
+        return new MipsExecution<T>
         {
             Low = low,
         };
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static Execution<T> CreateHigh(T high)
+    public static MipsExecution<T> CreateHigh(T high)
     {
-        return new Execution<T>
+        return new MipsExecution<T>
         {
             High = high,
         };
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Execution{T}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static Execution<T> CreateEffect(SideEffect sideEffect)
+    public static MipsExecution<T> CreateEffect(SideEffect sideEffect)
     {
-        return new Execution<T>
+        return new MipsExecution<T>
         {
             SideEffect = sideEffect,
         };

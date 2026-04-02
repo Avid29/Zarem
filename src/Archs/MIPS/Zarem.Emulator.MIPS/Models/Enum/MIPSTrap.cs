@@ -3,7 +3,7 @@
 namespace Zarem.Emulator.Models.Enum;
 
 /// <summary>
-/// An enum describing the kind of trap that occurred during an <see cref="Execution{T}"/>.
+/// An enum describing the kind of trap that occurred during an <see cref="MipsExecution{T}"/>.
 /// </summary>
 public enum MipsTrap : byte
 {

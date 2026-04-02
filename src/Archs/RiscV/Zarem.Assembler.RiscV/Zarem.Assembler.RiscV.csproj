@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <RootNamespace>Zarem.Assembler</RootNamespace>
+	  <RootNamespace>Zarem.Emulator</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

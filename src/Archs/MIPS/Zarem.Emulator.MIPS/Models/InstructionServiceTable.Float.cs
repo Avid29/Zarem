@@ -12,16 +12,16 @@ namespace Zarem.Emulator.Models;
 
 public partial class InstructionServiceTable<T, TSigned>
 {
-    private static MipsTrap CreateCoProc1Execution(InstructionServiceTable<T, TSigned> @this, MipsInstruction inst, out Execution<T> exec)
+    private static MipsTrap CreateCoProc1Execution(InstructionServiceTable<T, TSigned> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
         var floatInstruction = (FloatInstruction)inst;
 
         exec = floatInstruction.CoProc1RSCode switch
         {
-            CoProc1RSCode.MFC1 => Execution<T>.CreateWriteback(floatInstruction.RT, T.CreateTruncating(@this._processor.FloatProcessor[floatInstruction.FS])),
+            CoProc1RSCode.MFC1 => MipsExecution<T>.CreateWriteback(floatInstruction.RT, T.CreateTruncating(@this._processor.FloatProcessor[floatInstruction.FS])),
             CoProc1RSCode.CFC1 => throw new NotImplementedException(),
             CoProc1RSCode.MFHC1 => throw new NotImplementedException(),
-            CoProc1RSCode.MTC1 => Execution<T>.CreateFloatWriteback(floatInstruction.FS, @this._processor[floatInstruction.RT]),
+            CoProc1RSCode.MTC1 => MipsExecution<T>.CreateFloatWriteback(floatInstruction.FS, @this._processor[floatInstruction.RT]),
             CoProc1RSCode.CTC1 => throw new NotImplementedException(),
             CoProc1RSCode.MTHC1 => throw new NotImplementedException(),
             CoProc1RSCode.BC1 => throw new NotImplementedException(),
@@ -52,7 +52,7 @@ public partial class InstructionServiceTable<T, TSigned>
         return MipsTrap.None;
     }
 
-    private static Execution<T> CreateFloatExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
+    private static MipsExecution<T> CreateFloatExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
         where T2 : unmanaged, IFloatingPointIeee754<T2>
     {
         return inst.FloatFuncCode switch
@@ -72,7 +72,7 @@ public partial class InstructionServiceTable<T, TSigned>
         };
     }
 
-    private static Execution<T> CreateFloatIntExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
+    private static MipsExecution<T> CreateFloatIntExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
         where T2 : unmanaged, INumber<T2>
     {
         return inst.FloatFuncCode switch
@@ -85,7 +85,7 @@ public partial class InstructionServiceTable<T, TSigned>
         };
     }
 
-    private static Execution<T> CreateFloatRoundExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
+    private static MipsExecution<T> CreateFloatRoundExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
         where TFrom : unmanaged, IFloatingPointIeee754<TFrom>
         where TTo : unmanaged, INumber<TTo>, IMinMaxValue<TTo>
     {
@@ -124,10 +124,10 @@ public partial class InstructionServiceTable<T, TSigned>
         }
 
 
-        return Execution<T>.CreateFloatWriteback(destination, finalResult);
+        return MipsExecution<T>.CreateFloatWriteback(destination, finalResult);
     }
 
-    private static Execution<T> CreateFloatArithmeticExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
+    private static MipsExecution<T> CreateFloatArithmeticExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
         where T2 : unmanaged, IFloatingPointIeee754<T2>
     {
         var destination = inst.FD;
@@ -152,15 +152,15 @@ public partial class InstructionServiceTable<T, TSigned>
             _ => throw new NotImplementedException($"FPU instruction {inst.FloatFuncCode} not implemented."),
         };
 
-        return Execution<T>.CreateFloatWriteback(destination, value);
+        return MipsExecution<T>.CreateFloatWriteback(destination, value);
     }
 
-    private static Execution<T> CreateConvertExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
+    private static MipsExecution<T> CreateConvertExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
         where TFrom : unmanaged, INumber<TFrom>
         where TTo : unmanaged, INumber<TTo>
     {
         var source = indexer[inst.FS];
         var result = TTo.CreateTruncating(source);
-        return Execution<T>.CreateFloatWriteback(inst.FD, result);
+        return MipsExecution<T>.CreateFloatWriteback(inst.FD, result);
     }
 }

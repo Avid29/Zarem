@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
@@ -20,6 +21,11 @@ public abstract class ComputerBase : IComputer
 
     /// <inheritdoc/>
     public event EventHandler? ShutdownRequested;
+
+    /// <summary>
+    /// Gets the emulation configuration to follow for computing.
+    /// </summary>
+    public abstract EmulatorConfig Config { get; }
 
     /// <inheritdoc/>
     public abstract ICpu Cpu { get; }
@@ -76,8 +82,8 @@ public abstract class ComputerBase : IComputer
     public void Dispose()
     {
         foreach (var device in Devices)
-        {
             device.Dispose();
-        }
+
+        Cpu.Dispose();
     }
 }

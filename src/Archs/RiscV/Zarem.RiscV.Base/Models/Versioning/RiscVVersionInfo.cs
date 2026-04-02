@@ -12,6 +12,13 @@ public readonly struct RiscVVersionInfo
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVVersionInfo"/> struct.
     /// </summary>
+    public RiscVVersionInfo() : this(RiscVBaseVersion.RV32, RiscVExtensions.Integers)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVVersionInfo"/> struct.
+    /// </summary>
     public RiscVVersionInfo(RiscVBaseVersion @base, RiscVExtensions extensions)
     {
         Base = @base;
