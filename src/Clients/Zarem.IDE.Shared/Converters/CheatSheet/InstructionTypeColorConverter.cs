@@ -27,7 +27,7 @@ public partial class InstructionTypeToColorConverter : IValueConverter
             InstructionType.BasicI => ITypeInstructionColor,
             InstructionType.BasicJ => JTypeInstructionColor,
 
-            InstructionType.RegisterImmediate or
+            InstructionType.RegisterImmediateTrap or
             InstructionType.RegisterImmediateBranch => RegImmInstructionColor,
 
             InstructionType.Special2R or

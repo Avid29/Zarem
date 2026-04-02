@@ -55,7 +55,7 @@ public class MipsDisassembler
             InstructionType.BasicI or
             InstructionType.BasicJ => 0,
 
-            InstructionType.RegisterImmediate or
+            InstructionType.RegisterImmediateTrap or
             InstructionType.RegisterImmediateBranch => (byte)instruction.RTFuncCode,
 
             InstructionType.Coproc0 => (byte)((CoProc0Instruction)instruction).CoProc0RSCode,

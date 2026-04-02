@@ -82,10 +82,10 @@ public sealed partial class UsagePatternDisplay : UserControl
             Foreground = data.Type switch
             {
                 InstructionType.BasicR => InstructionBrushPalette?.RType,
-                InstructionType.BasicI => InstructionBrushPalette?.IType,
+                InstructionType.BasicI or InstructionType.IBranch => InstructionBrushPalette?.IType,
                 InstructionType.BasicJ => InstructionBrushPalette?.JType,
 
-                InstructionType.RegisterImmediate or
+                InstructionType.RegisterImmediateTrap or
                 InstructionType.RegisterImmediateBranch => InstructionBrushPalette?.RegImmediate,
 
                 InstructionType.Special2R or

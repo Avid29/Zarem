@@ -1,6 +1,6 @@
 ﻿[
   {
-    "type": "i-type",
+    "type": "j-type",
     "name": "j",
     "op_code": 2,
     "args": [ "target" ],
@@ -8,7 +8,7 @@
     "behavior": "$pc = address"
   },
   {
-    "type": "i-type",
+    "type": "j-type",
     "name": "jal",
     "op_code": 3,
     "args": [ "target" ],
@@ -16,7 +16,7 @@
     "behavior": "$ra = ret_addr; $pc = address"
   },
   {
-    "type": "i-type",
+    "type": "j-type",
     "name": "jalx",
     "op_code": 29,
     "args": [ "target" ],
@@ -25,7 +25,7 @@
     "behavior": "$ra = ret_addr; $pc = address (ISA Mode Switch)"
   },
   {
-    "type": "i-type",
+    "type": "j-type",
     "name": "bc",
     "op_code": 50,
     "args": [ "offset26" ],
@@ -33,7 +33,7 @@
     "behavior": "$pc = $pc + 4 + (offset << 2)"
   },
   {
-    "type": "i-type",
+    "type": "j-type",
     "name": "balc",
     "op_code": 58,
     "args": [ "offset26" ],

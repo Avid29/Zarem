@@ -36,7 +36,7 @@ public static class InstructionTypeHelper
             OperationCode.RegisterImmediate
                 when rtFuncCode is <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely or
                 >= RegImmFuncCode.BranchOnLessThanZeroAndLink => InstructionType.RegisterImmediateBranch,
-            OperationCode.RegisterImmediate => InstructionType.RegisterImmediate,
+            OperationCode.RegisterImmediate => InstructionType.RegisterImmediateTrap,
             
             // J Type
             OperationCode.Jump or OperationCode.JumpAndLink or

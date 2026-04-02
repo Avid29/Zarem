@@ -11,9 +11,10 @@ public enum InstructionType
 
     BasicR,
     BasicI,
+    IBranch,
     BasicJ,
-    RegisterImmediate,
     RegisterImmediateBranch,
+    RegisterImmediateTrap,
     Special2R,
     Special3R,
     Coproc0,
