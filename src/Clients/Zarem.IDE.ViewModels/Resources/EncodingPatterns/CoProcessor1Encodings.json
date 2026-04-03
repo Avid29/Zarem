@@ -40,7 +40,7 @@
         "type": 5
       },
       {
-        "name": "Function Code",
+        "name": "Func Code",
         "size": 6,
         "offset": 0,
         "type": 1
@@ -64,7 +64,7 @@
         "value": 0
       },
       {
-        "name": "Mov Code",
+        "name": "Mov",
         "size": 3,
         "offset": 21,
         "type": 2
@@ -100,25 +100,25 @@
         "value": 19
       },
       {
-        "name": "Register (RS/FR)",
+        "name": "RS/FR",
         "size": 5,
         "offset": 21,
         "type": 7
       },
       {
-        "name": "Target Register (RT/FT)",
+        "name": "RT/FT",
         "size": 5,
         "offset": 16,
         "type": 7
       },
       {
-        "name": "Source Register (FS)",
+        "name": "FS",
         "size": 5,
         "offset": 11,
         "type": 5
       },
       {
-        "name": "Destination Register (FD)",
+        "name": "FD",
         "size": 5,
         "offset": 6,
         "type": 5
@@ -130,7 +130,7 @@
         "type": 6
       },
       {
-        "name": "Function Code",
+        "name": "Func Code",
         "size": 3,
         "offset": 0,
         "type": 1
