@@ -186,8 +186,8 @@ public unsafe partial class InstructionServiceTable<T, TSigned>
 
         if (version is >= MipsVersion.MipsIV and < MipsVersion.Mips_R6)
         {
-            _specialTable[(int)FunctionCode.MoveOnZero] = &Move<MovzLogic>;
-            _specialTable[(int)FunctionCode.MoveOnNotZero] = &Move<MovnLogic>;
+            _specialTable[(int)FunctionCode.MoveOnZero] = &Move<Xeqz>;
+            _specialTable[(int)FunctionCode.MoveOnNotZero] = &Move<Xnez>;
         }
 
         if (version is < MipsVersion.Mips_R6)
