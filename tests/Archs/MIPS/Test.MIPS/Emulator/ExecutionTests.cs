@@ -101,7 +101,7 @@ public partial class ExecutionTests
         var computer = new MipsComputer(emulatorConfig);
         var emulator = new Zaremulator(computer);
 
-        var cpu = (MipsCpu<T>)computer.Processor;
+        var cpu = (MipsCpu<T>)computer.Cpu;
 
         // Initialize the status register
         cpu.CoProcessor0.StatusRegister = @case.Status;
@@ -169,7 +169,7 @@ public partial class ExecutionTests
         {
             Assert.AreEqual(expectedFloatWord.Value.Register, execution.FloatReg);
             Assert.AreEqual(expectedFloatWord.Value.Value, execution.FWordWriteBack);
-            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Processor.FloatProcessor.Words[execution.FloatReg]);
+            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatProcessor.Words[execution.FloatReg]);
         }
 
         var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
@@ -177,7 +177,7 @@ public partial class ExecutionTests
         {
             Assert.AreEqual(expectedFloatLong.Value.Register, execution.FloatReg);
             Assert.AreEqual(expectedFloatLong.Value.Value, execution.FLongWriteBack);
-            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Processor.FloatProcessor.Longs[execution.FloatReg]);
+            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatProcessor.Longs[execution.FloatReg]);
         }
 
         var expectedPC = @case.ExpectedPC;
@@ -186,8 +186,8 @@ public partial class ExecutionTests
             if (delaysSlots && execution.SideEffect is SideEffect.ProgramCounter)
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
-                Assert.AreEqual((uint)4, computer.Processor.ProgramCounter);
-                computer.Processor.Insert(MipsInstruction.NOP, out _);
+                Assert.AreEqual((uint)4, computer.Cpu.ProgramCounter);
+                computer.Cpu.Insert(MipsInstruction.NOP, out _);
             }
 
             Assert.AreEqual(expectedPC.Value, cpu.PC);

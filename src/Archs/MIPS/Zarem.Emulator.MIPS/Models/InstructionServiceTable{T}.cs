@@ -7,7 +7,7 @@ using Zarem.Models.Instructions;
 namespace Zarem.Emulator.Models;
 
 /// <summary>
-/// A struct which handles converting decoded instructions into <see cref="Execution{T}"/> models.
+/// A struct which handles converting decoded instructions into <see cref="MipsExecution{T}"/> models.
 /// </summary>
 public abstract partial class InstructionServiceTable<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
@@ -18,5 +18,5 @@ public abstract partial class InstructionServiceTable<T>
     /// <param name="instruction"></param>
     /// <param name="execution"></param>
     /// <returns></returns>
-    public abstract MipsTrap Execute(MipsInstruction instruction, out Execution<T> execution);
+    public abstract MipsTrap Execute(MipsInstruction instruction, out MipsExecution<T> execution);
 }

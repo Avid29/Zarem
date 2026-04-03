@@ -29,7 +29,6 @@ public abstract partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
 
         Tlb = new MipsTlb();
         Memory = memory;
-
     }
 
     /// <summary>
@@ -48,7 +47,7 @@ public abstract partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     public MipsTlb Tlb { get; }
 
     /// <summary>
-    /// Gets the emulation config.
+    /// Gets the emulation configuration.
     /// </summary>
     public MIPSEmulatorConfig Config { get; }
 
