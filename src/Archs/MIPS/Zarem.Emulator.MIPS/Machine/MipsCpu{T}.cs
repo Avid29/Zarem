@@ -22,7 +22,7 @@ namespace Zarem.Emulator.Machine;
 public partial class MipsCpu<T> : MipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private readonly InstructionServiceTable<T> _instructionServiceTable;
+    private readonly IInstructionServiceTable<T> _instructionServiceTable;
     private T? _delaySlot;
 
     /// <inheritdoc/>

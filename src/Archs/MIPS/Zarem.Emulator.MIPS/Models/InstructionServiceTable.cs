@@ -12,7 +12,7 @@ namespace Zarem.Emulator.Models;
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="MipsExecution{T}"/> models.
 /// </summary>
-public unsafe partial class InstructionServiceTable<T, TSigned> : InstructionServiceTable<T>
+public unsafe partial class InstructionServiceTable<T, TSigned> : LogicTable<T, TSigned>, IInstructionServiceTable<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
 {
@@ -36,7 +36,7 @@ public unsafe partial class InstructionServiceTable<T, TSigned> : InstructionSer
     }
 
     /// <inheritdoc/>
-    public override MipsTrap Execute(MipsInstruction instruction, out MipsExecution<T> execution)
+    public MipsTrap Execute(MipsInstruction instruction, out MipsExecution<T> execution)
     {
         var func = _opCodeTable[(int)instruction.OpCode];
         if (func == null)
