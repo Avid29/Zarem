@@ -4,9 +4,12 @@ using System;
 using System.Numerics;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
-using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.Registers;
+using Zarem.Emulator.Models;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
+using Zarem.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Machine;
 
@@ -16,6 +19,8 @@ namespace Zarem.Emulator.Machine;
 public class RiscVCpu<T> : IRiscVCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    private readonly IRiscVInstructionServiceTable<T> _instructionServiceTable;
+
     /// <inheritdoc/>
     public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
 
@@ -25,7 +30,16 @@ public class RiscVCpu<T> : IRiscVCpu
     public RiscVCpu(RiscVEmulatorConfig config, IMemoryAccessor memory)
     {
         Config = config;
+        RegisterFile = new();
         Memory = memory;
+
+        _instructionServiceTable = config.VersionInfo.Base switch
+        {
+            RiscVBaseVersion.RV32 => new RiscVInstructionServiceTable<T, int>(this),
+            RiscVBaseVersion.RV64 => new RiscVInstructionServiceTable<T, long>(this),
+            RiscVBaseVersion.RV128 => new RiscVInstructionServiceTable<T, Int128>(this),
+            _ => throw new NotImplementedException()
+        };
     }
 
     /// <inheritdoc/>
@@ -33,6 +47,9 @@ public class RiscVCpu<T> : IRiscVCpu
 
     /// <inheritdoc/>
     public T ProgramCounter { get; set; }
+
+    /// <inheritdoc/>
+    public RiscVGPRegisterFile<T> RegisterFile { get; }
 
     /// <inheritdoc/>
     public string ArchitectureName => "RISC-V";

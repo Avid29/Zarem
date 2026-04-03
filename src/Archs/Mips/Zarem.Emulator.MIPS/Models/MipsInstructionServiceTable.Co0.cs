@@ -9,9 +9,9 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 namespace Zarem.Emulator.Models;
 
-public partial class InstructionServiceTable<T, TSigned>
+public partial class MipsInstructionServiceTable<T, TSigned>
 {
-    private static MipsTrap CreateCoProc0Execution(InstructionServiceTable<T, TSigned> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CreateCoProc0Execution(MipsInstructionServiceTable<T, TSigned> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?

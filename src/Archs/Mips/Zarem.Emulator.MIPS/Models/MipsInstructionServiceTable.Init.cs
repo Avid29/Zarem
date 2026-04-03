@@ -8,7 +8,7 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
 namespace Zarem.Emulator.Models;
 
-public unsafe partial class InstructionServiceTable<T, TSigned>
+public unsafe partial class MipsInstructionServiceTable<T, TSigned>
 {
     private void InitTables(MIPSEmulatorConfig config)
     {

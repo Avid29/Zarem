@@ -9,7 +9,7 @@ namespace Zarem.Emulator.Models;
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="MipsExecution{T}"/> models.
 /// </summary>
-public interface IInstructionServiceTable<T>
+public interface IMipsInstructionServiceTable<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <summary>
