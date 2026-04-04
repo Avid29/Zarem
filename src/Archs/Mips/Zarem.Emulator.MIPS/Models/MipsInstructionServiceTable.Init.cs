@@ -1,14 +1,16 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using Zarem.Emulator.Config;
 using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
+using static Zarem.Emulator.Models.LogicTable;
 
 namespace Zarem.Emulator.Models;
 
-public unsafe partial class MipsInstructionServiceTable<T, TSigned>
+public unsafe partial class MipsInstructionServiceTable<T, TS>
 {
     private void InitTables(MIPSEmulatorConfig config)
     {
@@ -17,14 +19,14 @@ public unsafe partial class MipsInstructionServiceTable<T, TSigned>
         // Set default behavior to reserve instruction trap
         for (int i = 0; i < 64; i++)
         {
-            _opCodeTable[i] = &Reserved;
-            _specialTable[i] = &Reserved;
-            _special2Table[i] = &Reserved;
+            _opCodeTable[i] = &ReservedInstruction;
+            _specialTable[i] = &ReservedInstruction;
+            _special2Table[i] = &ReservedInstruction;
         }
 
         for (int i = 0; i < 32; i++)
         {
-            _regImmTable[i] = &Reserved;
+            _regImmTable[i] = &ReservedInstruction;
         }
 
         // Populate tables
@@ -39,17 +41,17 @@ public unsafe partial class MipsInstructionServiceTable<T, TSigned>
         _opCodeTable[(int)OperationCode.RegisterImmediate] = &DispatchRegImm;
         _opCodeTable[(int)OperationCode.Jump] = &Jump;
         _opCodeTable[(int)OperationCode.JumpAndLink] = &JumpLink;
-        _opCodeTable[(int)OperationCode.BranchOnEquals] = &BranchOn<XeqLogic>;
-        _opCodeTable[(int)OperationCode.BranchOnNotEquals] = &BranchOn<XneLogic>;
-        _opCodeTable[(int)OperationCode.BranchOnLessThanOrEqualToZero] = &BranchOn<XlezLogic>;
-        _opCodeTable[(int)OperationCode.BranchOnGreaterThanZero] = &BranchOn<XgtzLogic>;
-        _opCodeTable[(int)OperationCode.AddImmediate] = &CheckedAluI<AddLogic32, uint, int>;
-        _opCodeTable[(int)OperationCode.AddImmediateUnsigned] = &AluI<AdduLogic32, uint>;
-        _opCodeTable[(int)OperationCode.SetLessThanImmediate] = &AluISigned<SltLogic, T, TSigned>;
-        _opCodeTable[(int)OperationCode.SetLessThanImmediateUnsigned] = &AluI<SltuLogic, T>;
-        _opCodeTable[(int)OperationCode.AndImmediate] = &AluI<AndLogic, T>;
-        _opCodeTable[(int)OperationCode.OrImmediate] = &AluI<OrLogic, T>;
-        _opCodeTable[(int)OperationCode.ExclusiveOrImmediate] = &AluI<XorLogic, T>;
+        _opCodeTable[(int)OperationCode.BranchOnEquals] = &BranchOn<XeqLogic<T>>;
+        _opCodeTable[(int)OperationCode.BranchOnNotEquals] = &BranchOn<XneLogic<T>>;
+        _opCodeTable[(int)OperationCode.BranchOnLessThanOrEqualToZero] = &BranchOn<XlezLogic<T, TS>>;
+        _opCodeTable[(int)OperationCode.BranchOnGreaterThanZero] = &BranchOn<XgtzLogic<T, TS>>;
+        _opCodeTable[(int)OperationCode.AddImmediate] = &CheckedAluI<AddLogic<uint, int>, uint, int>;
+        _opCodeTable[(int)OperationCode.AddImmediateUnsigned] = &AluI<AdduLogic<uint>, uint>;
+        _opCodeTable[(int)OperationCode.SetLessThanImmediate] = &AluISigned<SltLogic<T, TS>, T, TS>;
+        _opCodeTable[(int)OperationCode.SetLessThanImmediateUnsigned] = &AluI<SltuLogic<T>, T>;
+        _opCodeTable[(int)OperationCode.AndImmediate] = &AluI<AndLogic<T>, T>;
+        _opCodeTable[(int)OperationCode.OrImmediate] = &AluI<OrLogic<T>, T>;
+        _opCodeTable[(int)OperationCode.ExclusiveOrImmediate] = &AluI<XorLogic<T>, T>;
         _opCodeTable[(int)OperationCode.LoadUpperImmediate] = &Lui;
         _opCodeTable[(int)OperationCode.Coprocessor0] = &CreateCoProc0Execution;
         _opCodeTable[(int)OperationCode.Coprocessor1] = &CreateCoProc1Execution;
@@ -80,8 +82,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TSigned>
         
         if (version is >= MipsVersion.MipsIII && version.Is64Bit())
         {
-            _opCodeTable[(int)OperationCode.DoubleWordAddImmediate] = &CheckedAluI<AddLogic64, ulong, long>;
-            _opCodeTable[(int)OperationCode.DoubleWordAddImmediateUnsigned] = &AluI<AddLogic64, ulong>;
+            _opCodeTable[(int)OperationCode.DoubleWordAddImmediate] = &CheckedAluI<AddLogic<ulong, long>, ulong, long>;
+            _opCodeTable[(int)OperationCode.DoubleWordAddImmediateUnsigned] = &AluI<AdduLogic<ulong>, ulong>;
             _opCodeTable[(int)OperationCode.LoadDoubleWordLeft] = &NotImplemented;
             _opCodeTable[(int)OperationCode.LoadDoubleWordRight] = &NotImplemented;
             _opCodeTable[(int)OperationCode.LoadDoubleWord] = &Load<long>;
@@ -132,71 +134,71 @@ public unsafe partial class MipsInstructionServiceTable<T, TSigned>
 
     private void InitSpecial(MipsVersion version)
     {
-        _specialTable[(int)FunctionCode.ShiftLeftLogical] = &Shift<SllLogic32, uint>;
-        _specialTable[(int)FunctionCode.ShiftRightLogical] = &Shift<SrlLogic32, uint>;
-        _specialTable[(int)FunctionCode.ShiftRightArithmetic] = &Shift<SraLogic32, uint>;
-        _specialTable[(int)FunctionCode.ShiftLeftLogicalVariable] = &ShiftVar<SllLogic32, uint>;
-        _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = &ShiftVar<SrlLogic32, uint>;
-        _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = &ShiftVar<SraLogic32, uint>;
+        _specialTable[(int)FunctionCode.ShiftLeftLogical] = &Shift<SllLogic<uint>, uint>;
+        _specialTable[(int)FunctionCode.ShiftRightLogical] = &Shift<SrlLogic<uint>, uint>;
+        _specialTable[(int)FunctionCode.ShiftRightArithmetic] = &Shift<SraLogic<uint, int>, uint>;
+        _specialTable[(int)FunctionCode.ShiftLeftLogicalVariable] = &ShiftVar<SllLogic<uint>, uint>;
+        _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = &ShiftVar<SrlLogic<uint>, uint>;
+        _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = &ShiftVar<SraLogic<uint, int>, uint>;
         _specialTable[(int)FunctionCode.JumpAndLinkRegister] = &JumpLinkR;
         _specialTable[(int)FunctionCode.SystemCall] = &Trap<SyscallLogic>;
         _specialTable[(int)FunctionCode.Break] = &Trap<BreakLogic>;
-        _specialTable[(int)FunctionCode.Add] = &CheckedAluR<AddLogic32, uint, int>;
-        _specialTable[(int)FunctionCode.AddUnsigned] = &AluR<AdduLogic32, uint>;
-        _specialTable[(int)FunctionCode.Subtract] = &CheckedAluR<SubLogic32, uint, int>;
-        _specialTable[(int)FunctionCode.SubtractUnsigned] = &AluR<SubuLogic32, uint>;
-        _specialTable[(int)FunctionCode.And] = &AluR<AndLogic, T>;
-        _specialTable[(int)FunctionCode.Or] = &AluR<OrLogic, T>;
-        _specialTable[(int)FunctionCode.ExclusiveOr] = &AluR<XorLogic, T>;
-        _specialTable[(int)FunctionCode.Nor] = &AluR<NorLogic,T>;
-        _specialTable[(int)FunctionCode.SetLessThan] = &AluR<SltLogic, T>;
-        _specialTable[(int)FunctionCode.SetLessThanUnsigned] = &AluR<SltuLogic, T>;
+        _specialTable[(int)FunctionCode.Add] = &CheckedAluR<AddLogic<uint, int>, uint, int>;
+        _specialTable[(int)FunctionCode.AddUnsigned] = &AluR<AdduLogic<uint>, uint>;
+        _specialTable[(int)FunctionCode.Subtract] = &CheckedAluR<SubLogic<uint, int>, uint, int>;
+        _specialTable[(int)FunctionCode.SubtractUnsigned] = &AluR<SubuLogic<uint>, uint>;
+        _specialTable[(int)FunctionCode.And] = &AluR<AndLogic<T>, T>;
+        _specialTable[(int)FunctionCode.Or] = &AluR<OrLogic<T>, T>;
+        _specialTable[(int)FunctionCode.ExclusiveOr] = &AluR<XorLogic<T>, T>;
+        _specialTable[(int)FunctionCode.Nor] = &AluR<NorLogic<T>, T>;
+        _specialTable[(int)FunctionCode.SetLessThan] = &AluR<SltLogic<T, TS>, T>;
+        _specialTable[(int)FunctionCode.SetLessThanUnsigned] = &AluR<SltuLogic<T>, T>;
 
         if (version is >= MipsVersion.MipsII)
         {
             _specialTable[(int)FunctionCode.Sync] = &NotImplemented; // TODO
-            _specialTable[(int)FunctionCode.TrapOnGreaterOrEqual] = &TrapOn<XgeLogic>;
-            _specialTable[(int)FunctionCode.TrapOnGreaterOrEqualUnsigned] = &TrapOn<XgeuLogic>;
-            _specialTable[(int)FunctionCode.TrapOnLessThan] = &TrapOn<XltLogic>;
-            _specialTable[(int)FunctionCode.TrapOnLessThanUnsigned] = &TrapOn<XltuLogic>;
-            _specialTable[(int)FunctionCode.TrapOnEquals] = &TrapOn<XeqLogic>;
-            _specialTable[(int)FunctionCode.TrapOnNotEquals] = &TrapOn<XneLogic>;
+            _specialTable[(int)FunctionCode.TrapOnGreaterOrEqual] = &TrapOn<XgeLogic<T, TS>>;
+            _specialTable[(int)FunctionCode.TrapOnGreaterOrEqualUnsigned] = &TrapOn<XgeuLogic<T>>;
+            _specialTable[(int)FunctionCode.TrapOnLessThan] = &TrapOn<XltLogic<T, TS>>;
+            _specialTable[(int)FunctionCode.TrapOnLessThanUnsigned] = &TrapOn<XltuLogic<T>>;
+            _specialTable[(int)FunctionCode.TrapOnEquals] = &TrapOn<XeqLogic<T>>;
+            _specialTable[(int)FunctionCode.TrapOnNotEquals] = &TrapOn<XneLogic<T>>;
         }
 
         if (version is >= MipsVersion.MipsIII && version.Is64Bit())
         {
-            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalVariable] = &ShiftVar<SllLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalVariable] = &ShiftVar<SrlLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticVariable] = &ShiftVar<SraLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordMultiply] = &MultR<MultLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordMultiplyUnsigned] = &MultR<MultuLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordDivide] = &DivR<DivLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordDivideUnsigned] = &DivR<DivuLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordAdd] = &AluR<AddLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordAddUnsigned] = &AluR<AdduLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordSubtract] = &AluR<SubLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordSubtractUnsigned] = &AluR<SubuLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogical] = &Shift<SllLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogical] = &Shift<SrlLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmetic] = &Shift<SraLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalPlus32] = &ShiftPlus32<SllLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalPlus32] = &ShiftPlus32<SrlLogic64, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticPlus32] = &ShiftPlus32<SraLogic64, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalVariable] = &ShiftVar<SllLogic<ulong>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalVariable] = &ShiftVar<SrlLogic<ulong>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticVariable] = &ShiftVar<SraLogic<ulong, long>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordMultiply] = &MultR<MultLogic<ulong, UInt128, Int128>, ulong, UInt128>;
+            _specialTable[(int)FunctionCode.DoubleWordMultiplyUnsigned] = &MultR<MultuLogic<ulong, UInt128>, ulong, UInt128>;
+            _specialTable[(int)FunctionCode.DoubleWordDivide] = &DivR<DivLogic<ulong, long>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordDivideUnsigned] = &DivR<DivuLogic<ulong>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordAdd] = &AluR<AddLogic<ulong, long>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordAddUnsigned] = &AluR<AdduLogic<ulong>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordSubtract] = &AluR<SubLogic<ulong, long>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordSubtractUnsigned] = &AluR<SubuLogic<ulong>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogical] = &Shift<SllLogic<ulong>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogical] = &Shift<SrlLogic<ulong>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmetic] = &Shift<SraLogic<ulong, long>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalPlus32] = &ShiftPlus32<SllLogic<ulong>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalPlus32] = &ShiftPlus32<SrlLogic<ulong>, ulong>;
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticPlus32] = &ShiftPlus32<SraLogic<ulong, long>, ulong>;
         }
 
         if (version is >= MipsVersion.MipsIV and < MipsVersion.Mips_R6)
         {
-            _specialTable[(int)FunctionCode.MoveOnZero] = &Move<Xeqz>;
-            _specialTable[(int)FunctionCode.MoveOnNotZero] = &Move<Xnez>;
+            _specialTable[(int)FunctionCode.MoveOnZero] = &Move<Xeqz<T>>;
+            _specialTable[(int)FunctionCode.MoveOnNotZero] = &Move<Xnez<T>>;
         }
 
         if (version is < MipsVersion.Mips_R6)
         {
             _specialTable[(int)FunctionCode.JumpRegister] = &JumpR;
-            _specialTable[(int)FunctionCode.Multiply] = &MultR<MultLogic32, uint>;
-            _specialTable[(int)FunctionCode.MultiplyUnsigned] = &MultR<MultuLogic32, uint>;
-            _specialTable[(int)FunctionCode.Divide] = &DivR<DivLogic32, uint>;
-            _specialTable[(int)FunctionCode.DivideUnsigned] = &DivR<DivuLogic32, uint>;
+            _specialTable[(int)FunctionCode.Multiply] = &MultR<MultLogic<uint, ulong, long>, uint, ulong>;
+            _specialTable[(int)FunctionCode.MultiplyUnsigned] = &MultR<MultuLogic<uint, ulong>, uint, ulong>;
+            _specialTable[(int)FunctionCode.Divide] = &DivR<DivLogic<uint, int>, uint>;
+            _specialTable[(int)FunctionCode.DivideUnsigned] = &DivR<DivuLogic<uint>, uint>;
             _specialTable[(int)FunctionCode.MoveFromHigh] = &Mfhi;
             _specialTable[(int)FunctionCode.MoveToHigh] = &Mthi;
             _specialTable[(int)FunctionCode.MoveFromLow] = &Mflo;
@@ -212,18 +214,18 @@ public unsafe partial class MipsInstructionServiceTable<T, TSigned>
 
     private void InitRegImm(MipsVersion version)
     {
-        _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZero] = &BranchOn<XltzLogic>;
-        _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = &BranchOn<XgezLogic>;
+        _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZero] = &BranchOn<XltzLogic<T, TS>>;
+        _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = &BranchOn<XgezLogic<T, TS>>;
 
 
         if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
         {
-            _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediate] = &TrapOnI<XgeLogic>;
-            _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediateUnsigned] = &TrapOnI<XgeuLogic>;
-            _regImmTable[(int)RegImmFuncCode.TrapOnLessThanImmediate] = &TrapOnI<XltLogic>;
-            _regImmTable[(int)RegImmFuncCode.TrapOnLessThanImmediateUnsigned] = &TrapOnI<XltuLogic>;
-            _regImmTable[(int)RegImmFuncCode.TrapOnEqualsImmediate] = &TrapOnI<XeqLogic>;
-            _regImmTable[(int)RegImmFuncCode.TrapOnNotEqualsImmediate] = &TrapOnI<XneLogic>;
+            _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediate] = &TrapOnI<XgeLogic<T, TS>>;
+            _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediateUnsigned] = &TrapOnI<XgeuLogic<T>>;
+            _regImmTable[(int)RegImmFuncCode.TrapOnLessThanImmediate] = &TrapOnI<XltLogic<T, TS>>;
+            _regImmTable[(int)RegImmFuncCode.TrapOnLessThanImmediateUnsigned] = &TrapOnI<XltuLogic<T>>;
+            _regImmTable[(int)RegImmFuncCode.TrapOnEqualsImmediate] = &TrapOnI<XeqLogic<T>>;
+            _regImmTable[(int)RegImmFuncCode.TrapOnNotEqualsImmediate] = &TrapOnI<XneLogic<T>>;
             _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroLikely] = &NotImplemented; // TODO
             _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely] = &NotImplemented; // TODO
             _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroLikelyAndLink] = &NotImplemented; // TODO
@@ -232,8 +234,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TSigned>
 
         if (version is < MipsVersion.Mips_R6)
         {
-            _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroAndLink] = &BranchLinkOn<XltzLogic>;
-            _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroAndLink] = &BranchLinkOn<XgezLogic>;
+            _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroAndLink] = &BranchLinkOn<XltzLogic<T, TS>>;
+            _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroAndLink] = &BranchLinkOn<XgezLogic<T, TS>>;
         }
 
         if (version >= MipsVersion.Mips_R6)
@@ -245,7 +247,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TSigned>
 
     private void InitSpecial2()
     {
-        _special2Table[(int)Func2Code.MultiplyToGPR] = &AluR<MulLogic32, uint>;
+        _special2Table[(int)Func2Code.MultiplyToGPR] = &AluR<MulLogic<uint, int>, uint>;
         _special2Table[(int)Func2Code.MultiplyAndAddHiLow] = &MultAddR<MultAddLogic32, uint>;
         _special2Table[(int)Func2Code.MultiplyAndAddHiLowUnsigned] = &MultAddR<MultAddLogic32, uint>;
         _special2Table[(int)Func2Code.MultiplyAndSubtractHiLow] = &MultAddR<MultSubLogic32, uint>;
