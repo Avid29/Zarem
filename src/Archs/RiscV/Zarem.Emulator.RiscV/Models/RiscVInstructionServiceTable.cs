@@ -14,13 +14,13 @@ namespace Zarem.Emulator.Models;
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="RiscVExecution{T}"/> models.
 /// </summary>
-public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : LogicTable, IRiscVInstructionServiceTable<T>
+public unsafe partial class RiscVInstructionServiceTable<T, TS> : LogicTable, IRiscVInstructionServiceTable<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-    where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
+    where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
 {
-    private readonly delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[] _funct7Table = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[128];
-    private readonly delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[] _baseTable = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
-    private readonly delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[] _modifiedTable = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
+    private readonly delegate*<RiscVInstructionServiceTable<T, TS>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[] _funct7Table = new delegate*<RiscVInstructionServiceTable<T, TS>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[128];
+    private readonly delegate*<RiscVInstructionServiceTable<T, TS>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[] _baseTable = new delegate*<RiscVInstructionServiceTable<T, TS>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
+    private readonly delegate*<RiscVInstructionServiceTable<T, TS>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[] _modifiedTable = new delegate*<RiscVInstructionServiceTable<T, TS>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
     private readonly RiscVCpu<T> _processor;
     private readonly T* _regs;
 
@@ -39,13 +39,13 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : LogicTabl
     public RiscVTrap Execute(RiscVInstruction instruction, out RiscVExecution<T> execution)
         => _funct7Table[(int)instruction.OpCode](this, instruction, out execution);
 
-    private static RiscVTrap DispatchBaseTable(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap DispatchBaseTable(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
         => @this._baseTable[GetLookupIndex(inst)](@this, inst, out exec);
 
-    private static RiscVTrap DispatchModifiedTable(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap DispatchModifiedTable(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
         => @this._modifiedTable[GetLookupIndex(inst)](@this, inst, out exec);
 
-    private static RiscVTrap AluR<TLogic, T2>(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap AluR<TLogic, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
         where TLogic : struct, IAluLogic<T2>
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
@@ -55,7 +55,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : LogicTabl
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap AluI<TLogic, T2>(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap AluI<TLogic, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
         where TLogic : struct, IAluLogic<T2>
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
@@ -65,7 +65,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : LogicTabl
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap AluISigned<TLogic, T2, TSigned2>(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap AluISigned<TLogic, T2, TSigned2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
         where TLogic : struct, IAluLogic<T2>
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
         where TSigned2 : unmanaged, IBinaryInteger<TSigned2>, ISignedNumber<TSigned2>
@@ -76,17 +76,17 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : LogicTabl
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap Shift<TLogic, T2>(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap Shift<TLogic, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
         where TLogic : struct, IShiftLogic<T2>
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
         var rs1 = T2.CreateTruncating(@this._regs[(int)inst.RS1]);
-        var imm = int.CreateTruncating(inst.Immediate);
+        var imm = int.CreateTruncating(inst.Immediate) & (sizeof(T2) * 8 - 1);
         exec = RiscVExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Execute(rs1, imm)));
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap ShiftVar<TLogic, T2>(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap ShiftVar<TLogic, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
         where TLogic : struct, IShiftLogic<T2>
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
@@ -96,13 +96,13 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : LogicTabl
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap IllegalInstruction(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap IllegalInstruction(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
     {
         exec = default;
         return RiscVTrap.IllegalInstruction;
     }
 
-    private static RiscVTrap NotImplemented(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap NotImplemented(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
         => throw new UnimplementedInstructionException(ulong.CreateTruncating(@this._processor.ProgramCounter));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
