@@ -23,12 +23,12 @@ public abstract partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu"/> class.
     /// </summary>
-    public MipsCpu(MIPSEmulatorConfig config, IMemoryAccessor memory)
+    public MipsCpu(MIPSEmulatorConfig config, PhysicalBus bus)
     {
         Config = config;
 
         Tlb = new MipsTlb();
-        Memory = memory;
+        Memory = new MemorySystem(bus, Tlb);
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public abstract partial class MipsCpu : ICpu<MipsCpu, MipsInstruction, MipsTrap>
     /// <summary>
     /// Gets the system memory
     /// </summary>
-    public IMemoryAccessor Memory { get; internal set; }
+    public IMemorySystem Memory { get; }
 
     /// <inheritdoc/>
     public string ArchitectureName => "MIPS";

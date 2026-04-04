@@ -28,11 +28,12 @@ public class RiscVCpu<T> : IRiscVCpu
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVCpu{T}"/> class.
     /// </summary>
-    public RiscVCpu(RiscVEmulatorConfig config, IMemoryAccessor memory)
+    public RiscVCpu(RiscVEmulatorConfig config, PhysicalBus bus)
     {
         Config = config;
         RegisterFile = new();
-        Memory = memory;
+        Tlb = new RiscVTlb();
+        Memory = new MemorySystem(bus, Tlb);
 
         _instructionServiceTable = config.VersionInfo.Base switch
         {
@@ -66,8 +67,13 @@ public class RiscVCpu<T> : IRiscVCpu
     /// <inheritdoc/>
     public string ArchitectureName => "RISC-V";
 
+    /// <summary>
+    /// Gets the translation look-aside buffer.
+    /// </summary>
+    public RiscVTlb Tlb { get; }
+
     /// <inheritdoc/>
-    public IMemoryAccessor Memory { get; set; }
+    public IMemorySystem Memory { get; }
 
     /// <inheritdoc/>
     ulong ICpu.ProgramCounter
@@ -112,6 +118,11 @@ public class RiscVCpu<T> : IRiscVCpu
         trap = trap is RiscVTrap.None ? Execute(instruction, out execution) : trap;
         //trap = trap is RiscVTrap.None ? MemAccess(execution, out memRead) : trap;
         trap = trap is RiscVTrap.None ? WriteBack(execution, memRead) : trap;
+
+        if (trap is RiscVTrap.Breakpoint)
+        {
+            BreakpointHit?.Invoke(this, new BreakpointHitEventArgs());
+        }
 
         return trap;
     }

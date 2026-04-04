@@ -6,7 +6,6 @@ using System.Numerics;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.CoProcessors;
-using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enum;
@@ -31,7 +30,7 @@ public partial class MipsCpu<T> : MipsCpu
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu"/> class.
     /// </summary>
-    public MipsCpu(MIPSEmulatorConfig config, IMemoryAccessor memory) : base(config, memory)
+    public MipsCpu(MIPSEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
         RegisterFile = new(config.MipsVersion);
         CoProcessor0 = new();

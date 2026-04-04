@@ -34,11 +34,6 @@ public class MipsComputer : ComputerBase
             ? new MipsCpu<ulong>(config, bus)
             : new MipsCpu<uint>(config, bus);
 
-        Memory = new MemorySystem(bus, Cpu.Tlb);
-
-        // Hook the virtual memory system into the Cpu
-        Cpu.Memory = Memory;
-
         Cpu.ShutdownRequested += Processor_ShutdownRequested;
     }
 
@@ -49,7 +44,7 @@ public class MipsComputer : ComputerBase
     public override MipsCpu Cpu { get; }
 
     /// <inheritdoc/>
-    public override IMemorySystem Memory { get; }
+    public override IMemorySystem Memory => Cpu.Memory;
 
     /// <inheritdoc/>
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;

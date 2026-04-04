@@ -20,5 +20,5 @@ public interface IRiscVCpu : ICpu<IRiscVCpu, RiscVInstruction, RiscVTrap>
     /// <summary>
     /// Gets the system memory
     /// </summary>
-    IMemoryAccessor Memory { get; internal set; }
+    IMemorySystem Memory { get; }
 }
