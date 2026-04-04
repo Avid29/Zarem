@@ -189,7 +189,7 @@ public partial class ExecutionTests
                 computer.Cpu.Insert(MipsInstruction.NOP, out _);
             }
 
-            Assert.AreEqual(expectedPC.Value, cpu.PC);
+            Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
         }
     }
 }

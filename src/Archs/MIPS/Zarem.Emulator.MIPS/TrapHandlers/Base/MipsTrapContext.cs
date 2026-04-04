@@ -10,7 +10,7 @@ namespace Zarem.Emulator.TrapHandlers.Base;
 /// </summary>
 public readonly struct MipsTrapContext
 {
-    internal MipsTrapContext(MipsCpu cpu, ulong trapCode)
+    internal MipsTrapContext(IMipsCpu cpu, ulong trapCode)
     {
         Cpu = cpu;
         TrapCode = trapCode;
@@ -19,7 +19,7 @@ public readonly struct MipsTrapContext
     /// <summary>
     /// Gets the cpu that trapped.
     /// </summary>
-    public MipsCpu Cpu { get; }
+    public IMipsCpu Cpu { get; }
 
     /// <summary>
     /// Gets the trap code.
@@ -29,29 +29,29 @@ public readonly struct MipsTrapContext
     /// <summary>
     /// Gets the value of first argument register.
     /// </summary>
-    public ulong A0 => Cpu[(int)GPRegister.Argument0];
+    public ulong A0 => Cpu[GPRegister.Argument0];
 
     /// <summary>
     /// Gets the value of first argument register.
     /// </summary>
-    public ulong A1 => Cpu[(int)GPRegister.Argument1];
+    public ulong A1 => Cpu[GPRegister.Argument1];
 
     /// <summary>
     /// Gets the value of first argument register.
     /// </summary>
-    public ulong A2 => Cpu[(int)GPRegister.Argument2];
+    public ulong A2 => Cpu[GPRegister.Argument2];
 
     /// <summary>
     /// Gets the value of first argument register.
     /// </summary>
-    public ulong A3 => Cpu[(int)GPRegister.Argument3];
+    public ulong A3 => Cpu[GPRegister.Argument3];
 
     /// <summary>
     /// Gets or sets the value of first return value register.
     /// </summary>
     public ulong V0
     {
-        get => Cpu[(int)GPRegister.ReturnValue0];
-        set => Cpu[(int)GPRegister.ReturnValue0] = value;
+        get => Cpu[GPRegister.ReturnValue0];
+        set => Cpu[GPRegister.ReturnValue0] = value;
     }
 }

@@ -41,7 +41,7 @@ public class MipsComputer : ComputerBase
     public override MIPSEmulatorConfig Config { get; }
 
     /// <inheritdoc/>
-    public override MipsCpu Cpu { get; }
+    public override IMipsCpu Cpu { get; }
 
     /// <inheritdoc/>
     public override IMemorySystem Memory => Cpu.Memory;

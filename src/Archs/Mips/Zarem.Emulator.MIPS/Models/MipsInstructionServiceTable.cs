@@ -243,7 +243,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     {
         var rs = T.CreateTruncating(@this._processor[inst.RS]);
         var rt = T.CreateTruncating(@this._processor[inst.RT]);
-        var jump = @this._processor.PC + T.CreateTruncating(inst.Offset + 4);
+        var jump = @this._processor.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
         exec = TLogic.Check(rs, rt) ? MipsExecution<T>.CreateJump(jump) : default;
         return MipsTrap.None;
     }
@@ -253,8 +253,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     {
         var rs = T.CreateTruncating(@this._processor[inst.RS]);
         var rt = T.CreateTruncating(@this._processor[inst.RT]);
-        var jump = @this._processor.PC + T.CreateTruncating(inst.Offset + 4);
-        var ret = T.CreateTruncating(@this._processor.ProgramCounter + 4);
+        var jump = @this._processor.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+        var ret = @this._processor.ProgramCounter + T.CreateTruncating(4);
         exec = TLogic.Check(rs, rt) ? MipsExecution<T>.CreateJumpAndLink(jump, ret) : default;
         return MipsTrap.None;
     }
@@ -333,7 +333,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
 
     private static MipsTrap JumpLink(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateJumpAndLink(T.CreateTruncating(inst.Address), @this._processor.PC + T.CreateTruncating(4));
+        exec = MipsExecution<T>.CreateJumpAndLink(T.CreateTruncating(inst.Address), @this._processor.ProgramCounter + T.CreateTruncating(4));
         return MipsTrap.None;
     }
 
@@ -346,7 +346,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     private static MipsTrap JumpLinkR(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
         var rs = @this._regs[(int)inst.RS];
-        exec = MipsExecution<T>.CreateJumpAndLink(rs, @this._processor.PC + T.CreateTruncating(4), inst.RD);
+        exec = MipsExecution<T>.CreateJumpAndLink(rs, @this._processor.ProgramCounter + T.CreateTruncating(4), inst.RD);
         return MipsTrap.None;
     }
 
@@ -387,5 +387,5 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     }
 
     private static MipsTrap NotImplemented(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
-        => throw new UnimplementedInstructionException(@this._processor.ProgramCounter);
+        => throw new UnimplementedInstructionException(ulong.CreateTruncating(@this._processor.ProgramCounter));
 }
