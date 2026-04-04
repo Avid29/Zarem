@@ -123,14 +123,14 @@ public partial class LogicTable
     /// <summary>
     /// An <see cref="IMultLogic{T, TL}"/> for a signed multiplication operation on 32-bit values.
     /// </summary>
-    public struct MultLogic<T, TL, TLS> : IMultLogic<T, TL>
+    public struct MultLogic<T, TS, TL> : IMultLogic<T, TL>
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
         where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
-        where TLS : unmanaged, IBinaryInteger<TLS>, ISignedNumber<TLS>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt) => TL.CreateTruncating(TLS.CreateSaturating(rs) * TLS.CreateSaturating(rt));
+        public static TL Compute(T rs, T rt) => TL.CreateTruncating(TS.CreateTruncating(rs)) * TL.CreateTruncating(TS.CreateTruncating(rt));
     }
 
     /// <summary>
@@ -154,11 +154,11 @@ public partial class LogicTable
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Divisor(T rs, T rt) => rt is not 0 ? T.CreateTruncating(TS.CreateTruncating(rs) / TS.CreateTruncating(rt)) : T.Zero;
+        public static T Divisor(T rs, T rt) => rt != T.Zero ? T.CreateTruncating(TS.CreateTruncating(rs) / TS.CreateTruncating(rt)) : T.Zero;
 
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Remainder(T rs, T rt) => rt is not 0 ? T.CreateTruncating(TS.CreateTruncating(rs) % TS.CreateTruncating(rt)) : rs;
+        public static T Remainder(T rs, T rt) => rt != T.Zero ? T.CreateTruncating(TS.CreateTruncating(rs) % TS.CreateTruncating(rt)) : rs;
     }
 
     /// <summary>
@@ -169,30 +169,28 @@ public partial class LogicTable
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Divisor(T rs, T rt) => rt is not 0 ? rs / rt : T.Zero;
+        public static T Divisor(T rs, T rt) => rt != T.Zero ? rs / rt : T.Zero;
 
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Remainder(T rs, T rt) => rt is not 0 ? rs % rt : rs;
+        public static T Remainder(T rs, T rt) => rt != T.Zero ? rs % rt : rs;
     }
 
     #endregion
 
     #region Multiply and Add/Subtract
 
-
-
     /// <summary>
     /// An <see cref="IMultAddLogic{T, TL}"/> for a signed multiply and add operation on 32-bit values.
     /// </summary>
-    public struct MultAddLogic<T, TL, TLS> : IMultAddLogic<T, TL>
+    public struct MultAddLogic<T, TS, TL> : IMultAddLogic<T, TL>
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
         where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
-        where TLS : unmanaged, IBinaryInteger<TLS>, ISignedNumber<TLS>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt, TL @base) => TL.CreateTruncating(TLS.CreateSaturating(rs) * TLS.CreateSaturating(rt)) + @base;
+        public static TL Compute(T rs, T rt, TL @base) => @base + MultLogic<T, TS, TL>.Compute(rs, rt);
     }
 
     /// <summary>
@@ -204,40 +202,37 @@ public partial class LogicTable
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt, TL @base) => TL.CreateSaturating(rs) * TL.CreateSaturating(rt) + @base;
+        public static TL Compute(T rs, T rt, TL @base) => @base + MultuLogic<T, TL>.Compute(rs, rt);
     }
 
     /// <summary>
     /// An <see cref="IMultAddLogic{T, TL}"/> for a signed multiply and subtract operation on 32-bit values.
     /// </summary>
-    public struct MultSubLogic32 : IMultAddLogic<uint>
+    public struct MultSubLogic<T, TS, TL> : IMultAddLogic<T, TL>
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
+        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static (uint, uint) Compute(uint rs, uint rt, uint hi, uint low)
-        {
-            long acc = (long)(((ulong)hi << 32) | low);
-            acc -= (long)(int)rs * (int)rt;
-            return ((uint)((ulong)acc >> 32), (uint)acc);
-        }
+        public static TL Compute(T rs, T rt, TL @base) => @base - MultLogic<T, TS, TL>.Compute(rs, rt);
     }
 
     /// <summary>
     /// An <see cref="IMultAddLogic{T, TL}"/> for an unsigned multiply and subtract operation on 32-bit values.
     /// </summary>
-    public struct MultSubuLogic32 : IMultAddLogic<uint>
+    public struct MultSubuLogic<T, TL> : IMultAddLogic<T, TL>
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static (uint, uint) Compute(uint rs, uint rt, uint hi, uint low)
-        {
-            ulong acc = ((ulong)hi << 32) | low;
-            acc -= rs * rt;
-            return ((uint)(acc >> 32), (uint)acc);
-        }
+        public static TL Compute(T rs, T rt, TL @base) => @base - MultuLogic<T, TL>.Compute(rs, rt);
     }
 
     #endregion
+
+    #region Logical
 
     /// <summary>
     /// An <see cref="IAluLogic{T}"/> implementation for an AND logic operation.
@@ -304,6 +299,10 @@ public partial class LogicTable
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Compute(T rs, T rt) => T.CreateTruncating(BitOperations.LeadingZeroCount(uint.CreateTruncating(~rs)));
     }
+
+    #endregion
+
+    #region Conditional
 
     /// <summary>
     /// An <see cref="ICondLogic{T}"/> implementation for a signed greater than or equal to logic operation.
@@ -443,6 +442,10 @@ public partial class LogicTable
         public static bool Check(T rs, T rt) => rt != T.Zero;
     }
 
+    #endregion
+
+    #region Set Less Than
+
     /// <summary>
     /// An <see cref="IAluLogic{T}"/> implementation for a signed set less than logic operation.
     /// </summary>
@@ -465,4 +468,6 @@ public partial class LogicTable
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Compute(T rs, T rt) => rs < rt ? T.One : T.Zero;
     }
+
+    #endregion
 }

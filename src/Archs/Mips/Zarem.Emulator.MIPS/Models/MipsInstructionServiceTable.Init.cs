@@ -170,7 +170,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
             _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalVariable] = &ShiftVar<SllLogic<ulong>, ulong>;
             _specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalVariable] = &ShiftVar<SrlLogic<ulong>, ulong>;
             _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticVariable] = &ShiftVar<SraLogic<ulong, long>, ulong>;
-            _specialTable[(int)FunctionCode.DoubleWordMultiply] = &MultR<MultLogic<ulong, UInt128, Int128>, ulong, UInt128>;
+            _specialTable[(int)FunctionCode.DoubleWordMultiply] = &MultR<MultLogic<ulong, long, UInt128>, ulong, UInt128>;
             _specialTable[(int)FunctionCode.DoubleWordMultiplyUnsigned] = &MultR<MultuLogic<ulong, UInt128>, ulong, UInt128>;
             _specialTable[(int)FunctionCode.DoubleWordDivide] = &DivR<DivLogic<ulong, long>, ulong>;
             _specialTable[(int)FunctionCode.DoubleWordDivideUnsigned] = &DivR<DivuLogic<ulong>, ulong>;
@@ -195,7 +195,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         if (version is < MipsVersion.Mips_R6)
         {
             _specialTable[(int)FunctionCode.JumpRegister] = &JumpR;
-            _specialTable[(int)FunctionCode.Multiply] = &MultR<MultLogic<uint, ulong, long>, uint, ulong>;
+            _specialTable[(int)FunctionCode.Multiply] = &MultR<MultLogic<uint, int, ulong>, uint, ulong>;
             _specialTable[(int)FunctionCode.MultiplyUnsigned] = &MultR<MultuLogic<uint, ulong>, uint, ulong>;
             _specialTable[(int)FunctionCode.Divide] = &DivR<DivLogic<uint, int>, uint>;
             _specialTable[(int)FunctionCode.DivideUnsigned] = &DivR<DivuLogic<uint>, uint>;
@@ -248,11 +248,11 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
     private void InitSpecial2()
     {
         _special2Table[(int)Func2Code.MultiplyToGPR] = &AluR<MulLogic<uint, int>, uint>;
-        _special2Table[(int)Func2Code.MultiplyAndAddHiLow] = &MultAddR<MultAddLogic32, uint>;
-        _special2Table[(int)Func2Code.MultiplyAndAddHiLowUnsigned] = &MultAddR<MultAddLogic32, uint>;
-        _special2Table[(int)Func2Code.MultiplyAndSubtractHiLow] = &MultAddR<MultSubLogic32, uint>;
-        _special2Table[(int)Func2Code.MultiplyAndSubtractHiLowUnsigned] = &MultAddR<MultSubuLogic32, uint>;
-        _special2Table[(int)Func2Code.CountLeadingZeros] = &AluR<ClzLogic32, uint>;
-        _special2Table[(int)Func2Code.CountLeadingOnes] = &AluR<CloLogic32, uint>;
+        _special2Table[(int)Func2Code.MultiplyAndAddHiLow] = &MultAddR<MultAddLogic<uint, int, ulong>, uint, ulong>;
+        _special2Table[(int)Func2Code.MultiplyAndAddHiLowUnsigned] = &MultAddR<MultAdduLogic<uint, ulong>, uint, ulong>;
+        _special2Table[(int)Func2Code.MultiplyAndSubtractHiLow] = &MultAddR<MultSubLogic<uint, int, ulong>, uint, ulong>;
+        _special2Table[(int)Func2Code.MultiplyAndSubtractHiLowUnsigned] = &MultAddR<MultSubuLogic<uint, ulong>, uint, ulong>;
+        _special2Table[(int)Func2Code.CountLeadingZeros] = &AluR<ClzLogic<uint>, uint>;
+        _special2Table[(int)Func2Code.CountLeadingOnes] = &AluR<CloLogic<uint>, uint>;
     }
 }

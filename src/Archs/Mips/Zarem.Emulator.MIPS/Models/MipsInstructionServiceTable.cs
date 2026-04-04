@@ -183,10 +183,13 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     {
         var rs = T2.CreateTruncating(@this._regs[(int)inst.RS]);
         var rt = T2.CreateTruncating(@this._regs[(int)inst.RT]);
-        var value = TLogic.Compute(rs, rt);
+        TL2 value = TLogic.Compute(rs, rt);
 
-        T hi = T.CreateTruncating(value >> sizeof(T2) * 8);
-        T low = T.CreateTruncating(value & TL2.CreateTruncating(T2.AllBitsSet));
+        int shift = sizeof(T2) * 8;
+        TL2 mask = TL2.CreateTruncating(T2.AllBitsSet);
+
+        T hi = T.CreateTruncating(value >> shift);
+        T low = T.CreateTruncating(value & mask);
 
         exec = MipsExecution<T>.CreateHighLow((hi, low));
         return MipsTrap.None;
@@ -200,13 +203,19 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         var rs = T2.CreateTruncating(@this._processor[inst.RS]);
         var rt = T2.CreateTruncating(@this._processor[inst.RT]);
 
-        TL2 @base = (TL2.CreateTruncating(@this._processor.RegisterFile.High) << sizeof(T2) * 8) | TL2.CreateTruncating(@this._processor.RegisterFile.Low);
-        var value = TLogic.Compute(rs, rt, @base);
+        int shift = sizeof(T2) * 8;
+        TL2 mask = TL2.CreateTruncating(T2.AllBitsSet);
 
-        T hi = T.CreateTruncating(value >> sizeof(T2) * 8);
-        T low = T.CreateTruncating(value & TL2.CreateTruncating(T2.AllBitsSet));
+        TL2 hiPart = TL2.CreateTruncating(@this._processor.RegisterFile.High) << shift;
+        TL2 loPart = TL2.CreateTruncating(@this._processor.RegisterFile.Low) & mask;
+        TL2 @base = hiPart | loPart;
 
-        exec = MipsExecution<T>.CreateHighLow((hi, low));
+        TL2 value = TLogic.Compute(rs, rt, @base);
+
+        T outHi = T.CreateTruncating(value >> shift);
+        T outLow = T.CreateTruncating(value & mask);
+
+        exec = MipsExecution<T>.CreateHighLow((outHi, outLow));
         return MipsTrap.None;
     }
 
