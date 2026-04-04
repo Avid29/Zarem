@@ -21,8 +21,8 @@ public sealed record ExecutionTestCase<T>
                     // Stored in the argument registers
                     (GPRegister.Argument0, T.CreateTruncating(int.MaxValue)),
                     (GPRegister.Argument1, T.CreateTruncating(int.MinValue)),
-                    (GPRegister.Argument2, T.MaxValue),
-                    (GPRegister.Argument3, T.MinValue),
+                    (GPRegister.Argument2, T.CreateTruncating(uint.MaxValue)),
+                    (GPRegister.Argument3, T.CreateTruncating(uint.MinValue)),
 
                     // Saved 0 - 3 are assigned to 1 through 4 respectively,
                     // while saved 4 and 5 are assigned to -1 and -2 (to test sign handling in arithmetic instructions)

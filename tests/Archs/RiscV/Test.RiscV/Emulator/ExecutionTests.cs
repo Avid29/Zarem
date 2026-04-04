@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Numerics;
 using Zarem.Assembler;
 using Zarem.Assembler.Models;
@@ -24,11 +25,11 @@ public partial class ExecutionTests
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_RV64_I))]
-    public void InstructionTests_RV64_I(ExecutionTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
+    public void InstructionTests_RV64_I(ExecutionTestCase<ulong> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_RV128_I))]
-    public void InstructionTests_RV128_I(ExecutionTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.Integers));
+    public void InstructionTests_RV128_I(ExecutionTestCase<UInt128> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.Integers));
 
     private static void RunTest<T>(ExecutionTestCase<T> @case, RiscVVersionInfo versionInfo)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
