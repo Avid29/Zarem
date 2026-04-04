@@ -4,9 +4,9 @@ using System.Numerics;
 using Zarem.Assembler;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
-using Zarem.Emulator;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
+using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning;
 using Zarem.Models.Versioning.Enums;
 
@@ -16,11 +16,19 @@ namespace Test.RiscV.Emulator;
 public partial class ExecutionTests
 {
     public const uint K0 = 0xbd0;
-    public const uint K1 = 0xd16;
+    public const uint K1 = 0x516;
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_RV32_I))]
     public void InstructionTests_RV32_I(ExecutionTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
+
+    [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_RV64_I))]
+    public void InstructionTests_RV64_I(ExecutionTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
+
+    [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_RV128_I))]
+    public void InstructionTests_RV128_I(ExecutionTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.Integers));
 
     private static void RunTest<T>(ExecutionTestCase<T> @case, RiscVVersionInfo versionInfo)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
@@ -33,13 +41,10 @@ public partial class ExecutionTests
         if (parsed is null)
             Assert.Fail();
 
-        /*
         // TODO: Psuedo instruction support
         var instruction = parsed.Realize()[0];
         var emulatorConfig = new RiscVEmulatorConfig(versionInfo);
         var computer = new RiscVComputer(emulatorConfig);
-        var emulator = new Zaremulator(computer);
-
         var cpu = (RiscVCpu<T>)computer.Cpu;
 
         // Initialize the register file with the provided values
@@ -68,6 +73,5 @@ public partial class ExecutionTests
             // If no register check was provided, we at least want to make sure no register was written to (as that would be unexpected)
             Assert.AreEqual(GPRegister.Zero, execution.WritebackGPRegister);
         }
-        */
     }
 }

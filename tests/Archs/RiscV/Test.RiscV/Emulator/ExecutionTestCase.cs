@@ -24,8 +24,8 @@ public sealed record ExecutionTestCase<T>
                     (GPRegister.Argument2, T.MaxValue),
                     (GPRegister.Argument3, T.MinValue),
 
-                    // Saved 1 - 4 are assigned to 1 through 4 respectively,
-                    // while saved 5 and 6 are assigned to -1 and -2 (to test sign handling in arithmetic instructions)
+                    // Saved 0 - 3 are assigned to 1 through 4 respectively,
+                    // while saved 4 and 5 are assigned to -1 and -2 (to test sign handling in arithmetic instructions)
                     (GPRegister.Saved0, T.CreateTruncating(1)),
                     (GPRegister.Saved1, T.CreateTruncating(2)),
                     (GPRegister.Saved2, T.CreateTruncating(3)),
@@ -63,6 +63,8 @@ public sealed record ExecutionTestCase<T>
     }
 
     public string Input { get; }
+
+    public RiscVTrap ExpectedTrap { get; init; } = RiscVTrap.None;
 
     public (GPRegister Regiter, T? Value)? ExpectedWriteBack { get; init; } = null;
 

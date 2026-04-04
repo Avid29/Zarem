@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Zarem.Models.Versioning;
@@ -11,6 +12,10 @@ public partial class ExecutionTests
 {
     public static IEnumerable<object[]> InstructionTestList_RV32_I
         => GetVersionTests<uint, int>(new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
+    public static IEnumerable<object[]> InstructionTestList_RV64_I
+        => GetVersionTests<ulong, long>(new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
+    public static IEnumerable<object[]> InstructionTestList_RV128_I
+        => GetVersionTests<UInt128, Int128>(new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.Integers));
 
     private static IEnumerable<object[]> GetVersionTests<T, TS>(RiscVVersionInfo versionInfo)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
@@ -46,14 +51,14 @@ public partial class ExecutionTests
         unchecked
         {
             // Without signs
-            yield return [new ExecutionTestCase<T>("add a0, a0, s0", T.CreateSaturating(int.MaxValue + 1))];     // max + 1
-            yield return [new ExecutionTestCase<T>("addi a0, a0, 1", T.CreateSaturating(int.MaxValue + 1))];      // max + 1
-            yield return [new ExecutionTestCase<T>("sub a0, a1, s0", T.CreateSaturating(int.MinValue - 1))];     // min - 1
+            yield return [new ExecutionTestCase<T>("add a0, a0, s0", T.CreateTruncating(int.MaxValue + 1))];        // max + 1
+            yield return [new ExecutionTestCase<T>("addi a0, a0, 1", T.CreateTruncating(int.MaxValue + 1))];        // max + 1
+            yield return [new ExecutionTestCase<T>("sub a0, a1, s0", T.CreateTruncating(int.MinValue - 1))];        // min - 1
 
             // With signs
-            yield return [new ExecutionTestCase<T>("add a0, a1, s4", T.CreateSaturating(int.MinValue + (-1)))];     // min + (-1)
-            yield return [new ExecutionTestCase<T>("addi a0, a1, -1", T.CreateSaturating(int.MinValue + (-1)))];     // min + (-1)
-            yield return [new ExecutionTestCase<T>("sub a0, a0, s4", T.CreateSaturating(int.MaxValue - (-1)))];     // max - (-1)
+            yield return [new ExecutionTestCase<T>("add a0, a1, s4", T.CreateTruncating(int.MinValue + (-1)))];     // min + (-1)
+            yield return [new ExecutionTestCase<T>("addi a0, a1, -1", T.CreateTruncating(int.MinValue + (-1)))];    // min + (-1)
+            yield return [new ExecutionTestCase<T>("sub a0, a0, s4", T.CreateTruncating(int.MaxValue - (-1)))];     // max - (-1)
         }
 
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)
@@ -71,11 +76,11 @@ public partial class ExecutionTests
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         yield return [new ExecutionTestCase<T>("and a0, s8, s9", T.CreateTruncating(K0 & K1))];
-        yield return [new ExecutionTestCase<T>("andi a0, s8, 0xd16", T.CreateTruncating(K0 & K1))];
+        yield return [new ExecutionTestCase<T>("andi a0, s8, 0x516", T.CreateTruncating(K0 & K1))];
         yield return [new ExecutionTestCase<T>("or a0, s8, s9", T.CreateTruncating(K0 | K1))];
-        yield return [new ExecutionTestCase<T>("ori a0, s8, 0xd16", T.CreateTruncating(K0 | K1))];
+        yield return [new ExecutionTestCase<T>("ori a0, s8, 0x516", T.CreateTruncating(K0 | K1))];
         yield return [new ExecutionTestCase<T>("xor a0, s8, s9", T.CreateTruncating(K0 ^ K1))];
-        yield return [new ExecutionTestCase<T>("xori a0, s8, 0xd16", T.CreateTruncating(K0 ^ K1))];
+        yield return [new ExecutionTestCase<T>("xori a0, s8, 0x516", T.CreateTruncating(K0 ^ K1))];
         yield return [new ExecutionTestCase<T>("sll a0, s6, s3", T.CreateTruncating(101 << 4))];
         yield return [new ExecutionTestCase<T>("srl a0, s6, s3", T.CreateTruncating(101 >> 4))];
         yield return [new ExecutionTestCase<T>("slli a0, s6, 4", T.CreateTruncating(101 << 4))];

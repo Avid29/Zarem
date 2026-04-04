@@ -31,13 +31,11 @@ public class RiscVComputer : ComputerBase
 
         Cpu = config.VersionInfo.Base switch
         {
-            RiscVBaseVersion.RV128 => new RiscVCpu<UInt128>(config, bus),
-            RiscVBaseVersion.RV64 => new RiscVCpu<ulong>(config, bus),
             RiscVBaseVersion.RV32 => new RiscVCpu<uint>(config, bus),
+            RiscVBaseVersion.RV64 => new RiscVCpu<ulong>(config, bus),
+            RiscVBaseVersion.RV128 => new RiscVCpu<UInt128>(config, bus),
             _ => throw new NotImplementedException()
         };
-
-        Cpu.Memory = Memory;
     }
 
     /// <inheritdoc/>
@@ -47,7 +45,7 @@ public class RiscVComputer : ComputerBase
     public override IRiscVCpu Cpu { get; }
 
     /// <inheritdoc/>
-    public override IMemorySystem Memory => throw new NotImplementedException();
+    public override IMemorySystem Memory => Cpu.Memory;
 
     /// <inheritdoc/>
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;

@@ -99,7 +99,6 @@ public partial class ExecutionTests
             DisableDelaySlots = !delaysSlots,
         };
         var computer = new MipsComputer(emulatorConfig);
-        var emulator = new Zaremulator(computer);
 
         var cpu = (MipsCpu<T>)computer.Cpu;
 
