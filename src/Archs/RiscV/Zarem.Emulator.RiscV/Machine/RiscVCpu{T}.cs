@@ -15,7 +15,7 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A class representing a RISC-V CPU.
 /// </summary>
-public partial class RiscVCpu<T> : IRiscVCpu
+public sealed partial class RiscVCpu<T> : IRiscVCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private readonly IRiscVInstructionServiceTable<T> _instructionServiceTable;
@@ -43,6 +43,9 @@ public partial class RiscVCpu<T> : IRiscVCpu
     }
 
     /// <inheritdoc/>
+    public string ArchitectureName => "RISC-V";
+
+    /// <inheritdoc/>
     public RiscVEmulatorConfig Config { get; }
 
     /// <inheritdoc/>
@@ -58,6 +61,17 @@ public partial class RiscVCpu<T> : IRiscVCpu
     /// <inheritdoc/>
     public RiscVGPRegisterFile<T> RegisterFile { get; }
 
+    /// <inheritdoc/>
+    IRegisterFile ICpu.RegisterFile => RegisterFile;
+
+    /// <summary>
+    /// Gets the translation look-aside buffer.
+    /// </summary>
+    public RiscVTlb Tlb { get; }
+
+    /// <inheritdoc/>
+    public MemorySystem Memory { get; }
+
     /// <summary>
     /// Gets or sets the value of a general-purpose register on the processor.
     /// </summary>
@@ -70,15 +84,11 @@ public partial class RiscVCpu<T> : IRiscVCpu
     }
 
     /// <inheritdoc/>
-    public string ArchitectureName => "RISC-V";
-
-    /// <summary>
-    /// Gets the translation look-aside buffer.
-    /// </summary>
-    public RiscVTlb Tlb { get; }
-
-    /// <inheritdoc/>
-    public IMemorySystem Memory { get; }
+    ulong IRiscVCpu.this[GPRegister reg]
+    {
+        get => ulong.CreateTruncating(RegisterFile[(int)reg]);
+        set => RegisterFile[(int)reg] = T.CreateTruncating(value);
+    }
 
     /// <inheritdoc/>
     public void Dispose()

@@ -11,7 +11,7 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A class representing a RISC-V CPU.
 /// </summary>
-public partial class RiscVCpu<T> : IRiscVCpu
+public sealed partial class RiscVCpu<T> : IRiscVCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <inheritdoc/>

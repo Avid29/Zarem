@@ -10,7 +10,7 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A class for a system handling physical and virtual memory in an <see cref="IComputer"/>.
 /// </summary>
-public class MemorySystem : IMemorySystem
+public sealed class MemorySystem : IMemorySystem
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MemorySystem"/> class.

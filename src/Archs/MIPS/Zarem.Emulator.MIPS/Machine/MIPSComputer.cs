@@ -13,7 +13,7 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A class representing a computer system in the MIPS interpreter.
 /// </summary>
-public class MipsComputer : ComputerBase
+public sealed class MipsComputer : ComputerBase
 {
     private readonly MemoryMapper _memoryMapper;
 
@@ -44,7 +44,7 @@ public class MipsComputer : ComputerBase
     public override IMipsCpu Cpu { get; }
 
     /// <inheritdoc/>
-    public override IMemorySystem Memory => Cpu.Memory;
+    public override MemorySystem Memory => Cpu.Memory;
 
     /// <inheritdoc/>
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;

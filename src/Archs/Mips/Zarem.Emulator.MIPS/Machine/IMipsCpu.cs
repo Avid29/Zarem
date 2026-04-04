@@ -26,16 +26,6 @@ public interface IMipsCpu : ICpu<IMipsCpu, MipsInstruction, MipsTrap>
     MIPSEmulatorConfig Config { get; }
 
     /// <summary>
-    /// Gets the general-purpose register file of the processor.
-    /// </summary>
-    IRegisterFile RegisterFile { get; }
-
-    /// <summary>
-    /// Gets the system memory
-    /// </summary>
-    IMemorySystem Memory { get; }
-
-    /// <summary>
     /// Gets the jump address in the delay slot.
     /// </summary>
     ulong? DelaySlot { get; }

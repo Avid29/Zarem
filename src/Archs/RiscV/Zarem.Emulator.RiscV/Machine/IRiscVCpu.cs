@@ -4,6 +4,7 @@ using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
+using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine;
 
@@ -18,7 +19,9 @@ public interface IRiscVCpu : ICpu<IRiscVCpu, RiscVInstruction, RiscVTrap>
     public RiscVEmulatorConfig Config { get; }
 
     /// <summary>
-    /// Gets the system memory
+    /// Gets or sets the value of a general-purpose register on the processor.
     /// </summary>
-    IMemorySystem Memory { get; }
+    /// <param name="reg">The register to get or set.</param>
+    /// <returns>The value of the register.</returns>
+    ulong this[GPRegister reg] { get; set; }
 }

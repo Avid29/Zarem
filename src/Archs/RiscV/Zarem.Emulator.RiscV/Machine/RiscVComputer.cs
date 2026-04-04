@@ -13,7 +13,7 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A class representing a computer system in the RISC-V interpreter.
 /// </summary>
-public class RiscVComputer : ComputerBase
+public sealed class RiscVComputer : ComputerBase
 {
     private readonly MemoryMapper _memoryMapper;
 
@@ -45,7 +45,7 @@ public class RiscVComputer : ComputerBase
     public override IRiscVCpu Cpu { get; }
 
     /// <inheritdoc/>
-    public override IMemorySystem Memory => Cpu.Memory;
+    public override MemorySystem Memory => Cpu.Memory;
 
     /// <inheritdoc/>
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;

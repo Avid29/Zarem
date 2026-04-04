@@ -14,7 +14,7 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A class representing a processor unit.
 /// </summary>
-public partial class MipsCpu<T> : IMipsCpu
+public sealed partial class MipsCpu<T> : IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <inheritdoc/>

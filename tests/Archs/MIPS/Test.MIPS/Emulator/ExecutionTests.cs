@@ -4,7 +4,6 @@ using System.Numerics;
 using Zarem.Assembler;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
-using Zarem.Emulator;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enum;

@@ -16,7 +16,7 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A class representing a processor unit.
 /// </summary>
-public partial class MipsCpu<T> : IMipsCpu
+public sealed partial class MipsCpu<T> : IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <inheritdoc/>
@@ -51,12 +51,6 @@ public partial class MipsCpu<T> : IMipsCpu
     /// <inheritdoc/>
     public MIPSEmulatorConfig Config { get; }
 
-    /// <inheritdoc cref="IMipsCpu.RegisterFile"/>
-    public MipsGPRegisterFile<T> RegisterFile { get; }
-
-    /// <inheritdoc/>
-    IRegisterFile IMipsCpu.RegisterFile => RegisterFile;
-
     /// <inheritdoc cref="ICpu.ProgramCounter"/>
     public T ProgramCounter { get; set; }
 
@@ -66,6 +60,12 @@ public partial class MipsCpu<T> : IMipsCpu
         get => ulong.CreateTruncating(ProgramCounter);
         set => ProgramCounter = T.CreateTruncating(value);
     }
+
+    /// <inheritdoc cref="ICpu.RegisterFile"/>
+    public MipsGPRegisterFile<T> RegisterFile { get; }
+
+    /// <inheritdoc/>
+    IRegisterFile ICpu.RegisterFile => RegisterFile;
 
     /// <summary>
     /// Gets the coprocessor 0 unit of the computer system.
@@ -86,7 +86,7 @@ public partial class MipsCpu<T> : IMipsCpu
     /// <summary>
     /// Gets the system memory
     /// </summary>
-    public IMemorySystem Memory { get; }
+    public MemorySystem Memory { get; }
 
     /// <inheritdoc cref="IMipsCpu.DelaySlot"/>
     public T? DelaySlot { get; private set; }
