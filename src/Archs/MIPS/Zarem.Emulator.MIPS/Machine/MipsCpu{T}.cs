@@ -22,7 +22,7 @@ namespace Zarem.Emulator.Machine;
 public partial class MipsCpu<T> : MipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private readonly IInstructionServiceTable<T> _instructionServiceTable;
+    private readonly IMipsInstructionServiceTable<T> _instructionServiceTable;
     private T? _delaySlot;
 
     /// <inheritdoc/>
@@ -38,12 +38,12 @@ public partial class MipsCpu<T> : MipsCpu
         FloatProcessor = new();
 
         _instructionServiceTable = config.MipsVersion.Is64Bit()
-            ? new InstructionServiceTable<T, long>(this)
-            : new InstructionServiceTable<T, int>(this);
+            ? new MipsInstructionServiceTable<T, long>(this)
+            : new MipsInstructionServiceTable<T, int>(this);
     }
 
     /// <inheritdoc/>
-    public override MipsGpRegisterFile<T> RegisterFile { get; }
+    public override MipsGPRegisterFile<T> RegisterFile { get; }
 
     /// <inheritdoc cref="ProgramCounter"/>
     public T PC { get; set; }

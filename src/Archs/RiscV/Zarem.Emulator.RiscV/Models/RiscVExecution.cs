@@ -15,6 +15,18 @@ public readonly struct RiscVExecution<T>
     //private readonly ulong _secondary2;
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVExecution{T}"/> struct.
+    /// </summary>
+    public static RiscVExecution<T> CreateWriteback(GPRegister dest, T writeback)
+    {
+        return new RiscVExecution<T>
+        {
+            WritebackGPRegister = dest,
+            Writeback = writeback,
+        };
+    }
+
+    /// <summary>
     /// Gets the general purpose register destination of the output.
     /// </summary>
     /// <remarks>

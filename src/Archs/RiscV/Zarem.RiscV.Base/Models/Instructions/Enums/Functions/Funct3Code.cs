@@ -13,7 +13,7 @@ public enum Funct3Code : byte
     Arithmetic = 0b000,
     ShiftLeft = 0b001,
     SetLessThan = 0b010,
-    SetLessU = 0b011,
+    SetLessThanUnsigned = 0b011,
     Xor = 0b100,
     ShiftRight = 0b101,
     Or = 0b110,

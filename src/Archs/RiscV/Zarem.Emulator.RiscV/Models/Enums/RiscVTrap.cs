@@ -1,8 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Models;
-
-namespace Zarem.Emulator.Machine.Enums;
+namespace Zarem.Emulator.Models.Enums;
 
 /// <summary>
 /// An enum describing the kind of trap that occurred during an <see cref="RiscVExecution{T}"/>.

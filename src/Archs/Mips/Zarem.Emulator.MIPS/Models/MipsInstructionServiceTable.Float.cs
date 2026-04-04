@@ -10,9 +10,9 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Emulator.Models;
 
-public partial class InstructionServiceTable<T, TSigned>
+public partial class MipsInstructionServiceTable<T, TS>
 {
-    private static MipsTrap CreateCoProc1Execution(InstructionServiceTable<T, TSigned> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CreateCoProc1Execution(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
         var floatInstruction = (FloatInstruction)inst;
 

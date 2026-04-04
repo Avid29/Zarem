@@ -16,7 +16,7 @@ public enum Funct7Code : byte
     /// Used to modify the operation (SUB instead of ADD, SRA instead of SRL).
     /// This effectively toggles bit 30 of the instruction.
     /// </summary>
-    Variant = 0x20,
+    Modified = 0x20,
 
     /// <summary>
     /// Multiplier and Divider extension (MUL, MULH, DIV, REM, etc).

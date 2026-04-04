@@ -10,13 +10,13 @@ namespace Zarem.Emulator.Machine.Registers;
 /// <summary>
 /// A class representing a register file.
 /// </summary>
-public unsafe class MipsGpRegisterFile<T> : RegisterFile<T>
+public unsafe class MipsGPRegisterFile<T> : RegisterFile<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MipsGpRegisterFile{T}"/> class.
+    /// Initializes a new instance of the <see cref="MipsGPRegisterFile{T}"/> class.
     /// </summary>
-    public MipsGpRegisterFile(MipsVersion version) :
+    public MipsGPRegisterFile(MipsVersion version) :
         base(version is < MipsVersion.Mips32R6 ? 34 : 32)
     {
     }
