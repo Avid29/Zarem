@@ -45,7 +45,7 @@ public class MipsDebugHandler : IDebugHandler
         var pc = computer.Cpu.ProgramCounter;
 
         // If delay slots are enabled, this is easy. The CPU literally tracks where it will jump next
-        var mipsCpu = (MipsCpu)computer.Cpu;
+        var mipsCpu = (IMipsCpu)computer.Cpu;
         if (mipsCpu.DelaySlot.HasValue)
         {
             return mipsCpu.DelaySlot.Value;
@@ -82,8 +82,8 @@ public class MipsDebugHandler : IDebugHandler
     /// <inheritdoc/>
     public ulong GetStepOutAddress(IComputer computer)
     {
-        var mipsCpu = (MipsCpu)computer.Cpu;
-        return mipsCpu[(int)GPRegister.ReturnAddress];
+        var mipsCpu = (IMipsCpu)computer.Cpu;
+        return mipsCpu[GPRegister.ReturnAddress];
     }
 
     /// <inheritdoc/>

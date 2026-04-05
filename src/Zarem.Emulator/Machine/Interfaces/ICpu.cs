@@ -25,9 +25,13 @@ public interface ICpu : IDisposable
     /// </summary>
     ulong ProgramCounter { get; set; }
 
-    ///// <summary>
-    ///// Gets the register info for the CPU.
-    ///// </summary>
-    // TODO: Add debugger interface to expose register info
-    //IRegisterGroup Registers { get; }
+    /// <summary>
+    /// Gets the general-purpose register file of the processor.
+    /// </summary>
+    IRegisterFile RegisterFile { get; }
+
+    /// <summary>
+    /// Gets the system memory.
+    /// </summary>
+    MemorySystem Memory { get; }
 }

@@ -60,7 +60,7 @@
     <Project Path="src/Archs/RiscV/Zarem.Emulator.RiscV/Zarem.Emulator.RiscV.csproj" Id="764aab63-d716-4e2d-807a-134369480fd6">
       <BuildType Solution="Alpha|*" Project="Debug" />
       <Build Solution="Alpha|*" Project="false" />
-      <Build Solution="Debug|*" Project="false" />
+      <Build Solution="Debug|arm64" Project="false" />
     </Project>
     <Project Path="src/Archs/RiscV/Zarem.RiscV.Base/Zarem.RiscV.Base.csproj" Id="32597ba3-5177-4db4-8541-6e800567872d">
       <BuildType Solution="Alpha|*" Project="Debug" />

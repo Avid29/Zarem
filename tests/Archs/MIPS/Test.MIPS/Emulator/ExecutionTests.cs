@@ -4,7 +4,6 @@ using System.Numerics;
 using Zarem.Assembler;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
-using Zarem.Emulator;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enum;
@@ -189,7 +188,7 @@ public partial class ExecutionTests
                 computer.Cpu.Insert(MipsInstruction.NOP, out _);
             }
 
-            Assert.AreEqual(expectedPC.Value, cpu.PC);
+            Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
         }
     }
 }

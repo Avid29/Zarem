@@ -45,7 +45,7 @@ public abstract class MipsTrapHandler : ITrapHandler
     /// <inheritdoc/>
     public void HandleTrap(ICpu cpu, ulong trapCode)
     {
-        if (cpu is not MipsCpu mipsCpu)
+        if (cpu is not IMipsCpu mipsCpu)
         {
             ThrowHelper.ThrowArgumentException(nameof(mipsCpu));
             return;

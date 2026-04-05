@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Exceptions;

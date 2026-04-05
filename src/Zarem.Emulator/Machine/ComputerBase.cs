@@ -31,7 +31,10 @@ public abstract class ComputerBase : IComputer
     public abstract ICpu Cpu { get; }
 
     /// <inheritdoc/>
-    public abstract IMemorySystem Memory { get; }
+    public abstract MemorySystem Memory { get; }
+
+    /// <inheritdoc/>
+    IMemorySystem IComputer.Memory => Memory;
 
     /// <inheritdoc/>
     public abstract IEnumerable<IDevice> Devices { get; }
@@ -73,10 +76,7 @@ public abstract class ComputerBase : IComputer
     protected abstract void MapDevices(MemoryMapper mapper);
 
     /// <inheritdoc/>
-    protected virtual void OnTrap(BreakpointHitEventArgs e)
-    {
-        BreakpointHit?.Invoke(this, e);
-    }
+    protected virtual void OnTrap(BreakpointHitEventArgs e) => BreakpointHit?.Invoke(this, e);
 
     /// <inheritdoc/>
     public void Dispose()
