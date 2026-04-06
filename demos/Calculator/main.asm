@@ -51,10 +51,11 @@ loop:
     nop
     
 exit_prog:
-    li $v0, 4
     la $a0, exit_msg
+    li $a2, 0
+    li $v0, 3
     syscall
-    li $v0, 10
+    li $v0, 9
     syscall
     
 # ---------------------------------------------------------
@@ -63,7 +64,8 @@ exit_prog:
 # Returns: $f0 = float value
 # ---------------------------------------------------------
 read_float:
-    li $v0, 4
+    li $a2, 0
+    li $v0, 3
     syscall
     li $v0, 6
     syscall
@@ -76,11 +78,13 @@ read_float:
 # Returns: $v0 = character
 # ---------------------------------------------------------
 read_char:
-    li $v0, 4
+    li $a2, 0
+    li $v0, 3
     syscall
-    li $v0, 8
     la $a0, op_buffer
     li $a1, 2
+    li $a2, 0
+    li $v0, 4
     syscall
     lb $v0, 0($a0)
     jr $ra
@@ -128,15 +132,17 @@ div_op:
 # ---------------------------------------------------------
 print_result:
     # Save $ra if we were calling other functions, but we aren't.
-    li $v0, 4
     la $a0, result_msg
+    li $a2, 0
+    li $v0, 3
     syscall
     
-    li $v0, 2            # Print float in $f12
+    li $v0, 5            # Print float in $f12
     syscall
     
-    li $v0, 4
     la $a0, newline
+    li $a2, 0
+    li $v0, 3
     syscall
     syscall
     jr $ra

@@ -5,7 +5,7 @@
 entry:
     
     # Read int
-    li      $v0,    5
+    li      $v0,    2
     syscall
 
     # Take input squred
@@ -19,5 +19,5 @@ entry:
     syscall
     
     # Exit gracefully
-    li      $v0,    10
+    li      $v0,    9
     syscall

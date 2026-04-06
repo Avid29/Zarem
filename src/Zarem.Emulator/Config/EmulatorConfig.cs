@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Config;
-using Zarem.Emulator.TrapHandlers;
+using Zarem.Emulator.TrapHandlers.Interfaces;
 
 namespace Zarem.Emulator.Config;
 

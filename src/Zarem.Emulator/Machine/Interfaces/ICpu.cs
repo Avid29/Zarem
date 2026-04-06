@@ -2,6 +2,7 @@
 
 using System;
 using Zarem.Emulator.Events;
+using Zarem.Models.Enums;
 
 namespace Zarem.Emulator.Machine.Interfaces;
 
@@ -16,9 +17,19 @@ public interface ICpu : IDisposable
     event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
 
     /// <summary>
+    /// An event invoked when the processor requests a shutdown of the emulator.
+    /// </summary>
+    event EventHandler? ShutdownRequested;
+
+    /// <summary>
     /// Gets the CPU architecture's name.
     /// </summary>
     string ArchitectureName { get; }
+
+    /// <summary>
+    /// Gets the CPU's endianness.
+    /// </summary>
+    Endianness Endianness { get; }
 
     /// <summary>
     /// Gets or sets the current program counter.
@@ -34,4 +45,9 @@ public interface ICpu : IDisposable
     /// Gets the system memory.
     /// </summary>
     MemorySystem Memory { get; }
+
+    /// <summary>
+    /// Requests a shutdown.
+    /// </summary>
+    void RequestShutdown();
 }

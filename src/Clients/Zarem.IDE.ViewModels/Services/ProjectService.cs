@@ -15,10 +15,10 @@ using Zarem.IDE.Services.Files.Models;
 using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Popup.Models;
 using Zarem.MIPS;
-using Zarem.MIPS.TrapHandlers;
 using Zarem.Models.Files;
 using Zarem.Registry;
 using Zarem.Serialization;
+using Zarem.TrapHandlers;
 
 namespace Zarem.IDE.Services;
 

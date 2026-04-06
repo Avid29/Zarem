@@ -3,7 +3,7 @@
 # The classic fizz buzz
 
 .def SYS_PRINT_INT, 1
-.def SYS_PRINT_STR, 4
+.def SYS_PRINT_STR, 3
 
 .globl entry
 
@@ -25,6 +25,7 @@ loop:
     
     # Print fizz
     la      $a0,    fizz_str
+    xori    $a2,    $zero,  0
     xori    $v0,    $zero,  SYS_PRINT_STR
     syscall
     
@@ -41,6 +42,7 @@ skip_fizz:
     
     # Print buzz
     la      $a0,    buzz_str
+    xori    $a2,    $zero,  0
     xori    $v0,    $zero,  SYS_PRINT_STR
     syscall
     
@@ -62,6 +64,7 @@ newline:
 
     # Explicitly print new line if either fizz or buzz
     la      $a0,    newline_str
+    xori    $a2,    $zero,  0
     xori    $v0,    $zero,  SYS_PRINT_STR
     syscall
     
@@ -76,7 +79,7 @@ loop_check:
 loop_end:
 
     # Shutdown
-    xori    $v0,    $zero,  10
+    xori    $v0,    $zero,  9
     syscall
     
     

@@ -10,7 +10,7 @@ using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Descriptors.Base;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.TrapHandlers;
+using Zarem.Emulator.TrapHandlers.Interfaces;
 using Zarem.Linker.Config;
 using Zarem.Registry;
 
