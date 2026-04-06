@@ -341,20 +341,22 @@ public readonly struct DirectiveParser
     {
         directive = null;
 
-        if (args.Count < 2)
+        if (args.Count is 0)
         {
-            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArgCount, name, "DirectiveRequiresTwoArguments", name);
+            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArgCount, name, "DirectiveRequiresAnArgument", name.Source);
             return false;
         }
 
-        if (args.Count > 2)
+        if (args.Count is > 1)
         {
-            _logger?.Log(Severity.Error, LogId.InvalidDirectiveArgCount, args[1].ProceedingComma ?? name, "DirectiveTakesTwoArguments", name);
+            var proceedingComma = args[0].ProceedingComma;
+            Guard.IsNotNull(proceedingComma);
+            _logger?.Log(Severity.Error, LogId.UnexpectedToken, proceedingComma, "UnexpectedToken", name.Source);
             return false;
         }
 
-        var nameArg = args[0];
-        if (nameArg.Tokens.Length is 0)
+        var arg = args[0];
+        if (arg.Tokens.Length is 0)
         {
             var comma = args[0].ProceedingComma;
             Guard.IsNotNull(comma);
@@ -362,17 +364,11 @@ public readonly struct DirectiveParser
             return false;
         }
 
-        if (nameArg.Tokens.Length > 1)
-        {
-            _logger?.Log(Severity.Error, LogId.UnexpectedToken, nameArg.Tokens[1], "UnexpectedToken", nameArg.Tokens[1]);
-            return false;
-        }
-
-        var valueArg = args[1];
-        if (!ExpressionParser.TryParse<long>(valueArg.Tokens, out var result, _symbols, _logger?.Parent))
+        var nameToken = arg.Tokens[0];
+        var valueTokens = arg.Tokens[1 ..];
+        if (!ExpressionParser.TryParse<long>(valueTokens, out var result, _symbols, _logger?.Parent))
             return false;
 
-        var nameToken = nameArg.Tokens[0];
         if (result.IsSymbolic)
         {
             _logger?.Log(Severity.Error, LogId.InvalidRelocatable, result.SymbolNode.ExpressionToken, "DirectiveNoRelocatableArguments", name);

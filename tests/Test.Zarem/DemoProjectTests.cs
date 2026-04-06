@@ -10,9 +10,9 @@ using Zarem.Elf;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
 using Zarem.MIPS;
-using Zarem.MIPS.TrapHandlers;
 using Zarem.Registry;
 using Zarem.Serialization;
+using Zarem.TrapHandlers;
 
 namespace Test.Zarem;
 

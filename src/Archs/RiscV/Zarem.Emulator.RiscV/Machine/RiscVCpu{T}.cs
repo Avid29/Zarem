@@ -7,6 +7,7 @@ using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models;
+using Zarem.Models.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning.Enums;
 
@@ -22,6 +23,9 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
 
     /// <inheritdoc/>
     public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
+
+    /// <inheritdoc/>
+    public event EventHandler? ShutdownRequested;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVCpu{T}"/> class.
@@ -44,6 +48,9 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
 
     /// <inheritdoc/>
     public string ArchitectureName => "RISC-V";
+
+    /// <inheritdoc/>
+    public Endianness Endianness => Endianness.Little;
 
     /// <inheritdoc/>
     public RiscVEmulatorConfig Config { get; }
@@ -89,6 +96,9 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
         get => ulong.CreateTruncating(RegisterFile[(int)reg]);
         set => RegisterFile[(int)reg] = T.CreateTruncating(value);
     }
+
+    /// <inheritdoc/>
+    public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
 
     /// <inheritdoc/>
     public void Dispose()
