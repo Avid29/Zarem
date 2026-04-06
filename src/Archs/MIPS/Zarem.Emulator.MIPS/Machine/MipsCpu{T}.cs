@@ -20,13 +20,13 @@ namespace Zarem.Emulator.Machine;
 public sealed partial class MipsCpu<T> : IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    /// <inheritdoc/>
-    public event EventHandler? ShutdownRequested;
-
     private readonly IMipsInstructionServiceTable<T> _instructionServiceTable;
 
     /// <inheritdoc/>
     public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
+
+    /// <inheritdoc/>
+    public event EventHandler? ShutdownRequested;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.

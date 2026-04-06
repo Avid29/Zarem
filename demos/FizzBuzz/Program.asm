@@ -2,8 +2,8 @@
 
 # The classic fizz buzz
 
-.def SYS_PRINT_INT, 1
-.def SYS_PRINT_STR, 3
+.def SYS_PRINT_INT 1
+.def SYS_PRINT_STR 3
 
 .globl entry
 

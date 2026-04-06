@@ -41,7 +41,7 @@ public class DirectiveParserTests
     }
 
     private const string Global = ".globl main";
-    private const string DefinePrintInt = ".def SYS_PRINT_INT, 1";
+    private const string DefinePrintInt = ".def SYS_PRINT_INT 1";
 
     [TestMethod(Global)]
     public void GlobalTest() => RunGlobalTest(Global, "main");

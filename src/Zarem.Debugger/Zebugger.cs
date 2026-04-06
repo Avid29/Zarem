@@ -9,7 +9,6 @@ using Zarem.Debugger.Models.Enums;
 using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Interfaces;
-using Zarem.Models;
 
 namespace Zarem.Debugger;
 
