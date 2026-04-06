@@ -9,6 +9,7 @@ using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models;
 using Zarem.Extensions;
+using Zarem.Models.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine;
@@ -47,6 +48,9 @@ public sealed partial class MipsCpu<T> : IMipsCpu
 
     /// <inheritdoc/>
     public string ArchitectureName => "MIPS";
+
+    /// <inheritdoc/>
+    public Endianness Endianness => Endianness.Big;
 
     /// <inheritdoc/>
     public MIPSEmulatorConfig Config { get; }

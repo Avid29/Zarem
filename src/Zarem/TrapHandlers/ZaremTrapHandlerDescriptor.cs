@@ -5,7 +5,7 @@ using Zarem.Attributes;
 using Zarem.Descriptors;
 using Zarem.Emulator.TrapHandlers;
 
-namespace Zarem.MIPS.TrapHandlers;
+namespace Zarem.TrapHandlers;
 
 /// <summary>
 /// An <see cref="ITrapHandlerDescriptor"/> for the Zarem MIPS trap handler.

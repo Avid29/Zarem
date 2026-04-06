@@ -9,11 +9,12 @@ entry:
     
     # Print "Hello World"
 	la      $a0,    hello_world
-	xori	$v0,	$zero,	4
+	li      $a2,    0
+	xori	$v0,	$zero,	3
 	syscall
 
     # Shutdown
-    xori    $v0,    $zero,  10
+    xori    $v0,    $zero,  9
     syscall
 
 .data

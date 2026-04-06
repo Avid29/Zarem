@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-using System;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Interfaces;
@@ -15,11 +14,6 @@ namespace Zarem.Emulator.Machine;
 /// </summary>
 public interface IMipsCpu : ICpu<IMipsCpu, MipsInstruction, MipsTrap>
 {
-    /// <summary>
-    /// An event invoked when the processor requests a shutdown of the emulator.
-    /// </summary>
-    event EventHandler? ShutdownRequested;
-
     /// <summary>
     /// Gets the emulation configuration.
     /// </summary>
@@ -41,9 +35,4 @@ public interface IMipsCpu : ICpu<IMipsCpu, MipsInstruction, MipsTrap>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
     ulong this[GPRegister reg] { get; set; }
-
-    /// <summary>
-    /// Requests a shutdown.
-    /// </summary>
-    void RequestShutdown();
 }

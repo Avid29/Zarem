@@ -7,6 +7,7 @@ using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enum;
+using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.Machine;
@@ -203,7 +204,7 @@ public sealed partial class MipsCpu<T> : IMipsCpu
         {
             // The host handled the trap, do not emulate it
             // Breakpoints are always handled by the host
-            Config.TrapHost.HandleTrap(this, (ulong)trap);
+            Config.TrapHost.HandleTrap(new MipsTrapContext(this, (ulong)trap));
         }
         else
         {
