@@ -282,6 +282,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\RegisterDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Controls\RunningIndicator.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -454,6 +458,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\Zarem\ZaremCodeEditor.Format.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\CodeEditor\Zarem\ZaremCodeEditor.Properties.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\EditableTextBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\RegisterDisplay.xaml.cs">
+      <DependentUpon>RegisterDisplay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Controls\RunningIndicator.xaml.cs">
       <DependentUpon>RunningIndicator.xaml</DependentUpon>
     </Compile>
@@ -463,10 +470,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converters\CheatSheet\RegisterEncodingColorConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FileTypeIconConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\PercentageStringConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\RegisterDisplayConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\Status\AppStatusColorConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\StringLocalizeConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\LocalizationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ViewModelProxy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\WindowHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Selectors\EditorTemplateSelection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Selectors\EncodingTemplateConverter.cs" />
