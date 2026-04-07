@@ -58,7 +58,7 @@ public enum LogId : uint
     // Linker Errors
     WrongArchitecture,
     UndefinedSymbol,
-    JumpOutOfRange,
+    OutOfRange,
     MissingEntryPoint,
 
 #pragma warning restore CS1591

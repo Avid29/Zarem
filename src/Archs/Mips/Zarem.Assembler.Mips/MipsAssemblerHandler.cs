@@ -7,7 +7,6 @@ using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Meta;
-using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
@@ -18,14 +17,14 @@ namespace Zarem.Assembler;
 /// <summary>
 /// An <see cref="IAssemblerHandler"/> for the MIPS architecture.
 /// </summary>
-public class MipsAssmblerHandler : IAssemblerHandler<MipsAssemblerConfig>
+public class MipsAssemblerHandler : IAssemblerHandler<MipsAssemblerConfig>
 {
     private readonly MipsInstructionTable _instructionTable;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MipsAssmblerHandler"/> class.
+    /// Initializes a new instance of the <see cref="MipsAssemblerHandler"/> class.
     /// </summary>
-    public MipsAssmblerHandler(MipsAssemblerConfig config)
+    public MipsAssemblerHandler(MipsAssemblerConfig config)
     {
         _instructionTable = new(config);
         Config = config;

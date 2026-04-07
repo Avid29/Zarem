@@ -34,7 +34,7 @@ public class AbstractionTests<TModule, TConfig>
         assemblerConfig ??= new();
         formatConfig ??= new();
 
-        var assemblyResult = await Zarembler.AssembleAsync(filePath, new MipsAssmblerHandler(assemblerConfig), assemblerConfig);
+        var assemblyResult = await Zarembler.AssembleAsync(filePath, new MipsAssemblerHandler(assemblerConfig), assemblerConfig);
         Guard.IsNotNull(assemblyResult.Module);
 
         // Link

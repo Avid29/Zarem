@@ -43,13 +43,13 @@ public class MipsLinkerHandler : ILinkerHandler<MipsLinkerConfig>
         var instruction = (MipsInstruction)value;
 
         long target = (long)symbolVirtual + relocation.Addend;
-        long pcTarget = target - ((long)patchVirtual + 4);
+        long relativeTarget = target - ((long)patchVirtual + 4);
 
         value = (MipsReferenceType)relocation.Type switch
         {
             MipsReferenceType.Low16 => MIPS_Low16(instruction, target),
             MipsReferenceType.High16 => MIPS_High16(instruction, target),
-            MipsReferenceType.PCRelative16 => MIPS_PC16(instruction, pcTarget),
+            MipsReferenceType.PCRelative16 => MIPS_PC16(instruction, relativeTarget, relocation, localLogger),
             MipsReferenceType.JumpTarget26 => MIPS_Jump26(instruction, target, patchVirtual, relocation, localLogger),
             MipsReferenceType.Absolute32 => (uint)target,
             _ => Invalid_Type(value, relocation.Type, localLogger)
@@ -72,11 +72,14 @@ public class MipsLinkerHandler : ILinkerHandler<MipsLinkerConfig>
         return (uint)instruction;
     }
 
-    private static uint MIPS_PC16(MipsInstruction instruction, long pcTarget)
+    private static uint MIPS_PC16(MipsInstruction instruction, long relativeTarget, RelocationEntry relocation, LinkerLogger logger)
     {
-        // TODO: Log error, branch out of range
+        if (relativeTarget > 0xFFFF00 || relativeTarget < -0xFFFF00)
+        {
+            logger.Log(Severity.Error, LogId.OutOfRange, "TODO: Get file name", "BranchOutOfRange", relocation.SymbolName);
+        }
 
-        instruction.Offset = (int)pcTarget;
+        instruction.Offset = (int)relativeTarget;
         return (uint)instruction;
     }
 
@@ -84,8 +87,7 @@ public class MipsLinkerHandler : ILinkerHandler<MipsLinkerConfig>
     {
         if (((ulong)target & 0xF0000000UL) != (patchVirtual & 0xF0000000UL))
         {
-            // TODO: Log error, jump out of range.
-            logger.Log(Severity.Error, LogId.JumpOutOfRange, "TODO: Get file name", "JumpOutOfRange", relocation.SymbolName);
+            logger.Log(Severity.Error, LogId.OutOfRange, "TODO: Get file name", "JumpOutOfRange", relocation.SymbolName);
         }
 
         instruction.Address = (uint)target;

@@ -164,7 +164,7 @@ public partial class EditorSettingsViewModel : SettingsSubPageViewModel
     private static IAssembleComponent CreateDemoAssembler()
     {
         var config = new MipsAssemblerConfig();
-        var handler = new MipsAssmblerHandler(config);
-        return new AssembleComponent<MipsAssmblerHandler, MipsAssemblerConfig>(handler, config, new MipsAssemblerDescriptor());
+        var handler = new MipsAssemblerHandler(config);
+        return new AssembleComponent<MipsAssemblerHandler, MipsAssemblerConfig>(handler, config, new MipsAssemblerDescriptor());
     }
 }
