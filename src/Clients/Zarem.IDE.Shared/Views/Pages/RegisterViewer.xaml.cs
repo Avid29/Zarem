@@ -27,7 +27,7 @@ public sealed partial class RegisterViewer : UserControl
         if (e.ClickedItem is not BindableRegister reg)
             return;
 
-        reg.DisplayMode = (RegisterDisplayMode)(((int)reg.DisplayMode + 1) % 5);
+        reg.DisplayMode = (RegisterDisplayMode)(((int)reg.DisplayMode + 1) % 6);
     }
 
     private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)

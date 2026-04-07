@@ -90,7 +90,6 @@
                             <MenuFlyoutItem
                                 x:Uid="/RegisterView/StringModeMFI"
                                 Click="MenuFlyoutItem_Click"
-                                IsEnabled="False"
                                 Tag="{x:Bind enums:RegisterDisplayMode.String}"
                                 Text="String">
                                 <MenuFlyoutItem.Icon>
@@ -102,6 +101,7 @@
                     <controls:RegisterDisplay
                         Mode="{x:Bind DisplayMode, Mode=OneWay}"
                         RegisterName="{x:Bind RegisterName, Mode=OneWay}"
+                        Session="{Binding Source={StaticResource ViewModelProxy}, Path=ViewModel.Session, Mode=OneWay}"
                         SymbolResolver="{Binding Source={StaticResource ViewModelProxy}, Path=ViewModel.SymbolResolver, Mode=OneWay}"
                         Value="{x:Bind Value, Mode=OneWay}" />
                 </Border>

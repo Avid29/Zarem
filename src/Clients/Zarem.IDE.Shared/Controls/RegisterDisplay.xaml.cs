@@ -3,6 +3,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Text;
+using Zarem.DebugSessions;
+using Zarem.Emulator.Extensions;
 using Zarem.Helpers;
 using Zarem.IDE.Models.Enums;
 
@@ -21,6 +24,9 @@ public sealed partial class RegisterDisplay : UserControl
 
     public static readonly DependencyProperty SymbolResolverProperty =
         DependencyProperty.Register(nameof(SymbolResolver), typeof(SymbolResolver), typeof(RegisterDisplay), new PropertyMetadata(null));
+
+    public static readonly DependencyProperty SessionProperty =
+        DependencyProperty.Register(nameof(Session), typeof(DebugSession), typeof(RegisterDisplay), new PropertyMetadata(null));
 
     public RegisterDisplay()
     {
@@ -51,11 +57,18 @@ public sealed partial class RegisterDisplay : UserControl
         set => SetValue(SymbolResolverProperty, value);
     }
 
+    public DebugSession? Session
+    {
+        get => (DebugSession)GetValue(SessionProperty);
+        set => SetValue(SessionProperty, value);
+    }
+
     private string GetFormatedValue(RegisterDisplayMode mode, ulong value)
     {
         return mode switch
         {
             RegisterDisplayMode.Label => GetLabelValue(value),
+            RegisterDisplayMode.String => GetStringValue(value),
 
             RegisterDisplayMode.Binary => $"0b{value:B}",
             RegisterDisplayMode.Octal => $"0o{Convert.ToString((long)value, 8)}",
@@ -83,5 +96,13 @@ public sealed partial class RegisterDisplay : UserControl
         }
 
         return $"{symbolName}+0x{symOffset:X}";
+    }
+
+    private string GetStringValue(ulong address)
+    {
+        if (Session is null)
+            return "N/A";
+
+        return $"\"{Session.Emulator.Computer.Memory.Virtual.ReadString(address, Encoding.ASCII, 256)}\"";
     }
 }
