@@ -40,7 +40,7 @@ public class AssemblerTests
 
         // Run assembler
         config ??= new();
-        var result = await Zarembler.AssembleAsync(stream, moduleId, new MipsAssmblerHandler(config), config);
+        var result = await Zarembler.AssembleAsync(stream, moduleId, new MipsAssemblerHandler(config), config);
 
         // Find expected errors, warnings, and messages
         if (expected.Length == result.Logs.Count)

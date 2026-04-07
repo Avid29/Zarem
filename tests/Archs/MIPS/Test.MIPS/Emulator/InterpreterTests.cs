@@ -24,7 +24,7 @@ public class InterpreterTests
 
         // Run assembler, and assert successful assembly
         var asmConfig = new MipsAssemblerConfig();
-        var asmHandler = new MipsAssmblerHandler(asmConfig);
+        var asmHandler = new MipsAssemblerHandler(asmConfig);
         var result = await Zarembler.AssembleAsync(path, asmHandler, asmConfig);
 
         // Link

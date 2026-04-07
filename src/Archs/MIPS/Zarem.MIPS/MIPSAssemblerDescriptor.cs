@@ -17,7 +17,7 @@ public class MipsAssemblerDescriptor : IAssemblerDescriptor
     public string Identifier => "MIPS";
 
     /// <inheritdoc/>
-    public Type AssemblerHandlerType => typeof(MipsAssmblerHandler);
+    public Type AssemblerHandlerType => typeof(MipsAssemblerHandler);
 
     /// <inheritdoc/>
     public Type ConfigType => typeof(MipsAssemblerConfig);
