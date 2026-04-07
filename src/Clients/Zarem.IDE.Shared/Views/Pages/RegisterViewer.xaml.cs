@@ -2,7 +2,6 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
 using Zarem.IDE.Bindables;
 using Zarem.IDE.Models.Enums;
 using Zarem.IDE.Services;
@@ -21,17 +20,6 @@ public sealed partial class RegisterViewer : UserControl
 
     private RegisterViewerViewModel ViewModel { get; }
 
-    private static string GetFormatedValue(RegisterDisplayMode mode, ulong value)
-    {
-        return mode switch
-        {
-            RegisterDisplayMode.Binary => $"0b{value:B}",
-            RegisterDisplayMode.Octal => $"0o{Convert.ToString((long)value, 8)}",
-            RegisterDisplayMode.Hex => $"0x{value:X8}",
-            RegisterDisplayMode.Decimal or _ => $"{value}",
-        };
-    }
-
     private static double GetOpacityByHalted(bool isHalted) => isHalted ? 1 : 0.5;
 
     private void GridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -39,7 +27,7 @@ public sealed partial class RegisterViewer : UserControl
         if (e.ClickedItem is not BindableRegister reg)
             return;
 
-        reg.DisplayMode = (RegisterDisplayMode)(((int)reg.DisplayMode + 1) % 4);
+        reg.DisplayMode = (RegisterDisplayMode)(((int)reg.DisplayMode + 1) % 5);
     }
 
     private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
