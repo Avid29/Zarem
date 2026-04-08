@@ -11,7 +11,7 @@ using Zarem.Linker.Logging;
 using Zarem.Models.Instructions;
 using Zarem.Models.Tables;
 
-namespace Zarem.Linker.Handler;
+namespace Zarem.Linker;
 
 /// <summary>
 /// A linker handler for the MIPS architecture.

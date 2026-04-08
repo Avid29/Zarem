@@ -54,10 +54,13 @@ public class ProjectService : IProjectService
         _popupService = popupService;
         _stateService = stateService;
 
-        // Populate
+        // Populate architectures
         ZaremRegistry.RegisterArchitecture(new MipsArchitectureDescriptor());
+
+        // Populate formats
         ZaremRegistry.Formats.Register(new ElfModuleDescriptor());
-        //ZaremRegistry.Formats.Register(new RasmModuleDescriptor());
+
+        // Populate trap handlers
         ZaremRegistry.TrapHandlers.Register(new ZaremTrapHandlerDescriptor());
     }
 

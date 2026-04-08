@@ -62,6 +62,9 @@
       <Build Solution="Alpha|*" Project="false" />
       <Build Solution="Debug|arm64" Project="false" />
     </Project>
+    <Project Path="src/Archs/RiscV/Zarem.Linker.RiscV/Zarem.Linker.RiscV.csproj" Id="9504807e-0cae-4fcd-a062-28480a57d323">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
     <Project Path="src/Archs/RiscV/Zarem.RiscV.Base/Zarem.RiscV.Base.csproj" Id="32597ba3-5177-4db4-8541-6e800567872d">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
