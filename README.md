@@ -55,8 +55,6 @@ Help translate on [Crowdin](https://crowdin.com/project/zarem)!
 
 # Screenshots
 
-<img width="1439" height="831" alt="image" src="https://github.com/user-attachments/assets/8c4d4d9a-dca8-4d9f-b676-dbb5af670c4a" />
+<img width="1467" height="845" alt="Zarem-Running" src="https://github.com/user-attachments/assets/2ba34911-95f9-4762-a314-08cc88a8ec2a" />
 
-<img width="1473" height="787" alt="image" src="https://github.com/user-attachments/assets/f9b4d9a2-d259-4442-bdd5-89fd17f2b75c" />
-
-<img width="1429" height="826" alt="image" src="https://github.com/user-attachments/assets/f76a33cb-2e92-4f62-8197-c782de23915b" />
+<img width="1468" height="833" alt="Zarem-Settings" src="https://github.com/user-attachments/assets/82c0dde9-9a45-4464-a2a6-66a0d153d962" />
