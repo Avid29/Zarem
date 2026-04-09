@@ -7,6 +7,7 @@ using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning;
 using Zarem.Models.Versioning.Enums;
@@ -73,6 +74,12 @@ public partial class ExecutionTests
         {
             // If no register check was provided, we at least want to make sure no register was written to (as that would be unexpected)
             Assert.AreEqual(GPRegister.Zero, execution.WritebackGPRegister);
+        }
+
+        var expectedPC = @case.ExpectedPC;
+        if (expectedPC is not null)
+        {
+            Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
         }
     }
 }

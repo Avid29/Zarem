@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning;
 using Zarem.Models.Versioning.Enums;
 
@@ -25,6 +26,9 @@ public partial class ExecutionTests
             yield return test;
 
         foreach (var test in GetLogicalInstructionTests<T>(versionInfo))
+            yield return test;
+
+        foreach (var test in GetJumpBranchInstructionTests<T>(versionInfo))
             yield return test;
     }
 
@@ -85,5 +89,19 @@ public partial class ExecutionTests
         yield return [new ExecutionTestCase<T>("srl a0, s6, s3", T.CreateTruncating(101 >> 4))];
         yield return [new ExecutionTestCase<T>("slli a0, s6, 4", T.CreateTruncating(101 << 4))];
         yield return [new ExecutionTestCase<T>("srli a0, s6, 4", T.CreateTruncating(101 >> 4))];
+    }
+
+    private static IEnumerable<object[]> GetJumpBranchInstructionTests<T>(RiscVVersionInfo versionInfo)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        // Jump
+        yield return [new ExecutionTestCase<T>("j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
+        yield return [new ExecutionTestCase<T>("jal 1000", GPRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(1000) }];
+
+        // Branch Equality
+        yield return [new ExecutionTestCase<T>("beq t1, t2, 80") { ExpectedPC = T.CreateTruncating(4) }];
+        yield return [new ExecutionTestCase<T>("beq t0, t0, 80") { ExpectedPC = T.CreateTruncating(84) }];
+        yield return [new ExecutionTestCase<T>("bne t0, t0, 80") { ExpectedPC = T.CreateTruncating(4) }];
+        yield return [new ExecutionTestCase<T>("bne t2, t1, 80") { ExpectedPC = T.CreateTruncating(84) }];
     }
 }

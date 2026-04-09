@@ -127,7 +127,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS> : LogicTable, IR
     {
         var rs1 = T.CreateTruncating(@this._processor[inst.RS1]);
         var rs2 = T.CreateTruncating(@this._processor[inst.RS2]);
-        var jump = @this._processor.ProgramCounter + T.CreateTruncating(inst.BranchOffset);
+        var jump = @this._processor.ProgramCounter + T.CreateTruncating(inst.BranchOffset) + T.CreateTruncating(4);
         exec = TLogic.Check(rs1, rs2) ? RiscVExecution<T>.CreateJump(jump) : default;
         return RiscVTrap.None;
     }
