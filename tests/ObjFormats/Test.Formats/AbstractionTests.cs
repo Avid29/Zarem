@@ -7,12 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Test.Mips.Helpers;
 using Zarem.Assembler;
-using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Models;
 using Zarem.Config;
 using Zarem.Linker;
 using Zarem.Linker.Config;
-using Zarem.Linker.Handler;
 
 namespace Test.ObjFormats;
 

@@ -5,7 +5,6 @@ using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Linker;
 using Zarem.Linker.Config;
-using Zarem.Linker.Handler;
 using Zarem.Models;
 
 namespace Test.MIPS.Linker;

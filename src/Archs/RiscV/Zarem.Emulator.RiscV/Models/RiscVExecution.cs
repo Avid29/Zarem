@@ -38,6 +38,18 @@ public readonly struct RiscVExecution<T>
         };
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVExecution{T}"/> struct.
+    /// </summary>
+    public static RiscVExecution<T> CreateJumpAndLink(T absolutePC, T writeback, GPRegister dest = GPRegister.ReturnAddress)
+    {
+        return new RiscVExecution<T>
+        {
+            Writeback = writeback,
+            WritebackGPRegister = dest,
+            ProgramCounter = absolutePC,
+        };
+    }
 
     /// <summary>
     /// Gets the general purpose register destination of the output.

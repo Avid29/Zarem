@@ -115,11 +115,10 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS> : LogicTable, IR
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
         => inst.Funct7 is Funct7Code.Modified ? ShiftI<TMod, T2>(@this, inst, out exec) : ShiftI<TBase, T2>(@this, inst, out exec);
 
-    private static RiscVTrap Jump<TLogic>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
-        where TLogic : struct, ICondLogic<T>
+    private static RiscVTrap JumpAndLink(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
     {
         var jump = T.CreateTruncating(inst.JumpOffset);
-        exec = RiscVExecution<T>.CreateJump(jump);
+        exec = RiscVExecution<T>.CreateJumpAndLink(jump, @this._processor.ProgramCounter + T.CreateTruncating(4), inst.RD);
         return RiscVTrap.None;
     }
 

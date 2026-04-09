@@ -48,7 +48,8 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS>
         _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
         _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
 
-        _baseTable[GetLookupIndex(OperationCode.JumpAndLink, 0)] = 
+        // Add jump operations
+        _baseTable[GetLookupIndex(OperationCode.JumpAndLink, 0)] = &JumpAndLink;
 
         if (baseVersion is >= RiscVBaseVersion.RV64)
         {

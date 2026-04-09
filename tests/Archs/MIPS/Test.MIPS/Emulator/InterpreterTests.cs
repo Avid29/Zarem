@@ -9,7 +9,6 @@ using Zarem.Emulator.Machine;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.Linker;
 using Zarem.Linker.Config;
-using Zarem.Linker.Handler;
 
 namespace Test.MIPS.Emulator;
 
