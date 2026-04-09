@@ -3,7 +3,7 @@
 using System;
 using System.Text;
 using Zarem.Emulator.Exceptions;
-using Zarem.Emulator.Models.Enum;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.TrapHandlers.Interfaces;
 
 namespace Zarem.Emulator.TrapHandlers;

@@ -69,6 +69,13 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
         // Handle gpr writeback
         RegisterFile[(int)execution.WritebackGPRegister] = execution.Writeback;
 
+        switch (execution.SideEffect)
+        {
+            case SideEffect.ProgramCounter:
+                nextPc = execution.ProgramCounter;
+                break;
+        }
+
         // Apply the program counter update
         ProgramCounter = nextPc;
         return RiscVTrap.None;

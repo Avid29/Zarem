@@ -24,12 +24,24 @@ public partial class ExecutionTests
     public void InstructionTests_RV32_I(ExecutionTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
 
     [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_RV32_G))]
+    public void InstructionTests_RV32_G(ExecutionTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.General));
+
+    [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_RV64_I))]
     public void InstructionTests_RV64_I(ExecutionTestCase<ulong> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
 
     [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_RV64_G))]
+    public void InstructionTests_RV64_G(ExecutionTestCase<ulong> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.General));
+
+    [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_RV128_I))]
     public void InstructionTests_RV128_I(ExecutionTestCase<UInt128> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.Integers));
+
+    [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_RV128_G))]
+    public void InstructionTests_RV128_G(ExecutionTestCase<UInt128> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.General));
 
     private static void RunTest<T>(ExecutionTestCase<T> @case, RiscVVersionInfo versionInfo)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
@@ -73,6 +85,12 @@ public partial class ExecutionTests
         {
             // If no register check was provided, we at least want to make sure no register was written to (as that would be unexpected)
             Assert.AreEqual(GPRegister.Zero, execution.WritebackGPRegister);
+        }
+
+        var expectedPC = @case.ExpectedPC;
+        if (expectedPC is not null)
+        {
+            Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
         }
     }
 }

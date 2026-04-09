@@ -49,6 +49,27 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase
     public double Version { get; init; } = 2.0;
 
     /// <summary>
+    /// Gets the fixed rs1 value, if applicable.
+    /// </summary>
+    [JsonPropertyName("rs1_fixed")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public byte? FixedRS1 { get; init; }
+
+    /// <summary>
+    /// Gets the fixed rs2 value, if applicable.
+    /// </summary>
+    [JsonPropertyName("rs2_fixed")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public byte? FixedRS2 { get; init; }
+
+    /// <summary>
+    /// Gets the fixed rd value, if applicable.
+    /// </summary>
+    [JsonPropertyName("rd_fixed")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public byte? FixedRD { get; init; }
+
+    /// <summary>
     /// Checks if an instruction is valid for the provided processor configuration.
     /// </summary>
     public bool IsValidFor(RiscVVersionInfo config)

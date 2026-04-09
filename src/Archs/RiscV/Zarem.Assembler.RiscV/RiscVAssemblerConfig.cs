@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System.Xml.Serialization;
 using Zarem.Assembler.Config;
 using Zarem.Models.Versioning;
 using Zarem.Models.Versioning.Enums;
@@ -21,5 +22,6 @@ public class RiscVAssemblerConfig(RiscVVersionInfo versionInfo) : AssemblerConfi
     /// <summary>
     /// Gets or sets the RISC-V version information to use for assembly.
     /// </summary>
+    [XmlIgnore]
     public RiscVVersionInfo VersionInfo { get; internal set; } = versionInfo;
 }

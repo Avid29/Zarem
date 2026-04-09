@@ -66,6 +66,10 @@ public sealed record ExecutionTestCase<T>
 
     public RiscVTrap ExpectedTrap { get; init; } = RiscVTrap.None;
 
+    public T? ExpectedPC { get; init; } = null;
+
+    public SideEffect? ExpectedSideEffect { get; init; }
+
     public (GPRegister Regiter, T? Value)? ExpectedWriteBack { get; init; } = null;
 
     public (GPRegister Register, T Value)[] RegisterInitialization { get; init; } = [];

@@ -15,7 +15,7 @@ namespace Zarem.MIPS;
 public sealed class MipsArchitectureConfig : IArchitectureConfig
 {
     /// <summary>
-    /// Gets the mips version 
+    /// Gets the mips version.
     /// </summary>
     public MipsVersion MipsVersion
     {
@@ -25,7 +25,8 @@ public sealed class MipsArchitectureConfig : IArchitectureConfig
             field = value;
 
             AssemblerConfig?.Version = value;
-            EmulatorConfig?.MipsVersion = value;
+            EmulatorConfig?.Version = value;
+            LinkerConfig?.Version = value;
         }
     }
 

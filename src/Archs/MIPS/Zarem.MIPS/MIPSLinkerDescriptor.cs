@@ -3,13 +3,13 @@
 using System;
 using Zarem.Attributes;
 using Zarem.Descriptors;
+using Zarem.Linker;
 using Zarem.Linker.Config;
-using Zarem.Linker.Handler;
 
 namespace Zarem.MIPS;
 
 /// <summary>
-/// An <see cref="ILinkerDescriptor"/> for the MIPS assembler.
+/// An <see cref="ILinkerDescriptor"/> for the MIPS linker.
 /// </summary>
 [ZaremPlugin]
 public class MipsLinkerDescriptor : ILinkerDescriptor

@@ -238,7 +238,7 @@ public struct RiscVInstruction
     public int UpperImmediate
     {
         readonly get => (int)BitField.GetField(_inst, 20, 12);
-        set => BitField.SetField(ref _inst, 20, 12, (uint)value & 0xFFFFF);
+        set => BitField.SetField(ref _inst, 20, 12, (uint)value & 0xF_FFFF);
     }
 
     /// <summary>

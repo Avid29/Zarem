@@ -2,7 +2,7 @@
 
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
-using Zarem.Emulator.Models.Enum;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.TrapHandlers.Interfaces;
 using Zarem.Models.Instructions.Enums.Registers;
 

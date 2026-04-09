@@ -40,6 +40,17 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS>
         InitAluImmediateOperations<T, TS>(OperationCode.AluImmediate);
         InitAluRegisterOperations<T, TS>(OperationCode.Alu);
 
+        // Add branch operations
+        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchEqual)] = &BranchOn<XeqLogic<T>>;
+        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchNotEqual)] = &BranchOn<XneLogic<T>>;
+        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchLessThan)] = &BranchOn<XltLogic<T, TS>>;
+        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchGreaterThanOrEqual)] = &BranchOn<XgeLogic<T, TS>>;
+        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
+        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
+
+        // Add jump operations
+        _baseTable[GetLookupIndex(OperationCode.JumpAndLink, 0)] = &JumpAndLink;
+
         if (baseVersion is >= RiscVBaseVersion.RV64)
         {
             // Add explicitly 32-bit ALU operations

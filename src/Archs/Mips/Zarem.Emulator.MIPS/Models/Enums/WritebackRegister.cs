@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Emulator.Models.Enum;
+namespace Zarem.Emulator.Models.Enums;
 
 /// <summary>
 /// An enum describing which register to writeback to.

@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Emulator.Models.Enum;
+namespace Zarem.Emulator.Models.Enums;
 
 /// <summary>
 /// An enum describing the secondary effect of an <see cref="MipsExecution{T}"/>.

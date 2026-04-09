@@ -1,6 +1,24 @@
 [
   {
     "type": "j-type",
+    "name": "j",
+    "opcode": 111,
+    "rd_fixed": 0,
+    "args": [ "jump_offset" ],
+    "extension": "I",
+    "behavior": "$pc += imm"
+  },
+  {
+    "type": "j-type",
+    "name": "jal",
+    "opcode": 111,
+    "rd_fixed": 1,
+    "args": [ "jump_offset" ],
+    "extension": "I",
+    "behavior": "$ra = $pc + 4; $pc += imm"
+  },
+  {
+    "type": "j-type",
     "name": "jal",
     "opcode": 111,
     "args": [ "rd", "jump_offset" ],

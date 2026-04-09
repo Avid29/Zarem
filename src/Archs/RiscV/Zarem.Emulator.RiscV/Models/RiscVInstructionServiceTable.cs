@@ -115,6 +115,23 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS> : LogicTable, IR
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
         => inst.Funct7 is Funct7Code.Modified ? ShiftI<TMod, T2>(@this, inst, out exec) : ShiftI<TBase, T2>(@this, inst, out exec);
 
+    private static RiscVTrap JumpAndLink(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    {
+        var jump = T.CreateTruncating(inst.JumpOffset);
+        exec = RiscVExecution<T>.CreateJumpAndLink(jump, @this._processor.ProgramCounter + T.CreateTruncating(4), inst.RD);
+        return RiscVTrap.None;
+    }
+
+    private static RiscVTrap BranchOn<TLogic>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TLogic : struct, ICondLogic<T>
+    {
+        var rs1 = T.CreateTruncating(@this._processor[inst.RS1]);
+        var rs2 = T.CreateTruncating(@this._processor[inst.RS2]);
+        var jump = @this._processor.ProgramCounter + T.CreateTruncating(inst.BranchOffset) + T.CreateTruncating(4);
+        exec = TLogic.Check(rs1, rs2) ? RiscVExecution<T>.CreateJump(jump) : default;
+        return RiscVTrap.None;
+    }
+
     private static RiscVTrap IllegalInstruction(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
     {
         exec = default;
