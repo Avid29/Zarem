@@ -50,10 +50,29 @@ public class MipsDebugHandler : IDebugHandler
         {
             return mipsCpu.DelaySlot.Value;
         }
+        else
+        {
+            var instruction = (MipsInstruction)computer.Memory.Read<uint>(pc);
 
-        // TODO: Handle jumps when the delay slot is disabled
+            return instruction.OpCode switch
+            {
+                // Jumps
+                OperationCode.Jump or OperationCode.JumpAndLink or OperationCode.JumpAndLinkX => instruction.Address,
+                OperationCode.Special when instruction.FuncCode is FunctionCode.JumpRegister or FunctionCode.JumpAndLinkRegister => mipsCpu[instruction.RS],
 
-        return pc + InstructionSize;
+                // Branches
+                OperationCode.BranchCompact or OperationCode.BranchAndLinkCompact or
+                (>= OperationCode.BranchOnEquals and <= OperationCode.BranchOnGreaterThanZero) or
+                (>= OperationCode.BranchOnEqualLikely and <= OperationCode.BranchOnGreaterThanZeroLikely) => StepBranch(instruction, mipsCpu, false),
+
+                // RT Branches
+                OperationCode.RegisterImmediate when instruction.RTFuncCode is
+                (>= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely) or
+                (>= RegImmFuncCode.BranchOnLessThanZeroAndLink and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink) => StepBranch(instruction, mipsCpu, false),
+
+                _ => pc + InstructionSize,
+            };
+        }
     }
 
     /// <inheritdoc/>
@@ -88,4 +107,45 @@ public class MipsDebugHandler : IDebugHandler
 
     /// <inheritdoc/>
     public IDebugViewer? GetDebugViewer(IComputer computer) => MipsDebugViewer.Create(computer);
+
+    private ulong StepBranch(MipsInstruction instruction, IMipsCpu cpu, bool delayed)
+    {
+        var rs = cpu[instruction.RS];
+        var rt = cpu[instruction.RT];
+
+        bool branch = instruction.OpCode switch
+        {
+            OperationCode.BranchOnEquals or OperationCode.BranchOnEqualLikely => rs == rt,
+            OperationCode.BranchOnNotEquals or OperationCode.BranchOnNotEqualLikely => rs != rt,
+            OperationCode.BranchOnLessThanOrEqualToZero or OperationCode.BranchOnLessThanOrEqualToZeroLikely => (int)rs <= 0,
+            OperationCode.BranchOnGreaterThanZero or OperationCode.BranchOnGreaterThanZeroLikely => (int)rs > 0,
+            OperationCode.RegisterImmediate => instruction.RTFuncCode switch
+            {
+                RegImmFuncCode.BranchOnLessThanZero or
+                RegImmFuncCode.BranchOnLessThanZeroLikely or
+                RegImmFuncCode.BranchOnLessThanZeroAndLink or
+                RegImmFuncCode.BranchOnLessThanZeroLikelyAndLink => (int)rs < 0,
+
+                RegImmFuncCode.BranchOnGreaterThanOrEqualToZero or
+                RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely or
+                RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroAndLink or
+                RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink => (int)rs >= 0,
+
+                _ => false
+            },
+
+            OperationCode.BranchCompact or OperationCode.BranchAndLinkCompact => true,
+            _ => false,
+        };
+
+        // MIPS branch targets are calculated from the instruction AFTER the branch (the delay slot)
+        // Target = (PC + 4) + offset
+        if (branch)
+        {
+            return cpu.ProgramCounter + (delayed ? InstructionSize : 0) + (ulong)instruction.Offset;
+        }
+
+        // If not taken, we move to the instruction after the delay slot
+        return cpu.ProgramCounter + (delayed ? (InstructionSize * 2) : InstructionSize);
+    }
 }
