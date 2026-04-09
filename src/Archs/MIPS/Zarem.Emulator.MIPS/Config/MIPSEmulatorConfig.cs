@@ -22,14 +22,14 @@ public class MIPSEmulatorConfig : EmulatorConfig
     /// </summary>
     public MIPSEmulatorConfig(MipsVersion mipsVersion = MipsVersion.Mips32R2)
     {
-        MipsVersion = mipsVersion;
+        Version = mipsVersion;
     }
 
     /// <summary>
     /// Gets or sets the mips ISA version to emulate.
     /// </summary>
     [XmlIgnore]
-    public MipsVersion MipsVersion { get; internal set; }
+    public MipsVersion Version { get; internal set; }
 
     /// <summary>
     /// Gets or sets whether or not to disable branch delay slot emulation

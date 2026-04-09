@@ -22,12 +22,12 @@ public class MipsLinkerConfig : LinkerConfig
     /// </summary>
     public MipsLinkerConfig(MipsVersion version = MipsVersion.Mips32R2)
     {
-        MipsVersion = version;
+        Version = version;
     }
 
     /// <summary>
     /// Gets or sets the mips version to assemble with.
     /// </summary>
     [XmlIgnore]
-    public MipsVersion MipsVersion { get; internal set; }
+    public MipsVersion Version { get; internal set; }
 }

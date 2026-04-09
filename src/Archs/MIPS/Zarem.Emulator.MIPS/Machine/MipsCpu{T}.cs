@@ -34,14 +34,14 @@ public sealed partial class MipsCpu<T> : IMipsCpu
     public MipsCpu(MIPSEmulatorConfig config, PhysicalBus bus)
     {
         Config = config;
-        RegisterFile = new(config.MipsVersion);
+        RegisterFile = new(config.Version);
         CoProcessor0 = new();
         FloatProcessor = new();
 
         Tlb = new MipsTlb();
         Memory = new MemorySystem(bus, Tlb);
 
-        _instructionServiceTable = config.MipsVersion.Is64Bit()
+        _instructionServiceTable = config.Version.Is64Bit()
             ? new MipsInstructionServiceTable<T, long>(this)
             : new MipsInstructionServiceTable<T, int>(this);
     }

@@ -9,7 +9,7 @@ using Zarem.Linker.Config;
 namespace Zarem.MIPS;
 
 /// <summary>
-/// An <see cref="ILinkerDescriptor"/> for the MIPS assembler.
+/// An <see cref="ILinkerDescriptor"/> for the MIPS linker.
 /// </summary>
 [ZaremPlugin]
 public class MipsLinkerDescriptor : ILinkerDescriptor

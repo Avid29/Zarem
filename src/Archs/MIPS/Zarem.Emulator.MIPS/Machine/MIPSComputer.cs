@@ -30,7 +30,7 @@ public sealed class MipsComputer : ComputerBase
         MapDevices(_memoryMapper);
 
         // Initialize the components
-        Cpu = config.MipsVersion.Is64Bit()
+        Cpu = config.Version.Is64Bit()
             ? new MipsCpu<ulong>(config, bus)
             : new MipsCpu<uint>(config, bus);
 

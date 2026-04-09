@@ -14,7 +14,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
 {
     private void InitTables(MIPSEmulatorConfig config)
     {
-        var version = config.MipsVersion;
+        var version = config.Version;
 
         // Set default behavior to reserve instruction trap
         for (int i = 0; i < 64; i++)
