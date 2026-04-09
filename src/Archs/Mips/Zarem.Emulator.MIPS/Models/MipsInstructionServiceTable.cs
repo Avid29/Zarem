@@ -4,7 +4,7 @@ using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Models.Enum;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.Models;

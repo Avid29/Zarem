@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using Zarem.Emulator.Models.Enum;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.Models;

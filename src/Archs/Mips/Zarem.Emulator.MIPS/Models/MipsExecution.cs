@@ -2,7 +2,7 @@
 
 using System;
 using System.Numerics;
-using Zarem.Emulator.Models.Enum;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Registers;
 
@@ -180,7 +180,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the writeback value to the selected GPR register.
     /// </summary>
-    public readonly T WriteBack { get; init; }
+    public T WriteBack { get; init; }
 
     /// <summary>
     /// Gets the general purpose register destination of the output.
@@ -198,7 +198,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the new value of the low register if applicable.
     /// </summary>
-    public readonly T Low
+    public T Low
     {
         get => _secondary1;
         init
@@ -211,7 +211,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the new value of the low register if applicable.
     /// </summary>
-    public readonly T High
+    public T High
     {
         get => T.CreateTruncating(_secondary2);
         init
@@ -222,9 +222,9 @@ public readonly struct MipsExecution<T>
     }
 
     /// <summary>
-    /// Gets the new PC value, if application.
+    /// Gets the new PC value, if applicable.
     /// </summary>
-    public readonly T ProgramCounter
+    public T ProgramCounter
     {
         get => _secondary1;
         init
@@ -237,7 +237,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the memory address to read or write at, if applicable.
     /// </summary>
-    public readonly T MemAddress
+    public T MemAddress
     {
         get => _secondary1;
         init => _secondary1 = value;
@@ -249,7 +249,7 @@ public readonly struct MipsExecution<T>
     /// <remarks>
     /// Number of bytes to read/write.
     /// </remarks>
-    public readonly ulong MemSize
+    public ulong MemSize
     {
         get => _secondary2;
         init => _secondary2 = value;
@@ -258,7 +258,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the register set to writeback to for co-process writeback.
     /// </summary>
-    public readonly GPRegister CoProcReg
+    public GPRegister CoProcReg
     {
         get => (GPRegister)byte.CreateTruncating(BitField.GetField(_secondary1, REG_BITCOUNT, 0));
         init
@@ -271,7 +271,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the coproc0 register for a co-process writeback.
     /// </summary>
-    public readonly CP0Registers CoProc0Reg
+    public CP0Registers CoProc0Reg
     {
         get => (CP0Registers)CoProcReg;
         init => CoProcReg = (GPRegister)value;
@@ -280,7 +280,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the coproc1 register for a co-process writeback.
     /// </summary>
-    public readonly FloatRegister FloatReg
+    public FloatRegister FloatReg
     {
         get => (FloatRegister)CoProcReg;
         init => CoProcReg = (GPRegister)value;
@@ -289,7 +289,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the value writing back to co-processor0.
     /// </summary>
-    public readonly T CoProc0WriteBack
+    public T CoProc0WriteBack
     {
         get => T.CreateTruncating(_secondary2);
         init
@@ -302,7 +302,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the value being written to the float processor as a <see cref="long"/>.
     /// </summary>
-    public readonly int FWordWriteBack
+    public int FWordWriteBack
     {
         get => (int)FLongWriteBack;
         init
@@ -315,7 +315,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the value being written to the float processor as a <see cref="long"/>.
     /// </summary>
-    public readonly long FLongWriteBack
+    public long FLongWriteBack
     {
         get => (long)_secondary2;
         init
@@ -328,7 +328,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the value being written to the float processor as a <see cref="float"/>.
     /// </summary>
-    public readonly float FFloatWriteBack
+    public float FFloatWriteBack
     {
         get => BitConverter.Int32BitsToSingle(FWordWriteBack);
         init => FWordWriteBack = BitConverter.SingleToInt32Bits(value);
@@ -337,7 +337,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the value being written to the float processor as a <see cref="double"/>.
     /// </summary>
-    public readonly double FDoubleWriteBack
+    public double FDoubleWriteBack
     {
         get => BitConverter.Int64BitsToDouble(FLongWriteBack);
         init => FLongWriteBack = BitConverter.DoubleToInt64Bits(value);
@@ -346,7 +346,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets a value indicating whether or not execution handled the PC changing.
     /// </summary>
-    public readonly bool PCHandled => SideEffect is SideEffect.ProgramCounter;
+    public bool PCHandled => SideEffect is SideEffect.ProgramCounter;
 
     private SideEffect MergeHighLow(SideEffect @new)
     {

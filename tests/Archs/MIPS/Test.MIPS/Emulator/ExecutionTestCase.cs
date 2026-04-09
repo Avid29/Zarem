@@ -4,7 +4,7 @@ using System;
 using System.Numerics;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Emulator.Models.Enum;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Test.MIPS.Emulator;

@@ -20,7 +20,7 @@ public enum Funct3Code : byte
     And = 0b111,
 
     // --- Branch Operations (BRANCH) ---
-    BrancEqual = 0b000,
+    BranchEqual = 0b000,
     BranchNotEqual = 0b001,
     BranchLessThan = 0b100,
     BranchGreaterThanOrEqual = 0b101,

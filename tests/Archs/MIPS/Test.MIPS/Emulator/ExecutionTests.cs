@@ -6,7 +6,7 @@ using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Models.Enum;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
