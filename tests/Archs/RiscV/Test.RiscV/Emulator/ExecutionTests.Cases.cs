@@ -13,10 +13,16 @@ public partial class ExecutionTests
 {
     public static IEnumerable<object[]> InstructionTestList_RV32_I
         => GetVersionTests<uint, int>(new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
+    public static IEnumerable<object[]> InstructionTestList_RV32_G
+        => GetVersionTests<uint, int>(new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.General));
     public static IEnumerable<object[]> InstructionTestList_RV64_I
         => GetVersionTests<ulong, long>(new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
+    public static IEnumerable<object[]> InstructionTestList_RV64_G
+        => GetVersionTests<ulong, long>(new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.General));
     public static IEnumerable<object[]> InstructionTestList_RV128_I
         => GetVersionTests<UInt128, Int128>(new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.Integers));
+    public static IEnumerable<object[]> InstructionTestList_RV128_G
+        => GetVersionTests<UInt128, Int128>(new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.General));
 
     private static IEnumerable<object[]> GetVersionTests<T, TS>(RiscVVersionInfo versionInfo)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
@@ -30,6 +36,11 @@ public partial class ExecutionTests
 
         foreach (var test in GetJumpBranchInstructionTests<T>(versionInfo))
             yield return test;
+
+        if (versionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
+        {
+
+        }
     }
 
     private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TS>(RiscVVersionInfo versionInfo)

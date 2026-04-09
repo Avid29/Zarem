@@ -20,8 +20,8 @@ public enum RiscVBaseVersion : byte
     //[XmlEnum("rv32e")][JsonStringEnumMemberName("RV32E")] RV32E = 2,
 
     // 64-bit and 128-bit base sets.
-    [XmlEnum("rv64")][JsonStringEnumMemberName("RV64I")] RV64 = 10,
-    [XmlEnum("rv128")][JsonStringEnumMemberName("RV128I")] RV128 = 20,
+    [XmlEnum("rv64")][JsonStringEnumMemberName("RV64")] RV64 = 10,
+    [XmlEnum("rv128")][JsonStringEnumMemberName("RV128")] RV128 = 20,
 
     //// --- Historical / Profile Versions ---
     //// RISC-V now uses "Profiles" (e.g., RVA20, RVA22) for platform compatibility.
