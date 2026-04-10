@@ -2,7 +2,7 @@
   {
     "type": "r-type",
     "name": "mul",
-    "opcode": 51,
+    "op_code": 51,
     "funct3": 0,
     "funct7": 1,
     "args": [ "rd", "rs1", "rs2" ],
@@ -12,7 +12,7 @@
   {
     "type": "r-type",
     "name": "mulh",
-    "opcode": 51,
+    "op_code": 51,
     "funct3": 1,
     "funct7": 1,
     "args": [ "rd", "rs1", "rs2" ],
@@ -22,7 +22,7 @@
   {
     "type": "r-type",
     "name": "mulhsu",
-    "opcode": 51,
+    "op_code": 51,
     "funct3": 2,
     "funct7": 1,
     "args": [ "rd", "rs1", "rs2" ],
@@ -32,7 +32,7 @@
   {
     "type": "r-type",
     "name": "mulhu",
-    "opcode": 51,
+    "op_code": 51,
     "funct3": 3,
     "funct7": 1,
     "args": [ "rd", "rs1", "rs2" ],
@@ -42,7 +42,7 @@
   {
     "type": "r-type",
     "name": "div",
-    "opcode": 51,
+    "op_code": 51,
     "funct3": 4,
     "funct7": 1,
     "args": [ "rd", "rs1", "rs2" ],
@@ -52,7 +52,7 @@
   {
     "type": "r-type",
     "name": "divu",
-    "opcode": 51,
+    "op_code": 51,
     "funct3": 5,
     "funct7": 1,
     "args": [ "rd", "rs1", "rs2" ],
@@ -62,7 +62,7 @@
   {
     "type": "r-type",
     "name": "rem",
-    "opcode": 51,
+    "op_code": 51,
     "funct3": 6,
     "funct7": 1,
     "args": [ "rd", "rs1", "rs2" ],
@@ -72,7 +72,7 @@
   {
     "type": "r-type",
     "name": "remu",
-    "opcode": 51,
+    "op_code": 51,
     "funct3": 7,
     "funct7": 1,
     "args": [ "rd", "rs1", "rs2" ],

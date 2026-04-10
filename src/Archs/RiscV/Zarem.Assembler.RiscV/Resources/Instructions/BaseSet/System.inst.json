@@ -2,7 +2,7 @@
   {
     "type": "i-type",
     "name": "ecall",
-    "opcode": 115,
+    "op_code": 115,
     "funct3": 0,
     "args": [],
     "extension": "I"
@@ -10,7 +10,7 @@
   {
     "type": "i-type",
     "name": "ebreak",
-    "opcode": 115,
+    "op_code": 115,
     "funct3": 0,
     "imm_fixed": 1,
     "args": [],
