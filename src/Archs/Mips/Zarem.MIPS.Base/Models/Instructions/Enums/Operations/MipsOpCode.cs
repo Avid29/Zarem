@@ -7,7 +7,7 @@ namespace Zarem.Models.Instructions.Enums.Operations;
 /// <summary>
 /// An enum for instruction op codes.
 /// </summary>
-public enum OperationCode : byte
+public enum MipsOpCode : byte
 {
     /// <summary>
     /// Marks any r-type instruction, each one shares an op-code of 0x00.

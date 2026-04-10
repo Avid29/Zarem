@@ -2,6 +2,7 @@
 
 using System;
 using Zarem.Attributes;
+using Zarem.Debugger;
 using Zarem.Descriptors;
 
 namespace Zarem.RiscV;
@@ -16,5 +17,5 @@ public class RiscVDebuggerDescriptor : IDebuggerDescriptor
     public string Identifier => "RISC-V";
 
     /// <inheritdoc/>
-    public Type DebugHandleType => throw new NotImplementedException();
+    public Type DebugHandleType => typeof(RiscVDebugHandler);
 }

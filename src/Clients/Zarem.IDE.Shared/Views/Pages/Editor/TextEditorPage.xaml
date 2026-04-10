@@ -42,7 +42,8 @@
             ColorScheme="{StaticResource SyntaxHighlighting}"
             ExecutingLocation="{x:Bind ViewModel.ExecutingLocation, Mode=OneWay}"
             RealTimeAssembly="{x:Bind ViewModel.RealTimeAssembly, Mode=OneWay}"
-            Text="{x:Bind Text, Mode=TwoWay}" />
+            Text="{x:Bind Text, Mode=TwoWay}"
+            TokenizerProfile="{x:Bind ViewModel.Assembler.Handler.TokenizerProfile, Mode=OneWay}" />
 
         <!--  Status Bar  -->
         <Grid

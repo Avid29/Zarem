@@ -93,7 +93,7 @@ public partial class MipsInstructionServiceTable<T, TS>
         // Apply the update function
         status.InteruptEnabled = enabled;
 
-        if (inst.RT is not GPRegister.Zero)
+        if (inst.RT is not MipsGpRegister.Zero)
         {
             // Write the updated status register value back to the specified GPR
             return new MipsExecution<T>

@@ -57,6 +57,9 @@
     <Project Path="src/Archs/RiscV/Zarem.Assembler.RiscV/Zarem.Assembler.RiscV.csproj" Id="3d911770-bf60-4cd7-a0ec-e64bf829fe95">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
+    <Project Path="src/Archs/RiscV/Zarem.Debugger.RiscV/Zarem.Debugger.RiscV.csproj" Id="4301033c-3ed8-4702-8592-6856ce15345a">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
     <Project Path="src/Archs/RiscV/Zarem.Emulator.RiscV/Zarem.Emulator.RiscV.csproj" Id="764aab63-d716-4e2d-807a-134369480fd6">
       <BuildType Solution="Alpha|*" Project="Debug" />
       <Build Solution="Alpha|*" Project="false" />

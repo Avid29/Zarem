@@ -17,11 +17,14 @@ namespace Zarem.Assembler;
 /// </summary>
 public class RiscVAssemblerHandler : IAssemblerHandler<RiscVAssemblerConfig>
 {
+    private readonly RiscVInstructionTable _instructionTable;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVAssemblerHandler"/> class.
     /// </summary>
     public RiscVAssemblerHandler(RiscVAssemblerConfig config)
     {
+        _instructionTable = new(config);
         Config = config;
     }
 
@@ -43,6 +46,7 @@ public class RiscVAssemblerHandler : IAssemblerHandler<RiscVAssemblerConfig>
     /// <inheritdoc/>
     public IParsedInstruction? ParseInstruction(AssemblyLine line, Address address, IReadOnlyDictionary<string, Symbol> symbols, ILogger? logger)
     {
-        throw new NotImplementedException();
+        var parser = new RiscVInstructionParser(Config, _instructionTable, address, symbols, logger);
+        return parser.Parse(line);
     }
 }

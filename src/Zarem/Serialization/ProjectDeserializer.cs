@@ -110,9 +110,22 @@ public static partial class ProjectSerializer
 
     private static void DeserializeSimple(object obj, XElement child, PropertyInfo prop)
     {
-        var value = Convert.ChangeType(
-            child.Value,
-            prop.PropertyType);
+        object? value;
+        Type type = prop.PropertyType;
+
+        if (type == typeof(string))
+        {
+            value = child.Value;
+        }
+        else if (TryParseParsable(type, child.Value, out var parsedValue))
+        {
+            value = parsedValue;
+        }
+        else
+        {
+            // Fallback for primitives like int, bool, decimal
+            value = Convert.ChangeType(child.Value, type);
+        }
 
         prop.SetValue(obj, value);
     }
@@ -149,5 +162,38 @@ public static partial class ProjectSerializer
 
         throw new InvalidOperationException(
             $"Value '{xmlValue}' is not valid for enum {enumType.Name}");
+    }
+
+    private static bool TryParseParsable(Type type, string input, out object? result)
+    {
+        result = null;
+
+        // Look for IParsable<T> implementation
+        var parsableInterface = type.GetInterfaces()
+            .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IParsable<>));
+
+        if (parsableInterface == null)
+            return false;
+
+        // Get the static Parse method: T Parse(string, IFormatProvider)
+        var parseMethod = type.GetMethod("Parse",
+            BindingFlags.Static | BindingFlags.Public,
+            null,
+            [typeof(string), typeof(IFormatProvider)],
+            null);
+
+        if (parseMethod == null)
+            return false;
+
+        try
+        {
+            // Invoke Parse(input, null)
+            result = parseMethod.Invoke(null, [input, null]);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

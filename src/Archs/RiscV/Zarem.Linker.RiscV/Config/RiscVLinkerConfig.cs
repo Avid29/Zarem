@@ -22,12 +22,12 @@ public class RiscVLinkerConfig : LinkerConfig
     /// </summary>
     public RiscVLinkerConfig(RiscVVersionInfo version)
     {
-        Version = version;
+        VersionInfo = version;
     }
 
     /// <summary>
     /// Gets or sets the mips version to assemble with.
     /// </summary>
     [XmlIgnore]
-    public RiscVVersionInfo Version { get; internal set; }
+    public RiscVVersionInfo VersionInfo { get; internal set; }
 }

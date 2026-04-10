@@ -5,7 +5,7 @@ using Zarem.Models.Instructions.Enums.Operations;
 namespace Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 /// <summary>
-/// An enum for <see cref="OperationCode.Coprocessor1"/> instruction function codes.
+/// An enum for <see cref="MipsOpCode.Coprocessor1"/> instruction function codes.
 /// </summary>
 public enum FloatFuncCode
 {

@@ -5,7 +5,7 @@ namespace Zarem.Models.Instructions.Enums.Operations;
 /// <summary>
 /// An enum representing the operation code (opcode) of a RISC-V instruction.
 /// </summary>
-public enum OperationCode : byte
+public enum RiscVOpCode : byte
 {
     #pragma warning disable CS1591
 
@@ -21,7 +21,7 @@ public enum OperationCode : byte
     AluImmediate64 = 0x4b,
     Alu64 = 0x5b,
     Branch = 0x63,
-    Jalr = 0x67,
+    JumpAndLinkRegister = 0x67,
     JumpAndLink = 0x6f,
     System = 0x73,
 

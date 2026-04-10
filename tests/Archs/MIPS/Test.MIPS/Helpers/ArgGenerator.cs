@@ -45,14 +45,14 @@ public class ArgGenerator
         return (uint)Rnd.Next(0, 1 << 26) & ~0b11u;
     }
 
-    public static GPRegister RandomRegister(bool safe = true)
-            => (GPRegister)(safe ? Rnd.Next(0, 32) : Rnd.Next(32, 256));
+    public static MipsGpRegister RandomRegister(bool safe = true)
+            => (MipsGpRegister)(safe ? Rnd.Next(0, 32) : Rnd.Next(32, 256));
 
-    public static OperationCode RandomOpCode(bool safe = true)
-            => (OperationCode)(safe ? Rnd.Next(0, 64) : Rnd.Next(64, 256));
+    public static MipsOpCode RandomOpCode(bool safe = true)
+            => (MipsOpCode)(safe ? Rnd.Next(0, 64) : Rnd.Next(64, 256));
 
     public static FunctionCode RandomFuncCode(bool safe = true)
             => (FunctionCode)(safe ? Rnd.Next(0, 64) : Rnd.Next(64, 256));
 
-    public static FloatFormat RandomFormat(HashSet<FloatFormat>? set) => set?.ElementAt(Random.Shared.Next(set.Count-1)) ?? FloatFormat.Single;
+    public static MipsFloatFormat RandomFormat(HashSet<MipsFloatFormat>? set) => set?.ElementAt(Random.Shared.Next(set.Count-1)) ?? MipsFloatFormat.Single;
 }

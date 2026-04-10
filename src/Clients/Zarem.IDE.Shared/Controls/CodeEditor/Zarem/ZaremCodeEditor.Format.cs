@@ -118,7 +118,7 @@ public partial class ZaremCodeEditor
         lineRange.CharacterFormat.ForegroundColor = Colors.White;
 
         // Tokenize the line
-        var tokenized = Tokenizer.TokenizeLine(line, MipsTokenizerProfile.Default, mode: TokenizerMode.IDE);
+        var tokenized = Tokenizer.TokenizeLine(line, TokenizerProfile ?? MipsTokenizerProfile.Default, mode: TokenizerMode.IDE);
         foreach (var token in tokenized[0].Tokens)
         {
             var tokenStart = lineStart + token.Location.Column;

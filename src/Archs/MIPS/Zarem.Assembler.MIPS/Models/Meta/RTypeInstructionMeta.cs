@@ -17,7 +17,7 @@ public record RTypeInstructionMeta : MipsInstructionMetaBase
     /// Gets the instruction operation code.
     /// </summary>
     [JsonPropertyName("op_code")]
-    public OperationCode OperationCode { get; init; } = OperationCode.Special;
+    public MipsOpCode OperationCode { get; init; } = MipsOpCode.Special;
 
     /// <summary>
     /// Gets the instruction function code.
@@ -26,10 +26,10 @@ public record RTypeInstructionMeta : MipsInstructionMetaBase
     public required FunctionCode FuncCode { get; init; }
 
     /// <inheritdoc/>
-    public override InstructionType Type => OperationCode switch
+    public override MipsInstructionType Type => OperationCode switch
     {
-        OperationCode.Special2 => InstructionType.Special2R,
-        OperationCode.Special3 => InstructionType.Special3R,
-        OperationCode.Special or  _ => InstructionType.BasicR,
+        MipsOpCode.Special2 => MipsInstructionType.Special2R,
+        MipsOpCode.Special3 => MipsInstructionType.Special3R,
+        MipsOpCode.Special or  _ => MipsInstructionType.BasicR,
     };
 }

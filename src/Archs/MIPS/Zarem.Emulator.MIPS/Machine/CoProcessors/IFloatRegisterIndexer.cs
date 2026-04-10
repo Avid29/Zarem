@@ -17,5 +17,5 @@ public interface IFloatRegisterIndexer<T>
     /// </summary>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
-    T this[FloatRegister reg] { get; set; }
+    T this[MipsFloatRegister reg] { get; set; }
 }

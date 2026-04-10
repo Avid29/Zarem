@@ -4,6 +4,7 @@ using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Models.Tables;
 
@@ -31,6 +32,9 @@ public partial class ZaremCodeEditor
 
     public static readonly DependencyProperty ExecutingLocationProperty =
         DependencyProperty.Register(nameof(ExecutingLocation), typeof(SourceRange?), typeof(ZaremCodeEditor), new PropertyMetadata(null));
+
+    public static readonly DependencyProperty TokenizerProfileProperty =
+        DependencyProperty.Register(nameof(TokenizerProfile), typeof(ITokenizerProfile), typeof(ZaremCodeEditor), new PropertyMetadata(null));
 
     /// <inheritdoc/>
     public string Text
@@ -78,6 +82,12 @@ public partial class ZaremCodeEditor
     {
         get => (SourceRange?)GetValue(ExecutingLocationProperty);
         set => SetValue(ExecutingLocationProperty, value);
+    }
+
+    public ITokenizerProfile? TokenizerProfile
+    {
+        get => (ITokenizerProfile?)GetValue(TokenizerProfileProperty);
+        set => SetValue(TokenizerProfileProperty, value);
     }
 
     private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)

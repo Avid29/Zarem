@@ -15,5 +15,5 @@ public record JTypeInstructionMeta : RiscVInstructionMetaBase
     /// Gets the instruction operation code.
     /// </summary>
     [JsonPropertyName("op_code")]
-    public OperationCode OpCode { get; init; } = OperationCode.JumpAndLink;
+    public RiscVOpCode OpCode { get; init; } = RiscVOpCode.JumpAndLink;
 }

@@ -5,7 +5,7 @@ namespace Zarem.Models.Instructions.Enums.Registers;
 /// <summary>
 /// An enum for general process registers.
 /// </summary>
-public enum GPRegister : byte
+public enum MipsGpRegister : byte
 {
 #pragma warning disable CS1591
 

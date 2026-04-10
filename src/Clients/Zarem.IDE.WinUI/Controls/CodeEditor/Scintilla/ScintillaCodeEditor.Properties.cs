@@ -3,6 +3,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Models.Tables;
 
@@ -30,6 +31,9 @@ public partial class ScintillaCodeEditor
 
     public static readonly DependencyProperty ExecutingLocationProperty =
         DependencyProperty.Register(nameof(ExecutingLocation), typeof(SourceRange?), typeof(ScintillaCodeEditor), new PropertyMetadata(null, OnExecutingLineChanged));
+
+    public static readonly DependencyProperty TokenizerProfileProperty =
+        DependencyProperty.Register(nameof(TokenizerProfile), typeof(ITokenizerProfile), typeof(ScintillaCodeEditor), new PropertyMetadata(null));
 
     /// <summary>
     /// Gets or sets the text contained in the editbox.
@@ -85,6 +89,12 @@ public partial class ScintillaCodeEditor
     {
         get => (SourceRange?)GetValue(ExecutingLocationProperty);
         set => SetValue(ExecutingLocationProperty, value);
+    }
+
+    public ITokenizerProfile? TokenizerProfile
+    {
+        get => (ITokenizerProfile?)GetValue(TokenizerProfileProperty);
+        set => SetValue(TokenizerProfileProperty, value);
     }
 
     private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs arg)

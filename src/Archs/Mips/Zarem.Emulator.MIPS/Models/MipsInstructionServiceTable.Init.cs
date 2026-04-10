@@ -37,98 +37,98 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
 
     private void InitRoot(MipsVersion version)
     {
-        _opCodeTable[(int)OperationCode.Special] = &DispatchSpecial;
-        _opCodeTable[(int)OperationCode.RegisterImmediate] = &DispatchRegImm;
-        _opCodeTable[(int)OperationCode.Jump] = &Jump;
-        _opCodeTable[(int)OperationCode.JumpAndLink] = &JumpLink;
-        _opCodeTable[(int)OperationCode.BranchOnEquals] = &BranchOn<XeqLogic<T>>;
-        _opCodeTable[(int)OperationCode.BranchOnNotEquals] = &BranchOn<XneLogic<T>>;
-        _opCodeTable[(int)OperationCode.BranchOnLessThanOrEqualToZero] = &BranchOn<XlezLogic<T, TS>>;
-        _opCodeTable[(int)OperationCode.BranchOnGreaterThanZero] = &BranchOn<XgtzLogic<T, TS>>;
-        _opCodeTable[(int)OperationCode.AddImmediate] = &CheckedAluI<AddLogic<uint, int>, uint, int>;
-        _opCodeTable[(int)OperationCode.AddImmediateUnsigned] = &AluI<AdduLogic<uint>, uint>;
-        _opCodeTable[(int)OperationCode.SetLessThanImmediate] = &AluISigned<SltLogic<T, TS>, T, TS>;
-        _opCodeTable[(int)OperationCode.SetLessThanImmediateUnsigned] = &AluI<SltuLogic<T>, T>;
-        _opCodeTable[(int)OperationCode.AndImmediate] = &AluI<AndLogic<T>, T>;
-        _opCodeTable[(int)OperationCode.OrImmediate] = &AluI<OrLogic<T>, T>;
-        _opCodeTable[(int)OperationCode.ExclusiveOrImmediate] = &AluI<XorLogic<T>, T>;
-        _opCodeTable[(int)OperationCode.LoadUpperImmediate] = &Lui;
-        _opCodeTable[(int)OperationCode.Coprocessor0] = &CreateCoProc0Execution;
-        _opCodeTable[(int)OperationCode.Coprocessor1] = &CreateCoProc1Execution;
-        _opCodeTable[(int)OperationCode.Coprocessor2] = &NotImplemented; // TODO
-        _opCodeTable[(int)OperationCode.LoadByte] = &Load<sbyte>;
-        _opCodeTable[(int)OperationCode.LoadHalfWord] = &Load<short>;
-        _opCodeTable[(int)OperationCode.LoadWord] = &Load<int>;
-        _opCodeTable[(int)OperationCode.LoadByteUnsigned] = &Load<byte>;
-        _opCodeTable[(int)OperationCode.LoadHalfWordUnsigned] = &Load<ushort>;
-        _opCodeTable[(int)OperationCode.StoreByte] = &Store<sbyte>;
-        _opCodeTable[(int)OperationCode.StoreHalfWord] = &Store<short>;
-        _opCodeTable[(int)OperationCode.StoreWord] = &Store<int>;
-        _opCodeTable[(int)OperationCode.LoadWordCoprocessor1] = &NotImplemented; // TODO
-        _opCodeTable[(int)OperationCode.StoreWordCoprocessor1] = &NotImplemented; // TODO
+        _opCodeTable[(int)MipsOpCode.Special] = &DispatchSpecial;
+        _opCodeTable[(int)MipsOpCode.RegisterImmediate] = &DispatchRegImm;
+        _opCodeTable[(int)MipsOpCode.Jump] = &Jump;
+        _opCodeTable[(int)MipsOpCode.JumpAndLink] = &JumpLink;
+        _opCodeTable[(int)MipsOpCode.BranchOnEquals] = &BranchOn<XeqLogic<T>>;
+        _opCodeTable[(int)MipsOpCode.BranchOnNotEquals] = &BranchOn<XneLogic<T>>;
+        _opCodeTable[(int)MipsOpCode.BranchOnLessThanOrEqualToZero] = &BranchOn<XlezLogic<T, TS>>;
+        _opCodeTable[(int)MipsOpCode.BranchOnGreaterThanZero] = &BranchOn<XgtzLogic<T, TS>>;
+        _opCodeTable[(int)MipsOpCode.AddImmediate] = &CheckedAluI<AddLogic<uint, int>, uint, int>;
+        _opCodeTable[(int)MipsOpCode.AddImmediateUnsigned] = &AluI<AdduLogic<uint>, uint>;
+        _opCodeTable[(int)MipsOpCode.SetLessThanImmediate] = &AluISigned<SltLogic<T, TS>, T, TS>;
+        _opCodeTable[(int)MipsOpCode.SetLessThanImmediateUnsigned] = &AluI<SltuLogic<T>, T>;
+        _opCodeTable[(int)MipsOpCode.AndImmediate] = &AluI<AndLogic<T>, T>;
+        _opCodeTable[(int)MipsOpCode.OrImmediate] = &AluI<OrLogic<T>, T>;
+        _opCodeTable[(int)MipsOpCode.ExclusiveOrImmediate] = &AluI<XorLogic<T>, T>;
+        _opCodeTable[(int)MipsOpCode.LoadUpperImmediate] = &Lui;
+        _opCodeTable[(int)MipsOpCode.Coprocessor0] = &CreateCoProc0Execution;
+        _opCodeTable[(int)MipsOpCode.Coprocessor1] = &CreateCoProc1Execution;
+        _opCodeTable[(int)MipsOpCode.Coprocessor2] = &NotImplemented; // TODO
+        _opCodeTable[(int)MipsOpCode.LoadByte] = &Load<sbyte>;
+        _opCodeTable[(int)MipsOpCode.LoadHalfWord] = &Load<short>;
+        _opCodeTable[(int)MipsOpCode.LoadWord] = &Load<int>;
+        _opCodeTable[(int)MipsOpCode.LoadByteUnsigned] = &Load<byte>;
+        _opCodeTable[(int)MipsOpCode.LoadHalfWordUnsigned] = &Load<ushort>;
+        _opCodeTable[(int)MipsOpCode.StoreByte] = &Store<sbyte>;
+        _opCodeTable[(int)MipsOpCode.StoreHalfWord] = &Store<short>;
+        _opCodeTable[(int)MipsOpCode.StoreWord] = &Store<int>;
+        _opCodeTable[(int)MipsOpCode.LoadWordCoprocessor1] = &NotImplemented; // TODO
+        _opCodeTable[(int)MipsOpCode.StoreWordCoprocessor1] = &NotImplemented; // TODO
 
         if (version is < MipsVersion.MipsIII)
         {
-            _opCodeTable[(int)OperationCode.Coprocessor3] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.LoadWordCoprocessor3] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.StoreWordCoprocessor3] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.Coprocessor3] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.LoadWordCoprocessor3] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.StoreWordCoprocessor3] = &NotImplemented; // TODO
 
             if (version is >= MipsVersion.MipsII)
             {
-                _opCodeTable[(int)OperationCode.LoadDoubleWordCoprocessor3] = &NotImplemented; // TODO
-                _opCodeTable[(int)OperationCode.StoreDoubleWordCoprocessor3] = &NotImplemented; // TODO
+                _opCodeTable[(int)MipsOpCode.LoadDoubleWordCoprocessor3] = &NotImplemented; // TODO
+                _opCodeTable[(int)MipsOpCode.StoreDoubleWordCoprocessor3] = &NotImplemented; // TODO
             }
         }
         
         if (version is >= MipsVersion.MipsIII && version.Is64Bit())
         {
-            _opCodeTable[(int)OperationCode.DoubleWordAddImmediate] = &CheckedAluI<AddLogic<ulong, long>, ulong, long>;
-            _opCodeTable[(int)OperationCode.DoubleWordAddImmediateUnsigned] = &AluI<AdduLogic<ulong>, ulong>;
-            _opCodeTable[(int)OperationCode.LoadDoubleWordLeft] = &NotImplemented;
-            _opCodeTable[(int)OperationCode.LoadDoubleWordRight] = &NotImplemented;
-            _opCodeTable[(int)OperationCode.LoadDoubleWord] = &Load<long>;
-            _opCodeTable[(int)OperationCode.StoreDoubleWord] = &Store<long>;
+            _opCodeTable[(int)MipsOpCode.DoubleWordAddImmediate] = &CheckedAluI<AddLogic<ulong, long>, ulong, long>;
+            _opCodeTable[(int)MipsOpCode.DoubleWordAddImmediateUnsigned] = &AluI<AdduLogic<ulong>, ulong>;
+            _opCodeTable[(int)MipsOpCode.LoadDoubleWordLeft] = &NotImplemented;
+            _opCodeTable[(int)MipsOpCode.LoadDoubleWordRight] = &NotImplemented;
+            _opCodeTable[(int)MipsOpCode.LoadDoubleWord] = &Load<long>;
+            _opCodeTable[(int)MipsOpCode.StoreDoubleWord] = &Store<long>;
         }
 
         if (version is < MipsVersion.Mips_R6)
         {
-            _opCodeTable[(int)OperationCode.LoadWordLeft] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.LoadWordRight] = &NotImplemented;
-            _opCodeTable[(int)OperationCode.StoreWordLeft] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.StoreWordRight] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.LoadWordCoprocessor2] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.StoreWordCoprocessor2] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.LoadWordLeft] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.LoadWordRight] = &NotImplemented;
+            _opCodeTable[(int)MipsOpCode.StoreWordLeft] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.StoreWordRight] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.LoadWordCoprocessor2] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.StoreWordCoprocessor2] = &NotImplemented; // TODO
         }
 
         if (version is >= MipsVersion.MipsII)
         {
-            _opCodeTable[(int)OperationCode.LoadLinkedWord] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.StoreConditionalWord] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.LoadLinkedWord] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.StoreConditionalWord] = &NotImplemented; // TODO
         }
 
         if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
         {
-            _opCodeTable[(int)OperationCode.BranchOnEqualLikely] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.BranchOnNotEqualLikely] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.BranchOnLessThanOrEqualToZeroLikely] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.BranchOnGreaterThanZeroLikely] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.BranchOnEqualLikely] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.BranchOnNotEqualLikely] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.BranchOnLessThanOrEqualToZeroLikely] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.BranchOnGreaterThanZeroLikely] = &NotImplemented; // TODO
 
-            _opCodeTable[(int)OperationCode.LoadDoubleWordCoprocessor1] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.LoadDoubleWordCoprocessor2] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.StoreDoubleWordCoprocessor1] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.StoreDoubleWordCoprocessor2] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.LoadDoubleWordCoprocessor1] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.LoadDoubleWordCoprocessor2] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.StoreDoubleWordCoprocessor1] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.StoreDoubleWordCoprocessor2] = &NotImplemented; // TODO
         }
 
         if (version is >= MipsVersion.Mips_R1 and < MipsVersion.Mips_R6)
         {
             InitSpecial2();
-            _opCodeTable[(int)OperationCode.Special2] = &DispatchSpecial2;
+            _opCodeTable[(int)MipsOpCode.Special2] = &DispatchSpecial2;
         }
 
         if (version is >= MipsVersion.Mips_R6)
         {
-            _opCodeTable[(int)OperationCode.BranchCompact] = &NotImplemented; // TODO
-            _opCodeTable[(int)OperationCode.BranchAndLinkCompact] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.BranchCompact] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.BranchAndLinkCompact] = &NotImplemented; // TODO
         }
     }
 

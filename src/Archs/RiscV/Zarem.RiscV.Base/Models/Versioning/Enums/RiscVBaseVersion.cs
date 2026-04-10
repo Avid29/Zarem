@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace Zarem.Models.Versioning.Enums;
+
 /// <summary>
 /// An enum for which RISC-V Base ISA or major version a feature is supported.
 /// </summary>

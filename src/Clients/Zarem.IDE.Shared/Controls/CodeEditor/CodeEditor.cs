@@ -7,17 +7,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Zarem.Assembler;
-using Zarem.Assembler.Config;
-using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Components.Interfaces;
 using Zarem.Helpers;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Models;
 using Zarem.Models.Breakpoints;
-using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Tables;
 
 namespace Zarem.IDE.Controls.CodeEditor;
@@ -56,6 +54,9 @@ public sealed partial class CodeEditor : Control, ICodeEditor
 
     public static readonly DependencyProperty ExecutingLocationProperty =
         DependencyProperty.Register(nameof(ExecutingLocation), typeof(SourceRange?), typeof(CodeEditor), new PropertyMetadata(null));
+
+    public static readonly DependencyProperty TokenizerProfileProperty =
+        DependencyProperty.Register(nameof(TokenizerProfile), typeof(ITokenizerProfile), typeof(CodeEditor), new PropertyMetadata(null));
 
     private const string ICodeEditorPartName = "PART_ICodeEditor";
 
@@ -132,6 +133,12 @@ public sealed partial class CodeEditor : Control, ICodeEditor
     {
         get => (SourceRange?)GetValue(ExecutingLocationProperty);
         set => SetValue(ExecutingLocationProperty, value);
+    }
+
+    public ITokenizerProfile? TokenizerProfile
+    {
+        get => (ITokenizerProfile?)GetValue(TokenizerProfileProperty);
+        set => SetValue(TokenizerProfileProperty, value);
     }
 
     public IAssembleComponent? Assembler { get; set; }

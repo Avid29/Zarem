@@ -37,10 +37,10 @@
                 SavedBrush="{StaticResource SavedRegister}"
                 TempBrush="{StaticResource TempRegister}" />
 
-            <DataTemplate x:Key="RegisterEncodingCellTemplate" x:DataType="reg:GPRegister">
+            <DataTemplate x:Key="RegisterEncodingCellTemplate" x:DataType="reg:MipsGpRegister">
                 <Border
                     Margin="1"
-                    Background="{x:Bind (reg:GPRegister), Converter={StaticResource RegisterEncodingColorConverter}}"
+                    Background="{x:Bind (reg:MipsGpRegister), Converter={StaticResource RegisterEncodingColorConverter}}"
                     CornerRadius="4">
                     <TextBlock
                         HorizontalAlignment="Center"
@@ -48,7 +48,7 @@
                         FontFamily="{StaticResource HappyMonkey}"
                         FontSize="18"
                         Foreground="Black"
-                        Text="{x:Bind tables:MipsRegisterTable.Instance.GetRegisterString((reg:GPRegister), reg:RegisterSet.GeneralPurpose)}" />
+                        Text="{x:Bind tables:MipsRegisterTable.Instance.GetRegisterString((reg:MipsGpRegister), reg:MipsRegisterSet.GeneralPurpose)}" />
                 </Border>
             </DataTemplate>
         </ResourceDictionary>

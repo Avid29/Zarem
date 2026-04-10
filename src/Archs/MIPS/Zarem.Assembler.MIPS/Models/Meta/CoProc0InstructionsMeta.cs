@@ -33,5 +33,5 @@ public record CoProc0InstructionsMeta : MipsInstructionMetaBase
     public MFMC0FuncCode? Mfmc0FuncCode { get; init; }
 
     /// <inheritdoc/>
-    public override InstructionType Type => InstructionType.Coproc0;
+    public override MipsInstructionType Type => MipsInstructionType.Coproc0;
 }

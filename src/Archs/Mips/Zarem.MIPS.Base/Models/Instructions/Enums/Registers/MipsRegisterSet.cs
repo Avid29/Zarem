@@ -5,7 +5,7 @@ namespace Zarem.Models.Instructions.Enums.Registers;
 /// <summary>
 /// An enum for register sets.
 /// </summary>
-public enum RegisterSet
+public enum MipsRegisterSet
 {
     /// <summary>
     /// Do not writeback to any register from any register set.
@@ -26,6 +26,7 @@ public enum RegisterSet
 #pragma warning disable CS1591
 
     GeneralPurpose,
+    CoProc0,
     FloatingPoints,
 
 #pragma warning restore CS1591

@@ -2,7 +2,7 @@
   {
     "type": "u-type",
     "name": "lui",
-    "opcode": 55,
+    "op_code": 55,
     "args": [ "rd", "upper_imm" ],
     "extension": "I",
     "behavior": "$rd = imm << 12"
@@ -10,7 +10,7 @@
   {
     "type": "u-type",
     "name": "auipc",
-    "opcode": 23,
+    "op_code": 23,
     "args": [ "rd", "upper_imm" ],
     "extension": "I",
     "behavior": "$rd = $pc + (imm << 12)"

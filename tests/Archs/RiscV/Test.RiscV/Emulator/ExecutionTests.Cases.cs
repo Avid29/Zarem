@@ -107,7 +107,7 @@ public partial class ExecutionTests
     {
         // Jump
         yield return [new ExecutionTestCase<T>("j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
-        yield return [new ExecutionTestCase<T>("jal 1000", GPRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(1000) }];
+        yield return [new ExecutionTestCase<T>("jal 1000", RiscVGpRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(1000) }];
 
         // Branch Equality
         yield return [new ExecutionTestCase<T>("beq t1, t2, 80") { ExpectedPC = T.CreateTruncating(4) }];

@@ -77,7 +77,7 @@ public partial class ScintillaCodeEditor
         var text = editor.GetLine(line).Trim('\n', '\r');
 
         // Tokenize the line
-        var tokenized = Tokenizer.TokenizeLine(text, MipsTokenizerProfile.Default, mode: TokenizerMode.IDE);
+        var tokenized = Tokenizer.TokenizeLine(text, TokenizerProfile ?? MipsTokenizerProfile.Default, mode: TokenizerMode.IDE);
 
         // Track the position
         long pos = GetMappedIndex(line, 0);

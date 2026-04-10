@@ -86,10 +86,10 @@ public struct FloatInstruction
     /// <summary>
     /// Creates a new floating-point coprocessor instruction.
     /// </summary>
-    public static FloatInstruction Create(FloatFuncCode funcCode, FloatFormat format, FloatRegister fs, FloatRegister fd, FloatRegister ft = FloatRegister.F0)
+    public static FloatInstruction Create(FloatFuncCode funcCode, MipsFloatFormat format, MipsFloatRegister fs, MipsFloatRegister fd, MipsFloatRegister ft = MipsFloatRegister.F0)
     {
         FloatInstruction value = default;
-        value.OpCode = OperationCode.Coprocessor1;
+        value.OpCode = MipsOpCode.Coprocessor1;
         value.FloatFuncCode = funcCode;
         value.Format = format;
         value.FS = fs;
@@ -101,10 +101,10 @@ public struct FloatInstruction
     /// <summary>
     /// Creates a new floating-point coprocessor instruction.
     /// </summary>
-    public static FloatInstruction Create(CoProc1RSCode code, GPRegister rt, FloatRegister fs)
+    public static FloatInstruction Create(CoProc1RSCode code, MipsGpRegister rt, MipsFloatRegister fs)
     {
         FloatInstruction value = default;
-        value.OpCode = OperationCode.Coprocessor1;
+        value.OpCode = MipsOpCode.Coprocessor1;
         value.CoProc1RSCode = code;
         value.RT = rt;
         value.FS = fs;
@@ -114,7 +114,7 @@ public struct FloatInstruction
     /// <summary>
     /// Gets the instruction's operation code.
     /// </summary>
-    public OperationCode OpCode
+    public MipsOpCode OpCode
     { 
         readonly get => _inst.OpCode;
         private set => _inst.OpCode = value;
@@ -135,31 +135,31 @@ public struct FloatInstruction
     public CoProc1RSCode CoProc1RSCode
     {
         readonly get => (CoProc1RSCode)_inst.RS;
-        private set => _inst.RS = (GPRegister)value;
+        private set => _inst.RS = (MipsGpRegister)value;
     }
 
     /// <summary>
     /// Gets the instruction's format.
     /// </summary>
-    public FloatFormat Format
+    public MipsFloatFormat Format
     {
-        readonly get => (FloatFormat)_inst.RS;
-        private set => _inst.RS = (GPRegister)value;
+        readonly get => (MipsFloatFormat)_inst.RS;
+        private set => _inst.RS = (MipsGpRegister)value;
     }
 
     /// <summary>
     /// Gets the instruction's FT Register.
     /// </summary>
-    public FloatRegister FT
+    public MipsFloatRegister FT
     {
-        readonly get => (FloatRegister)_inst.RT;
-        private set => _inst.RT = (GPRegister)value;
+        readonly get => (MipsFloatRegister)_inst.RT;
+        private set => _inst.RT = (MipsGpRegister)value;
     }
 
     /// <summary>
     /// Gets the instruction's RT Register.
     /// </summary>
-    public GPRegister RT
+    public MipsGpRegister RT
     {
         readonly get => _inst.RT;
         private set => _inst.RT = value;
@@ -168,18 +168,18 @@ public struct FloatInstruction
     /// <summary>
     /// Gets the instruction's FS Register.
     /// </summary>
-    public FloatRegister FS
+    public MipsFloatRegister FS
     {
-        readonly get => (FloatRegister)_inst.RD;
-        private set => _inst.RD = (GPRegister)value;
+        readonly get => (MipsFloatRegister)_inst.RD;
+        private set => _inst.RD = (MipsGpRegister)value;
     }
 
     /// <summary>
     /// Gets the instruction's FD Register.
     /// </summary>
-    public FloatRegister FD
+    public MipsFloatRegister FD
     {
-        readonly get => (FloatRegister)_inst.ShiftAmount;
+        readonly get => (MipsFloatRegister)_inst.ShiftAmount;
         private set => _inst.ShiftAmount = (byte)value;
     }
 

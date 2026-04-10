@@ -61,7 +61,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
     /// </summary>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
-    public T this[FloatRegister reg]
+    public T this[MipsFloatRegister reg]
     {
         get => RegisterFile[(int)reg];
         set => RegisterFile[(int)reg] = value;
@@ -75,7 +75,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
         private readonly FloatProcessor<T> _parent = parent;
 
         /// <inheritdoc/>
-        public float this[FloatRegister reg]
+        public float this[MipsFloatRegister reg]
         {
             get => BitConverter.UInt32BitsToSingle(uint.CreateTruncating(_parent[reg]));
             set => _parent[reg] = T.CreateTruncating(BitConverter.SingleToUInt32Bits(value));
@@ -90,7 +90,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
         private readonly FloatProcessor<T> _parent = parent;
 
         /// <inheritdoc/>
-        public int this[FloatRegister reg]
+        public int this[MipsFloatRegister reg]
         {
             get => int.CreateTruncating(_parent[reg]);
             set => _parent[reg] = T.CreateTruncating(value);
@@ -105,7 +105,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
         private readonly FloatProcessor<T> _parent = parent;
 
         /// <inheritdoc/>
-        public double this[FloatRegister reg]
+        public double this[MipsFloatRegister reg]
         {
             get => BitConverter.UInt64BitsToDouble(ulong.CreateTruncating(_parent[reg]));
             set => _parent[reg] = T.CreateTruncating(BitConverter.DoubleToUInt64Bits(value));
@@ -120,7 +120,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
         private readonly FloatProcessor<T> _parent = parent;
 
         /// <inheritdoc/>
-        public long this[FloatRegister reg]
+        public long this[MipsFloatRegister reg]
         {
             get => long.CreateTruncating(_parent[reg]);
             set => _parent[reg] = T.CreateTruncating(value);
@@ -135,7 +135,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
         private readonly FloatProcessor<T> _parent = parent;
 
         /// <inheritdoc/>
-        public double this[FloatRegister reg]
+        public double this[MipsFloatRegister reg]
         {
             get
             {
@@ -171,7 +171,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
         private readonly FloatProcessor<T> _parent = parent;
 
         /// <inheritdoc/>
-        public long this[FloatRegister reg]
+        public long this[MipsFloatRegister reg]
         {
             get
             {

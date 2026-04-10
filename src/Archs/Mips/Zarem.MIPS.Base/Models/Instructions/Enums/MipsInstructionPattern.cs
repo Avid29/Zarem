@@ -5,7 +5,7 @@ namespace Zarem.Models.Instructions.Enums;
 /// <summary>
 /// An enum for the mips instruction layout patterns.
 /// </summary>
-public enum InstructionPattern
+public enum MipsInstructionPattern
 {
     #pragma warning disable CS1591
 

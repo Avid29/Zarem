@@ -109,17 +109,13 @@ public class DebugService : IDebugService
         if (_session is null)
             return;
 
-        // Cheat and grab the mips emulator
-        if (_session.Emulator.Computer is not MipsComputer mipsComp)
-            return;
-
         _consoleService.ShowConsoleWindow();
         if (_session.Emulator.Computer.Devices.Any(x => x is IGraphicsDevice))
         {
             Service.Get<MainViewModel>().GoToPageByType<GraphicalOutputPageViewModel>();
         }
 
-        _session.Emulator.StateChanged += MipsEmu_StateChanged;
+        _session.Emulator.StateChanged += Emulator_StateChanged;
         _session.Debugger?.Halted += Debugger_Halted;
         _session.Debugger?.Resumed += DebugService_Resumed;
 
@@ -237,7 +233,7 @@ public class DebugService : IDebugService
         return true;
     }
 
-    private void MipsEmu_StateChanged(object? sender, EmulatorState e)
+    private void Emulator_StateChanged(object? sender, EmulatorState e)
     {
         if (e is EmulatorState.Stopped)
         {

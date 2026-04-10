@@ -25,7 +25,7 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase
     /// Gets the instruction argument pattern for parsing.
     /// </summary>
     [JsonPropertyName("args")]
-    public required Argument[] ArgumentPattern { get; init; }
+    public required RiscVArgument[] ArgumentPattern { get; init; }
 
     /// <inheritdoc/>
     public override int ArgumentCount =>  ArgumentPattern.Length;
@@ -68,6 +68,13 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase
     [JsonPropertyName("rd_fixed")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public byte? FixedRD { get; init; }
+
+    /// <summary>
+    /// Gets the fixed immediate value, if applicable.
+    /// </summary>
+    [JsonPropertyName("imm_fixed")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? FixedImm { get; init; }
 
     /// <summary>
     /// Checks if an instruction is valid for the provided processor configuration.

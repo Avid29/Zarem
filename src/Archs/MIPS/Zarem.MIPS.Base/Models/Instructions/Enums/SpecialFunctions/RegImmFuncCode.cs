@@ -6,7 +6,7 @@ using Zarem.Models.Instructions.Enums.Registers;
 namespace Zarem.Models.Instructions.Enums.SpecialFunctions;
 
 /// <summary>
-/// These values go in the <see cref="Argument.RT"/> field of instructions with <see cref="OperationCode.RegisterImmediate"/>.
+/// These values go in the <see cref="MipsArgument.RT"/> field of instructions with <see cref="MipsOpCode.RegisterImmediate"/>.
 /// </summary>
 public enum RegImmFuncCode : byte
 {
@@ -16,7 +16,7 @@ public enum RegImmFuncCode : byte
     /// <remarks>
     /// This value is too large to encode in a real instruction. If by accident
     /// this were encoded into an <see cref="MipsInstruction"/> struct, it would become 
-    /// <see cref="BranchOnLessThanZero"/> (or <see cref="GPRegister.Zero"/>) upon unencoding.
+    /// <see cref="BranchOnLessThanZero"/> (or <see cref="MipsGpRegister.Zero"/>) upon unencoding.
     /// </remarks>
     None = 0x20,
 

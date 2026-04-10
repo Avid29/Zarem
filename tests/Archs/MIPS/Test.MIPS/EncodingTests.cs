@@ -16,7 +16,7 @@ public class EncodingTests
     {
         // This test sets the opcode to each potential operation code with a random address.
         // It then asserts the readback is equivilient.
-        for (var i = OperationCode.Special; i <= OperationCode.StoreWordCoprocessor3; i++)
+        for (var i = MipsOpCode.Special; i <= MipsOpCode.StoreWordCoprocessor3; i++)
         {
             var instruction = MipsInstruction.CreateJ(i, ArgGenerator.RandomAddress(false));
             Assert.AreEqual(i, instruction.OpCode, $"Error setting operation code to {i}");
@@ -28,7 +28,7 @@ public class EncodingTests
     {
         // This test sets each register argument to each potential register with an otherwise random instruction.
         // It then asserts the readback is equivilient.
-        for (var i = GPRegister.Zero; i <= GPRegister.ReturnAddress; i++)
+        for (var i = MipsGpRegister.Zero; i <= MipsGpRegister.ReturnAddress; i++)
         {
             var instruction = MipsInstruction.CreateI(
                 ArgGenerator.RandomOpCode(false),

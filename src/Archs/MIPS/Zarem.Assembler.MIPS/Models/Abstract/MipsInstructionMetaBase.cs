@@ -27,7 +27,7 @@ public abstract record MipsInstructionMetaBase : InstructionMetaBase
     /// Gets the instruction parse type
     /// </summary>
     [JsonPropertyName("args")]
-    public required Argument[] ArgumentPattern { get; init; }
+    public required MipsArgument[] ArgumentPattern { get; init; }
 
     /// <inheritdoc/>
     public override int ArgumentCount => ArgumentPattern.Length;
@@ -107,7 +107,7 @@ public abstract record MipsInstructionMetaBase : InstructionMetaBase
     /// Gets the function's type.
     /// </summary>
     [JsonIgnore]
-    public abstract InstructionType Type { get; }
+    public abstract MipsInstructionType Type { get; }
 
     /// <summary>
     /// Check if an instruction is valid for a given version.

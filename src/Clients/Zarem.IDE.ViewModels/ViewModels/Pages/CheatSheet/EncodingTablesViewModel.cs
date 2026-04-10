@@ -20,7 +20,7 @@ public class EncodingTablesViewModel : CheatSheetSubPageViewModel
     {
         _localizationService = localizationService;
 
-        GPRegisters = [.. Enumerable.Range(0, 32).Select(x => (GPRegister)x)];
+        GPRegisters = [.. Enumerable.Range(0, 32).Select(x => (MipsGpRegister)x)];
 
     }
 
@@ -30,5 +30,5 @@ public class EncodingTablesViewModel : CheatSheetSubPageViewModel
     /// <summary>
     /// Gets the list of general purpose registers.
     /// </summary>
-    public GPRegister[] GPRegisters { get; }
+    public MipsGpRegister[] GPRegisters { get; }
 }

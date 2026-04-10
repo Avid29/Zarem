@@ -11,7 +11,7 @@ using Zarem.IDE.Models.CheatSheet.Enums;
 namespace Zarem.IDE.Converters;
 
 /// <summary>
-/// A converter that converts an <see cref="InstructionType"/> into a <see cref="SolidColorBrush"/>.
+/// A converter that converts an <see cref="MipsInstructionType"/> into a <see cref="SolidColorBrush"/>.
 /// </summary>
 public partial class EncodingPatternSectionColorConverter : IValueConverter
 {

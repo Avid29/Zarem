@@ -29,17 +29,17 @@ public readonly struct PseudoInstruction
     /// <summary>
     /// Gets or sets the pseudo-instruction rs register.
     /// </summary>
-    public GPRegister RS { get; init; }
+    public MipsGpRegister RS { get; init; }
 
     /// <summary>
     /// Gets or sets the pseudo-instruction rt register.
     /// </summary>
-    public GPRegister RT { get; init; }
+    public MipsGpRegister RT { get; init; }
 
     /// <summary>
     /// Gets or sets the pseudo-instruction rd register.
     /// </summary>
-    public GPRegister RD { get; init; }
+    public MipsGpRegister RD { get; init; }
 
     /// <summary>
     /// Gets or sets the pseudo-instruction immediate value.
@@ -61,29 +61,29 @@ public readonly struct PseudoInstruction
             PseudoOp.NoOperation =>
             [
                 // nop: sll zero, zero, 0
-                MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Zero, GPRegister.Zero),
+                MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Zero, MipsGpRegister.Zero),
             ],
             PseudoOp.SuperScalarNoOperation =>
             [
                 // ssnop: sll zero, zero, 1
-                MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Zero, GPRegister.Zero, 1),
+                MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Zero, MipsGpRegister.Zero, 1),
             ],
             PseudoOp.UnconditionalBranch =>
             [
                 // b offset: beq zero, zero, offset
-                MipsInstruction.CreateBranch(OperationCode.BranchOnEquals, GPRegister.Zero, GPRegister.Zero, Immediate),
+                MipsInstruction.CreateBranch(MipsOpCode.BranchOnEquals, MipsGpRegister.Zero, MipsGpRegister.Zero, Immediate),
             ],
             PseudoOp.BranchOnLessThan =>
             [
                 // blt rs, rt, offset: slt at, rs, rt; bne at, zero, offset
-                MipsInstruction.CreateR(FunctionCode.SetLessThan, RS, RT, GPRegister.AssemblerTemporary),
-                MipsInstruction.CreateBranch(OperationCode.BranchOnNotEquals, GPRegister.AssemblerTemporary, GPRegister.Zero, Immediate)
+                MipsInstruction.CreateR(FunctionCode.SetLessThan, RS, RT, MipsGpRegister.AssemblerTemporary),
+                MipsInstruction.CreateBranch(MipsOpCode.BranchOnNotEquals, MipsGpRegister.AssemblerTemporary, MipsGpRegister.Zero, Immediate)
             ],
             PseudoOp.LoadImmediate =>
             [
                 // li rt, imm: lui rt, upper; ori rt, rt, lower
-                MipsInstruction.CreateI(OperationCode.LoadUpperImmediate, GPRegister.Zero, RT, (short)(Immediate >> 16)),
-                MipsInstruction.CreateI(OperationCode.OrImmediate, RT, RT, (short)Immediate)
+                MipsInstruction.CreateI(MipsOpCode.LoadUpperImmediate, MipsGpRegister.Zero, RT, (short)(Immediate >> 16)),
+                MipsInstruction.CreateI(MipsOpCode.OrImmediate, RT, RT, (short)Immediate)
             ],
             PseudoOp.AbsoluteValue =>
             [
@@ -91,26 +91,26 @@ public readonly struct PseudoInstruction
                 // 1. move rd, rs 
                 // 2. bgez rs, 8 (skip next) 
                 // 3. sub rd, zero, rs
-                MipsInstruction.CreateR(FunctionCode.AddUnsigned, RS, GPRegister.Zero, RD),
+                MipsInstruction.CreateR(FunctionCode.AddUnsigned, RS, MipsGpRegister.Zero, RD),
                 MipsInstruction.CreateBranch(RegImmFuncCode.BranchOnGreaterThanOrEqualToZero, RS, 2), // Offset is usually instruction count (2 instructions)
-                MipsInstruction.CreateR(FunctionCode.Subtract, GPRegister.Zero, RS, RD),
+                MipsInstruction.CreateR(FunctionCode.Subtract, MipsGpRegister.Zero, RS, RD),
             ],
             PseudoOp.Move =>
             [
                 // move rd, rs: addu rd, rs, zero
-                MipsInstruction.CreateR(FunctionCode.AddUnsigned, RS, GPRegister.Zero, RD),
+                MipsInstruction.CreateR(FunctionCode.AddUnsigned, RS, MipsGpRegister.Zero, RD),
             ],
             PseudoOp.LoadAddress =>
             [
                 // la rd, addr: lui rd, upper; ori rd, rd, lower
-                MipsInstruction.CreateI(OperationCode.LoadUpperImmediate, GPRegister.Zero, RD, (short)(Immediate >> 16)),
-                MipsInstruction.CreateI(OperationCode.OrImmediate, RD, RD, (short)Immediate)
+                MipsInstruction.CreateI(MipsOpCode.LoadUpperImmediate, MipsGpRegister.Zero, RD, (short)(Immediate >> 16)),
+                MipsInstruction.CreateI(MipsOpCode.OrImmediate, RD, RD, (short)Immediate)
             ],
             PseudoOp.SetGreaterThanOrEqual =>
             [
                 // sge rd, rs, rt: slt rd, rs, rt; xori rd, rd, 1
                 MipsInstruction.CreateR(FunctionCode.SetLessThan, RS, RT, RD),
-                MipsInstruction.CreateI(OperationCode.ExclusiveOrImmediate, RD, RD, 1),
+                MipsInstruction.CreateI(MipsOpCode.ExclusiveOrImmediate, RD, RD, 1),
             ],
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsInstruction[]>(),
         };

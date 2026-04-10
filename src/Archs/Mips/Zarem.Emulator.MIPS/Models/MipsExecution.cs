@@ -24,7 +24,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static MipsExecution<T> CreateWriteback(GPRegister dest, T writeBack)
+    public static MipsExecution<T> CreateWriteback(MipsGpRegister dest, T writeBack)
     {
         return new MipsExecution<T>
         {
@@ -48,7 +48,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public unsafe static MipsExecution<T> CreateFloatWriteback<TFloat>(FloatRegister dest, TFloat writeBack)
+    public unsafe static MipsExecution<T> CreateFloatWriteback<TFloat>(MipsFloatRegister dest, TFloat writeBack)
         where TFloat : unmanaged, INumber<TFloat>
     {
         long longValue = writeBack switch
@@ -83,7 +83,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static MipsExecution<T> CreateMemRead(GPRegister dest, T address, int size, bool signed = true)
+    public static MipsExecution<T> CreateMemRead(MipsGpRegister dest, T address, int size, bool signed = true)
     {
         return new MipsExecution<T>
         {
@@ -122,7 +122,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static MipsExecution<T> CreateJumpAndLink(T absolutePC, T returnAddress, GPRegister raReg = GPRegister.ReturnAddress)
+    public static MipsExecution<T> CreateJumpAndLink(T absolutePC, T returnAddress, MipsGpRegister raReg = MipsGpRegister.ReturnAddress)
     {
         return new MipsExecution<T>
         {
@@ -186,9 +186,9 @@ public readonly struct MipsExecution<T>
     /// Gets the general purpose register destination of the output.
     /// </summary>
     /// <remarks>
-    /// <see cref="GPRegister.Zero"/> if none.
+    /// <see cref="MipsGpRegister.Zero"/> if none.
     /// </remarks>
-    public GPRegister GPR { get; init; }
+    public MipsGpRegister GPR { get; init; }
 
     /// <summary>
     /// Gets the type of secondary effect from the execution, if any.
@@ -258,9 +258,9 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the register set to writeback to for co-process writeback.
     /// </summary>
-    public GPRegister CoProcReg
+    public MipsGpRegister CoProcReg
     {
-        get => (GPRegister)byte.CreateTruncating(BitField.GetField(_secondary1, REG_BITCOUNT, 0));
+        get => (MipsGpRegister)byte.CreateTruncating(BitField.GetField(_secondary1, REG_BITCOUNT, 0));
         init
         {
             BitField.SetField(ref _secondary1, REG_BITCOUNT, 0, T.CreateTruncating((byte)value));
@@ -274,16 +274,16 @@ public readonly struct MipsExecution<T>
     public CP0Registers CoProc0Reg
     {
         get => (CP0Registers)CoProcReg;
-        init => CoProcReg = (GPRegister)value;
+        init => CoProcReg = (MipsGpRegister)value;
     }
 
     /// <summary>
     /// Gets the coproc1 register for a co-process writeback.
     /// </summary>
-    public FloatRegister FloatReg
+    public MipsFloatRegister FloatReg
     {
-        get => (FloatRegister)CoProcReg;
-        init => CoProcReg = (GPRegister)value;
+        get => (MipsFloatRegister)CoProcReg;
+        init => CoProcReg = (MipsGpRegister)value;
     }
 
     /// <summary>

@@ -28,5 +28,5 @@ public record PseudoInstructionMeta : MipsInstructionMetaBase
     public required int? RealizedCount { get; init; }
 
     /// <inheritdoc/>
-    public override InstructionType Type => InstructionType.Pseudo;
+    public override MipsInstructionType Type => MipsInstructionType.Pseudo;
 }

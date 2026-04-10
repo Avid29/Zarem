@@ -84,7 +84,7 @@ public partial class ExecutionTests
         else
         {
             // If no register check was provided, we at least want to make sure no register was written to (as that would be unexpected)
-            Assert.AreEqual(GPRegister.Zero, execution.WritebackGPRegister);
+            Assert.AreEqual(RiscVGpRegister.Zero, execution.WritebackGPRegister);
         }
 
         var expectedPC = @case.ExpectedPC;

@@ -11,20 +11,20 @@ public partial class RegisterEncodingColorConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, string language)
     {
-        if (value is not GPRegister reg)
+        if (value is not MipsGpRegister reg)
             return null;
 
         return reg switch
         {
-            GPRegister.Zero or GPRegister.AssemblerTemporary => OtherBrush,
-            GPRegister.ReturnValue0 or GPRegister.ReturnValue1 => ReturnValueBrush,
-            >= GPRegister.Argument0 and <= GPRegister.Argument3 => ArgBrush,
-            (>= GPRegister.Temporary0 and <= GPRegister.Temporary7)
-            or GPRegister.Temporary8 or GPRegister.Temporary9 => TempBrush,
-            >= GPRegister.Saved0 and <= GPRegister.Saved7 => SavedBrush,
-            GPRegister.Kernel0 or GPRegister.Kernel1 => KernelBrush,
-            GPRegister.GlobalPointer or GPRegister.StackPointer or GPRegister.FramePointer => EnvironmentBrush,
-            GPRegister.ReturnAddress => ReturnAddressBrush,
+            MipsGpRegister.Zero or MipsGpRegister.AssemblerTemporary => OtherBrush,
+            MipsGpRegister.ReturnValue0 or MipsGpRegister.ReturnValue1 => ReturnValueBrush,
+            >= MipsGpRegister.Argument0 and <= MipsGpRegister.Argument3 => ArgBrush,
+            (>= MipsGpRegister.Temporary0 and <= MipsGpRegister.Temporary7)
+            or MipsGpRegister.Temporary8 or MipsGpRegister.Temporary9 => TempBrush,
+            >= MipsGpRegister.Saved0 and <= MipsGpRegister.Saved7 => SavedBrush,
+            MipsGpRegister.Kernel0 or MipsGpRegister.Kernel1 => KernelBrush,
+            MipsGpRegister.GlobalPointer or MipsGpRegister.StackPointer or MipsGpRegister.FramePointer => EnvironmentBrush,
+            MipsGpRegister.ReturnAddress => ReturnAddressBrush,
             _ => null
         };
     }

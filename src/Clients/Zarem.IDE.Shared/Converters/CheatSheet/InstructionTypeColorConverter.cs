@@ -9,7 +9,7 @@ using Zarem.Models.Instructions.Enums;
 namespace Zarem.IDE.Converters;
 
 /// <summary>
-/// A converter that converts an <see cref="InstructionType"/> into a <see cref="SolidColorBrush"/>.
+/// A converter that converts an <see cref="MipsInstructionType"/> into a <see cref="SolidColorBrush"/>.
 /// </summary>
 public partial class InstructionTypeToColorConverter : IValueConverter
 {
@@ -18,25 +18,25 @@ public partial class InstructionTypeToColorConverter : IValueConverter
         if (value is null)
             return null;
 
-        if (value is not InstructionType type)
+        if (value is not MipsInstructionType type)
             throw new ArgumentException("Value must be of type InstructionType", nameof(value));
 
         return type switch
         {
-            InstructionType.BasicR => RTypeInstructionColor,
-            InstructionType.BasicI => ITypeInstructionColor,
-            InstructionType.BasicJ => JTypeInstructionColor,
+            MipsInstructionType.BasicR => RTypeInstructionColor,
+            MipsInstructionType.BasicI => ITypeInstructionColor,
+            MipsInstructionType.BasicJ => JTypeInstructionColor,
 
-            InstructionType.RegisterImmediateTrap or
-            InstructionType.RegisterImmediateBranch => RegImmInstructionColor,
+            MipsInstructionType.RegisterImmediateTrap or
+            MipsInstructionType.RegisterImmediateBranch => RegImmInstructionColor,
 
-            InstructionType.Special2R or
-            InstructionType.Special3R => SpecialInstructionColor,
+            MipsInstructionType.Special2R or
+            MipsInstructionType.Special3R => SpecialInstructionColor,
 
-            InstructionType.Coproc0 => CoProc0InstructionColor,
+            MipsInstructionType.Coproc0 => CoProc0InstructionColor,
 
-            InstructionType.Float or
-            InstructionType.Coproc1 => CoProc1InstructionColor,
+            MipsInstructionType.Float or
+            MipsInstructionType.Coproc1 => CoProc1InstructionColor,
 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<object>($"Unknown InstructionType: {type}"),
         };
