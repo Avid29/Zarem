@@ -66,7 +66,7 @@ public abstract class InstructionParserBase<TRegister, TSet>
     /// <summary>
     /// Gets the immediate value component of the instruction, if applicable.
     /// </summary>
-    protected int Immediate { get; private set; }
+    protected int Immediate { get; set; }
 
     /// <summary>
     /// Attempts to parse a register.

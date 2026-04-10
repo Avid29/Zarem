@@ -79,6 +79,7 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
         _rs1 = (GPRegister)(_meta.FixedRS1 ?? default);
         _rs2 = (GPRegister)(_meta.FixedRS2 ?? default);
         _rd = (GPRegister)(_meta.FixedRD ?? default);
+        Immediate = _meta.FixedImm ?? default;
 
         // Parse argument data according to pattern
         Argument[] pattern = _meta.ArgumentPattern;

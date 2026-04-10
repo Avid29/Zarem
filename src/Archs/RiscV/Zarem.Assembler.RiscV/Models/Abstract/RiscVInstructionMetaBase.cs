@@ -70,6 +70,13 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase
     public byte? FixedRD { get; init; }
 
     /// <summary>
+    /// Gets the fixed immediate value, if applicable.
+    /// </summary>
+    [JsonPropertyName("imm_fixed")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? FixedImm { get; init; }
+
+    /// <summary>
     /// Checks if an instruction is valid for the provided processor configuration.
     /// </summary>
     public bool IsValidFor(RiscVVersionInfo config)

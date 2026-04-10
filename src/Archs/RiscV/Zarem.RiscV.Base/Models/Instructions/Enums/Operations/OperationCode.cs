@@ -21,7 +21,7 @@ public enum OperationCode : byte
     AluImmediate64 = 0x4b,
     Alu64 = 0x5b,
     Branch = 0x63,
-    Jalr = 0x67,
+    JumpAndLinkRegister = 0x67,
     JumpAndLink = 0x6f,
     System = 0x73,
 
