@@ -4,6 +4,7 @@
     "name": "ecall",
     "opcode": 115,
     "funct3": 0,
+    "args": [],
     "extension": "I"
   },
   {
@@ -12,6 +13,7 @@
     "opcode": 115,
     "funct3": 0,
     "imm_fixed": 1,
+    "args": [],
     "extension": "I"
   }
 ]
