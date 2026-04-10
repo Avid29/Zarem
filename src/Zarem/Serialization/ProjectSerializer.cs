@@ -129,6 +129,8 @@ public static partial class ProjectSerializer
         return type.IsPrimitive
             || type == typeof(string)
             || type == typeof(decimal)
-            || type == typeof(DateTime);
+            || type == typeof(DateTime)
+            // Check if the type implements IParsable<T>
+            || type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IParsable<>));
     }
 }
