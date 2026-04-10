@@ -6,7 +6,7 @@ using Zarem.Models.Instructions.Enums.Registers;
 namespace Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 /// <summary>
-/// An enum for <see cref="OperationCode.Coprocessor1"/> instruction rs field function codes.
+/// An enum for <see cref="MipsOpCode.Coprocessor1"/> instruction rs field function codes.
 /// </summary>
 public enum CoProc1RSCode
 {
@@ -16,7 +16,7 @@ public enum CoProc1RSCode
     /// <remarks>
     /// This value is too large to encode in a real instruction. If by accident
     /// this were encoded into an <see cref="MipsInstruction"/> struct, it would become 
-    /// <see cref="MFC1"/> (or <see cref="GPRegister.Zero"/>) upon unencoding.
+    /// <see cref="MFC1"/> (or <see cref="MipsGpRegister.Zero"/>) upon unencoding.
     /// </remarks>
     None = 0x20,
     

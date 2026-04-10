@@ -25,7 +25,7 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase
     /// Gets the instruction argument pattern for parsing.
     /// </summary>
     [JsonPropertyName("args")]
-    public required Argument[] ArgumentPattern { get; init; }
+    public required RiscVArgument[] ArgumentPattern { get; init; }
 
     /// <inheritdoc/>
     public override int ArgumentCount =>  ArgumentPattern.Length;

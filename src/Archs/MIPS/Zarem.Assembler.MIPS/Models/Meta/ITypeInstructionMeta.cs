@@ -16,17 +16,17 @@ public record ITypeInstructionMeta : MipsInstructionMetaBase
     /// Gets the instruction operation code.
     /// </summary>
     [JsonPropertyName("op_code")]
-    public required OperationCode OperationCode { get; init; }
+    public required MipsOpCode OperationCode { get; init; }
 
     /// <inheritdoc/>
-    public override InstructionType Type
+    public override MipsInstructionType Type
     {
         get
         {
             bool isBranch = OperationCode is
-                (>= OperationCode.BranchOnEquals and <= OperationCode.BranchOnGreaterThanZero) or
-                (>= OperationCode.BranchOnEqualLikely and <= OperationCode.BranchOnGreaterThanZeroLikely);
-            return isBranch ? InstructionType.IBranch : InstructionType.BasicI;
+                (>= MipsOpCode.BranchOnEquals and <= MipsOpCode.BranchOnGreaterThanZero) or
+                (>= MipsOpCode.BranchOnEqualLikely and <= MipsOpCode.BranchOnGreaterThanZeroLikely);
+            return isBranch ? MipsInstructionType.IBranch : MipsInstructionType.BasicI;
         }
     }
 }

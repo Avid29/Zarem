@@ -5,10 +5,10 @@ using System.Text.Json.Serialization;
 namespace Zarem.Models.Instructions.Enums;
 
 /// <summary>
-/// An enum for float-point formats in floating point operations
+/// An enum for float-point formats in floating point operations.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum FloatFormat
+public enum MipsFloatFormat
 {
 #pragma warning disable CS1591
 

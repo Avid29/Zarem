@@ -24,7 +24,7 @@ public class MipsDebugHandler : IDebugHandler
     /// </summary>
     public MipsDebugHandler()
     {
-        var breakInstruction = MipsInstruction.CreateR(FunctionCode.Break, GPRegister.Zero, GPRegister.Zero, GPRegister.Zero);
+        var breakInstruction = MipsInstruction.CreateR(FunctionCode.Break, MipsGpRegister.Zero, MipsGpRegister.Zero, MipsGpRegister.Zero);
         _breakPointBytes = BitConverter.GetBytes((uint)breakInstruction);
 
         if (BitConverter.IsLittleEndian)
@@ -57,16 +57,16 @@ public class MipsDebugHandler : IDebugHandler
             return instruction.OpCode switch
             {
                 // Jumps
-                OperationCode.Jump or OperationCode.JumpAndLink or OperationCode.JumpAndLinkX => instruction.Address,
-                OperationCode.Special when instruction.FuncCode is FunctionCode.JumpRegister or FunctionCode.JumpAndLinkRegister => mipsCpu[instruction.RS],
+                MipsOpCode.Jump or MipsOpCode.JumpAndLink or MipsOpCode.JumpAndLinkX => instruction.Address,
+                MipsOpCode.Special when instruction.FuncCode is FunctionCode.JumpRegister or FunctionCode.JumpAndLinkRegister => mipsCpu[instruction.RS],
 
                 // Branches
-                OperationCode.BranchCompact or OperationCode.BranchAndLinkCompact or
-                (>= OperationCode.BranchOnEquals and <= OperationCode.BranchOnGreaterThanZero) or
-                (>= OperationCode.BranchOnEqualLikely and <= OperationCode.BranchOnGreaterThanZeroLikely) => StepBranch(instruction, mipsCpu, false),
+                MipsOpCode.BranchCompact or MipsOpCode.BranchAndLinkCompact or
+                (>= MipsOpCode.BranchOnEquals and <= MipsOpCode.BranchOnGreaterThanZero) or
+                (>= MipsOpCode.BranchOnEqualLikely and <= MipsOpCode.BranchOnGreaterThanZeroLikely) => StepBranch(instruction, mipsCpu, false),
 
                 // RT Branches
-                OperationCode.RegisterImmediate when instruction.RTFuncCode is
+                MipsOpCode.RegisterImmediate when instruction.RTFuncCode is
                 (>= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely) or
                 (>= RegImmFuncCode.BranchOnLessThanZeroAndLink and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink) => StepBranch(instruction, mipsCpu, false),
 
@@ -87,11 +87,11 @@ public class MipsDebugHandler : IDebugHandler
         return instruction.OpCode switch
         {
             // Jump and link
-            OperationCode.JumpAndLink => skipAddress,
-            OperationCode.Special when instruction.FuncCode is FunctionCode.JumpAndLinkRegister => skipAddress,
+            MipsOpCode.JumpAndLink => skipAddress,
+            MipsOpCode.Special when instruction.FuncCode is FunctionCode.JumpAndLinkRegister => skipAddress,
 
             // Branch and link
-            OperationCode.RegisterImmediate when instruction.RTFuncCode is > RegImmFuncCode.BranchOnLessThanZeroAndLink and < RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink => skipAddress,
+            MipsOpCode.RegisterImmediate when instruction.RTFuncCode is > RegImmFuncCode.BranchOnLessThanZeroAndLink and < RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink => skipAddress,
 
             // Default
             _ => GetStepAddress(computer),
@@ -102,7 +102,7 @@ public class MipsDebugHandler : IDebugHandler
     public ulong GetStepOutAddress(IComputer computer)
     {
         var mipsCpu = (IMipsCpu)computer.Cpu;
-        return mipsCpu[GPRegister.ReturnAddress];
+        return mipsCpu[MipsGpRegister.ReturnAddress];
     }
 
     /// <inheritdoc/>
@@ -115,11 +115,11 @@ public class MipsDebugHandler : IDebugHandler
 
         bool branch = instruction.OpCode switch
         {
-            OperationCode.BranchOnEquals or OperationCode.BranchOnEqualLikely => rs == rt,
-            OperationCode.BranchOnNotEquals or OperationCode.BranchOnNotEqualLikely => rs != rt,
-            OperationCode.BranchOnLessThanOrEqualToZero or OperationCode.BranchOnLessThanOrEqualToZeroLikely => (int)rs <= 0,
-            OperationCode.BranchOnGreaterThanZero or OperationCode.BranchOnGreaterThanZeroLikely => (int)rs > 0,
-            OperationCode.RegisterImmediate => instruction.RTFuncCode switch
+            MipsOpCode.BranchOnEquals or MipsOpCode.BranchOnEqualLikely => rs == rt,
+            MipsOpCode.BranchOnNotEquals or MipsOpCode.BranchOnNotEqualLikely => rs != rt,
+            MipsOpCode.BranchOnLessThanOrEqualToZero or MipsOpCode.BranchOnLessThanOrEqualToZeroLikely => (int)rs <= 0,
+            MipsOpCode.BranchOnGreaterThanZero or MipsOpCode.BranchOnGreaterThanZeroLikely => (int)rs > 0,
+            MipsOpCode.RegisterImmediate => instruction.RTFuncCode switch
             {
                 RegImmFuncCode.BranchOnLessThanZero or
                 RegImmFuncCode.BranchOnLessThanZeroLikely or
@@ -134,7 +134,7 @@ public class MipsDebugHandler : IDebugHandler
                 _ => false
             },
 
-            OperationCode.BranchCompact or OperationCode.BranchAndLinkCompact => true,
+            MipsOpCode.BranchCompact or MipsOpCode.BranchAndLinkCompact => true,
             _ => false,
         };
 

@@ -23,5 +23,5 @@ public interface IRiscVCpu : ICpu<IRiscVCpu, RiscVInstruction, RiscVTrap>
     /// </summary>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
-    ulong this[GPRegister reg] { get; set; }
+    ulong this[RiscVGpRegister reg] { get; set; }
 }

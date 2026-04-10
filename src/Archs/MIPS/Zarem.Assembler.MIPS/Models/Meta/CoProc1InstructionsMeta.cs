@@ -22,5 +22,5 @@ public record CoProc1InstructionsMeta : MipsInstructionMetaBase
     public required CoProc1RSCode RSCode { get; init; }
 
     /// <inheritdoc/>
-    public override InstructionType Type => InstructionType.Coproc1;
+    public override MipsInstructionType Type => MipsInstructionType.Coproc1;
 }

@@ -250,9 +250,9 @@ public partial class ExecutionTests
     {
         // Jump
         yield return [new ExecutionTestCase<T>("j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
-        yield return [new ExecutionTestCase<T>("jal 1000", GPRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(1000) }];
+        yield return [new ExecutionTestCase<T>("jal 1000", MipsGpRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(1000) }];
         yield return [new ExecutionTestCase<T>("jr $t4") { ExpectedPC = T.CreateTruncating(40) }];
-        yield return [new ExecutionTestCase<T>("jalr $t4", GPRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(40) }];
+        yield return [new ExecutionTestCase<T>("jalr $t4", MipsGpRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(40) }];
 
         // Branch Equality
         yield return [new ExecutionTestCase<T>("beq $t2, $t3, 80") { ExpectedPC = T.CreateTruncating(4) }];
@@ -358,10 +358,10 @@ public partial class ExecutionTests
         if (version is >= MipsVersion.MipsIV)
         {
             // movz/movn
-            yield return [new ExecutionTestCase<T>("movz $k0, $k1, $t0", GPRegister.Kernel0, T.CreateTruncating(K1))];
-            yield return [new ExecutionTestCase<T>("movz $k0, $k1, $t1", GPRegister.Zero)];
-            yield return [new ExecutionTestCase<T>("movn $k0, $k1, $t0", GPRegister.Zero)];
-            yield return [new ExecutionTestCase<T>("movn $k0, $k1, $t1", GPRegister.Kernel0, T.CreateTruncating(K1))];
+            yield return [new ExecutionTestCase<T>("movz $k0, $k1, $t0", MipsGpRegister.Kernel0, T.CreateTruncating(K1))];
+            yield return [new ExecutionTestCase<T>("movz $k0, $k1, $t1", MipsGpRegister.Zero)];
+            yield return [new ExecutionTestCase<T>("movn $k0, $k1, $t0", MipsGpRegister.Zero)];
+            yield return [new ExecutionTestCase<T>("movn $k0, $k1, $t1", MipsGpRegister.Kernel0, T.CreateTruncating(K1))];
         }
     }
 
@@ -392,7 +392,7 @@ public partial class ExecutionTests
             {
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
-            yield return [new ExecutionTestCase<T>("ei $v0", GPRegister.ReturnValue0)
+            yield return [new ExecutionTestCase<T>("ei $v0", MipsGpRegister.ReturnValue0)
             {
                 ExpectedSideEffect = SideEffect.WriteCoProc0,
                 PrivilegeMode = PrivilegeMode.Kernel
@@ -404,7 +404,7 @@ public partial class ExecutionTests
             {
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
-            yield return [new ExecutionTestCase<T>("di $v1", GPRegister.ReturnValue1)
+            yield return [new ExecutionTestCase<T>("di $v1", MipsGpRegister.ReturnValue1)
             {
                 ExpectedSideEffect = SideEffect.WriteCoProc0,
                 PrivilegeMode = PrivilegeMode.Kernel
@@ -416,45 +416,45 @@ public partial class ExecutionTests
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // CoProcessor 1
-        yield return [new ExecutionTestCase<T>("mtc1 $t2, $f16", FloatRegister.F16, 20)];
-        yield return [new ExecutionTestCase<T>("mfc1 $v0, $f0", GPRegister.ReturnValue0, T.CreateTruncating(2))];
+        yield return [new ExecutionTestCase<T>("mtc1 $t2, $f16", MipsFloatRegister.F16, 20)];
+        yield return [new ExecutionTestCase<T>("mfc1 $v0, $f0", MipsGpRegister.ReturnValue0, T.CreateTruncating(2))];
     }
 
     private static IEnumerable<object[]> GetFloatArithmeticInstructionTests<T>(MipsVersion version)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // Single
-        yield return [new ExecutionTestCase<T>("add.S $f16, $f8, $f9", FloatRegister.F16, 10.5f + 2.5f)];
-        yield return [new ExecutionTestCase<T>("sub.S $f16, $f8, $f9", FloatRegister.F16, 10.5f - 2.5f)];
-        yield return [new ExecutionTestCase<T>("mul.S $f16, $f8, $f9", FloatRegister.F16, 10.5f * 2.5f)];
-        yield return [new ExecutionTestCase<T>("div.S $f16, $f8, $f9", FloatRegister.F16, 10.5f / 2.5f)];
-        yield return [new ExecutionTestCase<T>("abs.S $f16, $f7", FloatRegister.F16, 2f)];
-        yield return [new ExecutionTestCase<T>("neg.S $f16, $f5", FloatRegister.F16, -2f)];
+        yield return [new ExecutionTestCase<T>("add.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f + 2.5f)];
+        yield return [new ExecutionTestCase<T>("sub.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f - 2.5f)];
+        yield return [new ExecutionTestCase<T>("mul.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f * 2.5f)];
+        yield return [new ExecutionTestCase<T>("div.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f / 2.5f)];
+        yield return [new ExecutionTestCase<T>("abs.S $f16, $f7", MipsFloatRegister.F16, 2f)];
+        yield return [new ExecutionTestCase<T>("neg.S $f16, $f5", MipsFloatRegister.F16, -2f)];
 
         // Double
-        yield return [new ExecutionTestCase<T>("add.D $f16, $f12, $f14", FloatRegister.F16, 2d + 0.5d)];
-        yield return [new ExecutionTestCase<T>("sub.D $f16, $f12, $f14", FloatRegister.F16, 2d - 0.5d)];
-        yield return [new ExecutionTestCase<T>("mul.D $f16, $f12, $f14", FloatRegister.F16, 2d * 0.5d)];
-        yield return [new ExecutionTestCase<T>("div.D $f16, $f12, $f14", FloatRegister.F16, 2d / 0.5d)];
-        yield return [new ExecutionTestCase<T>("abs.D $f16, $f16", FloatRegister.F16, 2d)];
-        yield return [new ExecutionTestCase<T>("neg.D $f16, $f12", FloatRegister.F16, -2d)];
+        yield return [new ExecutionTestCase<T>("add.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d + 0.5d)];
+        yield return [new ExecutionTestCase<T>("sub.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d - 0.5d)];
+        yield return [new ExecutionTestCase<T>("mul.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d * 0.5d)];
+        yield return [new ExecutionTestCase<T>("div.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d / 0.5d)];
+        yield return [new ExecutionTestCase<T>("abs.D $f16, $f16", MipsFloatRegister.F16, 2d)];
+        yield return [new ExecutionTestCase<T>("neg.D $f16, $f12", MipsFloatRegister.F16, -2d)];
 
         if (version is >= MipsVersion.MipsII)
         {
-            yield return [new ExecutionTestCase<T>("sqrt.S $f16, $f8", FloatRegister.F16, MathF.Sqrt(10.5f))];
-            yield return [new ExecutionTestCase<T>("sqrt.D $f16, $f12", FloatRegister.F16, Math.Sqrt(2d))];
+            yield return [new ExecutionTestCase<T>("sqrt.S $f16, $f8", MipsFloatRegister.F16, MathF.Sqrt(10.5f))];
+            yield return [new ExecutionTestCase<T>("sqrt.D $f16, $f12", MipsFloatRegister.F16, Math.Sqrt(2d))];
         }
 
         if (version is >= MipsVersion.MipsIV)
         {
-            yield return [new ExecutionTestCase<T>("recip.S $f16, $f9", FloatRegister.F16, float.ReciprocalEstimate(2.5f))];
-            yield return [new ExecutionTestCase<T>("recip.D $f16, $f12", FloatRegister.F16, double.ReciprocalEstimate(2d))];
+            yield return [new ExecutionTestCase<T>("recip.S $f16, $f9", MipsFloatRegister.F16, float.ReciprocalEstimate(2.5f))];
+            yield return [new ExecutionTestCase<T>("recip.D $f16, $f12", MipsFloatRegister.F16, double.ReciprocalEstimate(2d))];
         }
 
         if (version is >= MipsVersion.Mips_R2)
         {
-            yield return [new ExecutionTestCase<T>("rsqrt.S $f16, $f9", FloatRegister.F16, float.ReciprocalSqrtEstimate(2.5f))];
-            yield return [new ExecutionTestCase<T>("rsqrt.D $f16, $f12", FloatRegister.F16, double.ReciprocalSqrtEstimate(2d))];
+            yield return [new ExecutionTestCase<T>("rsqrt.S $f16, $f9", MipsFloatRegister.F16, float.ReciprocalSqrtEstimate(2.5f))];
+            yield return [new ExecutionTestCase<T>("rsqrt.D $f16, $f12", MipsFloatRegister.F16, double.ReciprocalSqrtEstimate(2d))];
         }
     }
 
@@ -462,26 +462,26 @@ public partial class ExecutionTests
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // From Single
-        yield return [new ExecutionTestCase<T>("cvt.D.S $f16, $f5", FloatRegister.F16, 2d)];     // To Double
-        yield return [new ExecutionTestCase<T>("cvt.W.S $f16, $f5", FloatRegister.F16, 2)];      // To Word
+        yield return [new ExecutionTestCase<T>("cvt.D.S $f16, $f5", MipsFloatRegister.F16, 2d)];     // To Double
+        yield return [new ExecutionTestCase<T>("cvt.W.S $f16, $f5", MipsFloatRegister.F16, 2)];      // To Word
 
         // From Double
-        yield return [new ExecutionTestCase<T>("cvt.S.D $f16, $f12", FloatRegister.F16, 2f)];    // To Single
-        yield return [new ExecutionTestCase<T>("cvt.W.D $f16, $f12", FloatRegister.F16, 2)];     // To Word
+        yield return [new ExecutionTestCase<T>("cvt.S.D $f16, $f12", MipsFloatRegister.F16, 2f)];    // To Single
+        yield return [new ExecutionTestCase<T>("cvt.W.D $f16, $f12", MipsFloatRegister.F16, 2)];     // To Word
 
         // From Word 
-        yield return [new ExecutionTestCase<T>("cvt.S.W $f16, $f0", FloatRegister.F16, 2f)];     // To Single
-        yield return [new ExecutionTestCase<T>("cvt.D.W $f16, $f0", FloatRegister.F16, 2d)];     // To Double
+        yield return [new ExecutionTestCase<T>("cvt.S.W $f16, $f0", MipsFloatRegister.F16, 2f)];     // To Single
+        yield return [new ExecutionTestCase<T>("cvt.D.W $f16, $f0", MipsFloatRegister.F16, 2d)];     // To Double
 
         if (version is >= MipsVersion.MipsIII && version.Is64Bit())
         {
             // To long
-            yield return [new ExecutionTestCase<T>("cvt.L.S $f16, $f5", FloatRegister.F16, 2L)];     // From Single
-            yield return [new ExecutionTestCase<T>("cvt.L.D $f16, $f12", FloatRegister.F16, 2L)];    // From Double
+            yield return [new ExecutionTestCase<T>("cvt.L.S $f16, $f5", MipsFloatRegister.F16, 2L)];     // From Single
+            yield return [new ExecutionTestCase<T>("cvt.L.D $f16, $f12", MipsFloatRegister.F16, 2L)];    // From Double
 
             // From Long
-            yield return [new ExecutionTestCase<T>("cvt.S.L $f16, $f0", FloatRegister.F16, 2f)];     // To Single
-            yield return [new ExecutionTestCase<T>("cvt.D.L $f16, $f0", FloatRegister.F16, 2d)];     // To Double
+            yield return [new ExecutionTestCase<T>("cvt.S.L $f16, $f0", MipsFloatRegister.F16, 2f)];     // To Single
+            yield return [new ExecutionTestCase<T>("cvt.D.L $f16, $f0", MipsFloatRegister.F16, 2d)];     // To Double
         }
     }
 
@@ -491,27 +491,27 @@ public partial class ExecutionTests
         if (version is >= MipsVersion.MipsII)
         {
             // Round
-            yield return [new ExecutionTestCase<T>("round.W.S $f16, $f10", FloatRegister.F16, 1)];
-            yield return [new ExecutionTestCase<T>("round.W.D $f16, $f18", FloatRegister.F16, 3)];
+            yield return [new ExecutionTestCase<T>("round.W.S $f16, $f10", MipsFloatRegister.F16, 1)];
+            yield return [new ExecutionTestCase<T>("round.W.D $f16, $f18", MipsFloatRegister.F16, 3)];
 
             // Ceiling
-            yield return [new ExecutionTestCase<T>("ceil.W.S $f16, $f10", FloatRegister.F16, 2)];
-            yield return [new ExecutionTestCase<T>("ceil.W.D $f16, $f18", FloatRegister.F16, 4)];
+            yield return [new ExecutionTestCase<T>("ceil.W.S $f16, $f10", MipsFloatRegister.F16, 2)];
+            yield return [new ExecutionTestCase<T>("ceil.W.D $f16, $f18", MipsFloatRegister.F16, 4)];
 
             // Floor
-            yield return [new ExecutionTestCase<T>("floor.W.S $f16, $f10", FloatRegister.F16, 1)];
-            yield return [new ExecutionTestCase<T>("floor.W.D $f16, $f18", FloatRegister.F16, 3)];
+            yield return [new ExecutionTestCase<T>("floor.W.S $f16, $f10", MipsFloatRegister.F16, 1)];
+            yield return [new ExecutionTestCase<T>("floor.W.D $f16, $f18", MipsFloatRegister.F16, 3)];
         }
 
         if (version is >= MipsVersion.MipsIII && version.Is64Bit())
         {
             // Long
-            yield return [new ExecutionTestCase<T>("round.L.S $f16, $f10", FloatRegister.F16, 1L)];
-            yield return [new ExecutionTestCase<T>("round.L.D $f16, $f18", FloatRegister.F16, 3L)];
-            yield return [new ExecutionTestCase<T>("ceil.L.S $f16, $f10", FloatRegister.F16, 2L)];
-            yield return [new ExecutionTestCase<T>("ceil.L.D $f16, $f18", FloatRegister.F16, 4L)];
-            yield return [new ExecutionTestCase<T>("floor.L.S $f16, $f10", FloatRegister.F16, 1L)];
-            yield return [new ExecutionTestCase<T>("floor.L.D $f16, $f18", FloatRegister.F16, 3L)];
+            yield return [new ExecutionTestCase<T>("round.L.S $f16, $f10", MipsFloatRegister.F16, 1L)];
+            yield return [new ExecutionTestCase<T>("round.L.D $f16, $f18", MipsFloatRegister.F16, 3L)];
+            yield return [new ExecutionTestCase<T>("ceil.L.S $f16, $f10", MipsFloatRegister.F16, 2L)];
+            yield return [new ExecutionTestCase<T>("ceil.L.D $f16, $f18", MipsFloatRegister.F16, 4L)];
+            yield return [new ExecutionTestCase<T>("floor.L.S $f16, $f10", MipsFloatRegister.F16, 1L)];
+            yield return [new ExecutionTestCase<T>("floor.L.D $f16, $f18", MipsFloatRegister.F16, 3L)];
         }
     }
 

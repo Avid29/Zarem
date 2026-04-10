@@ -15,69 +15,69 @@ namespace Zarem.Helpers.Instructions;
 public static class InstructionTypeHelper
 {
     /// <summary>
-    /// Gets the <see cref="InstructionType"/> of an <see cref="MipsInstruction"/>.
+    /// Gets the <see cref="MipsInstructionType"/> of an <see cref="MipsInstruction"/>.
     /// </summary>
     /// <param name="opCode">The instruction to get the type of.</param>
     /// <param name="rtFuncCode">The rtFunction of the instruction.</param>
     /// <param name="rsFuncCode">The rsFuncCode of the instruction.</param>
-    /// <returns>The <see cref="InstructionType"/> associated to an <see cref="MipsInstruction"/>.</returns>
-    public static InstructionType GetInstructionType(OperationCode? opCode, RegImmFuncCode? rtFuncCode = null, CoProc0RSCode? rsFuncCode = null)
+    /// <returns>The <see cref="MipsInstructionType"/> associated to an <see cref="MipsInstruction"/>.</returns>
+    public static MipsInstructionType GetInstructionType(MipsOpCode? opCode, RegImmFuncCode? rtFuncCode = null, CoProc0RSCode? rsFuncCode = null)
     {
         if (!opCode.HasValue)
-            return InstructionType.Pseudo;
+            return MipsInstructionType.Pseudo;
 
         return opCode switch
         {
             // R Type 
-            OperationCode.Special => InstructionType.BasicR,
-            OperationCode.Special2 => InstructionType.Special2R,
-            OperationCode.Special3 => InstructionType.Special3R,
+            MipsOpCode.Special => MipsInstructionType.BasicR,
+            MipsOpCode.Special2 => MipsInstructionType.Special2R,
+            MipsOpCode.Special3 => MipsInstructionType.Special3R,
 
-            OperationCode.RegisterImmediate
+            MipsOpCode.RegisterImmediate
                 when rtFuncCode is <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely or
-                >= RegImmFuncCode.BranchOnLessThanZeroAndLink => InstructionType.RegisterImmediateBranch,
-            OperationCode.RegisterImmediate => InstructionType.RegisterImmediateTrap,
+                >= RegImmFuncCode.BranchOnLessThanZeroAndLink => MipsInstructionType.RegisterImmediateBranch,
+            MipsOpCode.RegisterImmediate => MipsInstructionType.RegisterImmediateTrap,
             
             // J Type
-            OperationCode.Jump or OperationCode.JumpAndLink or
-            OperationCode.JumpAndLinkX => InstructionType.BasicJ,
+            MipsOpCode.Jump or MipsOpCode.JumpAndLink or
+            MipsOpCode.JumpAndLinkX => MipsInstructionType.BasicJ,
             
             // CoProc0
-            OperationCode.Coprocessor0 => InstructionType.Coproc0,
+            MipsOpCode.Coprocessor0 => MipsInstructionType.Coproc0,
 
             // CoProc1
-            OperationCode.Coprocessor1
+            MipsOpCode.Coprocessor1
                 => (CoProc1RSCode?)rsFuncCode switch
                 {
-                    null or (>= CoProc1RSCode.Single and <= CoProc1RSCode.PairedSingle) => InstructionType.Float,
-                    _ => InstructionType.Coproc1,
+                    null or (>= CoProc1RSCode.Single and <= CoProc1RSCode.PairedSingle) => MipsInstructionType.Float,
+                    _ => MipsInstructionType.Coproc1,
                 },
 
             // I Type is the default
-            _ => InstructionType.BasicI,
+            _ => MipsInstructionType.BasicI,
         };
     }
 
     /// <summary>
-    /// Gets the <see cref="InstructionPattern"/> of an <see cref="MipsInstruction"/>.
+    /// Gets the <see cref="MipsInstructionPattern"/> of an <see cref="MipsInstruction"/>.
     /// </summary>
     /// <param name="opCode">The instruction to get the type of.</param>
-    /// <returns>The <see cref="InstructionPattern"/> associated to an <see cref="MipsInstruction"/>.</returns>
-    public static InstructionPattern GetInstructionPattern(OperationCode? opCode)
+    /// <returns>The <see cref="MipsInstructionPattern"/> associated to an <see cref="MipsInstruction"/>.</returns>
+    public static MipsInstructionPattern GetInstructionPattern(MipsOpCode? opCode)
     {
         if (!opCode.HasValue)
-            return InstructionPattern.Other;
+            return MipsInstructionPattern.Other;
 
         return opCode switch
         {
-            OperationCode.Special => InstructionPattern.R,
-            OperationCode.RegisterImmediate => InstructionPattern.R,
-            OperationCode.Special2 => InstructionPattern.R,
-            OperationCode.Special3 => InstructionPattern.R,
-            OperationCode.Jump or
-            OperationCode.JumpAndLink => InstructionPattern.J,
-            OperationCode.Coprocessor0 => InstructionPattern.Other,
-            _ => InstructionPattern.I,
+            MipsOpCode.Special => MipsInstructionPattern.R,
+            MipsOpCode.RegisterImmediate => MipsInstructionPattern.R,
+            MipsOpCode.Special2 => MipsInstructionPattern.R,
+            MipsOpCode.Special3 => MipsInstructionPattern.R,
+            MipsOpCode.Jump or
+            MipsOpCode.JumpAndLink => MipsInstructionPattern.J,
+            MipsOpCode.Coprocessor0 => MipsInstructionPattern.Other,
+            _ => MipsInstructionPattern.I,
         };
     }
 }

@@ -29,16 +29,16 @@ namespace Zarem.Assembler;
 /// <summary>
 /// A struct for parsing RISC-V instructions.
 /// </summary>
-public class RiscVInstructionParser : InstructionParserBase<GPRegister, RegisterSet>
+public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, RiscVRegisterSet>
 {
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
 
     private RiscVInstructionMetaBase? _meta;
 
-    private GPRegister _rd;
-    private GPRegister _rs1;
-    private GPRegister _rs2;
+    private RiscVGpRegister _rd;
+    private RiscVGpRegister _rs1;
+    private RiscVGpRegister _rs2;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVInstructionParser"/> struct.
@@ -76,13 +76,13 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
             return null;
 
         // Applies provided values
-        _rs1 = (GPRegister)(_meta.FixedRS1 ?? default);
-        _rs2 = (GPRegister)(_meta.FixedRS2 ?? default);
-        _rd = (GPRegister)(_meta.FixedRD ?? default);
+        _rs1 = (RiscVGpRegister)(_meta.FixedRS1 ?? default);
+        _rs2 = (RiscVGpRegister)(_meta.FixedRS2 ?? default);
+        _rd = (RiscVGpRegister)(_meta.FixedRD ?? default);
         Immediate = _meta.FixedImm ?? default;
 
         // Parse argument data according to pattern
-        Argument[] pattern = _meta.ArgumentPattern;
+        RiscVArgument[] pattern = _meta.ArgumentPattern;
         for (int i = 0; i < line.Args.Count; i++)
         {
             // Split out next arg
@@ -138,18 +138,18 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
         return true;
     }
 
-    private bool TryParseArg(ReadOnlySpan<Token> arg, Argument type)
+    private bool TryParseArg(ReadOnlySpan<Token> arg, RiscVArgument type)
     {
         return type switch
         {
             // Register arguments
-            (>= Argument.RD and <= Argument.FRS3) => TryParseRegisterArg(arg, type),
+            (>= RiscVArgument.RD and <= RiscVArgument.FRS3) => TryParseRegisterArg(arg, type),
 
             // Expression arguments
-            (>= Argument.Immediate and <= Argument.JumpOffset) => TryParseExpressionArg(arg, type),
+            (>= RiscVArgument.Immediate and <= RiscVArgument.JumpOffset) => TryParseExpressionArg(arg, type),
 
             //// Address offset arguments
-            Argument.Memory => TryParseAddressOffsetArg(arg),
+            RiscVArgument.Memory => TryParseAddressOffsetArg(arg),
 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
@@ -158,27 +158,27 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
     /// </summary>
-    private bool TryParseRegisterArg(ReadOnlySpan<Token> arg, Argument target)
+    private bool TryParseRegisterArg(ReadOnlySpan<Token> arg, RiscVArgument target)
     {
         // Get reference to selected register argument
-        RefTuple<Ref<GPRegister>, RegisterSet> pair = target switch
+        RefTuple<Ref<RiscVGpRegister>, RiscVRegisterSet> pair = target switch
         {
             // General Purpose Registers
-            Argument.RD => new(new(ref _rd), RegisterSet.GeneralPurpose),
-            Argument.RS1 => new(new(ref _rs1), RegisterSet.GeneralPurpose),
-            Argument.RS2 => new(new(ref _rs2), RegisterSet.GeneralPurpose),
+            RiscVArgument.RD => new(new(ref _rd), RiscVRegisterSet.GeneralPurpose),
+            RiscVArgument.RS1 => new(new(ref _rs1), RiscVRegisterSet.GeneralPurpose),
+            RiscVArgument.RS2 => new(new(ref _rs2), RiscVRegisterSet.GeneralPurpose),
 
             // Float Registers
-            Argument.FRD => new(new(ref _rd), RegisterSet.FloatingPoints),
-            Argument.FRS1 => new(new(ref _rs1), RegisterSet.FloatingPoints),
-            Argument.FRS2 => new(new(ref _rs2), RegisterSet.FloatingPoints),
+            RiscVArgument.FRD => new(new(ref _rd), RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRS1 => new(new(ref _rs1), RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRS2 => new(new(ref _rs2), RiscVRegisterSet.FloatingPoints),
 
             // Invalid target type
             _ => throw new ArgumentOutOfRangeException($"Argument of type '{target}' attempted to parse as a register.")
         };
 
-        (Ref<GPRegister> regRef, RegisterSet set) = pair;
-        ref GPRegister reg = ref regRef.Value;
+        (Ref<RiscVGpRegister> regRef, RiscVRegisterSet set) = pair;
+        ref RiscVGpRegister reg = ref regRef.Value;
 
         if (!TryParseRegister(arg, out var register, set, 32))
             return false;
@@ -192,16 +192,16 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
     /// <summary>
     /// Parses an argument as an expression and assigns it to the target component
     /// </summary>
-    private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, Argument target)
+    private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, RiscVArgument target)
     {
         var type = target switch
         {
-            Argument.JumpOffset => RiscVReferenceType.Jump20,
-            Argument.BranchOffset => RiscVReferenceType.Branch20,
-            Argument.Immediate => RiscVReferenceType.Low12,
-            Argument.UpperImmediate => RiscVReferenceType.High20,
+            RiscVArgument.JumpOffset => RiscVReferenceType.Jump20,
+            RiscVArgument.BranchOffset => RiscVReferenceType.Branch20,
+            RiscVArgument.Immediate => RiscVReferenceType.Low12,
+            RiscVArgument.UpperImmediate => RiscVReferenceType.High20,
             // 'Memory' in RISC-V loads/stores uses a 12-bit offset (%lo)
-            Argument.StoreOffset or Argument.Memory => RiscVReferenceType.Low12,
+            RiscVArgument.StoreOffset or RiscVArgument.Memory => RiscVReferenceType.Low12,
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<RiscVReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
         };
 
@@ -209,13 +209,13 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
         (int bitCount, int shiftAmount, bool signed) = target switch
         {
             // 5-bit unsigned immediate (e.g., vsetvli or CSRI)
-            Argument.UImm5 => (5, 1, false),
-            Argument.Immediate or Argument.StoreOffset or
-            Argument.Memory => (12, 0, true),
-            Argument.BranchOffset => (12, 1, true),
-            Argument.JumpOffset => (20, 1, true),
-            Argument.UpperImmediate => (20, 0, false),
-            Argument.Csr => (12, 0, false),
+            RiscVArgument.UImm5 => (5, 1, false),
+            RiscVArgument.Immediate or RiscVArgument.StoreOffset or
+            RiscVArgument.Memory => (12, 0, true),
+            RiscVArgument.BranchOffset => (12, 1, true),
+            RiscVArgument.JumpOffset => (20, 1, true),
+            RiscVArgument.UpperImmediate => (20, 0, false),
+            RiscVArgument.Csr => (12, 0, false),
 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<(int, int, bool)>(
                 $"Argument of type '{target}' attempted to parse as an expression.")
@@ -245,11 +245,11 @@ public class RiscVInstructionParser : InstructionParserBase<GPRegister, Register
             return false;
 
         // Try parse offset component into immediate, return false if failed
-        if (!TryParseExpressionArg(offsetStr, Argument.Immediate))
+        if (!TryParseExpressionArg(offsetStr, RiscVArgument.Immediate))
             return false;
 
         // Parse register component into $rs, return false if failed
-        if (!TryParseRegisterArg(regStr, Argument.RS1))
+        if (!TryParseRegisterArg(regStr, RiscVArgument.RS1))
             return false;
 
         return true;

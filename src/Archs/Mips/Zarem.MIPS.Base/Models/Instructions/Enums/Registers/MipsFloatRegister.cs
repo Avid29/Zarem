@@ -5,7 +5,7 @@ namespace Zarem.Models.Instructions.Enums.Registers;
 /// <summary>
 /// An enum for floating-point co-processor registers.
 /// </summary>
-public enum FloatRegister : byte
+public enum MipsFloatRegister : byte
 {
 #pragma warning disable CS1591
 

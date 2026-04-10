@@ -18,14 +18,14 @@ public static class InstructionExtensions
     /// </summary>
     /// <param name="instruction">The instruction.</param>
     /// <returns>Which register the instruction writes back to.</returns>
-    public static GPRegister? GetWritebackRegister(this MipsInstruction instruction)
+    public static MipsGpRegister? GetWritebackRegister(this MipsInstruction instruction)
     {
         var arg = instruction.GetWritebackArgument();
 
         return arg switch
         {
-            Argument.RD => instruction.RD,
-            Argument.RT => instruction.RT,
+            MipsArgument.RD => instruction.RD,
+            MipsArgument.RT => instruction.RT,
             _ => null,
         };
     }
@@ -35,9 +35,9 @@ public static class InstructionExtensions
     /// </summary>
     /// <param name="instruction">The instruction.</param>
     /// <returns>Which argument register the instruction writes back to.</returns>
-    public static Argument? GetWritebackArgument(this MipsInstruction instruction)
+    public static MipsArgument? GetWritebackArgument(this MipsInstruction instruction)
     {
-        if (instruction.Type is InstructionType.BasicR)
+        if (instruction.Type is MipsInstructionType.BasicR)
         {
             return instruction.FuncCode switch
             {
@@ -47,7 +47,7 @@ public static class InstructionExtensions
                 FunctionCode.MoveFromHigh or FunctionCode.MoveFromLow or                                                                        // Move
                 FunctionCode.Add or FunctionCode.AddUnsigned or FunctionCode.Subtract or FunctionCode.SubtractUnsigned or                       // Arithmetic
                 FunctionCode.And or FunctionCode.Or or FunctionCode.ExclusiveOr or FunctionCode.Nor or                                          // Logical
-                FunctionCode.SetLessThan or FunctionCode.SetLessThanUnsigned => Argument.RD,                                                    // Sets
+                FunctionCode.SetLessThan or FunctionCode.SetLessThanUnsigned => MipsArgument.RD,                                                    // Sets
                 _ => null,
             };
         }
@@ -55,11 +55,11 @@ public static class InstructionExtensions
         return instruction.OpCode switch
         {
             // All these instructions write back to $rt.
-            OperationCode.AddImmediate or OperationCode.AddImmediateUnsigned or                                                             // Arithmetic
-            OperationCode.SetLessThanImmediate or OperationCode.SetLessThanImmediateUnsigned or                                             // Sets
-            OperationCode.AndImmediate or OperationCode.OrImmediate or OperationCode.ExclusiveOrImmediate or                                // Logical
-            OperationCode.LoadByte or OperationCode.LoadHalfWord or OperationCode.LoadWordLeft or OperationCode.LoadWord or                 // Loads
-            OperationCode.LoadByteUnsigned or OperationCode.LoadHalfWordUnsigned or OperationCode.LoadWordRight => Argument.RT,             // Loads (continued)
+            MipsOpCode.AddImmediate or MipsOpCode.AddImmediateUnsigned or                                                             // Arithmetic
+            MipsOpCode.SetLessThanImmediate or MipsOpCode.SetLessThanImmediateUnsigned or                                             // Sets
+            MipsOpCode.AndImmediate or MipsOpCode.OrImmediate or MipsOpCode.ExclusiveOrImmediate or                                // Logical
+            MipsOpCode.LoadByte or MipsOpCode.LoadHalfWord or MipsOpCode.LoadWordLeft or MipsOpCode.LoadWord or                 // Loads
+            MipsOpCode.LoadByteUnsigned or MipsOpCode.LoadHalfWordUnsigned or MipsOpCode.LoadWordRight => MipsArgument.RT,             // Loads (continued)
             _ => null,
         };
     }

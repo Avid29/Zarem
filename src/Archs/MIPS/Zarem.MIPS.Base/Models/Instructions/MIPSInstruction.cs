@@ -232,44 +232,44 @@ public struct MipsInstruction
     /// <summary>
     /// Creates an R-Type instruction.
     /// </summary>
-    public static MipsInstruction CreateR(FunctionCode func, GPRegister rs, GPRegister rt, GPRegister rd, byte sa = 0)
-        => CreateR(OperationCode.Special, func, rs, rt, rd, sa);
+    public static MipsInstruction CreateR(FunctionCode func, MipsGpRegister rs, MipsGpRegister rt, MipsGpRegister rd, byte sa = 0)
+        => CreateR(MipsOpCode.Special, func, rs, rt, rd, sa);
 
     /// <summary>
     /// Creates an R-Type instruction.
     /// </summary>
-    public static MipsInstruction CreateR(OperationCode op, FunctionCode func, GPRegister rs, GPRegister rt, GPRegister rd, byte sa = 0)
+    public static MipsInstruction CreateR(MipsOpCode op, FunctionCode func, MipsGpRegister rs, MipsGpRegister rt, MipsGpRegister rd, byte sa = 0)
         => new() { OpCode = op, FuncCode = func, RS = rs, RT = rt, RD = rd, ShiftAmount = sa };
 
     /// <summary>
     /// Creates an I-Type instruction.
     /// </summary>
-    public static MipsInstruction CreateI(OperationCode op, GPRegister rs, GPRegister rt, short imm)
+    public static MipsInstruction CreateI(MipsOpCode op, MipsGpRegister rs, MipsGpRegister rt, short imm)
         => new() { OpCode = op, RS = rs, RT = rt, ImmediateValue = imm };
 
     /// <summary>
     /// Creates a J-Type instruction.
     /// </summary>
-    public static MipsInstruction CreateJ(OperationCode op, uint address)
+    public static MipsInstruction CreateJ(MipsOpCode op, uint address)
         => new() { OpCode = op, Address = address };
 
     /// <summary>
     /// Creates a J-Type instruction.
     /// </summary>
-    public static MipsInstruction CreateBranch(OperationCode op, GPRegister rs, GPRegister rt, int offset)
+    public static MipsInstruction CreateBranch(MipsOpCode op, MipsGpRegister rs, MipsGpRegister rt, int offset)
         => new() { OpCode = op, RS = rs, RT = rt, Offset = offset };
 
     /// <summary>
     /// Creates a J-Type instruction.
     /// </summary>
-    public static MipsInstruction CreateBranch(RegImmFuncCode rtFunc, GPRegister rs, int offset)
-        => new() { OpCode = OperationCode.RegisterImmediate, RTFuncCode = rtFunc, RS = rs, Offset = offset };
+    public static MipsInstruction CreateBranch(RegImmFuncCode rtFunc, MipsGpRegister rs, int offset)
+        => new() { OpCode = MipsOpCode.RegisterImmediate, RTFuncCode = rtFunc, RS = rs, Offset = offset };
 
     /// <summary>
     /// Creates a J-Type instruction.
     /// </summary>
-    public static MipsInstruction CreateTrap(RegImmFuncCode rtFunc, GPRegister rs, short immediate)
-        => new() { OpCode = OperationCode.RegisterImmediate, RTFuncCode = rtFunc, RS = rs, ImmediateValue = immediate };
+    public static MipsInstruction CreateTrap(RegImmFuncCode rtFunc, MipsGpRegister rs, short immediate)
+        => new() { OpCode = MipsOpCode.RegisterImmediate, RTFuncCode = rtFunc, RS = rs, ImmediateValue = immediate };
 
     /// <summary>
     /// Gets a no operation instruction.
@@ -279,35 +279,35 @@ public struct MipsInstruction
     /// <summary>
     /// Gets the instruction type.
     /// </summary>
-    public readonly InstructionType Type => InstructionTypeHelper.GetInstructionType(OpCode, RTFuncCode, (CoProc0RSCode)RS);
+    public readonly MipsInstructionType Type => InstructionTypeHelper.GetInstructionType(OpCode, RTFuncCode, (CoProc0RSCode)RS);
 
     /// <summary>
     /// Gets the instruction's operation code.
     /// </summary>
-    public OperationCode OpCode
+    public MipsOpCode OpCode
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly get => (OperationCode)BitField.GetField(_inst, OPCODE_BIT_SIZE, OPCODE_BIT_OFFSET);
+        readonly get => (MipsOpCode)BitField.GetField(_inst, OPCODE_BIT_SIZE, OPCODE_BIT_OFFSET);
         set => BitField.SetField(ref _inst, OPCODE_BIT_SIZE, OPCODE_BIT_OFFSET, (uint)value);
     }
 
     /// <summary>
     /// Gets the instruction's RS Register 
     /// </summary>
-    public GPRegister RS
+    public MipsGpRegister RS
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly get => (GPRegister)BitField.GetField(_inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET);
+        readonly get => (MipsGpRegister)BitField.GetField(_inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET);
         set => BitField.SetField(ref _inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET, (uint)value);
     }
     
     /// <summary>
     /// Gets the instruction's RT Register 
     /// </summary>
-    public GPRegister RT
+    public MipsGpRegister RT
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly get => (GPRegister)BitField.GetField(_inst, REGISTER_BIT_SIZE, RT_BIT_OFFSET);
+        readonly get => (MipsGpRegister)BitField.GetField(_inst, REGISTER_BIT_SIZE, RT_BIT_OFFSET);
         set => BitField.SetField(ref _inst, REGISTER_BIT_SIZE, RT_BIT_OFFSET, (uint)value);
     }
 
@@ -316,22 +316,22 @@ public struct MipsInstruction
     /// </summary>
     /// <remarks>
     /// This is stored in the RT register space for an instruction where
-    /// the <see cref="OpCode"/> is <see cref="OperationCode.RegisterImmediate"/>.
+    /// the <see cref="OpCode"/> is <see cref="MipsOpCode.RegisterImmediate"/>.
     /// </remarks>
     public RegImmFuncCode RTFuncCode
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => (RegImmFuncCode)RT;
-        set => RT = (GPRegister)value;
+        set => RT = (MipsGpRegister)value;
     }
 
     /// <summary>
     /// Gets the instruction's RD Register 
     /// </summary>
-    public GPRegister RD
+    public MipsGpRegister RD
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly get => (GPRegister)BitField.GetField(_inst, REGISTER_BIT_SIZE, RD_BIT_OFFSET);
+        readonly get => (MipsGpRegister)BitField.GetField(_inst, REGISTER_BIT_SIZE, RD_BIT_OFFSET);
         set => BitField.SetField(ref _inst, REGISTER_BIT_SIZE, RD_BIT_OFFSET, (uint)value);
     }
 

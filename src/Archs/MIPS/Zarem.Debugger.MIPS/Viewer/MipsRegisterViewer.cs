@@ -13,12 +13,12 @@ namespace Zarem.Debugger.Viewer;
 public class MipsRegisterViewer : IRegisterGroup
 {
     private readonly IRegisterFile _registers;
-    private readonly RegisterSet _set;
+    private readonly MipsRegisterSet _set;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsRegisterViewer"/> class.
     /// </summary>
-    public MipsRegisterViewer(IRegisterFile registerFile, RegisterSet set)
+    public MipsRegisterViewer(IRegisterFile registerFile, MipsRegisterSet set)
     {
         _registers = registerFile;
         _set = set;
@@ -42,7 +42,7 @@ public class MipsRegisterViewer : IRegisterGroup
         {
             for (var i = 0; i < _registers.Count; i++)
             {
-                yield return MipsRegisterTable.Instance.GetRegisterString((GPRegister)i, RegisterSet.GeneralPurpose);
+                yield return MipsRegisterTable.Instance.GetRegisterString((MipsGpRegister)i, MipsRegisterSet.GeneralPurpose);
             }
         }
     }

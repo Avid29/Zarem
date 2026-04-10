@@ -24,7 +24,7 @@ public class RiscVDebugHandler : IDebugHandler
     /// </summary>
     public RiscVDebugHandler()
     {
-        var breakInstruction = RiscVInstruction.CreateI(OperationCode.System, 0, 0, 0, 1);
+        var breakInstruction = RiscVInstruction.CreateI(RiscVOpCode.System, 0, 0, 0, 1);
         _breakPointBytes = BitConverter.GetBytes((uint)breakInstruction);
 
         if (!BitConverter.IsLittleEndian)
@@ -49,9 +49,9 @@ public class RiscVDebugHandler : IDebugHandler
 
         return instruction.OpCode switch
         {
-            OperationCode.JumpAndLink => pc + (ulong)instruction.JumpOffset,
-            OperationCode.JumpAndLinkRegister => (riscVCpu[instruction.RS1] + (ulong)instruction.Immediate) & ~1UL,
-            OperationCode.Branch => StepBranch(instruction, riscVCpu),
+            RiscVOpCode.JumpAndLink => pc + (ulong)instruction.JumpOffset,
+            RiscVOpCode.JumpAndLinkRegister => (riscVCpu[instruction.RS1] + (ulong)instruction.Immediate) & ~1UL,
+            RiscVOpCode.Branch => StepBranch(instruction, riscVCpu),
             _ => pc + InstructionSize,
         };
     }
@@ -62,8 +62,8 @@ public class RiscVDebugHandler : IDebugHandler
         var pc = computer.Cpu.ProgramCounter;
         var instruction = (RiscVInstruction)computer.Memory.Read<uint>(pc);
 
-        if (instruction.OpCode is OperationCode.JumpAndLink or OperationCode.JumpAndLinkRegister &&
-            instruction.RD is not GPRegister.Zero)
+        if (instruction.OpCode is RiscVOpCode.JumpAndLink or RiscVOpCode.JumpAndLinkRegister &&
+            instruction.RD is not RiscVGpRegister.Zero)
         {
             return pc + InstructionSize;
         }
@@ -75,7 +75,7 @@ public class RiscVDebugHandler : IDebugHandler
     public ulong GetStepOutAddress(IComputer computer)
     {
         var riscVCpu = (IRiscVCpu)computer.Cpu;
-        return riscVCpu[GPRegister.ReturnAddress] & ~1UL;
+        return riscVCpu[RiscVGpRegister.ReturnAddress] & ~1UL;
     }
 
     /// <inheritdoc/>

@@ -5,7 +5,7 @@ using Zarem.Models.Instructions.Enums.Operations;
 namespace Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 /// <summary>
-/// An enum for <see cref="OperationCode.Coprocessor0"/> instruction function codes.
+/// An enum for <see cref="MipsOpCode.Coprocessor0"/> instruction function codes.
 /// </summary>
 public enum Co0FuncCode
 {

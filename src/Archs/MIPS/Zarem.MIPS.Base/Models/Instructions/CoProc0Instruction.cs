@@ -145,12 +145,12 @@ public partial struct CoProc0Instruction
     private MipsInstruction _inst;
 
     /// <summary>
-    /// Creates a new <see cref="OperationCode.Coprocessor0"/> instruction.
+    /// Creates a new <see cref="MipsOpCode.Coprocessor0"/> instruction.
     /// </summary>
-    public static CoProc0Instruction Create(CoProc0RSCode code, GPRegister rt, GPRegister rd)
+    public static CoProc0Instruction Create(CoProc0RSCode code, MipsGpRegister rt, MipsGpRegister rd)
     {
         CoProc0Instruction value = default;
-        value.OpCode = OperationCode.Coprocessor0;
+        value.OpCode = MipsOpCode.Coprocessor0;
         value.CoProc0RSCode = code;
         value.RT = rt;
         value.RD = rd;
@@ -161,10 +161,10 @@ public partial struct CoProc0Instruction
     /// <summary>
     /// Creates a new <see cref="CoProc0RSCode.C0"/> instruction.
     /// </summary>
-    public static CoProc0Instruction Create(Co0FuncCode code, GPRegister rd)
+    public static CoProc0Instruction Create(Co0FuncCode code, MipsGpRegister rd)
     {
         CoProc0Instruction value = default;
-        value.OpCode = OperationCode.Coprocessor0;
+        value.OpCode = MipsOpCode.Coprocessor0;
         value.Co0FuncCode = code;
         value.CoProc0RSCode = CoProc0RSCode.C0;
         value.RD = rd;
@@ -175,16 +175,16 @@ public partial struct CoProc0Instruction
     /// <summary>
     /// Creates a new <see cref="CoProc0RSCode.MFMC0"/> instruction.
     /// </summary>
-    public static CoProc0Instruction Create(MFMC0FuncCode code, GPRegister rt = GPRegister.Zero, byte? rd = null)
+    public static CoProc0Instruction Create(MFMC0FuncCode code, MipsGpRegister rt = MipsGpRegister.Zero, byte? rd = null)
     {
         CoProc0Instruction value = default;
-        value.OpCode = OperationCode.Coprocessor0;
+        value.OpCode = MipsOpCode.Coprocessor0;
         value.MFMC0FuncCode = code;
         value.CoProc0RSCode = CoProc0RSCode.MFMC0;
         value.RT = rt;
 
         // Conditionally assign
-        value.RD = rd.HasValue ? (GPRegister)rd.Value : value.RD;
+        value.RD = rd.HasValue ? (MipsGpRegister)rd.Value : value.RD;
 
         return value;
     }
@@ -192,7 +192,7 @@ public partial struct CoProc0Instruction
     /// <summary>
     /// Gets the instruction's operation code.
     /// </summary>
-    public OperationCode OpCode
+    public MipsOpCode OpCode
     { 
         readonly get => _inst.OpCode;
         internal set => _inst.OpCode = value;
@@ -204,13 +204,13 @@ public partial struct CoProc0Instruction
     public CoProc0RSCode CoProc0RSCode
     { 
         readonly get => (CoProc0RSCode)_inst.RS;
-        internal set => _inst.RS = (GPRegister)value;
+        internal set => _inst.RS = (MipsGpRegister)value;
     }
 
     /// <summary>
     /// Gets the instruction's RT Register 
     /// </summary>
-    public GPRegister RT
+    public MipsGpRegister RT
     { 
         readonly get => _inst.RT;
         internal set => _inst.RT = value;
@@ -219,7 +219,7 @@ public partial struct CoProc0Instruction
     /// <summary>
     /// Gets the instruction's RD Register 
     /// </summary>
-    public GPRegister RD
+    public MipsGpRegister RD
     { 
         readonly get => _inst.RD;
         internal set => _inst.RD = value;

@@ -17,7 +17,7 @@ public class RiscVDebugViewer : IDebugViewer
     {
         _riscVComputer = riscVComputer;
 
-        Registers = new RiscVRegisterViewer(_riscVComputer.Cpu.RegisterFile, RegisterSet.GeneralPurpose);
+        Registers = new RiscVRegisterViewer(_riscVComputer.Cpu.RegisterFile, RiscVRegisterSet.GeneralPurpose);
     }
 
     /// <inheritdoc/>

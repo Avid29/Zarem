@@ -37,36 +37,36 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS>
         _funct7Table[(int)Funct7Code.Modified] = &DispatchBaseTable;
 
         // Add ALU operations in the base register size
-        InitAluImmediateOperations<T, TS>(OperationCode.AluImmediate);
-        InitAluRegisterOperations<T, TS>(OperationCode.Alu);
+        InitAluImmediateOperations<T, TS>(RiscVOpCode.AluImmediate);
+        InitAluRegisterOperations<T, TS>(RiscVOpCode.Alu);
 
         // Add branch operations
-        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchEqual)] = &BranchOn<XeqLogic<T>>;
-        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchNotEqual)] = &BranchOn<XneLogic<T>>;
-        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchLessThan)] = &BranchOn<XltLogic<T, TS>>;
-        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchGreaterThanOrEqual)] = &BranchOn<XgeLogic<T, TS>>;
-        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
-        _baseTable[GetLookupIndex(OperationCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
+        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchEqual)] = &BranchOn<XeqLogic<T>>;
+        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchNotEqual)] = &BranchOn<XneLogic<T>>;
+        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThan)] = &BranchOn<XltLogic<T, TS>>;
+        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqual)] = &BranchOn<XgeLogic<T, TS>>;
+        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
+        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
 
         // Add jump operations
-        _baseTable[GetLookupIndex(OperationCode.JumpAndLink, 0)] = &JumpAndLink;
+        _baseTable[GetLookupIndex(RiscVOpCode.JumpAndLink, 0)] = &JumpAndLink;
 
         if (baseVersion is >= RiscVBaseVersion.RV64)
         {
             // Add explicitly 32-bit ALU operations
-            InitAluImmediateOperations<uint, int>(OperationCode.AluImmediate32);
-            InitAluRegisterOperations<uint, int>(OperationCode.Alu32);
+            InitAluImmediateOperations<uint, int>(RiscVOpCode.AluImmediate32);
+            InitAluRegisterOperations<uint, int>(RiscVOpCode.Alu32);
         }
 
         if (baseVersion is >= RiscVBaseVersion.RV128)
         {
             // Add explicitly 64-bit ALU operations
-            InitAluImmediateOperations<ulong, long>(OperationCode.AluImmediate64);
-            InitAluRegisterOperations<ulong, long>(OperationCode.Alu64);
+            InitAluImmediateOperations<ulong, long>(RiscVOpCode.AluImmediate64);
+            InitAluRegisterOperations<ulong, long>(RiscVOpCode.Alu64);
         }
     }
 
-    private void InitAluImmediateOperations<T2, TS2>(OperationCode opCode)
+    private void InitAluImmediateOperations<T2, TS2>(RiscVOpCode opCode)
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
         where TS2 : unmanaged, IBinaryInteger<TS2>, ISignedNumber<TS2>
     {
@@ -81,7 +81,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS>
         _baseTable[GetLookupIndex(opCode, Funct3Code.And)] = &AluI<AndLogic<T2>, T2>;
     }
 
-    private void InitAluRegisterOperations<T2, TS2>(OperationCode opCode)
+    private void InitAluRegisterOperations<T2, TS2>(RiscVOpCode opCode)
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
         where TS2 : unmanaged, IBinaryInteger<TS2>, ISignedNumber<TS2>
     {

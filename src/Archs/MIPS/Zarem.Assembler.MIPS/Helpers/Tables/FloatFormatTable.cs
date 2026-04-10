@@ -13,7 +13,7 @@ public static class FloatFormatTable
     /// <summary>
     /// Attempts to get a float format by name.
     /// </summary>
-    public static bool TryGetFloatFormat(string name, out FloatFormat format, out string lookupName)
+    public static bool TryGetFloatFormat(string name, out MipsFloatFormat format, out string lookupName)
     {
         format = 0;
         lookupName = string.Empty;
@@ -29,11 +29,11 @@ public static class FloatFormatTable
         lookupName = name[..split] + ".fmt";
         format = name[(split+1)..].ToLower() switch
         {
-            "s" => FloatFormat.Single,
-            "d" => FloatFormat.Double,
-            "l" => FloatFormat.Long,
-            "w" => FloatFormat.Word,
-            "ps" => FloatFormat.PairedSingle,
+            "s" => MipsFloatFormat.Single,
+            "d" => MipsFloatFormat.Double,
+            "l" => MipsFloatFormat.Long,
+            "w" => MipsFloatFormat.Word,
+            "ps" => MipsFloatFormat.PairedSingle,
             _ => 0
         };
 
@@ -43,15 +43,15 @@ public static class FloatFormatTable
     /// <summary>
     /// Attempts to get a float-format string by value.
     /// </summary>
-    public static string GetFloatFormatString(FloatFormat format)
+    public static string GetFloatFormatString(MipsFloatFormat format)
     {
         return format switch
         {
-            FloatFormat.Single => "S",
-            FloatFormat.Double => "D",
-            FloatFormat.Word => "W",
-            FloatFormat.Long => "L",
-            FloatFormat.PairedSingle => "PS",
+            MipsFloatFormat.Single => "S",
+            MipsFloatFormat.Double => "D",
+            MipsFloatFormat.Word => "W",
+            MipsFloatFormat.Long => "L",
+            MipsFloatFormat.PairedSingle => "PS",
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<string>("Invalid float format"),
         };
     }
@@ -59,7 +59,7 @@ public static class FloatFormatTable
     /// <summary>
     /// Replaces the ".fmt" in a name with the appropriate float format string.
     /// </summary>
-    public static string ApplyFormat(string name, FloatFormat format)
+    public static string ApplyFormat(string name, MipsFloatFormat format)
     {
         return name.Replace(".fmt", $".{GetFloatFormatString(format)}");
     }

@@ -16,8 +16,8 @@ public record JTypeInstructionMeta : MipsInstructionMetaBase
     /// Gets the instruction operation code.
     /// </summary>
     [JsonPropertyName("op_code")]
-    public required OperationCode OperationCode { get; init; }
+    public required MipsOpCode OperationCode { get; init; }
 
     /// <inheritdoc/>
-    public override InstructionType Type => InstructionType.BasicJ;
+    public override MipsInstructionType Type => MipsInstructionType.BasicJ;
 }

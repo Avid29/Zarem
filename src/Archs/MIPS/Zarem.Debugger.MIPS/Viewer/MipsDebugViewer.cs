@@ -17,7 +17,7 @@ public class MipsDebugViewer : IDebugViewer
     {
         _mipsComputer = mipsComputer;
 
-        Registers = new MipsRegisterViewer(_mipsComputer.Cpu.RegisterFile, RegisterSet.GeneralPurpose);
+        Registers = new MipsRegisterViewer(_mipsComputer.Cpu.RegisterFile, MipsRegisterSet.GeneralPurpose);
     }
 
     /// <inheritdoc/>

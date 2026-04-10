@@ -105,14 +105,14 @@ public sealed partial class MipsCpu<T> : IMipsCpu
     /// </summary>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
-    public T this[GPRegister reg]
+    public T this[MipsGpRegister reg]
     {
         get => RegisterFile[(int)reg];
         set => RegisterFile[(int)reg] = value;
     }
 
     /// <inheritdoc/>
-    ulong IMipsCpu.this[GPRegister reg]
+    ulong IMipsCpu.this[MipsGpRegister reg]
     {
         get => ulong.CreateTruncating(RegisterFile[(int)reg]);
         set => RegisterFile[(int)reg] = T.CreateTruncating(value);

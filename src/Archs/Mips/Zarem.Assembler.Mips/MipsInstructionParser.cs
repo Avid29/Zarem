@@ -29,17 +29,17 @@ namespace Zarem.Assembler;
 /// <summary>
 /// A struct for parsing MIPS instructions.
 /// </summary>
-public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterSet>
+public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsRegisterSet>
 {
     private readonly MipsInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
 
     private MipsInstructionMetaBase? _meta;
 
-    private GPRegister _rs;
-    private GPRegister _rt;
-    private GPRegister _rd;
-    private FloatFormat _format;
+    private MipsGpRegister _rs;
+    private MipsGpRegister _rt;
+    private MipsGpRegister _rd;
+    private MipsFloatFormat _format;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionParser"/> struct.
@@ -77,12 +77,12 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
             return null;
 
         // Applies provided values
-        _rs = (GPRegister)(_meta.FixedRS ?? default);
-        _rt = (GPRegister)(_meta.FixedRT ?? default);
-        _rd = (GPRegister)(_meta.FixedRD ?? default);
+        _rs = (MipsGpRegister)(_meta.FixedRS ?? default);
+        _rt = (MipsGpRegister)(_meta.FixedRT ?? default);
+        _rd = (MipsGpRegister)(_meta.FixedRD ?? default);
 
         // Parse argument data according to pattern
-        Argument[] pattern = _meta.ArgumentPattern;
+        MipsArgument[] pattern = _meta.ArgumentPattern;
         for (int i = 0; i < line.Args.Count; i++)
         {
             // Split out next arg
@@ -125,12 +125,12 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
         // Check for write back to zero register
         // Give a warning if not an explicit nop operation
         // TODO: Check on pseudo-instructions
-        if (instruction.GetWritebackRegister() is GPRegister.Zero && name != "nop")
+        if (instruction.GetWritebackRegister() is MipsGpRegister.Zero && name != "nop")
         {
             // Only log if the token can be parsed, and is not 0 for other reasons
             // TODO: Is this true for move operations? Double check
             var writebackArg = line.Args[0].Tokens;
-            if (writebackArg.Length is 1 && TryParseRegister(writebackArg, out var reg, RegisterSet.GeneralPurpose, 32) && reg is GPRegister.Zero)
+            if (writebackArg.Length is 1 && TryParseRegister(writebackArg, out var reg, MipsRegisterSet.GeneralPurpose, 32) && reg is MipsGpRegister.Zero)
             {
                 _logger?.Log(Severity.Message, LogId.ZeroRegWriteback, writebackArg, "ZeroRegisterWriteback");
             }
@@ -184,21 +184,21 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
         return true;
     }
 
-    private bool TryParseArg(ReadOnlySpan<Token> arg, Argument type)
+    private bool TryParseArg(ReadOnlySpan<Token> arg, MipsArgument type)
     {
         return type switch
         {
             // Register arguments
-            (>= Argument.RS and <= Argument.RD) or
-            (>= Argument.FS and <= Argument.FD) or
-            Argument.RT_Numbered => TryParseRegisterArg(arg, type),
+            (>= MipsArgument.RS and <= MipsArgument.RD) or
+            (>= MipsArgument.FS and <= MipsArgument.FD) or
+            MipsArgument.RT_Numbered => TryParseRegisterArg(arg, type),
 
             // Expression arguments
-            Argument.ShiftAmount or Argument.Immediate or Argument.FullImmediate
-            or Argument.Offset or Argument.LargeOffset or Argument.Address => TryParseExpressionArg(arg, type),
+            MipsArgument.ShiftAmount or MipsArgument.Immediate or MipsArgument.FullImmediate
+            or MipsArgument.Offset or MipsArgument.LargeOffset or MipsArgument.Address => TryParseExpressionArg(arg, type),
 
             // Address offset arguments
-            Argument.AddressBase => TryParseAddressOffsetArg(arg),
+            MipsArgument.AddressBase => TryParseAddressOffsetArg(arg),
 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
@@ -207,27 +207,27 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
     /// </summary>
-    private bool TryParseRegisterArg(ReadOnlySpan<Token> arg, Argument target)
+    private bool TryParseRegisterArg(ReadOnlySpan<Token> arg, MipsArgument target)
     {
         // Get reference to selected register argument
-        RefTuple<Ref<GPRegister>, RegisterSet> pair = target switch
+        RefTuple<Ref<MipsGpRegister>, MipsRegisterSet> pair = target switch
         {
             // General Purpose Registers
-            Argument.RS => new(new(ref _rs), RegisterSet.GeneralPurpose),
-            Argument.RT => new(new(ref _rt), RegisterSet.GeneralPurpose),
-            Argument.RD => new(new(ref _rd), RegisterSet.GeneralPurpose),
+            MipsArgument.RS => new(new(ref _rs), MipsRegisterSet.GeneralPurpose),
+            MipsArgument.RT => new(new(ref _rt), MipsRegisterSet.GeneralPurpose),
+            MipsArgument.RD => new(new(ref _rd), MipsRegisterSet.GeneralPurpose),
             // Float Registers
-            Argument.FS => new(new(ref _rs), RegisterSet.FloatingPoints),
-            Argument.FT => new(new(ref _rt), RegisterSet.FloatingPoints),
-            Argument.FD => new(new(ref _rd), RegisterSet.FloatingPoints),
+            MipsArgument.FS => new(new(ref _rs), MipsRegisterSet.FloatingPoints),
+            MipsArgument.FT => new(new(ref _rt), MipsRegisterSet.FloatingPoints),
+            MipsArgument.FD => new(new(ref _rd), MipsRegisterSet.FloatingPoints),
             // RT Register for coprocessors
-            Argument.RT_Numbered => new(new(ref _rt), RegisterSet.Numbered),
+            MipsArgument.RT_Numbered => new(new(ref _rt), MipsRegisterSet.Numbered),
             // Invalid target type
             _ => throw new ArgumentOutOfRangeException($"Argument of type '{target}' attempted to parse as a register.")
         };
 
-        (Ref<GPRegister> regRef, RegisterSet set) = pair;
-        ref GPRegister reg = ref regRef.Value;
+        (Ref<MipsGpRegister> regRef, MipsRegisterSet set) = pair;
+        ref MipsGpRegister reg = ref regRef.Value;
 
         if (!TryParseRegister(arg, out var register, set, 32))
             return false;
@@ -241,28 +241,28 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
     /// <summary>
     /// Parses an argument as an expression and assigns it to the target component
     /// </summary>
-    private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, Argument target)
+    private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, MipsArgument target)
     {
         var type = target switch
         {
-            Argument.Address => MipsReferenceType.JumpTarget26,
-            Argument.Immediate => MipsReferenceType.Low16,
-            Argument.Offset => MipsReferenceType.PCRelative16,
-            Argument.LargeOffset => MipsReferenceType.PCRelative26,
+            MipsArgument.Address => MipsReferenceType.JumpTarget26,
+            MipsArgument.Immediate => MipsReferenceType.Low16,
+            MipsArgument.Offset => MipsReferenceType.PCRelative16,
+            MipsArgument.LargeOffset => MipsReferenceType.PCRelative26,
             // FullImmediate triggers a HI/LO pair
-            Argument.FullImmediate => MipsReferenceType.High16,
+            MipsArgument.FullImmediate => MipsReferenceType.High16,
             _ => MipsReferenceType.None,
         };
 
         // Determine casting details for the argument
         (int bitCount, int shiftAmount, bool signed) = target switch
         {
-            Argument.ShiftAmount => (5, 0, false),
-            Argument.Offset => (16, 2, false),
-            Argument.Immediate => (16, 0, true),
-            Argument.Address => (26, 2, false),
-            Argument.LargeOffset => (26, 2, true),
-            Argument.FullImmediate => (32, 0, true),
+            MipsArgument.ShiftAmount => (5, 0, false),
+            MipsArgument.Offset => (16, 2, false),
+            MipsArgument.Immediate => (16, 0, true),
+            MipsArgument.Address => (26, 2, false),
+            MipsArgument.LargeOffset => (26, 2, true),
+            MipsArgument.FullImmediate => (32, 0, true),
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<(byte, byte, bool)>($"Argument of type '{target}' attempted to parse as an expression."),
         };
 
@@ -271,7 +271,7 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
 
         if (expResult.IsSymbolic)
         {
-            if (target is Argument.FullImmediate)
+            if (target is MipsArgument.FullImmediate)
             {
                 References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)MipsReferenceType.High16, default));
                 References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress + 4, (uint)MipsReferenceType.Low16, default));
@@ -298,11 +298,11 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
             return false;
 
         // Try parse offset component into immediate, return false if failed
-        if (!TryParseExpressionArg(offsetStr, Argument.Immediate))
+        if (!TryParseExpressionArg(offsetStr, MipsArgument.Immediate))
             return false;
 
         // Parse register component into $rs, return false if failed
-        if (!TryParseRegisterArg(regStr, Argument.RS))
+        if (!TryParseRegisterArg(regStr, MipsArgument.RS))
             return false;
 
         return true;
@@ -318,7 +318,7 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
             JTypeInstructionMeta j => MipsInstruction.CreateJ(j.OperationCode, (uint)Immediate),
 
             RegImmInstructionMeta ri
-                => ri.Type is InstructionType.RegisterImmediateBranch
+                => ri.Type is MipsInstructionType.RegisterImmediateBranch
                 ? MipsInstruction.CreateBranch(ri.RtCode, _rs, Immediate)
                 : MipsInstruction.CreateTrap(ri.RtCode, _rs, (short)Immediate),
 
@@ -326,10 +326,10 @@ public class MipsInstructionParser : InstructionParserBase<GPRegister, RegisterS
             CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
             CoProc0InstructionsMeta c0 => CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
 
-            CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (FloatRegister)_rs),
-            FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (FloatRegister)_rs, (FloatRegister)_rd, (FloatRegister)_rt),
+            CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (MipsFloatRegister)_rs),
+            FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (MipsFloatRegister)_rs, (MipsFloatRegister)_rd, (MipsFloatRegister)_rt),
 
-            ITypeInstructionMeta i => i.Type is InstructionType.IBranch 
+            ITypeInstructionMeta i => i.Type is MipsInstructionType.IBranch 
             ? MipsInstruction.CreateBranch(i.OperationCode, _rs, _rt, Immediate)
             : MipsInstruction.CreateI(i.OperationCode, _rs, _rt, (short)Immediate),
 

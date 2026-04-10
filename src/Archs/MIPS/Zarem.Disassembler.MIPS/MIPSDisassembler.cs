@@ -48,27 +48,27 @@ public class MipsDisassembler
         byte funcCode = instruction.Type switch
         {
             // Technically could be done with 'or', but clarity is nice.
-            InstructionType.BasicR => (byte)instruction.FuncCode,
-            InstructionType.Special2R => (byte)instruction.Func2Code,
-            InstructionType.Special3R => (byte)instruction.Func3Code,
+            MipsInstructionType.BasicR => (byte)instruction.FuncCode,
+            MipsInstructionType.Special2R => (byte)instruction.Func2Code,
+            MipsInstructionType.Special3R => (byte)instruction.Func3Code,
 
-            InstructionType.BasicI or
-            InstructionType.BasicJ => 0,
+            MipsInstructionType.BasicI or
+            MipsInstructionType.BasicJ => 0,
 
-            InstructionType.RegisterImmediateTrap or
-            InstructionType.RegisterImmediateBranch => (byte)instruction.RTFuncCode,
+            MipsInstructionType.RegisterImmediateTrap or
+            MipsInstructionType.RegisterImmediateBranch => (byte)instruction.RTFuncCode,
 
-            InstructionType.Coproc0 => (byte)((CoProc0Instruction)instruction).CoProc0RSCode,
+            MipsInstructionType.Coproc0 => (byte)((CoProc0Instruction)instruction).CoProc0RSCode,
 
-            InstructionType.Coproc1 => (byte)((FloatInstruction)instruction).CoProc1RSCode,
-            InstructionType.Float => (byte)((FloatInstruction)instruction).FloatFuncCode,
+            MipsInstructionType.Coproc1 => (byte)((FloatInstruction)instruction).CoProc1RSCode,
+            MipsInstructionType.Float => (byte)((FloatInstruction)instruction).FloatFuncCode,
 
             _ => 255,
         };
 
         byte funcCode2 = instruction.Type switch
         {
-            InstructionType.Coproc0 => funcCode switch
+            MipsInstructionType.Coproc0 => funcCode switch
             {
                 (byte)CoProc0RSCode.C0 => (byte)((CoProc0Instruction)instruction).Co0FuncCode,
                 (byte)CoProc0RSCode.MFMC0 => (byte)((CoProc0Instruction)instruction).MFMC0FuncCode,
@@ -78,12 +78,12 @@ public class MipsDisassembler
         };
 
         // If the instruction is a float instruction, retrieve the format.
-        FloatFormat? format = null;
-        if (instruction.Type is InstructionType.Float)
+        MipsFloatFormat? format = null;
+        if (instruction.Type is MipsInstructionType.Float)
             format = ((FloatInstruction)instruction).Format;
 
-        bool hasFormat = instruction.Type is InstructionType.Float;
-        bool eretnc = funcCode2 is (byte)Co0FuncCode.ExceptionReturn && instruction.RD is (GPRegister)1;
+        bool hasFormat = instruction.Type is MipsInstructionType.Float;
+        bool eretnc = funcCode2 is (byte)Co0FuncCode.ExceptionReturn && instruction.RD is (MipsGpRegister)1;
         var key = new DisassemblerLookup((byte)instruction.OpCode, funcCode, funcCode2, hasFormat || eretnc);
         if (!InstructionTable.TryGetInstruction(key, out var metas, out _, out _, out _))
         {
@@ -109,21 +109,21 @@ public class MipsDisassembler
         {
             pattern.Append(meta.ArgumentPattern[i] switch
             {
-                Argument.RS => GetRegisterString(instruction.RS, RegisterSet.GeneralPurpose),
-                Argument.RT => GetRegisterString(instruction.RT, RegisterSet.GeneralPurpose),
-                Argument.RD => GetRegisterString(instruction.RD, RegisterSet.GeneralPurpose),
-                Argument.ShiftAmount => instruction.ShiftAmount,
-                Argument.Immediate => instruction.ImmediateValue,
-                Argument.Offset => instruction.Offset,
-                Argument.LargeOffset => instruction.Address,
-                Argument.Address => instruction.Address,
-                Argument.AddressBase => $"{instruction.ImmediateValue}({GetRegisterString(instruction.RS, RegisterSet.GeneralPurpose)})",
-                Argument.FullImmediate => 0, // Won't happen until pseudo-instruction disassembly
-                Argument.FS => GetRegisterString((GPRegister)((FloatInstruction)instruction).FS, RegisterSet.FloatingPoints),
-                Argument.FT => GetRegisterString((GPRegister)((FloatInstruction)instruction).FT, RegisterSet.FloatingPoints),
-                Argument.FD => GetRegisterString((GPRegister)((FloatInstruction)instruction).FD, RegisterSet.FloatingPoints),
-                Argument.RS_Numbered => GetRegisterString(instruction.RS, RegisterSet.Numbered),
-                Argument.RT_Numbered => GetRegisterString(instruction.RT, RegisterSet.Numbered),
+                MipsArgument.RS => GetRegisterString(instruction.RS, MipsRegisterSet.GeneralPurpose),
+                MipsArgument.RT => GetRegisterString(instruction.RT, MipsRegisterSet.GeneralPurpose),
+                MipsArgument.RD => GetRegisterString(instruction.RD, MipsRegisterSet.GeneralPurpose),
+                MipsArgument.ShiftAmount => instruction.ShiftAmount,
+                MipsArgument.Immediate => instruction.ImmediateValue,
+                MipsArgument.Offset => instruction.Offset,
+                MipsArgument.LargeOffset => instruction.Address,
+                MipsArgument.Address => instruction.Address,
+                MipsArgument.AddressBase => $"{instruction.ImmediateValue}({GetRegisterString(instruction.RS, MipsRegisterSet.GeneralPurpose)})",
+                MipsArgument.FullImmediate => 0, // Won't happen until pseudo-instruction disassembly
+                MipsArgument.FS => GetRegisterString((MipsGpRegister)((FloatInstruction)instruction).FS, MipsRegisterSet.FloatingPoints),
+                MipsArgument.FT => GetRegisterString((MipsGpRegister)((FloatInstruction)instruction).FT, MipsRegisterSet.FloatingPoints),
+                MipsArgument.FD => GetRegisterString((MipsGpRegister)((FloatInstruction)instruction).FD, MipsRegisterSet.FloatingPoints),
+                MipsArgument.RS_Numbered => GetRegisterString(instruction.RS, MipsRegisterSet.Numbered),
+                MipsArgument.RT_Numbered => GetRegisterString(instruction.RT, MipsRegisterSet.Numbered),
                 _ => "unknown",
             });
 
@@ -136,5 +136,5 @@ public class MipsDisassembler
         return $"{pattern}";
     }
 
-    private static string GetRegisterString(GPRegister register, RegisterSet set) => $"${MipsRegisterTable.Instance.GetRegisterString(register, set)}";
+    private static string GetRegisterString(MipsGpRegister register, MipsRegisterSet set) => $"${MipsRegisterTable.Instance.GetRegisterString(register, set)}";
 }

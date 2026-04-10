@@ -31,7 +31,7 @@ public struct RiscVInstruction
     /// <summary>
     /// Creates an R-Type instruction.
     /// </summary>
-    public static RiscVInstruction CreateR(OperationCode op, Funct3Code f3, Funct7Code f7, GPRegister rd, GPRegister rs1, GPRegister rs2)
+    public static RiscVInstruction CreateR(RiscVOpCode op, Funct3Code f3, Funct7Code f7, RiscVGpRegister rd, RiscVGpRegister rs1, RiscVGpRegister rs2)
     {
         return new()
         {
@@ -47,7 +47,7 @@ public struct RiscVInstruction
     /// <summary>
     /// Creates an I-Type instruction.
     /// </summary>
-    public static RiscVInstruction CreateI(OperationCode op, Funct3Code f3, GPRegister rd, GPRegister rs1, short imm)
+    public static RiscVInstruction CreateI(RiscVOpCode op, Funct3Code f3, RiscVGpRegister rd, RiscVGpRegister rs1, short imm)
     {
         return new()
         {
@@ -62,7 +62,7 @@ public struct RiscVInstruction
     /// <summary>
     /// Creates an S-Type instruction (Store).
     /// </summary>
-    public static RiscVInstruction CreateS(OperationCode op, Funct3Code f3, GPRegister rs1, GPRegister rs2, short offset)
+    public static RiscVInstruction CreateS(RiscVOpCode op, Funct3Code f3, RiscVGpRegister rs1, RiscVGpRegister rs2, short offset)
     {
         return new RiscVInstruction
         {
@@ -77,7 +77,7 @@ public struct RiscVInstruction
     /// <summary>
     /// Creates a B-Type instruction (Branch).
     /// </summary>
-    public static RiscVInstruction CreateB(OperationCode op, Funct3Code f3, GPRegister rs1, GPRegister rs2, int offset)
+    public static RiscVInstruction CreateB(RiscVOpCode op, Funct3Code f3, RiscVGpRegister rs1, RiscVGpRegister rs2, int offset)
     {
         return new()
         {
@@ -92,7 +92,7 @@ public struct RiscVInstruction
     /// <summary>
     /// Creates a U-Type instruction (Upper Immediate).
     /// </summary>
-    public static RiscVInstruction CreateU(OperationCode op, GPRegister rd, int imm20)
+    public static RiscVInstruction CreateU(RiscVOpCode op, RiscVGpRegister rd, int imm20)
     {
         return new()
         {
@@ -105,7 +105,7 @@ public struct RiscVInstruction
     /// <summary>
     /// Creates a J-Type instruction (Jump and Link).
     /// </summary>
-    public static RiscVInstruction CreateJ(OperationCode op, GPRegister rd, int offset)
+    public static RiscVInstruction CreateJ(RiscVOpCode op, RiscVGpRegister rd, int offset)
     {
         return new()
         {
@@ -118,36 +118,36 @@ public struct RiscVInstruction
     /// <summary>
     /// Gets or sets the instruction's operation code.
     /// </summary>
-    public OperationCode OpCode
+    public RiscVOpCode OpCode
     {
-        readonly get => (OperationCode)BitField.GetField(_inst, OPCODE_BIT_SIZE, OPCODE_OFFSET);
+        readonly get => (RiscVOpCode)BitField.GetField(_inst, OPCODE_BIT_SIZE, OPCODE_OFFSET);
         set => BitField.SetField(ref _inst, OPCODE_BIT_SIZE, OPCODE_OFFSET, (byte)value);
     }
 
     /// <summary>
     /// Gets or sets the destination general-purpose register field for this instruction.
     /// </summary>
-    public GPRegister RD
+    public RiscVGpRegister RD
     {
-        readonly get => (GPRegister)BitField.GetField(_inst, REG_BIT_SIZE, RD_OFFSET);
+        readonly get => (RiscVGpRegister)BitField.GetField(_inst, REG_BIT_SIZE, RD_OFFSET);
         set => BitField.SetField(ref _inst, REG_BIT_SIZE, RD_OFFSET, (byte)value);
     }
 
     /// <summary>
     /// Gets or sets the value of the RS1 general-purpose register field.
     /// </summary>
-    public GPRegister RS1
+    public RiscVGpRegister RS1
     {
-        readonly get => (GPRegister)BitField.GetField(_inst, REG_BIT_SIZE, RS1_OFFSET);
+        readonly get => (RiscVGpRegister)BitField.GetField(_inst, REG_BIT_SIZE, RS1_OFFSET);
         set => BitField.SetField(ref _inst, REG_BIT_SIZE, RS1_OFFSET, (byte)value);
     }
 
     /// <summary>
     /// Gets or sets the value of the RS2 general-purpose register field.
     /// </summary>
-    public GPRegister RS2
+    public RiscVGpRegister RS2
     {
-        readonly get => (GPRegister)BitField.GetField(_inst, REG_BIT_SIZE, RS2_OFFSET);
+        readonly get => (RiscVGpRegister)BitField.GetField(_inst, REG_BIT_SIZE, RS2_OFFSET);
         set => BitField.SetField(ref _inst, REG_BIT_SIZE, RS2_OFFSET, (byte)value);
     }
 

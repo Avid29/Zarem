@@ -13,12 +13,12 @@ namespace Zarem.Debugger.Viewer;
 public class RiscVRegisterViewer : IRegisterGroup
 {
     private readonly IRegisterFile _registers;
-    private readonly RegisterSet _set;
+    private readonly RiscVRegisterSet _set;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVRegisterViewer"/> class.
     /// </summary>
-    public RiscVRegisterViewer(IRegisterFile registerFile, RegisterSet set)
+    public RiscVRegisterViewer(IRegisterFile registerFile, RiscVRegisterSet set)
     {
         _registers = registerFile;
         _set = set;
@@ -42,7 +42,7 @@ public class RiscVRegisterViewer : IRegisterGroup
         {
             for (var i = 0; i < _registers.Count; i++)
             {
-                yield return RiscVRegisterTable.Instance.GetRegisterString((GPRegister)i, RegisterSet.GeneralPurpose);
+                yield return RiscVRegisterTable.Instance.GetRegisterString((RiscVGpRegister)i, RiscVRegisterSet.GeneralPurpose);
             }
         }
     }

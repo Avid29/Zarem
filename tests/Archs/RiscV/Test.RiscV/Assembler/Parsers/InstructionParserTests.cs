@@ -147,14 +147,14 @@ public class InstructionParserTests
             {
                 line.Append(arg switch
                 {
-                    Argument.RD or Argument.RS1 or Argument.RS2 => GetRegisterString(ArgGenerator.RandomRegister(), RegisterSet.GeneralPurpose),
-                    Argument.FRD or Argument.FRS1 or Argument.FRS2 or Argument.FRS3 => GetRegisterString(ArgGenerator.RandomRegister(), RegisterSet.FloatingPoints),
-                    Argument.Immediate or Argument.StoreOffset or Argument.Csr=> $"{ArgGenerator.RandomImm12()}",
-                    Argument.UpperImmediate => $"{ArgGenerator.RandomImm20()}",
-                    Argument.UImm5 => $"{ArgGenerator.RandomShamt()}",
-                    Argument.BranchOffset => $"{ArgGenerator.RandomBranchOffset()}",
-                    Argument.JumpOffset => $"{ArgGenerator.RandomJumpOffset()}",
-                    Argument.Memory => $"{ArgGenerator.RandomImm12()}({GetRegisterString(ArgGenerator.RandomRegister(), RegisterSet.GeneralPurpose)})",
+                    RiscVArgument.RD or RiscVArgument.RS1 or RiscVArgument.RS2 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose),
+                    RiscVArgument.FRD or RiscVArgument.FRS1 or RiscVArgument.FRS2 or RiscVArgument.FRS3 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.FloatingPoints),
+                    RiscVArgument.Immediate or RiscVArgument.StoreOffset or RiscVArgument.Csr=> $"{ArgGenerator.RandomImm12()}",
+                    RiscVArgument.UpperImmediate => $"{ArgGenerator.RandomImm20()}",
+                    RiscVArgument.UImm5 => $"{ArgGenerator.RandomShamt()}",
+                    RiscVArgument.BranchOffset => $"{ArgGenerator.RandomBranchOffset()}",
+                    RiscVArgument.JumpOffset => $"{ArgGenerator.RandomJumpOffset()}",
+                    RiscVArgument.Memory => $"{ArgGenerator.RandomImm12()}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
                     _ => throw new NotImplementedException(),
                 });
 
@@ -170,5 +170,5 @@ public class InstructionParserTests
         }
     }
 
-    private static string GetRegisterString(GPRegister register, RegisterSet set) => $"{RiscVRegisterTable.Instance.GetRegisterString(register, set)}";
+    private static string GetRegisterString(RiscVGpRegister register, RiscVRegisterSet set) => $"{RiscVRegisterTable.Instance.GetRegisterString(register, set)}";
 }

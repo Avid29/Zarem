@@ -37,7 +37,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS> : LogicTable, IR
     /// <inheritdoc/>
     public RiscVTrap Execute(RiscVInstruction inst, out RiscVExecution<T> exec)
     {
-        if (inst.OpCode is OperationCode.Alu or OperationCode.Alu32 or OperationCode.Alu64)
+        if (inst.OpCode is RiscVOpCode.Alu or RiscVOpCode.Alu32 or RiscVOpCode.Alu64)
             return _funct7Table[(int)inst.Funct7](this, inst, out exec);
 
         return DispatchBaseTable(this, inst, out exec);
@@ -146,6 +146,6 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS> : LogicTable, IR
         => GetLookupIndex(instruction.OpCode, instruction.Funct3);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int GetLookupIndex(OperationCode op, Funct3Code funct3)
+    private static int GetLookupIndex(RiscVOpCode op, Funct3Code funct3)
         => (int)op << 3 | (int)funct3;
 }

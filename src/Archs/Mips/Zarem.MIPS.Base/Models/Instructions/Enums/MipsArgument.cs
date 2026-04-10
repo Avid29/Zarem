@@ -8,7 +8,7 @@ namespace Zarem.Models.Instructions.Enums;
 /// An enum for argument types.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum Argument
+public enum MipsArgument
 {
 #pragma warning disable CS1591
 

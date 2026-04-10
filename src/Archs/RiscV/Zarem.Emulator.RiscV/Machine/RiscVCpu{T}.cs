@@ -84,14 +84,14 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
     /// </summary>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
-    public T this[GPRegister reg]
+    public T this[RiscVGpRegister reg]
     {
         get => RegisterFile[(int)reg];
         set => RegisterFile[(int)reg] = value;
     }
 
     /// <inheritdoc/>
-    ulong IRiscVCpu.this[GPRegister reg]
+    ulong IRiscVCpu.this[RiscVGpRegister reg]
     {
         get => ulong.CreateTruncating(RegisterFile[(int)reg]);
         set => RegisterFile[(int)reg] = T.CreateTruncating(value);

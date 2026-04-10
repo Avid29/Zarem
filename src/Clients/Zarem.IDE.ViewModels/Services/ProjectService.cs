@@ -17,6 +17,7 @@ using Zarem.IDE.Services.Popup.Models;
 using Zarem.MIPS;
 using Zarem.Models.Files;
 using Zarem.Registry;
+using Zarem.RiscV;
 using Zarem.Serialization;
 using Zarem.TrapHandlers;
 
@@ -56,6 +57,7 @@ public class ProjectService : IProjectService
 
         // Populate architectures
         ZaremRegistry.RegisterArchitecture(new MipsArchitectureDescriptor());
+        ZaremRegistry.RegisterArchitecture(new RiscVArchitectureDescriptor());
 
         // Populate formats
         ZaremRegistry.Formats.Register(new ElfModuleDescriptor());

@@ -5,7 +5,7 @@ using Zarem.Models.Instructions.Enums.Operations;
 namespace Zarem.Models.Instructions.Enums.SpecialFunctions;
 
 /// <summary>
-/// An enum for <see cref="OperationCode.Special3"/> instruction function codes.
+/// An enum for <see cref="MipsOpCode.Special3"/> instruction function codes.
 /// </summary>
 public enum Func3Code
 {

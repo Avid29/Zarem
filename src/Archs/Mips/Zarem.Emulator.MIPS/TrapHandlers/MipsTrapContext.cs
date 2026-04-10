@@ -35,45 +35,45 @@ public readonly struct MipsTrapContext : ITrapContext
     public bool IsSyscall => ((MipsTrap)TrapCode) is MipsTrap.Syscall;
 
     /// <inheritdoc/>
-    public ulong Argument0 => Cpu[GPRegister.Argument0];
+    public ulong Argument0 => Cpu[MipsGpRegister.Argument0];
 
     /// <inheritdoc/>
-    public ulong Argument1 => Cpu[GPRegister.Argument1];
+    public ulong Argument1 => Cpu[MipsGpRegister.Argument1];
 
     /// <inheritdoc/>
-    public ulong Argument2 => Cpu[GPRegister.Argument2];
+    public ulong Argument2 => Cpu[MipsGpRegister.Argument2];
 
     /// <inheritdoc/>
-    public float FloatArgument0 => Cpu.FloatProcessor.Singles[FloatRegister.F12];
+    public float FloatArgument0 => Cpu.FloatProcessor.Singles[MipsFloatRegister.F12];
 
     /// <inheritdoc/>
-    public double DoubleArgument0 => Cpu.FloatProcessor.Doubles[FloatRegister.F12];
+    public double DoubleArgument0 => Cpu.FloatProcessor.Doubles[MipsFloatRegister.F12];
 
     /// <inheritdoc/>
     public ulong Result0
     {
-        get => Cpu[GPRegister.ReturnValue0];
-        set => Cpu[GPRegister.ReturnValue0] = value;
+        get => Cpu[MipsGpRegister.ReturnValue0];
+        set => Cpu[MipsGpRegister.ReturnValue0] = value;
     }
 
     /// <inheritdoc/>
     public ulong Result1
     {
-        get => Cpu[GPRegister.ReturnValue1];
-        set => Cpu[GPRegister.ReturnValue1] = value;
+        get => Cpu[MipsGpRegister.ReturnValue1];
+        set => Cpu[MipsGpRegister.ReturnValue1] = value;
     }
 
     /// <inheritdoc/>
     public float FloatResult0
     {
-        get => Cpu.FloatProcessor.Singles[FloatRegister.F0];
-        set => Cpu.FloatProcessor.Singles[FloatRegister.F0] = value;
+        get => Cpu.FloatProcessor.Singles[MipsFloatRegister.F0];
+        set => Cpu.FloatProcessor.Singles[MipsFloatRegister.F0] = value;
     }
 
     /// <inheritdoc/>
     public double DoubleResult0
     {
-        get => Cpu.FloatProcessor.Doubles[FloatRegister.F0];
-        set => Cpu.FloatProcessor.Doubles[FloatRegister.F0] = value;
+        get => Cpu.FloatProcessor.Doubles[MipsFloatRegister.F0];
+        set => Cpu.FloatProcessor.Doubles[MipsFloatRegister.F0] = value;
     }
 }

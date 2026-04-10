@@ -5,7 +5,7 @@ namespace Zarem.Models.Instructions.Enums;
 /// <summary>
 /// An enum for the mips instruction types.
 /// </summary>
-public enum InstructionType
+public enum MipsInstructionType
 {
 #pragma warning disable CS1591
 

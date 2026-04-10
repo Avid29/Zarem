@@ -24,8 +24,8 @@ public record FloatInstructionMeta : MipsInstructionMetaBase
     /// </summary>
     [JsonPropertyName("formats")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public HashSet<FloatFormat>? SupportedFormats { get; init; }
+    public HashSet<MipsFloatFormat>? SupportedFormats { get; init; }
 
     /// <inheritdoc/>
-    public override InstructionType Type => InstructionType.Float;
+    public override MipsInstructionType Type => MipsInstructionType.Float;
 }

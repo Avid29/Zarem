@@ -6,16 +6,15 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
+using Zarem.Assembler;
 using Zarem.Assembler.Helpers.Tables;
+using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Tokenization;
-using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
-using Zarem.Models.Instructions.Enums;
 using Zarem.IDE.Controls.CheatSheet.Palettes;
 using Zarem.IDE.Services;
-using Zarem.Assembler.Models.Abstract;
-using Zarem.Assembler;
+using Zarem.Models.Instructions.Enums;
 
 namespace Zarem.IDE.Controls.CheatSheet;
 
@@ -81,23 +80,23 @@ public sealed partial class UsagePatternDisplay : UserControl
             Text = name,
             Foreground = data.Type switch
             {
-                InstructionType.BasicR => InstructionBrushPalette?.RType,
-                InstructionType.BasicI or InstructionType.IBranch => InstructionBrushPalette?.IType,
-                InstructionType.BasicJ => InstructionBrushPalette?.JType,
+                MipsInstructionType.BasicR => InstructionBrushPalette?.RType,
+                MipsInstructionType.BasicI or MipsInstructionType.IBranch => InstructionBrushPalette?.IType,
+                MipsInstructionType.BasicJ => InstructionBrushPalette?.JType,
 
-                InstructionType.RegisterImmediateTrap or
-                InstructionType.RegisterImmediateBranch => InstructionBrushPalette?.RegImmediate,
+                MipsInstructionType.RegisterImmediateTrap or
+                MipsInstructionType.RegisterImmediateBranch => InstructionBrushPalette?.RegImmediate,
 
-                InstructionType.Special2R or
-                InstructionType.Special3R => InstructionBrushPalette?.R2Type,
+                MipsInstructionType.Special2R or
+                MipsInstructionType.Special3R => InstructionBrushPalette?.R2Type,
 
-                InstructionType.Coproc0 => InstructionBrushPalette?.CoProcessor0,
+                MipsInstructionType.Coproc0 => InstructionBrushPalette?.CoProcessor0,
 
-                InstructionType.Coproc1 or
-                InstructionType.Float => InstructionBrushPalette?.CoProcessor1,
+                MipsInstructionType.Coproc1 or
+                MipsInstructionType.Float => InstructionBrushPalette?.CoProcessor1,
 
                 // TODO: Pseudo Instructions
-                InstructionType.Pseudo => throw new System.NotImplementedException(),
+                MipsInstructionType.Pseudo => throw new System.NotImplementedException(),
                 _ => ThrowHelper.ThrowArgumentOutOfRangeException<SolidColorBrush?>(),
             },
         });
@@ -116,7 +115,7 @@ public sealed partial class UsagePatternDisplay : UserControl
         NameTextBlock.Blocks.Add(block);
     }
 
-    private void UpdateUsageDisplay(Argument[] args, ILocalizationService localizer)
+    private void UpdateUsageDisplay(MipsArgument[] args, ILocalizationService localizer)
     {
         var usage = new Paragraph();
         for (int i = 0; i < args.Length; i++)
@@ -177,43 +176,43 @@ public sealed partial class UsagePatternDisplay : UserControl
         return run;
     }
 
-    private Inline CreateArgumentRun(Argument arg, ILocalizationService? localizer = null)
+    private Inline CreateArgumentRun(MipsArgument arg, ILocalizationService? localizer = null)
     {
         return arg switch
         {
-            Argument.RS or Argument.RT or Argument.RD => new Run
+            MipsArgument.RS or MipsArgument.RT or MipsArgument.RD => new Run
             {
                 Text = ArgumentTable.GetArgPatternString(arg),
                 Foreground = ArgumentBrushPalette?.GPRegisterBrush,
             },
-            Argument.FS or Argument.FT or Argument.FD or Argument.RT_Numbered => new Run
+            MipsArgument.FS or MipsArgument.FT or MipsArgument.FD or MipsArgument.RT_Numbered => new Run
             {
                 Text = ArgumentTable.GetArgPatternString(arg),
                 Foreground = ArgumentBrushPalette?.CPRegisterBrush,
             },
-            Argument.Immediate or Argument.Offset or Argument.Address or
-            Argument.ShiftAmount or Argument.FullImmediate => new Run
+            MipsArgument.Immediate or MipsArgument.Offset or MipsArgument.Address or
+            MipsArgument.ShiftAmount or MipsArgument.FullImmediate => new Run
             {
                 Text = localizer is not null
                         ? localizer[$"/CheatSheet/Usage/{ArgumentTable.GetArgPatternString(arg)}"]
                         : ArgumentTable.GetArgPatternString(arg),
                 Foreground = ArgumentBrushPalette?.ImmediateValueBrush,
             },
-            Argument.AddressBase => new Span
+            MipsArgument.AddressBase => new Span
             {
                 Inlines =
                 {
                     new Run
                     {
                         Text = localizer is not null
-                        ? localizer[$"/CheatSheet/Usage/{ArgumentTable.GetArgPatternString(Argument.Offset)}"]
-                        : ArgumentTable.GetArgPatternString(Argument.Offset),
+                        ? localizer[$"/CheatSheet/Usage/{ArgumentTable.GetArgPatternString(MipsArgument.Offset)}"]
+                        : ArgumentTable.GetArgPatternString(MipsArgument.Offset),
                         Foreground = ArgumentBrushPalette?.ImmediateValueBrush,
                     },
                     new Run { Text = "(" },
                     new Run
                     {
-                        Text = ArgumentTable.GetArgPatternString(Argument.RS),
+                        Text = ArgumentTable.GetArgPatternString(MipsArgument.RS),
                         Foreground = ArgumentBrushPalette?.GPRegisterBrush,
                     },
                     new Run { Text = ")" },

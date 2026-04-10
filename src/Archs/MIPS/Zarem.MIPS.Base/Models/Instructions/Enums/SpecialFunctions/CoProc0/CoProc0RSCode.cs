@@ -6,7 +6,7 @@ using Zarem.Models.Instructions.Enums.Registers;
 namespace Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 /// <summary>
-/// An enum for <see cref="OperationCode.Coprocessor0"/> instruction rs field function codes.
+/// An enum for <see cref="MipsOpCode.Coprocessor0"/> instruction rs field function codes.
 /// </summary>
 public enum CoProc0RSCode : byte
 {
@@ -16,7 +16,7 @@ public enum CoProc0RSCode : byte
     /// <remarks>
     /// This value is too large to encode in a real instruction. If by accident
     /// this were encoded into an <see cref="MipsInstruction"/> struct, it would become 
-    /// <see cref="MFC0"/> (or <see cref="GPRegister.Zero"/>) upon unencoding.
+    /// <see cref="MFC0"/> (or <see cref="MipsGpRegister.Zero"/>) upon unencoding.
     /// </remarks>
     None = 0x20,
 

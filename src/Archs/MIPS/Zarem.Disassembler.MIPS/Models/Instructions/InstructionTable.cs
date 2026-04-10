@@ -38,11 +38,11 @@ public class InstructionTable : MipsInstructionTableBase<DisassemblerLookup>
                 (byte)j.OperationCode),
 
             RegImmInstructionMeta ri => new DisassemblerLookup(
-                (byte)OperationCode.RegisterImmediate,
+                (byte)MipsOpCode.RegisterImmediate,
                 (byte)ri.RtCode),
 
             CoProc0InstructionsMeta c0 => new DisassemblerLookup(
-                (byte)OperationCode.Coprocessor0,
+                (byte)MipsOpCode.Coprocessor0,
                 (byte)c0.RSCode, // sub-opcode
                 c0.RSCode switch
                 {
@@ -53,11 +53,11 @@ public class InstructionTable : MipsInstructionTableBase<DisassemblerLookup>
                 IsFloat: c0.FixedRD is 1), // Match specific RD (like 1 for eretnc)
 
             CoProc1InstructionsMeta c1 => new DisassemblerLookup(
-                (byte)OperationCode.Coprocessor1,
+                (byte)MipsOpCode.Coprocessor1,
                 (byte)c1.RSCode),
 
             FloatInstructionMeta f => new DisassemblerLookup(
-                (byte)OperationCode.Coprocessor1,
+                (byte)MipsOpCode.Coprocessor1,
                 (byte)f.Function,
                 IsFloat: true), // New flag to check bits [5:0] instead of [25:21]
 

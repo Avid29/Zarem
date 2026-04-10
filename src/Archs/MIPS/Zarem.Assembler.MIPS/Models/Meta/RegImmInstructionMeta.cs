@@ -19,14 +19,14 @@ public record RegImmInstructionMeta : MipsInstructionMetaBase
     public required RegImmFuncCode RtCode { get; init; }
 
     /// <inheritdoc/>
-    public override InstructionType Type
+    public override MipsInstructionType Type
     {
         get
         {
             bool isBranch = RtCode is
                 (>= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely) or
                 (>= RegImmFuncCode.BranchOnLessThanZeroAndLink and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink);
-            return isBranch ? InstructionType.RegisterImmediateBranch : InstructionType.RegisterImmediateTrap;
+            return isBranch ? MipsInstructionType.RegisterImmediateBranch : MipsInstructionType.RegisterImmediateTrap;
         }
     }
 }

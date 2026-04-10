@@ -41,10 +41,10 @@ public partial class MipsInstructionServiceTable<T, TS>
 
             _ => floatInstruction.Format switch
             {
-                FloatFormat.Single => CreateFloatExecution(inst, @this._processor.FloatProcessor.Singles),
-                FloatFormat.Double => CreateFloatExecution(inst, @this._processor.FloatProcessor.Doubles),
-                FloatFormat.Word => CreateFloatIntExecution(inst, @this._processor.FloatProcessor.Words),
-                FloatFormat.Long => CreateFloatIntExecution(inst, @this._processor.FloatProcessor.Longs),
+                MipsFloatFormat.Single => CreateFloatExecution(inst, @this._processor.FloatProcessor.Singles),
+                MipsFloatFormat.Double => CreateFloatExecution(inst, @this._processor.FloatProcessor.Doubles),
+                MipsFloatFormat.Word => CreateFloatIntExecution(inst, @this._processor.FloatProcessor.Words),
+                MipsFloatFormat.Long => CreateFloatIntExecution(inst, @this._processor.FloatProcessor.Longs),
                 _ => throw new NotImplementedException(),
             }
         };

@@ -34,5 +34,5 @@ public interface IMipsCpu : ICpu<IMipsCpu, MipsInstruction, MipsTrap>
     /// </summary>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
-    ulong this[GPRegister reg] { get; set; }
+    ulong this[MipsGpRegister reg] { get; set; }
 }

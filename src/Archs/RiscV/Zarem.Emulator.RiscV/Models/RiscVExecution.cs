@@ -18,7 +18,7 @@ public readonly struct RiscVExecution<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVExecution{T}"/> struct.
     /// </summary>
-    public static RiscVExecution<T> CreateWriteback(GPRegister dest, T writeback)
+    public static RiscVExecution<T> CreateWriteback(RiscVGpRegister dest, T writeback)
     {
         return new RiscVExecution<T>
         {
@@ -41,7 +41,7 @@ public readonly struct RiscVExecution<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVExecution{T}"/> struct.
     /// </summary>
-    public static RiscVExecution<T> CreateJumpAndLink(T absolutePC, T writeback, GPRegister dest = GPRegister.ReturnAddress)
+    public static RiscVExecution<T> CreateJumpAndLink(T absolutePC, T writeback, RiscVGpRegister dest = RiscVGpRegister.ReturnAddress)
     {
         return new RiscVExecution<T>
         {
@@ -55,9 +55,9 @@ public readonly struct RiscVExecution<T>
     /// Gets the general purpose register destination of the output.
     /// </summary>
     /// <remarks>
-    /// <see cref="GPRegister.Zero"/> if none.
+    /// <see cref="RiscVGpRegister.Zero"/> if none.
     /// </remarks>
-    public GPRegister WritebackGPRegister { get; init; }
+    public RiscVGpRegister WritebackGPRegister { get; init; }
 
     /// <summary>
     /// Gets the writeback value to the selected GPR register.

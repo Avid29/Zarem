@@ -56,17 +56,17 @@ public class InstructionParserTests
         get
         {
             yield return [new InstructionParsingTestCase("nop", MipsInstruction.NOP)];
-            yield return [new InstructionParsingTestCase("add $t0, $s0, $s1", MipsInstruction.CreateR(FunctionCode.Add, GPRegister.Saved0, GPRegister.Saved1, GPRegister.Temporary0))];
-            yield return [new InstructionParsingTestCase("addi $t0, $s0, 100", MipsInstruction.CreateI(OperationCode.AddImmediate, GPRegister.Saved0, GPRegister.Temporary0, (short)100))];
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, 3", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 3))];
-            yield return [new InstructionParsingTestCase("lw $t0, 100($s0)", MipsInstruction.CreateI(OperationCode.LoadWord, GPRegister.Saved0, GPRegister.Temporary0, (short)100))];
-            yield return [new InstructionParsingTestCase("sb $t0, -100($s0)", MipsInstruction.CreateI(OperationCode.StoreByte, GPRegister.Saved0, GPRegister.Temporary0, (short)-100))];
-            yield return [new InstructionParsingTestCase("j 1000", MipsInstruction.CreateJ(OperationCode.Jump, 1000))];
-            yield return [new InstructionParsingTestCase("j 10*10", MipsInstruction.CreateJ(OperationCode.Jump, 10 * 10))];
-            yield return [new InstructionParsingTestCase("di", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, GPRegister.Zero, 12))];
-            yield return [new InstructionParsingTestCase("di $t1", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, GPRegister.Temporary1, 12))];
-            yield return [new InstructionParsingTestCase("ei", CoProc0Instruction.Create(MFMC0FuncCode.EnableInterrupts, GPRegister.Zero, 12))];
-            yield return [new InstructionParsingTestCase("cvt.S.D $f4, $f8", FloatInstruction.Create(FloatFuncCode.ConvertToSingle, FloatFormat.Double, FloatRegister.F8, FloatRegister.F4))];
+            yield return [new InstructionParsingTestCase("add $t0, $s0, $s1", MipsInstruction.CreateR(FunctionCode.Add, MipsGpRegister.Saved0, MipsGpRegister.Saved1, MipsGpRegister.Temporary0))];
+            yield return [new InstructionParsingTestCase("addi $t0, $s0, 100", MipsInstruction.CreateI(MipsOpCode.AddImmediate, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, (short)100))];
+            yield return [new InstructionParsingTestCase("sll $t0, $s0, 3", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, 3))];
+            yield return [new InstructionParsingTestCase("lw $t0, 100($s0)", MipsInstruction.CreateI(MipsOpCode.LoadWord, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, (short)100))];
+            yield return [new InstructionParsingTestCase("sb $t0, -100($s0)", MipsInstruction.CreateI(MipsOpCode.StoreByte, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, (short)-100))];
+            yield return [new InstructionParsingTestCase("j 1000", MipsInstruction.CreateJ(MipsOpCode.Jump, 1000))];
+            yield return [new InstructionParsingTestCase("j 10*10", MipsInstruction.CreateJ(MipsOpCode.Jump, 10 * 10))];
+            yield return [new InstructionParsingTestCase("di", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, MipsGpRegister.Zero, 12))];
+            yield return [new InstructionParsingTestCase("di $t1", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, MipsGpRegister.Temporary1, 12))];
+            yield return [new InstructionParsingTestCase("ei", CoProc0Instruction.Create(MFMC0FuncCode.EnableInterrupts, MipsGpRegister.Zero, 12))];
+            yield return [new InstructionParsingTestCase("cvt.S.D $f4, $f8", FloatInstruction.Create(FloatFuncCode.ConvertToSingle, MipsFloatFormat.Double, MipsFloatRegister.F8, MipsFloatRegister.F4))];
         }
     }
 
@@ -84,9 +84,9 @@ public class InstructionParserTests
     {
         get
         {
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, 33", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 1), LogId.IntegerTruncated)];
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, -1", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, GPRegister.Zero, GPRegister.Saved0, GPRegister.Temporary0, 31), LogId.IntegerTruncated)];
-            yield return [new InstructionParsingTestCase("j 0x1", MipsInstruction.CreateJ(OperationCode.Jump, 0x1), LogId.IntegerTruncated)];
+            yield return [new InstructionParsingTestCase("sll $t0, $s0, 33", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, 1), LogId.IntegerTruncated)];
+            yield return [new InstructionParsingTestCase("sll $t0, $s0, -1", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, 31), LogId.IntegerTruncated)];
+            yield return [new InstructionParsingTestCase("j 0x1", MipsInstruction.CreateJ(MipsOpCode.Jump, 0x1), LogId.IntegerTruncated)];
         }
     }
 
@@ -128,7 +128,7 @@ public class InstructionParserTests
     [TestMethod(LoadImmediate)]
     public void LoadImmediateTest()
     {
-        PseudoInstruction expected = new(PseudoOp.LoadImmediate) { RT = GPRegister.Temporary0, Immediate = 0x10001 };
+        PseudoInstruction expected = new(PseudoOp.LoadImmediate) { RT = MipsGpRegister.Temporary0, Immediate = 0x10001 };
         RunTest(LoadImmediate, new MipsParsedInstruction(expected));
     }
 
@@ -282,15 +282,15 @@ public class InstructionParserTests
             {
                 line.Append(arg switch
                 {
-                    Argument.RS or Argument.RT or Argument.RD => GetRegisterString(ArgGenerator.RandomRegister(), RegisterSet.GeneralPurpose),
-                    Argument.FS or Argument.FT or Argument.FD => GetRegisterString(ArgGenerator.RandomRegister(), RegisterSet.FloatingPoints),
-                    Argument.Immediate => $"{ArgGenerator.RandomImmediate()}",
-                    Argument.Offset => $"{ArgGenerator.RandomOffset()}",
-                    Argument.LargeOffset => $"{ArgGenerator.RandomOffset()}",
-                    Argument.Address => $"{ArgGenerator.RandomAddress()}",
-                    Argument.AddressBase => $"{ArgGenerator.RandomImmediate()}({GetRegisterString(ArgGenerator.RandomRegister(), RegisterSet.GeneralPurpose)})",
-                    Argument.ShiftAmount => $"{ArgGenerator.RandomShift()}",
-                    Argument.FullImmediate => Random.Shared.Next(),
+                    MipsArgument.RS or MipsArgument.RT or MipsArgument.RD => GetRegisterString(ArgGenerator.RandomRegister(), MipsRegisterSet.GeneralPurpose),
+                    MipsArgument.FS or MipsArgument.FT or MipsArgument.FD => GetRegisterString(ArgGenerator.RandomRegister(), MipsRegisterSet.FloatingPoints),
+                    MipsArgument.Immediate => $"{ArgGenerator.RandomImmediate()}",
+                    MipsArgument.Offset => $"{ArgGenerator.RandomOffset()}",
+                    MipsArgument.LargeOffset => $"{ArgGenerator.RandomOffset()}",
+                    MipsArgument.Address => $"{ArgGenerator.RandomAddress()}",
+                    MipsArgument.AddressBase => $"{ArgGenerator.RandomImmediate()}({GetRegisterString(ArgGenerator.RandomRegister(), MipsRegisterSet.GeneralPurpose)})",
+                    MipsArgument.ShiftAmount => $"{ArgGenerator.RandomShift()}",
+                    MipsArgument.FullImmediate => Random.Shared.Next(),
                     _ => throw new NotImplementedException(),
                 });
 
@@ -307,5 +307,5 @@ public class InstructionParserTests
     }
 
 
-    private static string GetRegisterString(GPRegister register, RegisterSet set) => $"${MipsRegisterTable.Instance.GetRegisterString(register, set)}";
+    private static string GetRegisterString(MipsGpRegister register, MipsRegisterSet set) => $"${MipsRegisterTable.Instance.GetRegisterString(register, set)}";
 }
