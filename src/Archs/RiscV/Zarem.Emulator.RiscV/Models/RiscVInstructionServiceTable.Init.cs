@@ -40,7 +40,8 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS>
         InitAluImmediateOperations<T, TS>(RiscVOpCode.AluImmediate);
         InitAluRegisterOperations<T, TS>(RiscVOpCode.Alu);
 
-        // Add branch operations
+        // Add Jump/Branch operations
+        _baseTable[GetLookupIndex(RiscVOpCode.JumpAndLink, 0)] = &JumpAndLink;
         _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchEqual)] = &BranchOn<XeqLogic<T>>;
         _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchNotEqual)] = &BranchOn<XneLogic<T>>;
         _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThan)] = &BranchOn<XltLogic<T, TS>>;
@@ -48,8 +49,8 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS>
         _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
         _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
 
-        // Add jump operations
-        _baseTable[GetLookupIndex(RiscVOpCode.JumpAndLink, 0)] = &JumpAndLink;
+        // Add system operations
+        _baseTable[GetLookupIndex(RiscVOpCode.System, Funct3Code.EcallBreak)] = &EcallBreak;
 
         if (baseVersion is >= RiscVBaseVersion.RV64)
         {

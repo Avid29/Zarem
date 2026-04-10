@@ -25,7 +25,6 @@ using Zarem.Models.Tables;
 
 namespace Zarem.Assembler;
 
-
 /// <summary>
 /// A struct for parsing RISC-V instructions.
 /// </summary>

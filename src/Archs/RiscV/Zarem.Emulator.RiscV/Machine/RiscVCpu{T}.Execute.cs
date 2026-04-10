@@ -4,6 +4,7 @@ using System.Numerics;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.Machine;
@@ -51,10 +52,9 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
         //trap = trap is RiscVTrap.None ? MemAccess(execution, out memRead) : trap;
         trap = trap is RiscVTrap.None ? WriteBack(execution, memRead) : trap;
 
-        if (trap is RiscVTrap.Breakpoint)
-        {
-            BreakpointHit?.Invoke(this, new BreakpointHitEventArgs());
-        }
+        // Handle trap, if any occurred
+        if (trap is not RiscVTrap.None)
+            HandleTrap(trap);
 
         return trap;
     }
@@ -79,5 +79,27 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
         // Apply the program counter update
         ProgramCounter = nextPc;
         return RiscVTrap.None;
+    }
+
+    private void HandleTrap(RiscVTrap trap)
+    {
+        if (trap is RiscVTrap.None)
+            return;
+
+        // Breakpoints are handled by the debugger upon the trap occurring event
+        // The host also handles every kind of trap if that's what the config specifies
+        if (trap is RiscVTrap.Breakpoint && BreakpointHit is not null)
+        {
+            // Only wait if a debugger is attached
+            var eventArgs = new BreakpointHitEventArgs();
+            BreakpointHit.Invoke(this, eventArgs);
+            eventArgs.Wait();
+        }
+        else
+        {
+            // The host handled the trap, do not emulate it
+            // Breakpoints are always handled by the host
+            Config.TrapHost?.HandleTrap(new RiscVTrapContext(this, (ulong)trap));
+        }
     }
 }

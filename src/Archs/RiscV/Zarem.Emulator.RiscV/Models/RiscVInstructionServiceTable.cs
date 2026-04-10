@@ -132,6 +132,13 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS> : LogicTable, IR
         return RiscVTrap.None;
     }
 
+
+    private static RiscVTrap EcallBreak(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    {
+        exec = default;
+        return inst.Immediate is 1 ? RiscVTrap.Breakpoint : RiscVTrap.EnvironmentCallFromUMode;
+    }
+
     private static RiscVTrap IllegalInstruction(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
     {
         exec = default;
