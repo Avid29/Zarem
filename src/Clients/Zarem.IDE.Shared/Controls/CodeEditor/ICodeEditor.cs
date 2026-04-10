@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Zarem.Assembler.Logging;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Models.Breakpoints;
@@ -48,6 +49,8 @@ public interface ICodeEditor
     AssemblySyntaxColorScheme? ColorScheme { get; set;  }
 
     SourceRange? ExecutingLocation { get; set; }
+
+    ITokenizerProfile? TokenizerProfile { get; set; }
 
     void ApplyOperation(EditorOperation operation);
 

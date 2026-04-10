@@ -18,6 +18,7 @@
                         ExecutingLocation="{TemplateBinding ExecutingLocation}"
                         Line="{Binding Line, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        TokenizerProfile="{TemplateBinding TokenizerProfile}"
                         Zoom="{Binding Zoom, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
                 </ControlTemplate>
             </Setter.Value>
@@ -36,6 +37,7 @@
                         ExecutingLocation="{TemplateBinding ExecutingLocation}"
                         Line="{Binding Line, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        TokenizerProfile="{TemplateBinding TokenizerProfile}"
                         Zoom="{Binding Zoom, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
                 </ControlTemplate>
             </Setter.Value>
