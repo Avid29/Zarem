@@ -6,6 +6,7 @@ using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Models.Enums;
 using Zarem.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Machine;
@@ -26,7 +27,7 @@ public sealed class RiscVComputer : ComputerBase
 
         // Create the physical memory bus
         _memoryMapper = new MemoryMapper();
-        var bus = new PhysicalBus(_memoryMapper);
+        var bus = new PhysicalBus(_memoryMapper, Endianness.Little);
         MapDevices(_memoryMapper);
 
         Cpu = config.VersionInfo.Base switch

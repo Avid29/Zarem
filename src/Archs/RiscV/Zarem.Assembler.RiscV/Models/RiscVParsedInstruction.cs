@@ -66,7 +66,7 @@ public class RiscVParsedInstruction : IParsedInstruction
 
         for (int i = 0; i < instructions.Length; i++)
         {
-            BinaryPrimitives.WriteUInt32BigEndian(destination[(i * 4)..], (uint)instructions[i]);
+            BinaryPrimitives.WriteUInt32LittleEndian(destination[(i * 4)..], (uint)instructions[i]);
         }
 
         return bytes;

@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
-using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Extensions;
+using Zarem.Models.Enums;
 
 namespace Zarem.Emulator.Machine;
 
@@ -26,7 +26,7 @@ public sealed class MipsComputer : ComputerBase
 
         // Create the physical memory bus
         _memoryMapper = new MemoryMapper();
-        var bus = new PhysicalBus(_memoryMapper);
+        var bus = new PhysicalBus(_memoryMapper, Endianness.Big);
         MapDevices(_memoryMapper);
 
         // Initialize the components

@@ -2,7 +2,6 @@
 
 using System;
 using System.Buffers.Binary;
-using System.Drawing;
 using System.IO;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -26,7 +25,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
     /// <summary>
     /// Initializes a new instance of the <see cref="PhysicalBus"/> class.
     /// </summary>
-    public PhysicalBus(MemoryMapper mapper, Endianness endianness = Endianness.Big)
+    public PhysicalBus(MemoryMapper mapper, Endianness endianness)
     {
         _mapper = mapper;
         _endianMismatch = BitConverter.IsLittleEndian != (endianness == Endianness.Little);
