@@ -24,7 +24,7 @@ public class RiscVDebugHandler : IDebugHandler
     /// </summary>
     public RiscVDebugHandler()
     {
-        var breakInstruction = RiscVInstruction.CreateI(RiscVOpCode.System, 0, 0, 0, 1);
+        var breakInstruction = RiscVInstruction.CreateI(RiscVOpCode.System, Funct3Code.EcallBreak, 0, 0, 1);
         _breakPointBytes = BitConverter.GetBytes((uint)breakInstruction);
 
         if (!BitConverter.IsLittleEndian)

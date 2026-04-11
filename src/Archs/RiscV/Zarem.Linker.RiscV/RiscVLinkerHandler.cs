@@ -37,7 +37,7 @@ public class RiscVLinkerHandler : ILinkerHandler<RiscVLinkerConfig>
         var localLogger = new LinkerLogger(logger);
 
         section.Position = (long)offset;
-        section.Stream.TryRead<uint>(out var value);
+        section.Stream.TryRead<uint>(out var value, true);
 
         var instruction = (RiscVInstruction)value;
 
@@ -53,7 +53,7 @@ public class RiscVLinkerHandler : ILinkerHandler<RiscVLinkerConfig>
         };
 
         section.Position -= sizeof(uint);
-        section.Stream.TryWrite(value);
+        section.Stream.TryWrite(value, true);
         return true;
     }
 
