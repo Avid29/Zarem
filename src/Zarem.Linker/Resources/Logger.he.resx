@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConflictingSymbolDefinitions" xml:space="preserve">
-    <value>Symbol '{0}' is defined in '{1}', but was already defined in '{2}'.</value>
+    <value>הסמל '{0}' מוגדר ב-'{1}', אך כבר הוגדר ב-'{2}'.</value>
   </data>
   <data name="EntryPointNotFound" xml:space="preserve">
-    <value>Could not find entry point symbol '{0}'.</value>
+    <value>לא ניתן היה למצוא את סמל נקודת הכניסה '{0}'.</value>
   </data>
   <data name="EntryPointNotGlobal" xml:space="preserve">
-    <value>The entry point symbol '{0}' must be global.</value>
+    <value>סמל נקודת הכניסה '{0}' חייב להיות גלובלי.</value>
   </data>
   <data name="ModuleHasWrongArchitecture" xml:space="preserve">
-    <value>Module '{0}' is the wrong architecture ('{1}'). '{0}' will be skipped.</value>
+    <value>מודול '{0}' בעל ארכיטקטורה לא מתאימה ('{1}'). '{0}' יוזנח.</value>
   </data>
   <data name="SymbolNeverDefined" xml:space="preserve">
     <value>הסמל '{0}' הוצהר אך לא הוגדר.</value>
