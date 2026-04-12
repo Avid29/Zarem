@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -118,46 +118,46 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PseudoInstructionsDisabled" xml:space="preserve">
-    <value>פסאודו־הוראות מנוטרלות.</value>
+    <value>פסאודו־פקודות מנוטרלות.</value>
   </data>
   <data name="RequiresVersion" xml:space="preserve">
-    <value>ההוראה ‎'{0}'‎ דורשת גרסת MIPS ‎{1}.</value>
+    <value>הפקודה ‎'{0}'‎ דורשת גרסת MIPS ‎{1}.</value>
   </data>
   <data name="RemovedInVersion" xml:space="preserve">
-    <value>ההוראה ‎'{0}'‎ הוצאה משימוש. נתמכה לאחרונה בגרסת MIPS ‎{1}.</value>
+    <value>הפקודה ‎'{0}'‎ הוצאה משימוש. נתמכה לאחרונה בגרסת MIPS ‎{1}.</value>
   </data>
   <data name="DoesNotSupportFormatSingle" xml:space="preserve">
-    <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Single'‎ (דיוק יחיד).</value>
+    <value>הפקודה ‎'{0}'‎ אינה תומכת בתצורה ‎'Single'‎ (דיוק יחיד).</value>
   </data>
   <data name="DoesNotSupportFormatDouble" xml:space="preserve">
-    <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Double'‎ (דיוק כפול).</value>
+    <value>הפקודה ‎'{0}'‎ אינה תומכת בתצורה ‎'Double'‎ (דיוק כפול).</value>
   </data>
   <data name="DoesNotSupportFormatWord" xml:space="preserve">
-    <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Word'‎ (מילה).</value>
+    <value>הפקודה ‎'{0}'‎ אינה תומכת בתצורה ‎'Word'‎ (מילה).</value>
   </data>
   <data name="DoesNotSupportFormatLong" xml:space="preserve">
-    <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Long'‎ (ארוך).</value>
+    <value>הפקודה ‎'{0}'‎ אינה תומכת בתצורה ‎'Long'‎ (ארוך).</value>
   </data>
   <data name="DoesNotSupportFormatPairedSingle" xml:space="preserve">
-    <value>ההוראה ‎'{0}'‎ אינה תומכת בתצורה ‎'Paired Single'‎ (זוג דיוק יחיד).</value>
+    <value>הפקודה ‎'{0}'‎ אינה תומכת בתצורה ‎'Paired Single'‎ (זוג דיוק יחיד).</value>
   </data>
   <data name="InvalidAddressOffsetArgument" xml:space="preserve">
     <value>הארגומנט ‎'{0}'‎ אינו היסט כתובת תקין.</value>
   </data>
   <data name="NoInstructionNamed" xml:space="preserve">
-    <value>אין הוראה בשם '{0}'.</value>
+    <value>אין פקודה בשם '{0}'.</value>
   </data>
   <data name="InstructionDisabled" xml:space="preserve">
-    <value>ההוראה '{0}' הושבתה על־ידי תצורת הפרויקט.</value>
+    <value>הפקודה '{0}' הושבתה על־ידי תצורת הפרויקט.</value>
   </data>
   <data name="RelocatableShiftAmount" xml:space="preserve">
     <value>ארגומנט של גודל ההזזה לא יכול להפנות לסימבולים בני־הזזה.</value>
   </data>
   <data name="WrongArgumentCount" xml:space="preserve">
-    <value>ההוראה ‎'{0}'‎ אינה יכולה לקבל ‎{1}‎ ארגומנטים.</value>
+    <value>פקודה ‎'{0}'‎ אינה יכולה לקבל ‎{1}‎ ארגומנטים.</value>
   </data>
   <data name="ZeroRegisterWriteback" xml:space="preserve">
-    <value>הוראה זו כותבת לאוגר ‎$zero‎.</value>
+    <value>פקודה זו כותבת לאוגר ‎$zero‎.</value>
   </data>
   <data name="CastWarningSignChanged" xml:space="preserve">
     <value>הביטוי ‎'{0}'‎ הוערך לערך חתום ‎'{1}'‎ אך הומר לערך בלתי־חתום, והתוצאה היא ‎'{2}'‎.</value>
@@ -184,6 +184,6 @@
     <value>הארגומנט ריק.</value>
   </data>
   <data name="Needs64BitVersion" xml:space="preserve">
-    <value>The instruction '{0}' is only available in 64-bit versions of MIPS.</value>
+    <value>הפקודה '{0}' זמינה רק בגרסאות 64 סיביות של MIPS.</value>
   </data>
 </root>
