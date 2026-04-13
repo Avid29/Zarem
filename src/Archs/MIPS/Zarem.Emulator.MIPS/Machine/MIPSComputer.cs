@@ -56,7 +56,7 @@ public sealed class MipsComputer : ComputerBase
     protected override void MapDevices(MemoryMapper mapper)
     {
         // System RAM
-        mapper.MapDevice(0x0000_0000, new RamDevice(1024 * 1024 * 1024)); // TODO: Config ram size
+        mapper.MapDevice(0x0000_0000, new RamDevice(0x1_0000_0000)); // TODO: Config ram size
 
         // Graphics Buffer 
         //mapper.MapDevice(0x1300_0000, new ZaremGBU());
