@@ -19,6 +19,8 @@ namespace Zarem.IDE.Views.Pages.Editor;
 
 public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
 {
+    private bool _isLoading = false;
+
     public static readonly DependencyProperty TextProperty =
         DependencyProperty.Register(nameof(Text), typeof(string), typeof(TextEditorPage), new PropertyMetadata(string.Empty, OnTextPropertyChanged));
 
@@ -53,10 +55,16 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
         get;
         set
         {
+            if (ViewModel == value)
+                return;
+
             UpdateEvents(value, ViewModel);
             field = value;
             field?.EditorHandler = this;
-            _ = LoadContentAsync();
+            if (OriginalText is null)
+            {
+                _ = LoadContentAsync();
+            }
         }
     }
 
@@ -71,12 +79,11 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
         get => field;
         set
         {
-            Text = value ?? string.Empty;
-            if (value != field)
-            {
-                field = value;
-                ViewModel?.NotifyStateChanged();
-            }
+            if (value == field)
+                return;
+            
+            field = value;
+            ViewModel?.NotifyStateChanged();
         }
     }
 
@@ -103,7 +110,9 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
             await using var stream = await file.FileItem.OpenStreamForWriteAsync();
             using var writer = new StreamWriter(stream);
             await writer.WriteAsync(Text ?? string.Empty);
+            await writer.FlushAsync();
             stream.SetLength(stream.Position);
+
             OriginalText = Text;
         }
         catch
@@ -158,27 +167,40 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
 
     private async Task LoadContentAsync()
     {
-        // Defer until loaded
+        // Defer until the control has loaded
         if (CodeEditor is null)
             return;
 
-        var file = ViewModel?.File;
-        var text = string.Empty;
+        if (_isLoading)
+            return;
 
-        if (file is not null)
+        _isLoading = true;
+
+        try
         {
-            await using var stream = await file.FileItem.OpenStreamForReadAsync();
-            using var reader = new StreamReader(stream);
-            text = await reader.ReadToEndAsync();
+            var file = ViewModel?.File;
+            var text = string.Empty;
 
-            if (file.SourceFile is not null)
+            if (file is not null)
             {
-                CodeEditor?.RegisterBreakpointSource(file.SourceFile.Breakpoints);
-            }
-        }
+                await using var stream = await file.FileItem.OpenStreamForReadAsync();
+                using var reader = new StreamReader(stream);
+                text = await reader.ReadToEndAsync();
 
-        OriginalText = text;
-        CodeEditor?.ResetHistory();
+                if (file.SourceFile is not null)
+                {
+                    CodeEditor?.RegisterBreakpointSource(file.SourceFile.Breakpoints);
+                }
+            }
+
+            OriginalText = text;
+            Text = text;
+            CodeEditor?.ResetHistory();
+        }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 
     private void ZoomComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
