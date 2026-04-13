@@ -15,6 +15,7 @@ public enum LogId : uint
     DuplicateSymbolDefinition,
     DisabledFeatureInUse,
     NotInVersion,
+    Other,
 
     // Macros
     MacroMissingValue,

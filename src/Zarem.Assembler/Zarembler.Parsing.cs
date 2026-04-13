@@ -126,8 +126,9 @@ public partial class Zarembler
 
         // TODO: Macros
 
-        //var macroSym = new MacroSymbol(name, )
-        //DefineSymbol(name, result.Addend, SymbolType.Macro);
+        DefineSymbol(name, new Address(result.Addend), SymbolType.Macro);
+
+        //_logger.Log(Severity.Message, LogId.Other, line.Tokens, "DefMacroPrefered", )
     }
 
     private void RealizeInstruction(AssemblyLine line)

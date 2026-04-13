@@ -116,6 +116,7 @@ public partial class Tokenizer
 
                 // Behavior mode only?
                 "!" or "<" or ">" => TokenType.Operator,
+                "=" => TokenType.Assign,
                 _ => TokenType.Unknown,
             },
         };
