@@ -15,6 +15,7 @@ using Zarem.IDE.Services.Files.Models;
 using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Popup.Models;
 using Zarem.MIPS;
+using Zarem.MIPS.TrapHandlers;
 using Zarem.Models.Files;
 using Zarem.Registry;
 using Zarem.RiscV;
@@ -64,6 +65,7 @@ public class ProjectService : IProjectService
 
         // Populate trap handlers
         ZaremRegistry.TrapHandlers.Register(new ZaremTrapHandlerDescriptor());
+        ZaremRegistry.TrapHandlers.Register(new SpimTrapHandlerDescriptor());
     }
 
     /// <inheritdoc/>
