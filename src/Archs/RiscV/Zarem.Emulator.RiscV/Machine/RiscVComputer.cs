@@ -58,6 +58,6 @@ public sealed class RiscVComputer : ComputerBase
     protected override void MapDevices(MemoryMapper mapper)
     {
         // System RAM
-        mapper.MapDevice(0x0000_0000, new RamDevice(1024 * 1024 * 1024)); // TODO: Config ram size
+        mapper.MapDevice(0x0000_0000, new RamDevice(0x1_0000_0000)); // TODO: Config ram size
     }
 }

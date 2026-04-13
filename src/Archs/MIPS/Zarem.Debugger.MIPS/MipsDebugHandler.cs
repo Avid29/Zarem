@@ -50,7 +50,7 @@ public class MipsDebugHandler : IDebugHandler
         {
             return mipsCpu.DelaySlot.Value;
         }
-        else
+        else if (mipsCpu.Config.DisableDelaySlots)
         {
             var instruction = (MipsInstruction)computer.Memory.Read<uint>(pc);
 
@@ -73,6 +73,8 @@ public class MipsDebugHandler : IDebugHandler
                 _ => pc + InstructionSize,
             };
         }
+
+        return pc + InstructionSize;
     }
 
     /// <inheritdoc/>
