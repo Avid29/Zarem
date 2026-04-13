@@ -42,5 +42,8 @@ public class SpimTrapHandler : ITrapHandler
             case 10: context.Cpu.RequestShutdown(); break;
             default: throw new InvalidSyscallException(context.Cpu.ProgramCounter, code);
         }
+
+        // Increment program counter (TODO: dynamically sized instructions)
+        context.Cpu.ProgramCounter += 4;
     }
 }
