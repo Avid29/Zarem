@@ -61,10 +61,9 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
             UpdateEvents(value, ViewModel);
             field = value;
             field?.EditorHandler = this;
-            if (OriginalText is null)
-            {
-                _ = LoadContentAsync();
-            }
+            Text = string.Empty;
+            OriginalText = null;
+            _ = LoadContentAsync();
         }
     }
 
