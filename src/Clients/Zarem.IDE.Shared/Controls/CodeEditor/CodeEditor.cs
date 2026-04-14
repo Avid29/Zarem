@@ -25,7 +25,7 @@ public sealed partial class CodeEditor : Control, ICodeEditor
 {
     private const int ThrottleThresholdMs = 250;
     private readonly Stopwatch _throttleStopwatch = Stopwatch.StartNew();
-    private TokenizedAssembly? _tokenizedAssembly;
+    private LineResolver? _lineResolver;
     private bool _isAssemblerQueued;
 
     public static readonly DependencyProperty TextProperty =
@@ -211,7 +211,11 @@ public sealed partial class CodeEditor : Control, ICodeEditor
         {
             var result = await Zarembler.AssembleAsync(Text, "editor", Assembler.Handler, Assembler.Config);
             SymbolResolver = new SymbolResolver(result.Symbols);
-            _tokenizedAssembly = result.Tokens;
+
+            if (result.Module?.DebugLines is not null)
+            {
+                _lineResolver = new LineResolver(result.Module.DebugLines);
+            }
 
             ApplyLogHighlights(result.Logs);
         }
@@ -223,12 +227,10 @@ public sealed partial class CodeEditor : Control, ICodeEditor
 
     private void UpdatePositionAddress()
     {
-        if (_tokenizedAssembly is null || _tokenizedAssembly.LineCount is 0)
+        if (_lineResolver is null)
             return;
 
-        var line = Math.Min(Line, _tokenizedAssembly.LineCount - 1);
-        var asmLine = _tokenizedAssembly[(int)line];
-        PositionAddress = asmLine.Address;
+        PositionAddress = _lineResolver.GetAddress("editor", (ulong)Line);
     }
 
     private async void RequestThrottledAssembly()
