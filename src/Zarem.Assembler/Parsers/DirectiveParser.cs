@@ -30,16 +30,25 @@ public readonly struct DirectiveParser
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly AssemblerConfig? _config;
     private readonly AssemblerLogger? _logger;
+    private readonly bool _realize;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DirectiveParser"/> struct.
     /// </summary>
-    public DirectiveParser(IReadOnlyDictionary<string, Symbol>? symbols, AssemblerConfig? config, ILogger? logger)
+    public DirectiveParser() : this(null, null, null, true)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DirectiveParser"/> struct.
+    /// </summary>
+    public DirectiveParser(IReadOnlyDictionary<string, Symbol>? symbols, AssemblerConfig? config, ILogger? logger, bool realize)
     {
         _symbols = symbols;
         _config = config;
+        _realize = realize;
 
-        if (logger is not null)
+        if (_realize && logger is not null)
         {
             _logger = new AssemblerLogger(logger);
         }
@@ -225,32 +234,28 @@ public readonly struct DirectiveParser
         int argSize = Unsafe.SizeOf<T>();
         var bytes = new byte[args.Count * argSize];
 
-        for (int i = 0; i < args.Count; i++)
+        if (_realize)
         {
-            var arg = args[i];
-
-            if (!ExpressionParser.TryParse<long>(arg.Tokens, out var result, _symbols, _logger?.Parent))
-                return false;
-
-            if (result.IsSymbolic)
+            for (int i = 0; i < args.Count; i++)
             {
-                // TODO: Can data be a reference to a relocatable address?
-                _logger?.Log(Severity.Error, LogId.InvalidDirectiveDataArg, args[0].Tokens, "DirectiveAllocationNoRelocatableArguments", name);
-                return false;
-            }
+                var arg = args[i];
 
-            Guard.IsNotNull(result.Addend);
-            var resultValue = result.Addend;
-            
-            // TODO: Double check the logic here. Does this always detect the error?
-            T value = T.CreateTruncating(resultValue);
-            if (value != T.CreateSaturating(resultValue))
-            {
-                _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg.Tokens, "DirectiveAllocationTruncated",  arg.Tokens.Print(), result.Addend, value);
-            }
+                if (!ExpressionParser.TryParse<long>(arg.Tokens, out var result, _symbols, _logger?.Parent))
+                    return false;
 
-            value.WriteBigEndian(bytes, pos);
-            pos += argSize;
+                Guard.IsNotNull(result.Addend);
+                var resultValue = result.Addend;
+
+                // TODO: Double check the logic here. Does this always detect the error?
+                T value = T.CreateTruncating(resultValue);
+                if (value != T.CreateSaturating(resultValue))
+                {
+                    _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg.Tokens, "DirectiveAllocationTruncated", arg.Tokens.Print(), result.Addend, value);
+                }
+
+                value.WriteBigEndian(bytes, pos);
+                pos += argSize;
+            }
         }
 
         directive = new DataDirective(bytes);
