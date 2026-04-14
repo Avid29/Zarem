@@ -16,6 +16,7 @@ using Zarem.Assembler.Models.Directives;
 using Zarem.Assembler.Models.Directives.Abstract;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
+using Zarem.Models.Enums;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Parsers;
@@ -30,22 +31,24 @@ public readonly struct DirectiveParser
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly AssemblerConfig? _config;
     private readonly AssemblerLogger? _logger;
+    private readonly Endianness _endianness;
     private readonly bool _realize;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DirectiveParser"/> struct.
     /// </summary>
-    public DirectiveParser() : this(null, null, null, true)
+    public DirectiveParser(Endianness endianness) : this(endianness, null, null, null, true)
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DirectiveParser"/> struct.
     /// </summary>
-    public DirectiveParser(IReadOnlyDictionary<string, Symbol>? symbols, AssemblerConfig? config, ILogger? logger, bool realize)
+    public DirectiveParser(Endianness endianness, IReadOnlyDictionary<string, Symbol>? symbols, AssemblerConfig? config, ILogger? logger, bool realize)
     {
         _symbols = symbols;
         _config = config;
+        _endianness = endianness;
         _realize = realize;
 
         if (_realize && logger is not null)
@@ -95,8 +98,8 @@ public readonly struct DirectiveParser
             ".asciiz" => TryParseString(line.Args, Encoding.ASCII, true, out directive),
             ".utf8" => TryParseString(line.Args, Encoding.UTF8, false, out directive),
             ".utf8z" => TryParseString(line.Args, Encoding.UTF8, true, out directive),
-            ".unicode" or ".utf16" => TryParseString(line.Args, Encoding.BigEndianUnicode, false, out directive),
-            ".unicodez" or ".utf16z" => TryParseString(line.Args, Encoding.BigEndianUnicode, true, out directive),
+            ".unicode" or ".utf16" => TryParseString(line.Args, _endianness is Endianness.Big ? Encoding.BigEndianUnicode : Encoding.Unicode, false, out directive),
+            ".unicodez" or ".utf16z" => TryParseString(line.Args, _endianness is Endianness.Big ? Encoding.BigEndianUnicode : Encoding.Unicode, true, out directive),
 
             // Invalid directive
             _ => _logger?.Log(Severity.Error, LogId.InvalidDirectiveName, token, "DirectiveDoesNotExist", token.Source) ?? false,
@@ -253,7 +256,14 @@ public readonly struct DirectiveParser
                     _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg.Tokens, "DirectiveAllocationTruncated", arg.Tokens.Print(), result.Addend, value);
                 }
 
-                value.WriteBigEndian(bytes, pos);
+                if (_endianness is Endianness.Big)
+                {
+                    value.WriteBigEndian(bytes, pos);
+                }
+                else
+                {
+                    value.WriteLittleEndian(bytes, pos);
+                }
                 pos += argSize;
             }
         }
@@ -298,8 +308,8 @@ public readonly struct DirectiveParser
             Span<byte> destination = bytes.AsSpan(pos, argSize);
             MemoryMarshal.Write(destination, in value);
 
-            // If the host is Little Endian, flip to Big Endian for the directive
-            if (BitConverter.IsLittleEndian)
+            // If the host endianness does not match the desired endianness, flip reverse the bytes
+            if (BitConverter.IsLittleEndian == _endianness is Endianness.Big)
                 destination.Reverse();
 
             pos += argSize;

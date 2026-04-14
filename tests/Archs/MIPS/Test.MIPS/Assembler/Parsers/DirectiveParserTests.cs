@@ -9,6 +9,7 @@ using Zarem.Assembler.Models.Directives;
 using Zarem.Assembler.Models.Directives.Abstract;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization;
+using Zarem.Models.Enums;
 
 namespace Test.MIPS.Assembler.Parsers;
 
@@ -56,7 +57,7 @@ public class DirectiveParserTests
 
     private static Directive ParseDirective(string input)
     {
-        var parser = new DirectiveParser();
+        var parser = new DirectiveParser(Endianness.Big);
 
         // Tokenize directive
         var line = Tokenizer.TokenizeLine(input, MipsTokenizerProfile.Default, nameof(RunGlobalTest))[0];
