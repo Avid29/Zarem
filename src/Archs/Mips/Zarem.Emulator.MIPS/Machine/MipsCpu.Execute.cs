@@ -13,7 +13,7 @@ using Zarem.Models.Instructions;
 namespace Zarem.Emulator.Machine;
 
 /// <summary>
-/// A class representing a processor unit.
+/// A class representing a MIPS processor unit.
 /// </summary>
 public sealed partial class MipsCpu<T> : IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
