@@ -34,7 +34,7 @@ public readonly partial struct ExpressionParser
     // Floats: 1.0, -0.5, 1e10
     // Prefixed Ints: 0x, 0b, 0o
     // Standard Ints: 123
-    [GeneratedRegex(@"^(?:(?<float>[-+]?\d+\.\d+(?:[eE][-+]?\d+)?) | 0x(?<hex>[0-9a-fA-F]+) | 0b(?<bin>[01]+) | 0o(?<oct>[0-7]+) | (?<int>[-+]?\d+))$", RegexOptions.IgnorePatternWhitespace)]
+    [GeneratedRegex(@"^(?:(?<float>[-+]?(?:\d+\.\d*|\.\d+|\d+[eE][-+]?\d+)(?:[eE][-+]?\d+)?) | 0x(?<hex>[0-9a-fA-F]+) | 0b(?<bin>[01]+) | 0o(?<oct>[0-7]+) | (?<int>[-+]?\d+))$", RegexOptions.IgnorePatternWhitespace)]
     private static partial Regex NumberRegex();
 
     private readonly AssemblerLogger? _logger;
