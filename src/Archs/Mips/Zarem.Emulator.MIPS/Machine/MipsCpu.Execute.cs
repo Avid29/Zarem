@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
+using System.Threading;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models;
@@ -18,6 +19,13 @@ namespace Zarem.Emulator.Machine;
 public sealed partial class MipsCpu<T> : IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    /// <inheritdoc/>
+    public void Run(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+            Step();
+    }
+
     /// <inheritdoc/>
     public void Step()
     {

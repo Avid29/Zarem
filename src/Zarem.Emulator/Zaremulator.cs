@@ -18,6 +18,7 @@ namespace Zarem.Emulator;
 public class Zaremulator : IDisposable
 {
     private readonly ManualResetEventSlim _runGate = new(false);
+    private CancellationTokenSource? _cts;
     private Thread? _thread;
 
     /// <summary>
@@ -109,6 +110,7 @@ public class Zaremulator : IDisposable
     {
         // Schedule pause
         State = EmulatorState.Pausing;
+        _cts?.Cancel();
         _runGate.Reset();
     }
 
@@ -117,6 +119,7 @@ public class Zaremulator : IDisposable
     {
         // Schedule the shutdown
         State = EmulatorState.Stopping;
+        _cts?.Cancel();
         _runGate.Set(); // The thread must run to exit
     }
 
@@ -125,66 +128,49 @@ public class Zaremulator : IDisposable
     /// </summary>
     protected void ExecutionLoop()
     {
-#if DEBUG
-        Stopwatch sw = Stopwatch.StartNew();
-        long totalInstructions = 0;
-
-        void DumpMHz()
-        {
-            double mhz = totalInstructions / (sw.Elapsed.TotalSeconds * 1000000.0);
-            Debug.WriteLine($"{mhz} MHz");
-            totalInstructions = 0;
-            sw.Restart();
-        }
-#endif
         try
         {
             while (State is not EmulatorState.Stopping)
             {
-                // Wait here if paused
+                // Blocks the thread while Paused
                 _runGate.Wait();
 
-                // Loop ticks while running
-                while (State is EmulatorState.Running)
+                // Check if we exited the wait because of a Stop request
+                if (State is EmulatorState.Stopping)
+                    break;
+
+                if (State is EmulatorState.Running)
                 {
-                    Computer.Tick();
+                    // Create a fresh token for this run session
+                    _cts = new CancellationTokenSource();
 
-#if DEBUG
-                    totalInstructions++;
-
-                    if (sw.ElapsedMilliseconds > 1000)
-                        DumpMHz();
-#endif
+                    // Hand control to the computer.
+                    // It will loop internally until _cts.Cancel() is called.
+                    Computer.Run(_cts.Token);
                 }
 
-                // Complete pausing transition
+                // Transition logic for the state machine
                 if (State is EmulatorState.Pausing)
                     State = EmulatorState.Paused;
             }
         }
         catch (EmulationException e)
         {
-            Console.WriteLine();
-            Console.WriteLine(e.Message);
+            Console.WriteLine($"\n{e.Message}");
         }
         catch (Exception e)
         {
             var localizer = new Localizer("Zarem.Emulator.Resources.Messages", typeof(Zaremulator).Assembly);
-
-            Console.WriteLine();
-            Console.WriteLine(localizer["ExceptionOccurred", e]);
+            Console.WriteLine($"\n{localizer["ExceptionOccurred", e]}");
         }
 
-#if DEBUG
-        DumpMHz();
-#endif
-
-        // Complete the shutdown,
-        // or handle exception
         State = EmulatorState.Stopped;
-        _thread?.Join();
     }
 
     /// <inheritdoc/>
-    public void Dispose() => Computer.Dispose();
+    public void Dispose()
+    {
+        ShutDown();
+        Computer.Dispose();
+    }
 }

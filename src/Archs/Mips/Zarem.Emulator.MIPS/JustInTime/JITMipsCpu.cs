@@ -2,6 +2,7 @@
 
 using System;
 using System.Numerics;
+using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine;
@@ -21,8 +22,12 @@ namespace Zarem.Emulator.JustInTime;
 public class JITMipsCpu<T> : IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    #pragma warning disable CS0067
+
     /// <inheritdoc/>
     public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
+    
+    #pragma warning restore CS0067
 
     /// <inheritdoc/>
     public event EventHandler? ShutdownRequested;
@@ -134,7 +139,7 @@ public class JITMipsCpu<T> : IMipsCpu
     }
 
     /// <inheritdoc/>
-    public void Step()
+    public void Run(CancellationToken ct)
     {
         throw new NotImplementedException();
     }

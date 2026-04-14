@@ -2,6 +2,7 @@
 
 using System;
 using System.Numerics;
+using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.CoProcessors;

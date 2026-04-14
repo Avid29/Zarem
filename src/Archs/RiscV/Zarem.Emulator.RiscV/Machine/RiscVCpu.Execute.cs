@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
+using System.Threading;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enums;
@@ -15,6 +16,13 @@ namespace Zarem.Emulator.Machine;
 public sealed partial class RiscVCpu<T> : IRiscVCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    /// <inheritdoc/>
+    public void Run(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+            Step();
+    }
+
     /// <inheritdoc/>
     public void Step()
     {

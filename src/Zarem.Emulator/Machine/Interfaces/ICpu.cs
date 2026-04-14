@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Threading;
 using Zarem.Emulator.Events;
 using Zarem.Models.Enums;
 
@@ -45,6 +46,13 @@ public interface ICpu : IDisposable
     /// Gets the system memory.
     /// </summary>
     MemorySystem Memory { get; }
+
+    /// <summary>
+    /// Starts or resumes execution. 
+    /// Execution continues until the cancellation token is signaled 
+    /// or an internal shutdown/trap occurs.
+    /// </summary>
+    void Run(CancellationToken ct);
 
     /// <summary>
     /// Requests a shutdown.

@@ -50,9 +50,6 @@ public sealed class MipsComputer : ComputerBase
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;
 
     /// <inheritdoc/>
-    public override void Tick() => Cpu.Step();
-
-    /// <inheritdoc/>
     protected override void MapDevices(MemoryMapper mapper)
     {
         // System RAM

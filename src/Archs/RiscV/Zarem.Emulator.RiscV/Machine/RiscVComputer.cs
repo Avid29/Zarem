@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
@@ -50,9 +51,6 @@ public sealed class RiscVComputer : ComputerBase
 
     /// <inheritdoc/>
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;
-
-    /// <inheritdoc/>
-    public override void Tick() => Cpu.Step();
 
     /// <inheritdoc/>
     protected override void MapDevices(MemoryMapper mapper)

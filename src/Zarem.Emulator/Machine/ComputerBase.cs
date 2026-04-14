@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Devices.Interfaces;
@@ -68,7 +69,7 @@ public abstract class ComputerBase : IComputer
     }
 
     /// <inheritdoc/>
-    public abstract void Tick();
+    public virtual void Run(CancellationToken ct) => Cpu.Run(ct);
 
     /// <summary>
     /// Maps the devices in the memory bus.
