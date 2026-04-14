@@ -141,9 +141,6 @@
   <data name="DoesNotSupportFormatPairedSingle" xml:space="preserve">
     <value>Instruction '{0}' does not support the format 'Paired Single'.</value>
   </data>
-  <data name="InvalidAddressOffsetArgument" xml:space="preserve">
-    <value>Argument '{0}' is not a valid address offset.</value>
-  </data>
   <data name="NoInstructionNamed" xml:space="preserve">
     <value>No instruction named '{0}'.</value>
   </data>

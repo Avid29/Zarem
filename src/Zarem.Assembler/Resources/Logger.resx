@@ -315,4 +315,7 @@
   <data name="ArgumentNotARegister" xml:space="preserve">
     <value>'{0}' is not a valid register argument.</value>
   </data>
+  <data name="InvalidAddressOffsetArgument" xml:space="preserve">
+    <value>Argument '{0}' is not a valid address offset.</value>
+  </data>
 </root>
