@@ -10,6 +10,7 @@ using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
+using Zarem.Models.Enums;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler;
@@ -35,6 +36,9 @@ public class MipsAssemblerHandler : IAssemblerHandler<MipsAssemblerConfig>
 
     /// <inheritdoc/>
     public MipsAssemblerConfig Config { get; }
+
+    /// <inheritdoc/>
+    public Endianness Endianness => Endianness.Big;
 
     /// <inheritdoc/>
     public ITokenizerProfile TokenizerProfile => MipsTokenizerProfile.Default;

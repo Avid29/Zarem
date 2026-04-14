@@ -8,6 +8,7 @@ using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
+using Zarem.Models.Enums;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler;
@@ -36,6 +37,9 @@ public class RiscVAssemblerHandler : IAssemblerHandler<RiscVAssemblerConfig>
 
     /// <inheritdoc/>
     public string GetArchitectureName() => "RISC-V";
+
+    /// <inheritdoc/>
+    public Endianness Endianness => Endianness.Little;
 
     /// <inheritdoc/>
     public int GetInstructionSize(AssemblyLine line) => 4;

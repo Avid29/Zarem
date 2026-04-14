@@ -7,6 +7,7 @@ using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
+using Zarem.Models.Enums;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Handlers;
@@ -17,14 +18,19 @@ namespace Zarem.Assembler.Handlers;
 public interface IAssemblerHandler
 {
     /// <summary>
-    /// Gets the name of the architecture.
+    /// Gets the endianness for the architecture.
     /// </summary>
-    string GetArchitectureName();
+    Endianness Endianness { get; }
 
     /// <summary>
     /// Gets the tokenizer profile for the architecture.
     /// </summary>
     ITokenizerProfile TokenizerProfile { get; }
+
+    /// <summary>
+    /// Gets the name of the architecture.
+    /// </summary>
+    string GetArchitectureName();
 
     /// <summary>
     /// Gets the size of an instruction.

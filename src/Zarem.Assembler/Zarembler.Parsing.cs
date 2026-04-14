@@ -156,7 +156,7 @@ public partial class Zarembler
     private void HandleDirective(AssemblyLine line, bool realize)
     {
         // Only log parser errors on the second pass
-        var parser = new DirectiveParser(_module.Symbols, Config, _logger.Parent, realize);
+        var parser = new DirectiveParser(_archHandler.Endianness, _module.Symbols, Config, _logger.Parent, realize);
 
         var name = line.Directive;
         if (name is null || !parser.TryParseDirective(line, out var directive))
