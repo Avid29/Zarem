@@ -44,6 +44,9 @@ public sealed partial class MipsCpu<T> : IMipsCpu
         _instructionServiceTable = config.Version.Is64Bit()
             ? new MipsInstructionServiceTable<T, long>(this)
             : new MipsInstructionServiceTable<T, int>(this);
+
+        // HOTFIX: Initialize $sp
+        this[MipsGpRegister.StackPointer] = T.CreateTruncating(0x7FFF_8000);
     }
 
     /// <inheritdoc/>
