@@ -1,6 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System.Collections.Generic;
+using System.Net;
+using System.Runtime.InteropServices;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
@@ -11,7 +13,7 @@ namespace Zarem.Helpers;
 /// </summary>
 public class LineResolver
 {
-    private readonly Dictionary<(string?, ulong), Address> _lookup = [];
+    private readonly Dictionary<string, SortedList<ulong, Address>> _lineLookup = [];
     private readonly SortedList<ulong, SourceRange> _sourceLookup = [];
 
     /// <summary>
@@ -21,16 +23,18 @@ public class LineResolver
     {
         foreach (var line in lines)
         {
-            var key = (line.Location.Start.File, (ulong)line.Location.Start.Line);
-            if (!_lookup.ContainsKey(key))
-            {
-                _lookup[key] = line.Address;
-            }
+            var filePath = line.Location.Start.File ?? string.Empty;
+            var lineNum = line.Location.Start.Line;
 
             if (line.Address.VirtualAddress.HasValue)
             {
                 _sourceLookup[line.Address.VirtualAddress.Value] = line.Location;
             }
+
+            if (!_lineLookup.TryGetValue(filePath, out var list))
+                _lineLookup[filePath] = list = [];
+
+            list.TryAdd((ulong)lineNum, line.Address);
         }
     }
 
@@ -41,36 +45,43 @@ public class LineResolver
     /// <param name="lineNumber">The line number in the file.</param>
     /// <returns></returns>
     public Address? GetAddress(string filePath, ulong lineNumber)
-        => _lookup.TryGetValue((filePath, lineNumber), out var address) ? address : null;
+    {
+        if (!_lineLookup.TryGetValue(filePath, out var list))
+            return null;
+
+        return BinarySearch(list, lineNumber);
+    }
 
     /// <summary>
     /// Gets the file and line number given a virtual address.
     /// </summary>
     /// <param name="address">The virtual address</param>
     public SourceRange? GetSourceLocation(ulong address)
+        => BinarySearch(_sourceLookup, address);
+
+    private static T? BinarySearch<T>(SortedList<ulong, T> list, ulong key)
     {
-        if (_sourceLookup.Count == 0)
-            return null;
+        if (list.Count is 0)
+            return default;
 
-        // Binary search for the index
-        int index = BinarySearchKeys(address);
+        int index = BinarySearchKeys(list.Keys, key);
 
-        // Address is before our first registered point
-        if (index == -1)
-            return null; 
+        if (index is -1)
+            return default;
 
-        return _sourceLookup.Values[index];
+        return list.Values[index];
+
     }
 
-    private int BinarySearchKeys(ulong key)
+    private static int BinarySearchKeys(IList<ulong> list, ulong key)
     {
         int low = 0;
-        int high = _sourceLookup.Count - 1;
+        int high = list.Count - 1;
         while (low <= high)
         {
             int mid = low + (high - low) / 2;
-            if (_sourceLookup.Keys[mid] == key) return mid;
-            if (_sourceLookup.Keys[mid] < key) low = mid + 1;
+            if (list[mid] == key) return mid;
+            if (list[mid] < key) low = mid + 1;
             else high = mid - 1;
         }
         return high; // Returns the index of the greatest key less than the search key
