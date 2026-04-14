@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
 using Zarem.Emulator.Config;
@@ -14,15 +15,15 @@ using Zarem.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.JustInTime;
+namespace Zarem.Emulator.JIT;
 
 /// <summary>
 /// A class representing a MIPS processor unit, which uses JIT cross-compilation for execution.
 /// </summary>
-public class JITMipsCpu<T> : IMipsCpu
+public partial class MipsJitCpu<T> : IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    #pragma warning disable CS0067
+#pragma warning disable CS0067
 
     /// <inheritdoc/>
     public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
@@ -35,7 +36,7 @@ public class JITMipsCpu<T> : IMipsCpu
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
     /// </summary>
-    public JITMipsCpu(MIPSEmulatorConfig config, PhysicalBus bus)
+    public MipsJitCpu(MIPSEmulatorConfig config, PhysicalBus bus)
     {
         Config = config;
         RegisterFile = new(config.Version);
@@ -44,6 +45,8 @@ public class JITMipsCpu<T> : IMipsCpu
 
         Tlb = new MipsTlb();
         Memory = new MemorySystem(bus, Tlb);
+
+        _jitCompiler = new MipsJitCompiler<T>(this);
 
         // HOTFIX: Initialize $sp
         this[MipsGpRegister.StackPointer] = T.CreateTruncating(0x7FFF_8000);
@@ -134,12 +137,6 @@ public class JITMipsCpu<T> : IMipsCpu
 
     /// <inheritdoc/>
     public void Insert(MipsInstruction instruction, out MipsTrap trap)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public void Run(CancellationToken ct)
     {
         throw new NotImplementedException();
     }
