@@ -29,6 +29,16 @@ public static partial class TokenExtensions
     public static bool IsDigits(this Token? token)
         => DigitsRegex().IsMatch(token?.Source ?? string.Empty);
 
+    /// <summary>
+    /// Gets whether or not a token is numerical.
+    /// </summary>
+    public static bool IsScientific(this Token? token, out bool eSuffix)
+    {
+        var str = token?.Source ?? string.Empty;        
+        eSuffix = str.EndsWith('e') || str.EndsWith('E');
+        return char.IsDigit(str[0]) && str[1..].All(x => char.IsDigit(x) || char.ToLowerInvariant(x) is 'e');
+    }
+
     [GeneratedRegex(@"^(?:0x[0-9a-fA-F](?:_?[0-9a-fA-F])*|0b[01](?:_?[01])*|0o[0-7](?:_?[0-7])*|\d(?:_?\d)*)$")]
     private static partial Regex IntegerRegex();
 

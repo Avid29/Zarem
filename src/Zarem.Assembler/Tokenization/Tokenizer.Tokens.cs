@@ -315,32 +315,48 @@ public partial class Tokenizer
 
         var secondary = Peek(tokens);
         var tertiary = Peek(tokens, 2);
+        int baseCount = 0;
 
-        // Case: 123.456 (Digits + Dot + Digits)
-        if (baseToken.IsDigits() && secondary?.Source == "." && tertiary?.IsDigits() == true)
+        if (baseToken.IsDigits() && secondary?.Source == "." && tertiary?.IsScientific(out bool eSuffix) == true)
         {
-            // Merge the prefix (if any) plus the 3 numeric tokens
+            // Case: 123.456 (Digits + Dot + Digits)
             merged = Merge(TokenType.Immediate, baseToken, secondary, tertiary);
-            advance = 3;
-            return true;
+            baseCount = 3;
         }
-
-        // Case: .456 (Dot + Digits)
-        if (baseToken.Source == "." && secondary?.IsDigits() == true)
+        else if (baseToken.Source == "." && secondary?.IsScientific(out eSuffix) == true)
         {
+            // Case: .456 (Dot + Digits)
             merged = Merge(TokenType.Immediate, baseToken, secondary);
-            advance = 2;
-            return true;
+            baseCount = 2;
         }
-
-        // Case: 123 (Integer)
-        if (baseToken.IsInteger())
+        else if (baseToken.IsScientific(out eSuffix) || baseToken.IsInteger())
         {
+            // Case: 123 (Integer)
             merged = Merge(TokenType.Immediate, baseToken);
-            advance = 1;
-            return true;
+            baseCount = 1;
         }
 
-        return false;
+        if (merged is null)
+            return false;
+
+        // Handle scientific notation
+        if (eSuffix)
+        {
+            // The last token involved in the merge so far ends with 'e' or 'E'
+            var next1 = Peek(tokens, baseCount);
+            var next2 = Peek(tokens, baseCount + 1);
+
+            if ((next1?.Source is "+" or "-") && next2?.IsDigits() == true)
+            {
+                merged = Merge(TokenType.Immediate, merged, next1, next2);
+                advance = baseCount + 2;
+                return true;
+            }
+
+            return false;
+        }
+
+        advance = baseCount;
+        return true;
     }
 }
