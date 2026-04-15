@@ -6,8 +6,8 @@ using System.Numerics;
 using System.Threading;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Interfaces;
-using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Models.Interpret;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Instructions;
 

@@ -9,6 +9,7 @@ using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models;
+using Zarem.Emulator.Models.Interpret;
 using Zarem.Extensions;
 using Zarem.Models.Enums;
 using Zarem.Models.Instructions.Enums.Registers;

@@ -5,6 +5,7 @@ using System.Numerics;
 using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Models.Interpret;
 using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.Models;

@@ -3,8 +3,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using Zarem.Emulator.JIT;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.Emulator.Models.JIT;
 
 /// <summary>
 /// A cache manager for MIPS JIT blocks.

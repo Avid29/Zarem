@@ -8,9 +8,7 @@ using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Enums;
-using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.JIT;
