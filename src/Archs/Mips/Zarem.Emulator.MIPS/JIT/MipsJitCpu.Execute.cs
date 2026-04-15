@@ -15,9 +15,6 @@ namespace Zarem.Emulator.JIT;
 public delegate T MipsBlockDelegate<T>(MipsJitCpu<T> cpu)
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>;
 
-/// <summary>
-/// A class representing a MIPS processor unit, which uses JIT cross-compilation for execution.
-/// </summary>
 public partial class MipsJitCpu<T> : IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {

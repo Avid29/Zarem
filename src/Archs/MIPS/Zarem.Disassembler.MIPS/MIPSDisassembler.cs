@@ -113,11 +113,11 @@ public class MipsDisassembler
                 MipsArgument.RT => GetRegisterString(instruction.RT, MipsRegisterSet.GeneralPurpose),
                 MipsArgument.RD => GetRegisterString(instruction.RD, MipsRegisterSet.GeneralPurpose),
                 MipsArgument.ShiftAmount => instruction.ShiftAmount,
-                MipsArgument.Immediate => instruction.ImmediateValue,
+                MipsArgument.Immediate => instruction.Immediate,
                 MipsArgument.Offset => instruction.Offset,
                 MipsArgument.LargeOffset => instruction.Address,
                 MipsArgument.Address => instruction.Address,
-                MipsArgument.AddressBase => $"{instruction.ImmediateValue}({GetRegisterString(instruction.RS, MipsRegisterSet.GeneralPurpose)})",
+                MipsArgument.AddressBase => $"{instruction.Immediate}({GetRegisterString(instruction.RS, MipsRegisterSet.GeneralPurpose)})",
                 MipsArgument.FullImmediate => 0, // Won't happen until pseudo-instruction disassembly
                 MipsArgument.FS => GetRegisterString((MipsGpRegister)((FloatInstruction)instruction).FS, MipsRegisterSet.FloatingPoints),
                 MipsArgument.FT => GetRegisterString((MipsGpRegister)((FloatInstruction)instruction).FT, MipsRegisterSet.FloatingPoints),
