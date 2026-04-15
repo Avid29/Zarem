@@ -71,7 +71,7 @@ public partial class MipsJitCompiler<T>
         EmitRegisterWrite(il, inst.RD, () =>
         {
             EmitRegisterRead(il, inst.RT);
-            il.Emit(OpCodes.Ldc_I4, inst.ShiftAmount);
+            il.Emit(OpCodes.Ldc_I4, (int)inst.ShiftAmount);
             il.Emit(ilOpCode);
         });
 
