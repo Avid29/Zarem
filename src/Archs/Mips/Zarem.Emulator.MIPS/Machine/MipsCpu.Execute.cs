@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
+using System.Threading;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models;
@@ -13,11 +14,18 @@ using Zarem.Models.Instructions;
 namespace Zarem.Emulator.Machine;
 
 /// <summary>
-/// A class representing a processor unit.
+/// A class representing a MIPS processor unit.
 /// </summary>
 public sealed partial class MipsCpu<T> : IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    /// <inheritdoc/>
+    public void Run(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+            Step();
+    }
+
     /// <inheritdoc/>
     public void Step()
     {

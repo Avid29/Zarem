@@ -245,7 +245,7 @@ public struct MipsInstruction
     /// Creates an I-Type instruction.
     /// </summary>
     public static MipsInstruction CreateI(MipsOpCode op, MipsGpRegister rs, MipsGpRegister rt, short imm)
-        => new() { OpCode = op, RS = rs, RT = rt, ImmediateValue = imm };
+        => new() { OpCode = op, RS = rs, RT = rt, Immediate = imm };
 
     /// <summary>
     /// Creates a J-Type instruction.
@@ -269,7 +269,7 @@ public struct MipsInstruction
     /// Creates a J-Type instruction.
     /// </summary>
     public static MipsInstruction CreateTrap(RegImmFuncCode rtFunc, MipsGpRegister rs, short immediate)
-        => new() { OpCode = MipsOpCode.RegisterImmediate, RTFuncCode = rtFunc, RS = rs, ImmediateValue = immediate };
+        => new() { OpCode = MipsOpCode.RegisterImmediate, RTFuncCode = rtFunc, RS = rs, Immediate = immediate };
 
     /// <summary>
     /// Gets a no operation instruction.
@@ -387,7 +387,7 @@ public struct MipsInstruction
     /// <summary>
     /// Gets the instruction's immediate value.
     /// </summary>
-    public short ImmediateValue
+    public short Immediate
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => (short)BitField.GetField(_inst, IMMEDIATE_BIT_SIZE, IMMEDIATE_BIT_OFFSET);
@@ -400,8 +400,8 @@ public struct MipsInstruction
     public int Offset
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly get => ImmediateValue << 2;
-        set => ImmediateValue = (short)(value >> 2);
+        readonly get => Immediate << 2;
+        set => Immediate = (short)(value >> 2);
     }
 
     /// <summary>

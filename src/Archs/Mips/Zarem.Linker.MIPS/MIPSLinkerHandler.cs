@@ -62,13 +62,13 @@ public class MipsLinkerHandler : ILinkerHandler<MipsLinkerConfig>
 
     private static uint MIPS_Low16(MipsInstruction instruction, long target)
     {
-        instruction.ImmediateValue = (short)(target & 0xFFFF);
+        instruction.Immediate = (short)(target & 0xFFFF);
         return (uint)instruction;
     }
 
     private static uint MIPS_High16(MipsInstruction instruction, long target)
     {
-        instruction.ImmediateValue = (short)((target + 0x8000) >> 16);
+        instruction.Immediate = (short)((target + 0x8000) >> 16);
         return (uint)instruction;
     }
 

@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Config.Enums;
+using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Extensions;
@@ -30,9 +32,18 @@ public sealed class MipsComputer : ComputerBase
         MapDevices(_memoryMapper);
 
         // Initialize the components
-        Cpu = config.Version.Is64Bit()
-            ? new MipsCpu<ulong>(config, bus)
-            : new MipsCpu<uint>(config, bus);
+        Cpu = config.ExecutionMode switch
+        {
+            ExecutionMode.JustInTime =>
+                Cpu = config.Version.Is64Bit()
+                    ? new MipsJitCpu<ulong>(config, bus)
+                    : new MipsJitCpu<uint>(config, bus),
+
+            ExecutionMode.Interpret or _ =>
+                Cpu = config.Version.Is64Bit()
+                    ? new MipsCpu<ulong>(config, bus)
+                    : new MipsCpu<uint>(config, bus),
+        };
 
         Cpu.ShutdownRequested += Processor_ShutdownRequested;
     }
@@ -48,9 +59,6 @@ public sealed class MipsComputer : ComputerBase
 
     /// <inheritdoc/>
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;
-
-    /// <inheritdoc/>
-    public override void Tick() => Cpu.Step();
 
     /// <inheritdoc/>
     protected override void MapDevices(MemoryMapper mapper)

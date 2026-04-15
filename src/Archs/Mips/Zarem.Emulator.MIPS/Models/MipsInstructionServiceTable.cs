@@ -141,7 +141,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
         var rs = T2.CreateTruncating(@this._regs[(int)inst.RS]);
-        var imm = T2.CreateTruncating(inst.ImmediateValue);
+        var imm = T2.CreateTruncating(inst.Immediate);
         exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(TLogic.Compute(rs, imm)));
         return MipsTrap.None;
     }
@@ -152,7 +152,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         where TSigned2 : unmanaged, IBinaryInteger<TSigned2>, ISignedNumber<TSigned2>
     {
         var rs = T2.CreateTruncating(@this._regs[(int)inst.RS]);
-        var imm = T2.CreateTruncating(TSigned2.CreateSaturating(inst.ImmediateValue));
+        var imm = T2.CreateTruncating(TSigned2.CreateSaturating(inst.Immediate));
         exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(TLogic.Compute(rs, imm)));
         return MipsTrap.None;
     }
@@ -163,7 +163,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         where TSigned2 : unmanaged, IBinaryInteger<TSigned2>, ISignedNumber<TSigned2>
     {
         var rs = T2.CreateTruncating(@this._regs[(int)inst.RS]);
-        var imm = T2.CreateTruncating(TS.CreateSaturating(inst.ImmediateValue));
+        var imm = T2.CreateTruncating(TS.CreateSaturating(inst.Immediate));
         var value = TLogic.Compute(rs, imm);
 
         if (TLogic.Overflow(TSigned2.CreateTruncating(rs), TSigned2.CreateTruncating(imm), TSigned2.CreateTruncating(value)))
@@ -272,7 +272,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         where TLogic : ICondLogic<T>
     {
         var rs = T.CreateTruncating(@this._processor[inst.RS]);
-        var imm = T.CreateTruncating(TS.CreateSaturating(inst.ImmediateValue));
+        var imm = T.CreateTruncating(TS.CreateSaturating(inst.Immediate));
         exec = default;
         return TLogic.Check(rs, imm) ? MipsTrap.Trap : MipsTrap.None;
     }
@@ -289,7 +289,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     private static MipsTrap Load<TData>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TData : unmanaged, IBinaryInteger<TData>
     {
-        T offset = T.CreateTruncating(inst.ImmediateValue);
+        T offset = T.CreateTruncating(inst.Immediate);
         T baseAddr = T.CreateTruncating(@this._processor[inst.RS]);
         T addr = baseAddr + offset;
 
@@ -309,7 +309,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     private static MipsTrap Store<TData>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TData : unmanaged
     {
-        T offset = T.CreateTruncating(inst.ImmediateValue);
+        T offset = T.CreateTruncating(inst.Immediate);
         T baseAddr = T.CreateTruncating(@this._processor[inst.RS]);
         T addr = baseAddr + offset;
 
@@ -376,7 +376,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
 
     private static MipsTrap Lui(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(inst.ImmediateValue << 16));
+        exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(inst.Immediate << 16));
         return MipsTrap.None;
     }
 

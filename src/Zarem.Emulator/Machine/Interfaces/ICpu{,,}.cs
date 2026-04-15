@@ -12,11 +12,6 @@ public interface ICpu<TSelf, TInstruction, TTrap> : ICpu
     where TTrap : Enum
 {
     /// <summary>
-    /// Advances the state of the emulator by one step.
-    /// </summary>
-    void Step();
-
-    /// <summary>
     /// Executes an instruction on the current state of the processor.
     /// </summary>
     public void Insert(TInstruction instruction, out TTrap trap);

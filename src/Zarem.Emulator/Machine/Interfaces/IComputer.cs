@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Models;
 
@@ -33,14 +34,11 @@ public interface IComputer : IDisposable
     IEnumerable<IDevice> Devices { get; }
 
     /// <summary>
-    /// Advance the computer one tick.
+    /// Starts or resumes execution. 
+    /// Execution continues until the cancellation token is signaled 
+    /// or an internal shutdown/trap occurs.
     /// </summary>
-    /// <remarks>
-    /// NOTE:
-    /// Machines don't work on one big clock. 
-    /// Ideally the processor, devices, and everything should be running on seperate threads.
-    /// </remarks>
-    void Tick();
+    void Run(CancellationToken ct);
 
     /// <summary>
     /// Loads a module into the computer's memory.
