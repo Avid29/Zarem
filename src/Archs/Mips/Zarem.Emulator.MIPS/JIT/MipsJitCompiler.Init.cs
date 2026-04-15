@@ -3,6 +3,7 @@
 using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
@@ -43,6 +44,8 @@ public partial class MipsJitCompiler<T>
         _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = (il, inst, pc) => ShiftVar(il, inst, OpCodes.Shr_Un);
         _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = (il, inst, pc) => ShiftVar(il, inst, OpCodes.Shr);
         _specialTable[(int)FunctionCode.JumpAndLinkRegister] = (il, inst, pc) => JumpR(il, inst, pc, link: true);
+        _specialTable[(int)FunctionCode.SystemCall] = (il, inst, pc) => Trap(il, inst, pc, MipsTrap.Syscall);
+        _specialTable[(int)FunctionCode.Break] = (il, inst, pc) => Trap(il, inst, pc, MipsTrap.Breakpoint);
 
         _specialTable[(int)FunctionCode.AddUnsigned] = (il, inst, pc) => AluR(il, inst, OpCodes.Add);
         _specialTable[(int)FunctionCode.SubtractUnsigned] = (il, inst, pc) => AluR(il, inst, OpCodes.Sub);

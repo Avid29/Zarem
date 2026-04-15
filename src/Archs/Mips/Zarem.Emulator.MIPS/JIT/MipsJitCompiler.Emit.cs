@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Reflection.Emit;
@@ -31,41 +32,44 @@ public unsafe partial class MipsJitCompiler<T>
             return;
         }
 
-        long baseAddress = (long)_cpu.RegisterFile.Regs;
-        long regAddress = baseAddress + ((int)register * sizeof(T));
-
-        if (IntPtr.Size == 4)
-        {
-            il.Emit(OpCodes.Ldc_I4, (int)regAddress);
-        }
-        else
-        {
-            il.Emit(OpCodes.Ldc_I8, regAddress);
-        }
-
-        il.Emit(OpCodes.Conv_I);
+        // Load the register's address then retrieve the value at that address
+        EmitLoadRegisterAddress(il, register);
         EmitLdind(il);
     }
 
-    private void EmitRegisterWrite(ILGenerator il, MipsGpRegister register, Action emitValue)
+    private void EmitRegisterWrite(ILGenerator il, MipsGpRegister register, Action emitEvaluation)
     {
         if (register is 0)
         {
             // $zero cannot be written to.
             // We still emit the value calculation in case it has side effects,
             // then we immediately pop it off the stack.
-            emitValue();
+            emitEvaluation();
             il.Emit(OpCodes.Pop);
             return;
         }
 
-        // Calculate and push the static address of the register
-        long baseAddress = (long)_cpu.RegisterFile.Regs;
-        long regAddress = baseAddress + ((int)register * sizeof(T));
+        // Load the register's address, emit the evaluation instructions, and store the value
+        EmitLoadRegisterAddress(il, register);
+        emitEvaluation();
+        EmitStind(il);
+    }
+
+    private void EmitLoadRegisterAddress(ILGenerator il, MipsGpRegister register)
+    {
+#if DEBUG
+        // This method should not be used for the $zero register.
+        // For reads a constant 0 should be loaded, and for writes the value
+        // should be discarded.
+        Guard.IsNotEqualTo((int)register, (int)MipsGpRegister.Zero);
+#endif
+
+        nint baseAddress = (nint)_cpu.RegisterFile.Regs;
+        nint regAddress = baseAddress + ((int)register * sizeof(T));
 
         if (IntPtr.Size == 4)
         {
-            il.Emit(OpCodes.Ldc_I4, (int)regAddress);
+            il.Emit(OpCodes.Ldc_I4, regAddress);
         }
         else
         {
@@ -73,13 +77,6 @@ public unsafe partial class MipsJitCompiler<T>
         }
 
         il.Emit(OpCodes.Conv_I);
-
-        // Emit the logic to calculate the value (pushes result to stack)
-        emitValue();
-
-        // Store the value into the address
-        // Stind expects [address, value] on the stack
-        EmitStind(il);
     }
 
     private static void EmitLdind(ILGenerator il)

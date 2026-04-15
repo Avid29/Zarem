@@ -1,8 +1,12 @@
 ﻿// Avishai Dernis 2026
 
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Threading;
+using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.TrapHandlers;
 
 namespace Zarem.Emulator.JIT;
 
@@ -37,6 +41,41 @@ public partial class MipsJitCpu<T> : IMipsCpu
 
             // Execute the block, and update the PC to the next block start
             ProgramCounter = compiledBlock(this);
+        }
+    }
+
+    /// <summary>
+    /// Handles a trap.
+    /// </summary>
+    public void HandleTrap(int trapCode, T currentPc)
+    {
+        var trap = (MipsTrap)trapCode;
+
+        // Sync the PC so the interpreter/debugger knows where we are
+        ProgramCounter = currentPc;
+
+        if (trap is MipsTrap.None)
+            return;
+
+        // Breakpoints are handled by the debugger upon the trap occurring event
+        // The host also handles every kind of trap if that's what the config specifies
+        if (trap is MipsTrap.Breakpoint && BreakpointHit is not null)
+        {
+            // Only wait if a debugger is attached
+            var eventArgs = new BreakpointHitEventArgs();
+            BreakpointHit.Invoke(this, eventArgs);
+            eventArgs.Wait();
+        }
+        else if (Config.TrapHost is not null)
+        {
+            // The host handled the trap, do not emulate it
+            // Breakpoints are always handled by the host
+            Config.TrapHost.HandleTrap(new MipsTrapContext(this, (ulong)trap));
+        }
+        else
+        {
+            CoProcessor0.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
+            ProgramCounter = CoProcessor0.ExceptionVector;
         }
     }
 }

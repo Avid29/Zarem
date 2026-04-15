@@ -1,7 +1,10 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Reflection.Emit;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
@@ -182,6 +185,30 @@ public partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Ret);
 
         return true;
+    }
+
+    [DynamicDependency(nameof(MipsJitCpu<>.HandleTrap), typeof(MipsJitCpu<>))]
+    private bool Trap(ILGenerator il, MipsInstruction inst, T pc, MipsTrap trap)
+    {
+        // Push arguments:
+        // this, trap, currentPc
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Ldc_I4, (int)trap);
+        EmitLoadConstant(il, T.CreateTruncating(pc));
+
+        var handleMethod = typeof(MipsJitCpu<T>).GetMethod(nameof(MipsJitCpu<>.HandleTrap));
+        var pcGetter = typeof(MipsJitCpu<T>).GetProperty(nameof(MipsJitCpu<>.ProgramCounter))?.GetGetMethod();
+#if DEBUG
+        Guard.IsNotNull(handleMethod);
+        Guard.IsNotNull(pcGetter);
+#endif
+        il.Emit(OpCodes.Call, handleMethod);
+
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Callvirt, pcGetter);
+        il.Emit(OpCodes.Ret);
+
+        return true; // Terminate the IL block here
     }
 
     private bool Lui(ILGenerator il, MipsInstruction inst)
