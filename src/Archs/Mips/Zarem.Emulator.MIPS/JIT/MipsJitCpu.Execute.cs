@@ -35,9 +35,7 @@ public partial class MipsJitCpu<T> : IMipsCpu
                 _blockCache.Store(ProgramCounter, compiledBlock);
             }
 
-            // Execute the block
-            // The compiled IL is responsible for updating the RegisterFile 
-            // and internal state. It returns the PC of the next instruction/block.
+            // Execute the block, and update the PC to the next block start
             ProgramCounter = compiledBlock(this);
         }
     }

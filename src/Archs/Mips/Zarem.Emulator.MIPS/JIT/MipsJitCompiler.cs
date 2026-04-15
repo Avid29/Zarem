@@ -1,8 +1,9 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Numerics;
 using System.Reflection.Emit;
+using Zarem.Emulator.Models;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
@@ -11,7 +12,7 @@ namespace Zarem.Emulator.JIT;
 /// <summary>
 /// A class which compiles blocks of MIPS code into JIT IL code.
 /// </summary>
-public unsafe partial class MipsJitCompiler<T>
+public partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private delegate bool MipsEmitter(ILGenerator il, MipsInstruction inst, T pc);
@@ -25,7 +26,12 @@ public unsafe partial class MipsJitCompiler<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsJitCompiler{T}"/> class.
     /// </summary>
-    public MipsJitCompiler(MipsJitCpu<T> cpu) => _cpu = cpu;
+    public MipsJitCompiler(MipsJitCpu<T> cpu)
+    {
+        _cpu = cpu;
+
+        InitTables(_cpu.Config);
+    }
 
     /// <summary>
     /// Compiles a block of MIPS code to JIT starting at <paramref name="startPc"/>.
@@ -43,57 +49,22 @@ public unsafe partial class MipsJitCompiler<T>
         while (!isFinished)
         {
             var inst = (MipsInstruction)_cpu.Memory.Read<uint>(ulong.CreateTruncating(currentPc));
-            var emitter = _opCodeTable[(int)inst.OpCode];
-            isFinished = emitter(il, inst, currentPc);
+            isFinished = CompileInstruction(il, inst, currentPc);
         }
 
         return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
     }
 
-    private bool AluI(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, bool signExtend = false)
+    private bool CompileInstruction(ILGenerator il, MipsInstruction inst, T pc)
     {
-        // Fetch the raw immediate from the instruction
-        short rawImm = (short)inst.Immediate;
-
-        EmitRegisterWrite(il, inst.RT, () =>
-        {
-            EmitRegisterRead(il, inst.RS);
-
-            // Handle the extension at JIT-time
-            if (signExtend)
-            {
-                // Sign-extend 16-bit to T
-                long extended = (long)rawImm;
-                EmitLoadConstant(il, T.CreateTruncating(extended));
-            }
-            else
-            {
-                // Zero-extend 16-bit to T
-                ulong extended = (ushort)rawImm;
-                EmitLoadConstant(il, T.CreateTruncating(extended));
-            }
-
-            il.Emit(ilOpCode);
-        });
-
-        return false;
+        var emitter = _opCodeTable[(int)inst.OpCode];
+        return emitter(il, inst, pc);
     }
 
-    private bool AluR(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
+    private bool DispatchSpecial(ILGenerator il, MipsInstruction inst, T pc)
     {
-        EmitRegisterWrite(il, inst.RD, () =>
-        {
-            EmitRegisterRead(il, inst.RS);
-            EmitRegisterRead(il, inst.RT);
-            il.Emit(ilOpCode);
-
-            if (followUp.HasValue)
-            {
-                il.Emit(followUp.Value);
-            }
-        });
-
-        return false;
+        var emmiter = _specialTable[(int)inst.FuncCode];
+        return emmiter(il, inst, pc);
     }
 
     private bool Shift(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
@@ -133,6 +104,96 @@ public unsafe partial class MipsJitCompiler<T>
 
             il.Emit(ilOpCode);
         });
+        return false;
+    }
+
+    private bool AluR(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
+    {
+        EmitRegisterWrite(il, inst.RD, () =>
+        {
+            EmitRegisterRead(il, inst.RS);
+            EmitRegisterRead(il, inst.RT);
+            il.Emit(ilOpCode);
+
+            if (followUp.HasValue)
+            {
+                il.Emit(followUp.Value);
+            }
+        });
+
+        return false;
+    }
+
+    private bool AluI(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, bool signExtend = false)
+    {
+        // Fetch the raw immediate from the instruction
+        short rawImm = inst.Immediate;
+        T extended = signExtend ? T.CreateTruncating((long)rawImm) : T.CreateTruncating((ulong)rawImm);
+
+        EmitRegisterWrite(il, inst.RT, () =>
+        {
+            EmitRegisterRead(il, inst.RS);
+            EmitLoadConstant(il, extended);
+
+            il.Emit(ilOpCode);
+        });
+
+        return false;
+    }
+
+    private bool Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false)
+    {
+        if (link)
+        {
+            // Store the Return Address ($ra = PC + 8)
+            // We use +8 because +4 is the delay slot, and we want to return AFTER that.
+            T returnAddr = pc + T.CreateTruncating(8);
+            EmitRegisterWrite(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
+        }
+
+        // Handle the Delay Slot
+        T delaySlotPc = pc + T.CreateTruncating(4);
+        EmitDelaySlot(il, delaySlotPc);
+
+        // Calculate the Jump Target
+        T targetPc = T.CreateTruncating(inst.Address);
+
+        // Exit the block by returning the new PC
+        EmitLoadConstant(il, targetPc);
+        il.Emit(OpCodes.Ret);
+
+        return true; // Signals the compiler that this block is finished
+    }
+
+    private bool JumpR(ILGenerator il, MipsInstruction inst, T pc, bool link = false)
+    {
+        if (link)
+        {
+            // Store the Return Address ($ra = PC + 8)
+            // We use +8 because +4 is the delay slot, and we want to return AFTER that.
+            T returnAddr = pc + T.CreateTruncating(8);
+            EmitRegisterWrite(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
+        }
+
+        // Handle Delay Slot
+        EmitDelaySlot(il, pc + T.CreateTruncating(4));
+
+        // Read the target from the register and return it
+        EmitRegisterRead(il, inst.RS);
+        il.Emit(OpCodes.Ret);
+
+        return true;
+    }
+
+    private bool Lui(ILGenerator il, MipsInstruction inst)
+    {
+        uint value = (uint)inst.Immediate << 16;
+
+        EmitRegisterWrite(il, inst.RT, () =>
+        {
+            EmitLoadConstant(il, T.CreateTruncating(value));
+        });
+
         return false;
     }
 }

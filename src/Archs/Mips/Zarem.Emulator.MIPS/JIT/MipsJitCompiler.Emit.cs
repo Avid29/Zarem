@@ -3,16 +3,24 @@
 using System;
 using System.Numerics;
 using System.Reflection.Emit;
-using Zarem.Emulator.Config;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
 namespace Zarem.Emulator.JIT;
 
-public partial class MipsJitCompiler<T>
+public unsafe partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    private void EmitDelaySlot(ILGenerator il, T delaySlotPc)
+    {
+        uint rawInstr = _cpu.Memory.Read<uint>(ulong.CreateTruncating(delaySlotPc));
+        MipsInstruction instr = (MipsInstruction)rawInstr;
+
+        // We dispatch to our existing table to emit the IL for this instruction
+        // Note: MIPS forbids putting a jump/branch inside a delay slot!
+        CompileInstruction(il, instr, delaySlotPc);
+    }
+
     private void EmitRegisterRead(ILGenerator il, MipsGpRegister register)
     {
         if (register is 0)
