@@ -82,7 +82,7 @@ public unsafe partial class MipsJitCompiler<T>
         EmitStind(il);
     }
 
-    private void EmitLdind(ILGenerator il)
+    private static void EmitLdind(ILGenerator il)
     {
         if (typeof(T) == typeof(uint))
         {
@@ -98,7 +98,7 @@ public unsafe partial class MipsJitCompiler<T>
         }
     }
 
-    private void EmitStind(ILGenerator il)
+    private static void EmitStind(ILGenerator il)
     {
         if (typeof(T) == typeof(uint))
         {
@@ -114,7 +114,7 @@ public unsafe partial class MipsJitCompiler<T>
         }
     }
 
-    private void EmitLoadConstant(ILGenerator il, T value)
+    private static void EmitLoadConstant(ILGenerator il, T value)
     {
         if (typeof(T) == typeof(uint))
         {

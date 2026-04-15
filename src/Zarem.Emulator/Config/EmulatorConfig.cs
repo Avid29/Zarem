@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Config;
+using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.TrapHandlers.Interfaces;
 
 namespace Zarem.Emulator.Config;
@@ -18,4 +19,9 @@ public class EmulatorConfig : IConfig
     /// If not null, the trap handler will interpret traps and syscalls.
     /// </remarks>
     public ITrapHandler? TrapHost { get; init; }
+
+    /// <summary>
+    /// Gets or sets the emulator's execution mode.
+    /// </summary>
+    public ExecutionMode ExecutionMode { get; init; }
 }
