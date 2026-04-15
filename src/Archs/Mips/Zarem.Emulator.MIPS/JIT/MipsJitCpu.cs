@@ -132,10 +132,4 @@ public partial class MipsJitCpu<T> : IMipsCpu
 
     /// <inheritdoc/>
     public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
-
-    /// <inheritdoc/>
-    public void Insert(MipsInstruction instruction, out MipsTrap trap)
-    {
-        throw new NotImplementedException();
-    }
 }

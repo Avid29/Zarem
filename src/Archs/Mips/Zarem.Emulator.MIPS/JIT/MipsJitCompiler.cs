@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -57,7 +58,10 @@ public partial class MipsJitCompiler<T>
         return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
     }
 
-    private bool CompileInstruction(ILGenerator il, MipsInstruction inst, T pc)
+    /// <summary>
+    /// Compiles an instruction into a is CLI equivilent.
+    /// </summary>
+    public bool CompileInstruction(ILGenerator il, MipsInstruction inst, T pc)
     {
         var emitter = _opCodeTable[(int)inst.OpCode];
         return emitter(il, inst, pc);
@@ -143,6 +147,36 @@ public partial class MipsJitCompiler<T>
         return false;
     }
 
+    private bool MultR(ILGenerator il, MipsInstruction inst, bool signed)
+    {
+        // Retrieve the rs/rt registers
+        EmitRegisterRead(il, inst.RS);
+        il.Emit(signed ? OpCodes.Conv_I8 : OpCodes.Conv_U8);
+        EmitRegisterRead(il, inst.RT);
+        il.Emit(signed ? OpCodes.Conv_I8 : OpCodes.Conv_U8);
+
+        // Apply multiplication and store result as a local
+        var localResult = il.DeclareLocal(typeof(long));
+        il.Emit(OpCodes.Mul);
+        il.Emit(OpCodes.Stloc, localResult);
+
+        // Store high
+        EmitLoadRegisterAddress(il, MipsGpRegister.High);
+        il.Emit(OpCodes.Localloc, localResult);
+        il.Emit(OpCodes.Ldc_I4, 32);
+        il.Emit(OpCodes.Shr_Un);
+        il.Emit(OpCodes.Conv_U4);
+        il.Emit(OpCodes.Stind_I4);
+
+        // Store low
+        EmitLoadRegisterAddress(il, MipsGpRegister.Low);
+        il.Emit(OpCodes.Localloc, localResult);
+        il.Emit(OpCodes.Conv_U4);
+        il.Emit(OpCodes.Stind_I4);
+
+        return false;
+    }
+
     private bool Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false)
     {
         if (link)
@@ -153,9 +187,12 @@ public partial class MipsJitCompiler<T>
             EmitRegisterWrite(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
         }
 
-        // Handle the Delay Slot
-        T delaySlotPc = pc + T.CreateTruncating(4);
-        EmitDelaySlot(il, delaySlotPc);
+        if (!_cpu.Config.DisableDelaySlots)
+        {
+            // Handle the Delay Slot
+            T delaySlotPc = pc + T.CreateTruncating(4);
+            EmitDelaySlot(il, delaySlotPc);
+        }
 
         // Calculate the Jump Target
         T targetPc = T.CreateTruncating(inst.Address);
@@ -177,8 +214,11 @@ public partial class MipsJitCompiler<T>
             EmitRegisterWrite(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
         }
 
-        // Handle Delay Slot
-        EmitDelaySlot(il, pc + T.CreateTruncating(4));
+        if (!_cpu.Config.DisableDelaySlots)
+        {
+            // Handle Delay Slot
+            EmitDelaySlot(il, pc + T.CreateTruncating(4));
+        }
 
         // Read the target from the register and return it
         EmitRegisterRead(il, inst.RS);

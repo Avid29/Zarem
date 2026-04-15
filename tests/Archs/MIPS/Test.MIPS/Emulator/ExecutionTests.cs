@@ -5,6 +5,7 @@ using Zarem.Assembler;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
@@ -22,6 +23,10 @@ public partial class ExecutionTests
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips1))]
     public void InstructionTests_Mips1(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsI);
+
+    [DataTestMethod]
+    [DynamicData(nameof(InstructionTestList_Mips1))]
+    public void InstructionTests_Mips1_JIT(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsI, true);
 
     [DataTestMethod]
     [DynamicData(nameof(InstructionTestList_Mips2))]
@@ -67,25 +72,32 @@ public partial class ExecutionTests
     [DynamicData(nameof(InstructionTestList_Mips64R2))]
     public void InstructionTests_Mips64R2(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.Mips64R2);
 
-    private static void RunTest<T>(ExecutionTestCase<T> @case, MipsVersion version)
+    private static void RunTest<T>(ExecutionTestCase<T> @case, MipsVersion version, bool jit = false)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
+        var config = new MIPSEmulatorConfig(version)
+        {
+            DisableDelaySlots = false,
+            ExecutionMode = jit ? ExecutionMode.JustInTime : ExecutionMode.Interpret,
+        };
+
         // Run with delay slots by default
-        RunTest(@case, version, true);
+        RunTest(@case, config);
 
         // Run again without if jump/branch instruction
         if (@case.ExpectedPC.HasValue)
         {
-            RunTest(@case, version, false);
+            config.DisableDelaySlots = true;
+            RunTest(@case, config);
         }
     }
 
-    private static void RunTest<T>(ExecutionTestCase<T> @case, MipsVersion version, bool delaysSlots)
+    private static void RunTest<T>(ExecutionTestCase<T> @case, MIPSEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input, MipsTokenizerProfile.Default)[0];
-        var table = new MipsInstructionTable(new(version));
+        var table = new MipsInstructionTable(new MipsAssemblerConfig(config.Version));
         var parser = new MipsInstructionParser(new(), table, default, null, null);
         var parsed = parser.Parse(tokenized);
         if (parsed is null)
@@ -93,11 +105,7 @@ public partial class ExecutionTests
 
         // TODO: Psuedo instruction support
         var instruction = parsed.Realize()[0];
-        var emulatorConfig = new MIPSEmulatorConfig(version)
-        {
-            DisableDelaySlots = !delaysSlots,
-        };
-        var computer = new MipsComputer(emulatorConfig);
+        var computer = new MipsComputer(config);
 
         var cpu = (MipsCpu<T>)computer.Cpu;
 
@@ -181,7 +189,7 @@ public partial class ExecutionTests
         var expectedPC = @case.ExpectedPC;
         if (expectedPC is not null)
         {
-            if (delaysSlots && execution.SideEffect is SideEffect.ProgramCounter)
+            if (!config.DisableDelaySlots && execution.SideEffect is SideEffect.ProgramCounter)
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
                 Assert.AreEqual((uint)4, computer.Cpu.ProgramCounter);

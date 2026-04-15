@@ -1,12 +1,13 @@
 ﻿// Avishai Dernis 2026
 
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Reflection.Emit;
 using System.Threading;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.TrapHandlers;
+using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.JIT;
 
@@ -25,6 +26,20 @@ public partial class MipsJitCpu<T> : IMipsCpu
     // Cache mapping a PC to its compiled IL block.
     private readonly MipsBlockCache<T> _blockCache = new();
     private readonly MipsJitCompiler<T> _jitCompiler;
+
+    /// <inheritdoc/>
+    public void Insert(MipsInstruction instruction, out MipsTrap trap)
+    {
+        // TODO: Abstract traps how?
+        trap = MipsTrap.None;
+
+        var method = new DynamicMethod($"Insert_0x{ProgramCounter:X}", typeof(T), [typeof(MipsJitCpu<T>)], true);
+        var il = method.GetILGenerator();
+        _jitCompiler.CompileInstruction(il, instruction, ProgramCounter);
+
+        var @delegate = (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
+        @delegate(this);
+    }
 
     /// <inheritdoc/>
     public void Run(CancellationToken ct)
