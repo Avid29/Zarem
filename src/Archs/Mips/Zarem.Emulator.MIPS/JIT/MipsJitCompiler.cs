@@ -2,8 +2,6 @@
 
 using System.Numerics;
 using System.Reflection.Emit;
-using Zarem.Emulator.Models;
-using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
@@ -40,7 +38,7 @@ public partial class MipsJitCompiler<T>
     /// <returns>The method block.</returns>
     public MipsBlockDelegate<T> CompileBlock(T startPc)
     {
-        var method = new DynamicMethod($"Block_{startPc:X}", typeof(T), [typeof(MipsJitCpu<T>)], true);
+        var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), [typeof(MipsJitCpu<T>)], true);
         var il = method.GetILGenerator();
 
         T currentPc = startPc;
@@ -50,6 +48,7 @@ public partial class MipsJitCompiler<T>
         {
             var inst = (MipsInstruction)_cpu.Memory.Read<uint>(ulong.CreateTruncating(currentPc));
             isFinished = CompileInstruction(il, inst, currentPc);
+            currentPc += T.CreateTruncating(4);
         }
 
         return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
