@@ -24,7 +24,7 @@ public unsafe partial class MipsJitCompiler<T>
         CompileInstruction(il, instr, delaySlotPc);
     }
 
-    private void EmitRegisterRead(ILGenerator il, MipsGpRegister register)
+    private void EmitLoadRegister(ILGenerator il, MipsGpRegister register)
     {
         if (register is 0)
         {
@@ -39,7 +39,7 @@ public unsafe partial class MipsJitCompiler<T>
         EmitLdind(il);
     }
 
-    private void EmitRegisterWrite(ILGenerator il, MipsGpRegister register, Action emitEvaluation)
+    private void EmitStoreRegister(ILGenerator il, MipsGpRegister register, Action emitEvaluation)
     {
         if (register is 0)
         {

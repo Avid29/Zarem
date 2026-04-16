@@ -92,9 +92,9 @@ public unsafe partial class MipsJitCompiler<T>
 
     private bool Shift(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
     {
-        EmitRegisterWrite(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, () =>
         {
-            EmitRegisterRead(il, inst.RT);
+            EmitLoadRegister(il, inst.RT);
             il.Emit(OpCodes.Ldc_I4, (int)inst.ShiftAmount);
             il.Emit(ilOpCode);
         });
@@ -104,9 +104,9 @@ public unsafe partial class MipsJitCompiler<T>
 
     private bool ShiftPlus32(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
     {
-        EmitRegisterWrite(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, () =>
         {
-            EmitRegisterRead(il, inst.RT);
+            EmitLoadRegister(il, inst.RT);
             il.Emit(OpCodes.Ldc_I4, inst.ShiftAmount + 32);
             il.Emit(ilOpCode);
         });
@@ -116,10 +116,10 @@ public unsafe partial class MipsJitCompiler<T>
 
     private bool ShiftVar(ILGenerator il, MipsInstruction inst, OpCode ilOpCode)
     {
-        EmitRegisterWrite(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, () =>
         {
-            EmitRegisterRead(il, inst.RT); // Value to shift
-            EmitRegisterRead(il, inst.RS); // Shift amount from register
+            EmitLoadRegister(il, inst.RT); // Value to shift
+            EmitLoadRegister(il, inst.RS); // Shift amount from register
 
             // Ensure the shift amount is treated as an int for the IL stack
             if (typeof(T) == typeof(ulong))
@@ -132,10 +132,10 @@ public unsafe partial class MipsJitCompiler<T>
 
     private bool AluR(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
     {
-        EmitRegisterWrite(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, () =>
         {
-            EmitRegisterRead(il, inst.RS);
-            EmitRegisterRead(il, inst.RT);
+            EmitLoadRegister(il, inst.RS);
+            EmitLoadRegister(il, inst.RT);
             il.Emit(ilOpCode);
 
             if (followUp.HasValue)
@@ -152,12 +152,12 @@ public unsafe partial class MipsJitCompiler<T>
         Label noOverflow = il.DefineLabel();
 
         // Load RS into local
-        EmitRegisterRead(il, inst.RS);
+        EmitLoadRegister(il, inst.RS);
         LocalBuilder rs = il.DeclareLocal(typeof(T));
         il.Emit(OpCodes.Stloc, rs);
 
         // Load RT into local
-        EmitRegisterRead(il, inst.RT);
+        EmitLoadRegister(il, inst.RT);
         LocalBuilder rt = il.DeclareLocal(typeof(T));
         il.Emit(OpCodes.Stloc, rt);
 
@@ -173,7 +173,7 @@ public unsafe partial class MipsJitCompiler<T>
 
         // Safe Path
         il.MarkLabel(noOverflow);
-        EmitRegisterWrite(il, inst.RD, () => il.Emit(OpCodes.Ldloc, result));
+        EmitStoreRegister(il, inst.RD, () => il.Emit(OpCodes.Ldloc, result));
 
         return false;
     }
@@ -184,9 +184,9 @@ public unsafe partial class MipsJitCompiler<T>
         short rawImm = inst.Immediate;
         T extended = signExtend ? T.CreateTruncating((long)rawImm) : T.CreateTruncating((ulong)rawImm);
 
-        EmitRegisterWrite(il, inst.RT, () =>
+        EmitStoreRegister(il, inst.RT, () =>
         {
-            EmitRegisterRead(il, inst.RS);
+            EmitLoadRegister(il, inst.RS);
             EmitLoadConstant(il, extended);
 
             il.Emit(ilOpCode);
@@ -200,7 +200,7 @@ public unsafe partial class MipsJitCompiler<T>
         Label noOverflow = il.DefineLabel();
 
         // Load RS into local
-        EmitRegisterRead(il, inst.RS);
+        EmitLoadRegister(il, inst.RS);
         LocalBuilder rs = il.DeclareLocal(typeof(T));
         il.Emit(OpCodes.Stloc, rs);
 
@@ -221,7 +221,7 @@ public unsafe partial class MipsJitCompiler<T>
 
         // Safe Path
         il.MarkLabel(noOverflow);
-        EmitRegisterWrite(il, inst.RT, () => il.Emit(OpCodes.Ldloc, result));
+        EmitStoreRegister(il, inst.RT, () => il.Emit(OpCodes.Ldloc, result));
 
         return false;
     }
@@ -229,9 +229,9 @@ public unsafe partial class MipsJitCompiler<T>
     private bool MultR(ILGenerator il, MipsInstruction inst, bool signed)
     {
         // Retrieve the rs/rt registers
-        EmitRegisterRead(il, inst.RS);
+        EmitLoadRegister(il, inst.RS);
         il.Emit(signed ? OpCodes.Conv_I8 : OpCodes.Conv_U8);
-        EmitRegisterRead(il, inst.RT);
+        EmitLoadRegister(il, inst.RT);
         il.Emit(signed ? OpCodes.Conv_I8 : OpCodes.Conv_U8);
 
         // Apply multiplication and store result as a local
@@ -261,10 +261,10 @@ public unsafe partial class MipsJitCompiler<T>
         Label endDiv = il.DefineLabel();
 
         // Load operands into locals to keep stack predictable
-        EmitRegisterRead(il, inst.RS);
+        EmitLoadRegister(il, inst.RS);
         LocalBuilder rsLocal = il.DeclareLocal(typeof(T));
         il.Emit(OpCodes.Stloc, rsLocal);
-        EmitRegisterRead(il, inst.RT);
+        EmitLoadRegister(il, inst.RT);
         LocalBuilder rtLocal = il.DeclareLocal(typeof(T));
         il.Emit(OpCodes.Stloc, rtLocal);
 
@@ -311,7 +311,7 @@ public unsafe partial class MipsJitCompiler<T>
             // Store the Return Address ($ra = PC + 8)
             // We use +8 because +4 is the delay slot, and we want to return AFTER that.
             T returnAddr = pc + T.CreateTruncating(8);
-            EmitRegisterWrite(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
+            EmitStoreRegister(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
         }
 
         if (!_cpu.Config.DisableDelaySlots)
@@ -339,7 +339,7 @@ public unsafe partial class MipsJitCompiler<T>
             // Store the Return Address ($ra = PC + 8)
             // We use +8 because +4 is the delay slot, and we want to return AFTER that.
             T returnAddr = pc + T.CreateTruncating(8);
-            EmitRegisterWrite(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
+            EmitStoreRegister(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
         }
 
         if (!_cpu.Config.DisableDelaySlots)
@@ -350,7 +350,7 @@ public unsafe partial class MipsJitCompiler<T>
 
         // Read the target from the register and return it
         EmitTrapArg(il, MipsTrap.None);
-        EmitRegisterRead(il, inst.RS);
+        EmitLoadRegister(il, inst.RS);
         il.Emit(OpCodes.Ret);
 
         return true;
@@ -365,41 +365,38 @@ public unsafe partial class MipsJitCompiler<T>
         return true; // Terminate the IL block here
     }
 
-    private bool Branch(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, bool likely = false)
+    private bool Branch(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, Action<ILGenerator> pushOperands, bool likely = false)
     {
         Label takeBranch = il.DefineLabel();
 
-        // Push RS and RT to the stack
-        EmitRegisterRead(il, inst.RS);
-        EmitRegisterRead(il, inst.RT);
+        // Prepare the stack for the branch condition
+        // This calls the delegate to push RS, RT, or RS and 0.
+        pushOperands(il);
 
-        // Run delay slot 
+        // Append delay slot operation
         if (!_cpu.Config.DisableDelaySlots && !likely)
         {
             EmitDelaySlot(il, pc + T.CreateTruncating(4));
         }
 
-        // Evaluate the condition
+        // Evaluate the branch condition
         il.Emit(conditionOpCode, takeBranch);
 
-        // --- Branch not taken path ---
-        // Set trap to none and return PC + 8 (next instruction after delay slot)
+        // Branch NOT taken
         EmitTrapArg(il, MipsTrap.None);
         EmitLoadConstant(il, pc + T.CreateTruncating(8));
         il.Emit(OpCodes.Ret);
 
-        // --- Branch taken path ---
-        // Calculate target: PC + 4 + (offset << 2)
-        // The offset is a signed 16-bit integer.
+        // Branch taken
         il.MarkLabel(takeBranch);
-        long offset = (long)(short)inst.Immediate << 2;
+        long offset = (long)inst.Immediate << 2;
         T targetPc = pc + T.CreateTruncating(4) + T.CreateTruncating(offset);
 
         EmitTrapArg(il, MipsTrap.None);
         EmitLoadConstant(il, targetPc);
         il.Emit(OpCodes.Ret);
 
-        return true; // Ends the block
+        return true;
     }
 
     private bool MoveFromTo(ILGenerator il, MipsGpRegister from, MipsGpRegister to)
@@ -409,9 +406,9 @@ public unsafe partial class MipsJitCompiler<T>
         if (to is MipsGpRegister.Zero)
             return false;
 
-        EmitRegisterWrite(il, to, () =>
+        EmitStoreRegister(il, to, () =>
         {
-            EmitRegisterRead(il, from);
+            EmitLoadRegister(il, from);
         });
 
         return false;
@@ -421,7 +418,7 @@ public unsafe partial class MipsJitCompiler<T>
     {
         uint value = (uint)inst.Immediate << 16;
 
-        EmitRegisterWrite(il, inst.RT, () =>
+        EmitStoreRegister(il, inst.RT, () =>
         {
             EmitLoadConstant(il, T.CreateTruncating(value));
         });
