@@ -63,7 +63,7 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
         return GetArithmeticInstructionTests<T, TSigned, TLong>(config.Version)
             .Concat(GetLogicalInstructionTests<T>(config.Version))
             .Concat(GetMemoryInstructionTests<T>(config.Version))
-            .Concat(GetJumpBranchInstructionTests<T>(config.Version))
+            .Concat(GetJumpBranchInstructionTests<T>(config))
             .Concat(GetCompareInstructionTests<T>(config.Version))
             .Concat(GetTrapInstructionTests<T>(config.Version))
             .Concat(GetUncategorizedInstructionTests<T>(config.Version))
@@ -227,34 +227,37 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
         yield return [new ExecutionTestCase<T>("sw $at, 0x1000($zero)", (T.CreateTruncating(0x1000), [0x89, 0xab, 0xcd, 0xef]))];
     }
 
-    private static IEnumerable<object[]> GetJumpBranchInstructionTests<T>(MipsVersion version)
+    private static IEnumerable<object[]> GetJumpBranchInstructionTests<T>(MipsEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
+        var linkAddress = T.CreateTruncating(config.DisableDelaySlots ? 4 : 8);
+        var noBranchAddress = T.CreateTruncating(config.ExecutionMode is ExecutionMode.JustInTime && !config.DisableDelaySlots ? 8 : 4);
+
         // Jump
         yield return [new ExecutionTestCase<T>("j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
-        yield return [new ExecutionTestCase<T>("jal 1000", MipsGpRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(1000) }];
+        yield return [new ExecutionTestCase<T>("jal 1000", MipsGpRegister.ReturnAddress, linkAddress) { ExpectedPC = T.CreateTruncating(1000) }];
         yield return [new ExecutionTestCase<T>("jr $t4") { ExpectedPC = T.CreateTruncating(40) }];
-        yield return [new ExecutionTestCase<T>("jalr $t4", MipsGpRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(40) }];
+        yield return [new ExecutionTestCase<T>("jalr $t4", MipsGpRegister.ReturnAddress, linkAddress) { ExpectedPC = T.CreateTruncating(40) }];
 
         // Branch Equality
-        yield return [new ExecutionTestCase<T>("beq $t2, $t3, 80") { ExpectedPC = T.CreateTruncating(4) }];
+        yield return [new ExecutionTestCase<T>("beq $t2, $t3, 80") { ExpectedPC = noBranchAddress }];
         yield return [new ExecutionTestCase<T>("beq $t1, $t1, 80") { ExpectedPC = T.CreateTruncating(84) }];
-        yield return [new ExecutionTestCase<T>("bne $t1, $t1, 80") { ExpectedPC = T.CreateTruncating(4) }];
+        yield return [new ExecutionTestCase<T>("bne $t1, $t1, 80") { ExpectedPC = noBranchAddress }];
         yield return [new ExecutionTestCase<T>("bne $t3, $t2, 80") { ExpectedPC = T.CreateTruncating(84) }];
 
         // Branch Compare
-        yield return [new ExecutionTestCase<T>("blez $s1, 80") { ExpectedPC = T.CreateTruncating(4) }];
+        yield return [new ExecutionTestCase<T>("blez $s1, 80") { ExpectedPC = noBranchAddress }];
         yield return [new ExecutionTestCase<T>("blez $s0, 80") { ExpectedPC = T.CreateTruncating(84) }];
         yield return [new ExecutionTestCase<T>("blez $s5, 80") { ExpectedPC = T.CreateTruncating(84) }];
         yield return [new ExecutionTestCase<T>("bgtz $s1, 80") { ExpectedPC = T.CreateTruncating(84) }];
-        yield return [new ExecutionTestCase<T>("bgtz $s0, 80") { ExpectedPC = T.CreateTruncating(4) }];
-        yield return [new ExecutionTestCase<T>("bgtz $s5, 80") { ExpectedPC = T.CreateTruncating(4) }];
-        yield return [new ExecutionTestCase<T>("bltz $s1, 80") { ExpectedPC = T.CreateTruncating(4) }];
-        yield return [new ExecutionTestCase<T>("bltz $s0, 80") { ExpectedPC = T.CreateTruncating(4) }];
+        yield return [new ExecutionTestCase<T>("bgtz $s0, 80") { ExpectedPC = noBranchAddress }];
+        yield return [new ExecutionTestCase<T>("bgtz $s5, 80") { ExpectedPC = noBranchAddress }];
+        yield return [new ExecutionTestCase<T>("bltz $s1, 80") { ExpectedPC = noBranchAddress }];
+        yield return [new ExecutionTestCase<T>("bltz $s0, 80") { ExpectedPC = noBranchAddress }];
         yield return [new ExecutionTestCase<T>("bltz $s5, 80") { ExpectedPC = T.CreateTruncating(84) }];
         yield return [new ExecutionTestCase<T>("bgez $s1, 80") { ExpectedPC = T.CreateTruncating(84) }];
         yield return [new ExecutionTestCase<T>("bgez $s0, 80") { ExpectedPC = T.CreateTruncating(84) }];
-        yield return [new ExecutionTestCase<T>("bgez $s5, 80") { ExpectedPC = T.CreateTruncating(4) }];
+        yield return [new ExecutionTestCase<T>("bgez $s5, 80") { ExpectedPC = noBranchAddress }];
     }
 
     private static IEnumerable<object[]> GetCompareInstructionTests<T>(MipsVersion version)
