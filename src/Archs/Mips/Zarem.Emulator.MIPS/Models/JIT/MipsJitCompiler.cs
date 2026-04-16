@@ -315,6 +315,21 @@ public unsafe partial class MipsJitCompiler<T>
         return true; // Terminate the IL block here
     }
 
+    private bool MoveFromTo(ILGenerator il, MipsGpRegister from, MipsGpRegister to)
+    {
+        // Can't writeback to $zero.
+        // Skip as no-op
+        if (to is MipsGpRegister.Zero)
+            return false;
+
+        EmitRegisterWrite(il, to, () =>
+        {
+            EmitRegisterRead(il, from);
+        });
+
+        return false;
+    }
+
     private bool Lui(ILGenerator il, MipsInstruction inst)
     {
         uint value = (uint)inst.Immediate << 16;

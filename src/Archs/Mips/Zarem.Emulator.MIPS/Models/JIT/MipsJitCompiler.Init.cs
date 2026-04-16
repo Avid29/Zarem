@@ -6,6 +6,7 @@ using Zarem.Emulator.Config;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
+using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
 namespace Zarem.Emulator.JIT;
@@ -64,6 +65,10 @@ public partial class MipsJitCompiler<T>
             _specialTable[(int)FunctionCode.MultiplyUnsigned] = (il, inst, pc) => MultR(il, inst, false);
             _specialTable[(int)FunctionCode.Divide] = (il, inst, pc) => DivR(il, inst, true);
             _specialTable[(int)FunctionCode.DivideUnsigned] = (il, inst, pc) => DivR(il, inst, false);
+            _specialTable[(int)FunctionCode.MoveFromHigh] = (il, inst, pc) => MoveFromTo(il, MipsGpRegister.High, inst.RD);
+            _specialTable[(int)FunctionCode.MoveToHigh] = (il, inst, pc) => MoveFromTo(il, inst.RS, MipsGpRegister.High);
+            _specialTable[(int)FunctionCode.MoveFromLow] = (il, inst, pc) => MoveFromTo(il, MipsGpRegister.Low, inst.RD);
+            _specialTable[(int)FunctionCode.MoveToLow] = (il, inst, pc) => MoveFromTo(il, inst.RS, MipsGpRegister.Low);
         }
     }
 }
