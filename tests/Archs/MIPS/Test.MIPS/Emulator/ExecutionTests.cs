@@ -1,12 +1,15 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
+using System.Xml;
 using Zarem.Assembler;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Interpret;
+using Zarem.Emulator.Machine.JIT;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
@@ -75,7 +78,7 @@ public partial class ExecutionTests
     private static void RunTest<T>(ExecutionTestCase<T> @case, MipsVersion version, bool jit = false)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
-        var config = new MIPSEmulatorConfig(version)
+        var config = new MipsEmulatorConfig(version)
         {
             DisableDelaySlots = false,
             ExecutionMode = jit ? ExecutionMode.JustInTime : ExecutionMode.Interpret,
@@ -91,8 +94,8 @@ public partial class ExecutionTests
             RunTest(@case, config);
         }
     }
-
-    private static void RunTest<T>(ExecutionTestCase<T> @case, MIPSEmulatorConfig config)
+    
+    private static void RunTest<T>(ExecutionTestCase<T> @case, MipsEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
@@ -106,7 +109,6 @@ public partial class ExecutionTests
         // TODO: Psuedo instruction support
         var instruction = parsed.Realize()[0];
         var computer = new MipsComputer(config);
-
         var cpu = (MipsCpu<T>)computer.Cpu;
 
         // Initialize the status register
@@ -132,6 +134,20 @@ public partial class ExecutionTests
         foreach (var (address, data) in @case.MemoryInitialization)
             computer.Memory.Write(ulong.CreateTruncating(address), data);
 
+        if (cpu is MipsJitCpu<T>)
+        {
+            RunJitChecks(computer, instruction, @case);
+        }
+        else if (cpu is MipsInterpretCpu<T>)
+        {
+            RunInterpretChecks(computer, instruction, @case);
+        }
+    }
+
+    private static void RunInterpretChecks<T>(MipsComputer computer, MipsInstruction instruction, ExecutionTestCase<T> @case)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        var cpu = (MipsInterpretCpu<T>)computer.Cpu;
         cpu.Insert(instruction, out var execution, out var trap);
 
         // Ensure that the expected trap was raised (if any)
@@ -141,7 +157,7 @@ public partial class ExecutionTests
         if (writeback.HasValue)
         {
             // Ensure that the expected register was written to with the expected value
-            Assert.AreEqual(writeback.Value.Regiter, execution.GPR);
+            Assert.AreEqual(writeback.Value.Register, execution.GPR);
 
             var writeBackValue = writeback.Value.Value;
             if (writeBackValue.HasValue)
@@ -189,13 +205,66 @@ public partial class ExecutionTests
         var expectedPC = @case.ExpectedPC;
         if (expectedPC is not null)
         {
-            if (!config.DisableDelaySlots && execution.SideEffect is SideEffect.ProgramCounter)
+            if (!cpu.Config.DisableDelaySlots && execution.SideEffect is SideEffect.ProgramCounter)
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
                 Assert.AreEqual((uint)4, computer.Cpu.ProgramCounter);
                 computer.Cpu.Insert(MipsInstruction.NOP, out _);
             }
 
+            Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
+        }
+    }
+
+    private static void RunJitChecks<T>(MipsComputer computer, MipsInstruction instruction, ExecutionTestCase<T> @case)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        var cpu = (MipsJitCpu<T>)computer.Cpu;
+        cpu.Insert(instruction, out var trap);
+
+        // Ensure that the expected trap was raised (if any)
+        Assert.AreEqual(@case.ExpectedTrap, trap);
+
+        var writeback = @case.ExpectedWriteBack;
+        if (writeback.HasValue)
+        {
+            var writeBackValue = writeback.Value.Value;
+            if (writeBackValue.HasValue)
+            {
+                Assert.AreEqual(writeBackValue.Value, cpu[writeback.Value.Register]);
+            }
+        }
+
+        var highLow = @case.ExpectedHighLow;
+        if (highLow.HasValue)
+        {
+            Assert.AreEqual(highLow.Value.Low, cpu.RegisterFile.Low);
+            Assert.AreEqual(highLow.Value.High, cpu.RegisterFile.High);
+        }
+
+        var expectedMemory = @case.ExpectedMemory;
+        if (expectedMemory is not null)
+        {
+            var buffer = new byte[expectedMemory.Value.Data.Length];
+            computer.Memory.Read(ulong.CreateTruncating(expectedMemory.Value.Address), buffer);
+            CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
+        }
+
+        var expectedFloatWord = @case.ExpectedWordFloatWriteBack;
+        if (expectedFloatWord.HasValue)
+        {
+            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatProcessor.Words[expectedFloatWord.Value.Register]);
+        }
+
+        var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
+        if (expectedFloatLong.HasValue)
+        {
+            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatProcessor.Longs[expectedFloatLong.Value.Register]);
+        }
+
+        var expectedPC = @case.ExpectedPC;
+        if (expectedPC is not null)
+        {
             Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
         }
     }

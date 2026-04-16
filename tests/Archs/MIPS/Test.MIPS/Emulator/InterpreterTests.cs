@@ -32,7 +32,7 @@ public class InterpreterTests
         var module = ZaLinker.Link(linkConfig, linkHandler, null, result.Module);
 
         // Setup emulator
-        var emulatorConfig = new MIPSEmulatorConfig()
+        var emulatorConfig = new MipsEmulatorConfig()
         {
             TrapHost = new ZaremTrapHandler(),
         };

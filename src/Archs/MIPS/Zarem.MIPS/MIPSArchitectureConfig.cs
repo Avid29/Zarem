@@ -34,7 +34,7 @@ public sealed class MipsArchitectureConfig : IArchitectureConfig
     public MipsAssemblerConfig? AssemblerConfig { get; init; }
 
     /// <inheritdoc cref="IArchitectureConfig.EmulatorConfig"/>
-    public MIPSEmulatorConfig? EmulatorConfig { get; init; }
+    public MipsEmulatorConfig? EmulatorConfig { get; init; }
 
     /// <inheritdoc cref="IArchitectureConfig.LinkerConfig"/>
     public MipsLinkerConfig? LinkerConfig { get; init; }

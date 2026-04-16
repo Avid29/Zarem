@@ -8,19 +8,19 @@ namespace Zarem.Emulator.Config;
 /// <summary>
 /// A class containing emulator configurations for the MIPS emulator.
 /// </summary>
-public class MIPSEmulatorConfig : EmulatorConfig
+public class MipsEmulatorConfig : EmulatorConfig
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSEmulatorConfig"/> class.
+    /// Initializes a new instance of the <see cref="MipsEmulatorConfig"/> class.
     /// </summary>
-    public MIPSEmulatorConfig() : this(MipsVersion.Mips32R2)
+    public MipsEmulatorConfig() : this(MipsVersion.Mips32R2)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MIPSEmulatorConfig"/> class.
+    /// Initializes a new instance of the <see cref="MipsEmulatorConfig"/> class.
     /// </summary>
-    public MIPSEmulatorConfig(MipsVersion mipsVersion = MipsVersion.Mips32R2)
+    public MipsEmulatorConfig(MipsVersion mipsVersion = MipsVersion.Mips32R2)
     {
         Version = mipsVersion;
     }

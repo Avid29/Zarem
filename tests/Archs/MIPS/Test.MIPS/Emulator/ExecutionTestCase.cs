@@ -167,7 +167,7 @@ public sealed record ExecutionTestCase<T>
 
     public MipsTrap ExpectedTrap { get; init; } = MipsTrap.None;
 
-    public (MipsGpRegister Regiter, T? Value)? ExpectedWriteBack { get; init; } = null;
+    public (MipsGpRegister Register, T? Value)? ExpectedWriteBack { get; init; } = null;
 
     public (MipsFloatRegister Register, int Value)? ExpectedWordFloatWriteBack { get; init; } = null;
 

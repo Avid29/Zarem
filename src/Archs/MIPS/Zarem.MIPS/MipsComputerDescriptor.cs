@@ -19,14 +19,14 @@ public class MipsComputerDescriptor : IComputerDescriptor
     public string Identifier => "MIPS";
 
     /// <inheritdoc/>
-    public Type ConfigType => typeof(MIPSEmulatorConfig);
+    public Type ConfigType => typeof(MipsEmulatorConfig);
 
     /// <inheritdoc/>
     public Type ComputerType => typeof(MipsComputer);
 
     IComputer? IComputerDescriptor.Create(object config)
     {
-        if (config is not MIPSEmulatorConfig mipsConfig)
+        if (config is not MipsEmulatorConfig mipsConfig)
             return null;
 
         return new MipsComputer(mipsConfig);

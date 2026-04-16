@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Zarem.Emulator.JIT;
+using Zarem.Emulator.Machine.JIT;
 
 namespace Zarem.Emulator.Models.JIT;
 

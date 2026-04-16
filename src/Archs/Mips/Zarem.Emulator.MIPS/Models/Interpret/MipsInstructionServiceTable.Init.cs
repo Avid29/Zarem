@@ -12,7 +12,7 @@ namespace Zarem.Emulator.Models;
 
 public unsafe partial class MipsInstructionServiceTable<T, TS>
 {
-    private void InitTables(MIPSEmulatorConfig config)
+    private void InitTables(MipsEmulatorConfig config)
     {
         var version = config.Version;
 

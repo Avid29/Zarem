@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using Zarem.Emulator.Machine.JIT;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -59,9 +60,24 @@ public partial class MipsJitCompiler<T>
     }
 
     /// <summary>
-    /// Compiles an instruction into a is CLI equivilent.
+    /// Compiles a single instruction as a cli dynamic method.
     /// </summary>
-    public bool CompileInstruction(ILGenerator il, MipsInstruction inst, T pc)
+    public MipsBlockDelegate<T> CompileLoneInstruction(MipsInstruction inst, T pc)
+    {
+        var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), [typeof(MipsJitCpu<T>)], true);
+        var il = method.GetILGenerator();
+        bool ended = CompileInstruction(il, inst, pc);
+
+        if (!ended)
+        {
+            EmitLoadConstant(il, pc + T.CreateTruncating(4));
+            il.Emit(OpCodes.Ret);
+        }
+
+        return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
+    }
+
+    private bool CompileInstruction(ILGenerator il, MipsInstruction inst, T pc)
     {
         var emitter = _opCodeTable[(int)inst.OpCode];
         return emitter(il, inst, pc);

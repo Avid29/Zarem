@@ -1,133 +1,82 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Numerics;
+using System.Reflection.Emit;
+using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
-using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.CoProcessors;
-using Zarem.Emulator.Machine.Interfaces;
-using Zarem.Emulator.Machine.Registers;
-using Zarem.Models.Enums;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Emulator.JIT;
+using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Models.JIT;
+using Zarem.Emulator.TrapHandlers;
+using Zarem.Models.Instructions;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.Emulator.Machine.JIT;
 
 /// <summary>
-/// A class representing a MIPS processor unit, which uses JIT cross-compilation for execution.
+/// Represents a compiled block of MIPS instructions.
 /// </summary>
-public partial class MipsJitCpu<T> : IMipsCpu
+/// <typeparam name="T">The register width (uint or ulong).</typeparam>
+/// <param name="cpu">The CPU instance to operate on.</param>
+/// <returns>The Program Counter where execution should continue.</returns>
+public delegate T MipsBlockDelegate<T>(MipsJitCpu<T> cpu)
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>;
+
+/// <summary>
+/// A <see cref="MipsCpu{T}"/> which uses JIT cross-compilation for execution.
+/// </summary>
+public partial class MipsJitCpu<T> : MipsCpu<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-#pragma warning disable CS0067
-
-    /// <inheritdoc/>
-    public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
-    
-    #pragma warning restore CS0067
-
-    /// <inheritdoc/>
-    public event EventHandler? ShutdownRequested;
+    // Cache mapping a PC to its compiled IL block.
+    private readonly MipsBlockCache<T> _blockCache;
+    private readonly MipsJitCompiler<T> _jitCompiler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
     /// </summary>
-    public MipsJitCpu(MIPSEmulatorConfig config, PhysicalBus bus)
+    public MipsJitCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
-        Config = config;
-        RegisterFile = new(config.Version);
-        CoProcessor0 = new();
-        FloatProcessor = new();
-
-        Tlb = new MipsTlb();
-        Memory = new MemorySystem(bus, Tlb);
-
+        _blockCache = new();
         _jitCompiler = new MipsJitCompiler<T>(this);
-
-        // HOTFIX: Initialize $sp
-        this[MipsGpRegister.StackPointer] = T.CreateTruncating(0x7FFF_8000);
     }
 
     /// <inheritdoc/>
-    public string ArchitectureName => "MIPS";
-
-    /// <inheritdoc/>
-    public Endianness Endianness => Endianness.Big;
-
-    /// <inheritdoc/>
-    public MIPSEmulatorConfig Config { get; }
-
-    /// <inheritdoc cref="ICpu.ProgramCounter"/>
-    public T ProgramCounter { get; set; }
-
-    /// <inheritdoc/>
-    ulong ICpu.ProgramCounter
+    public override void Insert(MipsInstruction instruction, out MipsTrap trap)
     {
-        get => ulong.CreateTruncating(ProgramCounter);
-        set => ProgramCounter = T.CreateTruncating(value);
+        trap = MipsTrap.None;
+        var @delegate = _jitCompiler.CompileLoneInstruction(instruction, ProgramCounter);
+        ProgramCounter = @delegate(this);
     }
 
-    /// <inheritdoc cref="ICpu.RegisterFile"/>
-    public MipsGPRegisterFile<T> RegisterFile { get; }
-
     /// <inheritdoc/>
-    IRegisterFile ICpu.RegisterFile => RegisterFile;
+    public override void Run(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+        {
+            // Look up the current block
+            if (!_blockCache.TryGet(ProgramCounter, out var compiledBlock))
+            {
+                // Cache Miss. Compile the basic block starting at ProgramCounter
+                compiledBlock = _jitCompiler.CompileBlock(ProgramCounter);
+                _blockCache.Store(ProgramCounter, compiledBlock);
+            }
+
+            // Execute the block, and update the PC to the next block start
+            ProgramCounter = compiledBlock(this);
+        }
+    }
 
     /// <summary>
-    /// Gets the coprocessor 0 unit of the computer system.
+    /// Handles a trap.
     /// </summary>
-    public CoProcessor0<T> CoProcessor0 { get; }
-
-    /// <inheritdoc/>
-    public FloatProcessor<T> FloatProcessor { get; }
-
-    /// <inheritdoc/>
-    IFloatProcessor IMipsCpu.FloatProcessor => FloatProcessor;
-
-    /// <summary>
-    /// Gets the translation look-aside buffer.
-    /// </summary>
-    public MipsTlb Tlb { get; }
-
-    /// <summary>
-    /// Gets the system memory
-    /// </summary>
-    public MemorySystem Memory { get; }
-
-    /// <inheritdoc cref="IMipsCpu.DelaySlot"/>
-    public T? DelaySlot { get; private set; }
-
-    /// <inheritdoc/>
-    ulong? IMipsCpu.DelaySlot => DelaySlot.HasValue
-        ? ulong.CreateTruncating(DelaySlot.Value)
-        : null;
-
-    /// <summary>
-    /// Gets or sets the value of a general-purpose register on the processor.
-    /// </summary>
-    /// <param name="reg">The register to get or set.</param>
-    /// <returns>The value of the register.</returns>
-    public T this[MipsGpRegister reg]
+    public void HandleTrap(int trapCode, T currentPc)
     {
-        get => RegisterFile[(int)reg];
-        set => RegisterFile[(int)reg] = value;
-    }
+        var trap = (MipsTrap)trapCode;
 
-    /// <inheritdoc/>
-    ulong IMipsCpu.this[MipsGpRegister reg]
-    {
-        get => ulong.CreateTruncating(RegisterFile[(int)reg]);
-        set => RegisterFile[(int)reg] = T.CreateTruncating(value);
-    }
+        // Sync the PC so the interpreter/debugger knows where we are
+        ProgramCounter = currentPc;
 
-    /// <inheritdoc/>
-    public void Dispose()
-    {
-        RegisterFile.Dispose();
-        CoProcessor0.RegisterFile.Dispose();
-        FloatProcessor.RegisterFile.Dispose();
+        base.HandleTrap(trap);
     }
-
-    /// <inheritdoc/>
-    public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
 }

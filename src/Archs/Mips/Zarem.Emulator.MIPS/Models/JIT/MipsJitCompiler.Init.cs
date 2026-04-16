@@ -13,7 +13,7 @@ namespace Zarem.Emulator.JIT;
 public partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private void InitTables(MIPSEmulatorConfig config)
+    private void InitTables(MipsEmulatorConfig config)
     {
         var version = config.Version;
 

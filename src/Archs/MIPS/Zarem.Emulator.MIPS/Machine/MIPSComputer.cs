@@ -7,6 +7,8 @@ using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
+using Zarem.Emulator.Machine.Interpret;
+using Zarem.Emulator.Machine.JIT;
 using Zarem.Extensions;
 using Zarem.Models.Enums;
 
@@ -22,7 +24,7 @@ public sealed class MipsComputer : ComputerBase
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsComputer"/> class.
     /// </summary>
-    public MipsComputer(MIPSEmulatorConfig config)
+    public MipsComputer(MipsEmulatorConfig config)
     {
         Config = config;
 
@@ -41,15 +43,15 @@ public sealed class MipsComputer : ComputerBase
 
             ExecutionMode.Interpret or _ =>
                 Cpu = config.Version.Is64Bit()
-                    ? new MipsCpu<ulong>(config, bus)
-                    : new MipsCpu<uint>(config, bus),
+                    ? new MipsInterpretCpu<ulong>(config, bus)
+                    : new MipsInterpretCpu<uint>(config, bus),
         };
 
         Cpu.ShutdownRequested += Processor_ShutdownRequested;
     }
 
     /// <inheritdoc/>
-    public override MIPSEmulatorConfig Config { get; }
+    public override MipsEmulatorConfig Config { get; }
 
     /// <inheritdoc/>
     public override IMipsCpu Cpu { get; }
