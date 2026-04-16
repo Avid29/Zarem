@@ -312,17 +312,19 @@ public unsafe partial class MipsJitCompiler<T>
 
     private bool Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false)
     {
+        bool delaySlots = !_cpu.Config.DisableDelaySlots;
+
         if (link)
         {
             // Store the Return Address ($ra = PC + 8)
             // We use +8 because +4 is the delay slot, and we want to return AFTER that.
-            T returnAddr = pc + T.CreateTruncating(8);
+            T returnAddr = pc + (delaySlots ? T.CreateTruncating(8) : T.CreateTruncating(4));
             EmitStoreRegister(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
         }
 
-        if (!_cpu.Config.DisableDelaySlots)
+        // Handle the Delay Slot
+        if (delaySlots)
         {
-            // Handle the Delay Slot
             T delaySlotPc = pc + T.CreateTruncating(4);
             EmitDelaySlot(il, delaySlotPc);
         }
@@ -340,15 +342,17 @@ public unsafe partial class MipsJitCompiler<T>
 
     private bool JumpR(ILGenerator il, MipsInstruction inst, T pc, bool link = false)
     {
+        bool delaySlots = !_cpu.Config.DisableDelaySlots;
+
         if (link)
         {
             // Store the Return Address ($ra = PC + 8)
             // We use +8 because +4 is the delay slot, and we want to return AFTER that.
-            T returnAddr = pc + T.CreateTruncating(8);
+            T returnAddr = pc + (delaySlots ? T.CreateTruncating(8) : T.CreateTruncating(4));
             EmitStoreRegister(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
         }
 
-        if (!_cpu.Config.DisableDelaySlots)
+        if (delaySlots)
         {
             // Handle Delay Slot
             EmitDelaySlot(il, pc + T.CreateTruncating(4));
@@ -373,6 +377,8 @@ public unsafe partial class MipsJitCompiler<T>
 
     private bool Branch(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, Action<ILGenerator> pushOperands, bool likely = false)
     {
+        bool delaySlots = !_cpu.Config.DisableDelaySlots;
+
         Label takeBranch = il.DefineLabel();
 
         // Prepare the stack for the branch condition
@@ -380,7 +386,7 @@ public unsafe partial class MipsJitCompiler<T>
         pushOperands(il);
 
         // Append delay slot operation
-        if (!_cpu.Config.DisableDelaySlots && !likely)
+        if (!delaySlots && !likely)
         {
             EmitDelaySlot(il, pc + T.CreateTruncating(4));
         }
@@ -390,7 +396,7 @@ public unsafe partial class MipsJitCompiler<T>
 
         // Branch NOT taken
         EmitTrapArg(il, MipsTrap.None);
-        EmitLoadConstant(il, pc + T.CreateTruncating(8));
+        EmitLoadConstant(il, pc + (delaySlots ? T.CreateTruncating(8) : T.CreateTruncating(4)));
         il.Emit(OpCodes.Ret);
 
         // Branch taken
