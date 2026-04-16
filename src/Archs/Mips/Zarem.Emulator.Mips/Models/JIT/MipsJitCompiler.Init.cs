@@ -45,7 +45,7 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.Coprocessor1] = (il, inst, pc) => DispatchCoProc1(il, inst);
         _opCodeTable[(int)MipsOpCode.LoadByte] = Load<sbyte>;
         _opCodeTable[(int)MipsOpCode.LoadHalfWord] = Load<short>;
-        _opCodeTable[(int)MipsOpCode.LoadWord] = Store<int>;
+        _opCodeTable[(int)MipsOpCode.LoadWord] = Load<int>;
         _opCodeTable[(int)MipsOpCode.LoadByteUnsigned] = Load<byte>;
         _opCodeTable[(int)MipsOpCode.LoadHalfWordUnsigned] = Load<ushort>;
         _opCodeTable[(int)MipsOpCode.StoreByte] = Store<sbyte>;
