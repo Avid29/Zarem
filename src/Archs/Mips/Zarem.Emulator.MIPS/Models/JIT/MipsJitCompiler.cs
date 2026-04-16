@@ -365,6 +365,43 @@ public unsafe partial class MipsJitCompiler<T>
         return true; // Terminate the IL block here
     }
 
+    private bool Branch(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, bool likely = false)
+    {
+        Label takeBranch = il.DefineLabel();
+
+        // Push RS and RT to the stack
+        EmitRegisterRead(il, inst.RS);
+        EmitRegisterRead(il, inst.RT);
+
+        // Run delay slot 
+        if (!_cpu.Config.DisableDelaySlots && !likely)
+        {
+            EmitDelaySlot(il, pc + T.CreateTruncating(4));
+        }
+
+        // Evaluate the condition
+        il.Emit(conditionOpCode, takeBranch);
+
+        // --- Branch not taken path ---
+        // Set trap to none and return PC + 8 (next instruction after delay slot)
+        EmitTrapArg(il, MipsTrap.None);
+        EmitLoadConstant(il, pc + T.CreateTruncating(8));
+        il.Emit(OpCodes.Ret);
+
+        // --- Branch taken path ---
+        // Calculate target: PC + 4 + (offset << 2)
+        // The offset is a signed 16-bit integer.
+        il.MarkLabel(takeBranch);
+        long offset = (long)(short)inst.Immediate << 2;
+        T targetPc = pc + T.CreateTruncating(4) + T.CreateTruncating(offset);
+
+        EmitTrapArg(il, MipsTrap.None);
+        EmitLoadConstant(il, targetPc);
+        il.Emit(OpCodes.Ret);
+
+        return true; // Ends the block
+    }
+
     private bool MoveFromTo(ILGenerator il, MipsGpRegister from, MipsGpRegister to)
     {
         // Can't writeback to $zero.
