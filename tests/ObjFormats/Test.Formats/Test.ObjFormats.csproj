@@ -5,10 +5,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\src\Archs\MIPS\Zarem.Assembler.MIPS\Zarem.Assembler.MIPS.csproj" />
-	  <ProjectReference Include="..\..\..\src\Archs\MIPS\Zarem.Linker.MIPS\Zarem.Linker.MIPS.csproj" />
+	  <ProjectReference Include="..\..\..\src\Archs\MIPS\Zarem.Assembler.MIPS\Zarem.Assembler.Mips.csproj" />
+	  <ProjectReference Include="..\..\..\src\Archs\MIPS\Zarem.Linker.MIPS\Zarem.Linker.Mips.csproj" />
 	  <ProjectReference Include="..\..\..\src\Zarem.Assembler\Zarem.Assembler.csproj" />
-	  <ProjectReference Include="..\..\Archs\MIPS\Test.MIPS\Test.MIPS.csproj" />
+	  <ProjectReference Include="..\..\Archs\MIPS\Test.MIPS\Test.Mips.csproj" />
 	</ItemGroup>
 
 </Project>

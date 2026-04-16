@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.Assembler</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Instructions\CoProcessor1.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\FloatingPoint.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\CoProcessor0.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\IType64.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\IType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\JType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Pseudo.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\RegImm.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\RType64.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\RType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Special2.inst.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Zarem.Assembler\Zarem.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.MIPS.Base\Zarem.Mips.Base.csproj" />
+  </ItemGroup>
+
+</Project>
