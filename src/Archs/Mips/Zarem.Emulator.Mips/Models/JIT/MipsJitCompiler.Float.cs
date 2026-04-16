@@ -45,6 +45,14 @@ public partial class MipsJitCompiler<T>
             FloatFuncCode.AbsoluteValue => FloatUnary<TFloat>(il, inst, nameof(Math.Abs)),
             FloatFuncCode.Move => MoveFloat<TFloat>(il, inst.FS, inst.FD),
             FloatFuncCode.Negate => FloatUnary<TFloat>(il, inst, OpCodes.Neg),
+            FloatFuncCode.Round_L => FloatRound<TFloat, long>(il, inst, nameof(Math.Round)),
+            FloatFuncCode.Truncate_L => FloatRound<TFloat, long>(il, inst, nameof(Math.Truncate)),
+            FloatFuncCode.Ceiling_L => FloatRound<TFloat, long>(il, inst, nameof(Math.Ceiling)),
+            FloatFuncCode.Floor_L => FloatRound<TFloat, long>(il, inst, nameof(Math.Floor)),
+            FloatFuncCode.Round_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Round)),
+            FloatFuncCode.Truncate_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Truncate)),
+            FloatFuncCode.Ceiling_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Ceiling)),
+            FloatFuncCode.Floor_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Floor)),
 
             FloatFuncCode.ConvertToSingle => FloatConvert<TFloat, float>(il, inst.FS, inst.FD),
             FloatFuncCode.ConvertToDouble => FloatConvert<TFloat, double>(il, inst.FS, inst.FD),
@@ -105,6 +113,25 @@ public partial class MipsJitCompiler<T>
             var method = mathClass.GetMethod(methodName, [typeof(TFloat)]);
             Guard.IsNotNull(method);
             il.Emit(OpCodes.Call, method);
+        });
+
+        return false;
+    }
+
+    private bool FloatRound<TFrom, TTo>(ILGenerator il, FloatInstruction inst, string methodName)
+        where TFrom : unmanaged
+        where TTo : unmanaged
+    {
+        EmitStoreRegister<TTo>(il, inst.FD, () =>
+        {
+            EmitLoadRegister<TFrom>(il, inst.FS);
+
+            // Resolve Math.Sqrt(double) or MathF.Sqrt(float)
+            Type mathClass = typeof(TFrom) == typeof(float) ? typeof(MathF) : typeof(Math);
+            var method = mathClass.GetMethod(methodName, [typeof(TFrom)]);
+            Guard.IsNotNull(method);
+            il.Emit(OpCodes.Call, method);
+            EmitConv<TTo>(il);
         });
 
         return false;
