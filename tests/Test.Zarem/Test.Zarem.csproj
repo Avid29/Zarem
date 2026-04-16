@@ -14,8 +14,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\Archs\MIPS\Zarem.MIPS\Zarem.MIPS.csproj" />
-	  <ProjectReference Include="..\..\src\ModuleFormats\Zarem.ELF\Zarem.ELF.csproj" />
+	  <ProjectReference Include="..\..\src\Archs\MIPS\Zarem.MIPS\Zarem.Mips.csproj" />
+	  <ProjectReference Include="..\..\src\ModuleFormats\Zarem.ELF\Zarem.Elf.csproj" />
 	  <ProjectReference Include="..\..\src\Zarem\Zarem.csproj" />
 	</ItemGroup>
 

@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.MIPS</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Zarem\Zarem.csproj" />
+    <ProjectReference Include="..\Zarem.Assembler.MIPS\Zarem.Assembler.Mips.csproj" />
+    <ProjectReference Include="..\Zarem.Debugger.MIPS\Zarem.Debugger.Mips.csproj" />
+    <ProjectReference Include="..\Zarem.Disassembler.MIPS\Zarem.Disassembler.Mips.csproj" />
+    <ProjectReference Include="..\Zarem.Emulator.MIPS\Zarem.Emulator.Mips.csproj" />
+    <ProjectReference Include="..\Zarem.Linker.MIPS\Zarem.Linker.Mips.csproj" />
+  </ItemGroup>
+
+</Project>

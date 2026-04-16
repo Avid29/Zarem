@@ -30,26 +30,26 @@
   </Folder>
   <Folder Name="/Plugins/" />
   <Folder Name="/Plugins/Archs/" />
-  <Folder Name="/Plugins/Archs/MIPS/">
-    <Project Path="src/Archs/MIPS/Zarem.Assembler.MIPS/Zarem.Assembler.MIPS.csproj">
+  <Folder Name="/Plugins/Archs/Mips/">
+    <Project Path="src/Archs/Mips/Zarem.Assembler.Mips/Zarem.Assembler.Mips.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
-    <Project Path="src/Archs/MIPS/Zarem.Debugger.MIPS/Zarem.Debugger.MIPS.csproj" Id="7c2da9e5-f431-458d-880a-1b1a91b0a498">
+    <Project Path="src/Archs/Mips/Zarem.Debugger.Mips/Zarem.Debugger.Mips.csproj" Id="7c2da9e5-f431-458d-880a-1b1a91b0a498">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
-    <Project Path="src/Archs/MIPS/Zarem.Disassembler.MIPS/Zarem.Disassembler.MIPS.csproj">
+    <Project Path="src/Archs/Mips/Zarem.Disassembler.Mips/Zarem.Disassembler.Mips.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
-    <Project Path="src/Archs/MIPS/Zarem.Emulator.MIPS/Zarem.Emulator.MIPS.csproj">
+    <Project Path="src/Archs/Mips/Zarem.Emulator.Mips/Zarem.Emulator.Mips.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
-    <Project Path="src/Archs/MIPS/Zarem.Linker.MIPS/Zarem.Linker.MIPS.csproj" Id="024c439e-9ffc-44ee-aa70-737b7f9c2a23">
+    <Project Path="src/Archs/Mips/Zarem.Linker.Mips/Zarem.Linker.Mips.csproj" Id="024c439e-9ffc-44ee-aa70-737b7f9c2a23">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
-    <Project Path="src/Archs/MIPS/Zarem.MIPS.Base/Zarem.MIPS.Base.csproj">
+    <Project Path="src/Archs/Mips/Zarem.Mips.Base/Zarem.Mips.Base.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
-    <Project Path="src/Archs/MIPS/Zarem.MIPS/Zarem.MIPS.csproj">
+    <Project Path="src/Archs/Mips/Zarem.Mips/Zarem.Mips.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
   </Folder>
@@ -76,7 +76,7 @@
     </Project>
   </Folder>
   <Folder Name="/Plugins/ModuleFormats/">
-    <Project Path="src/ModuleFormats/Zarem.ELF/Zarem.ELF.csproj">
+    <Project Path="src/ModuleFormats/Zarem.ELF/Zarem.ELF.csproj" DisplayName="Zarem.Elf">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="src/ModuleFormats/Zarem.RASM/Zarem.RASM.csproj">
@@ -106,12 +106,12 @@
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Tests/Plugins/Archs/MIPS/">
-    <Project Path="tests/Archs/MIPS/Test.Assembler.MIPS.Live/Test.Assembler.MIPS.Live.csproj">
+  <Folder Name="/Tests/Plugins/Archs/Mips/">
+    <Project Path="tests/Archs/Mips/Test.Assembler.Mips.Live/Test.Assembler.Mips.Live.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
-    <Project Path="tests/Archs/MIPS/Test.MIPS.Asms/Test.MIPS.Asms.vcxitems" Id="f152d20e-aa8a-4d50-9852-0eb0b4a962c4" />
-    <Project Path="tests/Archs/MIPS/Test.MIPS/Test.MIPS.csproj">
+    <Project Path="tests/Archs/Mips/Test.Mips.Asms/Test.Mips.Asms.vcxitems" Id="f152d20e-aa8a-4d50-9852-0eb0b4a962c4" />
+    <Project Path="tests/Archs/Mips/Test.Mips/Test.Mips.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
   </Folder>
@@ -121,7 +121,7 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/Plugins/ModuleFormats/">
-    <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj">
+    <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj" DisplayName="Test.Elf">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/ObjFormats/Test.Formats/Test.ObjFormats.csproj">

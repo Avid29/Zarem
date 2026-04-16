@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.Disassembler</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zarem.Assembler.MIPS\Zarem.Assembler.Mips.csproj" />
+  </ItemGroup>
+
+</Project>

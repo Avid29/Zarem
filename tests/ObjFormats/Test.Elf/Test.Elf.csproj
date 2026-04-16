@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.12.6" />
+		<PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.4.3" />
+		<PackageReference Include="MSTest" Version="3.6.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\src\ModuleFormats\Zarem.ELF\Zarem.Elf.csproj" />
+	  <ProjectReference Include="..\Test.Formats\Test.ObjFormats.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+	</ItemGroup>
+
+</Project>
