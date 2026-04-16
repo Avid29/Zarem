@@ -75,6 +75,17 @@ public partial class MipsJitCompiler<T>
         _specialTable[(int)FunctionCode.SetLessThan] = (il, inst, pc) => AluR(il, inst, OpCodes.Clt);
         _specialTable[(int)FunctionCode.SetLessThanUnsigned] = (il, inst, pc) => AluR(il, inst, OpCodes.Clt_Un);
 
+        if (version is >= MipsVersion.MipsII)
+        {
+            // NOTE: Traps use inverted branchs for opcodes
+            _specialTable[(int)FunctionCode.TrapOnGreaterOrEqual] = (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Blt);
+            _specialTable[(int)FunctionCode.TrapOnGreaterOrEqualUnsigned] = (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Blt_Un);
+            _specialTable[(int)FunctionCode.TrapOnLessThan] = (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Bge);
+            _specialTable[(int)FunctionCode.TrapOnLessThanUnsigned] = (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Bge_Un);
+            _specialTable[(int)FunctionCode.TrapOnEquals] = (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Bne_Un);
+            _specialTable[(int)FunctionCode.TrapOnNotEquals] = (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Beq);
+        }
+
         if (version is < MipsVersion.Mips_R6)
         {
             _specialTable[(int)FunctionCode.JumpRegister] = (il, inst, pc) => JumpR(il, inst, pc);
@@ -93,5 +104,16 @@ public partial class MipsJitCompiler<T>
     {
         _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZero] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Blt);
         _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Bge);
+
+        if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        {
+            // NOTE: Traps use inverted branchs for opcodes
+            _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediate] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Blt);
+            _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediateUnsigned] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Blt_Un);
+            _regImmTable[(int)RegImmFuncCode.TrapOnLessThanImmediate] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Bge);
+            _regImmTable[(int)RegImmFuncCode.TrapOnLessThanImmediateUnsigned] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Bge_Un);
+            _regImmTable[(int)RegImmFuncCode.TrapOnEqualsImmediate] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Bne_Un);
+            _regImmTable[(int)RegImmFuncCode.TrapOnNotEqualsImmediate] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Beq);
+        }
     }
 }

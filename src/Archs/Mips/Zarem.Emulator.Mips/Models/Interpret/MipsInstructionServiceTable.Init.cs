@@ -216,7 +216,6 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZero] = &BranchOn<XltzLogic<T, TS>>;
         _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = &BranchOn<XgezLogic<T, TS>>;
 
-
         if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
         {
             _regImmTable[(int)RegImmFuncCode.TrapOnGreaterOrEqualImmediate] = &TrapOnI<XgeLogic<T, TS>>;

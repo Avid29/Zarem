@@ -130,11 +130,27 @@ public unsafe partial class MipsJitCompiler<T>
         return addrVar;
     }
 
+    private static void EmitRet(ILGenerator il, T pc) => EmitTrapRet(il, MipsTrap.None, pc);
+
+    private static void EmitRet(ILGenerator il, Action<ILGenerator> pushAddress)
+    {
+        EmitTrapArg(il, MipsTrap.None);
+        pushAddress(il);
+        il.Emit(OpCodes.Ret);
+    }
+
     private static void EmitTrapArg(ILGenerator il, MipsTrap trap)
     {
         il.Emit(OpCodes.Ldarg, 1);
         il.Emit(OpCodes.Ldc_I4, (int)trap);
         il.Emit(OpCodes.Stind_I4);
+    }
+
+    private static void EmitTrapRet(ILGenerator il, MipsTrap trap, T pc)
+    {
+        EmitTrapArg(il, trap);
+        EmitLoadConstant(il, pc);
+        il.Emit(OpCodes.Ret);
     }
 
     private static void EmitLdind(ILGenerator il) => EmitLdind<T>(il);

@@ -35,6 +35,10 @@ public partial class ExecutionTests
     public void InstructionTests_Mips2(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
+    [MipsDataSource(MipsVersion.MipsII, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips2_JIT(ExecutionTestCase<uint> @case) => RunTest(@case);
+
+    [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsIII, ExecutionMode.Interpret)]
     public void InstructionTests_Mips3(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
