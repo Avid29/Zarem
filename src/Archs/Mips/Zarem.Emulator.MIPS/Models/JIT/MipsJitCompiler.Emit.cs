@@ -81,7 +81,7 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Conv_I);
     }
 
-    private void EmitTrapArg(ILGenerator il, MipsTrap trap)
+    private static void EmitTrapArg(ILGenerator il, MipsTrap trap)
     {
         il.Emit(OpCodes.Ldarg, 1);
         il.Emit(OpCodes.Ldc_I4, (int)trap);
@@ -136,7 +136,7 @@ public unsafe partial class MipsJitCompiler<T>
         }
     }
 
-    private void EmitOverflowGuard(ILGenerator il, T pc, bool isSubtraction, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow)
+    private static void EmitOverflowGuard(ILGenerator il, T pc, bool isSubtraction, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow)
     {
         // Logic: ((rs ^ result) & (rtOrImm ^ result)) < 0  (for Addition)
         // Logic: ((rs ^ result) & (rs ^ rtOrImm)) < 0     (for Subtraction)

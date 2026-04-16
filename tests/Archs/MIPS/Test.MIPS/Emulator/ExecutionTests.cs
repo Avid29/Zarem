@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using System.Xml;
 using Zarem.Assembler;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
@@ -24,55 +23,55 @@ public partial class ExecutionTests
     public const uint K1 = 0xd16;
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips1))]
+    [MipsDataSource(MipsVersion.MipsI, ExecutionMode.Interpret)]
     public void InstructionTests_Mips1(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsI);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips1))]
+    [MipsDataSource(MipsVersion.MipsI, ExecutionMode.JustInTime)]
     public void InstructionTests_Mips1_JIT(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsI, true);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips2))]
+    [MipsDataSource(MipsVersion.MipsII, ExecutionMode.Interpret)]
     public void InstructionTests_Mips2(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsII);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips3))]
+    [MipsDataSource(MipsVersion.MipsIII, ExecutionMode.Interpret)]
     public void InstructionTests_Mips3(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.MipsIII);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips3_32Bit))]
+    [MipsDataSource(MipsVersion.MipsIII_32Bit, ExecutionMode.Interpret)]
     public void InstructionTests_Mips3_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsIII_32Bit);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips4))]
+    [MipsDataSource(MipsVersion.MipsIV, ExecutionMode.Interpret)]
     public void InstructionTests_Mips4(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.MipsIV);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips4_32Bit))]
+    [MipsDataSource(MipsVersion.MipsIV_32Bit, ExecutionMode.Interpret)]
     public void InstructionTests_Mips4_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsIV_32Bit);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips5))]
+    [MipsDataSource(MipsVersion.MipsV, ExecutionMode.Interpret)]
     public void InstructionTests_Mips5(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.MipsV);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips5_32Bit))]
+    [MipsDataSource(MipsVersion.MipsV_32Bit, ExecutionMode.Interpret)]
     public void InstructionTests_Mips5_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsV_32Bit);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips32R1))]
+    [MipsDataSource(MipsVersion.Mips32R1, ExecutionMode.Interpret)]
     public void InstructionTests_Mips32R1(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.Mips32R1);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips64R1))]
+    [MipsDataSource(MipsVersion.Mips64R1, ExecutionMode.Interpret)]
     public void InstructionTests_Mips64R1(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.Mips64R1);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips32R2))]
+    [MipsDataSource(MipsVersion.Mips32R2, ExecutionMode.Interpret)]
     public void InstructionTests_Mips32R2(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.Mips32R2);
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_Mips64R2))]
+    [MipsDataSource(MipsVersion.Mips64R2, ExecutionMode.Interpret)]
     public void InstructionTests_Mips64R2(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.Mips64R2);
 
     private static void RunTest<T>(ExecutionTestCase<T> @case, MipsVersion version, bool jit = false)

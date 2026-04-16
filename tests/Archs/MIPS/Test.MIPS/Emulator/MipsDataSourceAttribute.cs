@@ -2,7 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using System.Reflection;
+using Zarem.Emulator.Config;
+using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models.Enums;
@@ -12,84 +16,62 @@ using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Test.MIPS.Emulator;
 
-public partial class ExecutionTests
+[AttributeUsage(AttributeTargets.Method)]
+public class MipsDataSourceAttribute : Attribute, ITestDataSource
 {
-    public static IEnumerable<object[]> InstructionTestList_Mips1
-        => GetVersionTests<uint, int, ulong>(MipsVersion.MipsI);
+    public const uint K0 = ExecutionTests.K0;
+    public const uint K1 = ExecutionTests.K1;
 
-    public static IEnumerable<object[]> InstructionTestList_Mips2
-        => GetVersionTests<uint, int, ulong>(MipsVersion.MipsII);
+    private readonly MipsVersion _version;
+    private readonly ExecutionMode _mode;
 
-    public static IEnumerable<object[]> InstructionTestList_Mips3
-        => GetVersionTests<ulong, long, UInt128>(MipsVersion.MipsIII);
+    public MipsDataSourceAttribute(MipsVersion version, ExecutionMode mode)
+    {
+        _version = version;
+        _mode = mode;
+    }
 
-    public static IEnumerable<object[]> InstructionTestList_Mips3_32Bit
-        => GetVersionTests<uint, int, ulong>(MipsVersion.MipsIII_32Bit);
+    public IEnumerable<object[]> GetData(MethodInfo methodInfo)
+    {
+        var config = new MipsEmulatorConfig(_version)
+        {
+            ExecutionMode = _mode,
+        };
 
-    public static IEnumerable<object[]> InstructionTestList_Mips4
-        => GetVersionTests<ulong, long, UInt128>(MipsVersion.MipsIV);
+        return _version.Is64Bit()
+            ? GetVersionTests<ulong, long, UInt128>(config)
+            : GetVersionTests<uint, int, ulong>(config);
+    }
 
-    public static IEnumerable<object[]> InstructionTestList_Mips4_32Bit
-        => GetVersionTests<uint, int, ulong>(MipsVersion.MipsIV_32Bit);
+    public string? GetDisplayName(MethodInfo methodInfo, object?[]? data)
+    {
+        var obj = data?[0];
+        if (obj is null)
+        {
+            return string.Empty;
+        }
 
-    public static IEnumerable<object[]> InstructionTestList_Mips5
-        => GetVersionTests<ulong, long, UInt128>(MipsVersion.MipsV);
+        dynamic run = obj;
+        return $"{run?.Input}"; // Short name since the method name handles the context
+    }
 
-    public static IEnumerable<object[]> InstructionTestList_Mips5_32Bit
-        => GetVersionTests<uint, int, ulong>(MipsVersion.MipsV_32Bit);
-
-    public static IEnumerable<object[]> InstructionTestList_Mips32R1
-        => GetVersionTests<uint, int, ulong>(MipsVersion.Mips32R1);
-
-    public static IEnumerable<object[]> InstructionTestList_Mips64R1
-        => GetVersionTests<ulong, long, UInt128>(MipsVersion.Mips64R1);
-
-    public static IEnumerable<object[]> InstructionTestList_Mips32R2
-        => GetVersionTests<uint, int, ulong>(MipsVersion.Mips32R2);
-
-    public static IEnumerable<object[]> InstructionTestList_Mips64R2
-        => GetVersionTests<ulong, long, UInt128>(MipsVersion.Mips64R2);
-
-    private static IEnumerable<object[]> GetVersionTests<T, TSigned, TLong>(MipsVersion version)
+    private static IEnumerable<object[]> GetVersionTests<T, TSigned, TLong>(MipsEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
         where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
         where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>, IMinMaxValue<TLong>
     {
-        foreach (var test in GetArithmeticInstructionTests<T, TSigned, TLong>(version))
-            yield return test;
-
-        foreach (var test in GetLogicalInstructionTests<T>(version))
-            yield return test;
-
-        foreach (var test in GetMemoryInstructionTests<T>(version))
-            yield return test;
-
-        foreach (var test in GetJumpBranchInstructionTests<T>(version))
-            yield return test;
-
-        foreach (var test in GetCompareInstructionTests<T>(version))
-            yield return test;
-
-        foreach (var test in GetTrapInstructionTests<T>(version))
-            yield return test;
-
-        foreach (var test in GetUncategorizedInstructionTests<T>(version))
-            yield return test;
-
-        foreach (var test in GetSystemInstructionTests<T>(version))
-            yield return test;
-
-        foreach (var test in GetCoProcMoveInstructionTest<T>(version))
-            yield return test;
-
-        foreach (var test in GetFloatArithmeticInstructionTests<T>(version))
-            yield return test;
-
-        foreach (var test in GetFloatConvertInstructionTests<T>(version))
-            yield return test;
-
-        foreach (var test in GetFloatRoundInstructionTests<T>(version))
-            yield return test;
+        return GetArithmeticInstructionTests<T, TSigned, TLong>(config.Version)
+            .Concat(GetLogicalInstructionTests<T>(config.Version))
+            .Concat(GetMemoryInstructionTests<T>(config.Version))
+            .Concat(GetJumpBranchInstructionTests<T>(config.Version))
+            .Concat(GetCompareInstructionTests<T>(config.Version))
+            .Concat(GetTrapInstructionTests<T>(config.Version))
+            .Concat(GetUncategorizedInstructionTests<T>(config.Version))
+            .Concat(GetSystemInstructionTests<T>(config.Version))
+            .Concat(GetCoProcMoveInstructionTest<T>(config.Version))
+            .Concat(GetFloatArithmeticInstructionTests<T>(config.Version))
+            .Concat(GetFloatConvertInstructionTests<T>(config.Version))
+            .Concat(GetFloatRoundInstructionTests<T>(config.Version));
     }
 
     private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TSigned, TLong>(MipsVersion version)
