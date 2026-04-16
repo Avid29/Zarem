@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\src\ModuleFormats\Zarem.ELF\Zarem.ELF.csproj" />
+	  <ProjectReference Include="..\..\..\src\ModuleFormats\Zarem.ELF\Zarem.Elf.csproj" />
 	  <ProjectReference Include="..\Test.Formats\Test.ObjFormats.csproj" />
 	</ItemGroup>
 
