@@ -58,6 +58,11 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.OrImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Or);
         _opCodeTable[(int)MipsOpCode.ExclusiveOrImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Xor);
         _opCodeTable[(int)MipsOpCode.LoadUpperImmediate] = (il, inst, pc) => Lui(il, inst);
+        _opCodeTable[(int)MipsOpCode.LoadByte] = Load<sbyte>;
+        _opCodeTable[(int)MipsOpCode.LoadHalfWord] = Load<short>;
+        _opCodeTable[(int)MipsOpCode.LoadWord] = Store<int>;
+        _opCodeTable[(int)MipsOpCode.LoadByteUnsigned] = Load<byte>;
+        _opCodeTable[(int)MipsOpCode.LoadHalfWordUnsigned] = Load<ushort>;
         _opCodeTable[(int)MipsOpCode.StoreByte] = Store<sbyte>;
         _opCodeTable[(int)MipsOpCode.StoreHalfWord] = Store<short>;
         _opCodeTable[(int)MipsOpCode.StoreWord] = Store<int>;

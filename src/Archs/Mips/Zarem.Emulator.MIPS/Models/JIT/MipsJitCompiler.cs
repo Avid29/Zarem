@@ -311,6 +311,68 @@ public unsafe partial class MipsJitCompiler<T>
 
         return false;
     }
+    
+    private bool Load<TData>(ILGenerator il, MipsInstruction inst, T pc)
+        where TData : unmanaged
+    {
+        // Calculate Effective Address (rs + offset)
+        EmitLoadRegister(il, inst.RS);
+        il.Emit(OpCodes.Ldc_I8, (long)inst.Immediate);
+        il.Emit(OpCodes.Add);
+
+        var addrVar = il.DeclareLocal(typeof(T));
+        il.Emit(OpCodes.Stloc, addrVar);
+
+        // Alignment Check
+        int size = sizeof(TData);
+        if (size > 1)
+        {
+            Label labelAligned = il.DefineLabel();
+            il.Emit(OpCodes.Ldloc, addrVar);
+            il.Emit(OpCodes.Ldc_I4, size - 1);
+            il.Emit(OpCodes.And);
+            il.Emit(OpCodes.Conv_I8);
+            il.Emit(OpCodes.Ldc_I8, 0L);
+            il.Emit(OpCodes.Beq, labelAligned);
+
+            // Trap: Address Error Load
+            EmitTrapArg(il, MipsTrap.AddressErrorLoad);
+            EmitLoadConstant(il, pc);
+            il.Emit(OpCodes.Ret);
+
+            il.MarkLabel(labelAligned);
+        }
+
+        // Write Back to RT
+        EmitStoreRegister(il, inst.RT, () =>
+        {
+            var getMemoryMethod = _cpu.GetType().GetProperty("Memory")?.GetGetMethod();
+#if DEBUG
+            Guard.IsNotNull(getMemoryMethod);
+#endif
+
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Callvirt, getMemoryMethod);
+
+            // Arg 1: ulong addr
+            il.Emit(OpCodes.Ldloc, addrVar);
+            il.Emit(OpCodes.Conv_U8);
+
+            // 4. Call Memory.Read<TData>(ulong)
+            var readMethodBase = _cpu.Memory.GetType()
+                .GetMethods()
+                .First(m => m.Name == "Read" && m.IsGenericMethod && m.GetParameters().Length == 1);
+            var readMethod = readMethodBase.MakeGenericMethod(typeof(TData));
+
+            il.Emit(OpCodes.Callvirt, readMethod);
+
+            // Sign-Extension / Zero-Extension
+            EmitConv<TData>(il);
+            EmitConv(il);
+        });
+
+        return false;
+    }
 
     private bool Store<TData>(ILGenerator il, MipsInstruction inst, T pc)
         where TData : unmanaged
@@ -361,7 +423,7 @@ public unsafe partial class MipsJitCompiler<T>
 
         // Arg 2: TData value (Truncate the RT register value)
         EmitLoadRegister(il, inst.RT);
-        EmitTruncation<TData>(il);
+        EmitConv<TData>(il);
 
         // Find the generic method definition "Write<T>(ulong, T)"
         var writeMethodBase = _cpu.Memory.GetType()

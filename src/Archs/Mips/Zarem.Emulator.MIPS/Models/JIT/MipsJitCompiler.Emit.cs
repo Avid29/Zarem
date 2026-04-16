@@ -106,18 +106,27 @@ public unsafe partial class MipsJitCompiler<T>
 
     private static void EmitStind(ILGenerator il)
     {
-        if (typeof(T) == typeof(uint))
-        {
-            il.Emit(OpCodes.Stind_I4);
-        }
-        else if (typeof(T) == typeof(ulong))
-        {
-            il.Emit(OpCodes.Stind_I8);
-        }
-        else
-        {
-            throw new NotSupportedException("Unsupported register width.");
-        }
+        if (typeof(T) == typeof(uint)) il.Emit(OpCodes.Stind_I4);
+        else if (typeof(T) == typeof(ulong)) il.Emit(OpCodes.Stind_I8);
+        else throw new NotSupportedException("Unsupported register width.");
+    }
+
+    private static void EmitConv(ILGenerator il)
+    {
+        if (typeof(T) == typeof(uint)) il.Emit(OpCodes.Conv_U4);
+        else if (typeof(T) == typeof(ulong)) il.Emit(OpCodes.Conv_U8);
+    }
+
+    private static void EmitConv<TData>(ILGenerator il)
+    {
+        if (typeof(TData) == typeof(sbyte)) il.Emit(OpCodes.Conv_I1);
+        else if (typeof(TData) == typeof(byte)) il.Emit(OpCodes.Conv_U1);
+        else if (typeof(TData) == typeof(short)) il.Emit(OpCodes.Conv_I2);
+        else if (typeof(TData) == typeof(ushort)) il.Emit(OpCodes.Conv_U2);
+        else if (typeof(TData) == typeof(int)) il.Emit(OpCodes.Conv_I4);
+        else if (typeof(TData) == typeof(uint)) il.Emit(OpCodes.Conv_U4);
+        else if (typeof(TData) == typeof(long)) il.Emit(OpCodes.Conv_I8);
+        else if (typeof(TData) == typeof(ulong)) il.Emit(OpCodes.Conv_U8);
     }
 
     private static void EmitLoadConstant(ILGenerator il, T value)
@@ -136,17 +145,6 @@ public unsafe partial class MipsJitCompiler<T>
         }
     }
 
-    private static void EmitTruncation<TData>(ILGenerator il)
-    {
-        if (typeof(TData) == typeof(sbyte)) il.Emit(OpCodes.Conv_I1);
-        else if (typeof(TData) == typeof(byte)) il.Emit(OpCodes.Conv_U1);
-        else if (typeof(TData) == typeof(short)) il.Emit(OpCodes.Conv_I2);
-        else if (typeof(TData) == typeof(ushort)) il.Emit(OpCodes.Conv_U2);
-        else if (typeof(TData) == typeof(int)) il.Emit(OpCodes.Conv_I4);
-        else if (typeof(TData) == typeof(uint)) il.Emit(OpCodes.Conv_U4);
-        else if (typeof(TData) == typeof(long)) il.Emit(OpCodes.Conv_I8);
-        else if (typeof(TData) == typeof(ulong)) il.Emit(OpCodes.Conv_U8);
-    }
 
     private static void EmitOverflowGuard(ILGenerator il, T pc, bool isSubtraction, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow)
     {
