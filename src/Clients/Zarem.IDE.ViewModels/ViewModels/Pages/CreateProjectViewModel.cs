@@ -187,7 +187,7 @@ public partial class CreateProjectViewModel : PageViewModel
             {
                 MipsVersion = MipsVersion,
                 AssemblerConfig = new MipsAssemblerConfig(),
-                EmulatorConfig = new MIPSEmulatorConfig()
+                EmulatorConfig = new MipsEmulatorConfig()
                 {
                     TrapHost = new ZaremTrapHandler(),
                 },

@@ -1,26 +1,42 @@
-﻿// Avishai Dernis 2025
+﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Threading;
+using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Models.Interpret;
 using Zarem.Emulator.TrapHandlers;
+using Zarem.Extensions;
 using Zarem.Models.Instructions;
+using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.Emulator.Machine.Interpret;
 
 /// <summary>
-/// A class representing a MIPS processor unit.
+/// A <see cref="MipsCpu{T}"/> that executes by interpreting each instruction.
 /// </summary>
-public sealed partial class MipsCpu<T> : IMipsCpu
+public sealed class MipsInterpretCpu<T> : MipsCpu<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    private readonly IMipsInstructionServiceTable<T> _instructionServiceTable;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
+    /// </summary>
+    public MipsInterpretCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
+    {
+        _instructionServiceTable = config.Version.Is64Bit()
+            ? new MipsInstructionServiceTable<T, long>(this)
+            : new MipsInstructionServiceTable<T, int>(this);
+    }
+
     /// <inheritdoc/>
-    public void Run(CancellationToken ct)
+    public override void Run(CancellationToken ct)
     {
         while (!ct.IsCancellationRequested)
             Step();
@@ -35,7 +51,7 @@ public sealed partial class MipsCpu<T> : IMipsCpu
     }
 
     /// <inheritdoc/>
-    public void Insert(MipsInstruction instruction, out MipsTrap trap)
+    public override void Insert(MipsInstruction instruction, out MipsTrap trap)
         => Insert(instruction, out _, out trap);
 
     /// <inheritdoc cref="ICpu{TSelf, TInstruction, TTrap}.Insert(TInstruction, out TTrap)"/>
@@ -192,32 +208,5 @@ public sealed partial class MipsCpu<T> : IMipsCpu
 
         // Store the branch offset in the delay slot
         DelaySlot = targetPc;
-    }
-
-    private void HandleTrap(MipsTrap trap)
-    {
-        if (trap is MipsTrap.None)
-            return;
-
-        // Breakpoints are handled by the debugger upon the trap occurring event
-        // The host also handles every kind of trap if that's what the config specifies
-        if (trap is MipsTrap.Breakpoint && BreakpointHit is not null)
-        {
-            // Only wait if a debugger is attached
-            var eventArgs = new BreakpointHitEventArgs();
-            BreakpointHit.Invoke(this, eventArgs);
-            eventArgs.Wait();
-        }
-        else if (Config.TrapHost is not null)
-        {
-            // The host handled the trap, do not emulate it
-            // Breakpoints are always handled by the host
-            Config.TrapHost.HandleTrap(new MipsTrapContext(this, (ulong)trap));
-        }
-        else
-        {
-            CoProcessor0.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
-            ProgramCounter = CoProcessor0.ExceptionVector;
-        }
     }
 }

@@ -6,13 +6,12 @@ using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
-using static Zarem.Emulator.Models.LogicTable;
 
 namespace Zarem.Emulator.Models;
 
 public unsafe partial class MipsInstructionServiceTable<T, TS>
 {
-    private void InitTables(MIPSEmulatorConfig config)
+    private void InitTables(MipsEmulatorConfig config)
     {
         var version = config.Version;
 

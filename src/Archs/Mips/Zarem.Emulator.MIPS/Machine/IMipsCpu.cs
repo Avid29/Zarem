@@ -17,7 +17,7 @@ public interface IMipsCpu : ICpu<IMipsCpu, MipsInstruction, MipsTrap>
     /// <summary>
     /// Gets the emulation configuration.
     /// </summary>
-    MIPSEmulatorConfig Config { get; }
+    MipsEmulatorConfig Config { get; }
 
     /// <summary>
     /// Gets the jump address in the delay slot.

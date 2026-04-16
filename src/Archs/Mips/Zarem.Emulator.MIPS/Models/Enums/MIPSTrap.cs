@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.Emulator.Models.Interpret;
+
 namespace Zarem.Emulator.Models.Enums;
 
 /// <summary>

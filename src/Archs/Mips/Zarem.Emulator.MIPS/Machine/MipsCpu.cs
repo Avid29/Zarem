@@ -9,20 +9,22 @@ using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models;
+using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Models.Interpret;
+using Zarem.Emulator.TrapHandlers;
 using Zarem.Extensions;
 using Zarem.Models.Enums;
+using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine;
 
 /// <summary>
-/// A class representing a processor unit.
+/// A base class representing a processor unit.
 /// </summary>
-public sealed partial class MipsCpu<T> : IMipsCpu
+public abstract partial class MipsCpu<T> : IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private readonly IMipsInstructionServiceTable<T> _instructionServiceTable;
-
     /// <inheritdoc/>
     public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
 
@@ -32,7 +34,7 @@ public sealed partial class MipsCpu<T> : IMipsCpu
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
     /// </summary>
-    public MipsCpu(MIPSEmulatorConfig config, PhysicalBus bus)
+    public MipsCpu(MipsEmulatorConfig config, PhysicalBus bus)
     {
         Config = config;
         RegisterFile = new(config.Version);
@@ -41,10 +43,6 @@ public sealed partial class MipsCpu<T> : IMipsCpu
 
         Tlb = new MipsTlb();
         Memory = new MemorySystem(bus, Tlb);
-
-        _instructionServiceTable = config.Version.Is64Bit()
-            ? new MipsInstructionServiceTable<T, long>(this)
-            : new MipsInstructionServiceTable<T, int>(this);
 
         // HOTFIX: Initialize $sp
         this[MipsGpRegister.StackPointer] = T.CreateTruncating(0x7FFF_8000);
@@ -57,7 +55,7 @@ public sealed partial class MipsCpu<T> : IMipsCpu
     public Endianness Endianness => Endianness.Big;
 
     /// <inheritdoc/>
-    public MIPSEmulatorConfig Config { get; }
+    public MipsEmulatorConfig Config { get; }
 
     /// <inheritdoc cref="ICpu.ProgramCounter"/>
     public T ProgramCounter { get; set; }
@@ -97,7 +95,7 @@ public sealed partial class MipsCpu<T> : IMipsCpu
     public MemorySystem Memory { get; }
 
     /// <inheritdoc cref="IMipsCpu.DelaySlot"/>
-    public T? DelaySlot { get; private set; }
+    public T? DelaySlot { get; protected set; }
 
     /// <inheritdoc/>
     ulong? IMipsCpu.DelaySlot => DelaySlot.HasValue
@@ -124,6 +122,42 @@ public sealed partial class MipsCpu<T> : IMipsCpu
 
     /// <inheritdoc/>
     public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
+
+    /// <inheritdoc/>
+    public abstract void Run(CancellationToken ct);
+
+    /// <inheritdoc/>
+    public abstract void Insert(MipsInstruction instruction, out MipsTrap trap);
+
+    /// <summary>
+    /// Handles a trap.
+    /// </summary>
+    protected void HandleTrap(MipsTrap trap)
+    {
+        if (trap is MipsTrap.None)
+            return;
+
+        // Breakpoints are handled by the debugger upon the trap occurring event
+        // The host also handles every kind of trap if that's what the config specifies
+        if (trap is MipsTrap.Breakpoint && BreakpointHit is not null)
+        {
+            // Only wait if a debugger is attached
+            var eventArgs = new BreakpointHitEventArgs();
+            BreakpointHit.Invoke(this, eventArgs);
+            eventArgs.Wait();
+        }
+        else if (Config.TrapHost is not null)
+        {
+            // The host handled the trap, do not emulate it
+            // Breakpoints are always handled by the host
+            Config.TrapHost.HandleTrap(new MipsTrapContext(this, (ulong)trap));
+        }
+        else
+        {
+            CoProcessor0.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
+            ProgramCounter = CoProcessor0.ExceptionVector;
+        }
+    }
 
     /// <inheritdoc/>
     public void Dispose()
