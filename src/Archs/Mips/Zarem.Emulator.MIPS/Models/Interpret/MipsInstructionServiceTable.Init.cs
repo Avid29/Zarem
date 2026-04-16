@@ -6,7 +6,6 @@ using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
-using static Zarem.Emulator.Models.LogicTable;
 
 namespace Zarem.Emulator.Models;
 

@@ -15,7 +15,7 @@ namespace Zarem.Emulator.JIT;
 /// <summary>
 /// A class which compiles blocks of MIPS code into JIT IL code.
 /// </summary>
-public partial class MipsJitCompiler<T>
+public unsafe partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private delegate bool MipsEmitter(ILGenerator il, MipsInstruction inst, T pc);
@@ -189,6 +189,54 @@ public partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Localloc, localResult);
         il.Emit(OpCodes.Conv_U4);
         il.Emit(OpCodes.Stind_I4);
+
+        return false;
+    }
+
+    private bool DivR(ILGenerator il, MipsInstruction inst, bool signed)
+    {
+        Label endDiv = il.DefineLabel();
+
+        // Load operands into locals to keep stack predictable
+        EmitRegisterRead(il, inst.RS);
+        LocalBuilder rsLocal = il.DeclareLocal(typeof(T));
+        il.Emit(OpCodes.Stloc, rsLocal);
+        EmitRegisterRead(il, inst.RT);
+        LocalBuilder rtLocal = il.DeclareLocal(typeof(T));
+        il.Emit(OpCodes.Stloc, rtLocal);
+
+        // Guard against Div-By-Zero
+        il.Emit(OpCodes.Ldloc, rtLocal);
+        il.Emit(OpCodes.Ldc_I4_0);
+        if (sizeof(T) == 8)
+        {
+            il.Emit(OpCodes.Conv_I8); // Ensure width matches T
+        }
+        il.Emit(OpCodes.Beq, endDiv);
+
+        // Calculate and store the remainder to High
+        EmitLoadRegisterAddress(il, MipsGpRegister.High);
+        il.Emit(OpCodes.Ldloc, rsLocal);
+        il.Emit(OpCodes.Ldloc, rtLocal);
+        il.Emit(signed ? OpCodes.Rem : OpCodes.Rem_Un);
+        if (sizeof(T) == 4)
+        {
+            il.Emit(OpCodes.Conv_U4);
+        }
+        EmitStind(il);
+
+        // Calculate and store the quotient to low
+        EmitLoadRegisterAddress(il, MipsGpRegister.Low);
+        il.Emit(OpCodes.Ldloc, rsLocal);
+        il.Emit(OpCodes.Ldloc, rtLocal);
+        il.Emit(signed ? OpCodes.Div : OpCodes.Div_Un);
+        if (sizeof(T) == 4)
+        {
+            il.Emit(OpCodes.Conv_U4);
+        }
+        EmitStind(il);
+
+        il.MarkLabel(endDiv);
 
         return false;
     }

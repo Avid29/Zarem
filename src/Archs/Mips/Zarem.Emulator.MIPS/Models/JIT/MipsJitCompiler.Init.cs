@@ -60,8 +60,10 @@ public partial class MipsJitCompiler<T>
         if (version is < MipsVersion.Mips_R6)
         {
             _specialTable[(int)FunctionCode.JumpRegister] = (il, inst, pc) => JumpR(il, inst, pc);
-            _specialTable[(int)FunctionCode.Multiply] = (il, inst, pc) => MultR(il, inst, false);
-            _specialTable[(int)FunctionCode.MultiplyUnsigned] = (il, inst, pc) => MultR(il, inst, true);
+            _specialTable[(int)FunctionCode.Multiply] = (il, inst, pc) => MultR(il, inst, true);
+            _specialTable[(int)FunctionCode.MultiplyUnsigned] = (il, inst, pc) => MultR(il, inst, false);
+            _specialTable[(int)FunctionCode.Divide] = (il, inst, pc) => DivR(il, inst, true);
+            _specialTable[(int)FunctionCode.DivideUnsigned] = (il, inst, pc) => DivR(il, inst, false);
         }
     }
 }
