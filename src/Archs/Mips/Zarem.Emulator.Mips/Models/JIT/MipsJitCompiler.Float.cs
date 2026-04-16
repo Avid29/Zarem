@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Reflection.Emit;
@@ -13,7 +14,7 @@ namespace Zarem.Emulator.Models.JIT;
 public partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private bool DispatchCoProc1(ILGenerator il, FloatInstruction inst, T pc)
+    private bool DispatchCoProc1(ILGenerator il, FloatInstruction inst)
     {
         return inst.CoProc1RSCode switch
         {
@@ -40,7 +41,10 @@ public partial class MipsJitCompiler<T>
             FloatFuncCode.Subtract => FloatAlu<TFloat>(il, inst, OpCodes.Sub),
             FloatFuncCode.Multiply => FloatAlu<TFloat>(il, inst, OpCodes.Mul),
             FloatFuncCode.Divide => FloatAlu<TFloat>(il, inst, OpCodes.Div),
+            FloatFuncCode.SquareRoot => FloatUnary<TFloat>(il, inst, nameof(Math.Sqrt)),
+            FloatFuncCode.AbsoluteValue => FloatUnary<TFloat>(il, inst, nameof(Math.Abs)),
             FloatFuncCode.Move => MoveFloat<TFloat>(il, inst.FS, inst.FD),
+            FloatFuncCode.Negate => FloatUnary<TFloat>(il, inst, OpCodes.Neg),
 
             FloatFuncCode.ConvertToSingle => FloatConvert<TFloat, float>(il, inst.FS, inst.FD),
             FloatFuncCode.ConvertToDouble => FloatConvert<TFloat, double>(il, inst.FS, inst.FD),
@@ -72,6 +76,35 @@ public partial class MipsJitCompiler<T>
             EmitLoadRegister<TFloat>(il, inst.FS);
             EmitLoadRegister<TFloat>(il, inst.FT);
             il.Emit(ilOpCode);
+        });
+
+        return false;
+    }
+
+    private bool FloatUnary<TFloat>(ILGenerator il, FloatInstruction inst, OpCode ilOpCode)
+        where TFloat : unmanaged
+    {
+        EmitStoreRegister<TFloat>(il, inst.FD, () =>
+        {
+            EmitLoadRegister<TFloat>(il, inst.FS);
+            il.Emit(ilOpCode);
+        });
+
+        return false;
+    }
+
+    private bool FloatUnary<TFloat>(ILGenerator il, FloatInstruction inst, string methodName)
+        where TFloat : unmanaged
+    {
+        EmitStoreRegister<TFloat>(il, inst.FD, () =>
+        {
+            EmitLoadRegister<TFloat>(il, inst.FS);
+
+            // Resolve Math.Sqrt(double) or MathF.Sqrt(float)
+            Type mathClass = typeof(TFloat) == typeof(float) ? typeof(MathF) : typeof(Math);
+            var method = mathClass.GetMethod(methodName, [typeof(TFloat)]);
+            Guard.IsNotNull(method);
+            il.Emit(OpCodes.Call, method);
         });
 
         return false;
