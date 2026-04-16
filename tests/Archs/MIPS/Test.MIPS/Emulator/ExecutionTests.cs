@@ -24,79 +24,61 @@ public partial class ExecutionTests
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsI, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips1(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsI);
+    public void InstructionTests_Mips1(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsI, ExecutionMode.JustInTime)]
-    public void InstructionTests_Mips1_JIT(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsI, true);
+    public void InstructionTests_Mips1_JIT(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsII, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips2(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsII);
+    public void InstructionTests_Mips2(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsIII, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips3(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.MipsIII);
+    public void InstructionTests_Mips3(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsIII_32Bit, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips3_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsIII_32Bit);
+    public void InstructionTests_Mips3_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsIV, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips4(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.MipsIV);
+    public void InstructionTests_Mips4(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsIV_32Bit, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips4_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsIV_32Bit);
+    public void InstructionTests_Mips4_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsV, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips5(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.MipsV);
+    public void InstructionTests_Mips5(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsV_32Bit, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips5_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.MipsV_32Bit);
+    public void InstructionTests_Mips5_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.Mips32R1, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips32R1(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.Mips32R1);
+    public void InstructionTests_Mips32R1(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.Mips64R1, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips64R1(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.Mips64R1);
+    public void InstructionTests_Mips64R1(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.Mips32R2, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips32R2(ExecutionTestCase<uint> @case) => RunTest(@case, MipsVersion.Mips32R2);
+    public void InstructionTests_Mips32R2(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.Mips64R2, ExecutionMode.Interpret)]
-    public void InstructionTests_Mips64R2(ExecutionTestCase<ulong> @case) => RunTest(@case, MipsVersion.Mips64R2);
+    public void InstructionTests_Mips64R2(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
-    private static void RunTest<T>(ExecutionTestCase<T> @case, MipsVersion version, bool jit = false)
+    private static void RunTest<T>(ExecutionTestCase<T> @case)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
-        var config = new MipsEmulatorConfig(version)
-        {
-            DisableDelaySlots = false,
-            ExecutionMode = jit ? ExecutionMode.JustInTime : ExecutionMode.Interpret,
-        };
+        var config = @case.Config;
 
-        // Run with delay slots by default
-        RunTest(@case, config);
-
-        // Run again without if jump/branch instruction
-        if (@case.ExpectedPC.HasValue)
-        {
-            config.DisableDelaySlots = true;
-            RunTest(@case, config);
-        }
-    }
-    
-    private static void RunTest<T>(ExecutionTestCase<T> @case, MipsEmulatorConfig config)
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
-    {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input, MipsTokenizerProfile.Default)[0];
         var table = new MipsInstructionTable(new MipsAssemblerConfig(config.Version));
