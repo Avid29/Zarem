@@ -24,6 +24,8 @@ public partial class MipsJitCompiler<T>
             {
                 MipsFloatFormat.Single => DispatchFloatOp<float>(il, inst),
                 MipsFloatFormat.Double => DispatchFloatOp<double>(il, inst),
+                MipsFloatFormat.Word => DispatchFloatIntOp<int>(il, inst),
+                MipsFloatFormat.Long => DispatchFloatIntOp<long>(il, inst),
                 _ => throw new NotImplementedException()
             },
         };
@@ -40,7 +42,25 @@ public partial class MipsJitCompiler<T>
             FloatFuncCode.Divide => FloatAlu<TFloat>(il, inst, OpCodes.Div),
             FloatFuncCode.Move => MoveFloat<TFloat>(il, inst.FS, inst.FD),
 
+            FloatFuncCode.ConvertToSingle => FloatConvert<TFloat, float>(il, inst.FS, inst.FD),
+            FloatFuncCode.ConvertToDouble => FloatConvert<TFloat, double>(il, inst.FS, inst.FD),
+            FloatFuncCode.ConvertToWord => FloatConvert<TFloat, int>(il, inst.FS, inst.FD),
+            FloatFuncCode.ConvertToLong => FloatConvert<TFloat, long>(il, inst.FS, inst.FD),
+
             _ => throw new NotImplementedException($"FPU opcode {inst.FloatFuncCode} not JIT-ted yet.")
+        };
+    }
+
+    private bool DispatchFloatIntOp<TNumber>(ILGenerator il, FloatInstruction inst)
+        where TNumber : unmanaged
+    {
+        return inst.FloatFuncCode switch
+        {
+            FloatFuncCode.ConvertToSingle => FloatConvert<TNumber, float>(il, inst.FS, inst.FD),
+            FloatFuncCode.ConvertToDouble => FloatConvert<TNumber, double>(il, inst.FS, inst.FD),
+            FloatFuncCode.ConvertToWord => FloatConvert<TNumber, int>(il, inst.FS, inst.FD),
+            FloatFuncCode.ConvertToLong => FloatConvert<TNumber, long>(il, inst.FS, inst.FD),
+            _ => throw new NotImplementedException(),
         };
     }
 
@@ -52,6 +72,19 @@ public partial class MipsJitCompiler<T>
             EmitLoadRegister<TFloat>(il, inst.FS);
             EmitLoadRegister<TFloat>(il, inst.FT);
             il.Emit(ilOpCode);
+        });
+
+        return false;
+    }
+
+    private bool FloatConvert<TFrom, TTo>(ILGenerator il, MipsFloatRegister fs, MipsFloatRegister fd)
+        where TFrom : unmanaged
+        where TTo : unmanaged
+    {
+        EmitStoreRegister<TTo>(il, fd, () =>
+        {
+            EmitLoadRegister<TFrom>(il, fs);
+            EmitConv<TTo>(il);
         });
 
         return false;
