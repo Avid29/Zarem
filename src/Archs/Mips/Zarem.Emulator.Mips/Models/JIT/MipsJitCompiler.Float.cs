@@ -9,19 +9,20 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Emulator.Models.JIT;
 
-public unsafe partial class MipsJitCompiler<T>
+public partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private bool DispatchCoProc1(ILGenerator il, FloatInstruction inst, T pc)
     {
-        var floatInstruction = (FloatInstruction)inst;
-
-        return floatInstruction.CoProc1RSCode switch
+        return inst.CoProc1RSCode switch
         {
-            _ => floatInstruction.Format switch
+            CoProc1RSCode.MFC1 => MoveFromFloat(il, inst),
+            CoProc1RSCode.MTC1 => MoveToFloat(il, inst),
+
+            _ => inst.Format switch
             {
-                MipsFloatFormat.Single => DispatchFloatOp<float>(il, floatInstruction, pc),
-                MipsFloatFormat.Double => DispatchFloatOp<double>(il, floatInstruction, pc),
+                MipsFloatFormat.Single => DispatchFloatOp<float>(il, inst, pc),
+                MipsFloatFormat.Double => DispatchFloatOp<double>(il, inst, pc),
                 _ => throw new NotImplementedException()
             },
         };
@@ -39,5 +40,27 @@ public unsafe partial class MipsJitCompiler<T>
 
             _ => throw new NotImplementedException($"FPU opcode {inst.FloatFuncCode} not JIT-ted yet.")
         };
+    }
+
+    private bool MoveToFloat(ILGenerator il, FloatInstruction inst)
+    {
+        EmitStoreRegister<T>(il, inst.FS, () =>
+        {
+            EmitLoadRegister(il, inst.RT);
+            EmitConv(il);
+        });
+
+        return false;
+    }
+
+    private bool MoveFromFloat(ILGenerator il, FloatInstruction inst)
+    {
+        EmitStoreRegister(il, inst.RT, () =>
+        {
+            EmitLoadRegister<T>(il, inst.FS);
+            EmitConv(il);
+        });
+
+        return false;
     }
 }

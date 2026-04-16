@@ -164,11 +164,7 @@ public unsafe partial class MipsJitCompiler<T>
         else throw new NotSupportedException("Unsupported register width.");
     }
 
-    private static void EmitConv(ILGenerator il)
-    {
-        if (typeof(T) == typeof(uint)) il.Emit(OpCodes.Conv_U4);
-        else if (typeof(T) == typeof(ulong)) il.Emit(OpCodes.Conv_U8);
-    }
+    private static void EmitConv(ILGenerator il) => EmitConv<T>(il);
 
     private static void EmitConv<TData>(ILGenerator il)
     {
