@@ -81,6 +81,42 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Conv_I);
     }
 
+    /// <remarks>
+    /// Set <paramref name="accessFailureTrap"/> to <see cref="MipsTrap.None"/> to skip alignment check.
+    /// </remarks>
+    private LocalBuilder EmitLoadEffectiveAddress<TData>(ILGenerator il, MipsInstruction inst, T pc, MipsTrap accessFailureTrap = MipsTrap.None)
+        where TData : unmanaged
+    {
+        // Calculate Effective Address (rs + offset)
+        EmitLoadRegister(il, inst.RS);
+        il.Emit(OpCodes.Ldc_I8, (long)inst.Immediate);
+        il.Emit(OpCodes.Add);
+        var addrVar = il.DeclareLocal(typeof(T));
+        il.Emit(OpCodes.Stloc, addrVar);
+
+        // Alignment Check
+        int size = sizeof(TData);
+        if (accessFailureTrap is not MipsTrap.None && size > 1)
+        {
+            Label labelAligned = il.DefineLabel();
+            il.Emit(OpCodes.Ldloc, addrVar);
+            il.Emit(OpCodes.Ldc_I4, size - 1);
+            il.Emit(OpCodes.And);
+            il.Emit(OpCodes.Conv_I8);
+            il.Emit(OpCodes.Ldc_I8, 0L);
+            il.Emit(OpCodes.Beq, labelAligned);
+
+            // Trap: Address Error Load
+            EmitTrapArg(il, accessFailureTrap);
+            EmitLoadConstant(il, pc);
+            il.Emit(OpCodes.Ret);
+
+            il.MarkLabel(labelAligned);
+        }
+
+        return addrVar;
+    }
+
     private static void EmitTrapArg(ILGenerator il, MipsTrap trap)
     {
         il.Emit(OpCodes.Ldarg, 1);
@@ -144,7 +180,6 @@ public unsafe partial class MipsJitCompiler<T>
             throw new NotSupportedException("Unsupported register width.");
         }
     }
-
 
     private static void EmitOverflowGuard(ILGenerator il, T pc, bool isSubtraction, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow)
     {

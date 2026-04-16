@@ -2,8 +2,10 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Reflection.Emit;
 using Zarem.Emulator.Machine.JIT;
 using Zarem.Emulator.Models.Enums;
@@ -26,12 +28,34 @@ public unsafe partial class MipsJitCompiler<T>
     private readonly MipsEmitter[] _regImmTable = new MipsEmitter[32];
     private readonly MipsJitCpu<T> _cpu;
 
+    private readonly MethodInfo _getMemoryMethod;
+    private readonly Dictionary<Type, MethodInfo> _readMethods = [];
+    private readonly Dictionary<Type, MethodInfo> _writeMethods = [];
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsJitCompiler{T}"/> class.
     /// </summary>
     public MipsJitCompiler(MipsJitCpu<T> cpu)
     {
         _cpu = cpu;
+
+        var getMemoryMethod = _cpu.GetType().GetProperty("Memory")?.GetGetMethod();
+        Guard.IsNotNull(getMemoryMethod);
+        _getMemoryMethod = getMemoryMethod;
+
+        Type[] readWritetypes = [typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint)];
+        foreach (var type in readWritetypes)
+        {
+            _readMethods[type] = _cpu.Memory.GetType()
+                .GetMethods()
+                .First(m => m.Name == "Read" && m.IsGenericMethod && m.GetParameters().Length == 1)
+                .MakeGenericMethod(type);
+            _writeMethods[type] = _cpu.Memory.GetType()
+                .GetMethods()
+                .First(m => m.Name == "Write" && m.IsGenericMethod && m.GetParameters().Length == 2)
+                .MakeGenericMethod(type);
+        }
+
 
         InitTables(_cpu.Config);
     }
@@ -315,58 +339,20 @@ public unsafe partial class MipsJitCompiler<T>
     private bool Load<TData>(ILGenerator il, MipsInstruction inst, T pc)
         where TData : unmanaged
     {
-        // Calculate Effective Address (rs + offset)
-        EmitLoadRegister(il, inst.RS);
-        il.Emit(OpCodes.Ldc_I8, (long)inst.Immediate);
-        il.Emit(OpCodes.Add);
-
-        var addrVar = il.DeclareLocal(typeof(T));
-        il.Emit(OpCodes.Stloc, addrVar);
-
-        // Alignment Check
-        int size = sizeof(TData);
-        if (size > 1)
-        {
-            Label labelAligned = il.DefineLabel();
-            il.Emit(OpCodes.Ldloc, addrVar);
-            il.Emit(OpCodes.Ldc_I4, size - 1);
-            il.Emit(OpCodes.And);
-            il.Emit(OpCodes.Conv_I8);
-            il.Emit(OpCodes.Ldc_I8, 0L);
-            il.Emit(OpCodes.Beq, labelAligned);
-
-            // Trap: Address Error Load
-            EmitTrapArg(il, MipsTrap.AddressErrorLoad);
-            EmitLoadConstant(il, pc);
-            il.Emit(OpCodes.Ret);
-
-            il.MarkLabel(labelAligned);
-        }
+        var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, MipsTrap.AddressErrorLoad);
 
         // Write Back to RT
         EmitStoreRegister(il, inst.RT, () =>
         {
-            var getMemoryMethod = _cpu.GetType().GetProperty("Memory")?.GetGetMethod();
-#if DEBUG
-            Guard.IsNotNull(getMemoryMethod);
-#endif
-
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Callvirt, getMemoryMethod);
-
-            // Arg 1: ulong addr
-            il.Emit(OpCodes.Ldloc, addrVar);
-            il.Emit(OpCodes.Conv_U8);
-
             // Call Memory.Read<TData>(ulong)
-            var readMethodBase = _cpu.Memory.GetType()
-                .GetMethods()
-                .First(m => m.Name == "Read" && m.IsGenericMethod && m.GetParameters().Length == 1);
-            var readMethod = readMethodBase.MakeGenericMethod(typeof(TData));
-
+            var readMethod = _readMethods[typeof(TData)];
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Callvirt, _getMemoryMethod);
+            il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
+            il.Emit(OpCodes.Conv_U8);
             il.Emit(OpCodes.Callvirt, readMethod);
 
-            // Sign-Extension / Zero-Extension
+            // Sign-Extension / Zero-Extension then convert to T
             EmitConv<TData>(il);
             EmitConv(il);
         });
@@ -377,66 +363,16 @@ public unsafe partial class MipsJitCompiler<T>
     private bool Store<TData>(ILGenerator il, MipsInstruction inst, T pc)
         where TData : unmanaged
     {
-        // Calculate Effective Address: rs + offset
-        EmitLoadRegister(il, inst.RS);
-        il.Emit(OpCodes.Ldc_I8, (long)inst.Immediate); // Sign-extended
-        il.Emit(OpCodes.Add);
+        var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, MipsTrap.AddressErrorStore);
 
-        // Store in a local to avoid repeated math for alignment check
-        var addrVar = il.DeclareLocal(typeof(T));
-        il.Emit(OpCodes.Stloc, addrVar);
-
-        // Alignment Check
-        int size = sizeof(TData);
-        if (size > 1)
-        {
-            Label labelAligned = il.DefineLabel();
-
-            // if ((addr & (size - 1)) != 0)
-            il.Emit(OpCodes.Ldloc, addrVar);
-            il.Emit(OpCodes.Ldc_I4, size - 1);
-            il.Emit(OpCodes.And);
-            il.Emit(OpCodes.Conv_I8);
-            il.Emit(OpCodes.Ldc_I8, 0L);
-            il.Emit(OpCodes.Beq, labelAligned);
-
-            // Not Aligned: Return Trap
-            EmitTrapArg(il, MipsTrap.AddressErrorStore);
-            EmitLoadConstant(il, pc);
-            il.Emit(OpCodes.Ret);
-
-            il.MarkLabel(labelAligned);
-        }
-
-        var getMemoryMethod = _cpu.GetType().GetProperty("Memory")?.GetGetMethod();
-#if DEBUG
-        Guard.IsNotNull(getMemoryMethod);
-#endif
-
-        // Perform Memory Write
+        // Call Memory.Write<TData>(ulong, TData)
+        var writeMethod = _writeMethods[typeof(TData)];
         il.Emit(OpCodes.Ldarg_0);
-        il.Emit(OpCodes.Callvirt, getMemoryMethod);
-
-        // Arg 1: ulong addr
-        il.Emit(OpCodes.Ldloc, addrVar);
+        il.Emit(OpCodes.Callvirt, _getMemoryMethod);
+        il.Emit(OpCodes.Ldloc, addrVar);            // Arg 1: ulong addr
         il.Emit(OpCodes.Conv_U8);
-
-        // Arg 2: TData value (Truncate the RT register value)
-        EmitLoadRegister(il, inst.RT);
+        EmitLoadRegister(il, inst.RT);              // Arg 2: TData value (Truncate the RT register value)
         EmitConv<TData>(il);
-
-        // Find the generic method definition "Write<T>(ulong, T)"
-        var writeMethodBase = _cpu.Memory.GetType()
-            .GetMethods()
-            .First(m => m.Name == "Write" && m.IsGenericMethod && m.GetParameters().Length == 2);
-
-        // Specialize it for the current TData (byte, ushort, uint, etc.)
-        var writeMethod = writeMethodBase.MakeGenericMethod(typeof(TData));
-
-#if DEBUG
-        Guard.IsNotNull(writeMethod);
-#endif
-
         il.Emit(OpCodes.Callvirt, writeMethod);
 
         return false; // Does not complete the block
