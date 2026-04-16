@@ -86,7 +86,8 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
             .Concat(GetCoProcMoveInstructionTest<T>(config))
             .Concat(GetFloatArithmeticInstructionTests<T>(config))
             .Concat(GetFloatConvertInstructionTests<T>(config))
-            .Concat(GetFloatRoundInstructionTests<T>(config));
+            .Concat(GetFloatRoundInstructionTests<T>(config))
+            .Concat(GetFloatMoveInstructionTests<T>(config));
     }
 
     private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TSigned, TLong>(MipsEmulatorConfig config)
@@ -338,6 +339,40 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
             yield return [new ExecutionTestCase<T>(config, "tge $t6, $t7", MipsTrap.Trap)];
             yield return [new ExecutionTestCase<T>(config, "tge $t5, $t5", MipsTrap.Trap)];
         }
+
+        // Trap immediate
+        if (config.Version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        {
+            // Equality
+            yield return [new ExecutionTestCase<T>(config, "teqi $t2, 30", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "teqi $t1, 10", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tnei $t1, 10", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tnei $t3, 20", MipsTrap.Trap)];
+
+            // Unsigned
+            yield return [new ExecutionTestCase<T>(config, "tltiu $t3, 20", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tltiu $t2, 30", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tltiu $t1, 10", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgeiu $t2, 30", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgeiu $t3, 20", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tgeiu $t1, 10", MipsTrap.Trap)];
+
+            // Signed (without signs)
+            yield return [new ExecutionTestCase<T>(config, "tlti $t3, 20", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tlti $t2, 30", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tlti $t1, 10", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t2, 30", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t3, 20", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t1, 10", MipsTrap.Trap)];
+
+            // Signed (with signs)
+            yield return [new ExecutionTestCase<T>(config, "tlti $t6, -30", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tlti $t7, -20", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tlti $t5, -10", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t7, -20", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t6, -30", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t5, -10", MipsTrap.Trap)];
+        }
     }
 
     private static IEnumerable<object[]> GetUncategorizedInstructionTests<T>(MipsEmulatorConfig config)
@@ -370,6 +405,10 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
     {
         yield return [new ExecutionTestCase<T>(config, "syscall", MipsTrap.Syscall)];
         yield return [new ExecutionTestCase<T>(config, "break", MipsTrap.Breakpoint)];
+
+        // TODO: JIT CoProcessor0 instructions
+        if (config.ExecutionMode is ExecutionMode.JustInTime)
+            yield break;
 
         if (config.Version is >= MipsVersion.MipsII)
         {
@@ -483,6 +522,13 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
             yield return [new ExecutionTestCase<T>(config, "cvt.S.L $f16, $f0", MipsFloatRegister.F16, 2f)];     // To Single
             yield return [new ExecutionTestCase<T>(config, "cvt.D.L $f16, $f0", MipsFloatRegister.F16, 2d)];     // To Double
         }
+    }
+
+    private static IEnumerable<object[]> GetFloatMoveInstructionTests<T>(MipsEmulatorConfig config)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        yield return [new ExecutionTestCase<T>(config, "mov.S $f16, $f10", MipsFloatRegister.F16, 1.25f)];
+        yield return [new ExecutionTestCase<T>(config, "mov.D $f16, $f18", MipsFloatRegister.F16, Math.PI)];
     }
 
     private static IEnumerable<object[]> GetFloatRoundInstructionTests<T>(MipsEmulatorConfig config)

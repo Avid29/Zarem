@@ -12,7 +12,7 @@ using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.Emulator.Models.JIT;
 
 /// <summary>
 /// A class which compiles blocks of MIPS code into JIT IL code.
@@ -408,19 +408,44 @@ public unsafe partial class MipsJitCompiler<T>
         }
 
         // Exit the block by returning the new PC
-        EmitTrapArg(il, MipsTrap.None);
-        pushAddress(il);
-        il.Emit(OpCodes.Ret);
+        EmitRet(il, pushAddress);
 
         return true; // Signals the compiler that this block is finished
     }
 
+    private bool TrapCompareReg(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch) => ConditionalTrap(il, inst, pc, invertedBranch, il =>
+    {
+        EmitLoadRegister(il, inst.RS);
+        EmitLoadRegister(il, inst.RT);
+    });
+
+    private bool TrapCompareImmediate(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch) => ConditionalTrap(il, inst, pc, invertedBranch, il =>
+    {
+        EmitLoadRegister(il, inst.RS);
+        EmitLoadConstant(il, T.CreateTruncating(inst.Immediate));
+    });
+
+    private static bool ConditionalTrap(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch, Action<ILGenerator> pushOperands)
+    {
+        Label noTrap = il.DefineLabel();
+
+        // Evaluate the trap condition
+        pushOperands(il);
+        il.Emit(invertedBranch, noTrap);
+
+        // DO trap
+        EmitTrapRet(il, MipsTrap.Trap, pc);
+
+        // Do NOT trap
+        il.MarkLabel(noTrap);
+        EmitRet(il, pc);
+
+        return true;
+    }
+
     private static bool Trap(ILGenerator il, T pc, MipsTrap trap)
     {
-        EmitTrapArg(il, trap);
-        EmitLoadConstant(il, pc);
-        il.Emit(OpCodes.Ret);
-
+        EmitTrapRet(il, trap, pc);
         return true; // Terminate the IL block here
     }
 
@@ -443,7 +468,6 @@ public unsafe partial class MipsJitCompiler<T>
         Label takeBranch = il.DefineLabel();
 
         // Prepare the stack for the branch condition
-        // This calls the delegate to push RS, RT, or RS and 0.
         pushOperands(il);
 
         // Append delay slot operation
@@ -456,19 +480,13 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(conditionOpCode, takeBranch);
 
         // Branch NOT taken
-        EmitTrapArg(il, MipsTrap.None);
-        EmitLoadConstant(il, pc + (delaySlots ? T.CreateTruncating(8) : T.CreateTruncating(4)));
-        il.Emit(OpCodes.Ret);
+        EmitRet(il, pc + (delaySlots ? T.CreateTruncating(8) : T.CreateTruncating(4)));
 
         // Branch taken
         il.MarkLabel(takeBranch);
         long offset = (long)inst.Immediate << 2;
         T targetPc = pc + T.CreateTruncating(4) + T.CreateTruncating(offset);
-
-        EmitTrapArg(il, MipsTrap.None);
-        EmitLoadConstant(il, targetPc);
-        il.Emit(OpCodes.Ret);
-
+        EmitRet(il, targetPc);
         return true;
     }
 

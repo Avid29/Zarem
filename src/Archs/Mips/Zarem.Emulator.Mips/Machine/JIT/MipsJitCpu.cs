@@ -1,14 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using System.Reflection.Emit;
 using System.Threading;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Events;
-using Zarem.Emulator.JIT;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.Models.JIT;
-using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.Machine.JIT;
