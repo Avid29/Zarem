@@ -339,6 +339,40 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
             yield return [new ExecutionTestCase<T>(config, "tge $t6, $t7", MipsTrap.Trap)];
             yield return [new ExecutionTestCase<T>(config, "tge $t5, $t5", MipsTrap.Trap)];
         }
+
+        // Trap immediate
+        if (config.Version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        {
+            // Equality
+            yield return [new ExecutionTestCase<T>(config, "teqi $t2, 30", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "teqi $t1, 10", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tnei $t1, 10", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tnei $t3, 20", MipsTrap.Trap)];
+
+            // Unsigned
+            yield return [new ExecutionTestCase<T>(config, "tltiu $t3, 20", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tltiu $t2, 30", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tltiu $t1, 10", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgeiu $t2, 30", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgeiu $t3, 20", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tgeiu $t1, 10", MipsTrap.Trap)];
+
+            // Signed (without signs)
+            yield return [new ExecutionTestCase<T>(config, "tlti $t3, 20", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tlti $t2, 30", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tlti $t1, 10", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t2, 30", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t3, 20", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t1, 10", MipsTrap.Trap)];
+
+            // Signed (with signs)
+            yield return [new ExecutionTestCase<T>(config, "tlti $t6, -30", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tlti $t7, -20", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tlti $t5, -10", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t7, -20", MipsTrap.None)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t6, -30", MipsTrap.Trap)];
+            yield return [new ExecutionTestCase<T>(config, "tgei $t5, -10", MipsTrap.Trap)];
+        }
     }
 
     private static IEnumerable<object[]> GetUncategorizedInstructionTests<T>(MipsEmulatorConfig config)
