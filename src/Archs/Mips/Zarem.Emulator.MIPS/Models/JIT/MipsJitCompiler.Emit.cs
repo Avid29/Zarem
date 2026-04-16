@@ -135,4 +135,44 @@ public unsafe partial class MipsJitCompiler<T>
             throw new NotSupportedException("Unsupported register width.");
         }
     }
+
+    private void EmitOverflowGuard(ILGenerator il, T pc, bool isSubtraction, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow)
+    {
+        // Logic: ((rs ^ result) & (rtOrImm ^ result)) < 0  (for Addition)
+        // Logic: ((rs ^ result) & (rs ^ rtOrImm)) < 0     (for Subtraction)
+
+        // First term: (rs ^ result)
+        il.Emit(OpCodes.Ldloc, rs);
+        il.Emit(OpCodes.Ldloc, result);
+        il.Emit(OpCodes.Xor);
+
+        // Second term:
+        if (isSubtraction)
+        {
+            // (rs ^ rtOrImm)
+            il.Emit(OpCodes.Ldloc, rs);
+            il.Emit(OpCodes.Ldloc, rtOrImm);
+            il.Emit(OpCodes.Xor);
+        }
+        else
+        {
+            // (rtOrImm ^ result)
+            il.Emit(OpCodes.Ldloc, rtOrImm);
+            il.Emit(OpCodes.Ldloc, result);
+            il.Emit(OpCodes.Xor);
+        }
+
+        il.Emit(OpCodes.And);
+
+        // Check sign bit
+        if (sizeof(T) == 4) il.Emit(OpCodes.Ldc_I4_0);
+        else il.Emit(OpCodes.Ldc_I8, 0L);
+
+        il.Emit(OpCodes.Bge, noOverflow);
+
+        // Trap Path (ends block)
+        EmitTrapArg(il, MipsTrap.ArithmeticOverflow);
+        EmitLoadConstant(il, pc);
+        il.Emit(OpCodes.Ret);
+    }
 }

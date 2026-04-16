@@ -28,6 +28,7 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.Special] = DispatchSpecial;
         _opCodeTable[(int)MipsOpCode.Jump] = (il, inst, pc) => Jump(il, inst, pc);
         _opCodeTable[(int)MipsOpCode.JumpAndLink] = (il, inst, pc) => Jump(il, inst, pc, link: true);
+        _opCodeTable[(int)MipsOpCode.AddImmediate] = (il, inst, pc) => CheckedAluI(il, inst, pc, OpCodes.Add);
         _opCodeTable[(int)MipsOpCode.AddImmediateUnsigned] = (il, inst, pc) => AluI(il, inst, OpCodes.Add, signExtend: true);
         _opCodeTable[(int)MipsOpCode.SetLessThanImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Clt, signExtend: true);
         _opCodeTable[(int)MipsOpCode.AndImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.And);

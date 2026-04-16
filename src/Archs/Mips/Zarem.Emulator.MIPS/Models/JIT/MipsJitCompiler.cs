@@ -151,56 +151,30 @@ public unsafe partial class MipsJitCompiler<T>
     {
         Label noOverflow = il.DefineLabel();
 
-        // Load operands into locals (we need them twice: once for math, once for check)
+        // Load RS into local
         EmitRegisterRead(il, inst.RS);
         LocalBuilder rs = il.DeclareLocal(typeof(T));
         il.Emit(OpCodes.Stloc, rs);
+
+        // Load RT into local
         EmitRegisterRead(il, inst.RT);
         LocalBuilder rt = il.DeclareLocal(typeof(T));
         il.Emit(OpCodes.Stloc, rt);
 
-        // Perform the calculation and store the result
+        // Calculate
         il.Emit(OpCodes.Ldloc, rs);
         il.Emit(OpCodes.Ldloc, rt);
         il.Emit(ilOpCode);
         LocalBuilder result = il.DeclareLocal(typeof(T));
         il.Emit(OpCodes.Stloc, result);
 
-        // Overflow Guard Logic
-        il.Emit(OpCodes.Ldloc, rs);     // First term: (rs ^ result)
-        il.Emit(OpCodes.Ldloc, result);
-        il.Emit(OpCodes.Xor);
+        // Overflow Guard
+        EmitOverflowGuard(il, pc, isSubtraction, rs, rt, result, noOverflow);
 
-        if (isSubtraction)              // Second term
-        {
-            // (rs ^ rt)
-            il.Emit(OpCodes.Ldloc, rs);
-            il.Emit(OpCodes.Ldloc, rt);
-            il.Emit(OpCodes.Xor);
-        }
-        else
-        {
-            // (rt ^ result)
-            il.Emit(OpCodes.Ldloc, rt);
-            il.Emit(OpCodes.Ldloc, result);
-            il.Emit(OpCodes.Xor);
-        }
-
-        il.Emit(OpCodes.And);
-
-        // Check sign bit (Bge 0 means the sign bits match appropriately)
-        if (sizeof(T) == 4) il.Emit(OpCodes.Ldc_I4_0);
-        else il.Emit(OpCodes.Ldc_I8, 0L);
-        il.Emit(OpCodes.Bge, noOverflow);
-
-        // Trap path
-        EmitTrapArg(il, MipsTrap.ArithmeticOverflow);
-        EmitLoadConstant(il, pc);
-        il.Emit(OpCodes.Ret);
-
-        // Safe path
+        // Safe Path
         il.MarkLabel(noOverflow);
         EmitRegisterWrite(il, inst.RD, () => il.Emit(OpCodes.Ldloc, result));
+
         return false;
     }
 
@@ -217,6 +191,37 @@ public unsafe partial class MipsJitCompiler<T>
 
             il.Emit(ilOpCode);
         });
+
+        return false;
+    }
+
+    private bool CheckedAluI(ILGenerator il, MipsInstruction inst, T pc, OpCode ilOpCode)
+    {
+        Label noOverflow = il.DefineLabel();
+
+        // Load RS into local
+        EmitRegisterRead(il, inst.RS);
+        LocalBuilder rs = il.DeclareLocal(typeof(T));
+        il.Emit(OpCodes.Stloc, rs);
+
+        // Load Immediate into local (Sign-extended)
+        EmitLoadConstant(il, T.CreateTruncating((short)inst.Immediate));
+        LocalBuilder imm = il.DeclareLocal(typeof(T));
+        il.Emit(OpCodes.Stloc, imm);
+
+        // Calculate
+        il.Emit(OpCodes.Ldloc, rs);
+        il.Emit(OpCodes.Ldloc, imm);
+        il.Emit(ilOpCode);
+        LocalBuilder result = il.DeclareLocal(typeof(T));
+        il.Emit(OpCodes.Stloc, result);
+
+        // Overflow Guard
+        EmitOverflowGuard(il, pc, false, rs, imm, result, noOverflow);
+
+        // Safe Path
+        il.MarkLabel(noOverflow);
+        EmitRegisterWrite(il, inst.RT, () => il.Emit(OpCodes.Ldloc, result));
 
         return false;
     }
