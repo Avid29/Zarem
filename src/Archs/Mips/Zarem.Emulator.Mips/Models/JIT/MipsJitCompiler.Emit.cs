@@ -174,8 +174,10 @@ public unsafe partial class MipsJitCompiler<T>
         else if (typeof(TData) == typeof(ushort)) il.Emit(OpCodes.Conv_U2);
         else if (typeof(TData) == typeof(int)) il.Emit(OpCodes.Conv_I4);
         else if (typeof(TData) == typeof(uint)) il.Emit(OpCodes.Conv_U4);
+        else if (typeof(TData) == typeof(float)) il.Emit(OpCodes.Conv_R4);
         else if (typeof(TData) == typeof(long)) il.Emit(OpCodes.Conv_I8);
         else if (typeof(TData) == typeof(ulong)) il.Emit(OpCodes.Conv_U8);
+        else if (typeof(TData) == typeof(double)) il.Emit(OpCodes.Conv_R8);
     }
 
     private static void EmitLoadConstant(ILGenerator il, T value)

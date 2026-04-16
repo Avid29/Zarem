@@ -81,11 +81,14 @@ public partial class MipsJitCompiler<T>
         where TFrom : unmanaged
         where TTo : unmanaged
     {
-        EmitStoreRegister<TTo>(il, fd, () =>
+        if (typeof(TTo) != typeof(TFrom))
         {
-            EmitLoadRegister<TFrom>(il, fs);
-            EmitConv<TTo>(il);
-        });
+            EmitStoreRegister<TTo>(il, fd, () =>
+            {
+                EmitLoadRegister<TFrom>(il, fs);
+                EmitConv<TTo>(il);
+            });
+        }
 
         return false;
     }
