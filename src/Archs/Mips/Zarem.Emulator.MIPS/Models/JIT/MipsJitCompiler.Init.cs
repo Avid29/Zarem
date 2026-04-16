@@ -21,11 +21,13 @@ public partial class MipsJitCompiler<T>
         // Populate tables
         InitRoot(version);
         InitSpecial(version);
+        InitRegImm(version);
     }
 
     private void InitRoot(MipsVersion version)
     {
         _opCodeTable[(int)MipsOpCode.Special] = DispatchSpecial;
+        _opCodeTable[(int)MipsOpCode.RegisterImmediate] = DispatchRegImm;
         _opCodeTable[(int)MipsOpCode.Jump] = (il, inst, pc) => Jump(il, inst, pc);
         _opCodeTable[(int)MipsOpCode.JumpAndLink] = (il, inst, pc) => Jump(il, inst, pc, link: true);
         _opCodeTable[(int)MipsOpCode.BranchOnEquals] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Beq, il =>
@@ -55,6 +57,7 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.OrImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Or);
         _opCodeTable[(int)MipsOpCode.ExclusiveOrImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Xor);
         _opCodeTable[(int)MipsOpCode.LoadUpperImmediate] = (il, inst, pc) => Lui(il, inst);
+
     }
 
     private void InitSpecial(MipsVersion version)
@@ -92,5 +95,19 @@ public partial class MipsJitCompiler<T>
             _specialTable[(int)FunctionCode.MoveFromLow] = (il, inst, pc) => MoveFromTo(il, MipsGpRegister.Low, inst.RD);
             _specialTable[(int)FunctionCode.MoveToLow] = (il, inst, pc) => MoveFromTo(il, inst.RS, MipsGpRegister.Low);
         }
+    }
+
+    private void InitRegImm(MipsVersion version)
+    {
+        _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZero] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Blt, il =>
+        {
+            EmitLoadRegister(il, inst.RS);
+            EmitLoadConstant(il, T.Zero);
+        });
+        _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Bge, il =>
+        {
+            EmitLoadRegister(il, inst.RS);
+            EmitLoadConstant(il, T.Zero);
+        });
     }
 }

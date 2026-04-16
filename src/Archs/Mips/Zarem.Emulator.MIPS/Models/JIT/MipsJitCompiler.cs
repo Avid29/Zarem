@@ -90,6 +90,12 @@ public unsafe partial class MipsJitCompiler<T>
         return emmiter(il, inst, pc);
     }
 
+    private bool DispatchRegImm(ILGenerator il, MipsInstruction inst, T pc)
+    {
+        var emmiter = _regImmTable[(int)inst.RTFuncCode];
+        return emmiter(il, inst, pc);
+    }
+
     private bool Shift(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
     {
         EmitStoreRegister(il, inst.RD, () =>
