@@ -178,7 +178,7 @@ public unsafe partial class MipsJitCompiler<T>
 
         // Store high
         EmitLoadRegisterAddress(il, MipsGpRegister.High);
-        il.Emit(OpCodes.Localloc, localResult);
+        il.Emit(OpCodes.Ldloc, localResult);
         il.Emit(OpCodes.Ldc_I4, 32);
         il.Emit(OpCodes.Shr_Un);
         il.Emit(OpCodes.Conv_U4);
@@ -186,7 +186,7 @@ public unsafe partial class MipsJitCompiler<T>
 
         // Store low
         EmitLoadRegisterAddress(il, MipsGpRegister.Low);
-        il.Emit(OpCodes.Localloc, localResult);
+        il.Emit(OpCodes.Ldloc, localResult);
         il.Emit(OpCodes.Conv_U4);
         il.Emit(OpCodes.Stind_I4);
 
