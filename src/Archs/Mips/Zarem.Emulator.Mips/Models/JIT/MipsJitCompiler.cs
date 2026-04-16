@@ -12,7 +12,7 @@ using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.Emulator.Models.JIT;
 
 /// <summary>
 /// A class which compiles blocks of MIPS code into JIT IL code.
@@ -174,6 +174,19 @@ public unsafe partial class MipsJitCompiler<T>
             {
                 il.Emit(followUp.Value);
             }
+        });
+
+        return false;
+    }
+
+    private bool FloatAlu<TFloat>(ILGenerator il, FloatInstruction inst, OpCode ilOpCode)
+        where TFloat : unmanaged
+    {
+        EmitStoreRegister<TFloat>(il, inst.FD, () =>
+        {
+            EmitLoadRegister<TFloat>(il, inst.FS);
+            EmitLoadRegister<TFloat>(il, inst.FT);
+            il.Emit(ilOpCode);
         });
 
         return false;

@@ -9,7 +9,7 @@ using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.Emulator.Models.JIT;
 
 public unsafe partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
@@ -39,6 +39,14 @@ public unsafe partial class MipsJitCompiler<T>
         EmitLdind(il);
     }
 
+    private void EmitLoadRegister<TFloat>(ILGenerator il, MipsFloatRegister register)
+        where TFloat : unmanaged
+    {
+        // Load the register's address then retrieve the value at that address
+        EmitLoadRegisterAddress(il, register);
+        EmitLdind<TFloat>(il);
+    }
+
     private void EmitStoreRegister(ILGenerator il, MipsGpRegister register, Action emitEvaluation)
     {
         if (register is 0)
@@ -57,17 +65,22 @@ public unsafe partial class MipsJitCompiler<T>
         EmitStind(il);
     }
 
-    private void EmitLoadRegisterAddress(ILGenerator il, MipsGpRegister register)
+    private void EmitStoreRegister<TFloat>(ILGenerator il, MipsFloatRegister register, Action emitEvaluation)
+        where TFloat : unmanaged
     {
-#if DEBUG
-        // This method should not be used for the $zero register.
-        // For reads a constant 0 should be loaded, and for writes the value
-        // should be discarded.
-        Guard.IsNotEqualTo((int)register, (int)MipsGpRegister.Zero);
-#endif
+        // Load the register's address, emit the evaluation instructions, and store the value
+        EmitLoadRegisterAddress(il, register);
+        emitEvaluation();
+        EmitStind<TFloat>(il);
+    }
 
-        nint baseAddress = (nint)_cpu.RegisterFile.Regs;
-        nint regAddress = baseAddress + ((int)register * sizeof(T));
+    private void EmitLoadRegisterAddress(ILGenerator il, MipsGpRegister register) => EmitLoadRegisterAddress(il, (int)register, _cpu.RegisterFile.Regs);
+
+    private void EmitLoadRegisterAddress(ILGenerator il, MipsFloatRegister register) => EmitLoadRegisterAddress(il, (int)register, _cpu.FloatProcessor.RegisterFile.Regs);
+
+    private static void EmitLoadRegisterAddress(ILGenerator il, int index, T* regs)
+    {
+        nint regAddress = (nint)regs + (index * sizeof(T));
 
         if (IntPtr.Size == 4)
         {
@@ -124,26 +137,30 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Stind_I4);
     }
 
-    private static void EmitLdind(ILGenerator il)
+    private static void EmitLdind(ILGenerator il) => EmitLdind<T>(il);
+
+    private static void EmitLdind<TData>(ILGenerator il)
     {
-        if (typeof(T) == typeof(uint))
-        {
-            il.Emit(OpCodes.Ldind_U4);
-        }
-        else if (typeof(T) == typeof(ulong))
-        {
-            il.Emit(OpCodes.Ldind_I8);
-        }
-        else
-        {
-            throw new NotSupportedException("Unsupported register width.");
-        }
+        if (typeof(TData) == typeof(int)) il.Emit(OpCodes.Ldind_I4);
+        else if (typeof(TData) == typeof(uint)) il.Emit(OpCodes.Ldind_I4);
+        else if (typeof(TData) == typeof(float)) il.Emit(OpCodes.Ldind_R4);
+        else if (typeof(TData) == typeof(long)) il.Emit(OpCodes.Ldind_I8);
+        else if (typeof(TData) == typeof(ulong)) il.Emit(OpCodes.Ldind_I8);
+        else if (typeof(TData) == typeof(double)) il.Emit(OpCodes.Ldind_R8);
+        else throw new NotSupportedException("Unsupported register width.");
     }
 
-    private static void EmitStind(ILGenerator il)
+    private static void EmitStind(ILGenerator il) => EmitStind<T>(il);
+
+    private static void EmitStind<TData>(ILGenerator il)
+        where TData : unmanaged
     {
-        if (typeof(T) == typeof(uint)) il.Emit(OpCodes.Stind_I4);
-        else if (typeof(T) == typeof(ulong)) il.Emit(OpCodes.Stind_I8);
+        if (typeof(TData) == typeof(int)) il.Emit(OpCodes.Stind_I4);
+        else if (typeof(TData) == typeof(uint)) il.Emit(OpCodes.Stind_I4);
+        else if (typeof(TData) == typeof(float)) il.Emit(OpCodes.Stind_R4);
+        else if (typeof(TData) == typeof(long)) il.Emit(OpCodes.Stind_I8);
+        else if (typeof(TData) == typeof(ulong)) il.Emit(OpCodes.Stind_I8);
+        else if (typeof(TData) == typeof(double)) il.Emit(OpCodes.Stind_R8);
         else throw new NotSupportedException("Unsupported register width.");
     }
 
