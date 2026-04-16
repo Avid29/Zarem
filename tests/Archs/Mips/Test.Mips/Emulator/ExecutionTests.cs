@@ -43,8 +43,16 @@ public partial class ExecutionTests
     public void InstructionTests_Mips3(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
+    [MipsDataSource(MipsVersion.MipsIII, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips3_JIT(ExecutionTestCase<ulong> @case) => RunTest(@case);
+
+    [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsIII_32Bit, ExecutionMode.Interpret)]
     public void InstructionTests_Mips3_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [MipsDataSource(MipsVersion.MipsIII_32Bit, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips3_32Bit_JIT(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsIV, ExecutionMode.Interpret)]
