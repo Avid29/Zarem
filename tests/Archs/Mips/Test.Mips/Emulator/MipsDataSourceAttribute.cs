@@ -86,7 +86,8 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
             .Concat(GetCoProcMoveInstructionTest<T>(config))
             .Concat(GetFloatArithmeticInstructionTests<T>(config))
             .Concat(GetFloatConvertInstructionTests<T>(config))
-            .Concat(GetFloatRoundInstructionTests<T>(config));
+            .Concat(GetFloatRoundInstructionTests<T>(config))
+            .Concat(GetFloatMoveInstructionTests<T>(config));
     }
 
     private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TSigned, TLong>(MipsEmulatorConfig config)
@@ -483,6 +484,13 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
             yield return [new ExecutionTestCase<T>(config, "cvt.S.L $f16, $f0", MipsFloatRegister.F16, 2f)];     // To Single
             yield return [new ExecutionTestCase<T>(config, "cvt.D.L $f16, $f0", MipsFloatRegister.F16, 2d)];     // To Double
         }
+    }
+
+    private static IEnumerable<object[]> GetFloatMoveInstructionTests<T>(MipsEmulatorConfig config)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        yield return [new ExecutionTestCase<T>(config, "mov.S $f16, $f10", MipsFloatRegister.F16, 1.25f)];
+        yield return [new ExecutionTestCase<T>(config, "mov.D $f16, $f18", MipsFloatRegister.F16, Math.PI)];
     }
 
     private static IEnumerable<object[]> GetFloatRoundInstructionTests<T>(MipsEmulatorConfig config)

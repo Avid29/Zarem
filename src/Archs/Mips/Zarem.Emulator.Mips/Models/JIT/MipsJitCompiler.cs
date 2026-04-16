@@ -179,19 +179,6 @@ public unsafe partial class MipsJitCompiler<T>
         return false;
     }
 
-    private bool FloatAlu<TFloat>(ILGenerator il, FloatInstruction inst, OpCode ilOpCode)
-        where TFloat : unmanaged
-    {
-        EmitStoreRegister<TFloat>(il, inst.FD, () =>
-        {
-            EmitLoadRegister<TFloat>(il, inst.FS);
-            EmitLoadRegister<TFloat>(il, inst.FT);
-            il.Emit(ilOpCode);
-        });
-
-        return false;
-    }
-
     private bool CheckedAluR(ILGenerator il, MipsInstruction inst, T pc, OpCode ilOpCode, bool isSubtraction)
     {
         Label noOverflow = il.DefineLabel();

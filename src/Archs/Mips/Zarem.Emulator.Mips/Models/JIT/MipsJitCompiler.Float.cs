@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
+using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Emulator.Models.JIT;
@@ -21,14 +22,14 @@ public partial class MipsJitCompiler<T>
 
             _ => inst.Format switch
             {
-                MipsFloatFormat.Single => DispatchFloatOp<float>(il, inst, pc),
-                MipsFloatFormat.Double => DispatchFloatOp<double>(il, inst, pc),
+                MipsFloatFormat.Single => DispatchFloatOp<float>(il, inst),
+                MipsFloatFormat.Double => DispatchFloatOp<double>(il, inst),
                 _ => throw new NotImplementedException()
             },
         };
     }
 
-    private bool DispatchFloatOp<TFloat>(ILGenerator il, FloatInstruction inst, T pc)
+    private bool DispatchFloatOp<TFloat>(ILGenerator il, FloatInstruction inst)
         where TFloat : unmanaged
     {
         return inst.FloatFuncCode switch
@@ -37,9 +38,34 @@ public partial class MipsJitCompiler<T>
             FloatFuncCode.Subtract => FloatAlu<TFloat>(il, inst, OpCodes.Sub),
             FloatFuncCode.Multiply => FloatAlu<TFloat>(il, inst, OpCodes.Mul),
             FloatFuncCode.Divide => FloatAlu<TFloat>(il, inst, OpCodes.Div),
+            FloatFuncCode.Move => MoveFloat<TFloat>(il, inst.FS, inst.FD),
 
             _ => throw new NotImplementedException($"FPU opcode {inst.FloatFuncCode} not JIT-ted yet.")
         };
+    }
+
+    private bool FloatAlu<TFloat>(ILGenerator il, FloatInstruction inst, OpCode ilOpCode)
+        where TFloat : unmanaged
+    {
+        EmitStoreRegister<TFloat>(il, inst.FD, () =>
+        {
+            EmitLoadRegister<TFloat>(il, inst.FS);
+            EmitLoadRegister<TFloat>(il, inst.FT);
+            il.Emit(ilOpCode);
+        });
+
+        return false;
+    }
+
+    private bool MoveFloat<TFloat>(ILGenerator il, MipsFloatRegister fs, MipsFloatRegister fd)
+        where TFloat : unmanaged
+    {
+        EmitStoreRegister<TFloat>(il, fd, () =>
+        {
+            EmitLoadRegister<TFloat>(il, fs);
+        });
+
+        return false;
     }
 
     private bool MoveToFloat(ILGenerator il, FloatInstruction inst)
