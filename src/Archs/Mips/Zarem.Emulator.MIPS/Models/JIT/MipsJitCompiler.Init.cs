@@ -53,11 +53,11 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.AddImmediate] = (il, inst, pc) => CheckedAluI(il, inst, pc, OpCodes.Add);
         _opCodeTable[(int)MipsOpCode.AddImmediateUnsigned] = (il, inst, pc) => AluI(il, inst, OpCodes.Add, signExtend: true);
         _opCodeTable[(int)MipsOpCode.SetLessThanImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Clt, signExtend: true);
+        _opCodeTable[(int)MipsOpCode.SetLessThanImmediateUnsigned] = (il, inst, pc) => AluI(il, inst, OpCodes.Clt_Un, signExtend: true);
         _opCodeTable[(int)MipsOpCode.AndImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.And);
         _opCodeTable[(int)MipsOpCode.OrImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Or);
         _opCodeTable[(int)MipsOpCode.ExclusiveOrImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Xor);
         _opCodeTable[(int)MipsOpCode.LoadUpperImmediate] = (il, inst, pc) => Lui(il, inst);
-
     }
 
     private void InitSpecial(MipsVersion version)
@@ -69,8 +69,8 @@ public partial class MipsJitCompiler<T>
         _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = (il, inst, pc) => ShiftVar(il, inst, OpCodes.Shr_Un);
         _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = (il, inst, pc) => ShiftVar(il, inst, OpCodes.Shr);
         _specialTable[(int)FunctionCode.JumpAndLinkRegister] = (il, inst, pc) => JumpR(il, inst, pc, link: true);
-        _specialTable[(int)FunctionCode.SystemCall] = (il, inst, pc) => Trap(il, inst, pc, MipsTrap.Syscall);
-        _specialTable[(int)FunctionCode.Break] = (il, inst, pc) => Trap(il, inst, pc, MipsTrap.Breakpoint);
+        _specialTable[(int)FunctionCode.SystemCall] = (il, inst, pc) => Trap(il, pc, MipsTrap.Syscall);
+        _specialTable[(int)FunctionCode.Break] = (il, inst, pc) => Trap(il, pc, MipsTrap.Breakpoint);
         _specialTable[(int)FunctionCode.Add] = (il, inst, pc) => CheckedAluR(il, inst, pc, OpCodes.Add, false);
         _specialTable[(int)FunctionCode.AddUnsigned] = (il, inst, pc) => AluR(il, inst, OpCodes.Add);
         _specialTable[(int)FunctionCode.Subtract] = (il, inst, pc) => CheckedAluR(il, inst, pc, OpCodes.Sub, true);

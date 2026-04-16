@@ -366,7 +366,7 @@ public unsafe partial class MipsJitCompiler<T>
         return true;
     }
 
-    private bool Trap(ILGenerator il, MipsInstruction inst, T pc, MipsTrap trap)
+    private static bool Trap(ILGenerator il, T pc, MipsTrap trap)
     {
         EmitTrapArg(il, trap);
         EmitLoadConstant(il, pc);
