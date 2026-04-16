@@ -18,8 +18,9 @@ namespace Zarem.Emulator.Machine.JIT;
 /// </summary>
 /// <typeparam name="T">The register width (uint or ulong).</typeparam>
 /// <param name="cpu">The CPU instance to operate on.</param>
+/// <param name="trap">The trap which caused the block to exit.</param>
 /// <returns>The Program Counter where execution should continue.</returns>
-public delegate T MipsBlockDelegate<T>(MipsJitCpu<T> cpu)
+public delegate T MipsBlockDelegate<T>(MipsJitCpu<T> cpu, out MipsTrap trap)
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>;
 
 /// <summary>
@@ -44,9 +45,8 @@ public partial class MipsJitCpu<T> : MipsCpu<T>
     /// <inheritdoc/>
     public override void Insert(MipsInstruction instruction, out MipsTrap trap)
     {
-        trap = MipsTrap.None;
         var @delegate = _jitCompiler.CompileLoneInstruction(instruction, ProgramCounter);
-        ProgramCounter = @delegate(this);
+        ProgramCounter = @delegate(this, out trap);
     }
 
     /// <inheritdoc/>
@@ -63,20 +63,10 @@ public partial class MipsJitCpu<T> : MipsCpu<T>
             }
 
             // Execute the block, and update the PC to the next block start
-            ProgramCounter = compiledBlock(this);
+            ProgramCounter = compiledBlock(this, out var trap);
+
+            if (trap is not MipsTrap.None)
+                HandleTrap(trap);
         }
-    }
-
-    /// <summary>
-    /// Handles a trap.
-    /// </summary>
-    public void HandleTrap(int trapCode, T currentPc)
-    {
-        var trap = (MipsTrap)trapCode;
-
-        // Sync the PC so the interpreter/debugger knows where we are
-        ProgramCounter = currentPc;
-
-        base.HandleTrap(trap);
     }
 }

@@ -47,15 +47,16 @@ public partial class MipsJitCompiler<T>
         _specialTable[(int)FunctionCode.JumpAndLinkRegister] = (il, inst, pc) => JumpR(il, inst, pc, link: true);
         _specialTable[(int)FunctionCode.SystemCall] = (il, inst, pc) => Trap(il, inst, pc, MipsTrap.Syscall);
         _specialTable[(int)FunctionCode.Break] = (il, inst, pc) => Trap(il, inst, pc, MipsTrap.Breakpoint);
-
+        _specialTable[(int)FunctionCode.Add] = (il, inst, pc) => CheckedAluR(il, inst, pc, OpCodes.Add, false);
         _specialTable[(int)FunctionCode.AddUnsigned] = (il, inst, pc) => AluR(il, inst, OpCodes.Add);
+        _specialTable[(int)FunctionCode.Subtract] = (il, inst, pc) => CheckedAluR(il, inst, pc, OpCodes.Sub, true);
         _specialTable[(int)FunctionCode.SubtractUnsigned] = (il, inst, pc) => AluR(il, inst, OpCodes.Sub);
         _specialTable[(int)FunctionCode.And] = (il, inst, pc) => AluR(il, inst, OpCodes.And);
         _specialTable[(int)FunctionCode.Or] = (il, inst, pc) => AluR(il, inst, OpCodes.Or);
         _specialTable[(int)FunctionCode.ExclusiveOr] = (il, inst, pc) => AluR(il, inst, OpCodes.Xor);
         _specialTable[(int)FunctionCode.Nor] = (il, inst, pc) => AluR(il, inst, OpCodes.Or, followUp: OpCodes.Not);
-
         _specialTable[(int)FunctionCode.SetLessThan] = (il, inst, pc) => AluR(il, inst, OpCodes.Clt);
+        _specialTable[(int)FunctionCode.SetLessThanUnsigned] = (il, inst, pc) => AluR(il, inst, OpCodes.Clt_Un);
 
 
         if (version is < MipsVersion.Mips_R6)

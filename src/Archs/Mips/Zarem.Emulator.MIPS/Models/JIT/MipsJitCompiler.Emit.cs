@@ -4,6 +4,8 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Reflection.Emit;
+using Zarem.Emulator.Machine.JIT;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
@@ -77,6 +79,13 @@ public unsafe partial class MipsJitCompiler<T>
         }
 
         il.Emit(OpCodes.Conv_I);
+    }
+
+    private void EmitTrapArg(ILGenerator il, MipsTrap trap)
+    {
+        il.Emit(OpCodes.Ldarg, 1);
+        il.Emit(OpCodes.Ldc_I4, (int)trap);
+        il.Emit(OpCodes.Stind_I4);
     }
 
     private static void EmitLdind(ILGenerator il)

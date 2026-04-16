@@ -1,10 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+using System;
 using System.Numerics;
 using System.Reflection.Emit;
-using System.Runtime.InteropServices;
 using Zarem.Emulator.Machine.JIT;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
@@ -43,7 +41,8 @@ public unsafe partial class MipsJitCompiler<T>
     /// <returns>The method block.</returns>
     public MipsBlockDelegate<T> CompileBlock(T startPc)
     {
-        var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), [typeof(MipsJitCpu<T>)], true);
+        Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
+        var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
         T currentPc = startPc;
@@ -64,12 +63,14 @@ public unsafe partial class MipsJitCompiler<T>
     /// </summary>
     public MipsBlockDelegate<T> CompileLoneInstruction(MipsInstruction inst, T pc)
     {
-        var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), [typeof(MipsJitCpu<T>)], true);
+        Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
+        var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
         bool ended = CompileInstruction(il, inst, pc);
 
         if (!ended)
         {
+            EmitTrapArg(il, MipsTrap.None);
             EmitLoadConstant(il, pc + T.CreateTruncating(4));
             il.Emit(OpCodes.Ret);
         }
@@ -143,6 +144,63 @@ public unsafe partial class MipsJitCompiler<T>
             }
         });
 
+        return false;
+    }
+
+    private bool CheckedAluR(ILGenerator il, MipsInstruction inst, T pc, OpCode ilOpCode, bool isSubtraction)
+    {
+        Label noOverflow = il.DefineLabel();
+
+        // Load operands into locals (we need them twice: once for math, once for check)
+        EmitRegisterRead(il, inst.RS);
+        LocalBuilder rs = il.DeclareLocal(typeof(T));
+        il.Emit(OpCodes.Stloc, rs);
+        EmitRegisterRead(il, inst.RT);
+        LocalBuilder rt = il.DeclareLocal(typeof(T));
+        il.Emit(OpCodes.Stloc, rt);
+
+        // Perform the calculation and store the result
+        il.Emit(OpCodes.Ldloc, rs);
+        il.Emit(OpCodes.Ldloc, rt);
+        il.Emit(ilOpCode);
+        LocalBuilder result = il.DeclareLocal(typeof(T));
+        il.Emit(OpCodes.Stloc, result);
+
+        // Overflow Guard Logic
+        il.Emit(OpCodes.Ldloc, rs);     // First term: (rs ^ result)
+        il.Emit(OpCodes.Ldloc, result);
+        il.Emit(OpCodes.Xor);
+
+        if (isSubtraction)              // Second term
+        {
+            // (rs ^ rt)
+            il.Emit(OpCodes.Ldloc, rs);
+            il.Emit(OpCodes.Ldloc, rt);
+            il.Emit(OpCodes.Xor);
+        }
+        else
+        {
+            // (rt ^ result)
+            il.Emit(OpCodes.Ldloc, rt);
+            il.Emit(OpCodes.Ldloc, result);
+            il.Emit(OpCodes.Xor);
+        }
+
+        il.Emit(OpCodes.And);
+
+        // Check sign bit (Bge 0 means the sign bits match appropriately)
+        if (sizeof(T) == 4) il.Emit(OpCodes.Ldc_I4_0);
+        else il.Emit(OpCodes.Ldc_I8, 0L);
+        il.Emit(OpCodes.Bge, noOverflow);
+
+        // Trap path
+        EmitTrapArg(il, MipsTrap.ArithmeticOverflow);
+        EmitLoadConstant(il, pc);
+        il.Emit(OpCodes.Ret);
+
+        // Safe path
+        il.MarkLabel(noOverflow);
+        EmitRegisterWrite(il, inst.RD, () => il.Emit(OpCodes.Ldloc, result));
         return false;
     }
 
@@ -262,6 +320,7 @@ public unsafe partial class MipsJitCompiler<T>
         T targetPc = T.CreateTruncating(inst.Address);
 
         // Exit the block by returning the new PC
+        EmitTrapArg(il, MipsTrap.None);
         EmitLoadConstant(il, targetPc);
         il.Emit(OpCodes.Ret);
 
@@ -285,31 +344,17 @@ public unsafe partial class MipsJitCompiler<T>
         }
 
         // Read the target from the register and return it
+        EmitTrapArg(il, MipsTrap.None);
         EmitRegisterRead(il, inst.RS);
         il.Emit(OpCodes.Ret);
 
         return true;
     }
 
-    [DynamicDependency(nameof(MipsJitCpu<>.HandleTrap), typeof(MipsJitCpu<>))]
     private bool Trap(ILGenerator il, MipsInstruction inst, T pc, MipsTrap trap)
     {
-        // Push arguments:
-        // this, trap, currentPc
-        il.Emit(OpCodes.Ldarg_0);
-        il.Emit(OpCodes.Ldc_I4, (int)trap);
-        EmitLoadConstant(il, T.CreateTruncating(pc));
-
-        var handleMethod = typeof(MipsJitCpu<T>).GetMethod(nameof(MipsJitCpu<>.HandleTrap));
-        var pcGetter = typeof(MipsJitCpu<T>).GetProperty(nameof(MipsJitCpu<>.ProgramCounter))?.GetGetMethod();
-#if DEBUG
-        Guard.IsNotNull(handleMethod);
-        Guard.IsNotNull(pcGetter);
-#endif
-        il.Emit(OpCodes.Call, handleMethod);
-
-        il.Emit(OpCodes.Ldarg_0);
-        il.Emit(OpCodes.Callvirt, pcGetter);
+        EmitTrapArg(il, trap);
+        EmitLoadConstant(il, pc);
         il.Emit(OpCodes.Ret);
 
         return true; // Terminate the IL block here
