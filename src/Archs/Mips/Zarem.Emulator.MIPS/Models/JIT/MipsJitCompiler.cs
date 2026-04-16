@@ -358,7 +358,7 @@ public unsafe partial class MipsJitCompiler<T>
             il.Emit(OpCodes.Ldloc, addrVar);
             il.Emit(OpCodes.Conv_U8);
 
-            // 4. Call Memory.Read<TData>(ulong)
+            // Call Memory.Read<TData>(ulong)
             var readMethodBase = _cpu.Memory.GetType()
                 .GetMethods()
                 .First(m => m.Name == "Read" && m.IsGenericMethod && m.GetParameters().Length == 1);
@@ -442,7 +442,17 @@ public unsafe partial class MipsJitCompiler<T>
         return false; // Does not complete the block
     }
 
-    private bool Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false)
+    private bool Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false) => Jump(il, inst, pc, link: link, pushAddress: il =>
+    {
+        EmitLoadConstant(il, T.CreateTruncating(inst.Address));
+    });
+
+    private bool JumpR(ILGenerator il, MipsInstruction inst, T pc, bool link = false) => Jump(il, inst, pc, link: link, pushAddress: il =>
+    {
+        EmitLoadRegister(il, inst.RS);
+    });
+
+    private bool Jump(ILGenerator il, MipsInstruction inst, T pc, Action<ILGenerator> pushAddress, bool link = false)
     {
         bool delaySlots = !_cpu.Config.DisableDelaySlots;
 
@@ -461,41 +471,12 @@ public unsafe partial class MipsJitCompiler<T>
             EmitDelaySlot(il, delaySlotPc);
         }
 
-        // Calculate the Jump Target
-        T targetPc = T.CreateTruncating(inst.Address);
-
         // Exit the block by returning the new PC
         EmitTrapArg(il, MipsTrap.None);
-        EmitLoadConstant(il, targetPc);
+        pushAddress(il);
         il.Emit(OpCodes.Ret);
 
         return true; // Signals the compiler that this block is finished
-    }
-
-    private bool JumpR(ILGenerator il, MipsInstruction inst, T pc, bool link = false)
-    {
-        bool delaySlots = !_cpu.Config.DisableDelaySlots;
-
-        if (link)
-        {
-            // Store the Return Address ($ra = PC + 8)
-            // We use +8 because +4 is the delay slot, and we want to return AFTER that.
-            T returnAddr = pc + (delaySlots ? T.CreateTruncating(8) : T.CreateTruncating(4));
-            EmitStoreRegister(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
-        }
-
-        if (delaySlots)
-        {
-            // Handle Delay Slot
-            EmitDelaySlot(il, pc + T.CreateTruncating(4));
-        }
-
-        // Read the target from the register and return it
-        EmitTrapArg(il, MipsTrap.None);
-        EmitLoadRegister(il, inst.RS);
-        il.Emit(OpCodes.Ret);
-
-        return true;
     }
 
     private static bool Trap(ILGenerator il, T pc, MipsTrap trap)
@@ -506,6 +487,18 @@ public unsafe partial class MipsJitCompiler<T>
 
         return true; // Terminate the IL block here
     }
+
+    private bool BranchCompareReg(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode) => Branch(il, inst, pc, conditionOpCode, il =>
+    {
+        EmitLoadRegister(il, inst.RS);
+        EmitLoadRegister(il, inst.RT);
+    });
+
+    private bool BranchCompareZero(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode) => Branch(il, inst, pc, conditionOpCode, il =>
+    {
+        EmitLoadRegister(il, inst.RS);
+        EmitLoadConstant(il, T.Zero);
+    });
 
     private bool Branch(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, Action<ILGenerator> pushOperands, bool likely = false)
     {

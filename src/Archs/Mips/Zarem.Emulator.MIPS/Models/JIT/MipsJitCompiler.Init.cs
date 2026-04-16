@@ -30,26 +30,10 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.RegisterImmediate] = DispatchRegImm;
         _opCodeTable[(int)MipsOpCode.Jump] = (il, inst, pc) => Jump(il, inst, pc);
         _opCodeTable[(int)MipsOpCode.JumpAndLink] = (il, inst, pc) => Jump(il, inst, pc, link: true);
-        _opCodeTable[(int)MipsOpCode.BranchOnEquals] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Beq, il =>
-        {
-            EmitLoadRegister(il, inst.RS);
-            EmitLoadRegister(il, inst.RT);
-        });
-        _opCodeTable[(int)MipsOpCode.BranchOnNotEquals] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Bne_Un, il =>
-        {
-            EmitLoadRegister(il, inst.RS);
-            EmitLoadRegister(il, inst.RT);
-        });
-        _opCodeTable[(int)MipsOpCode.BranchOnLessThanOrEqualToZero] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Ble, il =>
-        {
-            EmitLoadRegister(il, inst.RS);
-            EmitLoadConstant(il, T.Zero);
-        });
-        _opCodeTable[(int)MipsOpCode.BranchOnGreaterThanZero] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Bgt, il =>
-        {
-            EmitLoadRegister(il, inst.RS);
-            EmitLoadConstant(il, T.Zero);
-        });
+        _opCodeTable[(int)MipsOpCode.BranchOnEquals] = (il, inst, pc) => BranchCompareReg(il, inst, pc, OpCodes.Beq);
+        _opCodeTable[(int)MipsOpCode.BranchOnNotEquals] = (il, inst, pc) => BranchCompareReg(il, inst, pc, OpCodes.Bne_Un);
+        _opCodeTable[(int)MipsOpCode.BranchOnLessThanOrEqualToZero] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Ble);
+        _opCodeTable[(int)MipsOpCode.BranchOnGreaterThanZero] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Bgt);
         _opCodeTable[(int)MipsOpCode.AddImmediate] = (il, inst, pc) => CheckedAluI(il, inst, pc, OpCodes.Add);
         _opCodeTable[(int)MipsOpCode.AddImmediateUnsigned] = (il, inst, pc) => AluI(il, inst, OpCodes.Add, signExtend: true);
         _opCodeTable[(int)MipsOpCode.SetLessThanImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Clt, signExtend: true);
@@ -106,15 +90,7 @@ public partial class MipsJitCompiler<T>
 
     private void InitRegImm(MipsVersion version)
     {
-        _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZero] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Blt, il =>
-        {
-            EmitLoadRegister(il, inst.RS);
-            EmitLoadConstant(il, T.Zero);
-        });
-        _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Bge, il =>
-        {
-            EmitLoadRegister(il, inst.RS);
-            EmitLoadConstant(il, T.Zero);
-        });
+        _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZero] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Blt);
+        _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZero] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Bge);
     }
 }
