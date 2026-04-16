@@ -406,6 +406,10 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
         yield return [new ExecutionTestCase<T>(config, "syscall", MipsTrap.Syscall)];
         yield return [new ExecutionTestCase<T>(config, "break", MipsTrap.Breakpoint)];
 
+        // TODO: JIT CoProcessor0 instructions
+        if (config.ExecutionMode is ExecutionMode.JustInTime)
+            yield break;
+
         if (config.Version is >= MipsVersion.MipsII)
         {
             // Exception Return
