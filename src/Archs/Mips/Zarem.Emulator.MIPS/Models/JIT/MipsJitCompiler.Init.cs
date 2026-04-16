@@ -58,6 +58,9 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.OrImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Or);
         _opCodeTable[(int)MipsOpCode.ExclusiveOrImmediate] = (il, inst, pc) => AluI(il, inst, OpCodes.Xor);
         _opCodeTable[(int)MipsOpCode.LoadUpperImmediate] = (il, inst, pc) => Lui(il, inst);
+        _opCodeTable[(int)MipsOpCode.StoreByte] = Store<sbyte>;
+        _opCodeTable[(int)MipsOpCode.StoreHalfWord] = Store<short>;
+        _opCodeTable[(int)MipsOpCode.StoreWord] = Store<int>;
     }
 
     private void InitSpecial(MipsVersion version)
@@ -81,7 +84,6 @@ public partial class MipsJitCompiler<T>
         _specialTable[(int)FunctionCode.Nor] = (il, inst, pc) => AluR(il, inst, OpCodes.Or, followUp: OpCodes.Not);
         _specialTable[(int)FunctionCode.SetLessThan] = (il, inst, pc) => AluR(il, inst, OpCodes.Clt);
         _specialTable[(int)FunctionCode.SetLessThanUnsigned] = (il, inst, pc) => AluR(il, inst, OpCodes.Clt_Un);
-
 
         if (version is < MipsVersion.Mips_R6)
         {
