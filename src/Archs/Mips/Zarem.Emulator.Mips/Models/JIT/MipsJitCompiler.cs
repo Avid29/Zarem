@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
+using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.JIT;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
@@ -29,6 +30,7 @@ public unsafe partial class MipsJitCompiler<T>
     private readonly MipsJitCpu<T> _cpu;
 
     private readonly MethodInfo _getMemoryMethod;
+    private readonly MethodInfo _clzMethod;
     private readonly Dictionary<Type, MethodInfo> _readMethods = [];
     private readonly Dictionary<Type, MethodInfo> _writeMethods = [];
     private readonly Dictionary<Type, MethodInfo> _multiplyMethod = [];
@@ -42,27 +44,31 @@ public unsafe partial class MipsJitCompiler<T>
     {
         _cpu = cpu;
 
-        var getMemoryMethod = _cpu.GetType().GetProperty("Memory")?.GetGetMethod();
+        var getMemoryMethod = _cpu.GetType().GetProperty(nameof(MipsJitCpu<>.Memory))?.GetGetMethod();
         Guard.IsNotNull(getMemoryMethod);
         _getMemoryMethod = getMemoryMethod;
+
+        var clzMethod = typeof(BitOperations).GetMethod(nameof(BitOperations.LeadingZeroCount), [typeof(uint)]);
+        Guard.IsNotNull(clzMethod);
+        _clzMethod = clzMethod;
 
         Type[] readWritetypes = [typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint)];
         foreach (var type in readWritetypes)
         {
-            _readMethods[type] = _cpu.Memory.GetType()
+            _readMethods[type] = typeof(MemorySystem)
                 .GetMethods()
-                .First(m => m.Name == "Read" && m.IsGenericMethod && m.GetParameters().Length == 1)
+                .First(m => m.Name == nameof(MemorySystem.Read) && m.IsGenericMethod && m.GetParameters().Length == 1)
                 .MakeGenericMethod(type);
-            _writeMethods[type] = _cpu.Memory.GetType()
+            _writeMethods[type] = typeof(MemorySystem)
                 .GetMethods()
-                .First(m => m.Name == "Write" && m.IsGenericMethod && m.GetParameters().Length == 2)
+                .First(m => m.Name == nameof(MemorySystem.Write) && m.IsGenericMethod && m.GetParameters().Length == 2)
                 .MakeGenericMethod(type);
         }
 
         Type[] multiplyTypes = [typeof(int), typeof(uint), typeof(long), typeof(ulong)];
         foreach (var type in multiplyTypes)
         {
-            var method = typeof(Math).GetMethod("BigMul", [type, type]);
+            var method = typeof(Math).GetMethod(nameof(Math.BigMul), [type, type]);
             Guard.IsNotNull(method);
             _multiplyMethod[type] = method;
         }
@@ -139,6 +145,12 @@ public unsafe partial class MipsJitCompiler<T>
     private bool DispatchSpecial(ILGenerator il, MipsInstruction inst, T pc)
     {
         var emmiter = _specialTable[(int)inst.FuncCode];
+        return emmiter(il, inst, pc);
+    }
+
+    private bool DispatchSpecial2(ILGenerator il, MipsInstruction inst, T pc)
+    {
+        var emmiter = _special2Table[(int)inst.FuncCode];
         return emmiter(il, inst, pc);
     }
 
@@ -307,7 +319,7 @@ public unsafe partial class MipsJitCompiler<T>
         return false;
     }
     
-    private bool MultR<TData, TLong>(ILGenerator il, MipsInstruction inst)
+    private bool MultR<TData, TLong>(ILGenerator il, MipsInstruction inst, int c = 0)
         where TData : unmanaged, INumber<TData>
         where TLong : unmanaged, INumber<TLong>
     {
@@ -326,6 +338,11 @@ public unsafe partial class MipsJitCompiler<T>
         // Store high
         EmitStoreRegister(il, MipsGpRegister.High, () =>
         {
+            if (c is not 0)
+            {
+                EmitLoadRegister(il, MipsGpRegister.High);
+            }
+
             il.Emit(OpCodes.Ldloc, localResult);
             EmitLoadConstant(il, shiftAmount);
 
@@ -340,12 +357,22 @@ public unsafe partial class MipsJitCompiler<T>
                 il.Emit(OpCodes.Call, _castDownMethods[typeof(TLong)]);
             }
 
+            if (c is not 0)
+            {
+                il.Emit(c is > 0 ? OpCodes.Add : OpCodes.Sub);
+            }
+
             EmitConv(il);
         });
 
         // Store low
         EmitStoreRegister(il, MipsGpRegister.Low, () =>
         {
+            if (c is not 0)
+            {
+                EmitLoadRegister(il, MipsGpRegister.Low);
+            }
+
             il.Emit(OpCodes.Ldloc, localResult);
 
             if (bigLong)
@@ -355,6 +382,11 @@ public unsafe partial class MipsJitCompiler<T>
             else
             {
                 il.Emit(OpCodes.Call, _castDownMethods[typeof(TLong)]);
+            }
+
+            if (c is not 0)
+            {
+                il.Emit(c is > 0 ? OpCodes.Add : OpCodes.Sub);
             }
 
             EmitConv(il);
@@ -593,6 +625,22 @@ public unsafe partial class MipsJitCompiler<T>
         uint value = (uint)inst.Immediate << 16;
 
         EmitStoreRegister(il, inst.RT, () => EmitLoadConstant(il, T.CreateTruncating(value)));
+
+        return false;
+    }
+
+    private bool MethodUnary<TData>(ILGenerator il, MipsInstruction inst, Action method)
+        where TData : unmanaged, INumber<TData>
+    {
+        EmitStoreRegister(il, inst.RD, () =>
+        {
+            EmitLoadRegister<TData>(il, inst.RS);
+
+            method();
+            
+            if (sizeof(TData) != sizeof(T))
+                EmitConv(il);
+        });
 
         return false;
     }

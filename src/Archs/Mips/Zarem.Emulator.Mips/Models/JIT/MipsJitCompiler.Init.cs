@@ -126,6 +126,12 @@ public partial class MipsJitCompiler<T>
             _specialTable[(int)FunctionCode.MoveOnNotZero] = (il, inst, pc) => Move(il, inst, OpCodes.Brfalse);
         }
 
+        if (version is >= MipsVersion.Mips_R1 and < MipsVersion.Mips_R6)
+        {
+            InitSpecial2();
+            _opCodeTable[(int)MipsOpCode.Special2] = DispatchSpecial2;
+        }
+
         if (version is < MipsVersion.Mips_R6)
         {
             _specialTable[(int)FunctionCode.JumpRegister] = (il, inst, pc) => JumpR(il, inst, pc);
@@ -155,5 +161,20 @@ public partial class MipsJitCompiler<T>
             _regImmTable[(int)RegImmFuncCode.TrapOnEqualsImmediate] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Bne_Un);
             _regImmTable[(int)RegImmFuncCode.TrapOnNotEqualsImmediate] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Beq);
         }
+    }
+
+    private void InitSpecial2()
+    {
+        _special2Table[(int)Func2Code.MultiplyToGPR] = (il, inst, pc) => AluR<int>(il, inst, OpCodes.Mul);
+        _special2Table[(int)Func2Code.MultiplyAndAddHiLow] = (il, inst, pc) => MultR<int, long>(il, inst, 1);
+        _special2Table[(int)Func2Code.MultiplyAndAddHiLowUnsigned] = (il, inst, pc) => MultR<uint, ulong>(il, inst, 1);
+        _special2Table[(int)Func2Code.MultiplyAndSubtractHiLow] = (il, inst, pc) => MultR<int, long>(il, inst, -1);
+        _special2Table[(int)Func2Code.MultiplyAndSubtractHiLowUnsigned] = (il, inst, pc) => MultR<int, long>(il, inst, -1);
+        _special2Table[(int)Func2Code.CountLeadingZeros] = (il, inst, pc) => MethodUnary<uint>(il, inst, () => il.Emit(OpCodes.Call, _clzMethod));
+        _special2Table[(int)Func2Code.CountLeadingOnes] = (il, inst, pc) => MethodUnary<uint>(il, inst, () =>
+        {
+            il.Emit(OpCodes.Not);
+            il.Emit(OpCodes.Call, _clzMethod);
+        });
     }
 }
