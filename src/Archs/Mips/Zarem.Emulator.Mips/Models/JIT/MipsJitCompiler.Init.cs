@@ -67,12 +67,12 @@ public partial class MipsJitCompiler<T>
 
     private void InitSpecial(MipsVersion version)
     {
-        _specialTable[(int)FunctionCode.ShiftLeftLogical] = (il, inst, pc) => Shift(il, inst, OpCodes.Shl);
-        _specialTable[(int)FunctionCode.ShiftRightLogical] = (il, inst, pc) => Shift(il, inst, OpCodes.Shr_Un);
-        _specialTable[(int)FunctionCode.ShiftRightArithmetic] = (il, inst, pc) => Shift(il, inst, OpCodes.Shr);
-        _specialTable[(int)FunctionCode.ShiftLeftLogicalVariable] = (il, inst, pc) => ShiftVar(il, inst, OpCodes.Shl);
-        _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = (il, inst, pc) => ShiftVar(il, inst, OpCodes.Shr_Un);
-        _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = (il, inst, pc) => ShiftVar(il, inst, OpCodes.Shr);
+        _specialTable[(int)FunctionCode.ShiftLeftLogical] = (il, inst, pc) => Shift<int>(il, inst, OpCodes.Shl);
+        _specialTable[(int)FunctionCode.ShiftRightLogical] = (il, inst, pc) => Shift<int>(il, inst, OpCodes.Shr_Un);
+        _specialTable[(int)FunctionCode.ShiftRightArithmetic] = (il, inst, pc) => Shift<int>(il, inst, OpCodes.Shr);
+        _specialTable[(int)FunctionCode.ShiftLeftLogicalVariable] = (il, inst, pc) => ShiftVar<int>(il, inst, OpCodes.Shl);
+        _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = (il, inst, pc) => ShiftVar<int>(il, inst, OpCodes.Shr_Un);
+        _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = (il, inst, pc) => ShiftVar<int>(il, inst, OpCodes.Shr);
         _specialTable[(int)FunctionCode.JumpAndLinkRegister] = (il, inst, pc) => JumpR(il, inst, pc, link: true);
         _specialTable[(int)FunctionCode.SystemCall] = (il, inst, pc) => Trap(il, pc, MipsTrap.Syscall);
         _specialTable[(int)FunctionCode.Break] = (il, inst, pc) => Trap(il, pc, MipsTrap.Breakpoint);
@@ -100,9 +100,9 @@ public partial class MipsJitCompiler<T>
 
         if (version is >= MipsVersion.MipsIII && version.Is64Bit())
         {
-            //_specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalVariable]
-            //_specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalVariable]
-            //_specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticVariable] = 
+            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalVariable] = (il, inst, pc) => ShiftVar<long>(il, inst, OpCodes.Shl);
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalVariable] = (il, inst, pc) => ShiftVar<long>(il, inst, OpCodes.Shr_Un);
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticVariable] = (il, inst, pc) => ShiftVar<long>(il, inst, OpCodes.Shr);
             //_specialTable[(int)FunctionCode.DoubleWordMultiply] = 
             //_specialTable[(int)FunctionCode.DoubleWordMultiplyUnsigned] = 
             //_specialTable[(int)FunctionCode.DoubleWordDivide] = 
@@ -111,12 +111,12 @@ public partial class MipsJitCompiler<T>
             _specialTable[(int)FunctionCode.DoubleWordAddUnsigned] = (il, inst, pc) => AluR<long>(il, inst, OpCodes.Add);
             _specialTable[(int)FunctionCode.DoubleWordSubtract] = (il, inst, pc) => CheckedAluR<long>(il, inst, pc, OpCodes.Sub, true);
             _specialTable[(int)FunctionCode.DoubleWordSubtractUnsigned] = (il, inst, pc) => AluR<long>(il, inst, OpCodes.Sub);
-            //_specialTable[(int)FunctionCode.DoubleWordShiftLeftLogical]
-            //_specialTable[(int)FunctionCode.DoubleWordShiftRightLogical]
-            //_specialTable[(int)FunctionCode.DoubleWordShiftRightArithmetic] = 
-            //_specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalPlus32] =
-            //_specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalPlus32] =
-            //_specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticPlus32] = 
+            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogical] = (il, inst, pc) => Shift<long>(il, inst, OpCodes.Shl);
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogical] = (il, inst, pc) => Shift<long>(il, inst, OpCodes.Shr_Un);
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmetic] = (il, inst, pc) => Shift<long>(il, inst, OpCodes.Shr);
+            _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalPlus32] = (il, inst, pc) => ShiftPlus32<long>(il, inst, OpCodes.Shl);
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalPlus32] = (il, inst, pc) => ShiftPlus32<long>(il, inst, OpCodes.Shr_Un);
+            _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticPlus32] = (il, inst, pc) => ShiftPlus32<long>(il, inst, OpCodes.Shr);
         }
 
         if (version is < MipsVersion.Mips_R6)

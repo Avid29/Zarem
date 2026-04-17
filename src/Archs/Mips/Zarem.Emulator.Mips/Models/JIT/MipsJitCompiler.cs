@@ -126,11 +126,12 @@ public unsafe partial class MipsJitCompiler<T>
         return emmiter(il, inst, pc);
     }
 
-    private bool Shift(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
+    private bool Shift<TData>(ILGenerator il, MipsInstruction inst, OpCode ilOpCode)
+        where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(il, inst.RD, () =>
         {
-            EmitLoadRegister(il, inst.RT);
+            EmitLoadRegister<TData>(il, inst.RT);
             il.Emit(OpCodes.Ldc_I4, (int)inst.ShiftAmount);
             il.Emit(ilOpCode);
         });
@@ -138,11 +139,12 @@ public unsafe partial class MipsJitCompiler<T>
         return false;
     }
 
-    private bool ShiftPlus32(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
+    private bool ShiftPlus32<TData>(ILGenerator il, MipsInstruction inst, OpCode ilOpCode)
+        where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(il, inst.RD, () =>
         {
-            EmitLoadRegister(il, inst.RT);
+            EmitLoadRegister<TData>(il, inst.RT);
             il.Emit(OpCodes.Ldc_I4, inst.ShiftAmount + 32);
             il.Emit(ilOpCode);
         });
@@ -150,15 +152,16 @@ public unsafe partial class MipsJitCompiler<T>
         return false;
     }
 
-    private bool ShiftVar(ILGenerator il, MipsInstruction inst, OpCode ilOpCode)
+    private bool ShiftVar<TData>(ILGenerator il, MipsInstruction inst, OpCode ilOpCode)
+        where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(il, inst.RD, () =>
         {
-            EmitLoadRegister(il, inst.RT); // Value to shift
-            EmitLoadRegister(il, inst.RS); // Shift amount from register
+            EmitLoadRegister<TData>(il, inst.RT); // Value to shift
+            EmitLoadRegister<TData>(il, inst.RS); // Shift amount from register
 
             // Ensure the shift amount is treated as an int for the IL stack
-            if (typeof(T) == typeof(ulong))
+            if (typeof(TData) == typeof(ulong))
                 il.Emit(OpCodes.Conv_I4);
 
             il.Emit(ilOpCode);
