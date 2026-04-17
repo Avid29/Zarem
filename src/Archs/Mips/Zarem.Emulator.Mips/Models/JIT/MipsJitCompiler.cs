@@ -529,29 +529,34 @@ public unsafe partial class MipsJitCompiler<T>
 
     private bool Branch(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, Action<ILGenerator> pushOperands, bool likely = false)
     {
-        bool delaySlots = !_cpu.Config.DisableDelaySlots;
+        bool delaySlotsEnabled = !_cpu.Config.DisableDelaySlots;
 
         Label takeBranch = il.DefineLabel();
 
-        // Prepare the stack for the branch condition
+        // Evaluate the branch condition
         pushOperands(il);
+        il.Emit(conditionOpCode, takeBranch);
 
-        // Append delay slot operation
-        if (!delaySlots && !likely)
+        // Branch NOT taken
+        if (delaySlotsEnabled && !likely)
         {
             EmitDelaySlot(il, pc + T.CreateTruncating(4));
         }
 
-        // Evaluate the branch condition
-        il.Emit(conditionOpCode, takeBranch);
-
         // Branch NOT taken
-        EmitRet(il, pc + (delaySlots ? T.CreateTruncating(8) : T.CreateTruncating(4)));
+        var nextPc = pc + (delaySlotsEnabled ? T.CreateTruncating(8) : T.CreateTruncating(4));
+        EmitRet(il, nextPc);
 
         // Branch taken
+        // In both Likely and Normal modes, the delay slot executes if the branch is taken.
         il.MarkLabel(takeBranch);
-        long offset = (long)inst.Immediate << 2;
-        T targetPc = pc + T.CreateTruncating(4) + T.CreateTruncating(offset);
+
+        if (delaySlotsEnabled)
+        {
+            EmitDelaySlot(il, pc + T.CreateTruncating(4));
+        }
+
+        T targetPc = pc + T.CreateTruncating(4) + T.CreateTruncating(inst.Offset);
         EmitRet(il, targetPc);
         return true;
     }
