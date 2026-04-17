@@ -55,7 +55,6 @@ public class AboutPageViewModel : PageViewModel
     public IEnumerable<ThirdPartyNotice> ThirdPartyNotices { get; } =
     [
         new("GitInfo", "https://github.com/devlooped/GitInfo", LicenseType.MIT),
-        new("HexBox.WinUI", "https://github.com/hotkidfamily/HexBox.WinUI", LicenseType.MIT),
         new("LibObjectFile", "https://github.com/xoofx/LibObjectFile", LicenseType.MIT),
         new("Windows Community Toolkit", "https://github.com/CommunityToolkit/Windows", LicenseType.MIT),
         new("WinUIEdit", "https://github.com/BreeceW/WinUIEdit", LicenseType.Other),
