@@ -12,6 +12,35 @@ namespace Zarem.Emulator.Models.JIT;
 public unsafe partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    private LocalBuilder[] _regLocals = [];
+
+    private void EmitSetupLocalRegisters(ILGenerator il)
+    {
+        _regLocals = new LocalBuilder[_cpu.RegisterFile.Count];
+
+        for (var reg = (MipsGpRegister)0; (int)reg < _cpu.RegisterFile.Count; reg++)
+        {
+            // Load register from memory into local i
+            _regLocals[(int)reg] = il.DeclareLocal(typeof(T));
+            EmitStoreRegister(il, reg, () =>
+            {
+                EmitLoadRegisterAddress(il, reg);
+                EmitLdind(il);
+            });
+        }
+    }
+
+    private void EmitFlushLocalRegisters(ILGenerator il)
+    {
+        for (var reg = (MipsGpRegister)1; (int)reg < _cpu.RegisterFile.Count; reg++)
+        {
+            // Load register local i into memory
+            EmitLoadRegisterAddress(il, reg);
+            EmitLoadRegister(il, reg);
+            EmitStind(il);
+        }
+    }
+
     private void EmitDelaySlot(ILGenerator il, T delaySlotPc)
     {
         uint rawInstr = _cpu.Memory.Read<uint>(ulong.CreateTruncating(delaySlotPc));
@@ -37,8 +66,7 @@ public unsafe partial class MipsJitCompiler<T>
         }
 
         // Load the register's address then retrieve the value at that address
-        EmitLoadRegisterAddress(il, register);
-        EmitLdind(il);
+        il.Emit(OpCodes.Ldloc, _regLocals[(int)register]);
 
         // Convert the value to TData if neccesary
         if (sizeof(T) != sizeof(TData))
@@ -66,9 +94,8 @@ public unsafe partial class MipsJitCompiler<T>
         }
 
         // Load the register's address, emit the evaluation instructions, and store the value
-        EmitLoadRegisterAddress(il, register);
         emitEvaluation();
-        EmitStind(il);
+        il.Emit(OpCodes.Stloc, _regLocals[(int)register]);
     }
 
     private void EmitStoreRegister<TFloat>(ILGenerator il, MipsFloatRegister register, Action emitEvaluation)
@@ -131,10 +158,11 @@ public unsafe partial class MipsJitCompiler<T>
         return addrVar;
     }
 
-    private static void EmitRet(ILGenerator il, T pc) => EmitTrapRet(il, MipsTrap.None, pc);
+    private void EmitRet(ILGenerator il, T pc) => EmitTrapRet(il, MipsTrap.None, pc);
 
-    private static void EmitRet(ILGenerator il, Action<ILGenerator> pushAddress)
+    private void EmitRet(ILGenerator il, Action<ILGenerator> pushAddress)
     {
+        EmitFlushLocalRegisters(il);
         EmitTrapArg(il, MipsTrap.None);
         pushAddress(il);
         il.Emit(OpCodes.Ret);
@@ -147,8 +175,9 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Stind_I1);
     }
 
-    private static void EmitTrapRet(ILGenerator il, MipsTrap trap, T pc)
+    private void EmitTrapRet(ILGenerator il, MipsTrap trap, T pc)
     {
+        EmitFlushLocalRegisters(il);
         EmitTrapArg(il, trap);
         EmitLoadConstant(il, pc);
         il.Emit(OpCodes.Ret);

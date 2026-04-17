@@ -95,7 +95,15 @@ public abstract partial class MipsCpu<T> : IMipsCpu
     public MemorySystem Memory { get; }
 
     /// <inheritdoc/>
-    public double ClockSpeed { get; protected set; }
+    public double ClockSpeed
+    {
+        get;
+        protected set
+        {
+            field = value;
+            Console.WriteLine($"Speed: {value / 1_000_000:F2} MHz");
+        }
+    }
 
     /// <inheritdoc cref="IMipsCpu.DelaySlot"/>
     public T? DelaySlot { get; protected set; }

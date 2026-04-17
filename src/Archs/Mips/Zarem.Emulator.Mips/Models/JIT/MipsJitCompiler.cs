@@ -98,6 +98,7 @@ public unsafe partial class MipsJitCompiler<T>
         Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
+        EmitSetupLocalRegisters(il);
 
         T currentPc = startPc;
         bool isFinished = false;
@@ -125,10 +126,11 @@ public unsafe partial class MipsJitCompiler<T>
             $"Insert_0x{pc:X}",
             typeof(T),
             parameterTypes,
-            this.GetType(),
             true);
 
         var il = method.GetILGenerator();
+        EmitSetupLocalRegisters(il);
+
         bool ended = CompileInstruction(il, inst, pc);
 
         if (!ended)
@@ -576,7 +578,7 @@ public unsafe partial class MipsJitCompiler<T>
         EmitLoadConstant(il, T.CreateTruncating(inst.Immediate));
     });
 
-    private static bool ConditionalTrap(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch, Action<ILGenerator> pushOperands)
+    private bool ConditionalTrap(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch, Action<ILGenerator> pushOperands)
     {
         Label noTrap = il.DefineLabel();
 
@@ -594,7 +596,7 @@ public unsafe partial class MipsJitCompiler<T>
         return true;
     }
 
-    private static bool Trap(ILGenerator il, T pc, MipsTrap trap)
+    private bool Trap(ILGenerator il, T pc, MipsTrap trap)
     {
         EmitTrapRet(il, trap, pc);
         return true; // Terminate the IL block here
