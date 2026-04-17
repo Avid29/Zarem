@@ -53,6 +53,8 @@ public partial class MipsJitCompiler<T>
             FloatFuncCode.Truncate_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Truncate)),
             FloatFuncCode.Ceiling_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Ceiling)),
             FloatFuncCode.Floor_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Floor)),
+            FloatFuncCode.Reciprical => FloatUnary<TFloat>(il, inst, nameof(Math.ReciprocalEstimate)),
+            FloatFuncCode.RecipricalSquareRoot => FloatUnary<TFloat>(il, inst, nameof(Math.ReciprocalSqrtEstimate)),
 
             FloatFuncCode.ConvertToSingle => FloatConvert<TFloat, float>(il, inst.FS, inst.FD),
             FloatFuncCode.ConvertToDouble => FloatConvert<TFloat, double>(il, inst.FS, inst.FD),

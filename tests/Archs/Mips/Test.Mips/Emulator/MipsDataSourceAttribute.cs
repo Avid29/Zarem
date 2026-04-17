@@ -225,6 +225,14 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
         yield return [new ExecutionTestCase<T>(config, "srl $v0, $t8, 4", T.CreateTruncating(101 >> 4))];
         yield return [new ExecutionTestCase<T>(config, "sllv $v0, $t8, $s4", T.CreateTruncating(101 << 4))];
         yield return [new ExecutionTestCase<T>(config, "srlv $v0, $t8, $s4", T.CreateTruncating(101 >> 4))];
+
+        if (config.Version is >= MipsVersion.MipsIII && config.Version.Is64Bit())
+        {
+            yield return [new ExecutionTestCase<T>(config, "dsll $v0, $t8, 4", T.CreateTruncating(101 << 4))];
+            yield return [new ExecutionTestCase<T>(config, "dsrl $v0, $t8, 4", T.CreateTruncating(101 >> 4))];
+            yield return [new ExecutionTestCase<T>(config, "dsllv $v0, $t8, $s4", T.CreateTruncating(101 << 4))];
+            yield return [new ExecutionTestCase<T>(config, "dsrlv $v0, $t8, $s4", T.CreateTruncating(101 >> 4))];
+        }
     }
 
     private static IEnumerable<object[]> GetMemoryInstructionTests<T>(MipsEmulatorConfig config)

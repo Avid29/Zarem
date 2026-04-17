@@ -1,10 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Reflection.Emit;
-using Zarem.Emulator.Machine.JIT;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -25,18 +23,26 @@ public unsafe partial class MipsJitCompiler<T>
     }
 
     private void EmitLoadRegister(ILGenerator il, MipsGpRegister register)
+        => EmitLoadRegister<T>(il, register);
+
+    private void EmitLoadRegister<TData>(ILGenerator il, MipsGpRegister register)
+        where TData : unmanaged, INumber<TData>
     {
         if (register is 0)
         {
             // MIPS $zero is always 0. 
             // We push a constant 0 instead of looking at memory.
-            EmitLoadConstant(il, T.Zero);
+            EmitLoadConstant(il, TData.Zero);
             return;
         }
 
         // Load the register's address then retrieve the value at that address
         EmitLoadRegisterAddress(il, register);
         EmitLdind(il);
+
+        // Convert the value to TData if neccesary
+        if (sizeof(T) != sizeof(TData))
+            EmitConv<TData>(il);
     }
 
     private void EmitLoadRegister<TFloat>(ILGenerator il, MipsFloatRegister register)
@@ -82,16 +88,11 @@ public unsafe partial class MipsJitCompiler<T>
     {
         nint regAddress = (nint)regs + (index * sizeof(T));
 
-        if (IntPtr.Size == 4)
-        {
-            il.Emit(OpCodes.Ldc_I4, regAddress);
-        }
-        else
-        {
-            il.Emit(OpCodes.Ldc_I8, regAddress);
-        }
+        if (nint.Size == 8) il.Emit(OpCodes.Ldc_I8, regAddress);
+        else if (nint.Size == 4) il.Emit(OpCodes.Ldc_I4, (int)regAddress);
+        else throw new PlatformNotSupportedException($"Unsupported pointer size: {nint.Size}");
 
-        il.Emit(OpCodes.Conv_I);
+        il.Emit(OpCodes.Conv_U);
     }
 
     /// <remarks>
@@ -141,9 +142,9 @@ public unsafe partial class MipsJitCompiler<T>
 
     private static void EmitTrapArg(ILGenerator il, MipsTrap trap)
     {
-        il.Emit(OpCodes.Ldarg, 1);
+        il.Emit(OpCodes.Ldarg_1);
         il.Emit(OpCodes.Ldc_I4, (int)trap);
-        il.Emit(OpCodes.Stind_I4);
+        il.Emit(OpCodes.Stind_I1);
     }
 
     private static void EmitTrapRet(ILGenerator il, MipsTrap trap, T pc)
@@ -180,7 +181,8 @@ public unsafe partial class MipsJitCompiler<T>
         else throw new NotSupportedException("Unsupported register width.");
     }
 
-    private static void EmitConv(ILGenerator il) => EmitConv<T>(il);
+    private static void EmitConv(ILGenerator il)
+        => EmitConv<T>(il);
 
     private static void EmitConv<TData>(ILGenerator il)
     {
@@ -196,15 +198,48 @@ public unsafe partial class MipsJitCompiler<T>
         else if (typeof(TData) == typeof(double)) il.Emit(OpCodes.Conv_R8);
     }
 
-    private static void EmitLoadConstant(ILGenerator il, T value)
+    private static void EmitLoadConstant<TData>(ILGenerator il, TData value)
+        where TData : unmanaged, INumber<TData>
     {
-        if (typeof(T) == typeof(uint))
+        if (typeof(TData) == typeof(int) || typeof(TData) == typeof(uint))
         {
-            il.Emit(OpCodes.Ldc_I4, uint.CreateTruncating(value));
+            var iValue = int.CreateTruncating(value);
+            var opCode = iValue switch
+            {
+                -1 => OpCodes.Ldc_I4_M1,
+                0 => OpCodes.Ldc_I4_0,
+                1 => OpCodes.Ldc_I4_1,
+                2 => OpCodes.Ldc_I4_2,
+                3 => OpCodes.Ldc_I4_3,
+                4 => OpCodes.Ldc_I4_4,
+                5 => OpCodes.Ldc_I4_5,
+                6 => OpCodes.Ldc_I4_6,
+                7 => OpCodes.Ldc_I4_7,
+                8 => OpCodes.Ldc_I4_8,
+                >= sbyte.MinValue and <= sbyte.MaxValue => OpCodes.Ldc_I4_S,
+                _ => OpCodes.Ldc_I4,
+            };
+
+            if (opCode == OpCodes.Ldc_I4) il.Emit(opCode, iValue);
+            else if (opCode == OpCodes.Ldc_I4_S) il.Emit(opCode, (sbyte)iValue);
+            else il.Emit(opCode);
         }
-        else if (typeof(T) == typeof(ulong))
+        else if (typeof(TData) == typeof(long) || typeof(TData) == typeof(ulong))
         {
-            il.Emit(OpCodes.Ldc_I8, ulong.CreateTruncating(value));
+            long lValue = long.CreateTruncating(value);
+
+            // Optimization: If the 64-bit constant fits in a 32-bit integer, load the integer and convert.
+            // The theory here is that this allows what would be a 9 byte instruction to become either a 2-6 byte
+            // instruction, resulting in a smaller CIL JIT for a change that is optimized away by the CLR. Discuss.
+            if (lValue >= int.MinValue && lValue <= int.MaxValue)
+            {
+                EmitLoadConstant(il, (int)lValue);
+                il.Emit(OpCodes.Conv_I8);
+            }
+            else
+            {
+                il.Emit(OpCodes.Ldc_I8, lValue);
+            }
         }
         else
         {
@@ -212,10 +247,11 @@ public unsafe partial class MipsJitCompiler<T>
         }
     }
 
-    private static void EmitOverflowGuard(ILGenerator il, T pc, bool isSubtraction, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow)
+    private static void EmitOverflowGuard<TData>(ILGenerator il, T pc, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow, bool isSubtraction = false)
+        where TData : unmanaged, INumber<TData>
     {
         // Logic: ((rs ^ result) & (rtOrImm ^ result)) < 0  (for Addition)
-        // Logic: ((rs ^ result) & (rs ^ rtOrImm)) < 0     (for Subtraction)
+        // Logic: ((rs ^ result) & (rs ^ rtOrImm)) < 0      (for Subtraction)
 
         // First term: (rs ^ result)
         il.Emit(OpCodes.Ldloc, rs);
@@ -241,8 +277,7 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.And);
 
         // Check sign bit
-        if (sizeof(T) == 4) il.Emit(OpCodes.Ldc_I4_0);
-        else il.Emit(OpCodes.Ldc_I8, 0L);
+        EmitLoadConstant(il, TData.Zero);
 
         il.Emit(OpCodes.Bge, noOverflow);
 

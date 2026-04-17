@@ -4,7 +4,6 @@ using System.Numerics;
 using Zarem.Assembler;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
-using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interpret;
@@ -43,40 +42,80 @@ public partial class ExecutionTests
     public void InstructionTests_Mips3(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
+    [MipsDataSource(MipsVersion.MipsIII, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips3_JIT(ExecutionTestCase<ulong> @case) => RunTest(@case);
+
+    [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsIII_32Bit, ExecutionMode.Interpret)]
     public void InstructionTests_Mips3_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [MipsDataSource(MipsVersion.MipsIII_32Bit, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips3_32Bit_JIT(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsIV, ExecutionMode.Interpret)]
     public void InstructionTests_Mips4(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
+    [MipsDataSource(MipsVersion.MipsIV, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips4_JIT(ExecutionTestCase<ulong> @case) => RunTest(@case);
+
+    [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsIV_32Bit, ExecutionMode.Interpret)]
     public void InstructionTests_Mips4_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [MipsDataSource(MipsVersion.MipsIV_32Bit, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips4_32Bit_JIT(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsV, ExecutionMode.Interpret)]
     public void InstructionTests_Mips5(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
+    [MipsDataSource(MipsVersion.MipsV, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips5_JIT(ExecutionTestCase<ulong> @case) => RunTest(@case);
+
+    [DataTestMethod]
     [MipsDataSource(MipsVersion.MipsV_32Bit, ExecutionMode.Interpret)]
     public void InstructionTests_Mips5_32Bit(ExecutionTestCase<uint> @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [MipsDataSource(MipsVersion.MipsV_32Bit, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips5_32Bit_JIT(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.Mips32R1, ExecutionMode.Interpret)]
     public void InstructionTests_Mips32R1(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
+    [MipsDataSource(MipsVersion.Mips32R1, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips32R1_JIT(ExecutionTestCase<uint> @case) => RunTest(@case);
+
+    [DataTestMethod]
     [MipsDataSource(MipsVersion.Mips64R1, ExecutionMode.Interpret)]
     public void InstructionTests_Mips64R1(ExecutionTestCase<ulong> @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [MipsDataSource(MipsVersion.Mips64R1, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips64R1_JIT(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
     [MipsDataSource(MipsVersion.Mips32R2, ExecutionMode.Interpret)]
     public void InstructionTests_Mips32R2(ExecutionTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
+    [MipsDataSource(MipsVersion.Mips32R2, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips32R2_JIT(ExecutionTestCase<uint> @case) => RunTest(@case);
+
+    [DataTestMethod]
     [MipsDataSource(MipsVersion.Mips64R2, ExecutionMode.Interpret)]
     public void InstructionTests_Mips64R2(ExecutionTestCase<ulong> @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [MipsDataSource(MipsVersion.Mips64R2, ExecutionMode.JustInTime)]
+    public void InstructionTests_Mips64R2_JIT(ExecutionTestCase<ulong> @case) => RunTest(@case);
 
     private static void RunTest<T>(ExecutionTestCase<T> @case)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
