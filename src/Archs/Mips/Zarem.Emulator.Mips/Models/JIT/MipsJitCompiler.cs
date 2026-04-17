@@ -483,42 +483,6 @@ public unsafe partial class MipsJitCompiler<T>
         return true; // Signals the compiler that this block is finished
     }
 
-    private bool TrapCompareReg(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch) => ConditionalTrap(il, inst, pc, invertedBranch, il =>
-    {
-        EmitLoadRegister(il, inst.RS);
-        EmitLoadRegister(il, inst.RT);
-    });
-
-    private bool TrapCompareImmediate(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch) => ConditionalTrap(il, inst, pc, invertedBranch, il =>
-    {
-        EmitLoadRegister(il, inst.RS);
-        EmitLoadConstant(il, T.CreateTruncating(inst.Immediate));
-    });
-
-    private static bool ConditionalTrap(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch, Action<ILGenerator> pushOperands)
-    {
-        Label noTrap = il.DefineLabel();
-
-        // Evaluate the trap condition
-        pushOperands(il);
-        il.Emit(invertedBranch, noTrap);
-
-        // DO trap
-        EmitTrapRet(il, MipsTrap.Trap, pc);
-
-        // Do NOT trap
-        il.MarkLabel(noTrap);
-        EmitRet(il, pc);
-
-        return true;
-    }
-
-    private static bool Trap(ILGenerator il, T pc, MipsTrap trap)
-    {
-        EmitTrapRet(il, trap, pc);
-        return true; // Terminate the IL block here
-    }
-
     private bool BranchCompareReg(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode) => Branch(il, inst, pc, conditionOpCode, il =>
     {
         EmitLoadRegister(il, inst.RS);
@@ -560,6 +524,58 @@ public unsafe partial class MipsJitCompiler<T>
         return true;
     }
 
+    private bool TrapCompareReg(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch) => ConditionalTrap(il, inst, pc, invertedBranch, il =>
+    {
+        EmitLoadRegister(il, inst.RS);
+        EmitLoadRegister(il, inst.RT);
+    });
+
+    private bool TrapCompareImmediate(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch) => ConditionalTrap(il, inst, pc, invertedBranch, il =>
+    {
+        EmitLoadRegister(il, inst.RS);
+        EmitLoadConstant(il, T.CreateTruncating(inst.Immediate));
+    });
+
+    private static bool ConditionalTrap(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch, Action<ILGenerator> pushOperands)
+    {
+        Label noTrap = il.DefineLabel();
+
+        // Evaluate the trap condition
+        pushOperands(il);
+        il.Emit(invertedBranch, noTrap);
+
+        // DO trap
+        EmitTrapRet(il, MipsTrap.Trap, pc);
+
+        // Do NOT trap
+        il.MarkLabel(noTrap);
+        EmitRet(il, pc);
+
+        return true;
+    }
+
+    private static bool Trap(ILGenerator il, T pc, MipsTrap trap)
+    {
+        EmitTrapRet(il, trap, pc);
+        return true; // Terminate the IL block here
+    }
+
+    private bool Move(ILGenerator il, MipsInstruction inst, OpCode invertedBranch)
+    {
+        Label noMove = il.DefineLabel();
+
+        EmitLoadRegister(il, inst.RT);
+        il.Emit(invertedBranch, noMove);
+
+        // DO move
+        EmitStoreRegister(il, inst.RD, () => EmitLoadRegister(il, inst.RS));
+
+        // Do NOT move
+        il.MarkLabel(noMove);
+
+        return false;
+    }
+
     private bool MoveFromTo(ILGenerator il, MipsGpRegister from, MipsGpRegister to)
     {
         // Can't writeback to $zero.
@@ -567,10 +583,7 @@ public unsafe partial class MipsJitCompiler<T>
         if (to is MipsGpRegister.Zero)
             return false;
 
-        EmitStoreRegister(il, to, () =>
-        {
-            EmitLoadRegister(il, from);
-        });
+        EmitStoreRegister(il, to, () => EmitLoadRegister(il, from));
 
         return false;
     }
@@ -579,10 +592,7 @@ public unsafe partial class MipsJitCompiler<T>
     {
         uint value = (uint)inst.Immediate << 16;
 
-        EmitStoreRegister(il, inst.RT, () =>
-        {
-            EmitLoadConstant(il, T.CreateTruncating(value));
-        });
+        EmitStoreRegister(il, inst.RT, () => EmitLoadConstant(il, T.CreateTruncating(value)));
 
         return false;
     }

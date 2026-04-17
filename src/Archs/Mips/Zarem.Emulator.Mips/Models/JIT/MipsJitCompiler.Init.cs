@@ -120,6 +120,12 @@ public partial class MipsJitCompiler<T>
             _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticPlus32] = (il, inst, pc) => ShiftPlus32<long>(il, inst, OpCodes.Shr);
         }
 
+        if (version is >= MipsVersion.MipsIV and < MipsVersion.Mips_R6)
+        {
+            _specialTable[(int)FunctionCode.MoveOnZero] = (il, inst, pc) => Move(il, inst, OpCodes.Brtrue);
+            _specialTable[(int)FunctionCode.MoveOnNotZero] = (il, inst, pc) => Move(il, inst, OpCodes.Brfalse);
+        }
+
         if (version is < MipsVersion.Mips_R6)
         {
             _specialTable[(int)FunctionCode.JumpRegister] = (il, inst, pc) => JumpR(il, inst, pc);
