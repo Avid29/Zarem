@@ -188,33 +188,41 @@ public unsafe partial class MipsJitCompiler<T>
         return false;
     }
 
-    private bool CheckedAluR(ILGenerator il, MipsInstruction inst, T pc, OpCode ilOpCode, bool isSubtraction)
+    private bool CheckedAluR<TData>(ILGenerator il, MipsInstruction inst, T pc, OpCode ilOpCode, bool isSubtraction)
+        where TData : unmanaged, INumber<TData>
     {
         Label noOverflow = il.DefineLabel();
 
         // Load RS into local
-        EmitLoadRegister(il, inst.RS);
-        LocalBuilder rs = il.DeclareLocal(typeof(T));
+        EmitLoadRegister<TData>(il, inst.RS);
+        LocalBuilder rs = il.DeclareLocal(typeof(TData));
         il.Emit(OpCodes.Stloc, rs);
 
         // Load RT into local
-        EmitLoadRegister(il, inst.RT);
-        LocalBuilder rt = il.DeclareLocal(typeof(T));
+        EmitLoadRegister<TData>(il, inst.RT);
+        LocalBuilder rt = il.DeclareLocal(typeof(TData));
         il.Emit(OpCodes.Stloc, rt);
 
         // Calculate
         il.Emit(OpCodes.Ldloc, rs);
         il.Emit(OpCodes.Ldloc, rt);
         il.Emit(ilOpCode);
-        LocalBuilder result = il.DeclareLocal(typeof(T));
+
+        // Store result
+        LocalBuilder result = il.DeclareLocal(typeof(TData));
         il.Emit(OpCodes.Stloc, result);
 
         // Overflow Guard
-        EmitOverflowGuard(il, pc, isSubtraction, rs, rt, result, noOverflow);
+        EmitOverflowGuard<TData>(il, pc, isSubtraction, rs, rt, result, noOverflow);
 
         // Safe Path
         il.MarkLabel(noOverflow);
-        EmitStoreRegister(il, inst.RD, () => il.Emit(OpCodes.Ldloc, result));
+        EmitStoreRegister(il, inst.RD, () =>
+        {
+            il.Emit(OpCodes.Ldloc, result);
+            if (typeof(TData) != typeof(T))
+                EmitConv(il);
+        });
 
         return false;
     }
@@ -258,7 +266,7 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Stloc, result);
 
         // Overflow Guard
-        EmitOverflowGuard(il, pc, false, rs, imm, result, noOverflow);
+        EmitOverflowGuard<T>(il, pc, false, rs, imm, result, noOverflow);
 
         // Safe Path
         il.MarkLabel(noOverflow);
