@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Threading;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.Models.JIT;
 using Zarem.Models.Instructions;
 
-namespace Zarem.Emulator.Machine.JIT;
+namespace Zarem.Emulator.JIT;
 
 /// <summary>
 /// Represents a compiled block of MIPS instructions.

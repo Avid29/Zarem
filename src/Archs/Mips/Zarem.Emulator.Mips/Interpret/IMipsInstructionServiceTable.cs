@@ -4,7 +4,7 @@ using System.Numerics;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 
-namespace Zarem.Emulator.Models.Interpret;
+namespace Zarem.Emulator.Interpret;
 
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="MipsExecution{T}"/> models.
