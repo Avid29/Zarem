@@ -90,15 +90,19 @@ public unsafe partial class MipsJitCompiler<T>
     public MipsBlockDelegate<T> CompileLoneInstruction(MipsInstruction inst, T pc)
     {
         Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
-        var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
+        var method = new DynamicMethod(
+            $"Insert_0x{pc:X}",
+            typeof(T),
+            parameterTypes,
+            this.GetType(),
+            true);
+
         var il = method.GetILGenerator();
         bool ended = CompileInstruction(il, inst, pc);
 
         if (!ended)
         {
-            EmitTrapArg(il, MipsTrap.None);
-            EmitLoadConstant(il, pc + T.CreateTruncating(4));
-            il.Emit(OpCodes.Ret);
+            EmitRet(il, pc + T.CreateTruncating(4));
         }
 
         return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
@@ -162,18 +166,23 @@ public unsafe partial class MipsJitCompiler<T>
         return false;
     }
 
-    private bool AluR(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
+    private bool AluR<TData>(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
+        where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(il, inst.RD, () =>
         {
-            EmitLoadRegister(il, inst.RS);
-            EmitLoadRegister(il, inst.RT);
+            EmitLoadRegister<TData>(il, inst.RS);
+            EmitLoadRegister<TData>(il, inst.RT);
             il.Emit(ilOpCode);
 
             if (followUp.HasValue)
             {
                 il.Emit(followUp.Value);
             }
+
+            // Convert to T if neccesary
+            if (typeof(TData) != typeof(T))
+                EmitConv(il);
         });
 
         return false;

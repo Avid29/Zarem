@@ -1,10 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Reflection.Emit;
-using Zarem.Emulator.Machine.JIT;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -25,18 +23,26 @@ public unsafe partial class MipsJitCompiler<T>
     }
 
     private void EmitLoadRegister(ILGenerator il, MipsGpRegister register)
+        => EmitLoadRegister<T>(il, register);
+
+    private void EmitLoadRegister<TData>(ILGenerator il, MipsGpRegister register)
+        where TData : unmanaged, INumber<TData>
     {
         if (register is 0)
         {
             // MIPS $zero is always 0. 
             // We push a constant 0 instead of looking at memory.
-            EmitLoadConstant(il, T.Zero);
+            EmitLoadConstant(il, TData.Zero);
             return;
         }
 
         // Load the register's address then retrieve the value at that address
         EmitLoadRegisterAddress(il, register);
         EmitLdind(il);
+
+        // Convert the value to TData if neccesary
+        if (typeof(T) != typeof(TData))
+            EmitConv<TData>(il);
     }
 
     private void EmitLoadRegister<TFloat>(ILGenerator il, MipsFloatRegister register)
@@ -82,16 +88,11 @@ public unsafe partial class MipsJitCompiler<T>
     {
         nint regAddress = (nint)regs + (index * sizeof(T));
 
-        if (IntPtr.Size == 4)
-        {
-            il.Emit(OpCodes.Ldc_I4, regAddress);
-        }
-        else
-        {
-            il.Emit(OpCodes.Ldc_I8, regAddress);
-        }
+        if (nint.Size == 8) il.Emit(OpCodes.Ldc_I8, regAddress);
+        else if (nint.Size == 4) il.Emit(OpCodes.Ldc_I4, (int)regAddress);
+        else throw new PlatformNotSupportedException($"Unsupported pointer size: {nint.Size}");
 
-        il.Emit(OpCodes.Conv_I);
+        il.Emit(OpCodes.Conv_U);
     }
 
     /// <remarks>
@@ -141,9 +142,9 @@ public unsafe partial class MipsJitCompiler<T>
 
     private static void EmitTrapArg(ILGenerator il, MipsTrap trap)
     {
-        il.Emit(OpCodes.Ldarg, 1);
+        il.Emit(OpCodes.Ldarg_1);
         il.Emit(OpCodes.Ldc_I4, (int)trap);
-        il.Emit(OpCodes.Stind_I4);
+        il.Emit(OpCodes.Stind_I1);
     }
 
     private static void EmitTrapRet(ILGenerator il, MipsTrap trap, T pc)
@@ -180,7 +181,8 @@ public unsafe partial class MipsJitCompiler<T>
         else throw new NotSupportedException("Unsupported register width.");
     }
 
-    private static void EmitConv(ILGenerator il) => EmitConv<T>(il);
+    private static void EmitConv(ILGenerator il)
+        => EmitConv<T>(il);
 
     private static void EmitConv<TData>(ILGenerator il)
     {
@@ -196,20 +198,16 @@ public unsafe partial class MipsJitCompiler<T>
         else if (typeof(TData) == typeof(double)) il.Emit(OpCodes.Conv_R8);
     }
 
-    private static void EmitLoadConstant(ILGenerator il, T value)
+    private static void EmitLoadConstant(ILGenerator il, T value) => EmitLoadConstant<T>(il, value);
+
+    private static void EmitLoadConstant<TData>(ILGenerator il, TData value)
+        where TData : unmanaged, INumber<TData>
     {
-        if (typeof(T) == typeof(uint))
-        {
-            il.Emit(OpCodes.Ldc_I4, uint.CreateTruncating(value));
-        }
-        else if (typeof(T) == typeof(ulong))
-        {
-            il.Emit(OpCodes.Ldc_I8, ulong.CreateTruncating(value));
-        }
-        else
-        {
-            throw new NotSupportedException("Unsupported register width.");
-        }
+        if (typeof(TData) == typeof(int)) il.Emit(OpCodes.Ldc_I4, int.CreateTruncating(value));
+        else if (typeof(TData) == typeof(uint)) il.Emit(OpCodes.Ldc_I4, int.CreateTruncating(value));
+        else if (typeof(TData) == typeof(long)) il.Emit(OpCodes.Ldc_I8, long.CreateTruncating(value));
+        else if (typeof(TData) == typeof(ulong)) il.Emit(OpCodes.Ldc_I8, long.CreateTruncating(value));
+        else throw new NotSupportedException("Unsupported register width.");
     }
 
     private static void EmitOverflowGuard(ILGenerator il, T pc, bool isSubtraction, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow)
