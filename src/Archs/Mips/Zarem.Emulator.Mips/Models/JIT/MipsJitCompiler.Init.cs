@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Config;
@@ -103,10 +104,10 @@ public partial class MipsJitCompiler<T>
             _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalVariable] = (il, inst, pc) => ShiftVar<long>(il, inst, OpCodes.Shl);
             _specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalVariable] = (il, inst, pc) => ShiftVar<long>(il, inst, OpCodes.Shr_Un);
             _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticVariable] = (il, inst, pc) => ShiftVar<long>(il, inst, OpCodes.Shr);
-            //_specialTable[(int)FunctionCode.DoubleWordMultiply] = 
-            //_specialTable[(int)FunctionCode.DoubleWordMultiplyUnsigned] = 
-            //_specialTable[(int)FunctionCode.DoubleWordDivide] = 
-            //_specialTable[(int)FunctionCode.DoubleWordDivideUnsigned]
+            _specialTable[(int)FunctionCode.DoubleWordMultiply] = (il, inst, pc) => MultR<long, Int128>(il, inst);
+            _specialTable[(int)FunctionCode.DoubleWordMultiplyUnsigned] = (il, inst, pc) => MultR<ulong, UInt128>(il, inst);
+            _specialTable[(int)FunctionCode.DoubleWordDivide] = (il, inst, pc) => DivR<long>(il, inst, true);
+            _specialTable[(int)FunctionCode.DoubleWordDivideUnsigned] = (il, inst, pc) => DivR<long>(il, inst, false);
             _specialTable[(int)FunctionCode.DoubleWordAdd] = (il, inst, pc) => CheckedAluR<long>(il, inst, pc, OpCodes.Add, false);
             _specialTable[(int)FunctionCode.DoubleWordAddUnsigned] = (il, inst, pc) => AluR<long>(il, inst, OpCodes.Add);
             _specialTable[(int)FunctionCode.DoubleWordSubtract] = (il, inst, pc) => CheckedAluR<long>(il, inst, pc, OpCodes.Sub, true);
@@ -122,8 +123,8 @@ public partial class MipsJitCompiler<T>
         if (version is < MipsVersion.Mips_R6)
         {
             _specialTable[(int)FunctionCode.JumpRegister] = (il, inst, pc) => JumpR(il, inst, pc);
-            _specialTable[(int)FunctionCode.Multiply] = (il, inst, pc) => MultR(il, inst, true);
-            _specialTable[(int)FunctionCode.MultiplyUnsigned] = (il, inst, pc) => MultR(il, inst, false);
+            _specialTable[(int)FunctionCode.Multiply] = (il, inst, pc) => MultR<int, long>(il, inst);
+            _specialTable[(int)FunctionCode.MultiplyUnsigned] = (il, inst, pc) => MultR<uint, ulong>(il, inst);
             _specialTable[(int)FunctionCode.Divide] = (il, inst, pc) => DivR<int>(il, inst, true);
             _specialTable[(int)FunctionCode.DivideUnsigned] = (il, inst, pc) => DivR<int>(il, inst, false);
             _specialTable[(int)FunctionCode.MoveFromHigh] = (il, inst, pc) => MoveFromTo(il, MipsGpRegister.High, inst.RD);

@@ -41,7 +41,7 @@ public unsafe partial class MipsJitCompiler<T>
         EmitLdind(il);
 
         // Convert the value to TData if neccesary
-        if (typeof(T) != typeof(TData))
+        if (sizeof(T) != sizeof(TData))
             EmitConv<TData>(il);
     }
 

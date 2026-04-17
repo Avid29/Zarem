@@ -31,6 +31,9 @@ public unsafe partial class MipsJitCompiler<T>
     private readonly MethodInfo _getMemoryMethod;
     private readonly Dictionary<Type, MethodInfo> _readMethods = [];
     private readonly Dictionary<Type, MethodInfo> _writeMethods = [];
+    private readonly Dictionary<Type, MethodInfo> _multiplyMethod = [];
+    private readonly Dictionary<Type, MethodInfo> _castDownMethods = [];
+    private readonly Dictionary<Type, MethodInfo> _rightShiftMethods = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsJitCompiler{T}"/> class.
@@ -56,6 +59,25 @@ public unsafe partial class MipsJitCompiler<T>
                 .MakeGenericMethod(type);
         }
 
+        Type[] multiplyTypes = [typeof(int), typeof(uint), typeof(long), typeof(ulong)];
+        foreach (var type in multiplyTypes)
+        {
+            var method = typeof(Math).GetMethod("BigMul", [type, type]);
+            Guard.IsNotNull(method);
+            _multiplyMethod[type] = method;
+        }
+
+        (Type, Type)[] bigTypePairs = [(typeof(Int128), typeof(long)), (typeof(UInt128), typeof(ulong))];
+        foreach (var (type, pair) in bigTypePairs)
+        {
+            var castDownMethod = type.GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .FirstOrDefault(m => m.Name == "op_Explicit" && m.ReturnType == pair);
+            var rightShiftMethod = type.GetMethod("op_RightShift", [type, typeof(int)]);
+            Guard.IsNotNull(castDownMethod);
+            Guard.IsNotNull(rightShiftMethod);
+            _castDownMethods[type] = castDownMethod;
+            _rightShiftMethods[type] = rightShiftMethod;
+        }
 
         InitTables(_cpu.Config);
     }
@@ -184,7 +206,7 @@ public unsafe partial class MipsJitCompiler<T>
             }
 
             // Convert to T if neccesary
-            if (typeof(TData) != typeof(T))
+            if (sizeof(TData) != sizeof(T))
                 EmitConv(il);
         });
 
@@ -223,7 +245,7 @@ public unsafe partial class MipsJitCompiler<T>
         EmitStoreRegister(il, inst.RD, () =>
         {
             il.Emit(OpCodes.Ldloc, result);
-            if (typeof(TData) != typeof(T))
+            if (sizeof(TData) != sizeof(T))
                 EmitConv(il);
         });
 
@@ -278,33 +300,46 @@ public unsafe partial class MipsJitCompiler<T>
         EmitStoreRegister(il, inst.RT, () =>
         {
             il.Emit(OpCodes.Ldloc, result);
-            if (typeof(TData) != typeof(T))
+            if (sizeof(TData) != sizeof(T))
                 EmitConv(il);
         });
 
         return false;
     }
-
-    private bool MultR(ILGenerator il, MipsInstruction inst, bool signed)
+    
+    private bool MultR<TData, TLong>(ILGenerator il, MipsInstruction inst)
+        where TData : unmanaged, INumber<TData>
+        where TLong : unmanaged, INumber<TLong>
     {
         // Retrieve the rs/rt registers
-        EmitLoadRegister<int>(il, inst.RS);
-        il.Emit(signed ? OpCodes.Conv_I8 : OpCodes.Conv_U8);
-        EmitLoadRegister<int>(il, inst.RT);
-        il.Emit(signed ? OpCodes.Conv_I8 : OpCodes.Conv_U8);
+        EmitLoadRegister<TData>(il, inst.RS);
+        EmitLoadRegister<TData>(il, inst.RT);
 
-        // Apply multiplication and store result as a local
-        var localResult = il.DeclareLocal(typeof(long));
-        il.Emit(OpCodes.Mul);
+        // Apply multiplication and store rsult as a local
+        var localResult = il.DeclareLocal(typeof(TLong));
+        il.Emit(OpCodes.Call, _multiplyMethod[typeof(TData)]);
         il.Emit(OpCodes.Stloc, localResult);
+
+        int shiftAmount = sizeof(TData) * 8;
+        bool bigLong = sizeof(TLong) <= sizeof(long);
 
         // Store high
         EmitStoreRegister(il, MipsGpRegister.High, () =>
         {
             il.Emit(OpCodes.Ldloc, localResult);
-            EmitLoadConstant(il, sizeof(int) * 8);
-            il.Emit(OpCodes.Shr_Un);
-            EmitConv<int>(il);
+            EmitLoadConstant(il, shiftAmount);
+
+            if (bigLong)
+            {
+                il.Emit(OpCodes.Shr_Un);
+                EmitConv<TData>(il);
+            }
+            else
+            {
+                il.Emit(OpCodes.Call, _rightShiftMethods[typeof(TLong)]);
+                il.Emit(OpCodes.Call, _castDownMethods[typeof(TLong)]);
+            }
+
             EmitConv(il);
         });
 
@@ -312,7 +347,16 @@ public unsafe partial class MipsJitCompiler<T>
         EmitStoreRegister(il, MipsGpRegister.Low, () =>
         {
             il.Emit(OpCodes.Ldloc, localResult);
-            EmitConv<int>(il);
+
+            if (bigLong)
+            {
+                EmitConv<TData>(il);
+            }
+            else
+            {
+                il.Emit(OpCodes.Call, _castDownMethods[typeof(TLong)]);
+            }
+
             EmitConv(il);
         });
 
@@ -343,7 +387,7 @@ public unsafe partial class MipsJitCompiler<T>
             il.Emit(OpCodes.Ldloc, rsLocal);
             il.Emit(OpCodes.Ldloc, rtLocal);
             il.Emit(signed ? OpCodes.Rem : OpCodes.Rem_Un);
-            if (typeof(TData) != typeof(T))
+            if (sizeof(TData) != sizeof(T))
                 EmitConv(il);
         });
 
@@ -353,7 +397,7 @@ public unsafe partial class MipsJitCompiler<T>
             il.Emit(OpCodes.Ldloc, rsLocal);
             il.Emit(OpCodes.Ldloc, rtLocal);
             il.Emit(signed ? OpCodes.Div : OpCodes.Div_Un);
-            if (typeof(TData) != typeof(T))
+            if (sizeof(TData) != sizeof(T))
                 EmitConv(il);
         });
 
@@ -404,17 +448,17 @@ public unsafe partial class MipsJitCompiler<T>
         return false; // Does not complete the block
     }
 
-    private bool Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false) => Jump(il, inst, pc, link: link, pushAddress: il =>
+    private bool Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false) => Jump(il, pc, link: link, pushAddress: il =>
     {
         EmitLoadConstant(il, T.CreateTruncating(inst.Address));
     });
 
-    private bool JumpR(ILGenerator il, MipsInstruction inst, T pc, bool link = false) => Jump(il, inst, pc, link: link, pushAddress: il =>
+    private bool JumpR(ILGenerator il, MipsInstruction inst, T pc, bool link = false) => Jump(il, pc, link: link, pushAddress: il =>
     {
         EmitLoadRegister(il, inst.RS);
     });
 
-    private bool Jump(ILGenerator il, MipsInstruction inst, T pc, Action<ILGenerator> pushAddress, bool link = false)
+    private bool Jump(ILGenerator il, T pc, Action<ILGenerator> pushAddress, bool link = false)
     {
         bool delaySlots = !_cpu.Config.DisableDelaySlots;
 
