@@ -13,18 +13,18 @@ namespace Zarem.Emulator.Models.JIT;
 public class MipsBlockCache<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private readonly Dictionary<T, MipsBlockDelegate<T>> _cache = [];
+    private readonly Dictionary<T, MipsJitBlock<T>> _cache = [];
 
     /// <summary>
     /// Attempts to retreive a cached block of JIT code.
     /// </summary>
-    public bool TryGet(T pc, [NotNullWhen(true)] out MipsBlockDelegate<T>? block)
+    public bool TryGet(T pc, [NotNullWhen(true)] out MipsJitBlock<T>? block)
         => _cache.TryGetValue(pc, out block);
 
     /// <summary>
     /// Stores a block of JIT code.
     /// </summary>
-    public void Store(T pc, MipsBlockDelegate<T> block)
+    public void Store(T pc, MipsJitBlock<T> block)
         => _cache[pc] = block;
 
     /// <summary>

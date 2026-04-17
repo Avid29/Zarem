@@ -2,18 +2,16 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using System.Diagnostics;
 using System.Numerics;
 using System.Threading;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.Models.Interpret;
-using Zarem.Emulator.TrapHandlers;
 using Zarem.Extensions;
 using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine.Interpret;
 
@@ -38,8 +36,29 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>
     /// <inheritdoc/>
     public override void Run(CancellationToken ct)
     {
+        long totalInstructions = 0;
+        var stopwatch = Stopwatch.StartNew();
+        long lastReportTime = 0;
+
         while (!ct.IsCancellationRequested)
+        {
             Step();
+
+            // Update instruction count
+            totalInstructions++;
+
+            // Speed Check: Every 1000ms (1 second)
+            long currentTime = stopwatch.ElapsedMilliseconds;
+            if (currentTime - lastReportTime >= 1000)
+            {
+                double seconds = (currentTime - lastReportTime) / 1000.0;
+                ClockSpeed = totalInstructions / seconds;
+
+                // Reset for next interval
+                totalInstructions = 0;
+                lastReportTime = currentTime;
+            }
+        }
     }
 
     /// <inheritdoc/>

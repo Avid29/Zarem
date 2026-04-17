@@ -93,7 +93,7 @@ public unsafe partial class MipsJitCompiler<T>
     /// </summary>
     /// <param name="startPc">The entry point of the JIT block.</param>
     /// <returns>The method block.</returns>
-    public MipsBlockDelegate<T> CompileBlock(T startPc)
+    public MipsJitBlock<T> CompileBlock(T startPc)
     {
         Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
@@ -101,15 +101,18 @@ public unsafe partial class MipsJitCompiler<T>
 
         T currentPc = startPc;
         bool isFinished = false;
+        int blockSize = 0;
 
         while (!isFinished)
         {
             var inst = (MipsInstruction)_cpu.Memory.Read<uint>(ulong.CreateTruncating(currentPc));
             isFinished = CompileInstruction(il, inst, currentPc);
             currentPc += T.CreateTruncating(4);
+            blockSize++;
         }
 
-        return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
+        var @delegate = (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
+        return new(@delegate, blockSize);
     }
 
     /// <summary>
