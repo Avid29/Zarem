@@ -213,7 +213,7 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Stloc, result);
 
         // Overflow Guard
-        EmitOverflowGuard<TData>(il, pc, isSubtraction, rs, rt, result, noOverflow);
+        EmitOverflowGuard<TData>(il, pc, rs, rt, result, noOverflow, isSubtraction);
 
         // Safe Path
         il.MarkLabel(noOverflow);
@@ -227,15 +227,16 @@ public unsafe partial class MipsJitCompiler<T>
         return false;
     }
 
-    private bool AluI(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, bool signExtend = false)
+    private bool AluI<TData>(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, bool signExtend = false)
+        where TData : unmanaged, INumber<TData>
     {
         // Fetch the raw immediate from the instruction
-        short rawImm = inst.Immediate;
-        T extended = signExtend ? T.CreateTruncating((long)rawImm) : T.CreateTruncating((ulong)rawImm);
+        var rawImm = inst.Immediate;
+        var extended = signExtend ? TData.CreateTruncating((long)rawImm) : TData.CreateTruncating((ulong)rawImm);
 
         EmitStoreRegister(il, inst.RT, () =>
         {
-            EmitLoadRegister(il, inst.RS);
+            EmitLoadRegister<TData>(il, inst.RS);
             EmitLoadConstant(il, extended);
 
             il.Emit(ilOpCode);
@@ -244,33 +245,39 @@ public unsafe partial class MipsJitCompiler<T>
         return false;
     }
 
-    private bool CheckedAluI(ILGenerator il, MipsInstruction inst, T pc, OpCode ilOpCode)
+    private bool CheckedAluI<TData>(ILGenerator il, MipsInstruction inst, T pc, OpCode ilOpCode)
+        where TData : unmanaged, INumber<TData>
     {
         Label noOverflow = il.DefineLabel();
 
         // Load RS into local
         EmitLoadRegister(il, inst.RS);
-        LocalBuilder rs = il.DeclareLocal(typeof(T));
+        LocalBuilder rs = il.DeclareLocal(typeof(TData));
         il.Emit(OpCodes.Stloc, rs);
 
         // Load Immediate into local (Sign-extended)
-        EmitLoadConstant(il, T.CreateTruncating(inst.Immediate));
-        LocalBuilder imm = il.DeclareLocal(typeof(T));
+        EmitLoadConstant(il, TData.CreateTruncating(inst.Immediate));
+        LocalBuilder imm = il.DeclareLocal(typeof(TData));
         il.Emit(OpCodes.Stloc, imm);
 
         // Calculate
         il.Emit(OpCodes.Ldloc, rs);
         il.Emit(OpCodes.Ldloc, imm);
         il.Emit(ilOpCode);
-        LocalBuilder result = il.DeclareLocal(typeof(T));
+        LocalBuilder result = il.DeclareLocal(typeof(TData));
         il.Emit(OpCodes.Stloc, result);
 
         // Overflow Guard
-        EmitOverflowGuard<T>(il, pc, false, rs, imm, result, noOverflow);
+        EmitOverflowGuard<TData>(il, pc, rs, imm, result, noOverflow);
 
         // Safe Path
         il.MarkLabel(noOverflow);
-        EmitStoreRegister(il, inst.RT, () => il.Emit(OpCodes.Ldloc, result));
+        EmitStoreRegister(il, inst.RT, () =>
+        {
+            il.Emit(OpCodes.Ldloc, result);
+            if (typeof(TData) != typeof(T))
+                EmitConv(il);
+        });
 
         return false;
     }

@@ -249,7 +249,7 @@ public unsafe partial class MipsJitCompiler<T>
         }
     }
 
-    private static void EmitOverflowGuard<TData>(ILGenerator il, T pc, bool isSubtraction, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow)
+    private static void EmitOverflowGuard<TData>(ILGenerator il, T pc, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow, bool isSubtraction = false)
         where TData : unmanaged, INumber<TData>
     {
         // Logic: ((rs ^ result) & (rtOrImm ^ result)) < 0  (for Addition)
