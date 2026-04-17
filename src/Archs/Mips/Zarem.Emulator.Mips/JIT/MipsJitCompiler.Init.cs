@@ -64,6 +64,19 @@ public partial class MipsJitCompiler<T>
             _opCodeTable[(int)MipsOpCode.LoadDoubleWord] = Load<long>;
             _opCodeTable[(int)MipsOpCode.StoreDoubleWord] = Store<long>;
         }
+
+        if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        {
+            _opCodeTable[(int)MipsOpCode.BranchOnEqualLikely] = (il, inst, pc) => BranchCompareReg(il, inst, pc, OpCodes.Beq, true);
+            _opCodeTable[(int)MipsOpCode.BranchOnNotEqualLikely] = (il, inst, pc) => BranchCompareReg(il, inst, pc, OpCodes.Bne_Un, true);
+            _opCodeTable[(int)MipsOpCode.BranchOnLessThanOrEqualToZeroLikely] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Ble, true);
+            _opCodeTable[(int)MipsOpCode.BranchOnGreaterThanZeroLikely] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Bgt, true);
+
+            //_opCodeTable[(int)MipsOpCode.LoadDoubleWordCoprocessor1] = &NotImplemented; // TODO
+            //_opCodeTable[(int)MipsOpCode.LoadDoubleWordCoprocessor2] = &NotImplemented; // TODO
+            //_opCodeTable[(int)MipsOpCode.StoreDoubleWordCoprocessor1] = &NotImplemented; // TODO
+            //_opCodeTable[(int)MipsOpCode.StoreDoubleWordCoprocessor2] = &NotImplemented; // TODO
+        }
     }
 
     private void InitSpecial(MipsVersion version)
@@ -160,6 +173,10 @@ public partial class MipsJitCompiler<T>
             _regImmTable[(int)RegImmFuncCode.TrapOnLessThanImmediateUnsigned] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Bge_Un);
             _regImmTable[(int)RegImmFuncCode.TrapOnEqualsImmediate] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Bne_Un);
             _regImmTable[(int)RegImmFuncCode.TrapOnNotEqualsImmediate] = (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Beq);
+            _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroLikely] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Blt, true);
+            _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Bge, true);
+            _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroLikelyAndLink] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Beq, true);
+            _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink] = (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Beq, true);
         }
     }
 

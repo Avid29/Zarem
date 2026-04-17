@@ -309,7 +309,7 @@ public unsafe partial class MipsJitCompiler<T>
                 EmitConv(il);
         });
     }
-    
+
     private void MultR<TData, TLong>(ILGenerator il, MipsInstruction inst, int c = 0)
         where TData : unmanaged, INumber<TData>
         where TLong : unmanaged, INumber<TLong>
@@ -424,7 +424,7 @@ public unsafe partial class MipsJitCompiler<T>
 
         il.MarkLabel(endDiv);
     }
-    
+
     private void Load<TData>(ILGenerator il, MipsInstruction inst, T pc)
         where TData : unmanaged
     {
@@ -496,17 +496,19 @@ public unsafe partial class MipsJitCompiler<T>
         EmitRet(il, pushAddress);
     }
 
-    private void BranchCompareReg(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode) => Branch(il, inst, pc, conditionOpCode, il =>
-    {
-        EmitLoadRegister(il, inst.RS);
-        EmitLoadRegister(il, inst.RT);
-    });
+    private void BranchCompareReg(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, bool likely = false)
+        => Branch(il, inst, pc, conditionOpCode, likely: likely, pushOperands: il =>
+        {
+            EmitLoadRegister(il, inst.RS);
+            EmitLoadRegister(il, inst.RT);
+        });
 
-    private void BranchCompareZero(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode) => Branch(il, inst, pc, conditionOpCode, il =>
-    {
-        EmitLoadRegister(il, inst.RS);
-        EmitLoadConstant(il, T.Zero);
-    });
+    private void BranchCompareZero(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, bool likely = false)
+        => Branch(il, inst, pc, conditionOpCode, likely: likely, pushOperands: il =>
+        {
+            EmitLoadRegister(il, inst.RS);
+            EmitLoadConstant(il, T.Zero);
+        });
 
     private void Branch(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, Action<ILGenerator> pushOperands, bool likely = false)
     {
@@ -613,7 +615,7 @@ public unsafe partial class MipsJitCompiler<T>
             EmitLoadRegister<TData>(il, inst.RS);
 
             method();
-            
+
             if (sizeof(TData) != sizeof(T))
                 EmitConv(il);
         });

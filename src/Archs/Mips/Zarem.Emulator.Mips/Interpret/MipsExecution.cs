@@ -111,11 +111,12 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static MipsExecution<T> CreateJump(T absolutePC)
+    public static MipsExecution<T> CreateJump(T absolutePC, bool force = false)
     {
         return new MipsExecution<T>
         {
             ProgramCounter = absolutePC,
+            SideEffect = force ? SideEffect.ForceProgramCounter : SideEffect.ProgramCounter,
         };
     }
 

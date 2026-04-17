@@ -256,32 +256,70 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
     {
         var linkAddress = T.CreateTruncating(config.DisableDelaySlots ? 4 : 8);
         var noBranchAddress = T.CreateTruncating(config.ExecutionMode is ExecutionMode.JustInTime && !config.DisableDelaySlots ? 8 : 4);
+        var branchAddress = T.CreateTruncating(84);
 
         // Jump
         yield return [new ExecutionTestCase<T>(config, "j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
-        yield return [new ExecutionTestCase<T>(config, "jal 1000", MipsGpRegister.ReturnAddress, linkAddress) { ExpectedPC = T.CreateTruncating(1000) }];
         yield return [new ExecutionTestCase<T>(config, "jr $t4") { ExpectedPC = T.CreateTruncating(40) }];
+
+        // Jump And Link
+        yield return [new ExecutionTestCase<T>(config, "jal 1000", MipsGpRegister.ReturnAddress, linkAddress) { ExpectedPC = T.CreateTruncating(1000) }];
         yield return [new ExecutionTestCase<T>(config, "jalr $t4", MipsGpRegister.ReturnAddress, linkAddress) { ExpectedPC = T.CreateTruncating(40) }];
 
-        // Branch Equality
-        yield return [new ExecutionTestCase<T>(config, "beq $t2, $t3, 80") { ExpectedPC = noBranchAddress }];
-        yield return [new ExecutionTestCase<T>(config, "beq $t1, $t1, 80") { ExpectedPC = T.CreateTruncating(84) }];
-        yield return [new ExecutionTestCase<T>(config, "bne $t1, $t1, 80") { ExpectedPC = noBranchAddress }];
-        yield return [new ExecutionTestCase<T>(config, "bne $t3, $t2, 80") { ExpectedPC = T.CreateTruncating(84) }];
+        // Branch Equality: True
+        yield return [new ExecutionTestCase<T>(config, "beq $t1, $t1, 80") { ExpectedPC = branchAddress }];
+        yield return [new ExecutionTestCase<T>(config, "bne $t3, $t2, 80") { ExpectedPC = branchAddress }];
 
-        // Branch Compare
+        // Branch Equality: False
+        yield return [new ExecutionTestCase<T>(config, "beq $t2, $t3, 80") { ExpectedPC = noBranchAddress }];
+        yield return [new ExecutionTestCase<T>(config, "bne $t1, $t1, 80") { ExpectedPC = noBranchAddress }];
+
+        // Branch Compare: True
+        yield return [new ExecutionTestCase<T>(config, "blez $s0, 80") { ExpectedPC = branchAddress }];
+        yield return [new ExecutionTestCase<T>(config, "blez $s5, 80") { ExpectedPC = branchAddress }];
+        yield return [new ExecutionTestCase<T>(config, "bgtz $s1, 80") { ExpectedPC = branchAddress }];
+        yield return [new ExecutionTestCase<T>(config, "bltz $s5, 80") { ExpectedPC = branchAddress }];
+        yield return [new ExecutionTestCase<T>(config, "bgez $s1, 80") { ExpectedPC = branchAddress }];
+        yield return [new ExecutionTestCase<T>(config, "bgez $s0, 80") { ExpectedPC = branchAddress }];
+
+        // Branch Compare: False
         yield return [new ExecutionTestCase<T>(config, "blez $s1, 80") { ExpectedPC = noBranchAddress }];
-        yield return [new ExecutionTestCase<T>(config, "blez $s0, 80") { ExpectedPC = T.CreateTruncating(84) }];
-        yield return [new ExecutionTestCase<T>(config, "blez $s5, 80") { ExpectedPC = T.CreateTruncating(84) }];
-        yield return [new ExecutionTestCase<T>(config, "bgtz $s1, 80") { ExpectedPC = T.CreateTruncating(84) }];
         yield return [new ExecutionTestCase<T>(config, "bgtz $s0, 80") { ExpectedPC = noBranchAddress }];
         yield return [new ExecutionTestCase<T>(config, "bgtz $s5, 80") { ExpectedPC = noBranchAddress }];
         yield return [new ExecutionTestCase<T>(config, "bltz $s1, 80") { ExpectedPC = noBranchAddress }];
         yield return [new ExecutionTestCase<T>(config, "bltz $s0, 80") { ExpectedPC = noBranchAddress }];
-        yield return [new ExecutionTestCase<T>(config, "bltz $s5, 80") { ExpectedPC = T.CreateTruncating(84) }];
-        yield return [new ExecutionTestCase<T>(config, "bgez $s1, 80") { ExpectedPC = T.CreateTruncating(84) }];
-        yield return [new ExecutionTestCase<T>(config, "bgez $s0, 80") { ExpectedPC = T.CreateTruncating(84) }];
         yield return [new ExecutionTestCase<T>(config, "bgez $s5, 80") { ExpectedPC = noBranchAddress }];
+
+        // Branch Likely
+        if (config.Version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        {
+            // If branch likely fails, it must skip the delay slot (PC + 8)
+            var likelyFailAddress = config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
+
+            // Branch Equality: True
+            yield return [new ExecutionTestCase<T>(config, "beql $t1, $t1, 80") { ExpectedPC = branchAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bnel $t3, $t2, 80") { ExpectedPC = branchAddress }];
+
+            // Branch Equality: False
+            yield return [new ExecutionTestCase<T>(config, "beql $t2, $t3, 80") { ExpectedPC = likelyFailAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bnel $t1, $t1, 80") { ExpectedPC = likelyFailAddress }];
+
+            // Branch Compare: True
+            yield return [new ExecutionTestCase<T>(config, "blezl $s0, 80") { ExpectedPC = branchAddress }];
+            yield return [new ExecutionTestCase<T>(config, "blezl $s5, 80") { ExpectedPC = branchAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bgtzl $s1, 80") { ExpectedPC = branchAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bltzl $s5, 80") { ExpectedPC = branchAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bgezl $s1, 80") { ExpectedPC = branchAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bgezl $s0, 80") { ExpectedPC = branchAddress }];
+
+            // Branch Compare: False
+            yield return [new ExecutionTestCase<T>(config, "blezl $s1, 80") { ExpectedPC = likelyFailAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bgtzl $s0, 80") { ExpectedPC = likelyFailAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bgtzl $s5, 80") { ExpectedPC = likelyFailAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bltzl $s1, 80") { ExpectedPC = likelyFailAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bltzl $s0, 80") { ExpectedPC = likelyFailAddress }];
+            yield return [new ExecutionTestCase<T>(config, "bgezl $s5, 80") { ExpectedPC = likelyFailAddress }];
+        }
     }
 
     private static IEnumerable<object[]> GetCompareInstructionTests<T>(MipsEmulatorConfig config)

@@ -193,7 +193,8 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>
                 (RegisterFile.High, RegisterFile.Low) = (execution.High, execution.Low);
                 break;
             case SideEffect.ProgramCounter:
-                ApplyJump(execution.ProgramCounter, ref nextPc);
+            case SideEffect.ForceProgramCounter:
+                ApplyJump(execution.ProgramCounter, ref nextPc, execution.SideEffect is SideEffect.ForceProgramCounter);
                 break;
             case SideEffect.ReadMemory:
             case SideEffect.ReadMemorySigned:
@@ -216,9 +217,9 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>
         return MipsTrap.None;
     }
 
-    private void ApplyJump(T targetPc, ref T nextPc)
+    private void ApplyJump(T targetPc, ref T nextPc, bool force)
     {
-        if (Config.DisableDelaySlots)
+        if (force || Config.DisableDelaySlots)
         {
             // Branch delays are disabled. Just change the PC
             nextPc = targetPc;
