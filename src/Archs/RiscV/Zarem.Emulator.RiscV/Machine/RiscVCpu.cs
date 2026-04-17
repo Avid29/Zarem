@@ -79,6 +79,9 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
     /// <inheritdoc/>
     public MemorySystem Memory { get; }
 
+    /// <inheritdoc/>
+    public double ClockSpeed { get; set; }
+
     /// <summary>
     /// Gets or sets the value of a general-purpose register on the processor.
     /// </summary>

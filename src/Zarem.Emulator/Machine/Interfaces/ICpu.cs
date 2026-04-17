@@ -48,6 +48,11 @@ public interface ICpu : IDisposable
     MemorySystem Memory { get; }
 
     /// <summary>
+    /// Gets the number of instructions or cycles being executed.
+    /// </summary>
+    double ClockSpeed { get; }
+
+    /// <summary>
     /// Starts or resumes execution. 
     /// Execution continues until the cancellation token is signaled 
     /// or an internal shutdown/trap occurs.

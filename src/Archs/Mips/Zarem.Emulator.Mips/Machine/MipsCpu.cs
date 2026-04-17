@@ -94,6 +94,9 @@ public abstract partial class MipsCpu<T> : IMipsCpu
     /// </summary>
     public MemorySystem Memory { get; }
 
+    /// <inheritdoc/>
+    public double ClockSpeed { get; protected set; }
+
     /// <inheritdoc cref="IMipsCpu.DelaySlot"/>
     public T? DelaySlot { get; protected set; }
 
