@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
@@ -51,6 +52,17 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.StoreByte] = Store<sbyte>;
         _opCodeTable[(int)MipsOpCode.StoreHalfWord] = Store<short>;
         _opCodeTable[(int)MipsOpCode.StoreWord] = Store<int>;
+
+
+        if (version is >= MipsVersion.MipsIII && version.Is64Bit())
+        {
+            _opCodeTable[(int)MipsOpCode.DoubleWordAddImmediate] = (il, inst, pc) => CheckedAluI<long>(il, inst, pc, OpCodes.Add);
+            _opCodeTable[(int)MipsOpCode.DoubleWordAddImmediateUnsigned] = (il, inst, pc) => AluI<long>(il, inst, OpCodes.Add, signExtend: true);
+            //_opCodeTable[(int)MipsOpCode.LoadDoubleWordLeft] =
+            //_opCodeTable[(int)MipsOpCode.LoadDoubleWordRight] = 
+            _opCodeTable[(int)MipsOpCode.LoadDoubleWord] = Load<long>;
+            _opCodeTable[(int)MipsOpCode.StoreDoubleWord] = Store<long>;
+        }
     }
 
     private void InitSpecial(MipsVersion version)
@@ -84,6 +96,27 @@ public partial class MipsJitCompiler<T>
             _specialTable[(int)FunctionCode.TrapOnLessThanUnsigned] = (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Bge_Un);
             _specialTable[(int)FunctionCode.TrapOnEquals] = (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Bne_Un);
             _specialTable[(int)FunctionCode.TrapOnNotEquals] = (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Beq);
+        }
+
+        if (version is >= MipsVersion.MipsIII && version.Is64Bit())
+        {
+            //_specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalVariable]
+            //_specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalVariable]
+            //_specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticVariable] = 
+            //_specialTable[(int)FunctionCode.DoubleWordMultiply] = 
+            //_specialTable[(int)FunctionCode.DoubleWordMultiplyUnsigned] = 
+            //_specialTable[(int)FunctionCode.DoubleWordDivide] = 
+            //_specialTable[(int)FunctionCode.DoubleWordDivideUnsigned]
+            _specialTable[(int)FunctionCode.DoubleWordAdd] = (il, inst, pc) => CheckedAluR<long>(il, inst, pc, OpCodes.Add, false);
+            _specialTable[(int)FunctionCode.DoubleWordAddUnsigned] = (il, inst, pc) => AluR<long>(il, inst, OpCodes.Add);
+            _specialTable[(int)FunctionCode.DoubleWordSubtract] = (il, inst, pc) => CheckedAluR<long>(il, inst, pc, OpCodes.Sub, true);
+            _specialTable[(int)FunctionCode.DoubleWordSubtractUnsigned] = (il, inst, pc) => AluR<long>(il, inst, OpCodes.Sub);
+            //_specialTable[(int)FunctionCode.DoubleWordShiftLeftLogical]
+            //_specialTable[(int)FunctionCode.DoubleWordShiftRightLogical]
+            //_specialTable[(int)FunctionCode.DoubleWordShiftRightArithmetic] = 
+            //_specialTable[(int)FunctionCode.DoubleWordShiftLeftLogicalPlus32] =
+            //_specialTable[(int)FunctionCode.DoubleWordShiftRightLogicalPlus32] =
+            //_specialTable[(int)FunctionCode.DoubleWordShiftRightArithmeticPlus32] = 
         }
 
         if (version is < MipsVersion.Mips_R6)
