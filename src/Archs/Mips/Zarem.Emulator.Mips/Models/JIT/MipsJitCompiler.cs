@@ -37,6 +37,9 @@ public unsafe partial class MipsJitCompiler<T>
     private readonly Dictionary<Type, MethodInfo> _castDownMethods = [];
     private readonly Dictionary<Type, MethodInfo> _rightShiftMethods = [];
 
+    private readonly HashSet<MipsGpRegister> _loadRegs = [];
+    private readonly HashSet<MipsGpRegister> _storeRegs = [];
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsJitCompiler{T}"/> class.
     /// </summary>
@@ -98,22 +101,23 @@ public unsafe partial class MipsJitCompiler<T>
         Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
+
+        var endPc = DiscoverBlock(startPc);
+        ScanRegisterUsage(startPc, endPc);
         EmitSetupLocalRegisters(il);
 
         T currentPc = startPc;
         bool isFinished = false;
-        int blockSize = 0;
 
-        while (!isFinished)
+        while (currentPc < endPc)
         {
-            var inst = (MipsInstruction)_cpu.Memory.Read<uint>(ulong.CreateTruncating(currentPc));
+            var inst = Fetch(currentPc);
             isFinished = CompileInstruction(il, inst, currentPc);
             currentPc += T.CreateTruncating(4);
-            blockSize++;
         }
 
         var @delegate = (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
-        return new(@delegate, blockSize);
+        return new(@delegate, int.CreateTruncating(endPc - startPc));
     }
 
     /// <summary>
@@ -122,18 +126,15 @@ public unsafe partial class MipsJitCompiler<T>
     public MipsBlockDelegate<T> CompileLoneInstruction(MipsInstruction inst, T pc)
     {
         Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
-        var method = new DynamicMethod(
-            $"Insert_0x{pc:X}",
-            typeof(T),
-            parameterTypes,
-            true);
-
+        var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
+
+        ScanRegisterUsage(pc, pc);
+        LogRegisterUsage(inst);
         EmitSetupLocalRegisters(il);
+        CompileInstruction(il, inst, pc);
 
-        bool ended = CompileInstruction(il, inst, pc);
-
-        if (!ended)
+        if (!IsControlFlow(inst))
         {
             EmitRet(il, pc + T.CreateTruncating(4));
         }

@@ -16,12 +16,18 @@ public unsafe partial class MipsJitCompiler<T>
 
     private void EmitSetupLocalRegisters(ILGenerator il)
     {
+        // Setup local registers
         _regLocals = new LocalBuilder[_cpu.RegisterFile.Count];
+        for (int i = 1; i < _cpu.RegisterFile.Count; i++)
+            _regLocals[i] = il.DeclareLocal(typeof(T));
 
-        for (var reg = (MipsGpRegister)0; (int)reg < _cpu.RegisterFile.Count; reg++)
+        // Load read registers
+        foreach (var reg in _loadRegs)
         {
+            if (reg is MipsGpRegister.Zero)
+                continue;
+
             // Load register from memory into local i
-            _regLocals[(int)reg] = il.DeclareLocal(typeof(T));
             EmitStoreRegister(il, reg, () =>
             {
                 EmitLoadRegisterAddress(il, reg);
@@ -32,8 +38,11 @@ public unsafe partial class MipsJitCompiler<T>
 
     private void EmitFlushLocalRegisters(ILGenerator il)
     {
-        for (var reg = (MipsGpRegister)1; (int)reg < _cpu.RegisterFile.Count; reg++)
+        foreach (var reg in _storeRegs)
         {
+            if (reg is MipsGpRegister.Zero)
+                continue;
+
             // Load register local i into memory
             EmitLoadRegisterAddress(il, reg);
             EmitLoadRegister(il, reg);
