@@ -47,7 +47,7 @@ public static class InstructionExtensions
                 FunctionCode.MoveFromHigh or FunctionCode.MoveFromLow or                                                                        // Move
                 FunctionCode.Add or FunctionCode.AddUnsigned or FunctionCode.Subtract or FunctionCode.SubtractUnsigned or                       // Arithmetic
                 FunctionCode.And or FunctionCode.Or or FunctionCode.ExclusiveOr or FunctionCode.Nor or                                          // Logical
-                FunctionCode.SetLessThan or FunctionCode.SetLessThanUnsigned => MipsArgument.RD,                                                    // Sets
+                FunctionCode.SetLessThan or FunctionCode.SetLessThanUnsigned => MipsArgument.RD,                                                // Sets
                 _ => null,
             };
         }
@@ -55,11 +55,11 @@ public static class InstructionExtensions
         return instruction.OpCode switch
         {
             // All these instructions write back to $rt.
-            MipsOpCode.AddImmediate or MipsOpCode.AddImmediateUnsigned or                                                             // Arithmetic
-            MipsOpCode.SetLessThanImmediate or MipsOpCode.SetLessThanImmediateUnsigned or                                             // Sets
-            MipsOpCode.AndImmediate or MipsOpCode.OrImmediate or MipsOpCode.ExclusiveOrImmediate or                                // Logical
-            MipsOpCode.LoadByte or MipsOpCode.LoadHalfWord or MipsOpCode.LoadWordLeft or MipsOpCode.LoadWord or                 // Loads
-            MipsOpCode.LoadByteUnsigned or MipsOpCode.LoadHalfWordUnsigned or MipsOpCode.LoadWordRight => MipsArgument.RT,             // Loads (continued)
+            MipsOpCode.AddImmediate or MipsOpCode.AddImmediateUnsigned or                                                               // Arithmetic
+            MipsOpCode.SetLessThanImmediate or MipsOpCode.SetLessThanImmediateUnsigned or                                               // Sets
+            MipsOpCode.AndImmediate or MipsOpCode.OrImmediate or MipsOpCode.ExclusiveOrImmediate or                                     // Logical
+            MipsOpCode.LoadByte or MipsOpCode.LoadHalfWord or MipsOpCode.LoadWordLeft or MipsOpCode.LoadWord or                         // Loads
+            MipsOpCode.LoadByteUnsigned or MipsOpCode.LoadHalfWordUnsigned or MipsOpCode.LoadWordRight => MipsArgument.RT,              // Loads (continued)
             _ => null,
         };
     }
