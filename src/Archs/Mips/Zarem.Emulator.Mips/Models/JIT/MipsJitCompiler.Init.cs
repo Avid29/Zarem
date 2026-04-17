@@ -124,8 +124,8 @@ public partial class MipsJitCompiler<T>
             _specialTable[(int)FunctionCode.JumpRegister] = (il, inst, pc) => JumpR(il, inst, pc);
             _specialTable[(int)FunctionCode.Multiply] = (il, inst, pc) => MultR(il, inst, true);
             _specialTable[(int)FunctionCode.MultiplyUnsigned] = (il, inst, pc) => MultR(il, inst, false);
-            _specialTable[(int)FunctionCode.Divide] = (il, inst, pc) => DivR(il, inst, true);
-            _specialTable[(int)FunctionCode.DivideUnsigned] = (il, inst, pc) => DivR(il, inst, false);
+            _specialTable[(int)FunctionCode.Divide] = (il, inst, pc) => DivR<int>(il, inst, true);
+            _specialTable[(int)FunctionCode.DivideUnsigned] = (il, inst, pc) => DivR<int>(il, inst, false);
             _specialTable[(int)FunctionCode.MoveFromHigh] = (il, inst, pc) => MoveFromTo(il, MipsGpRegister.High, inst.RD);
             _specialTable[(int)FunctionCode.MoveToHigh] = (il, inst, pc) => MoveFromTo(il, inst.RS, MipsGpRegister.High);
             _specialTable[(int)FunctionCode.MoveFromLow] = (il, inst, pc) => MoveFromTo(il, MipsGpRegister.Low, inst.RD);

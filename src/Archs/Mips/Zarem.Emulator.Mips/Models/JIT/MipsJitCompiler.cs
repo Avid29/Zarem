@@ -288,9 +288,9 @@ public unsafe partial class MipsJitCompiler<T>
     private bool MultR(ILGenerator il, MipsInstruction inst, bool signed)
     {
         // Retrieve the rs/rt registers
-        EmitLoadRegister(il, inst.RS);
+        EmitLoadRegister<int>(il, inst.RS);
         il.Emit(signed ? OpCodes.Conv_I8 : OpCodes.Conv_U8);
-        EmitLoadRegister(il, inst.RT);
+        EmitLoadRegister<int>(il, inst.RT);
         il.Emit(signed ? OpCodes.Conv_I8 : OpCodes.Conv_U8);
 
         // Apply multiplication and store result as a local
@@ -299,64 +299,63 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Stloc, localResult);
 
         // Store high
-        EmitLoadRegisterAddress(il, MipsGpRegister.High);
-        il.Emit(OpCodes.Ldloc, localResult);
-        il.Emit(OpCodes.Ldc_I4, 32);
-        il.Emit(OpCodes.Shr_Un);
-        il.Emit(OpCodes.Conv_U4);
-        il.Emit(OpCodes.Stind_I4);
+        EmitStoreRegister(il, MipsGpRegister.High, () =>
+        {
+            il.Emit(OpCodes.Ldloc, localResult);
+            EmitLoadConstant(il, sizeof(int) * 8);
+            il.Emit(OpCodes.Shr_Un);
+            EmitConv<int>(il);
+            EmitConv(il);
+        });
 
         // Store low
-        EmitLoadRegisterAddress(il, MipsGpRegister.Low);
-        il.Emit(OpCodes.Ldloc, localResult);
-        il.Emit(OpCodes.Conv_U4);
-        il.Emit(OpCodes.Stind_I4);
+        EmitStoreRegister(il, MipsGpRegister.Low, () =>
+        {
+            il.Emit(OpCodes.Ldloc, localResult);
+            EmitConv<int>(il);
+            EmitConv(il);
+        });
 
         return false;
     }
 
-    private bool DivR(ILGenerator il, MipsInstruction inst, bool signed)
+    private bool DivR<TData>(ILGenerator il, MipsInstruction inst, bool signed)
+        where TData : unmanaged, INumber<TData>
     {
         Label endDiv = il.DefineLabel();
 
         // Load operands into locals to keep stack predictable
         EmitLoadRegister(il, inst.RS);
-        LocalBuilder rsLocal = il.DeclareLocal(typeof(T));
+        LocalBuilder rsLocal = il.DeclareLocal(typeof(TData));
         il.Emit(OpCodes.Stloc, rsLocal);
         EmitLoadRegister(il, inst.RT);
-        LocalBuilder rtLocal = il.DeclareLocal(typeof(T));
+        LocalBuilder rtLocal = il.DeclareLocal(typeof(TData));
         il.Emit(OpCodes.Stloc, rtLocal);
 
         // Guard against Div-By-Zero
         il.Emit(OpCodes.Ldloc, rtLocal);
-        il.Emit(OpCodes.Ldc_I4_0);
-        if (sizeof(T) == 8)
-        {
-            il.Emit(OpCodes.Conv_I8); // Ensure width matches T
-        }
+        EmitLoadConstant(il, TData.Zero);
         il.Emit(OpCodes.Beq, endDiv);
 
         // Calculate and store the remainder to High
-        EmitLoadRegisterAddress(il, MipsGpRegister.High);
-        il.Emit(OpCodes.Ldloc, rsLocal);
-        il.Emit(OpCodes.Ldloc, rtLocal);
-        il.Emit(signed ? OpCodes.Rem : OpCodes.Rem_Un);
-        if (sizeof(T) == 4)
+        EmitStoreRegister(il, MipsGpRegister.High, () =>
         {
-            il.Emit(OpCodes.Conv_U4);
-        }
-        EmitStind(il);
+            il.Emit(OpCodes.Ldloc, rsLocal);
+            il.Emit(OpCodes.Ldloc, rtLocal);
+            il.Emit(signed ? OpCodes.Rem : OpCodes.Rem_Un);
+            if (typeof(TData) != typeof(T))
+                EmitConv(il);
+        });
 
         // Calculate and store the quotient to low
-        EmitLoadRegisterAddress(il, MipsGpRegister.Low);
-        il.Emit(OpCodes.Ldloc, rsLocal);
-        il.Emit(OpCodes.Ldloc, rtLocal);
-        il.Emit(signed ? OpCodes.Div : OpCodes.Div_Un);
-        if (sizeof(T) == 4)
+        EmitStoreRegister(il, MipsGpRegister.Low, () =>
         {
-            il.Emit(OpCodes.Conv_U4);
-        }
-        EmitStind(il);
+            il.Emit(OpCodes.Ldloc, rsLocal);
+            il.Emit(OpCodes.Ldloc, rtLocal);
+            il.Emit(signed ? OpCodes.Div : OpCodes.Div_Un);
+            if (typeof(TData) != typeof(T))
+                EmitConv(il);
+        });
 
         il.MarkLabel(endDiv);
 

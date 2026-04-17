@@ -198,8 +198,6 @@ public unsafe partial class MipsJitCompiler<T>
         else if (typeof(TData) == typeof(double)) il.Emit(OpCodes.Conv_R8);
     }
 
-    private static void EmitLoadConstant(ILGenerator il, T value) => EmitLoadConstant<T>(il, value);
-
     private static void EmitLoadConstant<TData>(ILGenerator il, TData value)
         where TData : unmanaged, INumber<TData>
     {
