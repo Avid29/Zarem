@@ -3,9 +3,9 @@
 using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
+using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Emulator.Models.Interpret;
 using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.Models;
@@ -257,6 +257,63 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         var jump = @this._processor.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
         var ret = @this._processor.ProgramCounter + T.CreateTruncating(4);
         exec = TLogic.Check(rs, rt) ? MipsExecution<T>.CreateJumpAndLink(jump, ret) : default;
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap BranchOnLikely<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+        where TLogic : struct, ICondLogic<T>
+    {
+        var rs = T.CreateTruncating(@this._processor[inst.RS]);
+        var rt = T.CreateTruncating(@this._processor[inst.RT]);
+
+        // PC + 4 is the Delay Slot. inst.Offset is relative to the Delay Slot.
+        var jumpTarget = @this._processor.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+
+        if (TLogic.Check(rs, rt))
+        {
+            // Branch Taken: Execute delay slot, then jump.
+            exec = MipsExecution<T>.CreateJump(jumpTarget);
+        }
+        else if (!@this._processor.Config.DisableDelaySlots)
+        {
+            // Branch NOT Taken: Nullify (skip) the delay slot.
+            // We force a jump to PC + 8 to bypass the delay slot entirely.
+            var skipDelaySlot = @this._processor.ProgramCounter + T.CreateTruncating(8);
+            exec = MipsExecution<T>.CreateJump(skipDelaySlot, force: true);
+        }
+        else
+        {
+            exec = default;
+        }
+
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap BranchLinkOnLikely<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+        where TLogic : ICondLogic<T>
+    {
+        var rs = T.CreateTruncating(@this._processor[inst.RS]);
+        var rt = T.CreateTruncating(@this._processor[inst.RT]);
+
+        var jumpTarget = @this._processor.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+        var linkAddr = @this._processor.ProgramCounter + T.CreateTruncating(8);
+
+        if (TLogic.Check(rs, rt))
+        {
+            // Taken: Link, execute delay slot, then jump.
+            exec = MipsExecution<T>.CreateJumpAndLink(jumpTarget, linkAddr);
+        }
+        else if (!@this._processor.Config.DisableDelaySlots)
+        {
+            // NOT Taken: Skip delay slot. No linking occurs on failed Branch Likely.
+            var skipDelaySlot = @this._processor.ProgramCounter + T.CreateTruncating(8);
+            exec = MipsExecution<T>.CreateJump(skipDelaySlot, force: true);
+        }
+        else
+        {
+            exec = default;
+        }
+
         return MipsTrap.None;
     }
 

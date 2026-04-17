@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
+using Zarem.Emulator.Interpret;
+using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
-using Zarem.Emulator.Machine.Interpret;
-using Zarem.Emulator.Machine.JIT;
 using Zarem.Extensions;
 using Zarem.Models.Enums;
 

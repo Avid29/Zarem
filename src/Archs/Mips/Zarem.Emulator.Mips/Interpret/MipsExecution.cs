@@ -6,7 +6,7 @@ using Zarem.Emulator.Models.Enums;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Models.Interpret;
+namespace Zarem.Emulator.Interpret;
 
 /// <summary>
 /// A struct representing the results of an instruction's execution.
@@ -111,11 +111,12 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static MipsExecution<T> CreateJump(T absolutePC)
+    public static MipsExecution<T> CreateJump(T absolutePC, bool force = false)
     {
         return new MipsExecution<T>
         {
             ProgramCounter = absolutePC,
+            SideEffect = force ? SideEffect.ForceProgramCounter : SideEffect.ProgramCounter,
         };
     }
 

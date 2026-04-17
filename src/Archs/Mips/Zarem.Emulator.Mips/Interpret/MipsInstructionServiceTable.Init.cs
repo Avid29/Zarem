@@ -107,10 +107,10 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
 
         if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
         {
-            _opCodeTable[(int)MipsOpCode.BranchOnEqualLikely] = &NotImplemented; // TODO
-            _opCodeTable[(int)MipsOpCode.BranchOnNotEqualLikely] = &NotImplemented; // TODO
-            _opCodeTable[(int)MipsOpCode.BranchOnLessThanOrEqualToZeroLikely] = &NotImplemented; // TODO
-            _opCodeTable[(int)MipsOpCode.BranchOnGreaterThanZeroLikely] = &NotImplemented; // TODO
+            _opCodeTable[(int)MipsOpCode.BranchOnEqualLikely] = &BranchOnLikely<XeqLogic<T>>;
+            _opCodeTable[(int)MipsOpCode.BranchOnNotEqualLikely] = &BranchOnLikely<XneLogic<T>>;
+            _opCodeTable[(int)MipsOpCode.BranchOnLessThanOrEqualToZeroLikely] = &BranchOnLikely<XlezLogic<T, TS>>;
+            _opCodeTable[(int)MipsOpCode.BranchOnGreaterThanZeroLikely] = &BranchOnLikely<XgtzLogic<T, TS>>;
 
             _opCodeTable[(int)MipsOpCode.LoadDoubleWordCoprocessor1] = &NotImplemented; // TODO
             _opCodeTable[(int)MipsOpCode.LoadDoubleWordCoprocessor2] = &NotImplemented; // TODO
@@ -187,8 +187,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
 
         if (version is >= MipsVersion.MipsIV and < MipsVersion.Mips_R6)
         {
-            _specialTable[(int)FunctionCode.MoveOnZero] = &Move<Xeqz<T>>;
-            _specialTable[(int)FunctionCode.MoveOnNotZero] = &Move<Xnez<T>>;
+            _specialTable[(int)FunctionCode.MoveOnZero] = &Move<XeqzLogic<T>>;
+            _specialTable[(int)FunctionCode.MoveOnNotZero] = &Move<XnezLogic<T>>;
         }
 
         if (version is < MipsVersion.Mips_R6)
@@ -224,10 +224,11 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
             _regImmTable[(int)RegImmFuncCode.TrapOnLessThanImmediateUnsigned] = &TrapOnI<XltuLogic<T>>;
             _regImmTable[(int)RegImmFuncCode.TrapOnEqualsImmediate] = &TrapOnI<XeqLogic<T>>;
             _regImmTable[(int)RegImmFuncCode.TrapOnNotEqualsImmediate] = &TrapOnI<XneLogic<T>>;
-            _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroLikely] = &NotImplemented; // TODO
-            _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely] = &NotImplemented; // TODO
-            _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroLikelyAndLink] = &NotImplemented; // TODO
-            _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink] = &NotImplemented; // TODO
+
+            _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroLikely] = &BranchOnLikely<XltzLogic<T, TS>>;
+            _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely] = &BranchOnLikely<XgezLogic<T, TS>>;
+            _regImmTable[(int)RegImmFuncCode.BranchOnLessThanZeroLikelyAndLink] = &BranchLinkOnLikely<XltzLogic<T, TS>>;
+            _regImmTable[(int)RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink] = &BranchLinkOnLikely<XgezLogic<T, TS>>;
         }
 
         if (version is < MipsVersion.Mips_R6)

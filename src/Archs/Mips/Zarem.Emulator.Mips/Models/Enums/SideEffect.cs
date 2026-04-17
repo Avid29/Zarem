@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Emulator.Models.Interpret;
+using Zarem.Emulator.Interpret;
 
 namespace Zarem.Emulator.Models.Enums;
 
@@ -55,9 +55,17 @@ public enum SideEffect
     WriteMemory,
 
     /// <summary>
-    /// Writes back to the program counter (with a delay if enabled).
+    /// Writes back to the program counter.
     /// </summary>
+    /// <remarks>
+    /// Utilizes the delay slot if not disabled by the configuration.
+    /// </remarks>
     ProgramCounter,
+
+    /// <summary>
+    /// Writes back to the program counter, ignoring the delay slot.
+    /// </summary>
+    ForceProgramCounter,
 
     /// <summary>
     /// Writes to co-processor.

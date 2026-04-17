@@ -423,7 +423,7 @@ public partial class LogicTable
     /// <summary>
     /// An <see cref="ICondLogic{T}"/> implementation for an equal to zero logic operation.
     /// </summary>
-    public struct Xeqz<T> : ICondLogic<T>
+    public struct XeqzLogic<T> : ICondLogic<T>
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     {
         /// <inheritdoc/>
@@ -434,7 +434,7 @@ public partial class LogicTable
     /// <summary>
     /// An <see cref="ICondLogic{T}"/> implementation for a not equal to zero logic operation.
     /// </summary>
-    public struct Xnez<T> : ICondLogic<T>
+    public struct XnezLogic<T> : ICondLogic<T>
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     {
         /// <inheritdoc/>

@@ -1,9 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using Zarem.Emulator.Machine.JIT;
 
-namespace Zarem.Emulator.Models.JIT
+namespace Zarem.Emulator.JIT
 {
     /// <summary>
     /// A record for a MIPS JIT Block.
