@@ -112,9 +112,12 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
         // Signed (with signs)
         unchecked
         {
-            yield return [new ExecutionTestCase<T>(config, "add $v0, $t3, $t5", T.CreateTruncating(30 + (-10)))];
-            yield return [new ExecutionTestCase<T>(config, "addi $v0, $t3, -10", T.CreateTruncating(30 + (-10)))];
-            yield return [new ExecutionTestCase<T>(config, "sub $v0, $t2, $t5", T.CreateTruncating(20 - (-10)))];
+            yield return [new ExecutionTestCase<T>(config, "add $v0, $t3, $t5", ToMips32<T>(30 + (-10)))];
+            yield return [new ExecutionTestCase<T>(config, "add $v0, $t5, $t3", ToMips32<T>((-10) + 30))];
+            yield return [new ExecutionTestCase<T>(config, "addi $v0, $t3, -10", ToMips32<T>(30 + (-10)))];
+            yield return [new ExecutionTestCase<T>(config, "addi $v0, $t5, 30", ToMips32<T>(-10 - 30))];
+            yield return [new ExecutionTestCase<T>(config, "sub $v0, $t2, $t5", ToMips32<T>(20 - (-10)))];
+            yield return [new ExecutionTestCase<T>(config, "sub $v0, $t5, $t2", ToMips32<T>(-10 - 20))];
             yield return [new ExecutionTestCase<T>(config, "mult $t3, $t6", Split<T, ulong>((ulong)(30 * -20)))];
             yield return [new ExecutionTestCase<T>(config, "div $t3, $t6", (T.CreateTruncating((uint)(30 % -20)), T.CreateTruncating((uint)(30 / -20))))];
         }
@@ -615,4 +618,8 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
         var mask = (TLong.One << (sizeof(TLong) * 4)) - TLong.One;
         return (T.CreateTruncating(value >> size), T.CreateTruncating(value & mask));
     }
+
+    private static T ToMips32<T>(int value)
+        where T : INumber<T>
+        => T.CreateTruncating(value);
 }

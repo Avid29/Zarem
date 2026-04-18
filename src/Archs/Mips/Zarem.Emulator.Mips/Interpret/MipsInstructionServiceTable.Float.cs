@@ -29,7 +29,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
     }
 
     private static MipsTrap FloatAlu<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
-        where TLogic : unmanaged, IFAluLogic<TFormat>
+        where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         var indexer = @this.GetFloatRegisterIndexer<TFormat>();
@@ -41,19 +41,21 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static MipsTrap FloatConvert<TFrom, TTo>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
-        where TFrom : unmanaged, INumber<TFrom>
-        where TTo : unmanaged, INumber<TTo>
+    private static MipsTrap FloatFAlu<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+        where TLogic : struct, IFAluLogic<TFormat>
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
-        var indexer = @this.GetFloatRegisterIndexer<TFrom>();
-        var source = indexer[inst.FS];
-        var result = TTo.CreateTruncating(source);
-        exec = MipsExecution<T>.CreateFloatWriteback(inst.FD, result);
+        var indexer = @this.GetFloatRegisterIndexer<TFormat>();
+        var destination = inst.FD;
+        var fs = indexer[inst.FS];
+        var ft = indexer[inst.FT];
+        var value = TLogic.Compute(fs);
+        exec = MipsExecution<T>.CreateFloatWriteback(destination, value);
         return MipsTrap.None;
     }
 
     private static MipsTrap FloatRound<TLogic, TFrom, TTo>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
-        where TLogic : unmanaged, IRoundLogic<TFrom>
+        where TLogic : struct, IRoundLogic<TFrom>
         where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
         where TTo : unmanaged, IBinaryInteger<TTo>, IMinMaxValue<TTo>
     {
@@ -80,6 +82,17 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         }
 
         exec = MipsExecution<T>.CreateFloatWriteback(inst.FD, finalResult);
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap FloatConvert<TFrom, TTo>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+        where TFrom : unmanaged, INumber<TFrom>
+        where TTo : unmanaged, INumber<TTo>
+    {
+        var indexer = @this.GetFloatRegisterIndexer<TFrom>();
+        var source = indexer[inst.FS];
+        var result = TTo.CreateTruncating(source);
+        exec = MipsExecution<T>.CreateFloatWriteback(inst.FD, result);
         return MipsTrap.None;
     }
 

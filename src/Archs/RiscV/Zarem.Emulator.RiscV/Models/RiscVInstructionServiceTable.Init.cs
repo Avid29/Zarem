@@ -67,33 +67,33 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS>
         }
     }
 
-    private void InitAluImmediateOperations<T2, TS2>(RiscVOpCode opCode)
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
-        where TS2 : unmanaged, IBinaryInteger<TS2>, ISignedNumber<TS2>
+    private void InitAluImmediateOperations<TUnsigned, TSigned>(RiscVOpCode opCode)
+        where TUnsigned : unmanaged, IBinaryInteger<TUnsigned>, IUnsignedNumber<TUnsigned>
+        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
     {
         // Base
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Arithmetic)] = &AluI<AdduLogic<T2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftLeft)] = &ShiftI<SllLogic<T2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThan)] = &AluISigned<SltLogic<T2, TS2>, T2, TS2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThanUnsigned)] = &AluI<SltuLogic<T2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Xor)] = &AluI<XorLogic<T2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftRight)] = &ModifyableShiftI<SrlLogic<T2>, SraLogic<T2, TS2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Or)] = &AluI<OrLogic<T2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.And)] = &AluI<AndLogic<T2>, T2>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.Arithmetic)] = &AluI<AddLogic<TUnsigned>, TUnsigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftLeft)] = &ShiftI<SllLogic<TUnsigned>, TUnsigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThan)] = &AluISigned<SltLogic<TSigned>, TSigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThanUnsigned)] = &AluI<SltLogic<TUnsigned>, TUnsigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.Xor)] = &AluI<XorLogic<TUnsigned>, TUnsigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftRight)] = &ModifyableShiftI<SrlLogic<TUnsigned>, SraLogic<TSigned>, TUnsigned, TSigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.Or)] = &AluI<OrLogic<TUnsigned>, TUnsigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.And)] = &AluI<AndLogic<TUnsigned>, TUnsigned>;
     }
 
-    private void InitAluRegisterOperations<T2, TS2>(RiscVOpCode opCode)
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
-        where TS2 : unmanaged, IBinaryInteger<TS2>, ISignedNumber<TS2>
+    private void InitAluRegisterOperations<TUnsigned, TSigned>(RiscVOpCode opCode)
+        where TUnsigned : unmanaged, IBinaryInteger<TUnsigned>, IUnsignedNumber<TUnsigned>
+        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
     {
         // Base
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Arithmetic)] = &ModifyableAluR<AdduLogic<T2>, SubuLogic<T2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftLeft)] = &ShiftR<SllLogic<T2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThan)] = &AluR<SltLogic<T2, TS2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThanUnsigned)] = &AluR<SltuLogic<T2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Xor)] = &AluR<XorLogic<T2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftRight)] = &ModifyableShiftR<SrlLogic<T2>, SraLogic<T2, TS2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Or)] = &AluR<OrLogic<T2>, T2>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.And)] = &AluR<AndLogic<T2>, T2>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.Arithmetic)] = &ModifyableAluR<AddLogic<TUnsigned>, SubLogic<TUnsigned>, TUnsigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftLeft)] = &ShiftR<SllLogic<TUnsigned>, TUnsigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThan)] = &AluR<SltLogic<TSigned>, TSigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThanUnsigned)] = &AluR<SltLogic<TUnsigned>, TUnsigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.Xor)] = &AluR<XorLogic<TUnsigned>, TUnsigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftRight)] = &ModifyableShiftR<SrlLogic<TUnsigned>, SraLogic<TSigned>, TUnsigned, TSigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.Or)] = &AluR<OrLogic<TUnsigned>, TUnsigned>;
+        _baseTable[GetLookupIndex(opCode, Funct3Code.And)] = &AluR<AndLogic<TUnsigned>, TUnsigned>;
     }
 }

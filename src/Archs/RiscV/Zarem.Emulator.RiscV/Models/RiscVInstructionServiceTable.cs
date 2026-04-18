@@ -46,74 +46,75 @@ public unsafe partial class RiscVInstructionServiceTable<T, TS> : LogicTable, IR
     private static RiscVTrap DispatchBaseTable(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
         => @this._baseTable[GetLookupIndex(inst)](@this, inst, out exec);
 
-    private static RiscVTrap AluR<TLogic, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
-        where TLogic : struct, IAluLogic<T2>
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
+    private static RiscVTrap AluR<TLogic, TFormat>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TLogic : struct, IAluLogic<TFormat>
+        where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
-        var rs1 = T2.CreateTruncating(@this._regs[(int)inst.RS1]);
-        var rs2 = T2.CreateTruncating(@this._regs[(int)inst.RS2]);
+        var rs1 = TFormat.CreateTruncating(@this._regs[(int)inst.RS1]);
+        var rs2 = TFormat.CreateTruncating(@this._regs[(int)inst.RS2]);
         exec = RiscVExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Compute(rs1, rs2)));
         return RiscVTrap.None;
     }
     
-    private static RiscVTrap ModifyableAluR<TBase, TMod, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
-        where TBase : struct, IAluLogic<T2>
-        where TMod : struct, IAluLogic<T2>
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
-        => inst.Funct7 is Funct7Code.Modified ? AluR<TMod, T2>(@this, inst, out exec) : AluR<TBase, T2>(@this, inst, out exec);
+    private static RiscVTrap ModifyableAluR<TBase, TMod, TFormat>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TBase : struct, IAluLogic<TFormat>
+        where TMod : struct, IAluLogic<TFormat>
+        where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
+        => inst.Funct7 is Funct7Code.Modified ? AluR<TMod, TFormat>(@this, inst, out exec) : AluR<TBase, TFormat>(@this, inst, out exec);
 
-    private static RiscVTrap AluI<TLogic, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
-        where TLogic : struct, IAluLogic<T2>
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
+    private static RiscVTrap AluI<TLogic, TFormat>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TLogic : struct, IAluLogic<TFormat>
+        where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
     {
-        var rs1 = T2.CreateTruncating(@this._regs[(int)inst.RS1]);
-        var imm = T2.CreateTruncating(inst.Immediate);
+        var rs1 = TFormat.CreateTruncating(@this._regs[(int)inst.RS1]);
+        var imm = TFormat.CreateTruncating(inst.Immediate);
         exec = RiscVExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Compute(rs1, imm)));
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap AluISigned<TLogic, T2, TSigned2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
-        where TLogic : struct, IAluLogic<T2>
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
-        where TSigned2 : unmanaged, IBinaryInteger<TSigned2>, ISignedNumber<TSigned2>
+    private static RiscVTrap AluISigned<TLogic, TFormat>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TLogic : struct, IAluLogic<TFormat>
+        where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
     {
-        var rs1 = T2.CreateTruncating(@this._regs[(int)inst.RS1]);
-        var imm = T2.CreateTruncating(TSigned2.CreateSaturating(inst.Immediate));
+        var rs1 = TFormat.CreateTruncating(@this._regs[(int)inst.RS1]);
+        var imm = TFormat.CreateSaturating(inst.Immediate);
         exec = RiscVExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Compute(rs1, imm)));
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap ShiftR<TLogic, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
-        where TLogic : struct, IShiftLogic<T2>
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
+    private static RiscVTrap ShiftR<TLogic, TFormat>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TLogic : struct, IShiftLogic<TFormat>
+        where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
-        var rs1 = T2.CreateTruncating(@this._regs[(int)inst.RS1]);
+        var rs1 = TFormat.CreateTruncating(@this._regs[(int)inst.RS1]);
         var rs2 = int.CreateTruncating(@this._regs[(int)inst.RS2]);
         exec = RiscVExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Execute(rs1, rs2)));
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap ModifyableShiftR<TBase, TMod, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
-        where TBase : struct, IShiftLogic<T2>
-        where TMod : struct, IShiftLogic<T2>
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
-        => inst.Funct7 is Funct7Code.Modified ? ShiftR<TMod, T2>(@this, inst, out exec) : ShiftR<TBase, T2>(@this, inst, out exec);
+    private static RiscVTrap ModifyableShiftR<TBase, TMod, TBaseFormat, TModFormat>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TBase : struct, IShiftLogic<TBaseFormat>
+        where TMod : struct, IShiftLogic<TModFormat>
+        where TBaseFormat : unmanaged, IBinaryInteger<TBaseFormat>
+        where TModFormat : unmanaged, IBinaryInteger<TModFormat>
+        => inst.Funct7 is Funct7Code.Modified ? ShiftR<TMod, TModFormat>(@this, inst, out exec) : ShiftR<TBase, TBaseFormat>(@this, inst, out exec);
 
-    private static RiscVTrap ShiftI<TLogic, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
-        where TLogic : struct, IShiftLogic<T2>
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
+    private static RiscVTrap ShiftI<TLogic, TFormat>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TLogic : struct, IShiftLogic<TFormat>
+        where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
-        var rs1 = T2.CreateTruncating(@this._regs[(int)inst.RS1]);
-        var imm = int.CreateTruncating(inst.Immediate) & (sizeof(T2) * 8 - 1);
+        var rs1 = TFormat.CreateTruncating(@this._regs[(int)inst.RS1]);
+        var imm = int.CreateTruncating(inst.Immediate) & (sizeof(TFormat) * 8 - 1);
         exec = RiscVExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Execute(rs1, imm)));
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap ModifyableShiftI<TBase, TMod, T2>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
-        where TBase : struct, IShiftLogic<T2>
-        where TMod : struct, IShiftLogic<T2>
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
-        => inst.Funct7 is Funct7Code.Modified ? ShiftI<TMod, T2>(@this, inst, out exec) : ShiftI<TBase, T2>(@this, inst, out exec);
+    private static RiscVTrap ModifyableShiftI<TBase, TMod, TBaseFormat, TModFormat>(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TBase : struct, IShiftLogic<TBaseFormat>
+        where TMod : struct, IShiftLogic<TModFormat>
+        where TBaseFormat : unmanaged, IBinaryInteger<TBaseFormat>
+        where TModFormat : unmanaged, IBinaryInteger<TModFormat>
+        => inst.Funct7 is Funct7Code.Modified ? ShiftI<TMod, TModFormat>(@this, inst, out exec) : ShiftI<TBase, TBaseFormat>(@this, inst, out exec);
 
     private static RiscVTrap JumpAndLink(RiscVInstructionServiceTable<T, TS> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
     {
