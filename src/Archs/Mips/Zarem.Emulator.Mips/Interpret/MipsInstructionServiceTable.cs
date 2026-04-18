@@ -17,10 +17,15 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
 {
+    // Main tables
     private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[] _opCodeTable = new delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[64];
     private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[] _specialTable = new delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[64];
     private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[] _special2Table = new delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[64];
     private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[] _regImmTable = new delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[32];
+
+    // CoProcessor tables
+    private readonly delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[] _coProc1RSTable = new delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[32];
+    
     private readonly MipsCpu<T> _processor;
     private readonly T* _regs;
 
@@ -445,6 +450,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         exec = default;
         return MipsTrap.ReservedInstruction;
     }
+
+    private static MipsTrap ReservedInstruction(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec) => ReservedInstruction(@this, inst, out exec);
 
     private static MipsTrap NotImplemented(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         => throw new UnimplementedInstructionException(ulong.CreateTruncating(@this._processor.ProgramCounter));

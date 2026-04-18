@@ -6,57 +6,24 @@ using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Emulator.Models;
 
-public partial class MipsInstructionServiceTable<T, TS>
+public unsafe partial class MipsInstructionServiceTable<T, TS>
 {
-    private static MipsTrap CreateCoProc1Execution(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap DispatchCoProc1(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        var floatInstruction = (FloatInstruction)inst;
-
-        exec = floatInstruction.CoProc1RSCode switch
-        {
-            CoProc1RSCode.MFC1 => MipsExecution<T>.CreateWriteback(floatInstruction.RT, T.CreateTruncating(@this._processor.FloatProcessor[floatInstruction.FS])),
-            CoProc1RSCode.CFC1 => throw new NotImplementedException(),
-            CoProc1RSCode.MFHC1 => throw new NotImplementedException(),
-            CoProc1RSCode.MTC1 => MipsExecution<T>.CreateFloatWriteback(floatInstruction.FS, @this._processor[floatInstruction.RT]),
-            CoProc1RSCode.CTC1 => throw new NotImplementedException(),
-            CoProc1RSCode.MTHC1 => throw new NotImplementedException(),
-            CoProc1RSCode.BC1 => throw new NotImplementedException(),
-            CoProc1RSCode.BC1ANY2 => throw new NotImplementedException(),
-            CoProc1RSCode.BC1ANY4 => throw new NotImplementedException(),
-            CoProc1RSCode.BZ_V => throw new NotImplementedException(),
-            CoProc1RSCode.BC1NEZ => throw new NotImplementedException(),
-            CoProc1RSCode.BNZ_V => throw new NotImplementedException(),
-            CoProc1RSCode.BZ_B => throw new NotImplementedException(),
-            CoProc1RSCode.BZ_H => throw new NotImplementedException(),
-            CoProc1RSCode.BZ_W => throw new NotImplementedException(),
-            CoProc1RSCode.BZ_D => throw new NotImplementedException(),
-            CoProc1RSCode.BNZ_B => throw new NotImplementedException(),
-            CoProc1RSCode.BNZ_H => throw new NotImplementedException(),
-            CoProc1RSCode.BNZ_W => throw new NotImplementedException(),
-            CoProc1RSCode.BNZ_D => throw new NotImplementedException(),
-
-            _ => floatInstruction.Format switch
-            {
-                MipsFloatFormat.Single => CreateFloatExecution(inst, @this._processor.FloatProcessor.Singles),
-                MipsFloatFormat.Double => CreateFloatExecution(inst, @this._processor.FloatProcessor.Doubles),
-                MipsFloatFormat.Word => CreateFloatIntExecution(inst, @this._processor.FloatProcessor.Words),
-                MipsFloatFormat.Long => CreateFloatIntExecution(inst, @this._processor.FloatProcessor.Longs),
-                _ => throw new NotImplementedException(),
-            }
-        };
-
-        return MipsTrap.None;
+        var fInst = (FloatInstruction)inst;
+        var func = @this._coProc1RSTable[(int)fInst.CoProc1RSCode];
+        return func(@this, fInst, out exec);
     }
 
-    private static MipsExecution<T> CreateFloatExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
+    private static MipsTrap CreateFloatExecution<T2>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
         where T2 : unmanaged, IFloatingPointIeee754<T2>
     {
-        return inst.FloatFuncCode switch
+        var indexer = @this.GetFloatRegisterIndexer<T2>();
+        exec = inst.FloatFuncCode switch
         {
             FloatFuncCode.ConvertToDouble => CreateConvertExecution<T2, double>(inst, indexer),
             FloatFuncCode.ConvertToSingle => CreateConvertExecution<T2, float>(inst, indexer),
@@ -71,12 +38,15 @@ public partial class MipsInstructionServiceTable<T, TS>
 
             _ => CreateFloatArithmeticExecution(inst, indexer)
         };
+
+        return MipsTrap.None;
     }
 
-    private static MipsExecution<T> CreateFloatIntExecution<T2>(FloatInstruction inst, IFloatRegisterIndexer<T2> indexer)
+    private static MipsTrap CreateFloatIntExecution<T2>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
         where T2 : unmanaged, INumber<T2>
     {
-        return inst.FloatFuncCode switch
+        var indexer = @this.GetFloatRegisterIndexer<T2>();
+        exec = inst.FloatFuncCode switch
         {
             FloatFuncCode.ConvertToDouble => CreateConvertExecution<T2, double>(inst, indexer),
             FloatFuncCode.ConvertToSingle => CreateConvertExecution<T2, float>(inst, indexer),
@@ -84,6 +54,20 @@ public partial class MipsInstructionServiceTable<T, TS>
             FloatFuncCode.ConvertToLong => CreateConvertExecution<T2, long>(inst, indexer),
             _ => throw new NotImplementedException(),
         };
+
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap MFC1(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+    {
+        exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(@this._processor.FloatProcessor[inst.FS]));
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap MTC1(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+    {
+        exec = MipsExecution<T>.CreateFloatWriteback(inst.FS, @this._processor[inst.RT]);
+        return MipsTrap.None;
     }
 
     private static MipsExecution<T> CreateFloatRoundExecution<TFrom, TTo>(FloatInstruction inst, IFloatRegisterIndexer<TFrom> indexer)
@@ -163,5 +147,15 @@ public partial class MipsInstructionServiceTable<T, TS>
         var source = indexer[inst.FS];
         var result = TTo.CreateTruncating(source);
         return MipsExecution<T>.CreateFloatWriteback(inst.FD, result);
+    }
+
+    private IFloatRegisterIndexer<TFloat> GetFloatRegisterIndexer<TFloat>()
+        where TFloat : unmanaged, INumber<TFloat>
+    {
+        if (typeof(TFloat) == typeof(float)) return (IFloatRegisterIndexer<TFloat>)_processor.FloatProcessor.Singles;
+        else if (typeof(TFloat) == typeof(double)) return (IFloatRegisterIndexer<TFloat>)_processor.FloatProcessor.Doubles;
+        else if (typeof(TFloat) == typeof(int)) return (IFloatRegisterIndexer<TFloat>)_processor.FloatProcessor.Words;
+        else if (typeof(TFloat) == typeof(long)) return (IFloatRegisterIndexer<TFloat>)_processor.FloatProcessor.Longs;
+        else throw new InvalidOperationException();
     }
 }

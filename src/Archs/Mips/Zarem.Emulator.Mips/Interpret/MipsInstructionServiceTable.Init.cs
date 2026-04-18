@@ -6,6 +6,7 @@ using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
+using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Emulator.Models;
 
@@ -26,12 +27,14 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         for (int i = 0; i < 32; i++)
         {
             _regImmTable[i] = &ReservedInstruction;
+            _coProc1RSTable[i] = &ReservedInstruction;
         }
 
         // Populate tables
         InitRoot(version);
         InitSpecial(version);
         InitRegImm(version);
+        InitFloat(version);
     }
 
     private void InitRoot(MipsVersion version)
@@ -53,7 +56,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         _opCodeTable[(int)MipsOpCode.ExclusiveOrImmediate] = &AluI<XorLogic<T>, T>;
         _opCodeTable[(int)MipsOpCode.LoadUpperImmediate] = &Lui;
         _opCodeTable[(int)MipsOpCode.Coprocessor0] = &CreateCoProc0Execution;
-        _opCodeTable[(int)MipsOpCode.Coprocessor1] = &CreateCoProc1Execution;
+        _opCodeTable[(int)MipsOpCode.Coprocessor1] = &DispatchCoProc1;
         _opCodeTable[(int)MipsOpCode.Coprocessor2] = &NotImplemented; // TODO
         _opCodeTable[(int)MipsOpCode.LoadByte] = &Load<sbyte>;
         _opCodeTable[(int)MipsOpCode.LoadHalfWord] = &Load<short>;
@@ -253,5 +256,15 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         _special2Table[(int)Func2Code.MultiplyAndSubtractHiLowUnsigned] = &MultAddR<MultSubuLogic<uint, ulong>, uint, ulong>;
         _special2Table[(int)Func2Code.CountLeadingZeros] = &AluR<ClzLogic<uint>, uint>;
         _special2Table[(int)Func2Code.CountLeadingOnes] = &AluR<CloLogic<uint>, uint>;
+    }
+
+    private void InitFloat(MipsVersion version)
+    {
+        _coProc1RSTable[(int)CoProc1RSCode.MFC1] = &MFC1;
+        _coProc1RSTable[(int)CoProc1RSCode.MTC1] = &MTC1;
+        _coProc1RSTable[(int)CoProc1RSCode.Single] = &CreateFloatExecution<float>;
+        _coProc1RSTable[(int)CoProc1RSCode.Double] = &CreateFloatExecution<double>;
+        _coProc1RSTable[(int)CoProc1RSCode.Word] = &CreateFloatIntExecution<int>;
+        _coProc1RSTable[(int)CoProc1RSCode.Long] = &CreateFloatIntExecution<long>;
     }
 }
