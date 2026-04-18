@@ -6,6 +6,7 @@ using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Extensions;
 using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.Models;
@@ -25,7 +26,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
 
     // CoProcessor tables
     private readonly delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[] _coProc1RSTable = new delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[32];
-    
+    private readonly delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[][] _floatFuncTables;
+
     private readonly MipsCpu<T> _processor;
     private readonly T* _regs;
 
@@ -37,6 +39,9 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         _processor = processor;
         _regs = processor.RegisterFile.Regs;
 
+        var formatCount = processor.Config.Version.Is64Bit() ? 4 : 3;
+        _floatFuncTables = new delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[formatCount][];
+
         InitTables(processor.Config);
     }
 
@@ -44,44 +49,24 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     public MipsTrap Execute(MipsInstruction instruction, out MipsExecution<T> execution)
     {
         var func = _opCodeTable[(int)instruction.OpCode];
-        if (func == null)
-        {
-            throw new NotImplementedException();
-        }
-
         return func(this, instruction, out execution);
     }
 
     private static MipsTrap DispatchSpecial(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
         var func = @this._specialTable[(int)inst.FuncCode];
-        if (func == null)
-        {
-            throw new NotImplementedException();
-        }
-
         return func(@this, inst, out exec);
     }
 
     private static MipsTrap DispatchSpecial2(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
         var func = @this._special2Table[(int)inst.FuncCode];
-        if (func == null)
-        {
-            throw new NotImplementedException();
-        }
-
         return func(@this, inst, out exec);
     }
 
     private static MipsTrap DispatchRegImm(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
         var func = @this._regImmTable[(int)inst.RTFuncCode];
-        if (func == null)
-        {
-            throw new NotImplementedException();
-        }
-
         return func(@this, inst, out exec);
     }
 
@@ -115,7 +100,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
 
     private static MipsTrap AluR<TLogic, T2>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<T2>
-        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
+        where T2 : unmanaged, INumber<T2>
     {
         var rs = T2.CreateTruncating(@this._regs[(int)inst.RS]);
         var rt = T2.CreateTruncating(@this._regs[(int)inst.RT]);
@@ -451,7 +436,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         return MipsTrap.ReservedInstruction;
     }
 
-    private static MipsTrap ReservedInstruction(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec) => ReservedInstruction(@this, inst, out exec);
+    private static MipsTrap ReservedInstruction(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+        => ReservedInstruction(@this, (MipsInstruction)inst, out exec);
 
     private static MipsTrap NotImplemented(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         => throw new UnimplementedInstructionException(ulong.CreateTruncating(@this._processor.ProgramCounter));
