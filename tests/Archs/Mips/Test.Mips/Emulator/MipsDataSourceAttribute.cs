@@ -9,7 +9,6 @@ using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Emulator.Models.Enums;
 using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;

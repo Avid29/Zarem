@@ -1,11 +1,10 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Machine.Enums;
 using Zarem.Extensions;
 using Zarem.Models.Instructions;
 
@@ -14,7 +13,7 @@ namespace Zarem.Emulator.Models;
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="MipsExecution{T}"/> models.
 /// </summary>
-public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMipsInstructionServiceTable<T>
+public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructionServiceTable<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
 {
@@ -28,21 +27,21 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     private readonly delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[] _coProc1RSTable = new delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[32];
     private readonly delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[][] _floatFuncTables;
 
-    private readonly MipsCpu<T> _processor;
+    private readonly MipsCpu<T> _cpu;
     private readonly T* _regs;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionServiceTable{T, TSigned}"/> struct.
     /// </summary>
-    public MipsInstructionServiceTable(MipsCpu<T> processor)
+    public MipsInstructionServiceTable(MipsCpu<T> cpu)
     {
-        _processor = processor;
-        _regs = processor.RegisterFile.Regs;
+        _cpu = cpu;
+        _regs = cpu.RegisterFile.Regs;
 
-        var formatCount = processor.Config.Version.Is64Bit() ? 4 : 3;
+        var formatCount = cpu.Config.Version.Is64Bit() ? 4 : 3;
         _floatFuncTables = new delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[formatCount][];
 
-        InitTables(processor.Config);
+        InitTables(cpu.Config);
     }
 
     /// <inheritdoc/>
@@ -226,8 +225,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         int shift = sizeof(TFormat) * 8;
         TLong mask = TLong.CreateTruncating(TFormat.AllBitsSet);
 
-        TLong hiPart = TLong.CreateTruncating(@this._processor.RegisterFile.High) << shift;
-        TLong loPart = TLong.CreateTruncating(@this._processor.RegisterFile.Low) & mask;
+        TLong hiPart = TLong.CreateTruncating(@this._cpu.RegisterFile.High) << shift;
+        TLong loPart = TLong.CreateTruncating(@this._cpu.RegisterFile.Low) & mask;
         TLong @base = hiPart | loPart;
 
         TLong value = TLogic.Compute(rs, rt, @base);
@@ -250,8 +249,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         int shift = sizeof(TFormat) * 8;
         TLong mask = (TLong.One << shift) - TLong.One;
 
-        TLong hiPart = TLong.CreateTruncating(@this._processor.RegisterFile.High) << shift;
-        TLong loPart = TLong.CreateTruncating(@this._processor.RegisterFile.Low) & mask;
+        TLong hiPart = TLong.CreateTruncating(@this._cpu.RegisterFile.High) << shift;
+        TLong loPart = TLong.CreateTruncating(@this._cpu.RegisterFile.Low) & mask;
         TLong @base = hiPart | loPart;
 
         TLong value = TLogic.Compute(rs, rt, @base);
@@ -297,9 +296,9 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     private static MipsTrap BranchOn<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._processor[inst.RS]);
-        var rt = T.CreateTruncating(@this._processor[inst.RT]);
-        var jump = @this._processor.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
+        var rt = T.CreateTruncating(@this._cpu[inst.RT]);
+        var jump = @this._cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
         exec = TLogic.Check(rs, rt) ? MipsExecution<T>.CreateJump(jump) : default;
         return MipsTrap.None;
     }
@@ -307,10 +306,10 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     private static MipsTrap BranchLinkOn<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._processor[inst.RS]);
-        var rt = T.CreateTruncating(@this._processor[inst.RT]);
-        var jump = @this._processor.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
-        var ret = @this._processor.ProgramCounter + T.CreateTruncating(4);
+        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
+        var rt = T.CreateTruncating(@this._cpu[inst.RT]);
+        var jump = @this._cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+        var ret = @this._cpu.ProgramCounter + T.CreateTruncating(4);
         exec = TLogic.Check(rs, rt) ? MipsExecution<T>.CreateJumpAndLink(jump, ret) : default;
         return MipsTrap.None;
     }
@@ -318,22 +317,22 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     private static MipsTrap BranchOnLikely<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._processor[inst.RS]);
-        var rt = T.CreateTruncating(@this._processor[inst.RT]);
+        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
+        var rt = T.CreateTruncating(@this._cpu[inst.RT]);
 
         // PC + 4 is the Delay Slot. inst.Offset is relative to the Delay Slot.
-        var jumpTarget = @this._processor.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+        var jumpTarget = @this._cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
 
         if (TLogic.Check(rs, rt))
         {
             // Branch Taken: Execute delay slot, then jump.
             exec = MipsExecution<T>.CreateJump(jumpTarget);
         }
-        else if (!@this._processor.Config.DisableDelaySlots)
+        else if (!@this._cpu.Config.DisableDelaySlots)
         {
             // Branch NOT Taken: Nullify (skip) the delay slot.
             // We force a jump to PC + 8 to bypass the delay slot entirely.
-            var skipDelaySlot = @this._processor.ProgramCounter + T.CreateTruncating(8);
+            var skipDelaySlot = @this._cpu.ProgramCounter + T.CreateTruncating(8);
             exec = MipsExecution<T>.CreateJump(skipDelaySlot, force: true);
         }
         else
@@ -347,21 +346,21 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     private static MipsTrap BranchLinkOnLikely<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._processor[inst.RS]);
-        var rt = T.CreateTruncating(@this._processor[inst.RT]);
+        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
+        var rt = T.CreateTruncating(@this._cpu[inst.RT]);
 
-        var jumpTarget = @this._processor.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
-        var linkAddr = @this._processor.ProgramCounter + T.CreateTruncating(8);
+        var jumpTarget = @this._cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+        var linkAddr = @this._cpu.ProgramCounter + T.CreateTruncating(8);
 
         if (TLogic.Check(rs, rt))
         {
             // Taken: Link, execute delay slot, then jump.
             exec = MipsExecution<T>.CreateJumpAndLink(jumpTarget, linkAddr);
         }
-        else if (!@this._processor.Config.DisableDelaySlots)
+        else if (!@this._cpu.Config.DisableDelaySlots)
         {
             // NOT Taken: Skip delay slot. No linking occurs on failed Branch Likely.
-            var skipDelaySlot = @this._processor.ProgramCounter + T.CreateTruncating(8);
+            var skipDelaySlot = @this._cpu.ProgramCounter + T.CreateTruncating(8);
             exec = MipsExecution<T>.CreateJump(skipDelaySlot, force: true);
         }
         else
@@ -375,8 +374,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     private static MipsTrap TrapOn<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._processor[inst.RS]);
-        var rt = T.CreateTruncating(@this._processor[inst.RT]);
+        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
+        var rt = T.CreateTruncating(@this._cpu[inst.RT]);
         exec = default;
         return TLogic.Check(rs, rt) ? MipsTrap.Trap : MipsTrap.None;
     }
@@ -384,7 +383,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
     private static MipsTrap TrapOnI<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._processor[inst.RS]);
+        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
         var imm = T.CreateTruncating(TS.CreateSaturating(inst.Immediate));
         exec = default;
         return TLogic.Check(rs, imm) ? MipsTrap.Trap : MipsTrap.None;
@@ -446,8 +445,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
 
     private static MipsTrap JumpLink(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        var linkOffset = @this._processor.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
-        exec = MipsExecution<T>.CreateJumpAndLink(T.CreateTruncating(inst.Address), @this._processor.ProgramCounter + linkOffset);
+        var linkOffset = @this._cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
+        exec = MipsExecution<T>.CreateJumpAndLink(T.CreateTruncating(inst.Address), @this._cpu.ProgramCounter + linkOffset);
         return MipsTrap.None;
     }
 
@@ -459,15 +458,15 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
 
     private static MipsTrap JumpLinkR(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        var linkOffset = @this._processor.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
+        var linkOffset = @this._cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
         var rs = @this._regs[(int)inst.RS];
-        exec = MipsExecution<T>.CreateJumpAndLink(rs, @this._processor.ProgramCounter + linkOffset, inst.RD);
+        exec = MipsExecution<T>.CreateJumpAndLink(rs, @this._cpu.ProgramCounter + linkOffset, inst.RD);
         return MipsTrap.None;
     }
 
     private static MipsTrap Mfhi(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateWriteback(inst.RD, @this._processor.RegisterFile.High);
+        exec = MipsExecution<T>.CreateWriteback(inst.RD, @this._cpu.RegisterFile.High);
         return MipsTrap.None;
     }
 
@@ -479,7 +478,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
 
     private static MipsTrap Mflo(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateWriteback(inst.RD, @this._processor.RegisterFile.Low);
+        exec = MipsExecution<T>.CreateWriteback(inst.RD, @this._cpu.RegisterFile.Low);
         return MipsTrap.None;
     }
 
@@ -505,5 +504,5 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         => ReservedInstruction(@this, (MipsInstruction)inst, out exec);
 
     private static MipsTrap NotImplemented(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
-        => throw new UnimplementedInstructionException(ulong.CreateTruncating(@this._processor.ProgramCounter));
+        => throw new UnimplementedInstructionException(ulong.CreateTruncating(@this._cpu.ProgramCounter));
 }

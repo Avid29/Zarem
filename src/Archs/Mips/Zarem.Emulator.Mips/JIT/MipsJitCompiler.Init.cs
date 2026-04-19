@@ -4,12 +4,13 @@ using System;
 using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Machine.Enums;
 using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.SpecialFunctions;
+using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Emulator.Models.JIT;
 
@@ -24,6 +25,7 @@ public partial class MipsJitCompiler<T>
         InitRoot(version);
         InitSpecial(version);
         InitRegImm(version);
+        InitFloat(version);
     }
 
     private void InitRoot(MipsVersion version)
@@ -44,7 +46,7 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.OrImmediate] = (il, inst, pc) => AluI<T>(il, inst, OpCodes.Or);
         _opCodeTable[(int)MipsOpCode.ExclusiveOrImmediate] = (il, inst, pc) => AluI<T>(il, inst, OpCodes.Xor);
         _opCodeTable[(int)MipsOpCode.LoadUpperImmediate] = (il, inst, pc) => Lui(il, inst);
-        _opCodeTable[(int)MipsOpCode.Coprocessor1] = (il, inst, pc) => DispatchCoProc1(il, inst);
+        _opCodeTable[(int)MipsOpCode.Coprocessor1] = (il, inst, pc) => DispatchCoProc1(il, inst, pc);
         _opCodeTable[(int)MipsOpCode.LoadByte] = Load<sbyte>;
         _opCodeTable[(int)MipsOpCode.LoadHalfWord] = Load<short>;
         _opCodeTable[(int)MipsOpCode.LoadWord] = Load<int>;
@@ -53,7 +55,6 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.StoreByte] = Store<sbyte>;
         _opCodeTable[(int)MipsOpCode.StoreHalfWord] = Store<short>;
         _opCodeTable[(int)MipsOpCode.StoreWord] = Store<int>;
-
 
         if (version is >= MipsVersion.MipsIII && version.Is64Bit())
         {
@@ -193,5 +194,101 @@ public partial class MipsJitCompiler<T>
             il.Emit(OpCodes.Not);
             il.Emit(OpCodes.Call, _clzMethod);
         });
+    }
+
+    private void InitFloat(MipsVersion version)
+    {
+        for (int i = 0; i < _floatFuncTables.Length; i++)
+        {
+            _floatFuncTables[i] = new MipsFloatEmitter[64];
+        }
+
+        InitFloatRoot(version);
+        InitFloatFuncs<float>(version);
+        InitFloatFuncs<double>(version);
+
+        InitConvertFuncs<float>(version);
+        InitConvertFuncs<double>(version);
+        InitConvertFuncs<int>(version);
+
+        if (version.Is64Bit())
+        {
+            InitConvertFuncs<long>(version);
+        }
+    }
+
+    private void InitFloatRoot(MipsVersion version)
+    {
+        _coProc1RSTable[(int)CoProc1RSCode.MFC1] = (il, inst, pc) => MoveFromFloat(il, inst);
+        _coProc1RSTable[(int)CoProc1RSCode.MTC1] = (il, inst, pc) => MoveToFloat(il, inst);
+        _coProc1RSTable[(int)CoProc1RSCode.Single] = DispatchFloatFunc<float>;
+        _coProc1RSTable[(int)CoProc1RSCode.Double] = DispatchFloatFunc<double>;
+        _coProc1RSTable[(int)CoProc1RSCode.Word] = DispatchFloatFunc<int>;
+
+        if (version.Is64Bit())
+        {
+            _coProc1RSTable[(int)CoProc1RSCode.Long] = DispatchFloatFunc<long>;
+        }
+    }
+
+    private void InitFloatFuncs<TFormat>(MipsVersion version)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        int index = GetFloatFuncTableIndex<TFormat>();
+        _floatFuncTables[index][(int)FloatFuncCode.Add] = (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Add);
+        _floatFuncTables[index][(int)FloatFuncCode.Subtract] = (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Sub);
+        _floatFuncTables[index][(int)FloatFuncCode.Multiply] = (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Mul);
+        _floatFuncTables[index][(int)FloatFuncCode.Divide] = (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Div);
+        _floatFuncTables[index][(int)FloatFuncCode.SquareRoot] = (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.Sqrt));
+        _floatFuncTables[index][(int)FloatFuncCode.AbsoluteValue] = (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.Abs));
+        _floatFuncTables[index][(int)FloatFuncCode.Move] = (il, inst, pc) => MoveFloat<TFormat>(il, inst.FS, inst.FD);
+        _floatFuncTables[index][(int)FloatFuncCode.Negate] = (il, inst, pc) => FloatUnary<TFormat>(il, inst, OpCodes.Neg);
+
+        _floatFuncTables[index][(int)FloatFuncCode.Round_W] = (il, inst, pc) => FloatRound<TFormat, int>(il, inst, nameof(Math.Round));
+        _floatFuncTables[index][(int)FloatFuncCode.Truncate_W] = (il, inst, pc) => FloatRound<TFormat, int>(il, inst, nameof(Math.Truncate));
+        _floatFuncTables[index][(int)FloatFuncCode.Ceiling_W] = (il, inst, pc) => FloatRound<TFormat, int>(il, inst, nameof(Math.Ceiling));
+        _floatFuncTables[index][(int)FloatFuncCode.Floor_W] = (il, inst, pc) => FloatRound<TFormat, int>(il, inst, nameof(Math.Floor));
+
+        if (version.Is64Bit())
+        {
+            _floatFuncTables[index][(int)FloatFuncCode.Round_L] = (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Round));
+            _floatFuncTables[index][(int)FloatFuncCode.Truncate_L] = (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Truncate));
+            _floatFuncTables[index][(int)FloatFuncCode.Ceiling_L] = (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Ceiling));
+            _floatFuncTables[index][(int)FloatFuncCode.Floor_L] = (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Floor));
+        }
+
+        if (version >= MipsVersion.MipsIV)
+        {
+            _floatFuncTables[index][(int)FloatFuncCode.Reciprical] = (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.ReciprocalEstimate));
+        }
+
+        if (version >= MipsVersion.Mips_R2)
+        {
+            _floatFuncTables[index][(int)FloatFuncCode.RecipricalSquareRoot] = (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.ReciprocalSqrtEstimate));
+        }
+    }
+
+    private void InitConvertFuncs<TFormat>(MipsVersion version)
+        where TFormat : unmanaged, INumber<TFormat>
+    {
+        int index = GetFloatFuncTableIndex<TFormat>();
+        InitConvertFunc<TFormat, float>(index, FloatFuncCode.ConvertToSingle);
+        InitConvertFunc<TFormat, double>(index, FloatFuncCode.ConvertToDouble);
+        InitConvertFunc<TFormat, int>(index, FloatFuncCode.ConvertToWord);
+
+        if (version.Is64Bit() && typeof(TFormat) != typeof(long))
+        {
+            InitConvertFunc<TFormat, long>(index, FloatFuncCode.ConvertToLong);
+        }
+    }
+
+    private void InitConvertFunc<TFrom, TTo>(int index, FloatFuncCode code)
+        where TFrom : unmanaged, INumber<TFrom>
+        where TTo : unmanaged, INumber<TTo>
+    {
+        if (typeof(TFrom) == typeof(TTo))
+            return;
+
+        _floatFuncTables[index][(int)code] = (il, inst, pc) => FloatConvert<TFrom, TTo>(il, inst.FS, inst.FD);
     }
 }

@@ -14,7 +14,7 @@ namespace Zarem.Emulator.Models;
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="RiscVExecution{T}"/> models.
 /// </summary>
-public unsafe partial class RiscVInstructionServiceTable<T, TS> : LogicTable, IRiscVInstructionServiceTable<T>
+public unsafe partial class RiscVInstructionServiceTable<T, TS> : IRiscVInstructionServiceTable<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
 {
