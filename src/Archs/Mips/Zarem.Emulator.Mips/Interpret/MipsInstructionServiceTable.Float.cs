@@ -5,9 +5,8 @@ using System;
 using System.Numerics;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.CoProcessors;
-using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Machine.Enums;
 using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Emulator.Models;
 

@@ -7,9 +7,9 @@ using System.Numerics;
 using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models;
-using Zarem.Emulator.Models.Enums;
 using Zarem.Extensions;
 using Zarem.Models.Instructions;
 

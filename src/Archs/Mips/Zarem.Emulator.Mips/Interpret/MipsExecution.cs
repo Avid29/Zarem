@@ -2,7 +2,7 @@
 
 using System;
 using System.Numerics;
-using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Machine.Enums;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Registers;
 

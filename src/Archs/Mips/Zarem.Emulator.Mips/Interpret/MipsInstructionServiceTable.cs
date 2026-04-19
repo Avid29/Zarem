@@ -4,7 +4,7 @@ using System.Numerics;
 using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Machine.Enums;
 using Zarem.Extensions;
 using Zarem.Models.Instructions;
 
@@ -13,7 +13,7 @@ namespace Zarem.Emulator.Models;
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="MipsExecution{T}"/> models.
 /// </summary>
-public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMipsInstructionServiceTable<T>
+public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructionServiceTable<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
 {

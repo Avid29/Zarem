@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Models.JIT;
 using Zarem.Models.Instructions;
 

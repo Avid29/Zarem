@@ -3,7 +3,6 @@
 using System.Numerics;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine.CoProcessors;
