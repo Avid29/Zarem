@@ -14,113 +14,57 @@ namespace Zarem.Emulator.Models.JIT;
 public partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private bool DispatchCoProc1(ILGenerator il, FloatInstruction inst)
+    private void DispatchCoProc1(ILGenerator il, FloatInstruction inst, T pc)
     {
-        return inst.CoProc1RSCode switch
-        {
-            CoProc1RSCode.MFC1 => MoveFromFloat(il, inst),
-            CoProc1RSCode.MTC1 => MoveToFloat(il, inst),
-
-            _ => inst.Format switch
-            {
-                MipsFloatFormat.Single => DispatchFloatOp<float>(il, inst),
-                MipsFloatFormat.Double => DispatchFloatOp<double>(il, inst),
-                MipsFloatFormat.Word => DispatchFloatIntOp<int>(il, inst),
-                MipsFloatFormat.Long => DispatchFloatIntOp<long>(il, inst),
-                _ => throw new NotImplementedException()
-            },
-        };
+        var fInst = inst;
+        var func = _coProc1RSTable[(int)fInst.CoProc1RSCode];
+        func(il, fInst, pc);
     }
 
-    private bool DispatchFloatOp<TFloat>(ILGenerator il, FloatInstruction inst)
-        where TFloat : unmanaged
+    private void DispatchFloatFunc<TFormat>(ILGenerator il, FloatInstruction inst, T pc)
+        where TFormat : unmanaged, INumber<TFormat>
     {
-        return inst.FloatFuncCode switch
-        {
-            FloatFuncCode.Add => FloatAlu<TFloat>(il, inst, OpCodes.Add),
-            FloatFuncCode.Subtract => FloatAlu<TFloat>(il, inst, OpCodes.Sub),
-            FloatFuncCode.Multiply => FloatAlu<TFloat>(il, inst, OpCodes.Mul),
-            FloatFuncCode.Divide => FloatAlu<TFloat>(il, inst, OpCodes.Div),
-            FloatFuncCode.SquareRoot => FloatUnary<TFloat>(il, inst, nameof(Math.Sqrt)),
-            FloatFuncCode.AbsoluteValue => FloatUnary<TFloat>(il, inst, nameof(Math.Abs)),
-            FloatFuncCode.Move => MoveFloat<TFloat>(il, inst.FS, inst.FD),
-            FloatFuncCode.Negate => FloatUnary<TFloat>(il, inst, OpCodes.Neg),
-            FloatFuncCode.Round_L => FloatRound<TFloat, long>(il, inst, nameof(Math.Round)),
-            FloatFuncCode.Truncate_L => FloatRound<TFloat, long>(il, inst, nameof(Math.Truncate)),
-            FloatFuncCode.Ceiling_L => FloatRound<TFloat, long>(il, inst, nameof(Math.Ceiling)),
-            FloatFuncCode.Floor_L => FloatRound<TFloat, long>(il, inst, nameof(Math.Floor)),
-            FloatFuncCode.Round_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Round)),
-            FloatFuncCode.Truncate_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Truncate)),
-            FloatFuncCode.Ceiling_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Ceiling)),
-            FloatFuncCode.Floor_W => FloatRound<TFloat, int>(il, inst, nameof(Math.Floor)),
-            FloatFuncCode.Reciprical => FloatUnary<TFloat>(il, inst, nameof(Math.ReciprocalEstimate)),
-            FloatFuncCode.RecipricalSquareRoot => FloatUnary<TFloat>(il, inst, nameof(Math.ReciprocalSqrtEstimate)),
-
-            FloatFuncCode.ConvertToSingle => FloatConvert<TFloat, float>(il, inst.FS, inst.FD),
-            FloatFuncCode.ConvertToDouble => FloatConvert<TFloat, double>(il, inst.FS, inst.FD),
-            FloatFuncCode.ConvertToWord => FloatConvert<TFloat, int>(il, inst.FS, inst.FD),
-            FloatFuncCode.ConvertToLong => FloatConvert<TFloat, long>(il, inst.FS, inst.FD),
-
-            _ => throw new NotImplementedException($"FPU opcode {inst.FloatFuncCode} not JIT-ted yet.")
-        };
+        int index = GetFloatFuncTableIndex<TFormat>();
+        var func = _floatFuncTables[index][(int)inst.FloatFuncCode];
+        func(il, inst, pc);
     }
 
-    private bool DispatchFloatIntOp<TNumber>(ILGenerator il, FloatInstruction inst)
-        where TNumber : unmanaged
+    private void FloatAlu<TFormat>(ILGenerator il, FloatInstruction inst, OpCode ilOpCode)
+        where TFormat : unmanaged
     {
-        return inst.FloatFuncCode switch
+        EmitStoreRegister<TFormat>(il, inst.FD, () =>
         {
-            FloatFuncCode.ConvertToSingle => FloatConvert<TNumber, float>(il, inst.FS, inst.FD),
-            FloatFuncCode.ConvertToDouble => FloatConvert<TNumber, double>(il, inst.FS, inst.FD),
-            FloatFuncCode.ConvertToWord => FloatConvert<TNumber, int>(il, inst.FS, inst.FD),
-            FloatFuncCode.ConvertToLong => FloatConvert<TNumber, long>(il, inst.FS, inst.FD),
-            _ => throw new NotImplementedException(),
-        };
-    }
-
-    private bool FloatAlu<TFloat>(ILGenerator il, FloatInstruction inst, OpCode ilOpCode)
-        where TFloat : unmanaged
-    {
-        EmitStoreRegister<TFloat>(il, inst.FD, () =>
-        {
-            EmitLoadRegister<TFloat>(il, inst.FS);
-            EmitLoadRegister<TFloat>(il, inst.FT);
+            EmitLoadRegister<TFormat>(il, inst.FS);
+            EmitLoadRegister<TFormat>(il, inst.FT);
             il.Emit(ilOpCode);
         });
-
-        return false;
     }
 
-    private bool FloatUnary<TFloat>(ILGenerator il, FloatInstruction inst, OpCode ilOpCode)
-        where TFloat : unmanaged
+    private void FloatUnary<TFormat>(ILGenerator il, FloatInstruction inst, OpCode ilOpCode)
+        where TFormat : unmanaged
     {
-        EmitStoreRegister<TFloat>(il, inst.FD, () =>
+        EmitStoreRegister<TFormat>(il, inst.FD, () =>
         {
-            EmitLoadRegister<TFloat>(il, inst.FS);
+            EmitLoadRegister<TFormat>(il, inst.FS);
             il.Emit(ilOpCode);
         });
-
-        return false;
     }
 
-    private bool FloatUnary<TFloat>(ILGenerator il, FloatInstruction inst, string methodName)
-        where TFloat : unmanaged
+    private void FloatUnary<TFormat>(ILGenerator il, FloatInstruction inst, string methodName)
+        where TFormat : unmanaged
     {
-        EmitStoreRegister<TFloat>(il, inst.FD, () =>
+        EmitStoreRegister<TFormat>(il, inst.FD, () =>
         {
-            EmitLoadRegister<TFloat>(il, inst.FS);
+            EmitLoadRegister<TFormat>(il, inst.FS);
 
-            // Resolve Math.Sqrt(double) or MathF.Sqrt(float)
-            Type mathClass = typeof(TFloat) == typeof(float) ? typeof(MathF) : typeof(Math);
-            var method = mathClass.GetMethod(methodName, [typeof(TFloat)]);
+            Type mathClass = typeof(TFormat) == typeof(float) ? typeof(MathF) : typeof(Math);
+            var method = mathClass.GetMethod(methodName, [typeof(TFormat)]);
             Guard.IsNotNull(method);
             il.Emit(OpCodes.Call, method);
         });
-
-        return false;
     }
 
-    private bool FloatRound<TFrom, TTo>(ILGenerator il, FloatInstruction inst, string methodName)
+    private void FloatRound<TFrom, TTo>(ILGenerator il, FloatInstruction inst, string methodName)
         where TFrom : unmanaged
         where TTo : unmanaged
     {
@@ -128,18 +72,15 @@ public partial class MipsJitCompiler<T>
         {
             EmitLoadRegister<TFrom>(il, inst.FS);
 
-            // Resolve Math.Sqrt(double) or MathF.Sqrt(float)
             Type mathClass = typeof(TFrom) == typeof(float) ? typeof(MathF) : typeof(Math);
             var method = mathClass.GetMethod(methodName, [typeof(TFrom)]);
             Guard.IsNotNull(method);
             il.Emit(OpCodes.Call, method);
             EmitConv<TTo>(il);
         });
-
-        return false;
     }
 
-    private bool FloatConvert<TFrom, TTo>(ILGenerator il, MipsFloatRegister fs, MipsFloatRegister fd)
+    private void FloatConvert<TFrom, TTo>(ILGenerator il, MipsFloatRegister fs, MipsFloatRegister fd)
         where TFrom : unmanaged
         where TTo : unmanaged
     {
@@ -151,40 +92,41 @@ public partial class MipsJitCompiler<T>
                 EmitConv<TTo>(il);
             });
         }
-
-        return false;
     }
 
-    private bool MoveFloat<TFloat>(ILGenerator il, MipsFloatRegister fs, MipsFloatRegister fd)
-        where TFloat : unmanaged
+    private void MoveFloat<TFormat>(ILGenerator il, MipsFloatRegister fs, MipsFloatRegister fd)
+        where TFormat : unmanaged
     {
-        EmitStoreRegister<TFloat>(il, fd, () =>
+        EmitStoreRegister<TFormat>(il, fd, () =>
         {
-            EmitLoadRegister<TFloat>(il, fs);
+            EmitLoadRegister<TFormat>(il, fs);
         });
-
-        return false;
     }
 
-    private bool MoveToFloat(ILGenerator il, FloatInstruction inst)
+    private void MoveToFloat(ILGenerator il, FloatInstruction inst)
     {
         EmitStoreRegister<T>(il, inst.FS, () =>
         {
             EmitLoadRegister(il, inst.RT);
             EmitConv(il);
         });
-
-        return false;
     }
 
-    private bool MoveFromFloat(ILGenerator il, FloatInstruction inst)
+    private void MoveFromFloat(ILGenerator il, FloatInstruction inst)
     {
         EmitStoreRegister(il, inst.RT, () =>
         {
             EmitLoadRegister<T>(il, inst.FS);
             EmitConv(il);
         });
+    }
 
-        return false;
+    private static int GetFloatFuncTableIndex<TFormat>()
+    {
+        if (typeof(TFormat) == typeof(float)) return 0;
+        if (typeof(TFormat) == typeof(double)) return 1;
+        if (typeof(TFormat) == typeof(int)) return 2;
+        if (typeof(TFormat) == typeof(long)) return 3;
+        else return ThrowHelper.ThrowFormatException<int>();
     }
 }

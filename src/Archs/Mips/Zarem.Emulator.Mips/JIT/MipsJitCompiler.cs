@@ -3,13 +3,16 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
+using Zarem.Emulator.Interpret;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Extensions;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 
@@ -22,12 +25,17 @@ public unsafe partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private delegate void MipsEmitter(ILGenerator il, MipsInstruction inst, T pc);
+    private delegate void MipsFloatEmitter(ILGenerator il, FloatInstruction inst, T pc);
 
+    // Main tables
     private readonly MipsEmitter[] _opCodeTable = new MipsEmitter[64];
     private readonly MipsEmitter[] _specialTable = new MipsEmitter[64];
     private readonly MipsEmitter[] _special2Table = new MipsEmitter[64];
     private readonly MipsEmitter[] _regImmTable = new MipsEmitter[32];
-    private readonly MipsJitCpu<T> _cpu;
+
+    // CoProcessor tables
+    private readonly MipsFloatEmitter[] _coProc1RSTable = new MipsFloatEmitter[32];
+    private readonly MipsFloatEmitter[][] _floatFuncTables;
 
     private readonly MethodInfo _getMemoryMethod;
     private readonly MethodInfo _clzMethod;
@@ -36,6 +44,7 @@ public unsafe partial class MipsJitCompiler<T>
     private readonly Dictionary<Type, MethodInfo> _multiplyMethod = [];
     private readonly Dictionary<Type, MethodInfo> _castDownMethods = [];
     private readonly Dictionary<Type, MethodInfo> _rightShiftMethods = [];
+    private readonly MipsJitCpu<T> _cpu;
 
     private readonly HashSet<MipsGpRegister> _loadRegs = [];
     private readonly HashSet<MipsGpRegister> _storeRegs = [];
@@ -87,6 +96,9 @@ public unsafe partial class MipsJitCompiler<T>
             _castDownMethods[type] = castDownMethod;
             _rightShiftMethods[type] = rightShiftMethod;
         }
+
+        var formatCount = _cpu.Config.Version.Is64Bit() ? 4 : 3;
+        _floatFuncTables = new MipsFloatEmitter[formatCount][];
 
         InitTables(_cpu.Config);
     }

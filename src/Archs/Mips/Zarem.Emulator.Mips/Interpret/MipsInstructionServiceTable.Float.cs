@@ -98,23 +98,23 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
 
     private static MipsTrap MFC1(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(@this._processor.FloatProcessor[inst.FS]));
+        exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(@this._cpu.FloatProcessor[inst.FS]));
         return MipsTrap.None;
     }
 
     private static MipsTrap MTC1(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateFloatWriteback(inst.FS, @this._processor[inst.RT]);
+        exec = MipsExecution<T>.CreateFloatWriteback(inst.FS, @this._cpu[inst.RT]);
         return MipsTrap.None;
     }
 
     private IFloatRegisterIndexer<TFormat> GetFloatRegisterIndexer<TFormat>()
         where TFormat : unmanaged, INumber<TFormat>
     {
-        if (typeof(TFormat) == typeof(float)) return (IFloatRegisterIndexer<TFormat>)_processor.FloatProcessor.Singles;
-        else if (typeof(TFormat) == typeof(double)) return (IFloatRegisterIndexer<TFormat>)_processor.FloatProcessor.Doubles;
-        else if (typeof(TFormat) == typeof(int)) return (IFloatRegisterIndexer<TFormat>)_processor.FloatProcessor.Words;
-        else if (typeof(TFormat) == typeof(long)) return (IFloatRegisterIndexer<TFormat>)_processor.FloatProcessor.Longs;
+        if (typeof(TFormat) == typeof(float)) return (IFloatRegisterIndexer<TFormat>)_cpu.FloatProcessor.Singles;
+        else if (typeof(TFormat) == typeof(double)) return (IFloatRegisterIndexer<TFormat>)_cpu.FloatProcessor.Doubles;
+        else if (typeof(TFormat) == typeof(int)) return (IFloatRegisterIndexer<TFormat>)_cpu.FloatProcessor.Words;
+        else if (typeof(TFormat) == typeof(long)) return (IFloatRegisterIndexer<TFormat>)_cpu.FloatProcessor.Longs;
         else throw new InvalidOperationException();
     }
 
