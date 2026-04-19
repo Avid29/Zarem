@@ -37,13 +37,12 @@ public partial class LogicTable
     /// <summary>
     /// An <see cref="IShiftLogic{T}"/> for an arithmetic right shift operation.
     /// </summary>
-    public struct SraLogic<T, TSigned> : IShiftLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
+    public struct SraLogic<T> : IShiftLogic<T>
+        where T : unmanaged, IBinaryInteger<T>, ISignedNumber<T>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Execute(T rt, int sa) => T.CreateTruncating((TSigned.CreateTruncating(rt) >> sa));
+        public static T Execute(T rt, int sa) => rt >> sa;
     }
 
     #endregion
@@ -51,26 +50,25 @@ public partial class LogicTable
     #region Add/Subtract
 
     /// <summary>
-    /// An <see cref="ICheckedAluLogic{T, TS}"/> for a signed add operation.
+    /// An <see cref="ICheckedAluLogic{T}"/> for a checked signed add operation.
     /// </summary>
-    public struct AddLogic<T, TS> : ICheckedAluLogic<T, TS>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
+    public struct CheckedAddLogic<T> : ICheckedAluLogic<T>
+        where T : unmanaged, IBinaryInteger<T>, ISignedNumber<T>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T rs, T rt) => T.CreateTruncating((TS.CreateTruncating(rs)) + TS.CreateTruncating(rt));
+        public static T Compute(T rs, T rt) => rs + rt;
 
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Overflow(TS a, TS b, TS r) => ((a ^ r) & (b ^ r)) < TS.Zero;
+        public static bool Overflow(T a, T b, T r) => ((a ^ r) & (b ^ r)) < T.Zero;
     }
 
     /// <summary>
-    /// An <see cref="IAluLogic{T}"/> for an unsigned add operation.
+    /// An <see cref="IAluLogic{T}"/> for an unchecked add operation.
     /// </summary>
-    public struct AdduLogic<T> : IAluLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    public struct AddLogic<T> : IAluLogic<T>
+        where T : unmanaged, INumber<T>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -78,26 +76,25 @@ public partial class LogicTable
     }
 
     /// <summary>
-    /// An <see cref="ICheckedAluLogic{T, TS}"/> for a signed subtraction operation.
+    /// An <see cref="ICheckedAluLogic{T}"/> for a checked signed subtraction operation.
     /// </summary>
-    public struct SubLogic<T, TS> : ICheckedAluLogic<T, TS>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
+    public struct CheckedSubLogic<T> : ICheckedAluLogic<T>
+        where T : unmanaged, IBinaryInteger<T>, ISignedNumber<T>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T rs, T rt) => T.CreateTruncating((TS.CreateTruncating(rs)) - TS.CreateTruncating(rt));
+        public static T Compute(T rs, T rt) => rs - rt;
 
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Overflow(TS a, TS b, TS r) => ((a ^ b) & (a ^ r)) < TS.Zero;
+        public static bool Overflow(T a, T b, T r) => ((a ^ b) & (a ^ r)) < T.Zero;
     }
 
     /// <summary>
     /// An <see cref="IAluLogic{T}"/> for an unsigned subtract operation.
     /// </summary>
-    public struct SubuLogic<T> : IAluLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    public struct SubLogic<T> : IAluLogic<T>
+        where T : unmanaged, INumber<T>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -109,36 +106,22 @@ public partial class LogicTable
     #region Multiply/Divide
 
     /// <summary>
-    /// An <see cref="IAluLogic{T}"/> for a signed multiplication operation.
+    /// An <see cref="IAluLogic{T}"/> for a multiplication operation.
     /// </summary>
-    public struct MulLogic<T, TS> : IAluLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
+    public struct MulLogic<T> : IAluLogic<T>
+        where T : unmanaged, INumber<T>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T rs, T rt) => T.CreateTruncating(TS.CreateTruncating(rs) * TS.CreateTruncating(rt));
+        public static T Compute(T rs, T rt) => rs * rt;
     }
 
     /// <summary>
     /// An <see cref="IMultLogic{T, TL}"/> for a signed multiplication operation on 32-bit values.
     /// </summary>
-    public struct MultLogic<T, TS, TL> : IMultLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt) => TL.CreateTruncating(TS.CreateTruncating(rs)) * TL.CreateTruncating(TS.CreateTruncating(rt));
-    }
-
-    /// <summary>
-    /// An <see cref="IMultLogic{TL, TL}"/> for an unsigned multiplication operation on 32-bit values.
-    /// </summary>
-    public struct MultuLogic<T, TL> : IMultLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
+    public struct MultLogic<T, TL> : IMultLogic<T, TL>
+        where T : unmanaged, INumber<T>
+        where TL : unmanaged, INumber<TL>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -146,27 +129,15 @@ public partial class LogicTable
     }
 
     /// <summary>
-    /// An <see cref="IDivLogic{T}"/> for a signed divison operation.
+    /// An <see cref="IDivLogic{T}"/> for a divison operation.
     /// </summary>
-    public struct DivLogic<T, TS> : IDivLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
+    public struct DivLogic<T> : IAluLogic<T>, IDivLogic<T>
+        where T : unmanaged, INumber<T>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Divisor(T rs, T rt) => rt != T.Zero ? T.CreateTruncating(TS.CreateTruncating(rs) / TS.CreateTruncating(rt)) : T.Zero;
+        public static T Compute(T rs, T rt) => Divisor(rs, rt);
 
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Remainder(T rs, T rt) => rt != T.Zero ? T.CreateTruncating(TS.CreateTruncating(rs) % TS.CreateTruncating(rt)) : rs;
-    }
-
-    /// <summary>
-    /// An <see cref="IDivLogic{T}"/> for an unsigned divison operation.
-    /// </summary>
-    public struct DivuLogic<T> : IDivLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-    {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Divisor(T rs, T rt) => rt != T.Zero ? rs / rt : T.Zero;
@@ -183,51 +154,25 @@ public partial class LogicTable
     /// <summary>
     /// An <see cref="IMultAddLogic{T, TL}"/> for a signed multiply and add operation on 32-bit values.
     /// </summary>
-    public struct MultAddLogic<T, TS, TL> : IMultAddLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
+    public struct MultAddLogic<T, TL> : IMultAddLogic<T, TL>
+        where T : unmanaged, IBinaryInteger<T>
+        where TL : unmanaged, IBinaryInteger<TL>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt, TL @base) => @base + MultLogic<T, TS, TL>.Compute(rs, rt);
-    }
-
-    /// <summary>
-    /// An <see cref="IMultAddLogic{T, TL}"/> for an unsigned multiply and add operation on 32-bit values.
-    /// </summary>
-    public struct MultAdduLogic<T, TL> : IMultAddLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt, TL @base) => @base + MultuLogic<T, TL>.Compute(rs, rt);
+        public static TL Compute(T rs, T rt, TL @base) => @base + MultLogic<T, TL>.Compute(rs, rt);
     }
 
     /// <summary>
     /// An <see cref="IMultAddLogic{T, TL}"/> for a signed multiply and subtract operation on 32-bit values.
     /// </summary>
-    public struct MultSubLogic<T, TS, TL> : IMultAddLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
+    public struct MultSubLogic<T, TL> : IMultAddLogic<T, TL>
+        where T : unmanaged, IBinaryInteger<T>
+        where TL : unmanaged, IBinaryInteger<TL>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt, TL @base) => @base - MultLogic<T, TS, TL>.Compute(rs, rt);
-    }
-
-    /// <summary>
-    /// An <see cref="IMultAddLogic{T, TL}"/> for an unsigned multiply and subtract operation on 32-bit values.
-    /// </summary>
-    public struct MultSubuLogic<T, TL> : IMultAddLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt, TL @base) => @base - MultuLogic<T, TL>.Compute(rs, rt);
+        public static TL Compute(T rs, T rt, TL @base) => @base - MultLogic<T, TL>.Compute(rs, rt);
     }
 
     #endregion
@@ -449,73 +394,18 @@ public partial class LogicTable
     /// <summary>
     /// An <see cref="IAluLogic{T}"/> implementation for a signed set less than logic operation.
     /// </summary>
-    public struct SltLogic<T, TS> : IAluLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T rs, T rt) => TS.CreateTruncating(rs) < TS.CreateTruncating(rt) ? T.One : T.Zero;
-    }
-
-    /// <summary>
-    /// An <see cref="IAluLogic{T}"/> implementation for an unsigned set less than logic operation.
-    /// </summary>
-    public struct SltuLogic<T> : IAluLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    public struct SltLogic<T> : IAluLogic<T>
+        where T : unmanaged, INumber<T>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Compute(T rs, T rt) => rs < rt ? T.One : T.Zero;
     }
 
+
     #endregion
 
     #region Float
-
-    /// <summary>
-    /// An <see cref="IFAluLogic{T}"/> for a floating-point add operation.
-    /// </summary>
-    public struct FAddLogic<T> : IFAluLogic<T>
-        where T : unmanaged, IBinaryFloatingPointIeee754<T>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T fs, T ft) => fs + ft;
-    }
-
-    /// <summary>
-    /// An <see cref="IFAluLogic{T}"/> for an unsigned subtract operation.
-    /// </summary>
-    public struct FSubLogic<T> : IFAluLogic<T>
-        where T : unmanaged, IBinaryFloatingPointIeee754<T>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T fs, T ft) => fs - ft;
-    }
-
-    /// <summary>
-    /// An <see cref="IFAluLogic{T}"/> for a floating-point multiplication operation.
-    /// </summary>
-    public struct FMulLogic<T> : IFAluLogic<T>
-        where T : unmanaged, IBinaryFloatingPointIeee754<T>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T fs, T ft) => fs * ft;
-    }
-
-    /// <summary>
-    /// An <see cref="IFAluLogic{T}"/> for a floating-point divison operation.
-    /// </summary>
-    public struct FDivLogic<T> : IFAluLogic<T>
-        where T : unmanaged, IBinaryFloatingPointIeee754<T>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T fs, T ft) => ft != T.Zero ? fs / ft : T.Zero;
-    }
 
     /// <summary>
     /// An <see cref="IFAluLogic{T}"/> for a square root operation.
@@ -525,7 +415,7 @@ public partial class LogicTable
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T fs, T ft) => T.Sqrt(fs);
+        public static T Compute(T fs) => T.Sqrt(fs);
     }
 
     /// <summary>
@@ -536,7 +426,7 @@ public partial class LogicTable
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T fs, T ft) => T.Abs(fs);
+        public static T Compute(T fs) => T.Abs(fs);
     }
 
     /// <summary>
@@ -547,7 +437,7 @@ public partial class LogicTable
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T fs, T rftt) => fs;
+        public static T Compute(T fs) => fs;
     }
 
     /// <summary>
@@ -558,7 +448,7 @@ public partial class LogicTable
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T fs, T ft) => -fs;
+        public static T Compute(T fs) => -fs;
     }
 
     /// <summary>
@@ -569,7 +459,7 @@ public partial class LogicTable
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T fs, T ft) => T.ReciprocalEstimate(fs);
+        public static T Compute(T fs) => T.ReciprocalEstimate(fs);
     }
 
     /// <summary>
@@ -580,7 +470,7 @@ public partial class LogicTable
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Compute(T fs, T ft) => T.ReciprocalSqrtEstimate(fs);
+        public static T Compute(T fs) => T.ReciprocalSqrtEstimate(fs);
     }
 
     #endregion

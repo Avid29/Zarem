@@ -92,6 +92,7 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
 
     private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TSigned, TLong>(MipsEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
     {
         // Unsigned
         yield return [new ExecutionTestCase<T>(config, "addu $v0, $t2, $t1", T.CreateTruncating(30))];
@@ -104,7 +105,7 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
         yield return [new ExecutionTestCase<T>(config, "add $v0, $t2, $t1", T.CreateTruncating(30))];
         yield return [new ExecutionTestCase<T>(config, "addi $v0, $t2, 10", T.CreateTruncating(30))];
         yield return [new ExecutionTestCase<T>(config, "sub $v0, $t3, $t2", T.CreateTruncating(30 - 20))];
-        yield return [new ExecutionTestCase<T>(config, "mult $t3, $t2", Split<T, ulong>(30 * 20))];
+        yield return [new ExecutionTestCase<T>(config, "mult $t3, $t2", Split<T, long>(30 * 20))];
         yield return [new ExecutionTestCase<T>(config, "div $t3, $t2", (T.CreateTruncating(30 % 20), T.CreateTruncating(30 / 20)))];
         yield return [new ExecutionTestCase<T>(config, "sra $v0, $t8, 4", T.CreateTruncating(101 >> 4))];
         yield return [new ExecutionTestCase<T>(config, "srav $v0, $t8, $s4", T.CreateTruncating(101 >> 4))];
@@ -113,10 +114,13 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
         unchecked
         {
             yield return [new ExecutionTestCase<T>(config, "add $v0, $t3, $t5", T.CreateTruncating(30 + (-10)))];
+            yield return [new ExecutionTestCase<T>(config, "add $v0, $t5, $t3", T.CreateTruncating((-10) + 30))];
             yield return [new ExecutionTestCase<T>(config, "addi $v0, $t3, -10", T.CreateTruncating(30 + (-10)))];
+            yield return [new ExecutionTestCase<T>(config, "addi $v0, $t7, 10", T.CreateTruncating(-30 + 10))];
             yield return [new ExecutionTestCase<T>(config, "sub $v0, $t2, $t5", T.CreateTruncating(20 - (-10)))];
-            yield return [new ExecutionTestCase<T>(config, "mult $t3, $t6", Split<T, ulong>((ulong)(30 * -20)))];
-            yield return [new ExecutionTestCase<T>(config, "div $t3, $t6", (T.CreateTruncating((uint)(30 % -20)), T.CreateTruncating((uint)(30 / -20))))];
+            yield return [new ExecutionTestCase<T>(config, "sub $v0, $t5, $t2", T.CreateTruncating(-10 - 20))];
+            yield return [new ExecutionTestCase<T>(config, "mult $t3, $t6", Split<T, long>(30 * -20))];
+            yield return [new ExecutionTestCase<T>(config, "div $t3, $t6", (T.CreateTruncating(30 % -20), T.CreateTruncating(30 / -20)))];
         }
 
         // Overflowing
@@ -139,14 +143,14 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
             yield return [new ExecutionTestCase<T>(config, "add $v0, $a0, $s1", MipsTrap.ArithmeticOverflow)];                  // max + 1
             yield return [new ExecutionTestCase<T>(config, "addi $v0, $a0, 1", MipsTrap.ArithmeticOverflow)];                   // max + 1
             yield return [new ExecutionTestCase<T>(config, "sub $v0, $a1, $s1", MipsTrap.ArithmeticOverflow)];                  // min - 1
-            yield return [new ExecutionTestCase<T>(config, "mult $a0, $a0", Split<T, ulong>((ulong)int.MaxValue * int.MaxValue))];     // max * max
+            yield return [new ExecutionTestCase<T>(config, "mult $a0, $a0", Split<T, long>((long)int.MaxValue * int.MaxValue))];     // max * max
             yield return [new ExecutionTestCase<T>(config, "div $a0, $a0", (T.CreateTruncating((uint)(int.MaxValue % int.MaxValue)), T.CreateTruncating((uint)(int.MaxValue / int.MaxValue))))];
 
             // Signed (with signs)
             yield return [new ExecutionTestCase<T>(config, "add $v0, $a1, $s5", MipsTrap.ArithmeticOverflow)];     // min + (-1)
             yield return [new ExecutionTestCase<T>(config, "addi $v0, $a1, -1", MipsTrap.ArithmeticOverflow)];     // min + (-1)
             yield return [new ExecutionTestCase<T>(config, "sub $v0, $a0, $s5", MipsTrap.ArithmeticOverflow)];     // max - (-1)
-            yield return [new ExecutionTestCase<T>(config, "mult $a1, $a1", Split<T, ulong>((long)int.MinValue * int.MinValue))];    // min * min
+            yield return [new ExecutionTestCase<T>(config, "mult $a1, $a1", Split<T, long>((long)int.MinValue * int.MinValue))];    // min * min
             yield return [new ExecutionTestCase<T>(config, "div $a1, $a1", (T.CreateTruncating((uint)(int.MinValue % int.MinValue)), T.CreateTruncating((uint)(int.MinValue / int.MinValue))))];
         }
 
@@ -158,9 +162,9 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
         {
             // GPR Multiply
             yield return [new ExecutionTestCase<T>(config, "mul $v0, $t3, $t2", T.CreateTruncating(30 * 20))];
-            yield return [new ExecutionTestCase<T>(config, "mul $v0, $t3, $t6", T.CreateTruncating(unchecked((uint)(30 * -20))))];
-            yield return [new ExecutionTestCase<T>(config, "mul $v0, $a0, $a0", T.CreateTruncating((uint)unchecked(int.MaxValue * int.MaxValue)))];     // max * max
-            yield return [new ExecutionTestCase<T>(config, "mul $v0, $a1, $a1", T.CreateTruncating((uint)unchecked(int.MinValue * int.MinValue)))];     // min * min
+            yield return [new ExecutionTestCase<T>(config, "mul $v0, $t3, $t6", T.CreateTruncating(unchecked(30 * -20)))];
+            yield return [new ExecutionTestCase<T>(config, "mul $v0, $a0, $a0", T.CreateTruncating(unchecked(int.MaxValue * int.MaxValue)))];     // max * max
+            yield return [new ExecutionTestCase<T>(config, "mul $v0, $a1, $a1", T.CreateTruncating(unchecked(int.MinValue * int.MinValue)))];     // min * min
         }
 
         if (config.Version is >= MipsVersion.Mips_R1 and < MipsVersion.Mips_R6)
@@ -204,9 +208,11 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
             {
                 yield return [new ExecutionTestCase<T>(config, "dadd $v0, $t3, $t5", T.CreateTruncating(30 + (-10)))];
                 yield return [new ExecutionTestCase<T>(config, "daddi $v0, $t3, -10", T.CreateTruncating(30 + (-10)))];
+                yield return [new ExecutionTestCase<T>(config, "daddi $v0, $t5, 30", T.CreateTruncating((-10) + 30))];
                 yield return [new ExecutionTestCase<T>(config, "dsub $v0, $t2, $t5", T.CreateTruncating(20 - (-10)))];
+                yield return [new ExecutionTestCase<T>(config, "dsub $v0, $t5, $t2", T.CreateTruncating((-10) - 20))];
                 yield return [new ExecutionTestCase<T>(config, "dmult $t3, $t6", Split<T, UInt128>((UInt128)(30 * -20)))];
-                yield return [new ExecutionTestCase<T>(config, "ddiv $t3, $t6", (T.CreateTruncating((ulong)(30 % -20)), T.CreateTruncating((ulong)(30 / -20))))];
+                yield return [new ExecutionTestCase<T>(config, "ddiv $t3, $t6", (T.CreateTruncating(30 % -20), T.CreateTruncating(30 / -20)))];
             }
         }
     }
@@ -608,11 +614,13 @@ public class MipsDataSourceAttribute : Attribute, ITestDataSource
     }
 
     private unsafe static (T, T) Split<T, TLong>(TLong value)
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>
+        where T : unmanaged, IBinaryInteger<T>
+        where TLong : unmanaged, IBinaryInteger<TLong>
     {
         var size = sizeof(TLong) * 4; // Half the size of TLong in bits
         var mask = (TLong.One << (sizeof(TLong) * 4)) - TLong.One;
-        return (T.CreateTruncating(value >> size), T.CreateTruncating(value & mask));
+        var hi = T.CreateTruncating(value >> size);
+        var low = T.CreateTruncating(value & mask);
+        return (hi, low);
     }
 }

@@ -10,7 +10,7 @@ public partial class LogicTable
     /// An interface for shift logic operations.
     /// </summary>
     public interface IShiftLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+        where T : unmanaged, IBinaryInteger<T>
     {
         /// <summary>
         /// Executes the shift logic operation.
@@ -39,11 +39,11 @@ public partial class LogicTable
         /// <summary>
         /// Executes the ALU logic operation.
         /// </summary>
-        static abstract T Compute(T rs, T rt);
+        static abstract T Compute(T fs);
     }
 
     /// <summary>
-    /// An interface for ALU logic operations.
+    /// An interface for a rounding operations.
     /// </summary>
     public interface IRoundLogic<T>
         where T : unmanaged, IBinaryFloatingPointIeee754<T>
@@ -57,22 +57,21 @@ public partial class LogicTable
     /// <summary>
     /// An interface for ALU logic operations with an overflow check.
     /// </summary>
-    public interface ICheckedAluLogic<T, TS> : IAluLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
+    public interface ICheckedAluLogic<T> : IAluLogic<T>
+        where T : unmanaged, IBinaryInteger<T>, ISignedNumber<T>
     {
         /// <summary>
         /// Checks if an overflow occured.
         /// </summary>
-        static abstract bool Overflow(TS a, TS b, TS r);
+        static abstract bool Overflow(T a, T b, T r);
     }
 
     /// <summary>
     /// An interface for multiply logic.
     /// </summary>
     public interface IMultLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
+        where T : unmanaged, INumber<T>
+        where TL : unmanaged, INumber<TL>
     {
         /// <summary>
         /// Executes the multiply logic operation.
@@ -84,8 +83,8 @@ public partial class LogicTable
     /// An interface for multiply and add logic operations.
     /// </summary>
     public interface IMultAddLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
+        where T : unmanaged, INumber<T>
+        where TL : unmanaged, INumber<TL>
     {
         /// <summary>
         /// Executes the multiply and add logic operation.
