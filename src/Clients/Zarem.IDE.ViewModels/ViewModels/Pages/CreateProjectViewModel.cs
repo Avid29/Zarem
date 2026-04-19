@@ -46,7 +46,8 @@ public partial class CreateProjectViewModel : PageViewModel
         _fileSystemService = fileSystemService;
         _projectService = projectService;
 
-        ModuleFormat = AvailableModuleFormats.FirstOrDefault();
+        Architecture = AvailableArchitectures.First();
+        ModuleFormat = AvailableModuleFormats.First();
     }
 
     /// <inheritdoc/>
@@ -106,37 +107,23 @@ public partial class CreateProjectViewModel : PageViewModel
     public bool NameConflict => Path.Exists(CreationPath);
 
     /// <summary>
-    /// Gets or sets the mips version for the project.
+    /// Gets or sets the selected architecture for the project.
     /// </summary>
-    public MipsVersion MipsVersion
+    public IArchitectureDescriptor Architecture
     {
         get => field;
         set => SetProperty(ref field, value);
-    } = MipsVersion.Mips32R2;
+    }
 
     /// <summary>
-    /// Gets the list of available mips version options.
+    /// Gets a list of available architectures.
     /// </summary>
-    public IEnumerable<MipsVersion> MipsVersionOptions =
-    [
-        MipsVersion.MipsI,
-        MipsVersion.MipsII,
-        MipsVersion.MipsIII,
-        MipsVersion.MipsIII_32Bit,
-        MipsVersion.MipsIV,
-        MipsVersion.MipsIV_32Bit,
-        MipsVersion.MipsV,
-        MipsVersion.MipsV_32Bit,
-        MipsVersion.Mips32R1,
-        MipsVersion.Mips64R1,
-        MipsVersion.Mips32R2,
-        MipsVersion.Mips64R2,
-    ];
+    public IEnumerable<IArchitectureDescriptor> AvailableArchitectures => ZaremRegistry.Architectures.GetDescriptors();
 
     /// <summary>
     /// Gets or sets the selected module format for the project.
     /// </summary>
-    public IModuleFormatDescriptor? ModuleFormat
+    public IModuleFormatDescriptor ModuleFormat
     {
         get => field;
         set => SetProperty(ref field, value); 
@@ -150,7 +137,7 @@ public partial class CreateProjectViewModel : PageViewModel
     /// <summary>
     /// Gets whether or not the project can be created.
     /// </summary>
-    [MemberNotNullWhen(true, nameof(ProjectName), nameof(FolderPath), nameof(ModuleFormat))]
+    [MemberNotNullWhen(true, nameof(ProjectName), nameof(FolderPath), nameof(Architecture), nameof(ModuleFormat))]
     public bool ReadyToCreate => ProjectName is not null && FolderPath is not null && !NameConflict;
 
     [RelayCommand]
@@ -173,30 +160,29 @@ public partial class CreateProjectViewModel : PageViewModel
         if (projectFile is null)
             return;
 
-        // Attempt to create the config
+        // Attempt to create the architecture config
+        var architectureConfig = (IArchitectureConfig?)Activator.CreateInstance(Architecture.ConfigType);
+        if (architectureConfig is null)
+            return;
+
+        // Attempt to create the format config
         var formatConfig = (FormatConfig?)Activator.CreateInstance(ModuleFormat.ConfigType);
         if (formatConfig is null)
             return;
+
+        // Initialize the trap config
+        architectureConfig.EmulatorConfig.TrapHost = new ZaremTrapHandler();
 
         // Create the file config
         var projectConfig = new ProjectConfig
         {
             Name = ProjectName,
             ConfigPath = projectFilePath,
-            ArchitectureConfig = new MipsArchitectureConfig()
-            {
-                MipsVersion = MipsVersion,
-                AssemblerConfig = new MipsAssemblerConfig(),
-                EmulatorConfig = new MipsEmulatorConfig()
-                {
-                    TrapHost = new ZaremTrapHandler(),
-                },
-                LinkerConfig = new MipsLinkerConfig(),
-            },
+            ArchitectureConfig = architectureConfig,
             FormatConfig = formatConfig,
         };
 
-        // Write project config to the file 
+        // Write project config to the file
         ProjectSerializer.Serialize(projectConfig, projectFilePath);
 
         // Open the project and close the page

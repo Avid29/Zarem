@@ -71,13 +71,13 @@
                 </Grid>
 
                 <ComboBox
-                    x:Uid="/Pages/CreateProject/MipsVersionCB"
-                    Header="Mips Version"
-                    ItemsSource="{x:Bind ViewModel.MipsVersionOptions, Mode=OneWay}"
-                    SelectedItem="{x:Bind ViewModel.MipsVersion, Mode=TwoWay}">
+                    x:Uid="/Pages/CreateProject/ArchitectureCB"
+                    Header="Architecture"
+                    ItemsSource="{x:Bind ViewModel.AvailableArchitectures, Mode=OneWay}"
+                    SelectedItem="{x:Bind ViewModel.Architecture, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="ienums:MipsVersion">
-                            <TextBlock Text="{x:Bind helpers:LocalizationHelper.Localize((ienums:MipsVersion)), Mode=OneWay}" />
+                        <DataTemplate x:DataType="descriptors:IArchitectureDescriptor">
+                            <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>

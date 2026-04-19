@@ -18,10 +18,10 @@ public class EmulatorConfig : IConfig
     /// If null, all traps EXCEPT BREAK will be handled by the host-layer, and not the emulated machine.
     /// If not null, the trap handler will interpret traps and syscalls.
     /// </remarks>
-    public ITrapHandler? TrapHost { get; init; }
+    public ITrapHandler? TrapHost { get; set; }
 
     /// <summary>
     /// Gets or sets the emulator's execution mode.
     /// </summary>
-    public ExecutionMode ExecutionMode { get; init; }
+    public ExecutionMode ExecutionMode { get; set; }
 }

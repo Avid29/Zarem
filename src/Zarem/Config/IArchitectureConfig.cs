@@ -14,15 +14,15 @@ public interface IArchitectureConfig
     /// <summary>
     /// Gets the assembler configuration.
     /// </summary>
-    AssemblerConfig? AssemblerConfig { get; }
+    AssemblerConfig AssemblerConfig { get; }
 
     /// <summary>
     /// Gets the linker config.
     /// </summary>
-    LinkerConfig? LinkerConfig { get; }
+    LinkerConfig LinkerConfig { get; }
 
     /// <summary>
     /// Gets the emulator config.
     /// </summary>
-    EmulatorConfig? EmulatorConfig { get; }
+    EmulatorConfig EmulatorConfig { get; }
 }

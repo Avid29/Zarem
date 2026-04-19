@@ -15,15 +15,25 @@ namespace Zarem.MIPS;
 public sealed class MipsArchitectureConfig : IArchitectureConfig
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="MipsArchitectureConfig"/> class.
+    /// </summary>
+    public MipsArchitectureConfig()
+    {
+        Version = MipsVersion.Mips32R2;
+        AssemblerConfig = new MipsAssemblerConfig();
+        EmulatorConfig = new MipsEmulatorConfig();
+        LinkerConfig = new MipsLinkerConfig();
+    }
+
+    /// <summary>
     /// Gets the mips version.
     /// </summary>
-    public MipsVersion MipsVersion
+    public MipsVersion Version
     {
         get => field;
         set
         {
             field = value;
-
             AssemblerConfig?.Version = value;
             EmulatorConfig?.Version = value;
             LinkerConfig?.Version = value;
@@ -31,17 +41,41 @@ public sealed class MipsArchitectureConfig : IArchitectureConfig
     }
 
     /// <inheritdoc cref="IArchitectureConfig.AssemblerConfig"/>
-    public MipsAssemblerConfig? AssemblerConfig { get; init; }
+    public MipsAssemblerConfig AssemblerConfig
+    {
+        get;
+        set
+        {
+            field = value;
+            value?.Version = Version;
+        }
+    }
 
     /// <inheritdoc cref="IArchitectureConfig.EmulatorConfig"/>
-    public MipsEmulatorConfig? EmulatorConfig { get; init; }
+    public MipsEmulatorConfig EmulatorConfig
+    {
+        get;
+        set
+        {
+            field = value;
+            value?.Version = Version;
+        }
+    }
 
     /// <inheritdoc cref="IArchitectureConfig.LinkerConfig"/>
-    public MipsLinkerConfig? LinkerConfig { get; init; }
+    public MipsLinkerConfig LinkerConfig
+    {
+        get;
+        set
+        {
+            field = value;
+            value?.Version = Version;
+        }
+    }
 
-    AssemblerConfig? IArchitectureConfig.AssemblerConfig => AssemblerConfig;
+    AssemblerConfig IArchitectureConfig.AssemblerConfig => AssemblerConfig;
 
-    EmulatorConfig? IArchitectureConfig.EmulatorConfig => EmulatorConfig;
+    EmulatorConfig IArchitectureConfig.EmulatorConfig => EmulatorConfig;
 
-    LinkerConfig? IArchitectureConfig.LinkerConfig => LinkerConfig;
+    LinkerConfig IArchitectureConfig.LinkerConfig => LinkerConfig;
 }

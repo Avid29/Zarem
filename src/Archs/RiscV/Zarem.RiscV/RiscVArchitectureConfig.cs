@@ -15,6 +15,17 @@ namespace Zarem.RiscV;
 public sealed class RiscVArchitectureConfig : IArchitectureConfig
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVArchitectureConfig"/> class.
+    /// </summary>
+    public RiscVArchitectureConfig()
+    {
+        VersionInfo = new RiscVVersionInfo();
+        AssemblerConfig = new RiscVAssemblerConfig();
+        EmulatorConfig = new RiscVEmulatorConfig();
+        LinkerConfig = new RiscVLinkerConfig();
+    }
+
+    /// <summary>
     /// Gets the RISC-V Version info.
     /// </summary>
     public RiscVVersionInfo VersionInfo
@@ -23,7 +34,6 @@ public sealed class RiscVArchitectureConfig : IArchitectureConfig
         set
         {
             field = value;
-
             AssemblerConfig?.VersionInfo = value;
             EmulatorConfig?.VersionInfo = value;
             LinkerConfig?.VersionInfo = value;
@@ -31,17 +41,41 @@ public sealed class RiscVArchitectureConfig : IArchitectureConfig
     }
 
     /// <inheritdoc cref="IArchitectureConfig.AssemblerConfig"/>
-    public RiscVAssemblerConfig? AssemblerConfig { get; init; }
+    public RiscVAssemblerConfig AssemblerConfig
+    {
+        get => field;
+        set
+        {
+            field = value;
+            value.VersionInfo = VersionInfo;
+        }
+    }
 
     /// <inheritdoc cref="IArchitectureConfig.EmulatorConfig"/>
-    public RiscVEmulatorConfig? EmulatorConfig { get; init; }
+    public RiscVEmulatorConfig EmulatorConfig
+    {
+        get => field;
+        set
+        {
+            field = value;
+            value.VersionInfo = VersionInfo;
+        }
+    }
 
     /// <inheritdoc cref="IArchitectureConfig.LinkerConfig"/>
-    public RiscVLinkerConfig? LinkerConfig { get; init; }
+    public RiscVLinkerConfig LinkerConfig
+    {
+        get => field;
+        set
+        {
+            field = value;
+            value.VersionInfo = VersionInfo;
+        }
+    }
 
-    AssemblerConfig? IArchitectureConfig.AssemblerConfig => AssemblerConfig;
+    AssemblerConfig IArchitectureConfig.AssemblerConfig => AssemblerConfig;
 
-    EmulatorConfig? IArchitectureConfig.EmulatorConfig => EmulatorConfig;
+    EmulatorConfig IArchitectureConfig.EmulatorConfig => EmulatorConfig;
 
-    LinkerConfig? IArchitectureConfig.LinkerConfig => LinkerConfig;
+    LinkerConfig IArchitectureConfig.LinkerConfig => LinkerConfig;
 }
