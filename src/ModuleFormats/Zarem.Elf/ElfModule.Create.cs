@@ -18,12 +18,23 @@ public partial class ElfModule
 {
     private ref struct ElfBuildContext
     {
+        private readonly ElfArchEx _archEx;
         private ElfSymbolTable? _symtab;
 
         public ElfBuildContext(Module module)
         {
             Module = module;
-            ElfFile = new ElfFile(ElfArch.MIPS)
+
+            var (archEx, fileClass, encoding) = module.Architecture switch
+            {
+                "MIPS" => (ElfArchEx.MIPS, ElfFileClass.Is32, ElfEncoding.Msb),
+                "RISC-V" => (ElfArchEx.RISCV, ElfFileClass.Is32, ElfEncoding.Lsb),
+                _ => ThrowHelper.ThrowArgumentException<(ElfArchEx, ElfFileClass, ElfEncoding)>(),
+            };
+
+            _archEx = archEx;
+            
+            ElfFile = new ElfFile(archEx.Value, fileClass, encoding)
             {
                 new ElfSectionHeaderStringTable(),
                 new ElfSectionHeaderTable()
@@ -133,7 +144,7 @@ public partial class ElfModule
                     var symbolIndex = _symtab.Entries.FindIndex(x => x.Name.Value == relocation.SymbolName);
                     Guard.IsNotEqualTo(symbolIndex, -1);
 
-                    var type = new ElfRelocationType(ElfArchEx.MIPS, relocation.Type);
+                    var type = new ElfRelocationType(_archEx, relocation.Type);
                     var relItem = new ElfRelocation((ulong)location.Offset, type, (uint)symbolIndex, relocation.Addend);
 
                     table.Entries.Add(relItem);
