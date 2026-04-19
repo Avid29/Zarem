@@ -38,6 +38,8 @@ public sealed class RiscVComputer : ComputerBase
             RiscVBaseVersion.RV128 => new RiscVCpu<UInt128>(config, bus),
             _ => throw new NotImplementedException()
         };
+
+        Cpu.ShutdownRequested += Processor_ShutdownRequested;
     }
 
     /// <inheritdoc/>
@@ -57,5 +59,11 @@ public sealed class RiscVComputer : ComputerBase
     {
         // System RAM
         mapper.MapDevice(0x0000_0000, new RamDevice(0x1_0000_0000)); // TODO: Config ram size
+    }
+
+    private void Processor_ShutdownRequested(object? sender, EventArgs e)
+    {
+        Cpu.ShutdownRequested -= Processor_ShutdownRequested;
+        RequestShutdown();
     }
 }
