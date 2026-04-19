@@ -470,4 +470,166 @@ public partial class LogicTable
     }
 
     #endregion
+
+    #region Float
+
+    /// <summary>
+    /// An <see cref="IFAluLogic{T}"/> for a floating-point add operation.
+    /// </summary>
+    public struct FAddLogic<T> : IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T fs, T ft) => fs + ft;
+    }
+
+    /// <summary>
+    /// An <see cref="IFAluLogic{T}"/> for an unsigned subtract operation.
+    /// </summary>
+    public struct FSubLogic<T> : IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T fs, T ft) => fs - ft;
+    }
+
+    /// <summary>
+    /// An <see cref="IFAluLogic{T}"/> for a floating-point multiplication operation.
+    /// </summary>
+    public struct FMulLogic<T> : IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T fs, T ft) => fs * ft;
+    }
+
+    /// <summary>
+    /// An <see cref="IFAluLogic{T}"/> for a floating-point divison operation.
+    /// </summary>
+    public struct FDivLogic<T> : IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T fs, T ft) => ft != T.Zero ? fs / ft : T.Zero;
+    }
+
+    /// <summary>
+    /// An <see cref="IFAluLogic{T}"/> for a square root operation.
+    /// </summary>
+    public struct SqrtLogic<T> : IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T fs, T ft) => T.Sqrt(fs);
+    }
+
+    /// <summary>
+    /// An <see cref="IFAluLogic{T}"/> for an absolute value operation.
+    /// </summary>
+    public struct AbsLogic<T> : IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T fs, T ft) => T.Abs(fs);
+    }
+
+    /// <summary>
+    /// An <see cref="IFAluLogic{T}"/> for a move operation.
+    /// </summary>
+    public struct MovLogic<T> : IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T fs, T rftt) => fs;
+    }
+
+    /// <summary>
+    /// An <see cref="IFAluLogic{T}"/> for a negate operation.
+    /// </summary>
+    public struct NegLogic<T> : IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T fs, T ft) => -fs;
+    }
+
+    /// <summary>
+    /// An <see cref="IFAluLogic{T}"/> for a reciprical operation.
+    /// </summary>
+    public struct RecipLogic<T> : IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T fs, T ft) => T.ReciprocalEstimate(fs);
+    }
+
+    /// <summary>
+    /// An <see cref="IFAluLogic{T}"/> for a square root reciprical operation.
+    /// </summary>
+    public struct RSqrtLogic<T> : IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T fs, T ft) => T.ReciprocalSqrtEstimate(fs);
+    }
+
+    #endregion
+
+    #region Rounding
+
+    /// <summary>
+    /// An <see cref="IRoundLogic{T}"/> for a rounding operation.
+    /// </summary>
+    public struct RoundLogic<T> : IRoundLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T rs) => T.Round(rs);
+    }
+
+    /// <summary>
+    /// An <see cref="IRoundLogic{T}"/> for a truncate operation.
+    /// </summary>
+    public struct TruncLogic<T> : IRoundLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T rs) => T.Truncate(rs);
+    }
+
+    /// <summary>
+    /// An <see cref="IRoundLogic{T}"/> for a ceiling operation.
+    /// </summary>
+    public struct CeilingLogic<T> : IRoundLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T rs) => T.Ceiling(rs);
+    }
+
+    /// <summary>
+    /// An <see cref="IRoundLogic{T}"/> for a floor operation.
+    /// </summary>
+    public struct FloorLogic<T> : IRoundLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Compute(T rs) => T.Floor(rs);
+    }
+
+    #endregion
 }

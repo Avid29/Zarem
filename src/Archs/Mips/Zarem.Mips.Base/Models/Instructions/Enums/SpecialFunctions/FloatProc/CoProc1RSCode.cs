@@ -37,11 +37,11 @@ public enum CoProc1RSCode
     BC1NEZ = 0x0d,
     BNZ_V = 0x0f,
 
-    Single = 0x10,
-    Double = 0x11,
-    Word = 0x14,
-    Long = 0x15,
-    PairedSingle = 0x16,
+    Single = MipsFloatFormat.Single,
+    Double = MipsFloatFormat.Double,
+    Word = MipsFloatFormat.Word,
+    Long = MipsFloatFormat.Long,
+    PairedSingle = MipsFloatFormat.PairedSingle,
 
     BZ_B = 0x18,
     BZ_H = 0x19,

@@ -22,12 +22,36 @@ public partial class LogicTable
     /// An interface for ALU logic operations.
     /// </summary>
     public interface IAluLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+        where T : unmanaged, INumber<T>
     {
         /// <summary>
         /// Executes the ALU logic operation.
         /// </summary>
         static abstract T Compute(T rs, T rt);
+    }
+
+    /// <summary>
+    /// An interface for floating-point ALU logic operations.
+    /// </summary>
+    public interface IFAluLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <summary>
+        /// Executes the ALU logic operation.
+        /// </summary>
+        static abstract T Compute(T rs, T rt);
+    }
+
+    /// <summary>
+    /// An interface for ALU logic operations.
+    /// </summary>
+    public interface IRoundLogic<T>
+        where T : unmanaged, IBinaryFloatingPointIeee754<T>
+    {
+        /// <summary>
+        /// Executes the round operation.
+        /// </summary>
+        static abstract T Compute(T rs);
     }
 
     /// <summary>
@@ -73,7 +97,7 @@ public partial class LogicTable
     /// An interface for divide logic operations.
     /// </summary>
     public interface IDivLogic<T>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+        where T : unmanaged, INumber<T>
     {
         /// <summary>
         /// Executes the divisor component divide logic operation.
