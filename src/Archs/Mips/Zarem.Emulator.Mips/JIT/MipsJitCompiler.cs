@@ -218,7 +218,7 @@ public unsafe partial class MipsJitCompiler<T>
 
             // Convert to T if neccesary
             if (sizeof(TData) != sizeof(T))
-                EmitConv(il);
+                EmitConv(il, IsSigned<TData>());
         });
     }
 
@@ -255,7 +255,7 @@ public unsafe partial class MipsJitCompiler<T>
         {
             il.Emit(OpCodes.Ldloc, result);
             if (sizeof(TData) != sizeof(T))
-                EmitConv(il);
+                EmitConv(il, Sign.Signed);
         });
     }
 
@@ -306,7 +306,7 @@ public unsafe partial class MipsJitCompiler<T>
         {
             il.Emit(OpCodes.Ldloc, result);
             if (sizeof(TData) != sizeof(T))
-                EmitConv(il);
+                EmitConv(il, Sign.Signed);
         });
     }
 
@@ -324,7 +324,7 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Stloc, localResult);
 
         int shiftAmount = sizeof(TData) * 8;
-        bool bigLong = sizeof(TLong) <= sizeof(long);
+        bool bigLong = sizeof(TLong) > sizeof(long);
 
         // Store high
         EmitStoreRegister(il, MipsGpRegister.High, () =>
@@ -339,13 +339,13 @@ public unsafe partial class MipsJitCompiler<T>
 
             if (bigLong)
             {
-                il.Emit(OpCodes.Shr_Un);
-                EmitConv<TData>(il);
+                il.Emit(OpCodes.Call, _rightShiftMethods[typeof(TLong)]);
+                il.Emit(OpCodes.Call, _castDownMethods[typeof(TLong)]);
             }
             else
             {
-                il.Emit(OpCodes.Call, _rightShiftMethods[typeof(TLong)]);
-                il.Emit(OpCodes.Call, _castDownMethods[typeof(TLong)]);
+                il.Emit(OpCodes.Shr_Un);
+                EmitConv<TData>(il);
             }
 
             if (c is not 0)
@@ -353,7 +353,7 @@ public unsafe partial class MipsJitCompiler<T>
                 il.Emit(c is > 0 ? OpCodes.Add : OpCodes.Sub);
             }
 
-            EmitConv(il);
+            EmitConv(il, IsSigned<TData>());
         });
 
         // Store low
@@ -368,11 +368,11 @@ public unsafe partial class MipsJitCompiler<T>
 
             if (bigLong)
             {
-                EmitConv<TData>(il);
+                il.Emit(OpCodes.Call, _castDownMethods[typeof(TLong)]);
             }
             else
             {
-                il.Emit(OpCodes.Call, _castDownMethods[typeof(TLong)]);
+                EmitConv<TData>(il);
             }
 
             if (c is not 0)
@@ -409,7 +409,9 @@ public unsafe partial class MipsJitCompiler<T>
             il.Emit(OpCodes.Ldloc, rtLocal);
             il.Emit(signed ? OpCodes.Rem : OpCodes.Rem_Un);
             if (sizeof(TData) != sizeof(T))
-                EmitConv(il);
+            {
+                EmitConv(il, signed ? Sign.Signed : Sign.Unsigned);
+            }
         });
 
         // Calculate and store the quotient to low
@@ -419,7 +421,9 @@ public unsafe partial class MipsJitCompiler<T>
             il.Emit(OpCodes.Ldloc, rtLocal);
             il.Emit(signed ? OpCodes.Div : OpCodes.Div_Un);
             if (sizeof(TData) != sizeof(T))
-                EmitConv(il);
+            {
+                EmitConv(il, signed ? Sign.Signed : Sign.Unsigned);
+            }
         });
 
         il.MarkLabel(endDiv);

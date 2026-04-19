@@ -198,8 +198,7 @@ public partial class ExecutionTests
         var highLow = @case.ExpectedHighLow;
         if (highLow.HasValue)
         {
-            Assert.AreEqual(highLow.Value.Low, cpu.RegisterFile.Low);
-            Assert.AreEqual(highLow.Value.High, cpu.RegisterFile.High);
+            Assert.AreEqual(highLow.Value, (cpu.RegisterFile.High, cpu.RegisterFile.Low));
         }
 
         var expectedMemory = @case.ExpectedMemory;
@@ -262,8 +261,7 @@ public partial class ExecutionTests
         var highLow = @case.ExpectedHighLow;
         if (highLow.HasValue)
         {
-            Assert.AreEqual(highLow.Value.Low, cpu.RegisterFile.Low);
-            Assert.AreEqual(highLow.Value.High, cpu.RegisterFile.High);
+            Assert.AreEqual(highLow.Value, (cpu.RegisterFile.High, cpu.RegisterFile.Low));
         }
 
         var expectedMemory = @case.ExpectedMemory;

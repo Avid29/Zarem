@@ -108,22 +108,20 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         return MipsTrap.None;
     }
 
-    private static MipsTrap AluR<TLogic, TFormat, TSize>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap SignedAluR<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, INumber<TFormat>
-        where TSize : unmanaged, IUnsignedNumber<TSize>
     {
         var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
         var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
-        var result = T.CreateTruncating(TSize.CreateTruncating(TLogic.Compute(rs, rt)));
+        var result = T.CreateTruncating(TS.CreateTruncating(TLogic.Compute(rs, rt)));
         exec = MipsExecution<T>.CreateWriteback(inst.RD, result);
         return MipsTrap.None;
     }
 
-    private static MipsTrap CheckedAluR<TLogic, TFormat, TSize>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CheckedAluR<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICheckedAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
-        where TSize : unmanaged, IBinaryInteger<TSize>, IUnsignedNumber<TSize>
     {
         var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
         var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
@@ -135,7 +133,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
             return MipsTrap.ArithmeticOverflow;
         }
 
-        var value = T.CreateTruncating(TSize.CreateTruncating(result));
+        var value = T.CreateTruncating(TS.CreateTruncating(result));
         exec = MipsExecution<T>.CreateWriteback(inst.RD, value);
         return MipsTrap.None;
     }
@@ -160,13 +158,12 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         return MipsTrap.None;
     }
 
-    private static MipsTrap CheckedAluI<TLogic, TFormat, TSize>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CheckedAluI<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICheckedAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
-        where TSize : unmanaged, IBinaryInteger<TSize>, IUnsignedNumber<TSize>
     {
         var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
-        var imm = TFormat.CreateSaturating(inst.Immediate);
+        var imm = TFormat.CreateTruncating(inst.Immediate);
         var result = TLogic.Compute(rs, imm);
 
         if (TLogic.Overflow(rs, imm, result))
@@ -175,7 +172,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
             return MipsTrap.ArithmeticOverflow;
         }
 
-        var value = T.CreateTruncating(result);
+        var value = T.CreateTruncating(TS.CreateTruncating(result));
         exec = MipsExecution<T>.CreateWriteback(inst.RT, value);
         return MipsTrap.None;
     }
@@ -193,6 +190,25 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         TLong mask = TLong.CreateTruncating(TFormat.AllBitsSet);
 
         T hi = T.CreateTruncating(value >> shift);
+        T low = T.CreateTruncating(value & mask);
+
+        exec = MipsExecution<T>.CreateHighLow((hi, low));
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap SignedMultR<TLogic, TFormat, TLong>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+        where TLogic : struct, IMultLogic<TFormat, TLong>
+        where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
+        where TLong : unmanaged, IBinaryInteger<TLong>, ISignedNumber<TLong>
+    {
+        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        TLong value = TLogic.Compute(rs, rt);
+
+        int shift = sizeof(TFormat) * 8;
+        TLong mask = (TLong.One << shift) - TLong.One;
+
+        T hi = T.CreateTruncating(TS.CreateTruncating(value >> shift));
         T low = T.CreateTruncating(value & mask);
 
         exec = MipsExecution<T>.CreateHighLow((hi, low));
@@ -223,6 +239,30 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         return MipsTrap.None;
     }
 
+    private static MipsTrap SignedMultAddR<TLogic, TFormat, TLong>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+        where TLogic : struct, IMultAddLogic<TFormat, TLong>
+        where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
+        where TLong : unmanaged, IBinaryInteger<TLong>, ISignedNumber<TLong>
+    {
+        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+
+        int shift = sizeof(TFormat) * 8;
+        TLong mask = (TLong.One << shift) - TLong.One;
+
+        TLong hiPart = TLong.CreateTruncating(@this._processor.RegisterFile.High) << shift;
+        TLong loPart = TLong.CreateTruncating(@this._processor.RegisterFile.Low) & mask;
+        TLong @base = hiPart | loPart;
+
+        TLong value = TLogic.Compute(rs, rt, @base);
+
+        T outHi = T.CreateTruncating(TS.CreateTruncating(value >> shift));
+        T outLow = T.CreateTruncating(value & mask);
+
+        exec = MipsExecution<T>.CreateHighLow((outHi, outLow));
+        return MipsTrap.None;
+    }
+
     private static MipsTrap DivR<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IDivLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
@@ -235,15 +275,14 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : LogicTable, IMi
         return MipsTrap.None;
     }
 
-    private static MipsTrap DivR<TLogic, TFormat, TSize>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap SignedDivR<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IDivLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
-        where TSize : unmanaged, IUnsignedNumber<TSize>
     {
         var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
         var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
-        var rem = T.CreateTruncating(TSize.CreateTruncating(TLogic.Remainder(rs, rt)));
-        var div = T.CreateTruncating(TSize.CreateTruncating(TLogic.Divisor(rs, rt)));
+        var rem = T.CreateTruncating(TS.CreateTruncating(TLogic.Remainder(rs, rt)));
+        var div = T.CreateTruncating(TS.CreateTruncating(TLogic.Divisor(rs, rt)));
         exec = MipsExecution<T>.CreateHighLow((rem, div));
         return MipsTrap.None;
     }

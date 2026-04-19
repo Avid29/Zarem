@@ -119,22 +119,9 @@ public partial class LogicTable
     /// <summary>
     /// An <see cref="IMultLogic{T, TL}"/> for a signed multiplication operation on 32-bit values.
     /// </summary>
-    public struct MultLogic<T, TS, TL> : IMultLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt) => TL.CreateTruncating(TS.CreateTruncating(rs)) * TL.CreateTruncating(TS.CreateTruncating(rt));
-    }
-
-    /// <summary>
-    /// An <see cref="IMultLogic{TL, TL}"/> for an unsigned multiplication operation on 32-bit values.
-    /// </summary>
-    public struct MultuLogic<T, TL> : IMultLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
+    public struct MultLogic<T, TL> : IMultLogic<T, TL>
+        where T : unmanaged, INumber<T>
+        where TL : unmanaged, INumber<TL>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -167,51 +154,25 @@ public partial class LogicTable
     /// <summary>
     /// An <see cref="IMultAddLogic{T, TL}"/> for a signed multiply and add operation on 32-bit values.
     /// </summary>
-    public struct MultAddLogic<T, TS, TL> : IMultAddLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
+    public struct MultAddLogic<T, TL> : IMultAddLogic<T, TL>
+        where T : unmanaged, IBinaryInteger<T>
+        where TL : unmanaged, IBinaryInteger<TL>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt, TL @base) => @base + MultLogic<T, TS, TL>.Compute(rs, rt);
-    }
-
-    /// <summary>
-    /// An <see cref="IMultAddLogic{T, TL}"/> for an unsigned multiply and add operation on 32-bit values.
-    /// </summary>
-    public struct MultAdduLogic<T, TL> : IMultAddLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt, TL @base) => @base + MultuLogic<T, TL>.Compute(rs, rt);
+        public static TL Compute(T rs, T rt, TL @base) => @base + MultLogic<T, TL>.Compute(rs, rt);
     }
 
     /// <summary>
     /// An <see cref="IMultAddLogic{T, TL}"/> for a signed multiply and subtract operation on 32-bit values.
     /// </summary>
-    public struct MultSubLogic<T, TS, TL> : IMultAddLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
+    public struct MultSubLogic<T, TL> : IMultAddLogic<T, TL>
+        where T : unmanaged, IBinaryInteger<T>
+        where TL : unmanaged, IBinaryInteger<TL>
     {
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt, TL @base) => @base - MultLogic<T, TS, TL>.Compute(rs, rt);
-    }
-
-    /// <summary>
-    /// An <see cref="IMultAddLogic{T, TL}"/> for an unsigned multiply and subtract operation on 32-bit values.
-    /// </summary>
-    public struct MultSubuLogic<T, TL> : IMultAddLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
-    {
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TL Compute(T rs, T rt, TL @base) => @base - MultuLogic<T, TL>.Compute(rs, rt);
+        public static TL Compute(T rs, T rt, TL @base) => @base - MultLogic<T, TL>.Compute(rs, rt);
     }
 
     #endregion

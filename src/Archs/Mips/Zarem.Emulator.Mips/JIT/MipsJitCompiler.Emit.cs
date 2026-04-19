@@ -12,6 +12,13 @@ namespace Zarem.Emulator.Models.JIT;
 public unsafe partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    private enum Sign
+    {
+        Unspecified,
+        Unsigned,
+        Signed,
+    }
+
     private LocalBuilder[] _regLocals = [];
 
     private void EmitSetupLocalRegisters(ILGenerator il)
@@ -219,21 +226,42 @@ public unsafe partial class MipsJitCompiler<T>
         else throw new NotSupportedException("Unsupported register width.");
     }
 
-    private static void EmitConv(ILGenerator il)
-        => EmitConv<T>(il);
+    private static void EmitConv(ILGenerator il, Sign sign = Sign.Unspecified)
+        => EmitConv<T>(il, sign);
 
-    private static void EmitConv<TData>(ILGenerator il)
+    private static void EmitConv<TData>(ILGenerator il, Sign sign = Sign.Unspecified)
+        where TData : unmanaged
     {
-        if (typeof(TData) == typeof(sbyte)) il.Emit(OpCodes.Conv_I1);
-        else if (typeof(TData) == typeof(byte)) il.Emit(OpCodes.Conv_U1);
-        else if (typeof(TData) == typeof(short)) il.Emit(OpCodes.Conv_I2);
-        else if (typeof(TData) == typeof(ushort)) il.Emit(OpCodes.Conv_U2);
-        else if (typeof(TData) == typeof(int)) il.Emit(OpCodes.Conv_I4);
-        else if (typeof(TData) == typeof(uint)) il.Emit(OpCodes.Conv_U4);
-        else if (typeof(TData) == typeof(float)) il.Emit(OpCodes.Conv_R4);
-        else if (typeof(TData) == typeof(long)) il.Emit(OpCodes.Conv_I8);
-        else if (typeof(TData) == typeof(ulong)) il.Emit(OpCodes.Conv_U8);
-        else if (typeof(TData) == typeof(double)) il.Emit(OpCodes.Conv_R8);
+        Type targetType;
+        int size = sizeof(TData);
+        if (sign is Sign.Unspecified) targetType = typeof(TData);
+        else if (size == 1) targetType = sign == Sign.Signed ? typeof(sbyte) : typeof(byte);
+        else if (size == 2) targetType = sign == Sign.Signed ? typeof(short) : typeof(ushort);
+        else if (size == 4) targetType = sign == Sign.Signed ? typeof(int) : typeof(uint);
+        else if (size == 8) targetType = sign == Sign.Signed ? typeof(long) : typeof(ulong);
+        else throw new InvalidOperationException();
+
+        if (targetType == typeof(sbyte)) il.Emit(OpCodes.Conv_I1);
+        else if (targetType == typeof(byte)) il.Emit(OpCodes.Conv_U1);
+        else if (targetType == typeof(short)) il.Emit(OpCodes.Conv_I2);
+        else if (targetType == typeof(ushort)) il.Emit(OpCodes.Conv_U2);
+        else if (targetType == typeof(int)) il.Emit(OpCodes.Conv_I4);
+        else if (targetType == typeof(uint)) il.Emit(OpCodes.Conv_U4);
+        else if (targetType == typeof(float)) il.Emit(OpCodes.Conv_R4);
+        else if (targetType == typeof(long)) il.Emit(OpCodes.Conv_I8);
+        else if (targetType == typeof(ulong)) il.Emit(OpCodes.Conv_U8);
+        else if (targetType == typeof(double)) il.Emit(OpCodes.Conv_R8);
+    }
+
+
+    private static Sign IsSigned<TData>()
+        where TData : unmanaged, INumber<TData>
+    {
+        if (typeof(TData) == typeof(sbyte) || typeof(TData) == typeof(short) ||
+            typeof(TData) == typeof(int) ||typeof(TData) == typeof(long))
+            return Sign.Signed;
+        else
+            return Sign.Unsigned;
     }
 
     private static void EmitLoadConstant<TData>(ILGenerator il, TData value)

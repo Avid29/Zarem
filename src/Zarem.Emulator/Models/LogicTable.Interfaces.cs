@@ -70,8 +70,8 @@ public partial class LogicTable
     /// An interface for multiply logic.
     /// </summary>
     public interface IMultLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
+        where T : unmanaged, INumber<T>
+        where TL : unmanaged, INumber<TL>
     {
         /// <summary>
         /// Executes the multiply logic operation.
@@ -83,8 +83,8 @@ public partial class LogicTable
     /// An interface for multiply and add logic operations.
     /// </summary>
     public interface IMultAddLogic<T, TL>
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-        where TL : unmanaged, IBinaryInteger<TL>, IUnsignedNumber<TL>
+        where T : unmanaged, INumber<T>
+        where TL : unmanaged, INumber<TL>
     {
         /// <summary>
         /// Executes the multiply and add logic operation.

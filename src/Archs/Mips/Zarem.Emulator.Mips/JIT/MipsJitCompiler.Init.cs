@@ -91,9 +91,9 @@ public partial class MipsJitCompiler<T>
         _specialTable[(int)FunctionCode.SystemCall] = (il, inst, pc) => Trap(il, pc, MipsTrap.Syscall);
         _specialTable[(int)FunctionCode.Break] = (il, inst, pc) => Trap(il, pc, MipsTrap.Breakpoint);
         _specialTable[(int)FunctionCode.Add] = (il, inst, pc) => CheckedAluR<int>(il, inst, pc, OpCodes.Add, false);
-        _specialTable[(int)FunctionCode.AddUnsigned] = (il, inst, pc) => AluR<int>(il, inst, OpCodes.Add);
+        _specialTable[(int)FunctionCode.AddUnsigned] = (il, inst, pc) => AluR<uint>(il, inst, OpCodes.Add);
         _specialTable[(int)FunctionCode.Subtract] = (il, inst, pc) => CheckedAluR<int>(il, inst, pc, OpCodes.Sub, true);
-        _specialTable[(int)FunctionCode.SubtractUnsigned] = (il, inst, pc) => AluR<int>(il, inst, OpCodes.Sub);
+        _specialTable[(int)FunctionCode.SubtractUnsigned] = (il, inst, pc) => AluR<uint>(il, inst, OpCodes.Sub);
         _specialTable[(int)FunctionCode.And] = (il, inst, pc) => AluR<T>(il, inst, OpCodes.And);
         _specialTable[(int)FunctionCode.Or] = (il, inst, pc) => AluR<T>(il, inst, OpCodes.Or);
         _specialTable[(int)FunctionCode.ExclusiveOr] = (il, inst, pc) => AluR<T>(il, inst, OpCodes.Xor);
@@ -122,9 +122,9 @@ public partial class MipsJitCompiler<T>
             _specialTable[(int)FunctionCode.DoubleWordDivide] = (il, inst, pc) => DivR<long>(il, inst, true);
             _specialTable[(int)FunctionCode.DoubleWordDivideUnsigned] = (il, inst, pc) => DivR<long>(il, inst, false);
             _specialTable[(int)FunctionCode.DoubleWordAdd] = (il, inst, pc) => CheckedAluR<long>(il, inst, pc, OpCodes.Add, false);
-            _specialTable[(int)FunctionCode.DoubleWordAddUnsigned] = (il, inst, pc) => AluR<long>(il, inst, OpCodes.Add);
+            _specialTable[(int)FunctionCode.DoubleWordAddUnsigned] = (il, inst, pc) => AluR<ulong>(il, inst, OpCodes.Add);
             _specialTable[(int)FunctionCode.DoubleWordSubtract] = (il, inst, pc) => CheckedAluR<long>(il, inst, pc, OpCodes.Sub, true);
-            _specialTable[(int)FunctionCode.DoubleWordSubtractUnsigned] = (il, inst, pc) => AluR<long>(il, inst, OpCodes.Sub);
+            _specialTable[(int)FunctionCode.DoubleWordSubtractUnsigned] = (il, inst, pc) => AluR<ulong>(il, inst, OpCodes.Sub);
             _specialTable[(int)FunctionCode.DoubleWordShiftLeftLogical] = (il, inst, pc) => Shift<long>(il, inst, OpCodes.Shl);
             _specialTable[(int)FunctionCode.DoubleWordShiftRightLogical] = (il, inst, pc) => Shift<long>(il, inst, OpCodes.Shr_Un);
             _specialTable[(int)FunctionCode.DoubleWordShiftRightArithmetic] = (il, inst, pc) => Shift<long>(il, inst, OpCodes.Shr);
@@ -151,7 +151,7 @@ public partial class MipsJitCompiler<T>
             _specialTable[(int)FunctionCode.Multiply] = (il, inst, pc) => MultR<int, long>(il, inst);
             _specialTable[(int)FunctionCode.MultiplyUnsigned] = (il, inst, pc) => MultR<uint, ulong>(il, inst);
             _specialTable[(int)FunctionCode.Divide] = (il, inst, pc) => DivR<int>(il, inst, true);
-            _specialTable[(int)FunctionCode.DivideUnsigned] = (il, inst, pc) => DivR<int>(il, inst, false);
+            _specialTable[(int)FunctionCode.DivideUnsigned] = (il, inst, pc) => DivR<uint>(il, inst, false);
             _specialTable[(int)FunctionCode.MoveFromHigh] = (il, inst, pc) => MoveFromTo(il, MipsGpRegister.High, inst.RD);
             _specialTable[(int)FunctionCode.MoveToHigh] = (il, inst, pc) => MoveFromTo(il, inst.RS, MipsGpRegister.High);
             _specialTable[(int)FunctionCode.MoveFromLow] = (il, inst, pc) => MoveFromTo(il, MipsGpRegister.Low, inst.RD);
