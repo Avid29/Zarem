@@ -21,6 +21,7 @@ public partial class ElfModule
             var archName = elfFile.Arch.Value switch
             {
                 ElfArch.MIPS => "MIPS",
+                ElfArch.RISCV => "RISC-V",
                 _ => null
             };
 
@@ -30,7 +31,7 @@ public partial class ElfModule
 
         public Module Module { get; }
 
-        public bool AbstractStreamSection(ElfStreamSection streamSection)
+        public readonly bool AbstractStreamSection(ElfStreamSection streamSection)
         {
             var sectionName = streamSection.Name.Value;
             Module.GetOrCreateSection(sectionName, stream: streamSection.Stream);
@@ -66,7 +67,7 @@ public partial class ElfModule
             return true;
         }
 
-        public bool AbstractRelocationTable(ElfRelocationTable relocationTable)
+        public readonly bool AbstractRelocationTable(ElfRelocationTable relocationTable)
         {
             if (_symTab is null)
                 return false;
