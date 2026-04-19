@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Name>HelloWorld</Name>
+  <ArchitectureConfig Type="MIPS">
+	<Version>mips3</Version>
+    <AssemblerConfig Type="MIPS" />
+    <EmulatorConfig Type="MIPS">
+      <TrapHost>Zarem</TrapHost>
+    </EmulatorConfig>
+    <LinkerConfig Type="MIPS">
+      <LinkMode>Executable</LinkMode>
+      <BaseAddress>0</BaseAddress>
+    </LinkerConfig>
+  </ArchitectureConfig>
+  <FormatConfig Type="ELF" />
+</Project>

@@ -17,7 +17,7 @@ public class RiscVArchitectureDescriptor : LocalizedDescriptor<RiscVArchitecture
     public override string Identifier => "RISC-V";
 
     /// <inheritdoc/>
-    protected override string ResourceNamespace => "Zarem.MIPS.Resources";
+    protected override string ResourceNamespace => "Zarem.RiscV.Resources";
 
     /// <inheritdoc/>
     public string? DisplayName => Localizer["ArchitectureShortName"];
