@@ -2,7 +2,7 @@
 <Project>
   <Name>Calculator</Name>
   <ArchitectureConfig Type="MIPS">
-    <MipsVersion>mips3</MipsVersion>
+    <Version>mips3</Version>
     <AssemblerConfig Type="MIPS" />
     <EmulatorConfig Type="MIPS">
       <DisableDelaySlots>false</DisableDelaySlots>

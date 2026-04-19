@@ -1,15 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <Name>שלום_עולם</Name>
+  <Name>HelloWorld</Name>
   <ArchitectureConfig Type="MIPS">
-    <MipsVersion>mips3</MipsVersion>
+	<Version>mips3</Version>
     <AssemblerConfig Type="MIPS" />
     <EmulatorConfig Type="MIPS">
-      <DisableDelaySlots>false</DisableDelaySlots>
       <TrapHost>Zarem</TrapHost>
     </EmulatorConfig>
     <LinkerConfig Type="MIPS">
-      <EntryPoint>כניסה</EntryPoint>
       <LinkMode>Executable</LinkMode>
       <BaseAddress>0</BaseAddress>
     </LinkerConfig>

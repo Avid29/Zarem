@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <Name>HelloWorld</Name>
+  <Name>Hello_Name</Name>
   <ArchitectureConfig Type="MIPS">
-    <MipsVersion>mips3</MipsVersion>
+    <Version>mips3</Version>
     <AssemblerConfig Type="MIPS" />
     <EmulatorConfig Type="MIPS">
       <TrapHost>Zarem</TrapHost>
