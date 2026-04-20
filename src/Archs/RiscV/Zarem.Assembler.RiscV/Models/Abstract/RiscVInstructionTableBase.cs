@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Versioning.Enums;
 
 namespace Zarem.Assembler.Models.Abstract;

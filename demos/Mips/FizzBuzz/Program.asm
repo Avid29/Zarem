@@ -56,7 +56,7 @@ skip_buzz:
     
     # Neither Fizz nor Buzz
     # Print the number
-    xor     $a0,    $zero,  $s0
+    move    $a0,    $s0
     xori    $v0,    $zero,  SYS_PRINT_INT
     syscall
     

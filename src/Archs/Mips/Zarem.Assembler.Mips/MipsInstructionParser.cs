@@ -112,7 +112,6 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
                 RT = _rt,
                 RD = _rd,
                 Immediate = Immediate,
-                Address = (uint)Immediate,
             };
 
             return new MipsParsedInstruction(pseudo, References);

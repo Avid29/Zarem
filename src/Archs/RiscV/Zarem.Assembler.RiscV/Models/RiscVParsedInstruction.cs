@@ -3,6 +3,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Zarem.Models.Instructions;
 using Zarem.Models.Tables;
 
@@ -13,8 +14,8 @@ namespace Zarem.Assembler.Models;
 /// </summary>
 public class RiscVParsedInstruction : IParsedInstruction
 {
-    private readonly RiscVInstruction _real;
-    //private readonly PseudoInstruction? _pseudo;
+    private readonly RiscVInstruction? _real;
+    private readonly PseudoInstruction? _pseudo;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVParsedInstruction"/> class.
@@ -25,36 +26,34 @@ public class RiscVParsedInstruction : IParsedInstruction
         References = references;
     }
 
-    ///// <summary>
-    ///// Initializes a new instance of the <see cref="RiscParsedInstruction"/> class.
-    ///// </summary>
-    //public RiscParsedInstruction(PseudoInstruction instruction, List<RelocationEntry>? references = null)
-    //{
-    //    _pseudo = instruction;
-    //    References = references;
-    //}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVParsedInstruction"/> class.
+    /// </summary>
+    public RiscVParsedInstruction(PseudoInstruction instruction, List<RelocationEntry>? references = null)
+    {
+        _pseudo = instruction;
+        References = references;
+    }
 
     /// <inheritdoc/>
     public List<RelocationEntry>? References { get; }
 
-    ///// <summary>
-    ///// Gets whether or not the parsed instruction was a pseudo instruction.
-    ///// </summary>
-    //[MemberNotNullWhen(false, nameof(_real))]
-    //[MemberNotNullWhen(true, nameof(_pseudo))]
-    //public bool IsPseduoInstruction => _real is null;
+    /// <summary>
+    /// Gets whether or not the parsed instruction was a pseudo instruction.
+    /// </summary>
+    [MemberNotNullWhen(false, nameof(_real))]
+    [MemberNotNullWhen(true, nameof(_pseudo))]
+    public bool IsPseduoInstruction => _real is null;
 
     /// <summary>
     /// Gets the parsed instruction implemented exlcusively in real instructions.
     /// </summary>
     public RiscVInstruction[] Realize()
     {
-        //if (!IsPseduoInstruction)
-        //    return [_real.Value];
+        if (!IsPseduoInstruction)
+            return [_real.Value];
 
-        //return _pseudo.Value.Expand();
-
-        return [_real];
+        return _pseudo.Value.Expand();
     }
     
     /// <inheritdoc/>

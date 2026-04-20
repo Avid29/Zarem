@@ -137,6 +137,12 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : IRiscVIns
         return inst.Immediate is 1 ? RiscVTrap.Breakpoint : RiscVTrap.EnvironmentCallFromUMode;
     }
 
+    private static RiscVTrap Lui(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    {
+        exec = RiscVExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(inst.Immediate << 12));
+        return RiscVTrap.None;
+    }
+
     private static RiscVTrap IllegalInstruction(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
     {
         exec = default;

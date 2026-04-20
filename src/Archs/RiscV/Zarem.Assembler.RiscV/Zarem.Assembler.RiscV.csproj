@@ -5,13 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Instructions\BaseSet\BType.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\BaseSet\IType.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\BaseSet\JType.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\BaseSet\RType.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\BaseSet\System.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\BaseSet\SType.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\BaseSet\UType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\BType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\IType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\JType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Pseudo.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\RType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\System.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\SType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\UType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\MultiplicationSet\RType.inst.json" />
   </ItemGroup>
 

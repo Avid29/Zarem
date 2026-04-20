@@ -10,6 +10,7 @@ using Zarem.Assembler;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Tokenization;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
@@ -136,8 +137,8 @@ public class InstructionParserTests
         foreach (var instruction in instructions)
         {
             // TODO: Disassembling pseudo instructions
-            //if (instruction is PseudoInstructionMeta)
-            //    continue;
+            if (instruction is PseudoInstructionMeta)
+                continue;
 
             // Generate instruction
             StringBuilder line = new(instruction.Name);
@@ -151,9 +152,10 @@ public class InstructionParserTests
                     RiscVArgument.FRD or RiscVArgument.FRS1 or RiscVArgument.FRS2 or RiscVArgument.FRS3 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.FloatingPoints),
                     RiscVArgument.Immediate or RiscVArgument.StoreOffset or RiscVArgument.Csr=> $"{ArgGenerator.RandomImm12()}",
                     RiscVArgument.UpperImmediate => $"{ArgGenerator.RandomImm20()}",
-                    RiscVArgument.UImm5 => $"{ArgGenerator.RandomShamt()}",
                     RiscVArgument.BranchOffset => $"{ArgGenerator.RandomBranchOffset()}",
                     RiscVArgument.JumpOffset => $"{ArgGenerator.RandomJumpOffset()}",
+                    RiscVArgument.FullImmediate => $"{ArgGenerator.RandomFullImm()}",
+                    RiscVArgument.UImm5 => $"{ArgGenerator.RandomShamt()}",
                     RiscVArgument.Memory => $"{ArgGenerator.RandomImm12()}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
                     _ => throw new NotImplementedException(),
                 });

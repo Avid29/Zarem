@@ -35,7 +35,7 @@
     "type": "i-type",
     "name": "addi",
     "op_code": 8,
-    "args": [ "rt", "rs", "immediate" ],
+    "args": [ "rt", "rs", "imm" ],
     "added_in": "MipsI",
     "removed_in": "Mips32R6",
     "behavior": "$rt = $rs + immediate"
@@ -44,7 +44,7 @@
     "type": "i-type",
     "name": "addiu",
     "op_code": 9,
-    "args": [ "rt", "rs", "immediate" ],
+    "args": [ "rt", "rs", "imm" ],
     "added_in": "MipsI",
     "behavior": "$rt = $rs + immediate"
   },
@@ -52,7 +52,7 @@
     "type": "i-type",
     "name": "slti",
     "op_code": 10,
-    "args": [ "rt", "rs", "immediate" ],
+    "args": [ "rt", "rs", "imm" ],
     "added_in": "MipsI",
     "behavior": "$rt = $rs < immediate ? 1 : 0"
   },
@@ -60,7 +60,7 @@
     "type": "i-type",
     "name": "sltiu",
     "op_code": 11,
-    "args": [ "rt", "rs", "immediate" ],
+    "args": [ "rt", "rs", "imm" ],
     "added_in": "MipsI",
     "behavior": "$rt = $rs < immediate ? 1 : 0"
   },
@@ -68,7 +68,7 @@
     "type": "i-type",
     "name": "andi",
     "op_code": 12,
-    "args": [ "rt", "rs", "immediate" ],
+    "args": [ "rt", "rs", "imm" ],
     "added_in": "MipsI",
     "behavior": "$rt = $rs & immediate"
   },
@@ -76,7 +76,7 @@
     "type": "i-type",
     "name": "ori",
     "op_code": 13,
-    "args": [ "rt", "rs", "immediate" ],
+    "args": [ "rt", "rs", "imm" ],
     "added_in": "MipsI",
     "behavior": "$rt = $rs | immediate"
   },
@@ -84,7 +84,7 @@
     "type": "i-type",
     "name": "xori",
     "op_code": 14,
-    "args": [ "rt", "rs", "immediate" ],
+    "args": [ "rt", "rs", "imm" ],
     "added_in": "MipsI",
     "behavior": "$rt = $rs ^ immediate"
   },
@@ -92,7 +92,7 @@
     "type": "i-type",
     "name": "lui",
     "op_code": 15,
-    "args": [ "rt", "immediate" ],
+    "args": [ "rt", "imm" ],
     "added_in": "MipsI",
     "behavior": "$rt = immediate << 16"
   },

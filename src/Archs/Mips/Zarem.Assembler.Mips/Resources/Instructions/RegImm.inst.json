@@ -37,7 +37,7 @@
     "type": "reg_imm",
     "name": "tgei",
     "rt_code": 8,
-    "args": [ "rs", "immediate" ],
+    "args": [ "rs", "imm" ],
     "added_in": "MipsII",
     "removed_in": "Mips_R6",
     "behavior": "if ($rs >= immediate) trap"
@@ -46,7 +46,7 @@
     "type": "reg_imm",
     "name": "tgeiu",
     "rt_code": 9,
-    "args": [ "rs", "immediate" ],
+    "args": [ "rs", "imm" ],
     "added_in": "MipsII",
     "removed_in": "Mips_R6",
     "behavior": "if ($rs >= immediate) trap"
@@ -55,7 +55,7 @@
     "type": "reg_imm",
     "name": "tlti",
     "rt_code": 10,
-    "args": [ "rs", "immediate" ],
+    "args": [ "rs", "imm" ],
     "added_in": "MipsII",
     "removed_in": "Mips_R6",
     "behavior": "if ($rs < immediate) trap"
@@ -64,7 +64,7 @@
     "type": "reg_imm",
     "name": "tltiu",
     "rt_code": 11,
-    "args": [ "rs", "immediate" ],
+    "args": [ "rs", "imm" ],
     "added_in": "MipsII",
     "removed_in": "Mips_R6",
     "behavior": "if ($rs < immediate) trap"
@@ -73,7 +73,7 @@
     "type": "reg_imm",
     "name": "teqi",
     "rt_code": 12,
-    "args": [ "rs", "immediate" ],
+    "args": [ "rs", "imm" ],
     "added_in": "MipsII",
     "removed_in": "Mips_R6",
     "behavior": "if ($rs == immediate) trap"
@@ -82,7 +82,7 @@
     "type": "reg_imm",
     "name": "tnei",
     "rt_code": 14,
-    "args": [ "rs", "immediate" ],
+    "args": [ "rs", "imm" ],
     "added_in": "MipsII",
     "removed_in": "Mips_R6",
     "behavior": "if ($rs != immediate) trap"
