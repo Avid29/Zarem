@@ -15,6 +15,9 @@ public class ArgGenerator
     public static int RandomImm20(bool safe = true)
         => safe ? Rnd.Next(-(1 << 19), 1 << 19) : Rnd.Next(int.MinValue, int.MaxValue);
 
+    public static int RandomFullImm()
+        => Rnd.Next(int.MinValue, int.MaxValue);
+
     public static RiscVGpRegister RandomRegister(bool safe = true)
         => (RiscVGpRegister)(safe ? Rnd.Next(0, 32) : Rnd.Next(32, 256));
 

@@ -22,7 +22,7 @@ public enum MipsArgument
     /// <summary>
     /// The 16 bit immediate value.
     /// </summary>
-    [JsonStringEnumMemberName("immediate")] Immediate,
+    [JsonStringEnumMemberName("imm")] Immediate,
 
     /// <summary>
     /// A branch's offset.
@@ -42,7 +42,7 @@ public enum MipsArgument
     /// <summary>
     /// A 32 bit immediate value.
     /// </summary>
-    [JsonStringEnumMemberName("immediate32")] FullImmediate,
+    [JsonStringEnumMemberName("imm32")] FullImmediate,
 
     // Floating Point Registers
     [JsonStringEnumMemberName("fs")] FS,

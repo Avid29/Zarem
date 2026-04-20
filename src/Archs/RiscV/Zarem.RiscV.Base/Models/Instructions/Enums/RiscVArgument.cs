@@ -29,6 +29,7 @@ public enum RiscVArgument : byte
     [JsonStringEnumMemberName("branch_offset")] BranchOffset,
     [JsonStringEnumMemberName("upper_imm")] UpperImmediate,
     [JsonStringEnumMemberName("jump_offset")] JumpOffset,
+    [JsonStringEnumMemberName("imm32")] FullImmediate,
 
     // System
     [JsonStringEnumMemberName("csr")] Csr,      // 12-bit CSR address

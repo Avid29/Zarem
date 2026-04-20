@@ -81,9 +81,9 @@ public readonly struct PseudoInstruction
             ],
             PseudoOp.LoadImmediate =>
             [
-                // li rt, imm: lui rt, upper; ori rt, rt, lower
-                MipsInstruction.CreateI(MipsOpCode.LoadUpperImmediate, MipsGpRegister.Zero, RT, (short)(Immediate >> 16)),
-                MipsInstruction.CreateI(MipsOpCode.OrImmediate, RT, RT, (short)Immediate)
+                // li rd, imm: lui rd, upper; ori rd, rd, lower
+                MipsInstruction.CreateI(MipsOpCode.LoadUpperImmediate, MipsGpRegister.Zero, RD, (short)(Immediate >> 16)),
+                MipsInstruction.CreateI(MipsOpCode.OrImmediate, RD, RD, (short)Immediate)
             ],
             PseudoOp.AbsoluteValue =>
             [

@@ -3,7 +3,7 @@
     "type": "i-type",
     "name": "daddi",
     "op_code": 24,
-    "args": [ "rt", "rs", "immediate" ],
+    "args": [ "rt", "rs", "imm" ],
     "added_in": "MipsIII",
     "64bit": true,
     "behavior": "$rt = $rs + immediate"
@@ -12,7 +12,7 @@
     "type": "i-type",
     "name": "daddiu",
     "op_code": 25,
-    "args": [ "rt", "rs", "immediate" ],
+    "args": [ "rt", "rs", "imm" ],
     "added_in": "MipsIII",
     "64bit": true,
     "behavior": "$rt = $rs + immediate"

@@ -1,0 +1,30 @@
+﻿[
+  {
+    "type": "pseudo",
+    "name": "nop",
+    "pseudo_id": 0,
+    "args": [],
+    "expansion_count": 1
+  },
+  {
+    "type": "pseudo",
+    "name": "li",
+    "pseudo_id": 1,
+    "args": [ "rd", "imm32" ],
+    "expansion_count": 2
+  },
+  {
+    "type": "pseudo",
+    "name": "move",
+    "pseudo_id": 2,
+    "args": [ "rd", "rs1" ],
+    "expansion_count": 1
+  },
+  {
+    "type": "pseudo",
+    "name": "la",
+    "pseudo_id": 3,
+    "args": [ "rd", "imm32" ],
+    "expansion_count": 2
+  }
+]
