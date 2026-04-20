@@ -46,7 +46,17 @@ public enum Funct3Code : byte
     Csrrc = 0b011,
     Csrrwi = 0b101,
     Csrrsi = 0b110,
-    Csrrci = 0b111
+    Csrrci = 0b111,
+
+    // --- Multiplication ---
+    Multiply = 0b000,
+    MultiplyHigh = 0b001,
+    MultiplyHighSignedUnsigned = 0b010,
+    MultiplyHighUnsigned = 0b011,
+    Divide = 0b100,
+    DivideUnsigned = 0b101,
+    Remainder = 0b110,
+    RemainderUnsigned = 0b111,
 
 #pragma warning restore CS1591
 }

@@ -83,6 +83,7 @@ public class RiscVDebugHandler : IDebugHandler
 
     private ulong StepBranch(RiscVInstruction instruction, IRiscVCpu cpu)
     {
+        var nextPc = cpu.ProgramCounter;
         var rs1 = cpu[instruction.RS1];
         var rs2 = cpu[instruction.RS2];
 
@@ -99,9 +100,9 @@ public class RiscVDebugHandler : IDebugHandler
 
         if (branch)
         {
-            return cpu.ProgramCounter + (ulong)instruction.BranchOffset;
+            nextPc += (ulong)instruction.BranchOffset;
         }
 
-        return cpu.ProgramCounter + InstructionSize;
+        return nextPc + InstructionSize;
     }
 }

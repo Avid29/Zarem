@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Name>FizzBuzz</Name>
+  <ArchitectureConfig Type="RISC-V">
+    <VersionInfo>RV32G</VersionInfo>
+    <AssemblerConfig Type="RISC-V" />
+    <EmulatorConfig Type="RISC-V">
+      <TrapHost>Zarem</TrapHost>
+      <ExecutionMode>interpret</ExecutionMode>
+    </EmulatorConfig>
+    <LinkerConfig Type="RISC-V">
+      <EntryPoint>entry</EntryPoint>
+      <LinkMode>Executable</LinkMode>
+      <BaseAddress>0</BaseAddress>
+    </LinkerConfig>
+  </ArchitectureConfig>
+  <FormatConfig Type="ELF" />
+</Project>
