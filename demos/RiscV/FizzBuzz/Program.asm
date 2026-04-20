@@ -16,64 +16,64 @@ entry:
 loop:
     
     # Check Fizz
-    xori    t1,    zero,    3
+    xori    t1,     zero,   3
     rem     t5,     s0,     t1
     
     # Branch past fizz if x % 3 != 0
-    bne     t5,    zero,    skip_fizz
+    bne     t5,     zero,    skip_fizz
     
     # Print fizz
-    xori    a0,    zero,    fizz_str
-    xori    a2,    zero,    0
-    xori    a7,    zero,    SYS_PRINT_STR
+    la      a0,     fizz_str
+    xori    a2,     zero,   0
+    xori    a7,     zero,   SYS_PRINT_STR
     ecall
     
 skip_fizz:
 
     # Check Buzz
-    xori    t1,    zero,    5
+    xori    t1,     zero,   5
     rem     t6,     s0,     t1
     
     # Branch past fizz if x % 5 != 0
-    bne     t6,    zero,    skip_buzz
+    bne     t6,     zero,    skip_buzz
     
     # Print buzz
-    xori    a0,    zero,    buzz_str
-    xori    a2,    zero,    0
-    xori    a7,    zero,    SYS_PRINT_STR
+    la      a0,       buzz_str
+    xori    a2,       zero,     0
+    xori    a7,       zero,     SYS_PRINT_STR
     ecall
     
 skip_buzz:
 
     # Branch past if either fizz or buzz
-    beq     t5,    zero,    newline
-    beq     t6,    zero,    newline
+    beq     t5,     zero,    newline
+    beq     t6,     zero,    newline
     
     # Neither Fizz nor Buzz
     # Print the number
-    xor     a0,    zero,    s0
-    xori    a7,    zero,    SYS_PRINT_INT
+    move    a0,     s0
+    xori    a7,     zero,    SYS_PRINT_INT
     ecall
     
 newline:
 
     # Explicitly print new line if either fizz or buzz
-    xori    a0,    zero,    newline_str
-    xori    a2,    zero,    0
-    xori    a7,    zero,    SYS_PRINT_STR
+    la      a0,     newline_str
+    xori    a2,     zero,   0
+    xori    a7,     zero,   SYS_PRINT_STR
     ecall
     
 loop_check:
     
     # Increment and loop again if $s0 < 101
-    slti    t0,    s0,      100
-    addi    s0,    s0,      1
-    bne     t0,    zero,    loop
+    slti    t0,     s0,      100
+    addi    s0,     s0,      1
+    bne     t0,     zero,    loop
     
 loop_end:
 
     # Shutdown
-    xori    a7,    zero,  9
+    xori    a7,    zero,    9
     ecall
     
     
