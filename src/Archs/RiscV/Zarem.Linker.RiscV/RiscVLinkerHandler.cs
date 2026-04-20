@@ -66,7 +66,7 @@ public class RiscVLinkerHandler : ILinkerHandler<RiscVLinkerConfig>
 
     private static uint RISCV_High20(RiscVInstruction instruction, long target)
     {
-        instruction.UpperImmediate = (int)((uint)(target + 0x800) >> 12);
+        instruction.UpperImmediate = (int)((uint)target >> 12);
         return (uint)instruction;
     }
 

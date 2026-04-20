@@ -78,6 +78,8 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqual)] = &BranchOn<XgeLogic<T, TSigned>>;
         @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
         @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
+        
+        @base[GetLookupIndex(RiscVOpCode.LoadUpperImmediate, 0)] = &Lui;
 
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)
         {

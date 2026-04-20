@@ -47,11 +47,6 @@ public readonly struct PseudoInstruction
     public int Immediate { get; init; }
 
     /// <summary>
-    /// Gets or sets the pseudo-instruction address.
-    /// </summary>
-    public uint Address { get; init; }
-
-    /// <summary>
     /// Expands the pseudo-instruction into an array of real instructions.
     /// </summary>
     public readonly MipsInstruction[] Expand()

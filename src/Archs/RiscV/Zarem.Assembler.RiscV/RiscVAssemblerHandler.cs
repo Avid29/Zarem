@@ -1,10 +1,12 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
@@ -42,7 +44,21 @@ public class RiscVAssemblerHandler : IAssemblerHandler<RiscVAssemblerConfig>
     public Endianness Endianness => Endianness.Little;
 
     /// <inheritdoc/>
-    public int GetInstructionSize(AssemblyLine line) => 4;
+    public int GetInstructionSize(AssemblyLine line)
+    {
+        Guard.IsNotNull(_instructionTable);
+        Guard.IsNotNull(line.Instruction);
+
+        if (_instructionTable.TryGetInstruction(line.Instruction.Source, line.Args.Count, out var meta, out _, out _))
+        {
+            var count = (meta as PseudoInstructionMeta)?.RealizedCount ?? 1;
+            return count * 4;
+        }
+
+        // Instruction not found.
+        // Add a nop and less the second pass handle the error
+        return 4;
+    }
 
     /// <inheritdoc/>
     public ReadOnlySpan<byte> GetNOP() => [0x13, 0x00, 0x00, 0x00]; // addi x0, x0, 0

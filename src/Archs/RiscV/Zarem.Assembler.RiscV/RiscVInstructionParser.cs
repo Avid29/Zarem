@@ -99,6 +99,20 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             TryParseArg(arg.Tokens, pattern[i]);
         }
 
+        if (_meta is PseudoInstructionMeta pMeta)
+        {
+            var pseudo = new PseudoInstruction
+            {
+                PseudoOp = pMeta.PseudoOp,
+                RS1 = _rs1,
+                RS2 = _rs2,
+                RD = _rd,
+                Immediate = Immediate,
+            };
+
+            return new RiscVParsedInstruction(pseudo, References);
+        }
+
         // Build an instruction using the information from
         // _meta and all the parsed arguments
         var instruction = BuildInstruction();
@@ -145,7 +159,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             (>= RiscVArgument.RD and <= RiscVArgument.FRS3) => TryParseRegisterArg(arg, type),
 
             // Expression arguments
-            (>= RiscVArgument.Immediate and <= RiscVArgument.JumpOffset) => TryParseExpressionArg(arg, type),
+            (>= RiscVArgument.Immediate and <= RiscVArgument.FullImmediate) => TryParseExpressionArg(arg, type),
 
             //// Address offset arguments
             RiscVArgument.Memory => TryParseAddressOffsetArg(arg),
@@ -201,6 +215,8 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             RiscVArgument.UpperImmediate => RiscVReferenceType.High20,
             // 'Memory' in RISC-V loads/stores uses a 12-bit offset (%lo)
             RiscVArgument.StoreOffset or RiscVArgument.Memory => RiscVReferenceType.Low12,
+            // FullImmediate triggers a HI/LO pair
+            RiscVArgument.FullImmediate => RiscVReferenceType.High20,   
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<RiscVReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
         };
 
@@ -215,6 +231,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             RiscVArgument.JumpOffset => (20, 1, true),
             RiscVArgument.UpperImmediate => (20, 0, false),
             RiscVArgument.Csr => (12, 0, false),
+            RiscVArgument.FullImmediate => (32, 0, true),
 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<(int, int, bool)>(
                 $"Argument of type '{target}' attempted to parse as an expression.")
@@ -225,7 +242,16 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
 
         if (expResult.IsSymbolic)
         {
-            References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
+            if (target is RiscVArgument.FullImmediate)
+            {
+                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)RiscVReferenceType.High20, default));
+                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress + 4, (uint)RiscVReferenceType.Low12, default));
+            }
+            else
+            {
+                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
+            }
+            
         }
 
         return true;
