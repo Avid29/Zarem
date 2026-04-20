@@ -1,99 +1,157 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Numerics;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Models.Enums;
+using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Functions;
 using Zarem.Models.Instructions.Enums.Operations;
+using Zarem.Models.Versioning;
 using Zarem.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Models;
 
-public unsafe partial class RiscVInstructionServiceTable<T, TS>
+public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
 {
     private void InitTables(RiscVEmulatorConfig config)
     {
-        var version = config.VersionInfo;
+        var versionInfo = config.VersionInfo;
 
-        // Set default behavior to reserve instruction trap
+        // Set default behavior to use empty table
         for (int i = 0; i < 128; i++)
         {
-            _funct7Table[i] = &IllegalInstruction;
+            _func7Table[i] = _emptyTable;
         }
 
         // Set default behavior to illegal instruction trap
+        _func7Table[(int)Funct7Code.Base] = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
         for (int i = 0; i < 1024; i++)
         {
-            _baseTable[i] = &IllegalInstruction;
+            _func7Table[(int)Funct7Code.Base][i] = &IllegalInstruction;
+            _emptyTable[i] = &IllegalInstruction;
         }
 
-        // Populate tables
-        InitBaseTable(version.Base);
+        // Populate base table
+        InitBaseTable(versionInfo);
+
+        // Init
+        if (versionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
+        {
+            switch (versionInfo.Base)
+            {
+                case RiscVBaseVersion.RV32:
+                    InitMultTable<ulong, long>(versionInfo);
+                    break;
+                case RiscVBaseVersion.RV64:
+                    InitMultTable<UInt128, Int128>(versionInfo);
+                    break;
+                case RiscVBaseVersion.RV128:
+                    InitMultTable<BigInteger, BigInteger>(versionInfo);
+                    break;
+            }
+        }
     }
 
-    private void InitBaseTable(RiscVBaseVersion baseVersion)
+    private void InitBaseTable(RiscVVersionInfo versionInfo)
     {
-        // Hook up tables
-        _funct7Table[(int)Funct7Code.Base] = &DispatchBaseTable;
-        _funct7Table[(int)Funct7Code.Modified] = &DispatchBaseTable;
+        var @base = _func7Table[(int)Funct7Code.Base] = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
+        _func7Table[(int)Funct7Code.Modified] = @base;
+        for (var i = 0; i < 1024; i++)
+        {
+            @base[i] = &IllegalInstruction;
+        }
 
-        // Add ALU operations in the base register size
-        InitAluImmediateOperations<T, TS>(RiscVOpCode.AluImmediate);
-        InitAluRegisterOperations<T, TS>(RiscVOpCode.Alu);
-
-        // Add Jump/Branch operations
-        _baseTable[GetLookupIndex(RiscVOpCode.JumpAndLink, 0)] = &JumpAndLink;
-        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchEqual)] = &BranchOn<XeqLogic<T>>;
-        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchNotEqual)] = &BranchOn<XneLogic<T>>;
-        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThan)] = &BranchOn<XltLogic<T, TS>>;
-        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqual)] = &BranchOn<XgeLogic<T, TS>>;
-        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
-        _baseTable[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
+        // Add ALU Immediate operations in the base register size
+        InitAluOperations<T, TSigned>(RiscVOpCode.Alu, RiscVOpCode.AluImmediate);
 
         // Add system operations
-        _baseTable[GetLookupIndex(RiscVOpCode.System, Funct3Code.EcallBreak)] = &EcallBreak;
+        @base[GetLookupIndex(RiscVOpCode.System, Funct3Code.EcallBreak)] = &EcallBreak;
+         
+        // Add Jump operations
+        @base[GetLookupIndex(RiscVOpCode.JumpAndLink, 0)] = &JumpAndLink;
+         
+        // Add Branch operations
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchEqual)] = &BranchOn<XeqLogic<T>>;
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchNotEqual)] = &BranchOn<XneLogic<T>>;
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThan)] = &BranchOn<XltLogic<T, TSigned>>;
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqual)] = &BranchOn<XgeLogic<T, TSigned>>;
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
 
-        if (baseVersion is >= RiscVBaseVersion.RV64)
+        if (versionInfo.Base is >= RiscVBaseVersion.RV64)
         {
             // Add explicitly 32-bit ALU operations
-            InitAluImmediateOperations<uint, int>(RiscVOpCode.AluImmediate32);
-            InitAluRegisterOperations<uint, int>(RiscVOpCode.Alu32);
+            InitAluOperations<uint, int>(RiscVOpCode.Alu32, RiscVOpCode.AluImmediate32);
         }
-
-        if (baseVersion is >= RiscVBaseVersion.RV128)
+        if (versionInfo.Base is >= RiscVBaseVersion.RV128)
         {
             // Add explicitly 64-bit ALU operations
-            InitAluImmediateOperations<ulong, long>(RiscVOpCode.AluImmediate64);
-            InitAluRegisterOperations<ulong, long>(RiscVOpCode.Alu64);
+            InitAluOperations<ulong, long>(RiscVOpCode.Alu64, RiscVOpCode.AluImmediate64);
         }
     }
 
-    private void InitAluImmediateOperations<TUnsigned, TSigned>(RiscVOpCode opCode)
-        where TUnsigned : unmanaged, IBinaryInteger<TUnsigned>, IUnsignedNumber<TUnsigned>
-        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
+    private void InitMultTable<TLong, TSignedLong>(RiscVVersionInfo versionInfo)
+        where TLong : struct, IBinaryInteger<TLong>
+        where TSignedLong : struct, IBinaryInteger<TSignedLong>
     {
-        // Base
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Arithmetic)] = &AluI<AddLogic<TUnsigned>, TUnsigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftLeft)] = &ShiftI<SllLogic<TUnsigned>, TUnsigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThan)] = &AluISigned<SltLogic<TSigned>, TSigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThanUnsigned)] = &AluI<SltLogic<TUnsigned>, TUnsigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Xor)] = &AluI<XorLogic<TUnsigned>, TUnsigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftRight)] = &ModifyableShiftI<SrlLogic<TUnsigned>, SraLogic<TSigned>, TUnsigned, TSigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Or)] = &AluI<OrLogic<TUnsigned>, TUnsigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.And)] = &AluI<AndLogic<TUnsigned>, TUnsigned>;
+        var mulTable = _func7Table[(int)Funct7Code.MExtension] = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
+        for (var i = 0; i < 1024; i++)
+        {
+            mulTable[i] = &IllegalInstruction;
+        }
+
+        InitMultiplyAluOperations<T, TSigned, TLong, TSignedLong>(RiscVOpCode.Alu);
+
+        if (versionInfo.Base is >= RiscVBaseVersion.RV64)
+        {
+            // Add explicitly 32-bit operations
+            InitMultiplyAluOperations<uint, int, ulong, long>(RiscVOpCode.Alu32);
+        }
+        if (versionInfo.Base is >= RiscVBaseVersion.RV128)
+        {
+            // Add explicitly 64-bit operations
+            InitMultiplyAluOperations<ulong, long, UInt128, Int128>(RiscVOpCode.Alu64);
+        }
     }
 
-    private void InitAluRegisterOperations<TUnsigned, TSigned>(RiscVOpCode opCode)
-        where TUnsigned : unmanaged, IBinaryInteger<TUnsigned>, IUnsignedNumber<TUnsigned>
-        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
+    private void InitAluOperations<T2, T2Signed>(RiscVOpCode rOpCode, RiscVOpCode iOpCode)
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
+        where T2Signed : unmanaged, IBinaryInteger<T2Signed>, ISignedNumber<T2Signed>
     {
-        // Base
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Arithmetic)] = &ModifyableAluR<AddLogic<TUnsigned>, SubLogic<TUnsigned>, TUnsigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftLeft)] = &ShiftR<SllLogic<TUnsigned>, TUnsigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThan)] = &AluR<SltLogic<TSigned>, TSigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.SetLessThanUnsigned)] = &AluR<SltLogic<TUnsigned>, TUnsigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Xor)] = &AluR<XorLogic<TUnsigned>, TUnsigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.ShiftRight)] = &ModifyableShiftR<SrlLogic<TUnsigned>, SraLogic<TSigned>, TUnsigned, TSigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.Or)] = &AluR<OrLogic<TUnsigned>, TUnsigned>;
-        _baseTable[GetLookupIndex(opCode, Funct3Code.And)] = &AluR<AndLogic<TUnsigned>, TUnsigned>;
+        var @base = _func7Table[(int)Funct7Code.Base];
+        @base[GetLookupIndex(rOpCode, Funct3Code.Arithmetic)] = &ModifyableAluR<AddLogic<T2>, SubLogic<T2>, T2>;
+        @base[GetLookupIndex(rOpCode, Funct3Code.ShiftLeft)] = &ShiftR<SllLogic<T2>, T2>;
+        @base[GetLookupIndex(rOpCode, Funct3Code.SetLessThan)] = &AluR<SltLogic<T2Signed>, T2Signed>;
+        @base[GetLookupIndex(rOpCode, Funct3Code.SetLessThanUnsigned)] = &AluR<SltLogic<T2>, T2>;
+        @base[GetLookupIndex(rOpCode, Funct3Code.Xor)] = &AluR<XorLogic<T2>, T2>;
+        @base[GetLookupIndex(rOpCode, Funct3Code.ShiftRight)] = &ModifyableShiftR<SrlLogic<T2>, SraLogic<T2Signed>, T2, T2Signed>;
+        @base[GetLookupIndex(rOpCode, Funct3Code.Or)] = &AluR<OrLogic<T2>, T2>;
+        @base[GetLookupIndex(rOpCode, Funct3Code.And)] = &AluR<AndLogic<T2>, T2>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.Arithmetic)] = &AluI<AddLogic<T2>, T2>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.ShiftLeft)] = &ShiftI<SllLogic<T2>, T2>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.SetLessThan)] = &AluISigned<SltLogic<T2Signed>, T2Signed>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.SetLessThanUnsigned)] = &AluI<SltLogic<T2>, T2>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.Xor)] = &AluI<XorLogic<T2>, T2>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.ShiftRight)] = &ModifyableShiftI<SrlLogic<T2>, SraLogic<T2Signed>, T2, T2Signed>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.Or)] = &AluI<OrLogic<T2>, T2>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.And)] = &AluI<AndLogic<T2>, T2>;
+    }
+
+    private void InitMultiplyAluOperations<T2, T2Signed, T2Long, T2SignedLong>(RiscVOpCode opCode)
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
+        where T2Signed : unmanaged, IBinaryInteger<T2Signed>, ISignedNumber<T2Signed>
+        where T2Long : struct, IBinaryInteger<T2Long>
+        where T2SignedLong : struct, IBinaryInteger<T2SignedLong>
+    {
+        var mulTable = _func7Table[(int)Funct7Code.MExtension];
+        mulTable[GetLookupIndex(opCode, Funct3Code.Multiply)] = &AluR<MulLogic<T2Signed>, T2Signed>;
+        mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHigh)] = &AluR<MulhLogic<T2Signed, T2SignedLong>, T2Signed>;
+        mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHighSignedUnsigned)] = &AluR<MulhsuLogic<T2Signed, T2SignedLong>, T2Signed>;
+        mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHighUnsigned)] = &AluR<MulhLogic<T2, T2Long>, T2>;
+        mulTable[GetLookupIndex(opCode, Funct3Code.Divide)] = &AluR<DivLogic<T2Signed>, T2Signed>;
+        mulTable[GetLookupIndex(opCode, Funct3Code.DivideUnsigned)] = &AluR<DivLogic<T2>, T2>;
+        mulTable[GetLookupIndex(opCode, Funct3Code.Remainder)] = &AluR<RemLogic<T2Signed>, T2Signed>;
+        mulTable[GetLookupIndex(opCode, Funct3Code.RemainderUnsigned)] = &AluR<RemLogic<T2>, T2>;
     }
 }

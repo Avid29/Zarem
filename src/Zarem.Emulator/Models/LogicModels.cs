@@ -122,6 +122,17 @@ public interface ICondLogic<T>
     static abstract bool Check(T rs, T rt);
 }
 
+/// <summary>
+/// An interface for a trap operatio.
+/// </summary>
+public interface ITrapLogic<TTrap>
+{
+    /// <summary>
+    /// Executes the trap operation.
+    /// </summary>
+    static abstract TTrap Trap();
+}
+
 #endregion
 
 #region Shift
@@ -259,6 +270,17 @@ public struct DivLogic<T> : IAluLogic<T>, IDivLogic<T>
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T Remainder(T rs, T rt) => rt != T.Zero ? rs % rt : rs;
+}
+
+/// <summary>
+/// An <see cref="IDivLogic{T}"/> for a divison operation.
+/// </summary>
+public struct RemLogic<T> : IAluLogic<T>
+    where T : unmanaged, INumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => DivLogic<T>.Remainder(rs, rt);
 }
 
 #endregion
