@@ -168,7 +168,7 @@ public sealed partial class UsagePatternDisplay : UserControl
             Text = token.Source,
         };
 
-        if (token.Type is TokenType.Register)
+        if (token.Type is TokenType.Register or TokenType.RegisterPrefix)
         {
             run.Foreground = ArgumentBrushPalette?.MiscArgBrush;
         }
