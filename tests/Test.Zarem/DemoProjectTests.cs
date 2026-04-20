@@ -30,10 +30,10 @@ public sealed class DemoProjectTests
     }
 
     [TestMethod]
-    public async Task HelloWorld() => await RunAndCompare(Path.Combine(DemoFilesPathBase, "HelloWorld", "HelloWorld.zrmp"), "Hello World!\n");
+    public async Task HelloWorld() => await RunAndCompare(Path.Combine(DemoFilesPathBase, "Mips", "HelloWorld", "HelloWorld.zrmp"), "Hello World!\n");
 
     [TestMethod]
-    public async Task FizzBuzz() => await RunAndCompare(Path.Combine(DemoFilesPathBase, "FizzBuzz", "FizzBuzz.zrmp"), FizzBuzzText);
+    public async Task FizzBuzz() => await RunAndCompare(Path.Combine(DemoFilesPathBase, "Mips", "FizzBuzz", "FizzBuzz.zrmp"), FizzBuzzText);
 
     private static string FizzBuzzText
     {

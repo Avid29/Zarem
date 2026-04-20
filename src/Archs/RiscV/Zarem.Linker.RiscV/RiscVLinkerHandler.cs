@@ -49,6 +49,7 @@ public class RiscVLinkerHandler : ILinkerHandler<RiscVLinkerConfig>
             RiscVReferenceType.Low12 => RISCV_Low12(instruction, target),
             RiscVReferenceType.High20 => RISCV_High20(instruction, target),
             RiscVReferenceType.Jump20 => RISCV_Jump20(instruction, target),
+            RiscVReferenceType.Branch20 => RISCV_Branch20(instruction, relativeTarget),
             _ => Invalid_Type(value, relocation.Type, localLogger)
         };
 
@@ -72,6 +73,12 @@ public class RiscVLinkerHandler : ILinkerHandler<RiscVLinkerConfig>
     private static uint RISCV_Jump20(RiscVInstruction instruction, long relativeTarget)
     {
         instruction.JumpOffset = (int)relativeTarget;
+        return (uint)instruction;
+    }
+
+    private static uint RISCV_Branch20(RiscVInstruction instruction, long relativeTarget)
+    {
+        instruction.BranchOffset = (int)relativeTarget;
         return (uint)instruction;
     }
 
