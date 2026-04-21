@@ -129,13 +129,13 @@ public abstract partial class MipsCpu<T> : IMipsCpu
     }
 
     /// <inheritdoc/>
-    public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
-
-    /// <inheritdoc/>
     public abstract void Run(CancellationToken ct);
 
     /// <inheritdoc/>
     public abstract void Insert(MipsInstruction instruction, out MipsTrap trap);
+
+    /// <inheritdoc/>
+    public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
 
     /// <summary>
     /// Handles a trap.

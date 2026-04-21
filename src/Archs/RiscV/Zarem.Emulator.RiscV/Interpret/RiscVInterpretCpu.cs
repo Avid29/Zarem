@@ -1,26 +1,70 @@
 ﻿// Avishai Dernis 2026
 
+using System;
+using System.Diagnostics;
 using System.Numerics;
 using System.Threading;
+using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
+using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Enums;
+using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models;
-using Zarem.Emulator.Models.Enums;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Instructions;
+using Zarem.Models.Versioning.Enums;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.Emulator.Interpret;
 
 /// <summary>
 /// A class representing a RISC-V CPU.
 /// </summary>
-public sealed partial class RiscVCpu<T> : IRiscVCpu
+public sealed class RiscVInterpretCpu<T> : RiscVCpu<T>, IInterpretCpu<RiscVInterpretCpu<T>, RiscVInstruction, RiscVExecution<T>, RiscVTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    /// <inheritdoc/>
-    public void Run(CancellationToken ct)
+    private readonly IRiscVInstructionServiceTable<T> _instructionServiceTable;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVCpu{T}"/> class.
+    /// </summary>
+    public RiscVInterpretCpu(RiscVEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
+
+        _instructionServiceTable = config.VersionInfo.Base switch
+        {
+            RiscVBaseVersion.RV32 => new RiscVInstructionServiceTable<T, int>(this),
+            RiscVBaseVersion.RV64 => new RiscVInstructionServiceTable<T, long>(this),
+            RiscVBaseVersion.RV128 => new RiscVInstructionServiceTable<T, Int128>(this),
+            _ => throw new NotImplementedException()
+        };
+    }
+
+    /// <inheritdoc/>
+    public override void Run(CancellationToken ct)
+    {
+        long totalInstructions = 0;
+        var stopwatch = Stopwatch.StartNew();
+        long lastReportTime = 0;
+
         while (!ct.IsCancellationRequested)
+        {
             Step();
+
+            // Update instruction count
+            totalInstructions++;
+
+            // Speed Check: Every 1000ms (1 second)
+            long currentTime = stopwatch.ElapsedMilliseconds;
+            if (currentTime - lastReportTime >= 1000)
+            {
+                double seconds = (currentTime - lastReportTime) / 1000.0;
+                ClockSpeed = totalInstructions / seconds;
+
+                // Reset for next interval
+                totalInstructions = 0;
+                lastReportTime = currentTime;
+            }
+        }
     }
 
     /// <inheritdoc/>
@@ -32,7 +76,7 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
     }
 
     /// <inheritdoc/>
-    public void Insert(RiscVInstruction instruction, out RiscVTrap trap)
+    public override void Insert(RiscVInstruction instruction, out RiscVTrap trap)
         => Insert(instruction, out _, out trap);
 
     /// <inheritdoc/>
@@ -87,27 +131,5 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
         // Apply the program counter update
         ProgramCounter = nextPc;
         return RiscVTrap.None;
-    }
-
-    private void HandleTrap(RiscVTrap trap)
-    {
-        if (trap is RiscVTrap.None)
-            return;
-
-        // Breakpoints are handled by the debugger upon the trap occurring event
-        // The host also handles every kind of trap if that's what the config specifies
-        if (trap is RiscVTrap.Breakpoint && BreakpointHit is not null)
-        {
-            // Only wait if a debugger is attached
-            var eventArgs = new BreakpointHitEventArgs();
-            BreakpointHit.Invoke(this, eventArgs);
-            eventArgs.Wait();
-        }
-        else
-        {
-            // The host handled the trap, do not emulate it
-            // Breakpoints are always handled by the host
-            Config.TrapHost?.HandleTrap(new RiscVTrapContext(this, (ulong)trap));
-        }
     }
 }
