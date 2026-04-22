@@ -18,7 +18,7 @@ namespace Zarem.Emulator.Interpret;
 /// <summary>
 /// A <see cref="MipsCpu{T}"/> that executes by interpreting each instruction.
 /// </summary>
-public sealed class MipsInterpretCpu<T> : MipsCpu<T>
+public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpretCpu<T>, MipsInstruction, MipsExecution<T>, MipsTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private readonly IMipsInstructionServiceTable<T> _instructionServiceTable;

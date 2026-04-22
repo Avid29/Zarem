@@ -4,10 +4,9 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Reflection.Emit;
+using Zarem.Emulator.Extensions;
 using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Emulator.Models.JIT;
 
@@ -76,7 +75,7 @@ public partial class MipsJitCompiler<T>
             var method = mathClass.GetMethod(methodName, [typeof(TFrom)]);
             Guard.IsNotNull(method);
             il.Emit(OpCodes.Call, method);
-            EmitConv<TTo>(il);
+            il.EmitConv<TTo>();
         });
     }
 
@@ -89,7 +88,7 @@ public partial class MipsJitCompiler<T>
             EmitStoreRegister<TTo>(il, fd, () =>
             {
                 EmitLoadRegister<TFrom>(il, fs);
-                EmitConv<TTo>(il);
+                il.EmitConv<TTo>();
             });
         }
     }
@@ -108,7 +107,7 @@ public partial class MipsJitCompiler<T>
         EmitStoreRegister<T>(il, inst.FS, () =>
         {
             EmitLoadRegister(il, inst.RT);
-            EmitConv(il);
+            il.EmitConv<T>();
         });
     }
 
@@ -117,7 +116,7 @@ public partial class MipsJitCompiler<T>
         EmitStoreRegister(il, inst.RT, () =>
         {
             EmitLoadRegister<T>(il, inst.FS);
-            EmitConv(il);
+            il.EmitConv<T>();
         });
     }
 

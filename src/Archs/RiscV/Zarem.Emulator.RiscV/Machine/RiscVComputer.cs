@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
@@ -33,9 +34,9 @@ public sealed class RiscVComputer : ComputerBase
 
         Cpu = config.VersionInfo.Base switch
         {
-            RiscVBaseVersion.RV32 => new RiscVCpu<uint>(config, bus),
-            RiscVBaseVersion.RV64 => new RiscVCpu<ulong>(config, bus),
-            RiscVBaseVersion.RV128 => new RiscVCpu<UInt128>(config, bus),
+            RiscVBaseVersion.RV32 => new RiscVInterpretCpu<uint>(config, bus),
+            RiscVBaseVersion.RV64 => new RiscVInterpretCpu<ulong>(config, bus),
+            RiscVBaseVersion.RV128 => new RiscVInterpretCpu<UInt128>(config, bus),
             _ => throw new NotImplementedException()
         };
 

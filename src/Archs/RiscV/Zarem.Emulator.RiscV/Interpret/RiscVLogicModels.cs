@@ -2,9 +2,10 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Models.Enums;
+using Zarem.Emulator.Machine.Enums;
+using Zarem.Emulator.Models;
 
-namespace Zarem.Emulator.Models;
+namespace Zarem.Emulator.Interpret;
 
 
 /// <summary>

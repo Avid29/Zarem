@@ -50,6 +50,9 @@ public partial class MipsJitCompiler<T>
         // TODO: Explicitly handle delay slot
         for (T pc = start; pc <= end; pc += T.CreateTruncating(4))
             LogRegisterUsage(Fetch(pc));
+
+        _loadRegs.Remove(MipsGpRegister.Zero);
+        _storeRegs.Remove(MipsGpRegister.Zero);
     }
 
     private void LogRegisterUsage(MipsInstruction inst)

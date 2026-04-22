@@ -2,12 +2,17 @@
 
 using System;
 using System.Numerics;
+using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Events;
+using Zarem.Emulator.Interpret;
+using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models;
+using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Enums;
+using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning.Enums;
 
@@ -16,11 +21,9 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A class representing a RISC-V CPU.
 /// </summary>
-public sealed partial class RiscVCpu<T> : IRiscVCpu
+public abstract class RiscVCpu<T> : IRiscVCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private readonly IRiscVInstructionServiceTable<T> _instructionServiceTable;
-
     /// <inheritdoc/>
     public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
 
@@ -36,14 +39,6 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
         RegisterFile = new();
         Tlb = new RiscVTlb();
         Memory = new MemorySystem(bus, Tlb);
-
-        _instructionServiceTable = config.VersionInfo.Base switch
-        {
-            RiscVBaseVersion.RV32 => new RiscVInstructionServiceTable<T, int>(this),
-            RiscVBaseVersion.RV64 => new RiscVInstructionServiceTable<T, long>(this),
-            RiscVBaseVersion.RV128 => new RiscVInstructionServiceTable<T, Int128>(this),
-            _ => throw new NotImplementedException()
-        };
     }
 
     /// <inheritdoc/>
@@ -101,7 +96,38 @@ public sealed partial class RiscVCpu<T> : IRiscVCpu
     }
 
     /// <inheritdoc/>
+    public abstract void Insert(RiscVInstruction instruction, out RiscVTrap trap);
+
+    /// <inheritdoc/>
+    public abstract void Run(CancellationToken ct);
+
+    /// <inheritdoc/>
     public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
+
+    /// <summary>
+    /// Handles a trap.
+    /// </summary>
+    protected void HandleTrap(RiscVTrap trap)
+    {
+        if (trap is RiscVTrap.None)
+            return;
+
+        // Breakpoints are handled by the debugger upon the trap occurring event
+        // The host also handles every kind of trap if that's what the config specifies
+        if (trap is RiscVTrap.Breakpoint && BreakpointHit is not null)
+        {
+            // Only wait if a debugger is attached
+            var eventArgs = new BreakpointHitEventArgs();
+            BreakpointHit.Invoke(this, eventArgs);
+            eventArgs.Wait();
+        }
+        else
+        {
+            // The host handled the trap, do not emulate it
+            // Breakpoints are always handled by the host
+            Config.TrapHost?.HandleTrap(new RiscVTrapContext(this, (ulong)trap));
+        }
+    }
 
     /// <inheritdoc/>
     public void Dispose()

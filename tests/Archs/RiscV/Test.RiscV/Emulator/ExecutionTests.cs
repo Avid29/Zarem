@@ -6,7 +6,11 @@ using Zarem.Assembler;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Enums;
+using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning;
 using Zarem.Models.Versioning.Enums;
@@ -63,7 +67,17 @@ public partial class ExecutionTests
         // Initialize the register file with the provided values
         foreach (var (reg, value) in @case.RegisterInitialization)
             cpu[reg] = value;
+        
+        if (cpu is RiscVInterpretCpu<T>)
+        {
+            RunInterpretChecks(computer, instruction, @case);
+        }
+    }
 
+    private static void RunInterpretChecks<T>(RiscVComputer computer, RiscVInstruction instruction, ExecutionTestCase<T> @case)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        var cpu = (RiscVInterpretCpu<T>)computer.Cpu;
         cpu.Insert(instruction, out var execution, out var trap);
 
         // Ensure that the expected trap was raised (if any)

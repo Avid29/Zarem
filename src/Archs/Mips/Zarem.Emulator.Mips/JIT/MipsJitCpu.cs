@@ -28,7 +28,7 @@ public partial class MipsJitCpu<T> : MipsCpu<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     // Cache mapping a PC to its compiled IL block.
-    private readonly MipsBlockCache<T> _blockCache;
+    private readonly JitBlockCache<T, MipsJitBlock<T>> _blockCache;
     private readonly MipsJitCompiler<T> _jitCompiler;
 
     /// <summary>
