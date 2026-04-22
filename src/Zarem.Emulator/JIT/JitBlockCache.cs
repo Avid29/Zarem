@@ -6,24 +6,26 @@ using System.Numerics;
 
 namespace Zarem.Emulator.JIT;
 
+
 /// <summary>
-/// A cache manager for MIPS JIT blocks.
+/// A cache manager for JIT blocks.
 /// </summary>
-public class MipsBlockCache<T>
+public class JitBlockCache<T, TBlock>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TBlock : class
 {
-    private readonly Dictionary<T, MipsJitBlock<T>> _cache = [];
+    private readonly Dictionary<T, TBlock> _cache = [];
 
     /// <summary>
     /// Attempts to retreive a cached block of JIT code.
     /// </summary>
-    public bool TryGet(T pc, [NotNullWhen(true)] out MipsJitBlock<T>? block)
+    public bool TryGet(T pc, [NotNullWhen(true)] out TBlock? block)
         => _cache.TryGetValue(pc, out block);
 
     /// <summary>
     /// Stores a block of JIT code.
     /// </summary>
-    public void Store(T pc, MipsJitBlock<T> block)
+    public void Store(T pc, TBlock block)
         => _cache[pc] = block;
 
     /// <summary>
