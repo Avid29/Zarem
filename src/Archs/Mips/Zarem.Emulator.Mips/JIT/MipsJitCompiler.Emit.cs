@@ -81,7 +81,7 @@ public unsafe partial class MipsJitCompiler<T>
 
         // Convert the value to TData if neccesary
         if (sizeof(T) != sizeof(TData))
-            EmitConv<TData>(il);
+            il.EmitConv<TData>();
     }
 
     private void EmitLoadRegister<TFloat>(ILGenerator il, MipsFloatRegister register)
@@ -220,13 +220,6 @@ public unsafe partial class MipsJitCompiler<T>
         else if (typeof(TData) == typeof(double)) il.Emit(OpCodes.Stind_R8);
         else throw new NotSupportedException("Unsupported register width.");
     }
-
-    private static void EmitConv(ILGenerator il, Sign sign = Sign.Unspecified)
-        => EmitConv<T>(il, sign);
-
-    private static void EmitConv<TData>(ILGenerator il, Sign sign = Sign.Unspecified)
-        where TData : unmanaged
-        => il.EmitConv<TData>(sign);
 
     private static Sign IsSigned<TData>()
         where TData : unmanaged, INumber<TData>

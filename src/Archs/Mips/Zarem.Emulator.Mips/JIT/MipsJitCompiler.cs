@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
+using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
@@ -229,7 +230,7 @@ public unsafe partial class MipsJitCompiler<T>
 
             // Convert to T if neccesary
             if (sizeof(TData) != sizeof(T))
-                EmitConv(il, IsSigned<TData>());
+                il.EmitConv<T>(IsSigned<TData>());
         });
     }
 
@@ -266,7 +267,7 @@ public unsafe partial class MipsJitCompiler<T>
         {
             il.Emit(OpCodes.Ldloc, result);
             if (sizeof(TData) != sizeof(T))
-                EmitConv(il, Sign.Signed);
+                il.EmitConv<T>(Sign.Signed);
         });
     }
 
@@ -317,7 +318,9 @@ public unsafe partial class MipsJitCompiler<T>
         {
             il.Emit(OpCodes.Ldloc, result);
             if (sizeof(TData) != sizeof(T))
-                EmitConv(il, Sign.Signed);
+            {
+                il.EmitConv<T>(Sign.Signed);
+            }
         });
     }
 
@@ -356,7 +359,7 @@ public unsafe partial class MipsJitCompiler<T>
             else
             {
                 il.Emit(OpCodes.Shr_Un);
-                EmitConv<TData>(il);
+                il.EmitConv<TData>();
             }
 
             if (c is not 0)
@@ -364,7 +367,7 @@ public unsafe partial class MipsJitCompiler<T>
                 il.Emit(c is > 0 ? OpCodes.Add : OpCodes.Sub);
             }
 
-            EmitConv(il, IsSigned<TData>());
+            il.EmitConv<T>(IsSigned<TData>());
         });
 
         // Store low
@@ -383,7 +386,7 @@ public unsafe partial class MipsJitCompiler<T>
             }
             else
             {
-                EmitConv<TData>(il);
+                il.EmitConv<TData>();
             }
 
             if (c is not 0)
@@ -391,7 +394,7 @@ public unsafe partial class MipsJitCompiler<T>
                 il.Emit(c is > 0 ? OpCodes.Add : OpCodes.Sub);
             }
 
-            EmitConv(il);
+            il.EmitConv<T>();
         });
     }
 
@@ -421,7 +424,7 @@ public unsafe partial class MipsJitCompiler<T>
             il.Emit(signed ? OpCodes.Rem : OpCodes.Rem_Un);
             if (sizeof(TData) != sizeof(T))
             {
-                EmitConv(il, signed ? Sign.Signed : Sign.Unsigned);
+                il.EmitConv<T>(signed ? Sign.Signed : Sign.Unsigned);
             }
         });
 
@@ -433,7 +436,7 @@ public unsafe partial class MipsJitCompiler<T>
             il.Emit(signed ? OpCodes.Div : OpCodes.Div_Un);
             if (sizeof(TData) != sizeof(T))
             {
-                EmitConv(il, signed ? Sign.Signed : Sign.Unsigned);
+                il.EmitConv<T>(signed ? Sign.Signed : Sign.Unsigned);
             }
         });
 
@@ -457,8 +460,8 @@ public unsafe partial class MipsJitCompiler<T>
             il.Emit(OpCodes.Callvirt, readMethod);
 
             // Sign-Extension / Zero-Extension then convert to T
-            EmitConv<TData>(il);
-            EmitConv(il);
+            il.EmitConv<TData>();
+            il.EmitConv<T>();
         });
     }
 
@@ -474,7 +477,7 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Ldloc, addrVar);            // Arg 1: ulong addr
         il.Emit(OpCodes.Conv_U8);
         EmitLoadRegister(il, inst.RT);              // Arg 2: TData value (Truncate the RT register value)
-        EmitConv<TData>(il);
+        il.EmitConv<TData>();
         il.Emit(OpCodes.Callvirt, writeMethod);
     }
 
@@ -632,7 +635,7 @@ public unsafe partial class MipsJitCompiler<T>
             method();
 
             if (sizeof(TData) != sizeof(T))
-                EmitConv(il);
+                il.EmitConv<T>();
         });
     }
 }
