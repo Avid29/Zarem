@@ -14,42 +14,6 @@ namespace Zarem.Emulator.Models.JIT;
 public unsafe partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private void EmitSetupLocalRegisters(ILGenerator il)
-    {
-        // Setup local registers
-        _regLocals = new LocalBuilder[_cpu.RegisterFile.Count];
-        for (int i = 1; i < _cpu.RegisterFile.Count; i++)
-            _regLocals[i] = il.DeclareLocal(typeof(T));
-
-        // Load read registers
-        foreach (var reg in _loadRegs)
-        {
-            if (reg is MipsGpRegister.Zero)
-                continue;
-
-            // Load register from memory into local i
-            EmitStoreRegister(il, reg, () =>
-            {
-                EmitLoadRegisterAddress(il, reg);
-                il.EmitLdind<T>();
-            });
-        }
-    }
-
-    private void EmitFlushLocalRegisters(ILGenerator il)
-    {
-        foreach (var reg in _storeRegs)
-        {
-            if (reg is MipsGpRegister.Zero)
-                continue;
-
-            // Load register local i into memory
-            EmitLoadRegisterAddress(il, reg);
-            EmitLoadRegister(il, reg);
-            il.EmitStind<T>();
-        }
-    }
-
     private void EmitDelaySlot(ILGenerator il, T delaySlotPc)
     {
         uint rawInstr = _cpu.Memory.Read<uint>(ulong.CreateTruncating(delaySlotPc));
@@ -59,6 +23,12 @@ public unsafe partial class MipsJitCompiler<T>
         // Note: MIPS forbids putting a jump/branch inside a delay slot!
         CompileInstruction(il, instr, delaySlotPc);
     }
+
+    /// <inheritdoc/>
+    protected override void EmitSetupLocalRegisters(ILGenerator il) => EmitSetupLocalRegisters(il, _cpu.RegisterFile, _loadRegs);
+
+    /// <inheritdoc/>
+    protected override void EmitFlushLocalRegisters(ILGenerator il) => EmitFlushLocalRegisters(il, _cpu.RegisterFile, _storeRegs);
 
     /// <inheritdoc/>
     protected override void EmitLoadRegister<TData>(ILGenerator il, MipsGpRegister register)
@@ -107,8 +77,6 @@ public unsafe partial class MipsJitCompiler<T>
         il.EmitStind<TFloat>();
     }
 
-    private void EmitLoadRegisterAddress(ILGenerator il, MipsGpRegister register) => EmitLoadRegisterAddress(il, (int)register, _cpu.RegisterFile.Regs);
-
     private void EmitLoadRegisterAddress(ILGenerator il, MipsFloatRegister register) => EmitLoadRegisterAddress(il, (int)register, _cpu.FloatProcessor.RegisterFile.Regs);
 
     /// <remarks>
@@ -137,9 +105,7 @@ public unsafe partial class MipsJitCompiler<T>
             il.Emit(OpCodes.Beq, labelAligned);
 
             // Trap: Address Error Load
-            EmitTrapArg(il, accessFailureTrap);
-            il.EmitLoadConstant(pc);
-            il.Emit(OpCodes.Ret);
+            EmitTrapRet(il, accessFailureTrap, pc);
 
             il.MarkLabel(labelAligned);
         }
@@ -151,7 +117,7 @@ public unsafe partial class MipsJitCompiler<T>
 
     private void EmitRet(ILGenerator il, Action<ILGenerator> pushAddress)
     {
-        EmitFlushLocalRegisters(il);
+        EmitFlushLocalRegisters(il, _cpu.RegisterFile, _storeRegs);
         EmitTrapArg(il, MipsTrap.None);
         pushAddress(il);
         il.Emit(OpCodes.Ret);
@@ -172,7 +138,7 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Ret);
     }
 
-    private static void EmitOverflowGuard<TData>(ILGenerator il, T pc, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow, bool isSubtraction = false)
+    private void EmitOverflowGuard<TData>(ILGenerator il, T pc, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow, bool isSubtraction = false)
         where TData : unmanaged, INumber<TData>
     {
         // Logic: ((rs ^ result) & (rtOrImm ^ result)) < 0  (for Addition)
@@ -207,8 +173,6 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Bge, noOverflow);
 
         // Trap Path (ends block)
-        EmitTrapArg(il, MipsTrap.ArithmeticOverflow);
-        il.EmitLoadConstant(pc);
-        il.Emit(OpCodes.Ret);
+        EmitTrapRet(il, MipsTrap.ArithmeticOverflow, pc);
     }
 }

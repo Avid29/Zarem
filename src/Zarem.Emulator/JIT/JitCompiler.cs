@@ -7,6 +7,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models.Enums;
 
 namespace Zarem.Emulator.JIT;
@@ -19,10 +20,10 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     where TRegister : unmanaged, Enum
     where TTrap : unmanaged, Enum
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    protected LocalBuilder[] _regLocals = [];
+    private LocalBuilder[] _regLocals = [];
+
+    /// <inheritdoc cref="EmitSetupLocalRegisters(ILGenerator, RegisterFile{T}, HashSet{TRegister})"/>
+    protected abstract void EmitSetupLocalRegisters(ILGenerator il);
 
     /// <summary>
     /// Emits the CIL to load registers into CIL locals.
@@ -49,6 +50,9 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
             });
         }
     }
+
+    /// <inheritdoc cref="EmitFlushLocalRegisters(ILGenerator, RegisterFile{T}, HashSet{TRegister})"/>
+    protected abstract void EmitFlushLocalRegisters(ILGenerator il);
 
     /// <summary>
     /// Emits the CIL to flush registers from CIL locals back to the register module object.
