@@ -120,6 +120,51 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     }
 
     /// <summary>
+    /// Emits the CIL to check for arithmetic overflow for addition or subtraction.
+    /// </summary>
+    protected void EmitOverflowGuard<TData>(ILGenerator il, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Action emitOverflowHandling, bool isSubtraction = false)
+        where TData : unmanaged, INumber<TData>
+    {
+        // Logic: ((rs ^ result) & (rtOrImm ^ result)) < 0  (for Addition)
+        // Logic: ((rs ^ result) & (rs ^ rtOrImm)) < 0      (for Subtraction)
+
+        Label noOverflow = il.DefineLabel();
+
+        // First term: (rs ^ result)
+        il.Emit(OpCodes.Ldloc, rs);
+        il.Emit(OpCodes.Ldloc, result);
+        il.Emit(OpCodes.Xor);
+
+        // Second term:
+        if (isSubtraction)
+        {
+            // (rs ^ rtOrImm)
+            il.Emit(OpCodes.Ldloc, rs);
+            il.Emit(OpCodes.Ldloc, rtOrImm);
+            il.Emit(OpCodes.Xor);
+        }
+        else
+        {
+            // (rtOrImm ^ result)
+            il.Emit(OpCodes.Ldloc, rtOrImm);
+            il.Emit(OpCodes.Ldloc, result);
+            il.Emit(OpCodes.Xor);
+        }
+
+        il.Emit(OpCodes.And);
+
+        // Check sign bit
+        il.EmitLoadConstant(TData.Zero);
+
+        il.Emit(OpCodes.Bge, noOverflow);
+
+        // Handling path (ends block)
+        emitOverflowHandling();
+
+        il.MarkLabel(noOverflow);
+    }
+
+    /// <summary>
     /// Gets the <see cref="Sign"/> of <typeparamref name="TData"/>.
     /// </summary>
     public static Sign IsSigned<TData>()

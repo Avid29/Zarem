@@ -138,41 +138,4 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Ret);
     }
 
-    private void EmitOverflowGuard<TData>(ILGenerator il, T pc, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow, bool isSubtraction = false)
-        where TData : unmanaged, INumber<TData>
-    {
-        // Logic: ((rs ^ result) & (rtOrImm ^ result)) < 0  (for Addition)
-        // Logic: ((rs ^ result) & (rs ^ rtOrImm)) < 0      (for Subtraction)
-
-        // First term: (rs ^ result)
-        il.Emit(OpCodes.Ldloc, rs);
-        il.Emit(OpCodes.Ldloc, result);
-        il.Emit(OpCodes.Xor);
-
-        // Second term:
-        if (isSubtraction)
-        {
-            // (rs ^ rtOrImm)
-            il.Emit(OpCodes.Ldloc, rs);
-            il.Emit(OpCodes.Ldloc, rtOrImm);
-            il.Emit(OpCodes.Xor);
-        }
-        else
-        {
-            // (rtOrImm ^ result)
-            il.Emit(OpCodes.Ldloc, rtOrImm);
-            il.Emit(OpCodes.Ldloc, result);
-            il.Emit(OpCodes.Xor);
-        }
-
-        il.Emit(OpCodes.And);
-
-        // Check sign bit
-        il.EmitLoadConstant(TData.Zero);
-
-        il.Emit(OpCodes.Bge, noOverflow);
-
-        // Trap Path (ends block)
-        EmitTrapRet(il, MipsTrap.ArithmeticOverflow, pc);
-    }
 }

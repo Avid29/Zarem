@@ -259,10 +259,12 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         il.Emit(OpCodes.Stloc, result);
 
         // Overflow Guard
-        EmitOverflowGuard<TData>(il, pc, rs, rt, result, noOverflow, isSubtraction);
+        EmitOverflowGuard<TData>(il, rs, rt, result, () =>
+        {
+            EmitTrapRet(il, MipsTrap.ArithmeticOverflow, pc);
+        }, isSubtraction);
 
         // Safe Path
-        il.MarkLabel(noOverflow);
         EmitStoreRegister(il, inst.RD, () =>
         {
             il.Emit(OpCodes.Ldloc, result);
@@ -290,7 +292,6 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private void CheckedAluI<TData>(ILGenerator il, MipsInstruction inst, T pc, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
-        Label noOverflow = il.DefineLabel();
 
         // Load RS into local
         EmitLoadRegister(il, inst.RS);
@@ -310,10 +311,12 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         il.Emit(OpCodes.Stloc, result);
 
         // Overflow Guard
-        EmitOverflowGuard<TData>(il, pc, rs, imm, result, noOverflow);
+        EmitOverflowGuard<TData>(il, rs, imm, result, () =>
+        {
+            EmitTrapRet(il, MipsTrap.ArithmeticOverflow, pc);
+        });
 
         // Safe Path
-        il.MarkLabel(noOverflow);
         EmitStoreRegister(il, inst.RT, () =>
         {
             il.Emit(OpCodes.Ldloc, result);
