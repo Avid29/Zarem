@@ -281,7 +281,7 @@ public unsafe partial class MipsJitCompiler<T>
         EmitStoreRegister(il, inst.RT, () =>
         {
             EmitLoadRegister<TData>(il, inst.RS);
-            EmitLoadConstant(il, extended);
+            il.EmitLoadConstant(extended);
 
             il.Emit(ilOpCode);
         });
@@ -298,7 +298,7 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Stloc, rs);
 
         // Load Immediate into local (Sign-extended)
-        EmitLoadConstant(il, TData.CreateTruncating(inst.Immediate));
+        il.EmitLoadConstant(TData.CreateTruncating(inst.Immediate));
         LocalBuilder imm = il.DeclareLocal(typeof(TData));
         il.Emit(OpCodes.Stloc, imm);
 
@@ -349,7 +349,7 @@ public unsafe partial class MipsJitCompiler<T>
             }
 
             il.Emit(OpCodes.Ldloc, localResult);
-            EmitLoadConstant(il, shiftAmount);
+            il.EmitLoadConstant(shiftAmount);
 
             if (bigLong)
             {
@@ -413,7 +413,7 @@ public unsafe partial class MipsJitCompiler<T>
 
         // Guard against Div-By-Zero
         il.Emit(OpCodes.Ldloc, rtLocal);
-        EmitLoadConstant(il, TData.Zero);
+        il.EmitLoadConstant(TData.Zero);
         il.Emit(OpCodes.Beq, endDiv);
 
         // Calculate and store the remainder to High
@@ -483,7 +483,7 @@ public unsafe partial class MipsJitCompiler<T>
 
     private void Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false) => Jump(il, pc, link: link, pushAddress: il =>
     {
-        EmitLoadConstant(il, T.CreateTruncating(inst.Address));
+        il.EmitLoadConstant(T.CreateTruncating(inst.Address));
     });
 
     private void JumpR(ILGenerator il, MipsInstruction inst, T pc, bool link = false) => Jump(il, pc, link: link, pushAddress: il =>
@@ -500,7 +500,7 @@ public unsafe partial class MipsJitCompiler<T>
             // Store the Return Address ($ra = PC + 8)
             // We use +8 because +4 is the delay slot, and we want to return AFTER that.
             T returnAddr = pc + (delaySlots ? T.CreateTruncating(8) : T.CreateTruncating(4));
-            EmitStoreRegister(il, MipsGpRegister.ReturnAddress, () => EmitLoadConstant(il, returnAddr));
+            EmitStoreRegister(il, MipsGpRegister.ReturnAddress, () => il.EmitLoadConstant(returnAddr));
         }
 
         // Handle the Delay Slot
@@ -525,7 +525,7 @@ public unsafe partial class MipsJitCompiler<T>
         => Branch(il, inst, pc, conditionOpCode, likely: likely, pushOperands: il =>
         {
             EmitLoadRegister(il, inst.RS);
-            EmitLoadConstant(il, T.Zero);
+            il.EmitLoadConstant(T.Zero);
         });
 
     private void Branch(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, Action<ILGenerator> pushOperands, bool likely = false)
@@ -570,7 +570,7 @@ public unsafe partial class MipsJitCompiler<T>
     private void TrapCompareImmediate(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch) => ConditionalTrap(il, inst, pc, invertedBranch, il =>
     {
         EmitLoadRegister(il, inst.RS);
-        EmitLoadConstant(il, T.CreateTruncating(inst.Immediate));
+        il.EmitLoadConstant(T.CreateTruncating(inst.Immediate));
     });
 
     private void ConditionalTrap(ILGenerator il, MipsInstruction inst, T pc, OpCode invertedBranch, Action<ILGenerator> pushOperands)
@@ -622,7 +622,7 @@ public unsafe partial class MipsJitCompiler<T>
     {
         uint value = (uint)inst.Immediate << 16;
 
-        EmitStoreRegister(il, inst.RT, () => EmitLoadConstant(il, T.CreateTruncating(value)));
+        EmitStoreRegister(il, inst.RT, () => il.EmitLoadConstant(T.CreateTruncating(value)));
     }
 
     private void MethodUnary<TData>(ILGenerator il, MipsInstruction inst, Action method)

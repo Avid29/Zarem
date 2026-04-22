@@ -6,9 +6,7 @@ using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
 using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
 
 namespace Zarem.Emulator.Models.JIT;
 

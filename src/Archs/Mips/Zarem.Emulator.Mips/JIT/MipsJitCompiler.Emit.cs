@@ -72,7 +72,7 @@ public unsafe partial class MipsJitCompiler<T>
         {
             // MIPS $zero is always 0. 
             // We push a constant 0 instead of looking at memory.
-            EmitLoadConstant(il, TData.Zero);
+            il.EmitLoadConstant(TData.Zero);
             return;
         }
 
@@ -160,7 +160,7 @@ public unsafe partial class MipsJitCompiler<T>
 
             // Trap: Address Error Load
             EmitTrapArg(il, accessFailureTrap);
-            EmitLoadConstant(il, pc);
+            il.EmitLoadConstant(pc);
             il.Emit(OpCodes.Ret);
 
             il.MarkLabel(labelAligned);
@@ -190,7 +190,7 @@ public unsafe partial class MipsJitCompiler<T>
     {
         EmitFlushLocalRegisters(il);
         EmitTrapArg(il, trap);
-        EmitLoadConstant(il, pc);
+        il.EmitLoadConstant(pc);
         il.Emit(OpCodes.Ret);
     }
 
@@ -202,55 +202,6 @@ public unsafe partial class MipsJitCompiler<T>
             return Sign.Signed;
         else
             return Sign.Unsigned;
-    }
-
-    private static void EmitLoadConstant<TData>(ILGenerator il, TData value)
-        where TData : unmanaged, INumber<TData>
-    {
-        if (typeof(TData) == typeof(int) || typeof(TData) == typeof(uint))
-        {
-            var iValue = int.CreateTruncating(value);
-            var opCode = iValue switch
-            {
-                -1 => OpCodes.Ldc_I4_M1,
-                0 => OpCodes.Ldc_I4_0,
-                1 => OpCodes.Ldc_I4_1,
-                2 => OpCodes.Ldc_I4_2,
-                3 => OpCodes.Ldc_I4_3,
-                4 => OpCodes.Ldc_I4_4,
-                5 => OpCodes.Ldc_I4_5,
-                6 => OpCodes.Ldc_I4_6,
-                7 => OpCodes.Ldc_I4_7,
-                8 => OpCodes.Ldc_I4_8,
-                >= sbyte.MinValue and <= sbyte.MaxValue => OpCodes.Ldc_I4_S,
-                _ => OpCodes.Ldc_I4,
-            };
-
-            if (opCode == OpCodes.Ldc_I4) il.Emit(opCode, iValue);
-            else if (opCode == OpCodes.Ldc_I4_S) il.Emit(opCode, (sbyte)iValue);
-            else il.Emit(opCode);
-        }
-        else if (typeof(TData) == typeof(long) || typeof(TData) == typeof(ulong))
-        {
-            long lValue = long.CreateTruncating(value);
-
-            // Optimization: If the 64-bit constant fits in a 32-bit integer, load the integer and convert.
-            // The theory here is that this allows what would be a 9 byte instruction to become either a 2-6 byte
-            // instruction, resulting in a smaller CIL JIT for a change that is optimized away by the CLR. Discuss.
-            if (lValue >= int.MinValue && lValue <= int.MaxValue)
-            {
-                EmitLoadConstant(il, (int)lValue);
-                il.Emit(OpCodes.Conv_I8);
-            }
-            else
-            {
-                il.Emit(OpCodes.Ldc_I8, lValue);
-            }
-        }
-        else
-        {
-            throw new NotSupportedException("Unsupported register width.");
-        }
     }
 
     private static void EmitOverflowGuard<TData>(ILGenerator il, T pc, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow, bool isSubtraction = false)
@@ -283,13 +234,13 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.And);
 
         // Check sign bit
-        EmitLoadConstant(il, TData.Zero);
+        il.EmitLoadConstant(TData.Zero);
 
         il.Emit(OpCodes.Bge, noOverflow);
 
         // Trap Path (ends block)
         EmitTrapArg(il, MipsTrap.ArithmeticOverflow);
-        EmitLoadConstant(il, pc);
+        il.EmitLoadConstant(pc);
         il.Emit(OpCodes.Ret);
     }
 }
