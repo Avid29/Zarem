@@ -33,7 +33,7 @@ public unsafe partial class MipsJitCompiler<T>
             EmitStoreRegister(il, reg, () =>
             {
                 EmitLoadRegisterAddress(il, reg);
-                EmitLdind(il);
+                il.EmitLdind<T>();
             });
         }
     }
@@ -48,7 +48,7 @@ public unsafe partial class MipsJitCompiler<T>
             // Load register local i into memory
             EmitLoadRegisterAddress(il, reg);
             EmitLoadRegister(il, reg);
-            EmitStind(il);
+            il.EmitStind<T>();
         }
     }
 
@@ -89,7 +89,7 @@ public unsafe partial class MipsJitCompiler<T>
     {
         // Load the register's address then retrieve the value at that address
         EmitLoadRegisterAddress(il, register);
-        EmitLdind<TFloat>(il);
+        il.EmitLdind<TFloat>();
     }
 
     private void EmitStoreRegister(ILGenerator il, MipsGpRegister register, Action emitEvaluation)
@@ -115,7 +115,7 @@ public unsafe partial class MipsJitCompiler<T>
         // Load the register's address, emit the evaluation instructions, and store the value
         EmitLoadRegisterAddress(il, register);
         emitEvaluation();
-        EmitStind<TFloat>(il);
+        il.EmitStind<TFloat>();
     }
 
     private void EmitLoadRegisterAddress(ILGenerator il, MipsGpRegister register) => EmitLoadRegisterAddress(il, (int)register, _cpu.RegisterFile.Regs);
@@ -192,33 +192,6 @@ public unsafe partial class MipsJitCompiler<T>
         EmitTrapArg(il, trap);
         EmitLoadConstant(il, pc);
         il.Emit(OpCodes.Ret);
-    }
-
-    private static void EmitLdind(ILGenerator il) => EmitLdind<T>(il);
-
-    private static void EmitLdind<TData>(ILGenerator il)
-    {
-        if (typeof(TData) == typeof(int)) il.Emit(OpCodes.Ldind_I4);
-        else if (typeof(TData) == typeof(uint)) il.Emit(OpCodes.Ldind_I4);
-        else if (typeof(TData) == typeof(float)) il.Emit(OpCodes.Ldind_R4);
-        else if (typeof(TData) == typeof(long)) il.Emit(OpCodes.Ldind_I8);
-        else if (typeof(TData) == typeof(ulong)) il.Emit(OpCodes.Ldind_I8);
-        else if (typeof(TData) == typeof(double)) il.Emit(OpCodes.Ldind_R8);
-        else throw new NotSupportedException("Unsupported register width.");
-    }
-
-    private static void EmitStind(ILGenerator il) => EmitStind<T>(il);
-
-    private static void EmitStind<TData>(ILGenerator il)
-        where TData : unmanaged
-    {
-        if (typeof(TData) == typeof(int)) il.Emit(OpCodes.Stind_I4);
-        else if (typeof(TData) == typeof(uint)) il.Emit(OpCodes.Stind_I4);
-        else if (typeof(TData) == typeof(float)) il.Emit(OpCodes.Stind_R4);
-        else if (typeof(TData) == typeof(long)) il.Emit(OpCodes.Stind_I8);
-        else if (typeof(TData) == typeof(ulong)) il.Emit(OpCodes.Stind_I8);
-        else if (typeof(TData) == typeof(double)) il.Emit(OpCodes.Stind_R8);
-        else throw new NotSupportedException("Unsupported register width.");
     }
 
     private static Sign IsSigned<TData>()

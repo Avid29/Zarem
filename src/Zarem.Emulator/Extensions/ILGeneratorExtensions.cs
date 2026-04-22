@@ -18,6 +18,7 @@ public unsafe static class ILGeneratorExtensions
         /// Emits a load indirect op-code for the <typeparamref name="TData"/>.
         /// </summary>
         public void EmitLdind<TData>()
+            where TData : unmanaged
         {
             if (typeof(TData) == typeof(int)) il.Emit(OpCodes.Ldind_I4);
             else if (typeof(TData) == typeof(uint)) il.Emit(OpCodes.Ldind_I4);
