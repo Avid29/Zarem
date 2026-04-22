@@ -19,7 +19,10 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     where TRegister : unmanaged, Enum
     where TTrap : unmanaged, Enum
 {
-    private LocalBuilder[] _regLocals = [];
+    /// <summary>
+    /// 
+    /// </summary>
+    protected LocalBuilder[] _regLocals = [];
 
     /// <summary>
     /// Emits the CIL to load registers into CIL locals.
@@ -37,11 +40,11 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
         foreach (var reg in loadRegs)
         {
             // Load register from memory into local i
-            EmitStoreRegister<T>(il, reg, () =>
+            EmitStoreRegister(il, reg, () =>
             {
                 var register = reg;
                 var index = Unsafe.As<TRegister, int>(ref register);
-                EmitLoadRegisterAddress(il, index, regFile);
+                EmitLoadRegisterAddress(il, index, regFile.Regs);
                 il.EmitLdind<T>();
             });
         }
@@ -57,7 +60,7 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
             // Load the address and value of the register
             var register = reg;
             var index = Unsafe.As<TRegister, int>(ref register);
-            EmitLoadRegisterAddress(il, index, regFile);
+            EmitLoadRegisterAddress(il, index, regFile.Regs);
             EmitLoadRegister<T>(il, reg);
             il.EmitStind<T>();
         }
@@ -72,24 +75,24 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     protected virtual void EmitLoadRegister<TData>(ILGenerator il, TRegister register)
         where TData : unmanaged, INumber<TData>
     {
+        // Load the register from local
         var regIndex = Unsafe.As<TRegister, int>(ref register);
         var regLocal = _regLocals[regIndex];
         il.Emit(OpCodes.Ldloc, regLocal);
 
+        // Convert the value to TData if neccesary
         if (sizeof(T) != sizeof(TData))
-            il.EmitConv<T>();
+            il.EmitConv<TData>();
     }
-
-    /// <inheritdoc cref="EmitStoreRegister{TData}(ILGenerator, TRegister, Action)"/>
-    protected void EmitStoreRegister(ILGenerator il, TRegister register, Action emitEvaluation) => EmitStoreRegister<T>(il, register, emitEvaluation);
 
     /// <summary>
     /// Emits the CIL to load a register to the CLR stack from locals.
     /// </summary>
-    protected virtual void EmitStoreRegister<TData>(ILGenerator il, TRegister register, Action emitEvaluation)
-        where TData : unmanaged, INumber<TData>
+    protected virtual void EmitStoreRegister(ILGenerator il, TRegister register, Action emitEvaluation)
     {
         emitEvaluation();
+
+        // Store the value to the register's local
         var regIndex = Unsafe.As<TRegister, int>(ref register);
         var regLocal = _regLocals[regIndex];
         il.Emit(OpCodes.Stloc, regLocal);
@@ -98,10 +101,9 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Emits the CIL to load the address of a register from a register file in memory.
     /// </summary>
-    protected void EmitLoadRegisterAddress(ILGenerator il, int index , RegisterFile<T> regFile)
+    protected void EmitLoadRegisterAddress(ILGenerator il, int index , T* regs)
     {
         // Calculate the address of the register in memory
-        var regs = regFile.Regs;
         nint regAddress = (nint)regs + (index * sizeof(T));
 
         // Emit the address 

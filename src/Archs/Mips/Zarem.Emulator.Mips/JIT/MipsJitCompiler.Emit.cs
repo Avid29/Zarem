@@ -14,8 +14,6 @@ namespace Zarem.Emulator.Models.JIT;
 public unsafe partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private LocalBuilder[] _regLocals = [];
-
     private void EmitSetupLocalRegisters(ILGenerator il)
     {
         // Setup local registers
@@ -62,11 +60,8 @@ public unsafe partial class MipsJitCompiler<T>
         CompileInstruction(il, instr, delaySlotPc);
     }
 
-    private void EmitLoadRegister(ILGenerator il, MipsGpRegister register)
-        => EmitLoadRegister<T>(il, register);
-
-    private void EmitLoadRegister<TData>(ILGenerator il, MipsGpRegister register)
-        where TData : unmanaged, INumber<TData>
+    /// <inheritdoc/>
+    protected override void EmitLoadRegister<TData>(ILGenerator il, MipsGpRegister register)
     {
         if (register is 0)
         {
@@ -76,12 +71,7 @@ public unsafe partial class MipsJitCompiler<T>
             return;
         }
 
-        // Load the register's address then retrieve the value at that address
-        il.Emit(OpCodes.Ldloc, _regLocals[(int)register]);
-
-        // Convert the value to TData if neccesary
-        if (sizeof(T) != sizeof(TData))
-            il.EmitConv<TData>();
+        base.EmitLoadRegister<TData>(il, register);
     }
 
     private void EmitLoadRegister<TFloat>(ILGenerator il, MipsFloatRegister register)
@@ -92,7 +82,8 @@ public unsafe partial class MipsJitCompiler<T>
         il.EmitLdind<TFloat>();
     }
 
-    private void EmitStoreRegister(ILGenerator il, MipsGpRegister register, Action emitEvaluation)
+    /// <inheritdoc/>
+    protected override void EmitStoreRegister(ILGenerator il, MipsGpRegister register, Action emitEvaluation)
     {
         if (register is 0)
         {
@@ -104,9 +95,7 @@ public unsafe partial class MipsJitCompiler<T>
             return;
         }
 
-        // Load the register's address, emit the evaluation instructions, and store the value
-        emitEvaluation();
-        il.Emit(OpCodes.Stloc, _regLocals[(int)register]);
+        base.EmitStoreRegister(il, register, emitEvaluation);
     }
 
     private void EmitStoreRegister<TFloat>(ILGenerator il, MipsFloatRegister register, Action emitEvaluation)
@@ -121,17 +110,6 @@ public unsafe partial class MipsJitCompiler<T>
     private void EmitLoadRegisterAddress(ILGenerator il, MipsGpRegister register) => EmitLoadRegisterAddress(il, (int)register, _cpu.RegisterFile.Regs);
 
     private void EmitLoadRegisterAddress(ILGenerator il, MipsFloatRegister register) => EmitLoadRegisterAddress(il, (int)register, _cpu.FloatProcessor.RegisterFile.Regs);
-
-    private static void EmitLoadRegisterAddress(ILGenerator il, int index, T* regs)
-    {
-        nint regAddress = (nint)regs + (index * sizeof(T));
-
-        if (nint.Size == 8) il.Emit(OpCodes.Ldc_I8, regAddress);
-        else if (nint.Size == 4) il.Emit(OpCodes.Ldc_I4, (int)regAddress);
-        else throw new PlatformNotSupportedException($"Unsupported pointer size: {nint.Size}");
-
-        il.Emit(OpCodes.Conv_U);
-    }
 
     /// <remarks>
     /// Set <paramref name="accessFailureTrap"/> to <see cref="MipsTrap.None"/> to skip alignment check.
@@ -192,16 +170,6 @@ public unsafe partial class MipsJitCompiler<T>
         EmitTrapArg(il, trap);
         il.EmitLoadConstant(pc);
         il.Emit(OpCodes.Ret);
-    }
-
-    private static Sign IsSigned<TData>()
-        where TData : unmanaged, INumber<TData>
-    {
-        if (typeof(TData) == typeof(sbyte) || typeof(TData) == typeof(short) ||
-            typeof(TData) == typeof(int) ||typeof(TData) == typeof(long))
-            return Sign.Signed;
-        else
-            return Sign.Unsigned;
     }
 
     private static void EmitOverflowGuard<TData>(ILGenerator il, T pc, LocalBuilder rs, LocalBuilder rtOrImm, LocalBuilder result, Label noOverflow, bool isSubtraction = false)

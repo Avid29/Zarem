@@ -21,7 +21,7 @@ namespace Zarem.Emulator.Models.JIT;
 /// <summary>
 /// A class which compiles blocks of MIPS code into JIT IL code.
 /// </summary>
-public unsafe partial class MipsJitCompiler<T>
+public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, MipsTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private delegate void MipsEmitter(ILGenerator il, MipsInstruction inst, T pc);
