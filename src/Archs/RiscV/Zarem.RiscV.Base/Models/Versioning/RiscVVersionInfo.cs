@@ -53,7 +53,7 @@ public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
     public byte SpecMinor { get; } = 0;
 
     /// <inheritdoc/>
-    public static RiscVVersionInfo Parse(string s, IFormatProvider? provider)
+    public static RiscVVersionInfo Parse(string s, IFormatProvider? provider = null)
     {
         if (!TryParse(s, provider, out var result))
         {

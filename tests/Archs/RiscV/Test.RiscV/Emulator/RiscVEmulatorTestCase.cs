@@ -6,10 +6,10 @@ using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Test.RiscV.Emulator;
 
-public sealed record ExecutionTestCase<T>
+public sealed record RiscVEmulatorTestCase<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
 {
-    public ExecutionTestCase(string input)
+    public RiscVEmulatorTestCase(string input)
     {
         Input = input;
 
@@ -52,12 +52,12 @@ public sealed record ExecutionTestCase<T>
         }
     }
 
-    public ExecutionTestCase(string input, T writeBack) : this(input)
+    public RiscVEmulatorTestCase(string input, T writeBack) : this(input)
     {
         ExpectedWriteBack = (RiscVGpRegister.Argument0, writeBack);
     }
 
-    public ExecutionTestCase(string input, RiscVGpRegister reg, T? writeBack = null) : this(input)
+    public RiscVEmulatorTestCase(string input, RiscVGpRegister reg, T? writeBack = null) : this(input)
     {
         ExpectedWriteBack = (reg, writeBack);
     }

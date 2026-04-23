@@ -6,10 +6,9 @@ using Zarem.Assembler;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning;
@@ -24,30 +23,30 @@ public partial class ExecutionTests
     public const uint K1 = 0x516;
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_RV32_I))]
-    public void InstructionTests_RV32_I(ExecutionTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
+    [RiscVInstructionSource("RV32I", ExecutionMode.Interpret)]
+    public void InstructionTests_RV32_I(RiscVEmulatorTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_RV32_G))]
-    public void InstructionTests_RV32_G(ExecutionTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.General));
+    [RiscVInstructionSource("RV32G", ExecutionMode.Interpret)]
+    public void InstructionTests_RV32_G(RiscVEmulatorTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.General));
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_RV64_I))]
-    public void InstructionTests_RV64_I(ExecutionTestCase<ulong> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
+    [RiscVInstructionSource("RV64I", ExecutionMode.Interpret)]
+    public void InstructionTests_RV64_I(RiscVEmulatorTestCase<ulong> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_RV64_G))]
-    public void InstructionTests_RV64_G(ExecutionTestCase<ulong> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.General));
+    [RiscVInstructionSource("RV64G", ExecutionMode.Interpret)]
+    public void InstructionTests_RV64_G(RiscVEmulatorTestCase<ulong> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.General));
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_RV128_I))]
-    public void InstructionTests_RV128_I(ExecutionTestCase<UInt128> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.Integers));
+    [RiscVInstructionSource("RV128I", ExecutionMode.Interpret)]
+    public void InstructionTests_RV128_I(RiscVEmulatorTestCase<UInt128> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.Integers));
 
     [DataTestMethod]
-    [DynamicData(nameof(InstructionTestList_RV128_G))]
-    public void InstructionTests_RV128_G(ExecutionTestCase<UInt128> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.General));
+    [RiscVInstructionSource("RV128G", ExecutionMode.Interpret)]
+    public void InstructionTests_RV128_G(RiscVEmulatorTestCase<UInt128> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.General));
 
-    private static void RunTest<T>(ExecutionTestCase<T> @case, RiscVVersionInfo versionInfo)
+    private static void RunTest<T>(RiscVEmulatorTestCase<T> @case, RiscVVersionInfo versionInfo)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
@@ -74,7 +73,7 @@ public partial class ExecutionTests
         }
     }
 
-    private static void RunInterpretChecks<T>(RiscVComputer computer, RiscVInstruction instruction, ExecutionTestCase<T> @case)
+    private static void RunInterpretChecks<T>(RiscVComputer computer, RiscVInstruction instruction, RiscVEmulatorTestCase<T> @case)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         var cpu = (RiscVInterpretCpu<T>)computer.Cpu;
