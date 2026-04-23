@@ -130,6 +130,8 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
         EmitStoreRegister(il, inst.RD, () => il.EmitLoadConstant(T.CreateTruncating(value)));
     }
 
+    private void IllegalInstruction(ILGenerator il, RiscVInstruction inst, T pc) => EmitTrapRet(il, RiscVTrap.IllegalInstruction, pc);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int GetLookupIndex(RiscVInstruction instruction)
         => GetLookupIndex(instruction.OpCode, instruction.Funct3);

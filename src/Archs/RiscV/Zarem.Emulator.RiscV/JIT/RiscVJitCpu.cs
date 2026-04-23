@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System.Diagnostics;
 using System.Numerics;
 using System.Threading;
 using Zarem.Emulator.Config;
@@ -30,12 +31,47 @@ public class RiscVJitCpu<T> : RiscVCpu<T>
     /// <inheritdoc/>
     public override void Insert(RiscVInstruction instruction, out RiscVTrap trap)
     {
-        throw new System.NotImplementedException();
+        var @delegate = _jitCompiler.CompileLoneInstruction(instruction, ProgramCounter);
+        ProgramCounter = @delegate(this, out trap);
     }
 
     /// <inheritdoc/>
     public override void Run(CancellationToken ct)
     {
-        throw new System.NotImplementedException();
+        long totalInstructions = 0;
+        var stopwatch = Stopwatch.StartNew();
+        long lastReportTime = 0;
+
+        while (!ct.IsCancellationRequested)
+        {
+            // Look up the current block
+            if (!_blockCache.TryGet(ProgramCounter, out var compiledBlock))
+            {
+                // Cache Miss. Compile the basic block starting at ProgramCounter
+                compiledBlock = _jitCompiler.CompileBlock(ProgramCounter);
+                _blockCache.Store(ProgramCounter, compiledBlock);
+            }
+
+            // Execute the block, and update the PC to the next block start
+            ProgramCounter = compiledBlock.Delegate(this, out var trap);
+
+            // Update instruction count
+            totalInstructions += compiledBlock.Size;
+
+            // Speed Check: Every 1000ms (1 second)
+            long currentTime = stopwatch.ElapsedMilliseconds;
+            if (currentTime - lastReportTime >= 1000)
+            {
+                double seconds = (currentTime - lastReportTime) / 1000.0;
+                ClockSpeed = totalInstructions / seconds;
+
+                // Reset for next interval
+                totalInstructions = 0;
+                lastReportTime = currentTime;
+            }
+
+            if (trap is not RiscVTrap.None)
+                HandleTrap(trap);
+        }
     }
 }

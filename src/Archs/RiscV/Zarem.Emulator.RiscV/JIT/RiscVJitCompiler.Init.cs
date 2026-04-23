@@ -31,8 +31,8 @@ public partial class RiscVJitCompiler<T>
         _func7Table[(int)Funct7Code.Base] = new RiscVEmitter[1024];
         for (int i = 0; i < 1024; i++)
         {
-            //_func7Table[(int)Funct7Code.Base][i] = &IllegalInstruction;
-            //_emptyTable[i] = &IllegalInstruction;
+            _func7Table[(int)Funct7Code.Base][i] = IllegalInstruction;
+            _emptyTable[i] = IllegalInstruction;
         }
 
         // Populate base table
@@ -59,11 +59,6 @@ public partial class RiscVJitCompiler<T>
     private void InitBaseTable(RiscVVersionInfo versionInfo)
     {
         var @base = _func7Table[(int)Funct7Code.Base];
-        _func7Table[(int)Funct7Code.Modified] = @base;
-        for (var i = 0; i < 1024; i++)
-        {
-            //@base[i] = &IllegalInstruction;
-        }
 
         // Add ALU Immediate operations in the base register size
         switch (versionInfo.Base)
@@ -110,7 +105,7 @@ public partial class RiscVJitCompiler<T>
         var mulTable = _func7Table[(int)Funct7Code.MExtension] = new RiscVEmitter[1024];
         for (var i = 0; i < 1024; i++)
         {
-            //mulTable[i] = &IllegalInstruction;
+            mulTable[i] = IllegalInstruction;
         }
 
         InitMultiplyAluOperations<T, TSigned, TLong, TSignedLong>(RiscVOpCode.Alu);

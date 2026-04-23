@@ -21,6 +21,19 @@ public partial class MipsJitCompiler<T>
     {
         var version = config.Version;
 
+        // Set default behavior to reserve instruction trap
+        for (int i = 0; i < 64; i++)
+        {
+            _opCodeTable[i] = ReservedInstruction;
+            _specialTable[i] = ReservedInstruction;
+            _special2Table[i] = ReservedInstruction;
+        }
+
+        for (int i = 0; i < 32; i++)
+        {
+            _regImmTable[i] = ReservedInstruction;
+        }
+
         // Populate tables
         InitRoot(version);
         InitSpecial(version);
@@ -198,9 +211,19 @@ public partial class MipsJitCompiler<T>
 
     private void InitFloat(MipsVersion version)
     {
+        for (int i = 0; i < 32; i++)
+        {
+            _coProc1RSTable[i] = ReservedInstruction;
+        }
+
         for (int i = 0; i < _floatFuncTables.Length; i++)
         {
             _floatFuncTables[i] = new MipsFloatEmitter[64];
+
+            for (int j = 0; j < 64; j++)
+            {
+                _floatFuncTables[i][j] = ReservedInstruction;
+            }
         }
 
         InitFloatRoot(version);

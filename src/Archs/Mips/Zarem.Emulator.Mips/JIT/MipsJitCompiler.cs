@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
-using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Extensions;
@@ -607,6 +606,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
         EmitStoreRegister(il, inst.RT, () => il.EmitLoadConstant(T.CreateTruncating(value)));
     }
+
+    private void ReservedInstruction(ILGenerator il, MipsInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
+
+    private void ReservedInstruction(ILGenerator il, FloatInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
 
     private void MethodUnary<TData>(ILGenerator il, MipsInstruction inst, Action method)
         where TData : unmanaged, INumber<TData>
