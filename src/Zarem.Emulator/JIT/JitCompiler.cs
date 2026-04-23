@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Extensions;
@@ -21,6 +24,44 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     where TTrap : unmanaged, Enum
 {
     private LocalBuilder[] _regLocals = [];
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JitCompiler{T, TRegister, TTrap}"/> class.
+    /// </summary>
+    public JitCompiler(ICpu cpu)
+    {
+        var getMemoryMethod = cpu.GetType().GetProperty(nameof(ICpu.Memory))?.GetGetMethod();
+        Guard.IsNotNull(getMemoryMethod);
+        GetMemoryMethod = getMemoryMethod;
+
+        Type[] readWritetypes = [typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint)];
+        foreach (var type in readWritetypes)
+        {
+            ReadMethods[type] = typeof(MemorySystem)
+                .GetMethods()
+                .First(m => m.Name == nameof(MemorySystem.Read) && m.IsGenericMethod && m.GetParameters().Length == 1)
+                .MakeGenericMethod(type);
+            WriteMethods[type] = typeof(MemorySystem)
+                .GetMethods()
+                .First(m => m.Name == nameof(MemorySystem.Write) && m.IsGenericMethod && m.GetParameters().Length == 2)
+                .MakeGenericMethod(type);
+        }
+    }
+
+    /// <summary>
+    /// Gets a <see cref="MethodInfo"/> for retreiving the <see cref="ICpu.Memory"/> for the compiler.
+    /// </summary>
+    protected MethodInfo GetMemoryMethod { get; }
+
+    /// <summary>
+    /// Gets a <see cref="Dictionary{Type, MethodInfo}"/> for looking up memory read methods by type.
+    /// </summary>
+    protected Dictionary<Type, MethodInfo> ReadMethods { get; } = [];
+
+    /// <summary>
+    /// Gets a <see cref="Dictionary{Type, MethodInfo}"/> for looking up memory write methods by type.
+    /// </summary>
+    protected Dictionary<Type, MethodInfo> WriteMethods { get; } = [];
 
     /// <inheritdoc cref="EmitSetupLocalRegisters(ILGenerator, RegisterFile{T}, HashSet{TRegister})"/>
     protected abstract void EmitSetupLocalRegisters(ILGenerator il);
@@ -162,6 +203,28 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
         emitOverflowHandling();
 
         il.MarkLabel(noOverflow);
+    }
+
+    /// <summary>
+    /// Emits the CIL update the trap out argument.
+    /// </summary>
+    protected static void EmitTrapArg(ILGenerator il, TTrap trap)
+    {
+        var trapCode = Unsafe.As<TTrap, int>(ref trap);
+        il.Emit(OpCodes.Ldarg_1);
+        il.Emit(OpCodes.Ldc_I4, trapCode);
+        il.Emit(OpCodes.Stind_I1);
+    }
+
+    /// <summary>
+    /// Emits the CIL to return a trap.
+    /// </summary>
+    protected void EmitTrapRet(ILGenerator il, TTrap trap, T pc)
+    {
+        EmitFlushLocalRegisters(il);
+        EmitTrapArg(il, trap);
+        il.EmitLoadConstant(pc);
+        il.Emit(OpCodes.Ret);
     }
 
     /// <summary>
