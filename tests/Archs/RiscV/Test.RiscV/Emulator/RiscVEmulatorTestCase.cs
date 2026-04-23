@@ -1,18 +1,18 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
+using Test.Archs.Emulator;
+using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Test.RiscV.Emulator;
 
-public sealed record RiscVEmulatorTestCase<T>
+public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorConfig>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
 {
-    public RiscVEmulatorTestCase(string input)
+    public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input) : base(config, input)
     {
-        Input = input;
-
         unchecked
         {
             RegisterInitialization =
@@ -52,17 +52,15 @@ public sealed record RiscVEmulatorTestCase<T>
         }
     }
 
-    public RiscVEmulatorTestCase(string input, T writeBack) : this(input)
+    public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input, T writeBack) : this(config, input)
     {
         ExpectedWriteBack = (RiscVGpRegister.Argument0, writeBack);
     }
 
-    public RiscVEmulatorTestCase(string input, RiscVGpRegister reg, T? writeBack = null) : this(input)
+    public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input, RiscVGpRegister reg, T? writeBack = null) : this(config, input)
     {
         ExpectedWriteBack = (reg, writeBack);
     }
-
-    public string Input { get; }
 
     public RiscVTrap ExpectedTrap { get; init; } = RiscVTrap.None;
 
@@ -70,7 +68,7 @@ public sealed record RiscVEmulatorTestCase<T>
 
     public SideEffect? ExpectedSideEffect { get; init; }
 
-    public (RiscVGpRegister Regiter, T? Value)? ExpectedWriteBack { get; init; } = null;
+    public (RiscVGpRegister Register, T? Value)? ExpectedWriteBack { get; init; } = null;
 
     public (RiscVGpRegister Register, T Value)[] RegisterInitialization { get; init; } = [];
 }

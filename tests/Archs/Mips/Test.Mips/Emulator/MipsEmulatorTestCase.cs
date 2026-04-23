@@ -2,6 +2,7 @@
 
 using System;
 using System.Numerics;
+using Test.Archs.Emulator;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
@@ -9,14 +10,11 @@ using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Test.MIPS.Emulator;
 
-public sealed record MipsEmulatorTestCase<T>
+public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConfig>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
 {
-    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input) : base(config, input)
     {
-        Config = config;
-        Input = input;
-
         PrivilegeMode = PrivilegeMode.User;
 
         unchecked
@@ -163,10 +161,6 @@ public sealed record MipsEmulatorTestCase<T>
     {
         ExpectedSideEffect = sideEffects;
     }
-
-    public MipsEmulatorConfig Config { get; }
-
-    public string Input { get; }
 
     public MipsTrap ExpectedTrap { get; init; } = MipsTrap.None;
 
