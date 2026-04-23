@@ -25,11 +25,12 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
             _func7Table[i] = _emptyTable;
         }
 
-        // Set default behavior to illegal instruction trap
-        _func7Table[(int)Funct7Code.Base] = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
+        // Set default behavior to illegal instruction trap, and modified to use the same array as base
+        var @base = _func7Table[(int)Funct7Code.Base] = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
+        _func7Table[(int)Funct7Code.Modified] = @base;
         for (int i = 0; i < 1024; i++)
         {
-            _func7Table[(int)Funct7Code.Base][i] = &IllegalInstruction;
+            @base[i] = &IllegalInstruction;
             _emptyTable[i] = &IllegalInstruction;
         }
 
@@ -56,12 +57,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
 
     private void InitBaseTable(RiscVVersionInfo versionInfo)
     {
-        var @base = _func7Table[(int)Funct7Code.Base] = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
-        _func7Table[(int)Funct7Code.Modified] = @base;
-        for (var i = 0; i < 1024; i++)
-        {
-            @base[i] = &IllegalInstruction;
-        }
+        var @base = _func7Table[(int)Funct7Code.Base];
 
         // Add ALU Immediate operations in the base register size
         InitAluOperations<T, TSigned>(RiscVOpCode.Alu, RiscVOpCode.AluImmediate);

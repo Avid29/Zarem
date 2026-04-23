@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Interpret;
+using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
@@ -32,12 +34,23 @@ public sealed class RiscVComputer : ComputerBase
         var bus = new PhysicalBus(_memoryMapper, Endianness.Little);
         MapDevices(_memoryMapper);
 
-        Cpu = config.VersionInfo.Base switch
+        Cpu = config.ExecutionMode switch
         {
-            RiscVBaseVersion.RV32 => new RiscVInterpretCpu<uint>(config, bus),
-            RiscVBaseVersion.RV64 => new RiscVInterpretCpu<ulong>(config, bus),
-            RiscVBaseVersion.RV128 => new RiscVInterpretCpu<UInt128>(config, bus),
-            _ => throw new NotImplementedException()
+            ExecutionMode.Interpret => config.VersionInfo.Base switch
+            {
+                RiscVBaseVersion.RV32 => new RiscVInterpretCpu<uint>(config, bus),
+                RiscVBaseVersion.RV64 => new RiscVInterpretCpu<ulong>(config, bus),
+                RiscVBaseVersion.RV128 => new RiscVInterpretCpu<UInt128>(config, bus),
+                _ => throw new NotImplementedException(),
+            },
+            ExecutionMode.JustInTime => config.VersionInfo.Base switch
+            {
+                RiscVBaseVersion.RV32 => new RiscVJitCpu<uint>(config, bus),
+                RiscVBaseVersion.RV64 => new RiscVJitCpu<ulong>(config, bus),
+                RiscVBaseVersion.RV128 => new RiscVJitCpu<UInt128>(config, bus),
+                _ => throw new NotImplementedException(),
+            },
+            _ => throw new NotImplementedException(),
         };
 
         Cpu.ShutdownRequested += Processor_ShutdownRequested;

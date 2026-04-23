@@ -21,6 +21,19 @@ public partial class MipsJitCompiler<T>
     {
         var version = config.Version;
 
+        // Set default behavior to reserve instruction trap
+        for (int i = 0; i < 64; i++)
+        {
+            _opCodeTable[i] = ReservedInstruction;
+            _specialTable[i] = ReservedInstruction;
+            _special2Table[i] = ReservedInstruction;
+        }
+
+        for (int i = 0; i < 32; i++)
+        {
+            _regImmTable[i] = ReservedInstruction;
+        }
+
         // Populate tables
         InitRoot(version);
         InitSpecial(version);
@@ -45,7 +58,7 @@ public partial class MipsJitCompiler<T>
         _opCodeTable[(int)MipsOpCode.AndImmediate] = (il, inst, pc) => AluI<T>(il, inst, OpCodes.And);
         _opCodeTable[(int)MipsOpCode.OrImmediate] = (il, inst, pc) => AluI<T>(il, inst, OpCodes.Or);
         _opCodeTable[(int)MipsOpCode.ExclusiveOrImmediate] = (il, inst, pc) => AluI<T>(il, inst, OpCodes.Xor);
-        _opCodeTable[(int)MipsOpCode.LoadUpperImmediate] = (il, inst, pc) => Lui(il, inst);
+        _opCodeTable[(int)MipsOpCode.LoadUpperImmediate] = Lui;
         _opCodeTable[(int)MipsOpCode.Coprocessor1] = (il, inst, pc) => DispatchCoProc1(il, inst, pc);
         _opCodeTable[(int)MipsOpCode.LoadByte] = Load<sbyte>;
         _opCodeTable[(int)MipsOpCode.LoadHalfWord] = Load<short>;
@@ -198,9 +211,19 @@ public partial class MipsJitCompiler<T>
 
     private void InitFloat(MipsVersion version)
     {
+        for (int i = 0; i < 32; i++)
+        {
+            _coProc1RSTable[i] = ReservedInstruction;
+        }
+
         for (int i = 0; i < _floatFuncTables.Length; i++)
         {
             _floatFuncTables[i] = new MipsFloatEmitter[64];
+
+            for (int j = 0; j < 64; j++)
+            {
+                _floatFuncTables[i][j] = ReservedInstruction;
+            }
         }
 
         InitFloatRoot(version);

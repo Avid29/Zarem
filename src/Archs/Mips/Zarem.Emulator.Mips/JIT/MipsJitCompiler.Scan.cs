@@ -8,9 +8,6 @@ using Zarem.Models.Instructions.Enums.SpecialFunctions;
 
 namespace Zarem.Emulator.Models.JIT;
 
-/// <summary>
-/// A class which compiles blocks of MIPS code into JIT IL code.
-/// </summary>
 public partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {

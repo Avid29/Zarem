@@ -6,32 +6,30 @@ using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Models.JIT;
 using Zarem.Models.Instructions;
 
 namespace Zarem.Emulator.JIT;
 
 /// <summary>
-/// A <see cref="MipsCpu{T}"/> which uses JIT cross-compilation for execution.
+/// A <see cref="RiscVJitCpu{T}"/> which uses JIT cross-compilation for execution.
 /// </summary>
-public partial class MipsJitCpu<T> : MipsCpu<T>
+public class RiscVJitCpu<T> : RiscVCpu<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    // Cache mapping a PC to its compiled IL block.
-    private readonly JitBlockCache<T, MipsJitBlock<T>> _blockCache;
-    private readonly MipsJitCompiler<T> _jitCompiler;
+    private readonly JitBlockCache<T, RiscVJitBlock<T>> _blockCache;
+    private readonly RiscVJitCompiler<T> _jitCompiler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
+    /// Initializes a new instance of the <see cref="RiscVCpu{T}"/> class.
     /// </summary>
-    public MipsJitCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
+    public RiscVJitCpu(RiscVEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
         _blockCache = new();
-        _jitCompiler = new MipsJitCompiler<T>(this);
+        _jitCompiler = new RiscVJitCompiler<T>(this);
     }
 
     /// <inheritdoc/>
-    public override void Insert(MipsInstruction instruction, out MipsTrap trap)
+    public override void Insert(RiscVInstruction instruction, out RiscVTrap trap)
     {
         var @delegate = _jitCompiler.CompileLoneInstruction(instruction, ProgramCounter);
         ProgramCounter = @delegate(this, out trap);
@@ -72,7 +70,7 @@ public partial class MipsJitCpu<T> : MipsCpu<T>
                 lastReportTime = currentTime;
             }
 
-            if (trap is not MipsTrap.None)
+            if (trap is not RiscVTrap.None)
                 HandleTrap(trap);
         }
     }

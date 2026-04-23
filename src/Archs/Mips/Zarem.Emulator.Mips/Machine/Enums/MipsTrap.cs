@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-
-// Avishai Dernis 2026
-
 using Zarem.Emulator.Interpret;
 
 namespace Zarem.Emulator.Machine.Enums;
@@ -10,7 +7,7 @@ namespace Zarem.Emulator.Machine.Enums;
 /// <summary>
 /// An enum describing the kind of trap that occurred during an <see cref="MipsExecution{T}"/>.
 /// </summary>
-public enum MipsTrap : byte
+public enum MipsTrap : uint
 {
 #pragma warning disable CS1591
 

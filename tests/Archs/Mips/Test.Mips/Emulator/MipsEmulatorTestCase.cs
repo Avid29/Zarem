@@ -2,6 +2,7 @@
 
 using System;
 using System.Numerics;
+using Test.Archs.Emulator;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
@@ -9,14 +10,11 @@ using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Test.MIPS.Emulator;
 
-public sealed record ExecutionTestCase<T>
+public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConfig>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
 {
-    public ExecutionTestCase(MipsEmulatorConfig config, string input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input) : base(config, input)
     {
-        Config = config;
-        Input = input;
-
         PrivilegeMode = PrivilegeMode.User;
 
         unchecked
@@ -116,57 +114,53 @@ public sealed record ExecutionTestCase<T>
         }
     }
 
-    public ExecutionTestCase(MipsEmulatorConfig config, string input, MipsTrap trap) : this(config, input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, MipsTrap trap) : this(config, input)
     {
         ExpectedTrap = trap;
     }
 
-    public ExecutionTestCase(MipsEmulatorConfig config, string input, T writeBack) : this(config, input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, T writeBack) : this(config, input)
     {
         ExpectedWriteBack = (MipsGpRegister.ReturnValue0, writeBack);
     }
 
-    public ExecutionTestCase(MipsEmulatorConfig config, string input, MipsGpRegister reg, T? writeBack = null) : this(config, input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, MipsGpRegister reg, T? writeBack = null) : this(config, input)
     {
         ExpectedWriteBack = (reg, writeBack);
     }
 
-    public ExecutionTestCase(MipsEmulatorConfig config, string input, MipsFloatRegister reg, float writeBack) : this(config, input, reg, BitConverter.SingleToInt32Bits(writeBack))
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, MipsFloatRegister reg, float writeBack) : this(config, input, reg, BitConverter.SingleToInt32Bits(writeBack))
     {
     }
 
-    public ExecutionTestCase(MipsEmulatorConfig config, string input, MipsFloatRegister reg, double writeBack) : this(config, input, reg, BitConverter.DoubleToInt64Bits(writeBack))
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, MipsFloatRegister reg, double writeBack) : this(config, input, reg, BitConverter.DoubleToInt64Bits(writeBack))
     {
     }
 
-    public ExecutionTestCase(MipsEmulatorConfig config, string input, MipsFloatRegister reg, int writeBack) : this(config, input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, MipsFloatRegister reg, int writeBack) : this(config, input)
     {
         ExpectedWordFloatWriteBack = (reg, writeBack);
     }
 
-    public ExecutionTestCase(MipsEmulatorConfig config, string input, MipsFloatRegister reg, long writeBack) : this(config, input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, MipsFloatRegister reg, long writeBack) : this(config, input)
     {
         ExpectedLongFloatWriteBack = (reg, writeBack);
     }
 
-    public ExecutionTestCase(MipsEmulatorConfig config, string input, (T, byte[]) memory) : this(config, input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, (T, byte[]) memory) : this(config, input)
     {
         ExpectedMemory = memory;
     }
 
-    public ExecutionTestCase(MipsEmulatorConfig config, string input, (T, T) highLow) : this(config, input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, (T, T) highLow) : this(config, input)
     {
         ExpectedHighLow = highLow;
     }
 
-    public ExecutionTestCase(MipsEmulatorConfig config, string input, SideEffect sideEffects) : this(config, input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, SideEffect sideEffects) : this(config, input)
     {
         ExpectedSideEffect = sideEffects;
     }
-
-    public MipsEmulatorConfig Config { get; }
-
-    public string Input { get; }
 
     public MipsTrap ExpectedTrap { get; init; } = MipsTrap.None;
 

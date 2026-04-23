@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
-using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Extensions;
@@ -37,10 +36,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private readonly MipsFloatEmitter[] _coProc1RSTable = new MipsFloatEmitter[32];
     private readonly MipsFloatEmitter[][] _floatFuncTables;
 
-    private readonly MethodInfo _getMemoryMethod;
     private readonly MethodInfo _clzMethod;
-    private readonly Dictionary<Type, MethodInfo> _readMethods = [];
-    private readonly Dictionary<Type, MethodInfo> _writeMethods = [];
     private readonly Dictionary<Type, MethodInfo> _multiplyMethod = [];
     private readonly Dictionary<Type, MethodInfo> _castDownMethods = [];
     private readonly Dictionary<Type, MethodInfo> _rightShiftMethods = [];
@@ -52,30 +48,13 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsJitCompiler{T}"/> class.
     /// </summary>
-    public MipsJitCompiler(MipsJitCpu<T> cpu)
+    public MipsJitCompiler(MipsJitCpu<T> cpu) : base(cpu)
     {
         _cpu = cpu;
-
-        var getMemoryMethod = _cpu.GetType().GetProperty(nameof(MipsJitCpu<>.Memory))?.GetGetMethod();
-        Guard.IsNotNull(getMemoryMethod);
-        _getMemoryMethod = getMemoryMethod;
 
         var clzMethod = typeof(BitOperations).GetMethod(nameof(BitOperations.LeadingZeroCount), [typeof(uint)]);
         Guard.IsNotNull(clzMethod);
         _clzMethod = clzMethod;
-
-        Type[] readWritetypes = [typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint)];
-        foreach (var type in readWritetypes)
-        {
-            _readMethods[type] = typeof(MemorySystem)
-                .GetMethods()
-                .First(m => m.Name == nameof(MemorySystem.Read) && m.IsGenericMethod && m.GetParameters().Length == 1)
-                .MakeGenericMethod(type);
-            _writeMethods[type] = typeof(MemorySystem)
-                .GetMethods()
-                .First(m => m.Name == nameof(MemorySystem.Write) && m.IsGenericMethod && m.GetParameters().Length == 2)
-                .MakeGenericMethod(type);
-        }
 
         Type[] multiplyTypes = [typeof(int), typeof(uint), typeof(long), typeof(ulong)];
         foreach (var type in multiplyTypes)
@@ -455,9 +434,9 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         EmitStoreRegister(il, inst.RT, () =>
         {
             // Call Memory.Read<TData>(ulong)
-            var readMethod = _readMethods[typeof(TData)];
+            var readMethod = ReadMethods[typeof(TData)];
             il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Callvirt, _getMemoryMethod);
+            il.Emit(OpCodes.Callvirt, GetMemoryMethod);
             il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
             il.Emit(OpCodes.Conv_U8);
             il.Emit(OpCodes.Callvirt, readMethod);
@@ -474,9 +453,9 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, MipsTrap.AddressErrorStore);
 
         // Call Memory.Write<TData>(ulong, TData)
-        var writeMethod = _writeMethods[typeof(TData)];
+        var writeMethod = WriteMethods[typeof(TData)];
         il.Emit(OpCodes.Ldarg_0);
-        il.Emit(OpCodes.Callvirt, _getMemoryMethod);
+        il.Emit(OpCodes.Callvirt, GetMemoryMethod);
         il.Emit(OpCodes.Ldloc, addrVar);            // Arg 1: ulong addr
         il.Emit(OpCodes.Conv_U8);
         EmitLoadRegister(il, inst.RT);              // Arg 2: TData value (Truncate the RT register value)
@@ -621,12 +600,16 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         EmitStoreRegister(il, to, () => EmitLoadRegister(il, from));
     }
 
-    private void Lui(ILGenerator il, MipsInstruction inst)
+    private void Lui(ILGenerator il, MipsInstruction inst, T pc)
     {
         uint value = (uint)inst.Immediate << 16;
 
         EmitStoreRegister(il, inst.RT, () => il.EmitLoadConstant(T.CreateTruncating(value)));
     }
+
+    private void ReservedInstruction(ILGenerator il, MipsInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
+
+    private void ReservedInstruction(ILGenerator il, FloatInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
 
     private void MethodUnary<TData>(ILGenerator il, MipsInstruction inst, Action method)
         where TData : unmanaged, INumber<TData>

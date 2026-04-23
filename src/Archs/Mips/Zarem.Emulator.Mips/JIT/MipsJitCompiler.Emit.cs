@@ -123,19 +123,4 @@ public unsafe partial class MipsJitCompiler<T>
         il.Emit(OpCodes.Ret);
     }
 
-    private static void EmitTrapArg(ILGenerator il, MipsTrap trap)
-    {
-        il.Emit(OpCodes.Ldarg_1);
-        il.Emit(OpCodes.Ldc_I4, (int)trap);
-        il.Emit(OpCodes.Stind_I1);
-    }
-
-    private void EmitTrapRet(ILGenerator il, MipsTrap trap, T pc)
-    {
-        EmitFlushLocalRegisters(il);
-        EmitTrapArg(il, trap);
-        il.EmitLoadConstant(pc);
-        il.Emit(OpCodes.Ret);
-    }
-
 }
