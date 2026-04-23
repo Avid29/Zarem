@@ -30,7 +30,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         _func7Table[(int)Funct7Code.Modified] = @base;
         for (int i = 0; i < 1024; i++)
         {
-            _func7Table[(int)Funct7Code.Base][i] = &IllegalInstruction;
+            @base[i] = &IllegalInstruction;
             _emptyTable[i] = &IllegalInstruction;
         }
 

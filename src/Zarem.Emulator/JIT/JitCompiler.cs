@@ -213,7 +213,7 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
         var trapCode = Unsafe.As<TTrap, int>(ref trap);
         il.Emit(OpCodes.Ldarg_1);
         il.Emit(OpCodes.Ldc_I4, trapCode);
-        il.Emit(OpCodes.Stind_I1);
+        il.Emit(OpCodes.Stind_I4);
     }
 
     /// <summary>

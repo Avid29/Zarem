@@ -28,10 +28,11 @@ public partial class RiscVJitCompiler<T>
         }
 
         // Set default behavior to illegal instruction trap
-        _func7Table[(int)Funct7Code.Base] = new RiscVEmitter[1024];
+        var @base = _func7Table[(int)Funct7Code.Base] = new RiscVEmitter[1024];
+        _func7Table[(int)Funct7Code.Modified] = @base;
         for (int i = 0; i < 1024; i++)
         {
-            _func7Table[(int)Funct7Code.Base][i] = IllegalInstruction;
+            @base[i] = IllegalInstruction;
             _emptyTable[i] = IllegalInstruction;
         }
 
@@ -67,7 +68,6 @@ public partial class RiscVJitCompiler<T>
             case RiscVBaseVersion.RV64: InitAluOperations<T, long>(RiscVOpCode.Alu, RiscVOpCode.AluImmediate); break;
             case RiscVBaseVersion.RV128: InitAluOperations<T, Int128>(RiscVOpCode.Alu, RiscVOpCode.AluImmediate); break;
         }
-        
 
         // Add system operations
         //@base[GetLookupIndex(RiscVOpCode.System, Funct3Code.EcallBreak)] = &EcallBreak;
@@ -127,22 +127,22 @@ public partial class RiscVJitCompiler<T>
         where T2Signed : unmanaged, IBinaryInteger<T2Signed>, ISignedNumber<T2Signed>
     {
         var @base = _func7Table[(int)Funct7Code.Base];
-        //@base[GetLookupIndex(rOpCode, Funct3Code.Arithmetic)] = &ModifyableAluR<AddLogic<T2>, SubLogic<T2>, T2>;
-        @base[GetLookupIndex(rOpCode, Funct3Code.ShiftLeft)] = (il, inst, pc) => ShiftR<T2Signed>(il, inst, OpCodes.Shl);
+        @base[GetLookupIndex(rOpCode, Funct3Code.Arithmetic)] = (il, inst, pc) => AluR<T2Signed>(il, inst, inst.Funct7 is Funct7Code.Modified ? OpCodes.Sub : OpCodes.Add);
+        @base[GetLookupIndex(rOpCode, Funct3Code.ShiftLeft)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Shl);
         //@base[GetLookupIndex(rOpCode, Funct3Code.SetLessThan)] = &AluR<SltLogic<T2Signed>, T2Signed>;
         //@base[GetLookupIndex(rOpCode, Funct3Code.SetLessThanUnsigned)] = &AluR<SltLogic<T2>, T2>;
-        //@base[GetLookupIndex(rOpCode, Funct3Code.Xor)] = &AluR<XorLogic<T2>, T2>;
-        @base[GetLookupIndex(rOpCode, Funct3Code.ShiftRight)] = (il, inst, pc) => ShiftR<T2Signed>(il, inst, inst.Funct7 is Funct7Code.Modified ? OpCodes.Shr : OpCodes.Shr_Un);
-        //@base[GetLookupIndex(rOpCode, Funct3Code.Or)] = &AluR<OrLogic<T2>, T2>;
-        //@base[GetLookupIndex(rOpCode, Funct3Code.And)] = &AluR<AndLogic<T2>, T2>;
-        //@base[GetLookupIndex(iOpCode, Funct3Code.Arithmetic)] = &AluI<AddLogic<T2>, T2>;
+        @base[GetLookupIndex(rOpCode, Funct3Code.Xor)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Xor);
+        @base[GetLookupIndex(rOpCode, Funct3Code.ShiftRight)] = (il, inst, pc) => AluR<T2Signed>(il, inst, inst.Funct7 is Funct7Code.Modified ? OpCodes.Shr : OpCodes.Shr_Un);
+        @base[GetLookupIndex(rOpCode, Funct3Code.Or)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Or);
+        @base[GetLookupIndex(rOpCode, Funct3Code.And)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.And);
+        @base[GetLookupIndex(iOpCode, Funct3Code.Arithmetic)] = (il, inst, pc) => AluI<T2Signed>(il, inst, OpCodes.Add);
         @base[GetLookupIndex(iOpCode, Funct3Code.ShiftLeft)] = (il, inst, pc) => ShiftI<T2Signed>(il, inst, OpCodes.Shl);
         //@base[GetLookupIndex(iOpCode, Funct3Code.SetLessThan)] = &AluISigned<SltLogic<T2Signed>, T2Signed>;
         //@base[GetLookupIndex(iOpCode, Funct3Code.SetLessThanUnsigned)] = &AluI<SltLogic<T2>, T2>;
-        //@base[GetLookupIndex(iOpCode, Funct3Code.Xor)] = &AluI<XorLogic<T2>, T2>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.Xor)] = (il, inst, pc) => AluI<T2Signed>(il, inst, OpCodes.Xor);
         @base[GetLookupIndex(iOpCode, Funct3Code.ShiftRight)] = (il, inst, pc) => ShiftI<T2Signed>(il, inst, inst.Funct7 is Funct7Code.Modified ? OpCodes.Shr : OpCodes.Shr_Un);
-        //@base[GetLookupIndex(iOpCode, Funct3Code.Or)] = &AluI<OrLogic<T2>, T2>;
-        //@base[GetLookupIndex(iOpCode, Funct3Code.And)] = &AluI<AndLogic<T2>, T2>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.Or)] = (il, inst, pc) => AluI<T2Signed>(il, inst, OpCodes.Or);
+        @base[GetLookupIndex(iOpCode, Funct3Code.And)] = (il, inst, pc) => AluI<T2Signed>(il, inst, OpCodes.And);
     }
 
     private void InitMultiplyAluOperations<T2, T2Signed, T2Long, T2SignedLong>(RiscVOpCode opCode)

@@ -101,13 +101,28 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
         func(il, inst, pc);
     }
 
-    private void ShiftR<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
+    private void AluR<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(il, inst.RD, () =>
         {
             EmitLoadRegister<TData>(il, inst.RS1);
             EmitLoadRegister<TData>(il, inst.RS2);
+            il.Emit(ilOpCode);
+        });
+
+        // Convert to T if neccesary
+        if (sizeof(TData) != sizeof(T))
+            il.EmitConv<T>(IsSigned<TData>());
+    }
+
+    private void AluI<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
+        where TData : unmanaged, INumber<TData>
+    {
+        EmitStoreRegister(il, inst.RD, () =>
+        {
+            EmitLoadRegister<TData>(il, inst.RS1);
+            il.EmitLoadConstant<int>(inst.Immediate);
             il.Emit(ilOpCode);
         });
     }
@@ -118,7 +133,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
         EmitStoreRegister(il, inst.RD, () =>
         {
             EmitLoadRegister<TData>(il, inst.RS1);
-            il.Emit(OpCodes.Ldc_I4, inst.Immediate & (sizeof(TData) * 8 - 1));
+            il.EmitLoadConstant(inst.Immediate & (sizeof(TData) * 8 - 1));
             il.Emit(ilOpCode);
         });
     }
