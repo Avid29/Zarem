@@ -53,14 +53,14 @@ public unsafe partial class MipsJitCompiler<T>
     }
 
     /// <inheritdoc/>
-    protected override void EmitStoreRegister(ILGenerator il, MipsGpRegister register, Action emitEvaluation)
+    protected override void EmitStoreRegister(ILGenerator il, MipsGpRegister register, Action<ILGenerator> emitEvaluation)
     {
         if (register is 0)
         {
             // $zero cannot be written to.
             // We still emit the value calculation in case it has side effects,
             // then we immediately pop it off the stack.
-            emitEvaluation();
+            emitEvaluation(il);
             il.Emit(OpCodes.Pop);
             return;
         }

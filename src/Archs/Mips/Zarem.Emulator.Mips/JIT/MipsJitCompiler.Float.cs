@@ -113,7 +113,7 @@ public partial class MipsJitCompiler<T>
 
     private void MoveFromFloat(ILGenerator il, FloatInstruction inst)
     {
-        EmitStoreRegister(il, inst.RT, () =>
+        EmitStoreRegister(il, inst.RT, il =>
         {
             EmitLoadRegister<T>(il, inst.FS);
             il.EmitConv<T>();

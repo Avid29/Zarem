@@ -158,7 +158,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private void Shift<TData>(ILGenerator il, MipsInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, il =>
         {
             EmitLoadRegister<TData>(il, inst.RT);
             il.Emit(OpCodes.Ldc_I4, (int)inst.ShiftAmount);
@@ -169,7 +169,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private void ShiftPlus32<TData>(ILGenerator il, MipsInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, il =>
         {
             EmitLoadRegister<TData>(il, inst.RT);
             il.Emit(OpCodes.Ldc_I4, inst.ShiftAmount + 32);
@@ -180,7 +180,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private void ShiftVar<TData>(ILGenerator il, MipsInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, il =>
         {
             EmitLoadRegister<TData>(il, inst.RT); // Value to shift
             EmitLoadRegister<TData>(il, inst.RS); // Shift amount from register
@@ -196,7 +196,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private void AluR<TData>(ILGenerator il, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, il =>
         {
             EmitLoadRegister<TData>(il, inst.RS);
             EmitLoadRegister<TData>(il, inst.RT);
@@ -244,7 +244,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         }, isSubtraction);
 
         // Safe Path
-        EmitStoreRegister(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, il =>
         {
             il.Emit(OpCodes.Ldloc, result);
             if (sizeof(TData) != sizeof(T))
@@ -259,7 +259,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         var rawImm = inst.Immediate;
         var extended = signExtend ? TData.CreateTruncating((long)rawImm) : TData.CreateTruncating((ulong)rawImm);
 
-        EmitStoreRegister(il, inst.RT, () =>
+        EmitStoreRegister(il, inst.RT, il =>
         {
             EmitLoadRegister<TData>(il, inst.RS);
             il.EmitLoadConstant(extended);
@@ -296,7 +296,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         });
 
         // Safe Path
-        EmitStoreRegister(il, inst.RT, () =>
+        EmitStoreRegister(il, inst.RT, il =>
         {
             il.Emit(OpCodes.Ldloc, result);
             if (sizeof(TData) != sizeof(T))
@@ -323,7 +323,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         bool bigLong = sizeof(TLong) > sizeof(long);
 
         // Store high
-        EmitStoreRegister(il, MipsGpRegister.High, () =>
+        EmitStoreRegister(il, MipsGpRegister.High, il =>
         {
             if (c is not 0)
             {
@@ -353,7 +353,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         });
 
         // Store low
-        EmitStoreRegister(il, MipsGpRegister.Low, () =>
+        EmitStoreRegister(il, MipsGpRegister.Low, il =>
         {
             if (c is not 0)
             {
@@ -399,7 +399,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         il.Emit(OpCodes.Beq, endDiv);
 
         // Calculate and store the remainder to High
-        EmitStoreRegister(il, MipsGpRegister.High, () =>
+        EmitStoreRegister(il, MipsGpRegister.High, il =>
         {
             il.Emit(OpCodes.Ldloc, rsLocal);
             il.Emit(OpCodes.Ldloc, rtLocal);
@@ -411,7 +411,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         });
 
         // Calculate and store the quotient to low
-        EmitStoreRegister(il, MipsGpRegister.Low, () =>
+        EmitStoreRegister(il, MipsGpRegister.Low, il =>
         {
             il.Emit(OpCodes.Ldloc, rsLocal);
             il.Emit(OpCodes.Ldloc, rtLocal);
@@ -431,7 +431,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, MipsTrap.AddressErrorLoad);
 
         // Write Back to RT
-        EmitStoreRegister(il, inst.RT, () =>
+        EmitStoreRegister(il, inst.RT, il =>
         {
             // Call Memory.Read<TData>(ulong)
             var readMethod = ReadMethods[typeof(TData)];
@@ -463,7 +463,8 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         il.Emit(OpCodes.Callvirt, writeMethod);
     }
 
-    private void Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false) => Jump(il, pc, link: link, pushAddress: il =>
+    private void Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false)
+        => Jump(il, pc, link: link, pushAddress: il =>
     {
         il.EmitLoadConstant(T.CreateTruncating(inst.Address));
     });
@@ -482,7 +483,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             // Store the Return Address ($ra = PC + 8)
             // We use +8 because +4 is the delay slot, and we want to return AFTER that.
             T returnAddr = pc + (delaySlots ? T.CreateTruncating(8) : T.CreateTruncating(4));
-            EmitStoreRegister(il, MipsGpRegister.ReturnAddress, () => il.EmitLoadConstant(returnAddr));
+            EmitStoreRegister(il, MipsGpRegister.ReturnAddress, il => il.EmitLoadConstant(returnAddr));
         }
 
         // Handle the Delay Slot
@@ -571,11 +572,6 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         EmitRet(il, pc);
     }
 
-    private void Trap(ILGenerator il, T pc, MipsTrap trap)
-    {
-        EmitTrapRet(il, trap, pc);
-    }
-
     private void Move(ILGenerator il, MipsInstruction inst, OpCode invertedBranch)
     {
         Label noMove = il.DefineLabel();
@@ -584,7 +580,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         il.Emit(invertedBranch, noMove);
 
         // DO move
-        EmitStoreRegister(il, inst.RD, () => EmitLoadRegister(il, inst.RS));
+        EmitStoreRegister(il, inst.RD, il => EmitLoadRegister(il, inst.RS));
 
         // Do NOT move
         il.MarkLabel(noMove);
@@ -597,28 +593,28 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         if (to is MipsGpRegister.Zero)
             return;
 
-        EmitStoreRegister(il, to, () => EmitLoadRegister(il, from));
+        EmitStoreRegister(il, to, il => EmitLoadRegister(il, from));
     }
 
     private void Lui(ILGenerator il, MipsInstruction inst, T pc)
     {
         uint value = (uint)inst.Immediate << 16;
 
-        EmitStoreRegister(il, inst.RT, () => il.EmitLoadConstant(T.CreateTruncating(value)));
+        EmitStoreRegister(il, inst.RT, il => il.EmitLoadConstant(T.CreateTruncating(value)));
     }
 
     private void ReservedInstruction(ILGenerator il, MipsInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
 
     private void ReservedInstruction(ILGenerator il, FloatInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
 
-    private void MethodUnary<TData>(ILGenerator il, MipsInstruction inst, Action method)
+    private void MethodUnary<TData>(ILGenerator il, MipsInstruction inst, Action<ILGenerator> method)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, il =>
         {
             EmitLoadRegister<TData>(il, inst.RS);
 
-            method();
+            method(il);
 
             if (sizeof(TData) != sizeof(T))
                 il.EmitConv<T>();

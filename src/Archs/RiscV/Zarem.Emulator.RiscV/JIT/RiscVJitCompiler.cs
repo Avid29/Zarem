@@ -104,7 +104,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
     private void AluR<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, il =>
         {
             EmitLoadRegister<TData>(il, inst.RS1);
             EmitLoadRegister<TData>(il, inst.RS2);
@@ -119,7 +119,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
     private void AluI<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, il =>
         {
             EmitLoadRegister<TData>(il, inst.RS1);
             il.EmitLoadConstant<int>(inst.Immediate);
@@ -130,7 +130,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
     private void ShiftI<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, () =>
+        EmitStoreRegister(il, inst.RD, il =>
         {
             EmitLoadRegister<TData>(il, inst.RS1);
             il.EmitLoadConstant(inst.Immediate & (sizeof(TData) * 8 - 1));
@@ -138,11 +138,45 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
         });
     }
 
+    private void JumpAndLink(ILGenerator il, RiscVInstruction inst, T pc)
+    {
+        // Link if needed
+        if (inst.RD is not RiscVGpRegister.Zero)
+        {
+            EmitStoreRegister(il, inst.RD, il =>
+            {
+                il.EmitLoadConstant(pc + T.CreateTruncating(4));
+            });
+        }
+
+        // Return
+        EmitRet(il, T.CreateTruncating(inst.JumpOffset));
+    }
+
+    private void Branch(ILGenerator il, RiscVInstruction inst, T pc, OpCode conditionCode)
+    {
+        Label takeBranch = il.DefineLabel();
+
+        EmitLoadRegister(il, inst.RS1);
+        EmitLoadRegister(il, inst.RS2);
+        il.Emit(conditionCode, takeBranch);
+
+        // Branch NOT taken
+        var nextPc = pc + T.CreateTruncating(4);
+        EmitRet(il, nextPc);
+
+        // Branch taken
+        il.MarkLabel(takeBranch);
+
+        T targetPc = pc + T.CreateTruncating(inst.BranchOffset) + T.CreateTruncating(4);
+        EmitRet(il, targetPc);
+    }
+
     private void Lui(ILGenerator il, RiscVInstruction inst, T pc)
     {
         uint value = (uint)inst.Immediate << 12;
 
-        EmitStoreRegister(il, inst.RD, () => il.EmitLoadConstant(T.CreateTruncating(value)));
+        EmitStoreRegister(il, inst.RD, il => il.EmitLoadConstant(T.CreateTruncating(value)));
     }
 
     private void IllegalInstruction(ILGenerator il, RiscVInstruction inst, T pc) => EmitTrapRet(il, RiscVTrap.IllegalInstruction, pc);

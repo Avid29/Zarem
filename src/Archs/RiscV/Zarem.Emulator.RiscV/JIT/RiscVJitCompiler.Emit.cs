@@ -31,14 +31,14 @@ public partial class RiscVJitCompiler<T>
     }
 
     /// <inheritdoc/>
-    protected override void EmitStoreRegister(ILGenerator il, RiscVGpRegister register, Action emitEvaluation)
+    protected override void EmitStoreRegister(ILGenerator il, RiscVGpRegister register, Action<ILGenerator> emitEvaluation)
     {
         if (register is 0)
         {
             // $zero cannot be written to.
             // We still emit the value calculation in case it has side effects,
             // then we immediately pop it off the stack.
-            emitEvaluation();
+            emitEvaluation(il);
             il.Emit(OpCodes.Pop);
             return;
         }

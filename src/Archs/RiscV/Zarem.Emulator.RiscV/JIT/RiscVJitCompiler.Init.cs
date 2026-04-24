@@ -4,10 +4,7 @@ using System;
 using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Models;
-using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Functions;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Versioning;
@@ -70,18 +67,18 @@ public partial class RiscVJitCompiler<T>
         }
 
         // Add system operations
-        //@base[GetLookupIndex(RiscVOpCode.System, Funct3Code.EcallBreak)] = &EcallBreak;
+        @base[GetLookupIndex(RiscVOpCode.System, Funct3Code.EcallBreak)] = (il, inst, pc) => EmitTrapRet(il, inst.Immediate is 1 ? RiscVTrap.Breakpoint : RiscVTrap.EnvironmentCallFromUMode, pc);
 
         // Add Jump operations
-        //@base[GetLookupIndex(RiscVOpCode.JumpAndLink, 0)] = &JumpAndLink;
+        @base[GetLookupIndex(RiscVOpCode.JumpAndLink, 0)] = JumpAndLink;
 
         // Add Branch operations
-        //@base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchEqual)] = &BranchOn<XeqLogic<T>>;
-        //@base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchNotEqual)] = &BranchOn<XneLogic<T>>;
-        //@base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThan)] = &BranchOn<XltLogic<T, TSigned>>;
-        //@base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqual)] = &BranchOn<XgeLogic<T, TSigned>>;
-        //@base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
-        //@base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchEqual)] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Beq);
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchNotEqual)] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Bne_Un);
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThan)] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Blt);
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqual)] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Bge);
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned)] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Blt_Un);
+        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Bge_Un);
 
         @base[GetLookupIndex(RiscVOpCode.LoadUpperImmediate, 0)] = Lui;
 
@@ -129,16 +126,16 @@ public partial class RiscVJitCompiler<T>
         var @base = _func7Table[(int)Funct7Code.Base];
         @base[GetLookupIndex(rOpCode, Funct3Code.Arithmetic)] = (il, inst, pc) => AluR<T2Signed>(il, inst, inst.Funct7 is Funct7Code.Modified ? OpCodes.Sub : OpCodes.Add);
         @base[GetLookupIndex(rOpCode, Funct3Code.ShiftLeft)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Shl);
-        //@base[GetLookupIndex(rOpCode, Funct3Code.SetLessThan)] = &AluR<SltLogic<T2Signed>, T2Signed>;
-        //@base[GetLookupIndex(rOpCode, Funct3Code.SetLessThanUnsigned)] = &AluR<SltLogic<T2>, T2>;
+        @base[GetLookupIndex(rOpCode, Funct3Code.SetLessThan)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Clt);
+        @base[GetLookupIndex(rOpCode, Funct3Code.SetLessThanUnsigned)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Clt_Un);
         @base[GetLookupIndex(rOpCode, Funct3Code.Xor)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Xor);
         @base[GetLookupIndex(rOpCode, Funct3Code.ShiftRight)] = (il, inst, pc) => AluR<T2Signed>(il, inst, inst.Funct7 is Funct7Code.Modified ? OpCodes.Shr : OpCodes.Shr_Un);
         @base[GetLookupIndex(rOpCode, Funct3Code.Or)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Or);
         @base[GetLookupIndex(rOpCode, Funct3Code.And)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.And);
         @base[GetLookupIndex(iOpCode, Funct3Code.Arithmetic)] = (il, inst, pc) => AluI<T2Signed>(il, inst, OpCodes.Add);
         @base[GetLookupIndex(iOpCode, Funct3Code.ShiftLeft)] = (il, inst, pc) => ShiftI<T2Signed>(il, inst, OpCodes.Shl);
-        //@base[GetLookupIndex(iOpCode, Funct3Code.SetLessThan)] = &AluISigned<SltLogic<T2Signed>, T2Signed>;
-        //@base[GetLookupIndex(iOpCode, Funct3Code.SetLessThanUnsigned)] = &AluI<SltLogic<T2>, T2>;
+        @base[GetLookupIndex(iOpCode, Funct3Code.SetLessThan)] = (il, inst, pc) => AluI<T2Signed>(il, inst, OpCodes.Clt);
+        @base[GetLookupIndex(iOpCode, Funct3Code.SetLessThanUnsigned)] = (il, inst, pc) => AluI<T2Signed>(il, inst, OpCodes.Clt_Un);
         @base[GetLookupIndex(iOpCode, Funct3Code.Xor)] = (il, inst, pc) => AluI<T2Signed>(il, inst, OpCodes.Xor);
         @base[GetLookupIndex(iOpCode, Funct3Code.ShiftRight)] = (il, inst, pc) => ShiftI<T2Signed>(il, inst, inst.Funct7 is Funct7Code.Modified ? OpCodes.Shr : OpCodes.Shr_Un);
         @base[GetLookupIndex(iOpCode, Funct3Code.Or)] = (il, inst, pc) => AluI<T2Signed>(il, inst, OpCodes.Or);
