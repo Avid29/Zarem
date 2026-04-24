@@ -8,6 +8,7 @@ using System.Reflection;
 using Test.Archs.Emulator;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
+using Zarem.Emulator.Machine.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning;
 using Zarem.Models.Versioning.Enums;
@@ -67,7 +68,8 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         return GetArithmeticInstructionTests<T, TSigned>(config)
             .Concat(GetMultiplicationInstructionTests<T, TSigned, TLong>(config))
             .Concat(GetLogicalInstructionTests<T>(config))
-            .Concat(GetJumpBranchInstructionTests<T>(config));
+            .Concat(GetJumpBranchInstructionTests<T>(config))
+            .Concat(GetSystemInstructionTests<T>(config));
     }
 
     private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TSigned>(RiscVEmulatorConfig config)
@@ -152,8 +154,8 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         yield return [new RiscVEmulatorTestCase<T>(config, "xor a0, s8, s9", T.CreateTruncating(K0 ^ K1))];
         yield return [new RiscVEmulatorTestCase<T>(config, "xori a0, s8, 0x516", T.CreateTruncating(K0 ^ K1))];
         yield return [new RiscVEmulatorTestCase<T>(config, "sll a0, s6, s3", T.CreateTruncating(101 << 4))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "srl a0, s6, s3", T.CreateTruncating(101 >> 4))];
         yield return [new RiscVEmulatorTestCase<T>(config, "slli a0, s6, 4", T.CreateTruncating(101 << 4))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "srl a0, s6, s3", T.CreateTruncating(101 >> 4))];
         yield return [new RiscVEmulatorTestCase<T>(config, "srli a0, s6, 4", T.CreateTruncating(101 >> 4))];
     }
 
@@ -169,5 +171,13 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         yield return [new RiscVEmulatorTestCase<T>(config, "beq t0, t0, 80") { ExpectedPC = T.CreateTruncating(84) }];
         yield return [new RiscVEmulatorTestCase<T>(config, "bne t0, t0, 80") { ExpectedPC = T.CreateTruncating(4) }];
         yield return [new RiscVEmulatorTestCase<T>(config, "bne t2, t1, 80") { ExpectedPC = T.CreateTruncating(84) }];
+    }
+
+    private static IEnumerable<object[]> GetSystemInstructionTests<T>(RiscVEmulatorConfig config)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        // Syscall and break
+        yield return [new RiscVEmulatorTestCase<T>(config, "ecall", RiscVTrap.EnvironmentCallFromUMode)];
+        yield return [new RiscVEmulatorTestCase<T>(config, "ebreak", RiscVTrap.Breakpoint)];
     }
 }
