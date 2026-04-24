@@ -28,37 +28,36 @@ public struct BreakLogic : ITrapLogic<RiscVTrap>
     public static RiscVTrap Trap() => RiscVTrap.Breakpoint;
 }
 
-
 /// <summary>
-/// An <see cref="IMultLogic{T, TL}"/> for a signed multiplication operation on 32-bit values.
+/// An <see cref="IAluLogic{T}"/> for a signed multiplication operation on 32-bit values.
 /// </summary>
-public unsafe struct MulhLogic<T, TL> : IAluLogic<T>
+public unsafe struct MulhLogic<T, TLong> : IAluLogic<T>
     where T : unmanaged, INumber<T>
-    where TL : struct, INumber<TL>, IBinaryInteger<TL>
+    where TLong : struct, INumber<TLong>, IBinaryInteger<TLong>
 {
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T Compute(T rs, T rt)
     {
         var shift = sizeof(T) * 4;
-        var result = TL.CreateTruncating(rs) * TL.CreateTruncating(rt);
+        var result = TLong.CreateTruncating(rs) * TLong.CreateTruncating(rt);
         return T.CreateTruncating(result >> shift);
     }
 }
 
 /// <summary>
-/// An <see cref="IMultLogic{T, TL}"/> for a signed multiplication operation on 32-bit values.
+/// An <see cref="IAluLogic{T}"/> for a signed multiplication operation on 32-bit values.
 /// </summary>
-public unsafe struct MulhsuLogic<T, TL> : IAluLogic<T>
+public unsafe struct MulhsuLogic<T, TLong> : IAluLogic<T>
     where T : unmanaged, INumber<T>
-    where TL : struct, INumber<TL>, IBinaryInteger<TL>
+    where TLong : struct, INumber<TLong>, IBinaryInteger<TLong>
 {
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T Compute(T rs, T rt)
     {
         var shift = sizeof(T) * 4;
-        var result = TL.CreateTruncating(rs) * TL.CreateTruncating(rt);
+        var result = TLong.CreateTruncating(rs) * TLong.CreateTruncating(rt);
         return T.CreateTruncating(result >> shift);
     }
 }

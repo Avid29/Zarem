@@ -65,20 +65,21 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>, IMinMaxValue<TLong>
     {
         return GetArithmeticInstructionTests<T, TSigned>(config)
+            .Concat(GetMultiplicationInstructionTests<T, TSigned, TLong>(config))
             .Concat(GetLogicalInstructionTests<T>(config))
             .Concat(GetJumpBranchInstructionTests<T>(config));
     }
 
-    private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TS>(RiscVEmulatorConfig config)
+    private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TSigned>(RiscVEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
-        where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>, IMinMaxValue<TS>
+        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
     {
         // Without signs
-        yield return [new RiscVEmulatorTestCase<T>(config, "add a0, t1, t0", T.CreateTruncating(30))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "addi a0, t1, 10", T.CreateTruncating(30))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "add a0, t1, t0", T.CreateTruncating(20 + 10))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "addi a0, t1, 10", T.CreateTruncating(20 + 10))];
         yield return [new RiscVEmulatorTestCase<T>(config, "sub a0, t2, t1", T.CreateTruncating(30 - 20))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "sra a0, s6, s3", T.CreateTruncating(TS.CreateTruncating(101)) >> 4)];
-        yield return [new RiscVEmulatorTestCase<T>(config, "srai a0, s6, 4", T.CreateTruncating(TS.CreateTruncating(101)) >> 4)];
+        yield return [new RiscVEmulatorTestCase<T>(config, "sra a0, s6, s3", T.CreateTruncating(TSigned.CreateTruncating(101)) >> 4)];
+        yield return [new RiscVEmulatorTestCase<T>(config, "srai a0, s6, 4", T.CreateTruncating(TSigned.CreateTruncating(101)) >> 4)];
 
         // With signs
         unchecked
@@ -110,6 +111,34 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         if (config.VersionInfo.Base is >= RiscVBaseVersion.RV128)
         {
             // TODO: Explicit 64-bit instructions
+        }
+    }
+
+    private static IEnumerable<object[]> GetMultiplicationInstructionTests<T, TSigned, TLong>(RiscVEmulatorConfig config)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
+        where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>, IMinMaxValue<TLong>
+    {
+        if (!config.VersionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
+            yield break;
+
+        // Without signs
+        yield return [new RiscVEmulatorTestCase<T>(config, "mul a0, t2, t1", T.CreateTruncating(30 * 20))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "mulh a0, t2, t1", T.CreateTruncating(TLong.CreateTruncating(30 * 20) >> 32))];  // TODO: allow other shifts
+        yield return [new RiscVEmulatorTestCase<T>(config, "div a0, t2, t1", T.CreateTruncating(30 / 20))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "divu a0, t2, t1", T.CreateTruncating(30 / 20))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "rem a0, t2, t1", T.CreateTruncating(30 % 20))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "remu a0, t2, t1", T.CreateTruncating(30 % 20))];
+
+        // With signs
+        unchecked
+        {
+            yield return [new RiscVEmulatorTestCase<T>(config, "mul a0, t2, t5", T.CreateTruncating(30 * -20))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "mulh a0, t2, t5", T.CreateTruncating((TLong.CreateTruncating(30) * TLong.CreateTruncating(-20)) >> 32))];  // TODO: allow other shifts
+            yield return [new RiscVEmulatorTestCase<T>(config, "div a0, t2, t5", T.CreateTruncating(30 / -20))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "divu a0, t2, t5", T.CreateTruncating(30) / T.CreateTruncating(-20))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "rem a0, t2, t5", T.CreateTruncating(30 % -20))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "remu a0, t2, t5", T.CreateTruncating(30) % T.CreateTruncating(-20))];
         }
     }
 
