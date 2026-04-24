@@ -455,6 +455,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
     private static IEnumerable<object[]> GetSystemInstructionTests<T>(MipsEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
+        // Syscall and break
         yield return [new MipsEmulatorTestCase<T>(config, "syscall", MipsTrap.Syscall)];
         yield return [new MipsEmulatorTestCase<T>(config, "break", MipsTrap.Breakpoint)];
 

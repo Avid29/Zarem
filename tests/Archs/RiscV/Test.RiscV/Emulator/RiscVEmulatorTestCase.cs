@@ -52,6 +52,11 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
         }
     }
 
+    public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input, RiscVTrap trap) : this(config, input)
+    {
+        ExpectedTrap = trap;
+    }
+
     public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input, T writeBack) : this(config, input)
     {
         ExpectedWriteBack = (RiscVGpRegister.Argument0, writeBack);

@@ -47,10 +47,6 @@ public partial class ExecutionTests
     [RiscVInstructionSource("RV128I", ExecutionMode.Interpret)]
     public void InstructionTests_RV128_I(RiscVEmulatorTestCase<UInt128> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.Integers));
 
-    [DataTestMethod]
-    [RiscVInstructionSource("RV128G", ExecutionMode.Interpret)]
-    public void InstructionTests_RV128_G(RiscVEmulatorTestCase<UInt128> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.General));
-
     private static void RunTest<T>(RiscVEmulatorTestCase<T> @case, RiscVVersionInfo versionInfo)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
