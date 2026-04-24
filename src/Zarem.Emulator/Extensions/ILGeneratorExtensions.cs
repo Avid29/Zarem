@@ -122,6 +122,5 @@ public unsafe static class ILGeneratorExtensions
                 throw new NotSupportedException("Unsupported register width.");
             }
         }
-
     }
 }

@@ -102,8 +102,8 @@ public partial class MipsJitCompiler<T>
         _specialTable[(int)FunctionCode.ShiftRightLogicalVariable] = (il, inst, pc) => ShiftVar<int>(il, inst, OpCodes.Shr_Un);
         _specialTable[(int)FunctionCode.ShiftRightArithmeticVariable] = (il, inst, pc) => ShiftVar<int>(il, inst, OpCodes.Shr);
         _specialTable[(int)FunctionCode.JumpAndLinkRegister] = (il, inst, pc) => JumpR(il, inst, pc, link: true);
-        _specialTable[(int)FunctionCode.SystemCall] = (il, inst, pc) => Trap(il, pc, MipsTrap.Syscall);
-        _specialTable[(int)FunctionCode.Break] = (il, inst, pc) => Trap(il, pc, MipsTrap.Breakpoint);
+        _specialTable[(int)FunctionCode.SystemCall] = (il, inst, pc) => EmitTrapRet(il, MipsTrap.Syscall, pc);
+        _specialTable[(int)FunctionCode.Break] = (il, inst, pc) => EmitTrapRet(il, MipsTrap.Breakpoint, pc);
         _specialTable[(int)FunctionCode.Add] = (il, inst, pc) => CheckedAluR<int>(il, inst, pc, OpCodes.Add, false);
         _specialTable[(int)FunctionCode.AddUnsigned] = (il, inst, pc) => AluR<uint>(il, inst, OpCodes.Add);
         _specialTable[(int)FunctionCode.Subtract] = (il, inst, pc) => CheckedAluR<int>(il, inst, pc, OpCodes.Sub, true);
@@ -201,8 +201,8 @@ public partial class MipsJitCompiler<T>
         _special2Table[(int)Func2Code.MultiplyAndAddHiLowUnsigned] = (il, inst, pc) => MultR<uint, ulong>(il, inst, 1);
         _special2Table[(int)Func2Code.MultiplyAndSubtractHiLow] = (il, inst, pc) => MultR<int, long>(il, inst, -1);
         _special2Table[(int)Func2Code.MultiplyAndSubtractHiLowUnsigned] = (il, inst, pc) => MultR<int, long>(il, inst, -1);
-        _special2Table[(int)Func2Code.CountLeadingZeros] = (il, inst, pc) => MethodUnary<uint>(il, inst, () => il.Emit(OpCodes.Call, _clzMethod));
-        _special2Table[(int)Func2Code.CountLeadingOnes] = (il, inst, pc) => MethodUnary<uint>(il, inst, () =>
+        _special2Table[(int)Func2Code.CountLeadingZeros] = (il, inst, pc) => MethodUnary<uint>(il, inst, il => il.Emit(OpCodes.Call, _clzMethod));
+        _special2Table[(int)Func2Code.CountLeadingOnes] = (il, inst, pc) => MethodUnary<uint>(il, inst, il =>
         {
             il.Emit(OpCodes.Not);
             il.Emit(OpCodes.Call, _clzMethod);

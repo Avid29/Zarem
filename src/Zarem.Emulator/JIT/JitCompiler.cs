@@ -82,7 +82,7 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
         foreach (var reg in loadRegs)
         {
             // Load register from memory into local i
-            EmitStoreRegister(il, reg, () =>
+            EmitStoreRegister(il, reg, il =>
             {
                 var register = reg;
                 var index = Unsafe.As<TRegister, int>(ref register);
@@ -133,9 +133,9 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Emits the CIL to load a register to the CLR stack from locals.
     /// </summary>
-    protected virtual void EmitStoreRegister(ILGenerator il, TRegister register, Action emitEvaluation)
+    protected virtual void EmitStoreRegister(ILGenerator il, TRegister register, Action<ILGenerator> emitEvaluation)
     {
-        emitEvaluation();
+        emitEvaluation(il);
 
         // Store the value to the register's local
         var regIndex = Unsafe.As<TRegister, int>(ref register);
