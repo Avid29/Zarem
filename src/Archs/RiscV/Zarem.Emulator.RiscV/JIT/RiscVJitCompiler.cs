@@ -138,6 +138,41 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
         });
     }
 
+    private void MulH<TData, TLong>(ILGenerator il, RiscVInstruction inst)
+        where TData : unmanaged, INumber<TData>
+        where TLong : unmanaged, INumber<TLong>
+    {
+        EmitStoreRegister(il, inst.RD, il =>
+        {
+            EmitLoadRegister<TLong>(il, inst.RS1);
+            EmitLoadRegister<TLong>(il, inst.RS2);
+            il.Emit(OpCodes.Mul);
+
+            int shiftAmount = sizeof(TData) * 8;
+            il.EmitLoadConstant(shiftAmount);
+            il.Emit(OpCodes.Shr_Un);
+            il.EmitConv<TData>();
+        });
+    }
+
+    private void MulSH<TData, TLong, TLongSigned>(ILGenerator il, RiscVInstruction inst)
+        where TData : unmanaged, INumber<TData>, IUnsignedNumber<TData>
+        where TLong : unmanaged, INumber<TLong>, IUnsignedNumber<TLong>
+        where TLongSigned : unmanaged, INumber<TLongSigned>, ISignedNumber<TLongSigned>
+    {
+        EmitStoreRegister(il, inst.RD, il =>
+        {
+            EmitLoadRegister<TLongSigned>(il, inst.RS1);
+            EmitLoadRegister<TLong>(il, inst.RS2);
+            il.Emit(OpCodes.Mul);
+
+            int shiftAmount = sizeof(TData) * 8;
+            il.EmitLoadConstant(shiftAmount);
+            il.Emit(OpCodes.Shr_Un);
+            il.EmitConv<TData>();
+        });
+    }
+
     private void JumpAndLink(ILGenerator il, RiscVInstruction inst, T pc)
     {
         // Link if needed
