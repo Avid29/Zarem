@@ -23,6 +23,11 @@ public unsafe class PhysicalBus : IMemoryAccessor
     private readonly bool _endianMismatch;
 
     /// <summary>
+    /// An event invoked when an address is written to.
+    /// </summary>
+    public event EventHandler<ulong>? AddressWritten;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="PhysicalBus"/> class.
     /// </summary>
     public PhysicalBus(MemoryMapper mapper, Endianness endianness)
@@ -79,11 +84,15 @@ public unsafe class PhysicalBus : IMemoryAccessor
             }
 
             Unsafe.Write(ptr, value);
-            return;
+        }
+        else
+        {
+            // Fallback: MMIO/Hardware registers
+            WriteSlow(device, offset, value);
         }
 
-        // Fallback: MMIO/Hardware registers
-        WriteSlow(device, offset, value);
+        // Invoke the address written event
+        AddressWritten?.Invoke(this, address);
     }
 
     /// <inheritdoc/>
@@ -208,6 +217,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
         ulong offset = address - baseAddress;
 
         device.Write(offset, buffer);
+        AddressWritten?.Invoke(this, address);
     }
 
     private T ReadSlow<T>(IBusDevice device, ulong offset) where T : unmanaged, IBinaryNumber<T>

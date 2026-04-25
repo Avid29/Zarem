@@ -27,6 +27,8 @@ public partial class MipsJitCpu<T> : MipsCpu<T>
     {
         _blockCache = new();
         _jitCompiler = new MipsJitCompiler<T>(this);
+
+        bus.AddressWritten += OnAddressWritten;
     }
 
     /// <inheritdoc/>
@@ -58,5 +60,11 @@ public partial class MipsJitCpu<T> : MipsCpu<T>
 
         // Return the number of instructions executed.
         return compiledBlock.Size;
+    }
+
+    private void OnAddressWritten(object? sender, ulong e)
+    {
+        // TODO: Targeted block invalidation
+        _blockCache.Clear();
     }
 }
