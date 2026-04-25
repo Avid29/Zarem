@@ -52,7 +52,7 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
             if (currentTime - lastReportTime >= 1000)
             {
                 double seconds = (currentTime - lastReportTime) / 1000.0;
-                ClockSpeed = totalInstructions / seconds;
+                MeasuredSpeed = totalInstructions / seconds;
 
                 // Reset for next interval
                 totalInstructions = 0;

@@ -75,7 +75,7 @@ public abstract class RiscVCpu<T> : IRiscVCpu
     public MemorySystem Memory { get; }
 
     /// <inheritdoc/>
-    public double ClockSpeed { get; set; }
+    public double MeasuredSpeed { get; set; }
 
     /// <summary>
     /// Gets or sets the value of a general-purpose register on the processor.

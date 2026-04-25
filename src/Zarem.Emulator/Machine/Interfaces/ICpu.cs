@@ -43,14 +43,14 @@ public interface ICpu : IDisposable
     IRegisterFile RegisterFile { get; }
 
     /// <summary>
-    /// Gets the system memory.
+    /// Gets the <see cref="MemorySystem"/> which handles virtual and physical addressing.
     /// </summary>
     MemorySystem Memory { get; }
 
     /// <summary>
     /// Gets the number of instructions or cycles being executed.
     /// </summary>
-    double ClockSpeed { get; }
+    double MeasuredSpeed { get; }
 
     /// <summary>
     /// Starts or resumes execution. 

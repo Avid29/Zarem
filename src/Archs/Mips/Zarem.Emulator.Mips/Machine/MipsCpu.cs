@@ -92,7 +92,7 @@ public abstract partial class MipsCpu<T> : IMipsCpu
     public MemorySystem Memory { get; }
 
     /// <inheritdoc/>
-    public double ClockSpeed
+    public double MeasuredSpeed
     {
         get;
         protected set

@@ -5,7 +5,7 @@ using Zarem.Models.Interface;
 namespace Zarem.Emulator.Models.Modules;
 
 /// <summary>
-/// An interface representing an executable module in the MIPS interpreter.
+/// An interface representing an executable module in the emulator.
 /// </summary>
 public interface IExecutableModule : IModule
 {
