@@ -149,13 +149,13 @@ public partial class RiscVJitCompiler<T>
         where T2SignedLong : struct, IBinaryInteger<T2SignedLong>
     {
         var mulTable = _func7Table[(int)Funct7Code.MExtension];
-        //mulTable[GetLookupIndex(opCode, Funct3Code.Multiply)] = &AluR<MulLogic<T2Signed>, T2Signed>;
+        mulTable[GetLookupIndex(opCode, Funct3Code.Multiply)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Mul);
         //mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHigh)] = &AluR<MulhLogic<T2Signed, T2SignedLong>, T2Signed>;
         //mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHighSignedUnsigned)] = &AluR<MulhsuLogic<T2Signed, T2SignedLong>, T2Signed>;
         //mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHighUnsigned)] = &AluR<MulhLogic<T2, T2Long>, T2>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.Divide)] = &AluR<DivLogic<T2Signed>, T2Signed>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.DivideUnsigned)] = &AluR<DivLogic<T2>, T2>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.Remainder)] = &AluR<RemLogic<T2Signed>, T2Signed>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.RemainderUnsigned)] = &AluR<RemLogic<T2>, T2>;
+        mulTable[GetLookupIndex(opCode, Funct3Code.Divide)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Div);
+        mulTable[GetLookupIndex(opCode, Funct3Code.DivideUnsigned)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Div_Un);
+        mulTable[GetLookupIndex(opCode, Funct3Code.Remainder)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Rem);
+        mulTable[GetLookupIndex(opCode, Funct3Code.RemainderUnsigned)] = (il, inst, pc) => AluR<T2>(il, inst, OpCodes.Rem_Un);
     }
 }
