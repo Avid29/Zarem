@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
@@ -34,31 +35,11 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
     }
 
     /// <inheritdoc/>
-    public override void Run(CancellationToken ct)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override long ExecutionLoop()
     {
-        long totalInstructions = 0;
-        var stopwatch = Stopwatch.StartNew();
-        long lastReportTime = 0;
-
-        while (!ct.IsCancellationRequested)
-        {
-            Step();
-
-            // Update instruction count
-            totalInstructions++;
-
-            // Speed Check: Every 1000ms (1 second)
-            long currentTime = stopwatch.ElapsedMilliseconds;
-            if (currentTime - lastReportTime >= 1000)
-            {
-                double seconds = (currentTime - lastReportTime) / 1000.0;
-                MeasuredSpeed = totalInstructions / seconds;
-
-                // Reset for next interval
-                totalInstructions = 0;
-                lastReportTime = currentTime;
-            }
-        }
+        Step();
+        return 1;
     }
 
     /// <inheritdoc/>

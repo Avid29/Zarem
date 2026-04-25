@@ -1,20 +1,13 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Numerics;
-using System.Threading;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Events;
-using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Emulator.Models;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Machine;
 

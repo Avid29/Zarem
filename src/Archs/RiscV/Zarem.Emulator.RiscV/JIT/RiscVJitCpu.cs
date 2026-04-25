@@ -1,8 +1,7 @@
 ﻿// Avishai Dernis 2026
 
-using System.Diagnostics;
 using System.Numerics;
-using System.Threading;
+using System.Runtime.CompilerServices;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
@@ -36,42 +35,25 @@ public class RiscVJitCpu<T> : RiscVCpu<T>
     }
 
     /// <inheritdoc/>
-    public override void Run(CancellationToken ct)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override long ExecutionLoop()
     {
-        long totalInstructions = 0;
-        var stopwatch = Stopwatch.StartNew();
-        long lastReportTime = 0;
-
-        while (!ct.IsCancellationRequested)
+        // Look up the current block
+        if (!_blockCache.TryGet(ProgramCounter, out var compiledBlock))
         {
-            // Look up the current block
-            if (!_blockCache.TryGet(ProgramCounter, out var compiledBlock))
-            {
-                // Cache Miss. Compile the basic block starting at ProgramCounter
-                compiledBlock = _jitCompiler.CompileBlock(ProgramCounter);
-                _blockCache.Store(ProgramCounter, compiledBlock);
-            }
-
-            // Execute the block, and update the PC to the next block start
-            ProgramCounter = compiledBlock.Delegate(this, out var trap);
-
-            // Update instruction count
-            totalInstructions += compiledBlock.Size;
-
-            // Speed Check: Every 1000ms (1 second)
-            long currentTime = stopwatch.ElapsedMilliseconds;
-            if (currentTime - lastReportTime >= 1000)
-            {
-                double seconds = (currentTime - lastReportTime) / 1000.0;
-                MeasuredSpeed = totalInstructions / seconds;
-
-                // Reset for next interval
-                totalInstructions = 0;
-                lastReportTime = currentTime;
-            }
-
-            if (trap is not RiscVTrap.None)
-                HandleTrap(trap);
+            // Cache Miss. Compile the basic block starting at ProgramCounter
+            compiledBlock = _jitCompiler.CompileBlock(ProgramCounter);
+            _blockCache.Store(ProgramCounter, compiledBlock);
         }
+
+        // Execute the block, and update the PC to the next block start
+        ProgramCounter = compiledBlock.Delegate(this, out var trap);
+
+        // Handle trap
+        if (trap is not RiscVTrap.None)
+            HandleTrap(trap);
+
+        // Return the number of instructions executed.
+        return compiledBlock.Size;
     }
 }
