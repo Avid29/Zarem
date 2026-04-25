@@ -1,35 +1,22 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Numerics;
-using System.Threading;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Events;
-using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Emulator.Models;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Machine;
 
 /// <summary>
 /// A class representing a RISC-V CPU.
 /// </summary>
-public abstract class RiscVCpu<T> : IRiscVCpu
+public abstract class RiscVCpu<T> : CpuBase<T>, IRiscVCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    /// <inheritdoc/>
-    public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
-
-    /// <inheritdoc/>
-    public event EventHandler? ShutdownRequested;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVCpu{T}"/> class.
     /// </summary>
@@ -42,29 +29,16 @@ public abstract class RiscVCpu<T> : IRiscVCpu
     }
 
     /// <inheritdoc/>
-    public string ArchitectureName => "RISC-V";
+    public override string ArchitectureName => "RISC-V";
 
     /// <inheritdoc/>
-    public Endianness Endianness => Endianness.Little;
+    public override Endianness Endianness => Endianness.Little;
 
     /// <inheritdoc/>
     public RiscVEmulatorConfig Config { get; }
 
     /// <inheritdoc/>
-    public T ProgramCounter { get; set; }
-
-    /// <inheritdoc/>
-    ulong ICpu.ProgramCounter
-    {
-        get => ulong.CreateTruncating(ProgramCounter);
-        set => ProgramCounter = T.CreateTruncating(value);
-    }
-
-    /// <inheritdoc/>
-    public RiscVGPRegisterFile<T> RegisterFile { get; }
-
-    /// <inheritdoc/>
-    IRegisterFile ICpu.RegisterFile => RegisterFile;
+    public override RiscVGPRegisterFile<T> RegisterFile { get; }
 
     /// <summary>
     /// Gets the translation look-aside buffer.
@@ -72,10 +46,7 @@ public abstract class RiscVCpu<T> : IRiscVCpu
     public RiscVTlb Tlb { get; }
 
     /// <inheritdoc/>
-    public MemorySystem Memory { get; }
-
-    /// <inheritdoc/>
-    public double MeasuredSpeed { get; set; }
+    public override MemorySystem Memory { get; }
 
     /// <summary>
     /// Gets or sets the value of a general-purpose register on the processor.
@@ -98,12 +69,6 @@ public abstract class RiscVCpu<T> : IRiscVCpu
     /// <inheritdoc/>
     public abstract void Insert(RiscVInstruction instruction, out RiscVTrap trap);
 
-    /// <inheritdoc/>
-    public abstract void Run(CancellationToken ct);
-
-    /// <inheritdoc/>
-    public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
-
     /// <summary>
     /// Handles a trap.
     /// </summary>
@@ -114,12 +79,9 @@ public abstract class RiscVCpu<T> : IRiscVCpu
 
         // Breakpoints are handled by the debugger upon the trap occurring event
         // The host also handles every kind of trap if that's what the config specifies
-        if (trap is RiscVTrap.Breakpoint && BreakpointHit is not null)
+        if (trap is RiscVTrap.Breakpoint && InvokeBreakpoint())
         {
-            // Only wait if a debugger is attached
-            var eventArgs = new BreakpointHitEventArgs();
-            BreakpointHit.Invoke(this, eventArgs);
-            eventArgs.Wait();
+            // Logic handled in InvokeBreakpoint
         }
         else
         {
@@ -127,11 +89,5 @@ public abstract class RiscVCpu<T> : IRiscVCpu
             // Breakpoints are always handled by the host
             Config.TrapHost?.HandleTrap(new RiscVTrapContext(this, (ulong)trap));
         }
-    }
-
-    /// <inheritdoc/>
-    public void Dispose()
-    {
-        RegisterFile.Dispose();
     }
 }

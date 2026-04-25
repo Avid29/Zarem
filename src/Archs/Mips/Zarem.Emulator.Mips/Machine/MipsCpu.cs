@@ -1,13 +1,9 @@
 ﻿// Avishai Dernis 2025
 
-using System;
 using System.Numerics;
-using System.Threading;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Enums;
@@ -19,15 +15,9 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A base class representing a processor unit.
 /// </summary>
-public abstract partial class MipsCpu<T> : IMipsCpu
+public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    /// <inheritdoc/>
-    public event EventHandler<BreakpointHitEventArgs>? BreakpointHit;
-
-    /// <inheritdoc/>
-    public event EventHandler? ShutdownRequested;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
     /// </summary>
@@ -46,29 +36,16 @@ public abstract partial class MipsCpu<T> : IMipsCpu
     }
 
     /// <inheritdoc/>
-    public string ArchitectureName => "MIPS";
+    public override string ArchitectureName => "MIPS";
 
     /// <inheritdoc/>
-    public Endianness Endianness => Endianness.Big;
+    public override Endianness Endianness => Endianness.Big;
 
     /// <inheritdoc/>
     public MipsEmulatorConfig Config { get; }
 
-    /// <inheritdoc cref="ICpu.ProgramCounter"/>
-    public T ProgramCounter { get; set; }
-
     /// <inheritdoc/>
-    ulong ICpu.ProgramCounter
-    {
-        get => ulong.CreateTruncating(ProgramCounter);
-        set => ProgramCounter = T.CreateTruncating(value);
-    }
-
-    /// <inheritdoc cref="ICpu.RegisterFile"/>
-    public MipsGPRegisterFile<T> RegisterFile { get; }
-
-    /// <inheritdoc/>
-    IRegisterFile ICpu.RegisterFile => RegisterFile;
+    public override MipsGPRegisterFile<T> RegisterFile { get; }
 
     /// <summary>
     /// Gets the coprocessor 0 unit of the computer system.
@@ -87,20 +64,9 @@ public abstract partial class MipsCpu<T> : IMipsCpu
     public MipsTlb Tlb { get; }
 
     /// <summary>
-    /// Gets the system memory
+    /// Gets the system memory.
     /// </summary>
-    public MemorySystem Memory { get; }
-
-    /// <inheritdoc/>
-    public double MeasuredSpeed
-    {
-        get;
-        protected set
-        {
-            field = value;
-            Console.WriteLine($"Speed: {value / 1_000_000:F2} MHz");
-        }
-    }
+    public override MemorySystem Memory { get; }
 
     /// <inheritdoc cref="IMipsCpu.DelaySlot"/>
     public T? DelaySlot { get; protected set; }
@@ -129,13 +95,7 @@ public abstract partial class MipsCpu<T> : IMipsCpu
     }
 
     /// <inheritdoc/>
-    public abstract void Run(CancellationToken ct);
-
-    /// <inheritdoc/>
     public abstract void Insert(MipsInstruction instruction, out MipsTrap trap);
-
-    /// <inheritdoc/>
-    public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
 
     /// <summary>
     /// Handles a trap.
@@ -147,12 +107,9 @@ public abstract partial class MipsCpu<T> : IMipsCpu
 
         // Breakpoints are handled by the debugger upon the trap occurring event
         // The host also handles every kind of trap if that's what the config specifies
-        if (trap is MipsTrap.Breakpoint && BreakpointHit is not null)
+        if (trap is MipsTrap.Breakpoint && InvokeBreakpoint())
         {
-            // Only wait if a debugger is attached
-            var eventArgs = new BreakpointHitEventArgs();
-            BreakpointHit.Invoke(this, eventArgs);
-            eventArgs.Wait();
+            // Logic handled in InvokeBreakpoint
         }
         else if (Config.TrapHost is not null)
         {
@@ -168,9 +125,9 @@ public abstract partial class MipsCpu<T> : IMipsCpu
     }
 
     /// <inheritdoc/>
-    public void Dispose()
+    public override void Dispose()
     {
-        RegisterFile.Dispose();
+        base.Dispose();
         CoProcessor0.RegisterFile.Dispose();
         FloatProcessor.RegisterFile.Dispose();
     }
