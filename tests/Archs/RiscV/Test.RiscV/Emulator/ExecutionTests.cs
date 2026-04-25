@@ -25,36 +25,40 @@ public partial class ExecutionTests
 
     [DataTestMethod]
     [RiscVInstructionSource("RV32I", ExecutionMode.Interpret)]
-    public void InstructionTests_RV32_I(RiscVEmulatorTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
+    public void InstructionTests_RV32_I(RiscVEmulatorTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV32I", ExecutionMode.JustInTime)]
-    public void InstructionTests_RV32_I_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
+    public void InstructionTests_RV32_I_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV32G", ExecutionMode.Interpret)]
-    public void InstructionTests_RV32_G(RiscVEmulatorTestCase<uint> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.General));
+    public void InstructionTests_RV32_G(RiscVEmulatorTestCase<uint> @case) => RunTest(@case);
+
+    [DataTestMethod]
+    [RiscVInstructionSource("RV32G", ExecutionMode.JustInTime)]
+    public void InstructionTests_RV32_G_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV64I", ExecutionMode.Interpret)]
-    public void InstructionTests_RV64_I(RiscVEmulatorTestCase<ulong> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
+    public void InstructionTests_RV64_I(RiscVEmulatorTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV64G", ExecutionMode.Interpret)]
-    public void InstructionTests_RV64_G(RiscVEmulatorTestCase<ulong> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.General));
+    public void InstructionTests_RV64_G(RiscVEmulatorTestCase<ulong> @case) => RunTest(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV128I", ExecutionMode.Interpret)]
-    public void InstructionTests_RV128_I(RiscVEmulatorTestCase<UInt128> @case) => RunTest(@case, new RiscVVersionInfo(RiscVBaseVersion.RV128, RiscVExtensions.Integers));
+    public void InstructionTests_RV128_I(RiscVEmulatorTestCase<UInt128> @case) => RunTest(@case);
 
-    private static void RunTest<T>(RiscVEmulatorTestCase<T> @case, RiscVVersionInfo versionInfo)
+    private static void RunTest<T>(RiscVEmulatorTestCase<T> @case)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         var config = @case.Config;
 
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input, RiscVTokenizerProfile.Default)[0];
-        var table = new RiscVInstructionTable(new(versionInfo));
+        var table = new RiscVInstructionTable(new(config.VersionInfo));
         var parser = new RiscVInstructionParser(new(), table, default, null, null);
         var parsed = parser.Parse(tokenized);
         if (parsed is null)

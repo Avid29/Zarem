@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Reflection.Emit;
@@ -48,7 +49,7 @@ public partial class RiscVJitCompiler<T>
                     InitMultTable<long, UInt128, Int128>(versionInfo);
                     break;
                 case RiscVBaseVersion.RV128:
-                    InitMultTable<Int128, BigInteger, BigInteger>(versionInfo);
+                    ThrowHelper.ThrowArgumentException();
                     break;
             }
         }
@@ -96,8 +97,8 @@ public partial class RiscVJitCompiler<T>
      
     private void InitMultTable<TSigned, TLong, TSignedLong>(RiscVVersionInfo versionInfo)
         where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
-        where TLong : struct, IBinaryInteger<TLong>
-        where TSignedLong : struct, IBinaryInteger<TSignedLong>
+        where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>
+        where TSignedLong : unmanaged, IBinaryInteger<TSignedLong>, ISignedNumber<TSignedLong>
     {
         var mulTable = _func7Table[(int)Funct7Code.MExtension] = new RiscVEmitter[1024];
         for (var i = 0; i < 1024; i++)
@@ -145,17 +146,17 @@ public partial class RiscVJitCompiler<T>
     private void InitMultiplyAluOperations<T2, T2Signed, T2Long, T2SignedLong>(RiscVOpCode opCode)
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
         where T2Signed : unmanaged, IBinaryInteger<T2Signed>, ISignedNumber<T2Signed>
-        where T2Long : struct, IBinaryInteger<T2Long>
-        where T2SignedLong : struct, IBinaryInteger<T2SignedLong>
+        where T2Long : unmanaged, IBinaryInteger<T2Long>, IUnsignedNumber<T2Long>
+        where T2SignedLong : unmanaged, IBinaryInteger<T2SignedLong>, ISignedNumber<T2SignedLong>
     {
         var mulTable = _func7Table[(int)Funct7Code.MExtension];
-        //mulTable[GetLookupIndex(opCode, Funct3Code.Multiply)] = &AluR<MulLogic<T2Signed>, T2Signed>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHigh)] = &AluR<MulhLogic<T2Signed, T2SignedLong>, T2Signed>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHighSignedUnsigned)] = &AluR<MulhsuLogic<T2Signed, T2SignedLong>, T2Signed>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHighUnsigned)] = &AluR<MulhLogic<T2, T2Long>, T2>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.Divide)] = &AluR<DivLogic<T2Signed>, T2Signed>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.DivideUnsigned)] = &AluR<DivLogic<T2>, T2>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.Remainder)] = &AluR<RemLogic<T2Signed>, T2Signed>;
-        //mulTable[GetLookupIndex(opCode, Funct3Code.RemainderUnsigned)] = &AluR<RemLogic<T2>, T2>;
+        mulTable[GetLookupIndex(opCode, Funct3Code.Multiply)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Mul);
+        mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHigh)] = (il, inst, pc) => MulH<T2Signed, T2SignedLong>(il, inst);
+        mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHighSignedUnsigned)] = (il, inst, pc) => MulSH<T2, T2Long, T2SignedLong>(il, inst);
+        mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHighUnsigned)] = (il, inst, pc) => MulH<T2, T2Long>(il, inst);
+        mulTable[GetLookupIndex(opCode, Funct3Code.Divide)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Div);
+        mulTable[GetLookupIndex(opCode, Funct3Code.DivideUnsigned)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Div_Un);
+        mulTable[GetLookupIndex(opCode, Funct3Code.Remainder)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Rem);
+        mulTable[GetLookupIndex(opCode, Funct3Code.RemainderUnsigned)] = (il, inst, pc) => AluR<T2>(il, inst, OpCodes.Rem_Un);
     }
 }
