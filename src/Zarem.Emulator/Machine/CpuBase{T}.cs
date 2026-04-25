@@ -55,7 +55,9 @@ public abstract class CpuBase<T> : ICpu
         private set
         {
             field = value;
-            Console.WriteLine($"Speed: {value / 1_000_000:F2} MHz");
+#if DEBUG
+            Debug.WriteLine($"Speed: {value / 1_000_000:F2} MHz");
+#endif
         }
     }
 
