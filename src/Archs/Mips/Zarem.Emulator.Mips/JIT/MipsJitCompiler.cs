@@ -218,19 +218,14 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     {
         Label noOverflow = il.DefineLabel();
 
-        // Load RS into local
-        EmitLoadRegister<TData>(il, inst.RS);
-        LocalBuilder rs = il.DeclareLocal(typeof(TData));
-        il.Emit(OpCodes.Stloc, rs);
-
-        // Load RT into local
-        EmitLoadRegister<TData>(il, inst.RT);
-        LocalBuilder rt = il.DeclareLocal(typeof(TData));
-        il.Emit(OpCodes.Stloc, rt);
+        // Get register locals
+        // NOTE: This is safe because these registers will not be written to
+        LocalBuilder rs = GetRegisterLocal(inst.RS);
+        LocalBuilder rt = GetRegisterLocal(inst.RT);
 
         // Calculate
-        il.Emit(OpCodes.Ldloc, rs);
-        il.Emit(OpCodes.Ldloc, rt);
+        EmitLoadRegister<TData>(il, rs);
+        EmitLoadRegister<TData>(il, rt);
         il.Emit(ilOpCode);
 
         // Store result
@@ -271,11 +266,8 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private void CheckedAluI<TData>(ILGenerator il, MipsInstruction inst, T pc, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
-
-        // Load RS into local
-        EmitLoadRegister(il, inst.RS);
-        LocalBuilder rs = il.DeclareLocal(typeof(TData));
-        il.Emit(OpCodes.Stloc, rs);
+        // Get RS register local
+        LocalBuilder rs = GetRegisterLocal(inst.RS);
 
         // Load Immediate into local (Sign-extended)
         il.EmitLoadConstant(TData.CreateTruncating(inst.Immediate));
@@ -283,9 +275,11 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         il.Emit(OpCodes.Stloc, imm);
 
         // Calculate
-        il.Emit(OpCodes.Ldloc, rs);
-        il.Emit(OpCodes.Ldloc, imm);
+        EmitLoadRegister<TData>(il, rs);
+        EmitLoadRegister<TData>(il, imm);
         il.Emit(ilOpCode);
+
+        // Store result
         LocalBuilder result = il.DeclareLocal(typeof(TData));
         il.Emit(OpCodes.Stloc, result);
 
@@ -386,23 +380,19 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         Label endDiv = il.DefineLabel();
 
         // Load operands into locals to keep stack predictable
-        EmitLoadRegister(il, inst.RS);
-        LocalBuilder rsLocal = il.DeclareLocal(typeof(TData));
-        il.Emit(OpCodes.Stloc, rsLocal);
-        EmitLoadRegister(il, inst.RT);
-        LocalBuilder rtLocal = il.DeclareLocal(typeof(TData));
-        il.Emit(OpCodes.Stloc, rtLocal);
+        var rs = GetRegisterLocal(inst.RS);
+        var rt = GetRegisterLocal(inst.RT);
 
         // Guard against Div-By-Zero
-        il.Emit(OpCodes.Ldloc, rtLocal);
+        EmitLoadRegister<TData>(il, rt);
         il.EmitLoadConstant(TData.Zero);
         il.Emit(OpCodes.Beq, endDiv);
 
         // Calculate and store the remainder to High
         EmitStoreRegister(il, MipsGpRegister.High, il =>
         {
-            il.Emit(OpCodes.Ldloc, rsLocal);
-            il.Emit(OpCodes.Ldloc, rtLocal);
+            EmitLoadRegister<TData>(il, rs);
+            EmitLoadRegister<TData>(il, rt);
             il.Emit(signed ? OpCodes.Rem : OpCodes.Rem_Un);
             if (sizeof(TData) != sizeof(T))
             {
@@ -413,8 +403,8 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         // Calculate and store the quotient to low
         EmitStoreRegister(il, MipsGpRegister.Low, il =>
         {
-            il.Emit(OpCodes.Ldloc, rsLocal);
-            il.Emit(OpCodes.Ldloc, rtLocal);
+            EmitLoadRegister<TData>(il, rs);
+            EmitLoadRegister<TData>(il, rt);
             il.Emit(signed ? OpCodes.Div : OpCodes.Div_Un);
             if (sizeof(TData) != sizeof(T))
             {
