@@ -58,7 +58,7 @@ public sealed class RiscVInterpretCpu<T> : RiscVCpu<T>, IInterpretCpu<RiscVInter
             if (currentTime - lastReportTime >= 1000)
             {
                 double seconds = (currentTime - lastReportTime) / 1000.0;
-                ClockSpeed = totalInstructions / seconds;
+                MeasuredSpeed = totalInstructions / seconds;
 
                 // Reset for next interval
                 totalInstructions = 0;

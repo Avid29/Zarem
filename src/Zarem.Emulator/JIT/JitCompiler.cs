@@ -121,12 +121,21 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
         where TData : unmanaged, INumber<TData>
     {
         // Load the register from local
-        var regIndex = Unsafe.As<TRegister, int>(ref register);
-        var regLocal = _regLocals[regIndex];
-        il.Emit(OpCodes.Ldloc, regLocal);
+        var regLocal = GetRegisterLocal(register);
+        EmitLoadRegister<TData>(il, regLocal);
+    }
+
+    /// <summary>
+    /// Emits the CIL to load a register to the CLR stack from locals.
+    /// </summary>
+    protected virtual void EmitLoadRegister<TData>(ILGenerator il, LocalBuilder local)
+        where TData : unmanaged, INumber<TData>
+    {
+        // Load the register from local
+        il.Emit(OpCodes.Ldloc, local);
 
         // Convert the value to TData if neccesary
-        if (sizeof(T) != sizeof(TData))
+        if (local.LocalType != typeof(TData))
             il.EmitConv<TData>();
     }
 
@@ -138,11 +147,19 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
         emitEvaluation(il);
 
         // Store the value to the register's local
-        var regIndex = Unsafe.As<TRegister, int>(ref register);
-        var regLocal = _regLocals[regIndex];
+        var regLocal = GetRegisterLocal(register);
         il.Emit(OpCodes.Stloc, regLocal);
     }
-    
+
+    /// <summary>
+    /// Gets the <see cref="LocalBuilder"/> for the specified <typeparamref name="TRegister"/>.
+    /// </summary>
+    protected virtual LocalBuilder GetRegisterLocal(TRegister register)
+    {
+        var regIndex = Unsafe.As<TRegister, int>(ref register);
+        return _regLocals[regIndex];
+    }
+
     /// <summary>
     /// Emits the CIL to load the address of a register from a register file in memory.
     /// </summary>
@@ -172,7 +189,7 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
         Label noOverflow = il.DefineLabel();
 
         // First term: (rs ^ result)
-        il.Emit(OpCodes.Ldloc, rs);
+        EmitLoadRegister<TData>(il, rs);
         il.Emit(OpCodes.Ldloc, result);
         il.Emit(OpCodes.Xor);
 
@@ -180,14 +197,14 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
         if (isSubtraction)
         {
             // (rs ^ rtOrImm)
-            il.Emit(OpCodes.Ldloc, rs);
+            EmitLoadRegister<TData>(il, rs);
             il.Emit(OpCodes.Ldloc, rtOrImm);
             il.Emit(OpCodes.Xor);
         }
         else
         {
             // (rtOrImm ^ result)
-            il.Emit(OpCodes.Ldloc, rtOrImm);
+            EmitLoadRegister<TData>(il, rtOrImm);
             il.Emit(OpCodes.Ldloc, result);
             il.Emit(OpCodes.Xor);
         }

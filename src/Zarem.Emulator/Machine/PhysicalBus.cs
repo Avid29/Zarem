@@ -103,7 +103,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
     {
         T value = MemoryMarshal.Read<T>(buffer);
 
-        // If the system endianness doesn't match the target MIPS endianness, swap it.
+        // If the host endianness doesn't match the emulation endianness, swap it.
             return _endianMismatch
                 ? ReverseEndianness(value)
                 : value;
@@ -121,7 +121,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
         }
 
         // No match. Change endianness before writing
-        // The JIT optimizes this into a single path based on the caller's 'T'
+        // The CLR optimizes this into a single path based on the caller's 'T'
         if (sizeof(T) == 1)
         {
             buffer[0] = Unsafe.As<T, byte>(ref value);
