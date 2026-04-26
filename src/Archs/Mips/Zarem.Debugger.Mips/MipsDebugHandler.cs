@@ -50,7 +50,7 @@ public class MipsDebugHandler : IDebugHandler
         {
             return mipsCpu.DelaySlot.Value;
         }
-        else if (mipsCpu.Config.DisableDelaySlots)
+        else
         {
             var instruction = (MipsInstruction)computer.Memory.Read<uint>(pc);
 
@@ -63,18 +63,16 @@ public class MipsDebugHandler : IDebugHandler
                 // Branches
                 MipsOpCode.BranchCompact or MipsOpCode.BranchAndLinkCompact or
                 (>= MipsOpCode.BranchOnEquals and <= MipsOpCode.BranchOnGreaterThanZero) or
-                (>= MipsOpCode.BranchOnEqualLikely and <= MipsOpCode.BranchOnGreaterThanZeroLikely) => StepBranch(instruction, mipsCpu, false),
+                (>= MipsOpCode.BranchOnEqualLikely and <= MipsOpCode.BranchOnGreaterThanZeroLikely) => StepBranch(instruction, mipsCpu),
 
                 // RT Branches
                 MipsOpCode.RegisterImmediate when instruction.RTFuncCode is
                 (>= RegImmFuncCode.BranchOnLessThanZero and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely) or
-                (>= RegImmFuncCode.BranchOnLessThanZeroAndLink and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink) => StepBranch(instruction, mipsCpu, false),
+                (>= RegImmFuncCode.BranchOnLessThanZeroAndLink and <= RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink) => StepBranch(instruction, mipsCpu),
 
                 _ => pc + InstructionSize,
             };
         }
-
-        return pc + InstructionSize;
     }
 
     /// <inheritdoc/>
@@ -110,8 +108,9 @@ public class MipsDebugHandler : IDebugHandler
     /// <inheritdoc/>
     public IDebugViewer? GetDebugViewer(IComputer computer) => MipsDebugViewer.Create(computer);
 
-    private ulong StepBranch(MipsInstruction instruction, IMipsCpu cpu, bool delayed)
+    private ulong StepBranch(MipsInstruction instruction, IMipsCpu cpu)
     {
+        var nextPc = cpu.ProgramCounter + InstructionSize;
         var rs = cpu[instruction.RS];
         var rt = cpu[instruction.RT];
 
@@ -144,10 +143,10 @@ public class MipsDebugHandler : IDebugHandler
         // Target = (PC + 4) + offset
         if (branch)
         {
-            return cpu.ProgramCounter + (delayed ? InstructionSize : 0) + (ulong)instruction.Offset;
+            nextPc += (ulong)instruction.Offset;
         }
 
         // If not taken, we move to the instruction after the delay slot
-        return cpu.ProgramCounter + (delayed ? (InstructionSize * 2) : InstructionSize);
+        return nextPc;
     }
 }
