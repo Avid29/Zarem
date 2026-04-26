@@ -11,7 +11,7 @@ namespace Zarem.Emulator.Machine.Devices;
 /// <summary>
 /// An <see cref="IBusDevice"/> that is the system RAM.
 /// </summary>
-public unsafe class RamDevice : IBusDevice
+public unsafe class RamDevice : IBusDeviceDirect
 {
     private readonly byte*[] _pageTable;
     private readonly uint _pageSize;
