@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Emulator.Machine.Devices.Interfaces;
 
-namespace Zarem.Emulator.Machine.Devices;
+namespace Zarem.N64.Devices;
 
 /// <summary>
 /// A <see cref="IDevice"/> that behaves as a N64 game cartridge.

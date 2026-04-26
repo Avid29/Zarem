@@ -76,10 +76,15 @@
     </Project>
   </Folder>
   <Folder Name="/Plugins/ModuleFormats/">
-    <Project Path="src/ModuleFormats/Zarem.ELF/Zarem.ELF.csproj" DisplayName="Zarem.Elf">
+    <Project Path="src/ModuleFormats/Zarem.ELF/Zarem.ELF.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="src/ModuleFormats/Zarem.RASM/Zarem.RASM.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Plugins/Systems/">
+    <Project Path="src/Systems/Zarem.N64/Zarem.N64.csproj" Id="65a41cb1-e76f-432c-8623-d266d6fd151e">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
   </Folder>
@@ -121,7 +126,7 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/Plugins/ModuleFormats/">
-    <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj" DisplayName="Test.Elf">
+    <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/ObjFormats/Test.Formats/Test.ObjFormats.csproj">

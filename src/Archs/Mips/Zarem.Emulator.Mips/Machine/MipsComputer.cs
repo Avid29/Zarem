@@ -16,7 +16,7 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A class representing a computer system in the MIPS interpreter.
 /// </summary>
-public sealed class MipsComputer : ComputerBase
+public class MipsComputer : ComputerBase
 {
     private readonly MemoryMapper _memoryMapper;
 
