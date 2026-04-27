@@ -12,16 +12,36 @@ namespace Zarem.N64.Devices;
 /// <summary>
 /// A <see cref="IDevice"/> that behaves as a N64 game cartridge.
 /// </summary>
-public unsafe class N64Cartridge : IBusDeviceDirect
+public unsafe class N64CartridgeSlot : IBusDeviceDirect
 {
-    private readonly byte* _ptr;
-    private readonly ulong _size;
+    private byte* _ptr;
+    private ulong _size;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="N64Cartridge"/> class.
+    /// Initializes a new instance of the <see cref="N64CartridgeSlot"/> class.
     /// </summary>
-    public N64Cartridge(string z64FilePath)
+    public N64CartridgeSlot(ulong maxSize)
     {
+        UnloadCartridge();
+
+        BusRangeSize = maxSize;
+    }
+
+    /// <inheritdoc/>
+    public ulong BusRangeSize { get; }
+
+    /// <inheritdoc/>
+    public string Name => "N64 Cartridge";
+
+    /// <summary>
+    /// Loads a z64 file as an N64 cartridge.
+    /// </summary>
+    public void LoadCartridge(string z64FilePath)
+    {
+        // Unload the current cartidge
+        UnloadCartridge();
+
+        // Load the file data
         byte[] fileData = File.ReadAllBytes(z64FilePath);
         _size = (ulong)fileData.Length;
 
@@ -35,11 +55,18 @@ public unsafe class N64Cartridge : IBusDeviceDirect
         }
     }
 
-    /// <inheritdoc/>
-    public ulong BusRangeSize => _size;
-
-    /// <inheritdoc/>
-    public string Name => "N64 Cartridge";
+    /// <summary>
+    /// Unloads the current z64 cartridge.
+    /// </summary>
+    public void UnloadCartridge()
+    {
+        if (_ptr is not null)
+        {
+            NativeMemory.Free(_ptr);
+            _ptr = null;
+            _size = 0;
+        }
+    }
 
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -67,6 +94,6 @@ public unsafe class N64Cartridge : IBusDeviceDirect
     /// <inheritdoc/>
     public void Dispose()
     {
-        NativeMemory.Free(_ptr);
+        UnloadCartridge();
     }
 }
