@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Devices;
 using Zarem.Models.Instructions.Enums;
@@ -31,7 +32,7 @@ public class Nintendo64 : MipsComputer
     /// <summary>
     /// Initializes a new instance of the <see cref="Nintendo64"/> class.
     /// </summary>
-    public Nintendo64() : base(new MipsEmulatorConfig(MipsVersion.MipsIII))
+    public Nintendo64(ExecutionMode mode) : base(new MipsEmulatorConfig(MipsVersion.MipsIII, mode))
     {
         _cartridgeSlot = new N64CartridgeSlot(CartridgeSize);
     }
