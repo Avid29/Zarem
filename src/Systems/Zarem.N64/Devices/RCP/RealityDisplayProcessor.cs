@@ -9,12 +9,10 @@ namespace Zarem.N64.Devices.RCP;
 /// </summary>
 public class RealityDisplayProcessor
 {
-
     /// <summary>
     /// Writes the specified data at the given offset to the RDP registers.
     /// </summary>
     public void WriteRegister(ulong offset, ReadOnlySpan<byte> data)
     {
-
     }
 }

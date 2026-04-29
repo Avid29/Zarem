@@ -14,6 +14,5 @@ public class N64VideoInterface
     /// </summary>
     public void WriteRegister(ulong offset, ReadOnlySpan<byte> data)
     {
-
     }
 }

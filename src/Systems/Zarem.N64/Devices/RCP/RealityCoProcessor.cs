@@ -12,16 +12,18 @@ namespace Zarem.N64.Devices.RCP;
 /// </summary>
 public class RealityCoProcessor : IBusDevice
 {
-    private const ulong RspDataMemoryBase = 0x0;
-    private const ulong RspDataMemorySize = 0x1000;
-    private const ulong RspIntstructionMemoryBase = 0x1000;
-    private const ulong RspIntstructionMemorySize = 0x1000;
-    private const ulong RspRegistersBase = 0x4_1000;
-    private const ulong RspRegistersSize = 0x20;
-    private const ulong RdpRegistersBase = 0x10_0000;
-    private const ulong RdpRegistersSize = 0x20;
-    private const ulong ViRegistersBase = 0x40_0000;
-    private const ulong ViRegistersSize = 0x3C;
+#pragma warning disable CS1591
+    public const ulong RspDataMemoryBase = 0x0;
+    public const ulong RspDataMemorySize = 0x1000;
+    public const ulong RspIntstructionMemoryBase = 0x1000;
+    public const ulong RspIntstructionMemorySize = 0x1000;
+    public const ulong RspRegistersBase = 0x4_1000;
+    public const ulong RspRegistersSize = 0x20;
+    public const ulong RdpRegistersBase = 0x10_0000;
+    public const ulong RdpRegistersSize = 0x20;
+    public const ulong ViRegistersBase = 0x40_0000;
+    public const ulong ViRegistersSize = 0x3C;
+#pragma warning restore CS1591
 
     private readonly RealitySignalProcessor _rsp;
     private readonly RealityDisplayProcessor _rdp;
@@ -81,5 +83,6 @@ public class RealityCoProcessor : IBusDevice
     /// <inheritdoc/>
     public void Dispose()
     {
+        _rsp.Dispose();
     }
 }
