@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Archs\Mips\Zarem.Emulator.Mips\Zarem.Emulator.Mips.csproj" />
+    <ProjectReference Include="..\..\Zarem\Zarem.csproj" />
   </ItemGroup>
 
 </Project>
