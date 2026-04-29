@@ -30,7 +30,6 @@ public class MipsComputer : ComputerBase
         // Create the physical memory bus
         _memoryMapper = new MemoryMapper();
         var bus = new PhysicalBus(_memoryMapper, Endianness.Big);
-        MapDevices(_memoryMapper);
 
         // Initialize the components
         Cpu = config.ExecutionMode switch
@@ -47,6 +46,8 @@ public class MipsComputer : ComputerBase
         };
 
         Cpu.ShutdownRequested += Processor_ShutdownRequested;
+
+        MapDevices(_memoryMapper);
     }
 
     /// <inheritdoc/>

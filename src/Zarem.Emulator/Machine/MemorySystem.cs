@@ -22,7 +22,7 @@ public sealed class MemorySystem : IMemorySystem
     }
 
     /// <inheritdoc/>
-    public IMemoryAccessor Physical { get; }
+    public PhysicalBus Physical { get; }
 
     /// <inheritdoc/>
     public IVirtualMemoryAccessor Virtual { get; }

@@ -13,9 +13,18 @@ namespace Zarem.N64;
 /// </summary>
 public class Nintendo64 : MipsComputer
 {
-    private const ulong MemorySize = 0x0040_0000;           // 4MB of RAM
-    private const ulong CartridgeAddress = 0x1000_0000;     // Cartridge address
-    private const ulong CartridgeRangeSize = 0x1000_0000;   // The size of the cartridge range
+#pragma warning disable CS1591
+    public const ulong MemoryBase = 0x00000000;
+    public const ulong MemorySize = 0x00400000;
+    public const ulong RcpBase = 0x04000000;
+    public const ulong RcpSize = 0x01000000;
+    public const ulong DmaInterfaceBase = 0x04600000;
+    public const ulong DmaInterfaceSize = 0x00000020;
+    public const ulong CartridgeBase = 0x1000_0000;
+    public const ulong CartridgeSize = 0x1FC0_0000;
+    public const ulong RomChipBase = 0x1FC00000;
+    public const ulong RomChipSize = 0x00000800;
+#pragma warning restore CS1591
 
     private readonly N64CartridgeSlot _cartridgeSlot;
 
@@ -24,7 +33,7 @@ public class Nintendo64 : MipsComputer
     /// </summary>
     public Nintendo64() : base(new MipsEmulatorConfig(MipsVersion.MipsIII))
     {
-        _cartridgeSlot = new N64CartridgeSlot(CartridgeRangeSize);
+        _cartridgeSlot = new N64CartridgeSlot(CartridgeSize);
     }
 
     /// <summary>
@@ -46,9 +55,8 @@ public class Nintendo64 : MipsComputer
     /// <inheritdoc/>
     protected override void MapDevices(MemoryMapper mapper)
     {
-        mapper.MapDevice(0x0, new RamDevice(MemorySize));
-
-        // Map the game cartridge
-        mapper.MapDevice(CartridgeAddress, _cartridgeSlot);
+        mapper.MapDevice(MemoryBase, new RamDevice(MemorySize));
+        mapper.MapDevice(RcpBase, new RealityCoProcessor(Memory.Physical));
+        mapper.MapDevice(CartridgeBase, _cartridgeSlot);
     }
 }

@@ -8,9 +8,9 @@ namespace Zarem.Emulator.Machine.Interfaces;
 public interface IMemorySystem : IMemoryAccessor
 {
     /// <summary>
-    /// Gets the physical memory <see cref="IMemoryAccessor"/>.
+    /// Gets the physical memory <see cref="PhysicalBus"/>.
     /// </summary>
-    IMemoryAccessor Physical { get; }
+    PhysicalBus Physical { get; }
 
     /// <summary>
     /// Gets the virtual memory <see cref="IVirtualMemoryAccessor"/>.
