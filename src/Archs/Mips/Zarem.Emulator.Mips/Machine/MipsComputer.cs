@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
+using Zarem.Emulator.Devices;
+using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.JIT;
-using Zarem.Emulator.Machine.Devices;
-using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Extensions;
 using Zarem.Models.Enums;
 
@@ -16,21 +16,20 @@ namespace Zarem.Emulator.Machine;
 /// <summary>
 /// A class representing a computer system in the MIPS interpreter.
 /// </summary>
-public sealed class MipsComputer : ComputerBase
+public class MipsComputer : ComputerBase
 {
     private readonly MemoryMapper _memoryMapper;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsComputer"/> class.
     /// </summary>
-    public MipsComputer(MipsEmulatorConfig config)
+    public MipsComputer(MipsEmulatorConfig config, bool mapDevices = true)
     {
         Config = config;
 
         // Create the physical memory bus
         _memoryMapper = new MemoryMapper();
         var bus = new PhysicalBus(_memoryMapper, Endianness.Big);
-        MapDevices(_memoryMapper);
 
         // Initialize the components
         Cpu = config.ExecutionMode switch
@@ -47,6 +46,11 @@ public sealed class MipsComputer : ComputerBase
         };
 
         Cpu.ShutdownRequested += Processor_ShutdownRequested;
+
+        if (mapDevices)
+        {
+            MapDevices(_memoryMapper);
+        }
     }
 
     /// <inheritdoc/>
@@ -60,6 +64,15 @@ public sealed class MipsComputer : ComputerBase
 
     /// <inheritdoc/>
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;
+
+    /// <summary>
+    /// Maps the devices to the memory mapper.
+    /// </summary>
+    protected void RemapDevices()
+    {
+        _memoryMapper.Clear();
+        MapDevices(_memoryMapper);
+    }
 
     /// <inheritdoc/>
     protected override void MapDevices(MemoryMapper mapper)

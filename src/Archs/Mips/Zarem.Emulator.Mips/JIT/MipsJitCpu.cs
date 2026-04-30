@@ -38,7 +38,6 @@ public partial class MipsJitCpu<T> : MipsCpu<T>
         ProgramCounter = @delegate(this, out trap);
     }
 
-
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected override long ExecutionLoop()

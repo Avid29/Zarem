@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Xml.Serialization;
+using Zarem.Emulator.Config.Enums;
 using Zarem.Models.Instructions.Enums;
 
 namespace Zarem.Emulator.Config;
@@ -20,9 +21,10 @@ public class MipsEmulatorConfig : EmulatorConfig
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsEmulatorConfig"/> class.
     /// </summary>
-    public MipsEmulatorConfig(MipsVersion mipsVersion = MipsVersion.Mips32R2)
+    public MipsEmulatorConfig(MipsVersion mipsVersion = MipsVersion.Mips32R2, ExecutionMode mode = ExecutionMode.Interpret)
     {
         Version = mipsVersion;
+        ExecutionMode = mode;
     }
 
     /// <summary>

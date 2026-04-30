@@ -6,9 +6,8 @@ using System.IO;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Helpers;
-using Zarem.Emulator.Machine.Devices;
-using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models.Enums;
 
@@ -50,7 +49,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
         var device = _mapper.Resolve(address, out var baseAddress);
         ulong offset = address - baseAddress;
 
-        if (device is RamDevice memDevice)
+        if (device is IBusDeviceDirect memDevice)
         {
             byte* ptr = memDevice.GetPointer(offset);
             T value = Unsafe.Read<T>(ptr);
@@ -73,7 +72,7 @@ public unsafe class PhysicalBus : IMemoryAccessor
         var device = _mapper.Resolve(address, out var baseAddress);
         ulong offset = address - baseAddress;
 
-        if (device is RamDevice memDevice)
+        if (device is IBusDeviceDirect memDevice)
         {
             byte* ptr = memDevice.GetPointer(offset);
 

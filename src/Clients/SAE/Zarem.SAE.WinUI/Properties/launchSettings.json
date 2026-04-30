@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Zarem.SAE.WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Zarem.SAE.WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -12,17 +12,28 @@
     </Project>
   </Folder>
   <Folder Name="/Clients/IDE/">
-    <Project Path="src/Clients/Zarem.IDE.Shared/Zarem.IDE.Shared.shproj" Id="d6e0cea0-101e-44ea-b842-6a32433cbac0" />
-    <Project Path="src/Clients/Zarem.IDE.ViewModels/Zarem.IDE.ViewModels.csproj" />
+    <Project Path="src/Clients/IDE/Zarem.IDE.Shared/Zarem.IDE.Shared.shproj" Id="d6e0cea0-101e-44ea-b842-6a32433cbac0" />
+    <Project Path="src/Clients/IDE/Zarem.IDE.ViewModels/Zarem.IDE.ViewModels.csproj" />
   </Folder>
   <Folder Name="/Clients/IDE/Heads/">
-    <Project Path="src/Clients/Zarem.IDE.Uno/Zarem.IDE.Uno.Server/Zarem.IDE.Uno.Server.csproj">
+    <Project Path="src/Clients/IDE/Zarem.IDE.Uno/Zarem.IDE.Uno.Server/Zarem.IDE.Uno.Server.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
-    <Project Path="src/Clients/Zarem.IDE.Uno/Zarem.IDE.Uno/Zarem.IDE.Uno.csproj">
+    <Project Path="src/Clients/IDE/Zarem.IDE.Uno/Zarem.IDE.Uno/Zarem.IDE.Uno.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
-    <Project Path="src/Clients/Zarem.IDE.WinUI/Zarem.IDE.WinUI.csproj">
+    <Project Path="src/Clients/IDE/Zarem.IDE.WinUI/Zarem.IDE.WinUI.csproj">
+      <Platform Solution="*|arm64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Clients/SAE/">
+    <Project Path="src/Clients/SAE/Zarem.SAE.ViewModels/Zarem.SAE.ViewModels.csproj" Id="65d3495f-ee49-4216-bc3c-447d30e71fad">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Clients/SAE/Zarem.SAE.WinUI/Zarem.SAE.WinUI.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
       <Platform Solution="*|arm64" Project="ARM64" />
       <Platform Solution="*|x64" Project="x64" />
       <Deploy />
@@ -76,10 +87,15 @@
     </Project>
   </Folder>
   <Folder Name="/Plugins/ModuleFormats/">
-    <Project Path="src/ModuleFormats/Zarem.ELF/Zarem.ELF.csproj" DisplayName="Zarem.Elf">
+    <Project Path="src/ModuleFormats/Zarem.ELF/Zarem.ELF.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="src/ModuleFormats/Zarem.RASM/Zarem.RASM.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Plugins/Systems/">
+    <Project Path="src/Systems/Zarem.N64/Zarem.N64.csproj" Id="65a41cb1-e76f-432c-8623-d266d6fd151e">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
   </Folder>
@@ -121,7 +137,7 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/Plugins/ModuleFormats/">
-    <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj" DisplayName="Test.Elf">
+    <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/ObjFormats/Test.Formats/Test.ObjFormats.csproj">
@@ -143,6 +159,9 @@
   </Project>
   <Project Path="src/Zarem.Disassembler/Zarem.Disassembler.csproj" Id="cfe7fc00-2550-4bc7-aae5-9484270fa566">
     <BuildType Solution="Alpha|*" Project="Release" />
+  </Project>
+  <Project Path="src/Zarem.Emulator.DirectX/Zarem.Emulator.DirectX.csproj" Id="fc0811ff-9b56-4fd5-be0c-2282c9b79f85">
+    <BuildType Solution="Alpha|*" Project="Debug" />
   </Project>
   <Project Path="src/Zarem.Emulator/Zarem.Emulator.csproj" Id="89e90d7f-f7ba-4b83-be1d-16e3c7e8efb0">
     <BuildType Solution="Alpha|*" Project="Release" />
