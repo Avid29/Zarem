@@ -10,6 +10,8 @@ using Zarem.N64.Devices.RCP.Enums;
 
 namespace Zarem.N64.Devices.RCP;
 
+#pragma warning disable CS0649
+
 /// <summary>
 /// A sub-components of the <see cref="RealityCoProcessor"/> responsible for processing the display operations.
 /// </summary>
@@ -19,7 +21,9 @@ public unsafe partial class RealityDisplayProcessor
     private readonly RegisterFile<uint> _registerFile;
 
     private ComPtr<ID3D11Device> _device;
+    private ComPtr<ID3D11DeviceContext> _context;
     private ComPtr<IDXGISwapChain1> _swapChain;
+    private ComPtr<ID3D11RenderTargetView> _rtv;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RealityDisplayProcessor"/> class.
@@ -82,6 +86,16 @@ public unsafe partial class RealityDisplayProcessor
     {
         _device = new ComPtr<ID3D11Device>(device);
         _swapChain = new ComPtr<IDXGISwapChain1>(swapChain);
+
+        // Get the immediate context from the device
+        _device.GetImmediateContext(_context.GetAddressOf());
+
+        // Create the RenderTargetView so we have something to clear
+        using ComPtr<ID3D11Texture2D> backBuffer = default;
+        _swapChain.GetBuffer(0, SilkMarshal.GuidPtrOf<ID3D11Texture2D>(), (void**)backBuffer.GetAddressOf());
+        _device.CreateRenderTargetView((ID3D11Resource*)backBuffer.Handle, (RenderTargetViewDesc*)null, _rtv.GetAddressOf());
+
+        TestClearScreen();
     }
 
     /// <summary>
@@ -172,6 +186,19 @@ public unsafe partial class RealityDisplayProcessor
                 break;
         }
         */
+    }
+
+    private void TestClearScreen()
+    {
+        // Deep Blue
+        float[] color = [0.0f, 0.0f, 0.5f, 1.0f];
+
+        fixed (float* c = color)
+        {
+            _context.ClearRenderTargetView(_rtv, c);
+        }
+
+        _swapChain.Present(1, 0);
     }
 
     private static uint CalculateTriangleSize(byte opCode)
