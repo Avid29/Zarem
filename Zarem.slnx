@@ -94,8 +94,12 @@
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Plugins/Systems/">
-    <Project Path="src/Systems/Zarem.N64/Zarem.N64.csproj" Id="65a41cb1-e76f-432c-8623-d266d6fd151e">
+  <Folder Name="/Plugins/Systems/" />
+  <Folder Name="/Plugins/Systems/N64/">
+    <Project Path="src/Systems/N64/Zarem.N64.Projects/Zarem.N64.Projects.csproj" Id="86d9211c-ef41-4e10-97a6-9ff6750c465e">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Systems/N64/Zarem.N64/Zarem.N64.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
   </Folder>
