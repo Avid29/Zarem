@@ -12,17 +12,17 @@
     </Project>
   </Folder>
   <Folder Name="/Clients/IDE/">
-    <Project Path="src/Clients/Zarem.IDE.Shared/Zarem.IDE.Shared.shproj" Id="d6e0cea0-101e-44ea-b842-6a32433cbac0" />
-    <Project Path="src/Clients/Zarem.IDE.ViewModels/Zarem.IDE.ViewModels.csproj" />
+    <Project Path="src/Clients/IDE/Zarem.IDE.Shared/Zarem.IDE.Shared.shproj" Id="d6e0cea0-101e-44ea-b842-6a32433cbac0" />
+    <Project Path="src/Clients/IDE/Zarem.IDE.ViewModels/Zarem.IDE.ViewModels.csproj" />
   </Folder>
   <Folder Name="/Clients/IDE/Heads/">
-    <Project Path="src/Clients/Zarem.IDE.Uno/Zarem.IDE.Uno.Server/Zarem.IDE.Uno.Server.csproj">
+    <Project Path="src/Clients/IDE/Zarem.IDE.Uno/Zarem.IDE.Uno.Server/Zarem.IDE.Uno.Server.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
-    <Project Path="src/Clients/Zarem.IDE.Uno/Zarem.IDE.Uno/Zarem.IDE.Uno.csproj">
+    <Project Path="src/Clients/IDE/Zarem.IDE.Uno/Zarem.IDE.Uno/Zarem.IDE.Uno.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
-    <Project Path="src/Clients/Zarem.IDE.WinUI/Zarem.IDE.WinUI.csproj">
+    <Project Path="src/Clients/IDE/Zarem.IDE.WinUI/Zarem.IDE.WinUI.csproj">
       <Platform Solution="*|arm64" Project="ARM64" />
       <Platform Solution="*|x64" Project="x64" />
       <Deploy />
