@@ -10,7 +10,7 @@ namespace Zarem.N64.Devices.RCP;
 /// <summary>
 /// A sub-components of the <see cref="RealityCoProcessor"/> responsible for processing the display operations.
 /// </summary>
-public class RealityDisplayProcessor
+public partial class RealityDisplayProcessor
 {
     private readonly PhysicalBus _bus;
 
@@ -80,17 +80,95 @@ public class RealityDisplayProcessor
 
         // Update the register file
         uint value = BinaryPrimitives.ReadUInt32BigEndian(data);
+        var register = (RdpRegister)regIndex;
         _registerFile[regIndex] = value;
 
         // Handle any side effects of writing to the register.
-        switch ((RdpRegister)offset)
+        switch (register)
         {
+            // Writing to the Start register sets the Current register to the same value.
             case RdpRegister.Start:
-                Current = Start; // Writing to the Start register sets the Current register to the same value.
+                Current = Start;
                 break;
+
+            // Writing to the End register triggers the processing of the command list from Start to End.
             case RdpRegister.End:
-                // TODO: Trigger processing of the display list from Start to End.
+                ProcessCommandList();
                 break;
         }
+    }
+
+    private void ProcessCommandList()
+    {
+        // Important: The RDP can only run if it's not "Frozen" via the Status register
+        while (Current < End)
+        {
+            // Fetch the first word (the OpCode is in the most significant byte)
+            var firstWord = _bus.Read<ulong>(Current);
+            byte opCode = (byte)(firstWord >> 56);
+
+            // Identify length and execute
+            ExecuteCommand(opCode, Current, firstWord, out var commandSize);
+
+            // Advance Current
+            Current += commandSize;
+        }
+    }
+
+    private void ExecuteCommand(byte opCode, uint address, ulong word0, out uint size)
+    {
+        size = 8;
+        /*
+        switch (opCode)
+        {
+            // --- 1 Word Commands (8 Bytes) ---
+            case >= 0x29 and <= 0x3F:
+                size = 8;
+                HandleStateCommand(opCode, word0);
+                break;
+
+            // --- Rectangle Commands (Variable) ---
+            case 0x24: // TEXTURE_RECTANGLE
+            case 0x25: // TEXTURE_RECTANGLE_FLIP
+                size = 24; // These are always 3 words (24 bytes)
+                DrawTextureRectHLE(address);
+                break;
+
+            case 0x30: // FILL_RECTANGLE
+                size = 8;
+                DrawFillRectHLE(word0);
+                break;
+
+            // --- Triangle Commands (Dynamic Size) ---
+            case >= 0x08 and <= 0x0F:
+                size = CalculateTriangleSize(opCode);
+                DrawTriangleHLE(opCode, address, size);
+                break;
+
+            // --- Sync/No-op Commands ---
+            case 0x26: // PIPE_SYNC
+            case 0x27: // TILE_SYNC
+            case 0x28: // FULL_SYNC
+                size = 8;
+                // Handle synchronization logic for DirectX fence/flush if needed
+                break;
+
+            default:
+                size = 8; // Default to 1 word to skip unknown data
+                break;
+        }
+        */
+    }
+
+    private static uint CalculateTriangleSize(byte opCode)
+    {
+        // Base triangle is 1 word for coefficients + 3 words for edges = 4 words (32 bytes)
+        uint words = 4;
+
+        if ((opCode & 0x04) != 0) words += 4; // Shading (LRGBA) adds 4 words
+        if ((opCode & 0x02) != 0) words += 4; // Texture (STW) adds 4 words
+        if ((opCode & 0x01) != 0) words += 4; // Z-Buffer (Z) adds 4 words
+
+        return words * 8;
     }
 }

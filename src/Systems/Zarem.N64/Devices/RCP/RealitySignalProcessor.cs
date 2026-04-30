@@ -114,10 +114,11 @@ public unsafe class RealitySignalProcessor : IDisposable
 
         // Update the register file
         uint value = BinaryPrimitives.ReadUInt32BigEndian(data);
+        var register = (RspRegister)regIndex;
         _registerFile[regIndex] = value;
 
         // Handle any side effects of writing to the register.
-        switch ((RspRegister)offset)
+        switch (register)
         {
             case RspRegister.ReadLength:
                 ExecuteReadDma();
