@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using Silk.NET.Core.Native;
-using Silk.NET.Direct3D11;
-using Silk.NET.DXGI;
 using System;
 using System.Buffers.Binary;
 using Zarem.Emulator.Machine;
@@ -15,15 +12,10 @@ namespace Zarem.N64.Devices.RCP;
 /// <summary>
 /// A sub-components of the <see cref="RealityCoProcessor"/> responsible for processing the display operations.
 /// </summary>
-public unsafe partial class RealityDisplayProcessor
+public partial class RealityDisplayProcessor
 {
     private readonly PhysicalBus _bus;
     private readonly RegisterFile<uint> _registerFile;
-
-    private ComPtr<ID3D11Device> _device;
-    private ComPtr<ID3D11DeviceContext> _context;
-    private ComPtr<IDXGISwapChain1> _swapChain;
-    private ComPtr<ID3D11RenderTargetView> _rtv;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RealityDisplayProcessor"/> class.
@@ -80,25 +72,6 @@ public unsafe partial class RealityDisplayProcessor
     }
 
     /// <summary>
-    /// Attaches the DirectX 11 device and swap chain to the RDP for rendering output.
-    /// </summary>
-    public void AttachGraphics(ID3D11Device* device, IDXGISwapChain1* swapChain)
-    {
-        _device = new ComPtr<ID3D11Device>(device);
-        _swapChain = new ComPtr<IDXGISwapChain1>(swapChain);
-
-        // Get the immediate context from the device
-        _device.GetImmediateContext(_context.GetAddressOf());
-
-        // Create the RenderTargetView so we have something to clear
-        using ComPtr<ID3D11Texture2D> backBuffer = default;
-        _swapChain.GetBuffer(0, SilkMarshal.GuidPtrOf<ID3D11Texture2D>(), (void**)backBuffer.GetAddressOf());
-        _device.CreateRenderTargetView((ID3D11Resource*)backBuffer.Handle, (RenderTargetViewDesc*)null, _rtv.GetAddressOf());
-
-        TestClearScreen();
-    }
-
-    /// <summary>
     /// Writes the specified data at the given offset to the RDP registers.
     /// </summary>
     public void WriteRegister(ulong offset, ReadOnlySpan<byte> data)
@@ -124,92 +97,5 @@ public unsafe partial class RealityDisplayProcessor
                 ProcessCommandList();
                 break;
         }
-    }
-
-    private void ProcessCommandList()
-    {
-        // Important: The RDP can only run if it's not "Frozen" via the Status register
-        while (Current < End)
-        {
-            // Fetch the first word (the OpCode is in the most significant byte)
-            var firstWord = _bus.Read<ulong>(Current);
-            byte opCode = (byte)(firstWord >> 56);
-
-            // Identify length and execute
-            ExecuteCommand(opCode, Current, firstWord, out var commandSize);
-
-            // Advance Current
-            Current += commandSize;
-        }
-    }
-
-    private void ExecuteCommand(byte opCode, uint address, ulong word0, out uint size)
-    {
-        size = 8;
-        /*
-        switch (opCode)
-        {
-            // --- 1 Word Commands (8 Bytes) ---
-            case >= 0x29 and <= 0x3F:
-                size = 8;
-                HandleStateCommand(opCode, word0);
-                break;
-
-            // --- Rectangle Commands (Variable) ---
-            case 0x24: // TEXTURE_RECTANGLE
-            case 0x25: // TEXTURE_RECTANGLE_FLIP
-                size = 24; // These are always 3 words (24 bytes)
-                DrawTextureRectHLE(address);
-                break;
-
-            case 0x30: // FILL_RECTANGLE
-                size = 8;
-                DrawFillRectHLE(word0);
-                break;
-
-            // --- Triangle Commands (Dynamic Size) ---
-            case >= 0x08 and <= 0x0F:
-                size = CalculateTriangleSize(opCode);
-                DrawTriangleHLE(opCode, address, size);
-                break;
-
-            // --- Sync/No-op Commands ---
-            case 0x26: // PIPE_SYNC
-            case 0x27: // TILE_SYNC
-            case 0x28: // FULL_SYNC
-                size = 8;
-                // Handle synchronization logic for DirectX fence/flush if needed
-                break;
-
-            default:
-                size = 8; // Default to 1 word to skip unknown data
-                break;
-        }
-        */
-    }
-
-    private void TestClearScreen()
-    {
-        // Deep Blue
-        float[] color = [0.0f, 0.0f, 0.5f, 1.0f];
-
-        fixed (float* c = color)
-        {
-            _context.ClearRenderTargetView(_rtv, c);
-        }
-
-        _swapChain.Present(1, 0);
-    }
-
-    private static uint CalculateTriangleSize(byte opCode)
-    {
-        // Base triangle is 1 word for coefficients + 3 words for edges = 4 words (32 bytes)
-        uint words = 4;
-
-        if ((opCode & 0x04) != 0) words += 4; // Shading (LRGBA) adds 4 words
-        if ((opCode & 0x02) != 0) words += 4; // Texture (STW) adds 4 words
-        if ((opCode & 0x01) != 0) words += 4; // Z-Buffer (Z) adds 4 words
-
-        return words * 8;
     }
 }
