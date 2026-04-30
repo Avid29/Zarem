@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Zarem.SAE (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Zarem.SAE (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

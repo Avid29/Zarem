@@ -28,6 +28,14 @@
       <Deploy />
     </Project>
   </Folder>
+  <Folder Name="/Clients/SAE/">
+    <Project Path="src/Clients/SAE/Zarem.SAE/Zarem.SAE.csproj" Id="f0cf257f-e9dc-4ec0-89d7-105116db602e">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+      <Platform Solution="*|arm64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Deploy />
+    </Project>
+  </Folder>
   <Folder Name="/Plugins/" />
   <Folder Name="/Plugins/Archs/" />
   <Folder Name="/Plugins/Archs/Mips/">
