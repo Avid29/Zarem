@@ -15,7 +15,6 @@ namespace Zarem.N64.Devices.RCP;
 /// </summary>
 public unsafe class RealitySignalProcessor : IDisposable
 {
-    private readonly RealityCoProcessor _rcp;
     private readonly PhysicalBus _bus;
 
     private readonly RegisterFile<uint> _registerFile;
@@ -26,12 +25,11 @@ public unsafe class RealitySignalProcessor : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="RealitySignalProcessor"/> class.
     /// </summary>
-    public RealitySignalProcessor(RealityCoProcessor rcp, PhysicalBus bus)
+    public RealitySignalProcessor(PhysicalBus bus)
     {
-        _rcp = rcp;
         _bus = bus;
 
-        _registerFile = new RegisterFile<uint>(4);
+        _registerFile = new(4);
         _memory = (byte*)NativeMemory.Alloc((nuint)(RealityCoProcessor.RspDataMemorySize + RealityCoProcessor.RspIntstructionMemorySize));
         _dataMemory = _memory + RealityCoProcessor.RspDataMemoryBase;
         _instructionMemory = _memory + RealityCoProcessor.RspIntstructionMemoryBase;
@@ -87,25 +85,23 @@ public unsafe class RealitySignalProcessor : IDisposable
     /// </summary>
     public void WriteMemory(ulong offset, ReadOnlySpan<byte> data)
     {
-        fixed (byte* dataPtr = data)
+        if (offset < RealityCoProcessor.RspDataMemorySize)
         {
-            if (offset < RealityCoProcessor.RspDataMemorySize)
-            {
-                // Write to RSP Data Memory
-                ulong dataOffset = offset;
-                Unsafe.CopyBlock(_dataMemory + dataOffset, dataPtr, (uint)data.Length);
-            }
-            else if (offset >= RealityCoProcessor.RspDataMemorySize && offset < RealityCoProcessor.RspDataMemorySize + RealityCoProcessor.RspIntstructionMemorySize)
-            {
-                // Write to RSP Instruction Memory
-                ulong instructionOffset = offset - RealityCoProcessor.RspDataMemorySize;
-                Unsafe.CopyBlock(_instructionMemory + instructionOffset, dataPtr, (uint)data.Length);
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds for RSP memory.");
-            }
+            // Write to RSP Data Memory
+            ulong dataOffset = offset;
+            Unsafe.CopyBlock(_dataMemory + dataOffset, data);
         }
+        else if (offset >= RealityCoProcessor.RspDataMemorySize && offset < RealityCoProcessor.RspDataMemorySize + RealityCoProcessor.RspIntstructionMemorySize)
+        {
+            // Write to RSP Instruction Memory
+            ulong instructionOffset = offset - RealityCoProcessor.RspDataMemorySize;
+            Unsafe.CopyBlock(_instructionMemory + instructionOffset, data);
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds for RSP memory.");
+        }
+
     }
 
     /// <summary>

@@ -34,8 +34,8 @@ public class RealityCoProcessor : IBusDevice
     /// </summary>
     public RealityCoProcessor(PhysicalBus bus)
     {
-        _rsp = new RealitySignalProcessor(this, bus);
-        _rdp = new RealityDisplayProcessor();
+        _rsp = new RealitySignalProcessor(bus);
+        _rdp = new RealityDisplayProcessor(bus);
         _vi = new N64VideoInterface();
     }
 

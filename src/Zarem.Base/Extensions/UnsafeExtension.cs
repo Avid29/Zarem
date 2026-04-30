@@ -26,7 +26,7 @@ public unsafe static class UnsafeExtension
         /// <summary>
         /// Copies a block of memory from the source pointer to the destination span.
         /// </summary>
-        public static void CopyBlock(byte* destination, Span<byte> source)
+        public static void CopyBlock(byte* destination, ReadOnlySpan<byte> source)
         {
             fixed(byte* srcPtr = source)
             {
