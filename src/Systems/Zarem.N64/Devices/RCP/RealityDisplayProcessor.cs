@@ -19,7 +19,7 @@ public unsafe partial class RealityDisplayProcessor
     private readonly RegisterFile<uint> _registerFile;
 
     private ComPtr<ID3D11Device> _device;
-    private ComPtr<IDXGISwapChain> _swapChain;
+    private ComPtr<IDXGISwapChain1> _swapChain;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RealityDisplayProcessor"/> class.
@@ -78,10 +78,10 @@ public unsafe partial class RealityDisplayProcessor
     /// <summary>
     /// Attaches the DirectX 11 device and swap chain to the RDP for rendering output.
     /// </summary>
-    public void AttachGraphics(ID3D11Device* device, IDXGISwapChain* swapChain)
+    public void AttachGraphics(ID3D11Device* device, IDXGISwapChain1* swapChain)
     {
         _device = new ComPtr<ID3D11Device>(device);
-        _swapChain = new ComPtr<IDXGISwapChain>(swapChain);
+        _swapChain = new ComPtr<IDXGISwapChain1>(swapChain);
     }
 
     /// <summary>

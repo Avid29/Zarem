@@ -82,7 +82,7 @@ public class RealityCoProcessor : IBusDevice, IDXGraphicsDevice
     }
 
     /// <inheritdoc/>
-    public unsafe void InitializeGraphics(ID3D11Device* device, IDXGISwapChain* swapChain)
+    public unsafe void InitializeGraphics(ID3D11Device* device, IDXGISwapChain1* swapChain)
     {
         _rdp.AttachGraphics(device, swapChain);
     }

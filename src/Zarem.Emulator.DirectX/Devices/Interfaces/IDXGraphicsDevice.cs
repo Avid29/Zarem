@@ -13,5 +13,5 @@ public unsafe interface IDXGraphicsDevice : IDevice
     /// <summary>
     /// Initialize the graphics.
     /// </summary>
-    void InitializeGraphics(ID3D11Device* device, IDXGISwapChain* swapChain);
+    void InitializeGraphics(ID3D11Device* device, IDXGISwapChain1* swapChain);
 }
