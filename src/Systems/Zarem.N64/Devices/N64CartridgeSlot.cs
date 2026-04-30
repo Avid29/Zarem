@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Zarem.Emulator.Machine.Devices.Interfaces;
+using Zarem.Emulator.Devices.Interfaces;
 
 namespace Zarem.N64.Devices;
 

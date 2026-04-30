@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Runtime.InteropServices;
 using Windows.Graphics.DirectX;
-using Zarem.Emulator.Machine.Devices.Interfaces;
+using Zarem.Emulator.Devices.Interfaces;
 using Zarem.IDE.Views.Pages;
 
 namespace Zarem.IDE.Controls;

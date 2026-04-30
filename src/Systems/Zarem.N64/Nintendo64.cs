@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.Emulator.Devices;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Devices;
 using Zarem.N64.Config;
 using Zarem.N64.Devices;
 using Zarem.N64.Devices.RCP;
@@ -31,10 +31,18 @@ public class Nintendo64 : MipsComputer
     /// <summary>
     /// Initializes a new instance of the <see cref="Nintendo64"/> class.
     /// </summary>
-    public Nintendo64(N64EmulatorConfig config) : base(config)
+    public Nintendo64(N64EmulatorConfig config) : base(config, false)
     {
         _cartridgeSlot = new N64CartridgeSlot(CartridgeSize);
+        RealityCoProcessor = new RealityCoProcessor(Memory.Physical);
+
+        RemapDevices();
     }
+
+    /// <summary>
+    /// Gets the Reality Co-Processor (RCP) device.
+    /// </summary>
+    public RealityCoProcessor RealityCoProcessor { get; }
 
     /// <summary>
     /// Insert a z64 as a cartridge.
@@ -56,7 +64,7 @@ public class Nintendo64 : MipsComputer
     protected override void MapDevices(MemoryMapper mapper)
     {
         mapper.MapDevice(MemoryBase, new RamDevice(MemorySize));
-        mapper.MapDevice(RcpBase, new RealityCoProcessor(Memory.Physical));
+        mapper.MapDevice(RcpBase, RealityCoProcessor);
         mapper.MapDevice(CartridgeBase, _cartridgeSlot);
     }
 }

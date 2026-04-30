@@ -1,5 +1,8 @@
 ﻿// Avishai Dernis 2026
 
+using Silk.NET.Core.Native;
+using Silk.NET.Direct3D11;
+using Silk.NET.DXGI;
 using System;
 using System.Buffers.Binary;
 using Zarem.Emulator.Machine;
@@ -10,11 +13,13 @@ namespace Zarem.N64.Devices.RCP;
 /// <summary>
 /// A sub-components of the <see cref="RealityCoProcessor"/> responsible for processing the display operations.
 /// </summary>
-public partial class RealityDisplayProcessor
+public unsafe partial class RealityDisplayProcessor
 {
     private readonly PhysicalBus _bus;
-
     private readonly RegisterFile<uint> _registerFile;
+
+    private ComPtr<ID3D11Device> _device;
+    private ComPtr<IDXGISwapChain> _swapChain;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RealityDisplayProcessor"/> class.
@@ -68,6 +73,15 @@ public partial class RealityDisplayProcessor
     {
         get => _registerFile[(int)reg];
         set => _registerFile[(int)reg] = value;
+    }
+
+    /// <summary>
+    /// Attaches the DirectX 11 device and swap chain to the RDP for rendering output.
+    /// </summary>
+    public void AttachGraphics(ID3D11Device* device, IDXGISwapChain* swapChain)
+    {
+        _device = new ComPtr<ID3D11Device>(device);
+        _swapChain = new ComPtr<IDXGISwapChain>(swapChain);
     }
 
     /// <summary>

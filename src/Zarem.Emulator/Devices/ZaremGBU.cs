@@ -3,9 +3,9 @@
 using CommunityToolkit.HighPerformance;
 using System;
 using System.Runtime.InteropServices;
-using Zarem.Emulator.Machine.Devices.Interfaces;
+using Zarem.Emulator.Devices.Interfaces;
 
-namespace Zarem.Emulator.Machine.Devices;
+namespace Zarem.Emulator.Devices;
 
 /// <summary>
 /// The "Zarem Graphical Buffer Unit".

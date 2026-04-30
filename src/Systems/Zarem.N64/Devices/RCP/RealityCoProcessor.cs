@@ -1,16 +1,17 @@
 ﻿// Avishai Dernis 2026
 
+using Silk.NET.Direct3D11;
+using Silk.NET.DXGI;
 using System;
-using System.Buffers.Binary;
+using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Devices.Interfaces;
 
 namespace Zarem.N64.Devices.RCP;
 
 /// <summary>
 /// An <see cref="IBusDevice"/> implementation for the N64 reality coprocessor (rcp) graphics card.
 /// </summary>
-public class RealityCoProcessor : IBusDevice
+public class RealityCoProcessor : IBusDevice, IDXGraphicsDevice
 {
 #pragma warning disable CS1591
     public const ulong RspDataMemoryBase = 0x0;
@@ -78,6 +79,12 @@ public class RealityCoProcessor : IBusDevice
         {
             throw new NotImplementedException();
         }
+    }
+
+    /// <inheritdoc/>
+    public unsafe void InitializeGraphics(ID3D11Device* device, IDXGISwapChain* swapChain)
+    {
+        _rdp.AttachGraphics(device, swapChain);
     }
 
     /// <inheritdoc/>

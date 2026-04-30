@@ -1,6 +1,9 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Emulator.Machine.Devices.Interfaces;
+
+// Avishai Dernis 2026
+
+namespace Zarem.Emulator.Devices.Interfaces;
 
 /// <summary>
 /// An interface for a <see cref="IBusDevice"/> which can be read/written to directly.

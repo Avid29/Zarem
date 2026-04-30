@@ -3,7 +3,7 @@
 using CommunityToolkit.HighPerformance;
 using System;
 
-namespace Zarem.Emulator.Machine.Devices.Interfaces;
+namespace Zarem.Emulator.Devices.Interfaces;
 
 /// <summary>
 /// An <see cref="IBusDevice"/> for a graphics device.

@@ -29,7 +29,10 @@
     </Project>
   </Folder>
   <Folder Name="/Clients/SAE/">
-    <Project Path="src/Clients/SAE/Zarem.SAE/Zarem.SAE.csproj" Id="f0cf257f-e9dc-4ec0-89d7-105116db602e">
+    <Project Path="src/Clients/SAE/Zarem.SAE.ViewModels/Zarem.SAE.ViewModels.csproj" Id="65d3495f-ee49-4216-bc3c-447d30e71fad">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Clients/SAE/Zarem.SAE.WinUI/Zarem.SAE.WinUI.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
       <Platform Solution="*|arm64" Project="ARM64" />
       <Platform Solution="*|x64" Project="x64" />
@@ -156,6 +159,9 @@
   </Project>
   <Project Path="src/Zarem.Disassembler/Zarem.Disassembler.csproj" Id="cfe7fc00-2550-4bc7-aae5-9484270fa566">
     <BuildType Solution="Alpha|*" Project="Release" />
+  </Project>
+  <Project Path="src/Zarem.Emulator.DirectX/Zarem.Emulator.DirectX.csproj" Id="fc0811ff-9b56-4fd5-be0c-2282c9b79f85">
+    <BuildType Solution="Alpha|*" Project="Debug" />
   </Project>
   <Project Path="src/Zarem.Emulator/Zarem.Emulator.csproj" Id="89e90d7f-f7ba-4b83-be1d-16e3c7e8efb0">
     <BuildType Solution="Alpha|*" Project="Release" />

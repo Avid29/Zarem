@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>Zarem.SAE</RootNamespace>
+    <RootNamespace>Zarem.SAE.WinUI</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
@@ -39,7 +39,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1839" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.0.1" />
+	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250108002" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Zarem.SAE.ViewModels\Zarem.SAE.ViewModels.csproj" />
   </ItemGroup>
 
   <!--

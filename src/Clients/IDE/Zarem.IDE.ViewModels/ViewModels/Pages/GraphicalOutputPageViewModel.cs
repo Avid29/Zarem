@@ -3,7 +3,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using System.Linq;
 using Zarem.DebugSessions;
-using Zarem.Emulator.Machine.Devices.Interfaces;
+using Zarem.Emulator.Devices.Interfaces;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels.Pages;

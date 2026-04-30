@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using Zarem.Emulator.Machine.Devices.Interfaces;
+using Zarem.Emulator.Devices.Interfaces;
 
 namespace Zarem.Emulator.Machine;
 
@@ -38,6 +38,15 @@ public class MemoryMapper
         }
 
         _devices.Add(device);
+    }
+
+    /// <summary>
+    /// Clears all device mappings from the bus.
+    /// </summary>
+    public void Clear()
+    {
+        Array.Clear(_pageTable);
+        _devices.Clear();
     }
 
     /// <summary>

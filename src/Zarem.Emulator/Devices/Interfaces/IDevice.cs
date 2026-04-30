@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Zarem.Emulator.Machine.Devices.Interfaces;
+namespace Zarem.Emulator.Devices.Interfaces;
 
 /// <summary>
 /// An interface for a device in a computer.

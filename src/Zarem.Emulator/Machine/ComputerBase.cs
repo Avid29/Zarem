@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Zarem.Emulator.Config;
+using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Events;
-using Zarem.Emulator.Machine.Devices.Interfaces;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models;
 

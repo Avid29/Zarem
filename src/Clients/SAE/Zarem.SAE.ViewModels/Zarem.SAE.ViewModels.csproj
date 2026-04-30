@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Zarem.SAE</RootNamespace>
+    <Configurations>Debug;Release;Alpha</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Systems\Zarem.N64\Zarem.N64.csproj" />
+  </ItemGroup>
+
+</Project>

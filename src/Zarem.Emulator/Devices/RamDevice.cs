@@ -4,9 +4,9 @@ using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Zarem.Emulator.Machine.Devices.Interfaces;
+using Zarem.Emulator.Devices.Interfaces;
 
-namespace Zarem.Emulator.Machine.Devices;
+namespace Zarem.Emulator.Devices;
 
 /// <summary>
 /// An <see cref="IBusDevice"/> that is the system RAM.
