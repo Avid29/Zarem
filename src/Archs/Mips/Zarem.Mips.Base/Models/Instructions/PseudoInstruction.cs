@@ -77,8 +77,8 @@ public readonly struct PseudoInstruction
             PseudoOp.LoadImmediate =>
             [
                 // li rd, imm: lui rd, upper; ori rd, rd, lower
-                MipsInstruction.CreateI(MipsOpCode.LoadUpperImmediate, MipsGpRegister.Zero, RD, (short)(Immediate >> 16)),
-                MipsInstruction.CreateI(MipsOpCode.OrImmediate, RD, RD, (short)Immediate)
+                MipsInstruction.CreateI(MipsOpCode.LoadUpperImmediate, MipsGpRegister.Zero, RT, (short)(Immediate >> 16)),
+                MipsInstruction.CreateI(MipsOpCode.OrImmediate, RT, RT, (short)Immediate)
             ],
             PseudoOp.AbsoluteValue =>
             [
@@ -95,7 +95,7 @@ public readonly struct PseudoInstruction
                 // move rd, rs: addu rd, rs, zero
                 MipsInstruction.CreateR(FunctionCode.AddUnsigned, RS, MipsGpRegister.Zero, RD),
             ],
-            PseudoOp.LoadAddress =>
+            PseudoOp.LoadAddress or PseudoOp.LoadAddress =>
             [
                 // la rd, addr: lui rd, upper; ori rd, rd, lower
                 MipsInstruction.CreateI(MipsOpCode.LoadUpperImmediate, MipsGpRegister.Zero, RD, (short)(Immediate >> 16)),

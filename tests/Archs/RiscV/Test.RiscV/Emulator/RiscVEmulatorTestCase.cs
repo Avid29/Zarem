@@ -46,8 +46,8 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
                     // Assign some arbitrary values to the rest of the registers as well, just in case
                     (RiscVGpRegister.Saved6, T.CreateTruncating(101)),
                     (RiscVGpRegister.Saved7, T.CreateTruncating(0x89ab_cdef)),
-                    (RiscVGpRegister.Saved8, T.CreateTruncating(ExecutionTests.K0)),
-                    (RiscVGpRegister.Saved9, T.CreateTruncating(ExecutionTests.K1)),
+                    (RiscVGpRegister.Saved8, T.CreateTruncating(RiscVExecutionTests.K0)),
+                    (RiscVGpRegister.Saved9, T.CreateTruncating(RiscVExecutionTests.K1)),
                 ];
         }
     }
@@ -71,7 +71,7 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
 
     public T? ExpectedPC { get; init; } = null;
 
-    public SideEffect? ExpectedSideEffect { get; init; }
+    public RiscVSideEffect? ExpectedSideEffect { get; init; }
 
     public (RiscVGpRegister Register, T? Value)? ExpectedWriteBack { get; init; } = null;
 

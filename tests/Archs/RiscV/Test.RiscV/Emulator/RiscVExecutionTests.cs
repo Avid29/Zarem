@@ -18,7 +18,7 @@ using Zarem.Models.Versioning.Enums;
 namespace Test.RiscV.Emulator;
 
 [TestClass]
-public partial class ExecutionTests
+public partial class RiscVExecutionTests
 {
     public const uint K0 = 0xbd0;
     public const uint K1 = 0x516;

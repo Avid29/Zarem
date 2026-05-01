@@ -20,6 +20,7 @@
 	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Emulator.MIPS\Zarem.Emulator.Mips.csproj" />
 	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Linker.MIPS\Zarem.Linker.Mips.csproj" />
 	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.MIPS.Base\Zarem.Mips.Base.csproj" />
+	  <ProjectReference Include="..\..\..\Test.Zarem\Test.Zarem.csproj" />
 	  <ProjectReference Include="..\..\Test.Archs\Test.Archs.csproj" />
 	</ItemGroup>
 

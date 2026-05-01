@@ -104,7 +104,7 @@ public sealed class RiscVInterpretCpu<T> : RiscVCpu<T>, IInterpretCpu<RiscVInter
 
         switch (execution.SideEffect)
         {
-            case SideEffect.ProgramCounter:
+            case RiscVSideEffect.ProgramCounter:
                 nextPc = execution.ProgramCounter;
                 break;
         }

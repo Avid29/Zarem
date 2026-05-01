@@ -111,9 +111,9 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
         // NOTE: Alignment was already checked during the execution phase.
         // No need to check it here too.
 
-        if (execution.SideEffect is SideEffect.ReadMemory or SideEffect.ReadMemorySigned)
+        if (execution.SideEffect is MipsSideEffect.ReadMemory or MipsSideEffect.ReadMemorySigned)
         {
-            bool signed = execution.SideEffect is SideEffect.ReadMemorySigned;
+            bool signed = execution.SideEffect is MipsSideEffect.ReadMemorySigned;
             read = size switch
             {
                 1 => signed ? T.CreateSaturating(Memory.Read<sbyte>(addr)) : T.CreateTruncating(Memory.Read<byte>(addr)),
@@ -123,7 +123,7 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
                 _ => ThrowHelper.ThrowInvalidOperationException<T>($"Invalid memory read size: {size}"),
             };
         }
-        else if (execution.SideEffect is SideEffect.WriteMemory)
+        else if (execution.SideEffect is MipsSideEffect.WriteMemory)
         {
             switch (size)
             {
@@ -156,7 +156,7 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
         DelaySlot = null;
 
         // Handle gpr writeback
-        if (execution.SideEffect is not (SideEffect.ReadMemory or SideEffect.WriteMemory))
+        if (execution.SideEffect is not (MipsSideEffect.ReadMemory or MipsSideEffect.WriteMemory))
         {
             RegisterFile[(int)execution.GPR] = execution.WriteBack;
         }
@@ -164,30 +164,30 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
         // Apply side effects
         switch (execution.SideEffect)
         {
-            case SideEffect.Low:
+            case MipsSideEffect.Low:
                 RegisterFile.Low = execution.Low;
                 break;
-            case SideEffect.High:
+            case MipsSideEffect.High:
                 RegisterFile.High = execution.High;
                 break;
-            case SideEffect.HighLow:
+            case MipsSideEffect.HighLow:
                 (RegisterFile.High, RegisterFile.Low) = (execution.High, execution.Low);
                 break;
-            case SideEffect.ProgramCounter:
-            case SideEffect.ForceProgramCounter:
-                ApplyJump(execution.ProgramCounter, ref nextPc, execution.SideEffect is SideEffect.ForceProgramCounter);
+            case MipsSideEffect.ProgramCounter:
+            case MipsSideEffect.ForceProgramCounter:
+                ApplyJump(execution.ProgramCounter, ref nextPc, execution.SideEffect is MipsSideEffect.ForceProgramCounter);
                 break;
-            case SideEffect.ReadMemory:
-            case SideEffect.ReadMemorySigned:
+            case MipsSideEffect.ReadMemory:
+            case MipsSideEffect.ReadMemorySigned:
                 RegisterFile[(int)execution.GPR] = memRead;
                 break;
-            case SideEffect.WriteCoProc0:
+            case MipsSideEffect.WriteCoProc0:
                 CoProcessor0[execution.CoProc0Reg] = execution.CoProc0WriteBack;
                 break;
-            case SideEffect.WriteFloat:
+            case MipsSideEffect.WriteFloat:
                 FloatProcessor.Words[execution.FloatReg] = execution.FWordWriteBack;
                 break;
-            case SideEffect.WriteDouble:
+            case MipsSideEffect.WriteDouble:
                 FloatProcessor.Longs[execution.FloatReg] = execution.FLongWriteBack;
                 break;
                 // TODO: Handle TLB side effects

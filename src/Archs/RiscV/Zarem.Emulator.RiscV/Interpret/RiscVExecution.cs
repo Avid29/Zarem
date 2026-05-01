@@ -67,7 +67,7 @@ public readonly struct RiscVExecution<T>
     /// <summary>
     /// Gets the type of secondary effect from the execution, if any.
     /// </summary>
-    public SideEffect SideEffect { get; init; }
+    public RiscVSideEffect SideEffect { get; init; }
 
     /// <summary>
     /// Gets the new PC value, if applicable.
@@ -78,7 +78,7 @@ public readonly struct RiscVExecution<T>
         init
         {
             _secondary1 = value;
-            SideEffect = SideEffect.ProgramCounter;
+            SideEffect = RiscVSideEffect.ProgramCounter;
         }
     }
 }

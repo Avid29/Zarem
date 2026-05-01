@@ -18,8 +18,8 @@ namespace Test.RiscV.Emulator;
 [AttributeUsage(AttributeTargets.Method)]
 public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVEmulatorConfig>
 {
-    public const uint K0 = ExecutionTests.K0;
-    public const uint K1 = ExecutionTests.K1;
+    public const uint K0 = RiscVExecutionTests.K0;
+    public const uint K1 = RiscVExecutionTests.K1;
 
     private readonly RiscVVersionInfo _versionInfo;
     private readonly ExecutionMode _mode;

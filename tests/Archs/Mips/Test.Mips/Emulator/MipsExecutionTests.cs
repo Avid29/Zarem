@@ -16,7 +16,7 @@ using Zarem.Models.Instructions.Enums.Registers;
 namespace Test.MIPS.Emulator;
 
 [TestClass]
-public partial class ExecutionTests
+public partial class MipsExecutionTests
 {
     public const uint K0 = 0xbd0;
     public const uint K1 = 0xd16;
@@ -228,7 +228,7 @@ public partial class ExecutionTests
         var expectedPC = @case.ExpectedPC;
         if (expectedPC is not null)
         {
-            if (!cpu.Config.DisableDelaySlots && execution.SideEffect is SideEffect.ProgramCounter)
+            if (!cpu.Config.DisableDelaySlots && execution.SideEffect is MipsSideEffect.ProgramCounter)
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
                 Assert.AreEqual((uint)4, computer.Cpu.ProgramCounter);
