@@ -1,19 +1,16 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Diagnostics;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Zarem.Elf;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
-using Zarem.MIPS;
-using Zarem.Registry;
 using Zarem.Serialization;
-using Zarem.TrapHandlers;
 
 namespace Test.Zarem;
 
@@ -24,28 +21,31 @@ public abstract class ProjectTestsBase
 {
     public static async Task RunProjectTest(string projectPath)
     {
-        var actualOutput = await RunProject(projectPath);
-        var expectedOutput = File.ReadAllText(Path.ChangeExtension(projectPath, ".test"));
+        var dir = Path.GetDirectoryName(projectPath);
+        Assert.IsNotNull(dir);
 
-        actualOutput = actualOutput?.Trim();
-        expectedOutput = expectedOutput?.Trim();
+        var expectedScriptPath = Path.Combine(dir, "Test.cs");
+        Assert.IsTrue(File.Exists(expectedScriptPath));
 
+        var actualOutput = await RunProjectAsync(projectPath);
+        var expectedScript = File.ReadAllText(expectedScriptPath);
+        var expectedOutput = await RunExpectedAsync(expectedScript);
         Assert.AreEqual(expectedOutput, actualOutput);
     }
 
     protected static IEnumerable<string> GetProjectPaths(string arch)
         => Directory.EnumerateFiles(Path.Combine(FindRootPath(), "demos", arch), "*.zrmp", SearchOption.AllDirectories);
 
-    private static async Task<string?> RunProject(string projectPath)
+    private static async Task<string?> RunProjectAsync(string projectPath)
     {
-        // ReDirect console output
+        // Redirect console output
         var consoleOutput = new StringBuilder();
         Console.SetOut(new StringWriter(consoleOutput));
         consoleOutput.Clear();
 
         // Load project
         var project = ProjectFactory.Load(projectPath);
-        
+
         // Build project
         var buildResult = await project.BuildProjectAsync(true);
         var module = buildResult.OutputModule;
@@ -74,6 +74,17 @@ public abstract class ProjectTestsBase
         session.Emulator.Start();
         await tcs.Task.WaitAsync(TimeSpan.FromSeconds(10));
 
+        return $"{consoleOutput}";
+    }
+
+    private static async Task<string?> RunExpectedAsync(string scriptCode)
+    {
+        // Redirect console output
+        var consoleOutput = new StringBuilder();
+        Console.SetOut(new StringWriter(consoleOutput));
+        consoleOutput.Clear();
+
+        await CSharpScript.EvaluateAsync<string>(scriptCode);
         return $"{consoleOutput}";
     }
 

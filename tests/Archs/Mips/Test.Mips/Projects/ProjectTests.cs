@@ -32,5 +32,5 @@ public class ProjectTests : ProjectTestsBase
 
     [DataTestMethod]
     [DynamicData(nameof(ProjectsPaths))]
-    public Task RunTest(string projectPath) => RunProjectTest(projectPath);
+    public Task RunTestAsync(string projectPath) => RunProjectTest(projectPath);
 }
