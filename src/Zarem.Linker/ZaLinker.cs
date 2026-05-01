@@ -174,7 +174,8 @@ public sealed class ZaLinker
 
                 var newSymbol = Module.GetOrCreateSymbol(symbolId);
                 newSymbol.Binding = symbol.Binding;
-                newSymbol.Type = symbol.Type;
+                if (newSymbol.Type is SymbolType.Unknown)
+                    newSymbol.Type = symbol.Type;
 
                 if (symbol.Address.IsRelocatable)
                 {
