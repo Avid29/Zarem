@@ -94,8 +94,12 @@
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
   </Folder>
-  <Folder Name="/Plugins/Systems/">
-    <Project Path="src/Systems/Zarem.N64/Zarem.N64.csproj" Id="65a41cb1-e76f-432c-8623-d266d6fd151e">
+  <Folder Name="/Plugins/Systems/" />
+  <Folder Name="/Plugins/Systems/N64/">
+    <Project Path="src/Systems/N64/Zarem.N64.Projects/Zarem.N64.Projects.csproj" Id="86d9211c-ef41-4e10-97a6-9ff6750c465e">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Systems/N64/Zarem.N64/Zarem.N64.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
   </Folder>
@@ -146,6 +150,12 @@
     <Project Path="tests/ObjFormats/Test.RASM/Test.RASM.csproj">
       <BuildType Solution="Alpha|arm64" Project="Debug" />
       <BuildType Solution="Alpha|x64" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tests/Plugins/Systems/" />
+  <Folder Name="/Tests/Plugins/Systems/N64/">
+    <Project Path="tests/Systems/N64/Test.N64/Test.N64.csproj" Id="afabb204-0224-495b-b3c5-e124d8ab3fbc">
+      <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
   </Folder>
   <Project Path="src/Zarem.Assembler/Zarem.Assembler.csproj" Id="a4a13c0e-dc3b-4c0d-aa24-5e7e3c2f5500">

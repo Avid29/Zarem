@@ -6,7 +6,7 @@ using Zarem.Descriptors;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.N64.Config;
 
-namespace Zarem.N64.Descriptors;
+namespace Zarem.N64;
 
 /// <summary>
 /// An <see cref="IComputerDescriptor"/> for the N64 emulator.

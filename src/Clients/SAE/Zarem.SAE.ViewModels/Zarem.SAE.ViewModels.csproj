@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Systems\Zarem.N64\Zarem.N64.csproj" />
+    <ProjectReference Include="..\..\..\Systems\N64\Zarem.N64\Zarem.N64.csproj" />
   </ItemGroup>
 
 </Project>

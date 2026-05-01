@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.N64</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Zarem\Zarem.csproj" />
+    <ProjectReference Include="..\Zarem.N64\Zarem.N64.csproj" />
+  </ItemGroup>
+
+</Project>
