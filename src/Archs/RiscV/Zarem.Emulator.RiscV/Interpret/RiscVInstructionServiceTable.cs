@@ -132,6 +132,45 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : IRiscVIns
         return RiscVTrap.None;
     }
 
+    private static RiscVTrap Load<TData>(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TData : unmanaged, IBinaryInteger<TData>
+    {
+        T offset = T.CreateTruncating(inst.Immediate);
+        T baseAddr = T.CreateTruncating(@this._regs[(int)inst.RS1]);
+        T addr = baseAddr + offset;
+
+        // Alignment check (bytes are always aligned)
+        int size = sizeof(TData);
+        if (size > 1 && (addr & T.CreateTruncating(size - 1)) != T.Zero)
+        {
+            exec = default;
+            return RiscVTrap.LoadAddressMisaligned;
+        }
+
+        bool signed = typeof(TData) == typeof(sbyte) || typeof(TData) == typeof(short) || typeof(TData) == typeof(int) || typeof(TData) == typeof(long);
+        exec = RiscVExecution<T>.CreateMemRead(inst.RD, addr, size, signed);
+        return RiscVTrap.None;
+    }
+
+    private static RiscVTrap Store<TData>(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+        where TData : unmanaged
+    {
+        T offset = T.CreateTruncating(inst.StoreOffset);
+        T baseAddr = T.CreateTruncating(@this._regs[(int)inst.RS1]);
+        T addr = baseAddr + offset;
+
+        // Alignment check (bytes are always aligned)
+        int size = sizeof(TData);
+        if (size > 1 && (addr & T.CreateTruncating(size - 1)) != T.Zero)
+        {
+            exec = default;
+            return RiscVTrap.StoreAddressMisaligned;
+        }
+
+        exec = RiscVExecution<T>.CreateMemWrite(@this._regs[(int)inst.RS2], addr, size);
+        return RiscVTrap.None;
+    }
+
     private static RiscVTrap EcallBreak(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
     {
         exec = default;

@@ -36,7 +36,8 @@ public enum RiscVArgument : byte
     [JsonStringEnumMemberName("csri")] UImm5,    // 5-bit immediate for CSRI
 
     // Memory syntax (e.g., 8(sp))
-    [JsonStringEnumMemberName("mem")] Memory    // This would be a combination of Imm12I + Rs1
+    [JsonStringEnumMemberName("mem_load")] MemoryLoad,    // This would be a combination of Immediate + RS1
+    [JsonStringEnumMemberName("mem_store")] MemoryStore    // This would be a combination of StoreOffset + RS1
 
 #pragma warning restore CS1591
 }

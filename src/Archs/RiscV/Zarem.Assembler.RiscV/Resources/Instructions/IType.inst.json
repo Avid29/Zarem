@@ -91,7 +91,7 @@
     "name": "lb",
     "op_code": 3,
     "funct3": 0,
-    "args": [ "rd", "mem" ],
+    "args": [ "rd", "mem_load" ],
     "extension": "I",
     "behavior": "$rd = sign_extend(Mem8($rs1 + imm))"
   },
@@ -100,7 +100,7 @@
     "name": "lh",
     "op_code": 3,
     "funct3": 1,
-    "args": [ "rd", "mem" ],
+    "args": [ "rd", "mem_load" ],
     "extension": "I",
     "behavior": "$rd = sign_extend(Mem16($rs1 + imm))"
   },
@@ -109,7 +109,7 @@
     "name": "lw",
     "op_code": 3,
     "funct3": 2,
-    "args": [ "rd", "mem" ],
+    "args": [ "rd", "mem_load" ],
     "extension": "I",
     "behavior": "$rd = Mem32($rs1 + imm)"
   },
@@ -118,7 +118,7 @@
     "name": "lbu",
     "op_code": 3,
     "funct3": 4,
-    "args": [ "rd", "mem" ],
+    "args": [ "rd", "mem_load" ],
     "extension": "I",
     "behavior": "$rd = zero_extend(Mem8($rs1 + imm))"
   },
@@ -127,7 +127,7 @@
     "name": "lhu",
     "op_code": 3,
     "funct3": 5,
-    "args": [ "rd", "mem" ],
+    "args": [ "rd", "mem_load" ],
     "extension": "I",
     "behavior": "$rd = zero_extend(Mem16($rs1 + imm))"
   },
@@ -136,7 +136,7 @@
     "name": "jalr",
     "op_code": 103,
     "funct3": 0,
-    "args": [ "rd", "mem" ],
+    "args": [ "rd", "mem_load" ],
     "extension": "I",
     "behavior": "$rd = $pc + 4; $pc = ($rs1 + imm) & ~1"
   }

@@ -128,16 +128,16 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
             switch (size)
             {
                 case 1:
-                    Memory.Write(addr, byte.CreateTruncating(execution.WriteBack));
+                    Memory.Write(addr, byte.CreateTruncating(execution.Writeback));
                     break;
                 case 2:
-                    Memory.Write(addr, ushort.CreateTruncating(execution.WriteBack));
+                    Memory.Write(addr, ushort.CreateTruncating(execution.Writeback));
                     break;
                 case 4:
-                    Memory.Write(addr, uint.CreateTruncating(execution.WriteBack));
+                    Memory.Write(addr, uint.CreateTruncating(execution.Writeback));
                     break;
                 case 8:
-                    Memory.Write(addr, ulong.CreateTruncating(execution.WriteBack));
+                    Memory.Write(addr, ulong.CreateTruncating(execution.Writeback));
                     break;
                 default:
                     throw new InvalidOperationException($"Invalid memory write size: {size}");
@@ -158,7 +158,7 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
         // Handle gpr writeback
         if (execution.SideEffect is not (MipsSideEffect.ReadMemory or MipsSideEffect.WriteMemory))
         {
-            RegisterFile[(int)execution.GPR] = execution.WriteBack;
+            RegisterFile[(int)execution.WritebackGPRegister] = execution.Writeback;
         }
 
         // Apply side effects
@@ -179,7 +179,7 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
                 break;
             case MipsSideEffect.ReadMemory:
             case MipsSideEffect.ReadMemorySigned:
-                RegisterFile[(int)execution.GPR] = memRead;
+                RegisterFile[(int)execution.WritebackGPRegister] = memRead;
                 break;
             case MipsSideEffect.WriteCoProc0:
                 CoProcessor0[execution.CoProc0Reg] = execution.CoProc0WriteBack;
