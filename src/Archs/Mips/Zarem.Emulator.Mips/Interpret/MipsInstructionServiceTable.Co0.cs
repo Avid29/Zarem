@@ -28,10 +28,10 @@ public partial class MipsInstructionServiceTable<T, TS>
             CoProc0RSCode.C0 => coInst.Co0FuncCode switch
             {
                 Co0FuncCode.ExceptionReturn => @this.Eret(),
-                Co0FuncCode.ReadIndexedTLBEntry => MipsExecution<T>.CreateEffect(SideEffect.TLBRead),
-                Co0FuncCode.WriteIndexedTLBEntry => MipsExecution<T>.CreateEffect(SideEffect.TLBWriteIndexed),
-                Co0FuncCode.WriteRandomTLBEntry => MipsExecution<T>.CreateEffect(SideEffect.TLBWriteRandom),
-                Co0FuncCode.ProbeTLBForMatch => MipsExecution<T>.CreateEffect(SideEffect.TLBProbe),
+                Co0FuncCode.ReadIndexedTLBEntry => MipsExecution<T>.CreateEffect(MipsSideEffect.TLBRead),
+                Co0FuncCode.WriteIndexedTLBEntry => MipsExecution<T>.CreateEffect(MipsSideEffect.TLBWriteIndexed),
+                Co0FuncCode.WriteRandomTLBEntry => MipsExecution<T>.CreateEffect(MipsSideEffect.TLBWriteRandom),
+                Co0FuncCode.ProbeTLBForMatch => MipsExecution<T>.CreateEffect(MipsSideEffect.TLBProbe),
 
                 _ => throw new NotImplementedException()
             },

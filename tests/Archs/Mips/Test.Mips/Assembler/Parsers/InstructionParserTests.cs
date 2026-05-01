@@ -306,6 +306,5 @@ public class InstructionParserTests
         }
     }
 
-
     private static string GetRegisterString(MipsGpRegister register, MipsRegisterSet set) => $"${MipsRegisterTable.Instance.GetRegisterString(register, set)}";
 }

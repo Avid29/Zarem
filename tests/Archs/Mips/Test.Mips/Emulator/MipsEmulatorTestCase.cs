@@ -50,8 +50,8 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
                     // Assign some arbitrary values to the rest of the registers as well, just in case
                     (MipsGpRegister.Temporary8, T.CreateTruncating(101)),
                     (MipsGpRegister.AssemblerTemporary, T.CreateTruncating(0x89ab_cdef)),
-                    (MipsGpRegister.Kernel0, T.CreateTruncating(ExecutionTests.K0)),
-                    (MipsGpRegister.Kernel1, T.CreateTruncating(ExecutionTests.K1)),
+                    (MipsGpRegister.Kernel0, T.CreateTruncating(MipsExecutionTests.K0)),
+                    (MipsGpRegister.Kernel1, T.CreateTruncating(MipsExecutionTests.K1)),
 
                     // Print integer
                     (MipsGpRegister.ReturnValue0, T.One),
@@ -157,7 +157,7 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
         ExpectedHighLow = highLow;
     }
 
-    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, SideEffect sideEffects) : this(config, input)
+    public MipsEmulatorTestCase(MipsEmulatorConfig config, string input, MipsSideEffect sideEffects) : this(config, input)
     {
         ExpectedSideEffect = sideEffects;
     }
@@ -172,7 +172,7 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
 
     public T? ExpectedPC { get; init; } = null;
 
-    public SideEffect? ExpectedSideEffect { get; init; }
+    public MipsSideEffect? ExpectedSideEffect { get; init; }
 
     public (T Address, byte[] Data)? ExpectedMemory { get; init; }
 

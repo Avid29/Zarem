@@ -10,7 +10,7 @@ namespace Zarem.Emulator.Machine.Enums;
 /// <summary>
 /// An enum describing the secondary effect of an <see cref="MipsExecution{T}"/>.
 /// </summary>
-public enum SideEffect
+public enum MipsSideEffect
 {
     /// <summary>
     /// No secondary effect.

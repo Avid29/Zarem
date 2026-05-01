@@ -19,8 +19,8 @@ namespace Test.MIPS.Emulator;
 [AttributeUsage(AttributeTargets.Method)]
 public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmulatorConfig>
 {
-    public const uint K0 = ExecutionTests.K0;
-    public const uint K1 = ExecutionTests.K1;
+    public const uint K0 = MipsExecutionTests.K0;
+    public const uint K1 = MipsExecutionTests.K1;
 
     private readonly MipsVersion _version;
     private readonly ExecutionMode _mode;
@@ -467,7 +467,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         {
             // Exception Return
             yield return [new MipsEmulatorTestCase<T>(config, "eret", MipsTrap.ReservedInstruction)];
-            yield return [new MipsEmulatorTestCase<T>(config, "eret", SideEffect.WriteCoProc0)
+            yield return [new MipsEmulatorTestCase<T>(config, "eret", MipsSideEffect.WriteCoProc0)
             {
                 Status = new StatusRegister
                 {
@@ -480,25 +480,25 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         {
             // Enable Interrupts
             yield return [new MipsEmulatorTestCase<T>(config, "ei", MipsTrap.ReservedInstruction)];
-            yield return [new MipsEmulatorTestCase<T>(config, "ei", SideEffect.WriteCoProc0)
+            yield return [new MipsEmulatorTestCase<T>(config, "ei", MipsSideEffect.WriteCoProc0)
             {
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
             yield return [new MipsEmulatorTestCase<T>(config, "ei $v0", MipsGpRegister.ReturnValue0)
             {
-                ExpectedSideEffect = SideEffect.WriteCoProc0,
+                ExpectedSideEffect = MipsSideEffect.WriteCoProc0,
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
 
             // Disable Interrupts
             yield return [new MipsEmulatorTestCase<T>(config, "di", MipsTrap.ReservedInstruction)];
-            yield return [new MipsEmulatorTestCase<T>(config, "di", SideEffect.WriteCoProc0)
+            yield return [new MipsEmulatorTestCase<T>(config, "di", MipsSideEffect.WriteCoProc0)
             {
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
             yield return [new MipsEmulatorTestCase<T>(config, "di $v1", MipsGpRegister.ReturnValue1)
             {
-                ExpectedSideEffect = SideEffect.WriteCoProc0,
+                ExpectedSideEffect = MipsSideEffect.WriteCoProc0,
                 PrivilegeMode = PrivilegeMode.Kernel
             }];
         }

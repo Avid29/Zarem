@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,61 +20,24 @@ namespace Test.Zarem;
 /// <summary>
 /// Uses the demo projects as test sources
 /// </summary>
-[TestClass]
-public sealed class DemoProjectTests
+public abstract class ProjectTestsBase
 {
-    private static string DemoFilesPathBase => Path.Combine(FindRootPath(), "demos");
-
-    [TestInitialize]
-    public void TestInit()
+    public static async Task RunProjectTest(string projectPath)
     {
+        var actualOutput = await RunProject(projectPath);
+        var expectedOutput = File.ReadAllText(Path.ChangeExtension(projectPath, ".test"));
+
+        actualOutput = actualOutput?.Trim();
+        expectedOutput = expectedOutput?.Trim();
+
+        Assert.AreEqual(expectedOutput, actualOutput);
     }
 
-    [TestMethod]
-    public async Task HelloWorld() => await RunAndCompare(Path.Combine(DemoFilesPathBase, "Mips", "HelloWorld", "HelloWorld.zrmp"), "Hello World!\n");
+    protected static IEnumerable<string> GetProjectPaths(string arch)
+        => Directory.EnumerateFiles(Path.Combine(FindRootPath(), "demos", arch), "*.zrmp", SearchOption.AllDirectories);
 
-    [TestMethod]
-    public async Task FizzBuzz() => await RunAndCompare(Path.Combine(DemoFilesPathBase, "Mips", "FizzBuzz", "FizzBuzz.zrmp"), FizzBuzzText);
-
-    private static string FizzBuzzText
+    private static async Task<string?> RunProject(string projectPath)
     {
-        get
-        {
-            // This is a kinda strange implementation, but it matches the
-            // MIPS code most closely
-            var sb = new StringBuilder();
-            for(int i = 1; i <= 100; i++)
-            {
-                bool fizz = i % 3 == 0;
-                if (fizz)
-                {
-                    sb.Append("Fizz");
-                }
-
-                bool buzz = i % 5 == 0;
-                if (buzz)
-                {
-                    sb.Append("Buzz");
-                }
-                else if (!fizz)
-                {
-                    sb.Append(i);
-                }
-
-                sb.Append('\n');
-            }
-
-            return sb.ToString();
-        }
-    }
-
-    private async Task RunAndCompare(string projectPath, string expectedOutput)
-    {
-        // Register plugins
-        ZaremRegistry.RegisterArchitecture(new MipsArchitectureDescriptor());
-        ZaremRegistry.Formats.Register(new ElfModuleDescriptor());
-        ZaremRegistry.TrapHandlers.Register(new ZaremTrapHandlerDescriptor());
-
         // ReDirect console output
         var consoleOutput = new StringBuilder();
         Console.SetOut(new StringWriter(consoleOutput));
@@ -94,7 +58,7 @@ public sealed class DemoProjectTests
         if (session.Emulator.Computer is not MipsComputer mipsComp)
         {
             Assert.Fail();
-            return;
+            return null;
         }
 
         // Setup comparision unpon completion
@@ -106,10 +70,11 @@ public sealed class DemoProjectTests
         };
 
         // Begin emulator and await completion
+        // (With a timeout to prevent hanging and because input is not yet handled)
         session.Emulator.Start();
-        await tcs.Task;
+        await tcs.Task.WaitAsync(TimeSpan.FromSeconds(10));
 
-        Assert.AreEqual(expectedOutput, $"{consoleOutput}");
+        return $"{consoleOutput}";
     }
 
     private static string FindRootPath()

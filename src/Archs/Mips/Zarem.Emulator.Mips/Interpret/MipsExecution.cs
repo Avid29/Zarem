@@ -90,7 +90,7 @@ public readonly struct MipsExecution<T>
             GPR = dest,
             MemAddress = address,
             MemSize = (uint)size,
-            SideEffect = signed ? SideEffect.ReadMemorySigned : SideEffect.ReadMemory,
+            SideEffect = signed ? MipsSideEffect.ReadMemorySigned : MipsSideEffect.ReadMemory,
         };
     }
 
@@ -104,7 +104,7 @@ public readonly struct MipsExecution<T>
             WriteBack = writeBack,
             MemAddress = address,
             MemSize = (uint)size,
-            SideEffect = SideEffect.WriteMemory,
+            SideEffect = MipsSideEffect.WriteMemory,
         };
     }
 
@@ -116,7 +116,7 @@ public readonly struct MipsExecution<T>
         return new MipsExecution<T>
         {
             ProgramCounter = absolutePC,
-            SideEffect = force ? SideEffect.ForceProgramCounter : SideEffect.ProgramCounter,
+            SideEffect = force ? MipsSideEffect.ForceProgramCounter : MipsSideEffect.ProgramCounter,
         };
     }
 
@@ -170,7 +170,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
-    public static MipsExecution<T> CreateEffect(SideEffect sideEffect)
+    public static MipsExecution<T> CreateEffect(MipsSideEffect sideEffect)
     {
         return new MipsExecution<T>
         {
@@ -194,7 +194,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the type of secondary effect from the execution, if any.
     /// </summary>
-    public SideEffect SideEffect { get; init; }
+    public MipsSideEffect SideEffect { get; init; }
 
     /// <summary>
     /// Gets the new value of the low register if applicable.
@@ -205,7 +205,7 @@ public readonly struct MipsExecution<T>
         init
         {
             _secondary1 = value;
-            SideEffect = MergeHighLow(SideEffect.Low);
+            SideEffect = MergeHighLow(MipsSideEffect.Low);
         }
     }
 
@@ -218,7 +218,7 @@ public readonly struct MipsExecution<T>
         init
         {
             _secondary2 = ulong.CreateTruncating(value);
-            SideEffect = MergeHighLow(SideEffect.High);
+            SideEffect = MergeHighLow(MipsSideEffect.High);
         }
     }
 
@@ -231,7 +231,7 @@ public readonly struct MipsExecution<T>
         init
         {
             _secondary1 = value;
-            SideEffect = SideEffect.ProgramCounter;
+            SideEffect = MipsSideEffect.ProgramCounter;
         }
     }
 
@@ -265,7 +265,7 @@ public readonly struct MipsExecution<T>
         init
         {
             BitField.SetField(ref _secondary1, REG_BITCOUNT, 0, T.CreateTruncating((byte)value));
-            SideEffect = SideEffect.WriteCoProc0;
+            SideEffect = MipsSideEffect.WriteCoProc0;
         }
     }
 
@@ -296,7 +296,7 @@ public readonly struct MipsExecution<T>
         init
         {
             _secondary2 = ulong.CreateTruncating(value);
-            SideEffect = SideEffect.WriteCoProc0;
+            SideEffect = MipsSideEffect.WriteCoProc0;
         }
     }
 
@@ -309,7 +309,7 @@ public readonly struct MipsExecution<T>
         init
         {
             _secondary2 = (uint)value;
-            SideEffect = SideEffect.WriteFloat;
+            SideEffect = MipsSideEffect.WriteFloat;
         }
     }
 
@@ -322,7 +322,7 @@ public readonly struct MipsExecution<T>
         init
         {
             _secondary2 = (ulong)value;
-            SideEffect = SideEffect.WriteDouble;
+            SideEffect = MipsSideEffect.WriteDouble;
         }
     }
 
@@ -347,12 +347,12 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets a value indicating whether or not execution handled the PC changing.
     /// </summary>
-    public bool PCHandled => SideEffect is SideEffect.ProgramCounter;
+    public bool PCHandled => SideEffect is MipsSideEffect.ProgramCounter;
 
-    private SideEffect MergeHighLow(SideEffect @new)
+    private MipsSideEffect MergeHighLow(MipsSideEffect @new)
     {
-        if (SideEffect is SideEffect.Low or
-            SideEffect.High or SideEffect.HighLow)
+        if (SideEffect is MipsSideEffect.Low or
+            MipsSideEffect.High or MipsSideEffect.HighLow)
         {
             return SideEffect | @new;
         }

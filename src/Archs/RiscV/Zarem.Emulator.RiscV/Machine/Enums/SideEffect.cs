@@ -7,7 +7,7 @@ namespace Zarem.Emulator.Machine.Enums;
 /// <summary>
 /// An enum describing the secondary effect of an <see cref="RiscVExecution{T}"/>.
 /// </summary>
-public enum SideEffect
+public enum RiscVSideEffect
 {
 #pragma warning disable CS1591
 
