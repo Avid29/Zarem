@@ -72,7 +72,11 @@ public partial class RiscVExecutionTests
         // Initialize the register file with the provided values
         foreach (var (reg, value) in @case.RegisterInitialization)
             cpu[reg] = value;
-        
+
+        // Initialize the memory, if specified in the test case
+        foreach (var (address, data) in @case.MemoryInitialization)
+            computer.Memory.Write(ulong.CreateTruncating(address), data);
+
         if (cpu is RiscVJitCpu<T>)
         {
             RunJitChecks(computer, instruction, @case);
@@ -110,6 +114,14 @@ public partial class RiscVExecutionTests
             Assert.AreEqual(RiscVGpRegister.Zero, execution.WritebackGPRegister);
         }
 
+        var expectedMemory = @case.ExpectedMemory;
+        if (expectedMemory is not null)
+        {
+            var buffer = new byte[expectedMemory.Value.Data.Length];
+            computer.Memory.Read(ulong.CreateTruncating(expectedMemory.Value.Address), buffer);
+            CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
+        }
+
         var expectedPC = @case.ExpectedPC;
         if (expectedPC is not null)
         {
@@ -134,6 +146,14 @@ public partial class RiscVExecutionTests
             {
                 Assert.AreEqual(writeBackValue.Value, cpu[writeback.Value.Register]);
             }
+        }
+
+        var expectedMemory = @case.ExpectedMemory;
+        if (expectedMemory is not null)
+        {
+            var buffer = new byte[expectedMemory.Value.Data.Length];
+            computer.Memory.Read(ulong.CreateTruncating(expectedMemory.Value.Address), buffer);
+            CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
         }
 
         var expectedPC = @case.ExpectedPC;

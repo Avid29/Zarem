@@ -69,6 +69,7 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
             .Concat(GetMultiplicationInstructionTests<T, TSigned, TLong>(config))
             .Concat(GetLogicalInstructionTests<T>(config))
             .Concat(GetJumpBranchInstructionTests<T>(config))
+            .Concat(GetMemoryInstructionTests<T>(config))
             .Concat(GetSystemInstructionTests<T>(config));
     }
 
@@ -171,6 +172,22 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         yield return [new RiscVEmulatorTestCase<T>(config, "beq t0, t0, 80") { ExpectedPC = T.CreateTruncating(84) }];
         yield return [new RiscVEmulatorTestCase<T>(config, "bne t0, t0, 80") { ExpectedPC = T.CreateTruncating(4) }];
         yield return [new RiscVEmulatorTestCase<T>(config, "bne t2, t1, 80") { ExpectedPC = T.CreateTruncating(84) }];
+    }
+
+    private static IEnumerable<object[]> GetMemoryInstructionTests<T>(RiscVEmulatorConfig config)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        // Load
+        yield return [new RiscVEmulatorTestCase<T>(config, "lb a0, 0x100(zero)", T.CreateTruncating(0x12))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "lh a0, 0x100(zero)", T.CreateTruncating(0x3412))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "lw a0, 0x100(zero)", T.CreateTruncating(0x7856_3412))];
+
+        // TODO: Load unsigned/signed with sign
+
+        // Store
+        yield return [new RiscVEmulatorTestCase<T>(config, "sb s7, 0x100(zero)", (T.CreateTruncating(0x100), [0xef, 0x34, 0x56, 0x78]))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "sh s7, 0x100(zero)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0x56, 0x78]))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "sw s7, 0x100(zero)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0xab, 0x89]))];
     }
 
     private static IEnumerable<object[]> GetSystemInstructionTests<T>(RiscVEmulatorConfig config)

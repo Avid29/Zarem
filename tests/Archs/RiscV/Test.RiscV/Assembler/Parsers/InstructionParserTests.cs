@@ -156,7 +156,7 @@ public class InstructionParserTests
                     RiscVArgument.JumpOffset => $"{ArgGenerator.RandomJumpOffset()}",
                     RiscVArgument.FullImmediate => $"{ArgGenerator.RandomFullImm()}",
                     RiscVArgument.UImm5 => $"{ArgGenerator.RandomShamt()}",
-                    RiscVArgument.Memory => $"{ArgGenerator.RandomImm12()}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
+                    RiscVArgument.MemoryLoad or RiscVArgument.MemoryStore => $"{ArgGenerator.RandomImm12()}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
                     _ => throw new NotImplementedException(),
                 });
 
