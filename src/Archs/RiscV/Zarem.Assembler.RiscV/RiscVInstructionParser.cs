@@ -99,9 +99,9 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             TryParseArg(arg.Tokens, pattern[i]);
         }
 
-        if (_meta is PseudoInstructionMeta pMeta)
+        if (_meta is RiscVPseudoInstructionMeta pMeta)
         {
-            var pseudo = new PseudoInstruction
+            var pseudo = new RiscVPseudoInstruction
             {
                 PseudoOp = pMeta.PseudoOp,
                 RS1 = _rs1,

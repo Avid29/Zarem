@@ -13,7 +13,7 @@ using Zarem.TrapHandlers;
 namespace Test.Mips.Projects;
 
 [TestClass]
-public class ProjectTests : ProjectTestsBase
+public class MipsProjectTests : ProjectTestsBase
 {
     public static IEnumerable<object[]> ProjectsPaths
     {

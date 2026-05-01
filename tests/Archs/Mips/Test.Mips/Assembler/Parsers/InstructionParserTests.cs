@@ -128,7 +128,7 @@ public class InstructionParserTests
     [TestMethod(LoadImmediate)]
     public void LoadImmediateTest()
     {
-        PseudoInstruction expected = new(PseudoOp.LoadImmediate) { RT = MipsGpRegister.Temporary0, Immediate = 0x10001 };
+        MipsPseudoInstruction expected = new(MipsPseudoOp.LoadImmediate) { RT = MipsGpRegister.Temporary0, Immediate = 0x10001 };
         RunTest(LoadImmediate, new MipsParsedInstruction(expected));
     }
 
@@ -264,7 +264,7 @@ public class InstructionParserTests
         foreach (var instruction in instructions)
         {
             // TODO: Disassembling pseudo instructions
-            if (instruction is PseudoInstructionMeta)
+            if (instruction is MipsPseudoInstructionMeta)
                 continue;
 
             // Apply format to instruction name, if applicable

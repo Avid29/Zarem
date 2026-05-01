@@ -103,9 +103,9 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
         // It's a pseudo instruction.
         // Create a pseudo-instruction and return with reference
         // as parsed instruction.
-        if (_meta is PseudoInstructionMeta pMeta)
+        if (_meta is MipsPseudoInstructionMeta pMeta)
         {
-            var pseudo = new PseudoInstruction
+            var pseudo = new MipsPseudoInstruction
             {
                 PseudoOp = pMeta.PseudoOp,
                 RS = _rs,

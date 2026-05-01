@@ -202,7 +202,7 @@ public class Program()
                 var instructions = new MipsInstructionTable(new(version)).GetInstructions().OrderBy(x => x.Name);
                 foreach (var instr in instructions)
                 {
-                    if (instr is PseudoInstructionMeta)
+                    if (instr is MipsPseudoInstructionMeta)
                         Console.Write("* ");
 
                     Console.WriteLine(instr.UsagePattern);

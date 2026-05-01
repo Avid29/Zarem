@@ -99,12 +99,6 @@ public abstract class ProjectTestsBase
         var session = project.StartDebug(module);
         Assert.IsNotNull(session);
 
-        if (session.Emulator.Computer is not MipsComputer mipsComp)
-        {
-            Assert.Fail();
-            return;
-        }
-
         // Setup comparision unpon completion
         var tcs = new TaskCompletionSource();
         session.Emulator.StateChanged += (s, state) =>

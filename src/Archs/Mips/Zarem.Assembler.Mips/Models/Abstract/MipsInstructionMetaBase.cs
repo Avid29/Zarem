@@ -20,7 +20,7 @@ namespace Zarem.Assembler.Models.Abstract;
 [JsonDerivedType(typeof(CoProc0InstructionsMeta), "coproc0")]
 [JsonDerivedType(typeof(CoProc1InstructionsMeta), "coproc1")]
 [JsonDerivedType(typeof(FloatInstructionMeta), "float")]
-[JsonDerivedType(typeof(PseudoInstructionMeta), "pseudo")]
+[JsonDerivedType(typeof(MipsPseudoInstructionMeta), "pseudo")]
 public abstract record MipsInstructionMetaBase : InstructionMetaBase
 {
     /// <summary>

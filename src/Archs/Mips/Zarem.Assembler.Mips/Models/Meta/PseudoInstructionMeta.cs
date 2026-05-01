@@ -10,13 +10,13 @@ namespace Zarem.Assembler.Models.Meta;
 /// <summary>
 /// Instruction metadata for parsing pseudo instructions.
 /// </summary>
-public record PseudoInstructionMeta : MipsInstructionMetaBase
+public record MipsPseudoInstructionMeta : MipsInstructionMetaBase
 {
     /// <summary>
     /// Gets the pseudo op for a pseudo-instruction.
     /// </summary>
     [JsonPropertyName("pseudo_id")]
-    public required PseudoOp PseudoOp { get; init; }
+    public required MipsPseudoOp PseudoOp { get; init; }
 
     /// <summary>
     /// Gets the number of real instructions required to execute the instruction.

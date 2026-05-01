@@ -81,7 +81,7 @@ public class MipsInstructionTable : MipsInstructionTableBase<string>
     protected override void LoadInstruction(MipsInstructionMetaBase metadata)
     {
         // Handle Banning (Pseudo-instruction logic)
-        if (metadata is PseudoInstructionMeta && Config.PseudoInstructionPermissibility is not null)
+        if (metadata is MipsPseudoInstructionMeta && Config.PseudoInstructionPermissibility is not null)
         {
             bool isBlacklist = Config.PseudoInstructionPermissibility == PseudoInstructionPermissibility.Blacklist;
             bool isInList = Config.PseudoInstructionSet?.Contains(metadata.Name) ?? false;

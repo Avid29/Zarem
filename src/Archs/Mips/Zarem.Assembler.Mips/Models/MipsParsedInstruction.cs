@@ -15,7 +15,7 @@ namespace Zarem.Assembler.Models;
 public class MipsParsedInstruction : IParsedInstruction
 {
     private readonly MipsInstruction? _real;
-    private readonly PseudoInstruction? _pseudo;
+    private readonly MipsPseudoInstruction? _pseudo;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsParsedInstruction"/> class.
@@ -29,7 +29,7 @@ public class MipsParsedInstruction : IParsedInstruction
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsParsedInstruction"/> class.
     /// </summary>
-    public MipsParsedInstruction(PseudoInstruction instruction, List<RelocationEntry>? references = null)
+    public MipsParsedInstruction(MipsPseudoInstruction instruction, List<RelocationEntry>? references = null)
     {
         _pseudo = instruction;
         References = references;
