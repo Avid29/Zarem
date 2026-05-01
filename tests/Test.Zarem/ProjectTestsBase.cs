@@ -23,14 +23,8 @@ public abstract class ProjectTestsBase
 {
     public static async Task RunProjectTest(string projectPath)
     {
-        var dir = Path.GetDirectoryName(projectPath);
-        Assert.IsNotNull(dir);
-
-        var expectedScriptPath = Path.Combine(dir, "Test.cs");
-        var testInputsPath = Path.Combine(dir, "Tests.json");
-
+        GetTestScriptPath(projectPath, out var expectedScriptPath, out var testInputsPath);
         Assert.IsTrue(File.Exists(expectedScriptPath), "Test.cs missing.");
-        var expectedScript = await File.ReadAllTextAsync(expectedScriptPath);
 
         string[][] testScenarios = [[""]];
         if (File.Exists(testInputsPath))
@@ -38,6 +32,7 @@ public abstract class ProjectTestsBase
             var json = await File.ReadAllTextAsync(testInputsPath);
             testScenarios = JsonSerializer.Deserialize<string[][]>(json) ?? [[""]];
         }
+
 
         foreach (var inputLines in testScenarios)
         {
@@ -50,6 +45,7 @@ public abstract class ProjectTestsBase
 
             // Run the expected C# script
             var expectedOutput = await ExecuteWithRedirectedStreams(simulatedInput, async () => {
+                var expectedScript = await File.ReadAllTextAsync(expectedScriptPath);
                 await CSharpScript.EvaluateAsync(expectedScript);
             });
 
@@ -59,7 +55,15 @@ public abstract class ProjectTestsBase
     }
 
     protected static IEnumerable<string> GetProjectPaths(string arch)
-        => Directory.EnumerateFiles(Path.Combine(FindRootPath(), "demos", arch), "*.zrmp", SearchOption.AllDirectories);
+    {
+        var projects = Directory.EnumerateFiles(Path.Combine(FindRootPath(), "demos", arch), "*.zrmp", SearchOption.AllDirectories);
+
+        foreach (var project in projects)
+        {
+            if (GetTestScriptPath(project, out _, out _))
+                yield return project;
+        }
+    }
 
     private static async Task<string> ExecuteWithRedirectedStreams(string input, Func<Task> action)
     {
@@ -124,5 +128,14 @@ public abstract class ProjectTestsBase
 
         Guard.IsNotNull(dir);
         return dir.FullName;
+    }
+
+    private static bool GetTestScriptPath(string projectPath, out string testScriptPath, out string testInputsPath)
+    {
+        var dir = Path.GetDirectoryName(projectPath);
+        Assert.IsNotNull(dir);
+        testScriptPath = Path.Combine(dir, "Test.cs");
+        testInputsPath = Path.Combine(dir, "Tests.json");
+        return File.Exists(testScriptPath);
     }
 }
