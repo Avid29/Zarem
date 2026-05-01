@@ -2,11 +2,13 @@
 
 using CommunityToolkit.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
@@ -25,24 +27,66 @@ public abstract class ProjectTestsBase
         Assert.IsNotNull(dir);
 
         var expectedScriptPath = Path.Combine(dir, "Test.cs");
-        Assert.IsTrue(File.Exists(expectedScriptPath));
+        var testInputsPath = Path.Combine(dir, "Tests.json");
 
-        var actualOutput = await RunProjectAsync(projectPath);
-        var expectedScript = File.ReadAllText(expectedScriptPath);
-        var expectedOutput = await RunExpectedAsync(expectedScript);
-        Assert.AreEqual(expectedOutput, actualOutput);
+        Assert.IsTrue(File.Exists(expectedScriptPath), "Test.cs missing.");
+        var expectedScript = await File.ReadAllTextAsync(expectedScriptPath);
+
+        string[][] testScenarios = [[""]];
+        if (File.Exists(testInputsPath))
+        {
+            var json = await File.ReadAllTextAsync(testInputsPath);
+            testScenarios = JsonSerializer.Deserialize<string[][]>(json) ?? [[""]];
+        }
+
+        foreach (var inputLines in testScenarios)
+        {
+            var simulatedInput = string.Join(Environment.NewLine, inputLines);
+
+            // Run the actual emulator
+            var actualOutput = await ExecuteWithRedirectedStreams(simulatedInput, async () => {
+                await RunProjectAsync(projectPath);
+            });
+
+            // Run the expected C# script
+            var expectedOutput = await ExecuteWithRedirectedStreams(simulatedInput, async () => {
+                await CSharpScript.EvaluateAsync(expectedScript);
+            });
+
+
+            Assert.AreEqual(expectedOutput, actualOutput, $"Mismatch for input: {simulatedInput}");
+        }
     }
 
     protected static IEnumerable<string> GetProjectPaths(string arch)
         => Directory.EnumerateFiles(Path.Combine(FindRootPath(), "demos", arch), "*.zrmp", SearchOption.AllDirectories);
 
-    private static async Task<string?> RunProjectAsync(string projectPath)
+    private static async Task<string> ExecuteWithRedirectedStreams(string input, Func<Task> action)
     {
-        // Redirect console output
-        var consoleOutput = new StringBuilder();
-        Console.SetOut(new StringWriter(consoleOutput));
-        consoleOutput.Clear();
+        var originalIn = Console.In;
+        var originalOut = Console.Out;
 
+        try
+        {
+            using var reader = new StringReader(input);
+            using var writer = new StringWriter();
+
+            Console.SetIn(reader);
+            Console.SetOut(writer);
+
+            await action();
+
+            return writer.ToString();
+        }
+        finally
+        {
+            Console.SetIn(originalIn);
+            Console.SetOut(originalOut);
+        }
+    }
+
+    private static async Task RunProjectAsync(string projectPath)
+    {
         // Load project
         var project = ProjectFactory.Load(projectPath);
 
@@ -58,7 +102,7 @@ public abstract class ProjectTestsBase
         if (session.Emulator.Computer is not MipsComputer mipsComp)
         {
             Assert.Fail();
-            return null;
+            return;
         }
 
         // Setup comparision unpon completion
@@ -73,19 +117,6 @@ public abstract class ProjectTestsBase
         // (With a timeout to prevent hanging and because input is not yet handled)
         session.Emulator.Start();
         await tcs.Task.WaitAsync(TimeSpan.FromSeconds(10));
-
-        return $"{consoleOutput}";
-    }
-
-    private static async Task<string?> RunExpectedAsync(string scriptCode)
-    {
-        // Redirect console output
-        var consoleOutput = new StringBuilder();
-        Console.SetOut(new StringWriter(consoleOutput));
-        consoleOutput.Clear();
-
-        await CSharpScript.EvaluateAsync<string>(scriptCode);
-        return $"{consoleOutput}";
     }
 
     private static string FindRootPath()
