@@ -137,7 +137,7 @@ public class InstructionParserTests
         foreach (var instruction in instructions)
         {
             // TODO: Disassembling pseudo instructions
-            if (instruction is PseudoInstructionMeta)
+            if (instruction is RiscVPseudoInstructionMeta)
                 continue;
 
             // Generate instruction

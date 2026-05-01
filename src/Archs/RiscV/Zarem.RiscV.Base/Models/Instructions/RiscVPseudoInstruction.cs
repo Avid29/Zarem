@@ -10,12 +10,12 @@ namespace Zarem.Models.Instructions;
 /// <summary>
 /// A struct representing a pseudo instruction.
 /// </summary>
-public readonly struct PseudoInstruction
+public readonly struct RiscVPseudoInstruction
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="PseudoInstruction"/> struct.
+    /// Initializes a new instance of the <see cref="RiscVPseudoInstruction"/> struct.
     /// </summary>
-    public PseudoInstruction(PseudoOp op)
+    public RiscVPseudoInstruction(RiscVPseudoOp op)
     {
         PseudoOp = op;
     }
@@ -23,7 +23,7 @@ public readonly struct PseudoInstruction
     /// <summary>
     /// Gets the psudo operation code
     /// </summary>
-    public PseudoOp PseudoOp { get; init; }
+    public RiscVPseudoOp PseudoOp { get; init; }
 
     /// <summary>
     /// Gets the pseudo-instruction rs1 register.
@@ -52,23 +52,23 @@ public readonly struct PseudoInstruction
     {
         return PseudoOp switch
         {
-            PseudoOp.NoOperation =>
+            RiscVPseudoOp.NoOperation =>
             [
                 // nop: add zero zero zero
                 RiscVInstruction.CreateR(RiscVOpCode.Alu, Funct3Code.Arithmetic, Funct7Code.Base, 0, 0, 0),
             ],
-            PseudoOp.LoadImmediate =>
+            RiscVPseudoOp.LoadImmediate =>
             [
                 // li rd, imm: lui rd, upper; addi rd, rd, lower
                 RiscVInstruction.CreateI(RiscVOpCode.LoadUpperImmediate, 0, RD, 0, (short)(Immediate >> 20)),
                 RiscVInstruction.CreateI(RiscVOpCode.AluImmediate, Funct3Code.Arithmetic, RD, RD, (short)(Immediate & 0xFFF)),
             ],
-            PseudoOp.Move =>
+            RiscVPseudoOp.Move =>
             [
                 // move rd, rs: addu rd, rs, zero
                 RiscVInstruction.CreateR(RiscVOpCode.Alu, Funct3Code.Arithmetic, Funct7Code.Base, RD, RS1, RS2),
             ],
-            PseudoOp.LoadAddress =>
+            RiscVPseudoOp.LoadAddress =>
             [
                 // la rd, imm: lui rd, upper; addi rd, rd, lower
                 RiscVInstruction.CreateI(RiscVOpCode.LoadUpperImmediate, 0, RD, 0, (short)(Immediate >> 20)),

@@ -15,7 +15,7 @@ namespace Zarem.Assembler.Models;
 public class RiscVParsedInstruction : IParsedInstruction
 {
     private readonly RiscVInstruction? _real;
-    private readonly PseudoInstruction? _pseudo;
+    private readonly RiscVPseudoInstruction? _pseudo;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVParsedInstruction"/> class.
@@ -29,7 +29,7 @@ public class RiscVParsedInstruction : IParsedInstruction
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVParsedInstruction"/> class.
     /// </summary>
-    public RiscVParsedInstruction(PseudoInstruction instruction, List<RelocationEntry>? references = null)
+    public RiscVParsedInstruction(RiscVPseudoInstruction instruction, List<RelocationEntry>? references = null)
     {
         _pseudo = instruction;
         References = references;

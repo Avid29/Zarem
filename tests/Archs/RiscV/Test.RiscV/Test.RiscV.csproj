@@ -17,6 +17,7 @@
 		<ProjectReference Include="..\..\..\..\src\Archs\RiscV\Zarem.Assembler.RiscV\Zarem.Assembler.RiscV.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Archs\RiscV\Zarem.Emulator.RiscV\Zarem.Emulator.RiscV.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Archs\RiscV\Zarem.RiscV.Base\Zarem.RiscV.Base.csproj" />
+		<ProjectReference Include="..\..\..\Test.Zarem\Test.Zarem.csproj" />
 		<ProjectReference Include="..\..\Test.Archs\Test.Archs.csproj" />
 	</ItemGroup>
 

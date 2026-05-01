@@ -51,7 +51,7 @@ public class MipsAssemblerHandler : IAssemblerHandler<MipsAssemblerConfig>
 
         if (_instructionTable.TryGetInstruction(line.Instruction.Source, line.Args.Count, out var meta, out _, out _, out _))
         {
-            var count = (meta as PseudoInstructionMeta)?.RealizedCount ?? 1;
+            var count = (meta as MipsPseudoInstructionMeta)?.RealizedCount ?? 1;
             return count * 4;
         }
 
