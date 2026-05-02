@@ -117,8 +117,22 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : IRiscVIns
 
     private static RiscVTrap JumpAndLink(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
     {
-        var jump = T.CreateTruncating(inst.JumpOffset);
-        exec = RiscVExecution<T>.CreateJumpAndLink(jump, @this._processor.ProgramCounter + T.CreateTruncating(4), inst.RD);
+        var offset = T.CreateTruncating(inst.JumpOffset);
+        var target = (@this._processor.ProgramCounter + offset) & ~T.One;
+        var link = @this._processor.ProgramCounter + T.CreateTruncating(4);
+
+        exec = RiscVExecution<T>.CreateJumpAndLink(target, link, inst.RD);
+        return RiscVTrap.None;
+    }
+
+    private static RiscVTrap JumpAndLinkRegister(RiscVInstructionServiceTable<T, TSigned> @this, RiscVInstruction inst, out RiscVExecution<T> exec)
+    {
+        var @base = T.CreateTruncating(@this._processor[inst.RS1]);
+        var offset = T.CreateTruncating(inst.Immediate);
+        var target = @base + offset;
+        var link = @this._processor.ProgramCounter + T.CreateTruncating(4);
+
+        exec = RiscVExecution<T>.CreateJumpAndLink(target, link, inst.RD);
         return RiscVTrap.None;
     }
 
