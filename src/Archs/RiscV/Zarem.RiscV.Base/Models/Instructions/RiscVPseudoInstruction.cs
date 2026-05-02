@@ -50,11 +50,18 @@ public readonly struct RiscVPseudoInstruction
     /// </summary>
     public readonly RiscVInstruction[] Expand()
     {
+
+
         return PseudoOp switch
         {
             RiscVPseudoOp.NoOperation =>
             [
                 // nop: add zero zero zero
+                RiscVInstruction.CreateR(RiscVOpCode.Alu, Funct3Code.Arithmetic, Funct7Code.Base, 0, 0, 0),
+            ],
+            RiscVPseudoOp.Return =>
+            [
+                // ret: jalr zero 0(ra)
                 RiscVInstruction.CreateR(RiscVOpCode.Alu, Funct3Code.Arithmetic, Funct7Code.Base, 0, 0, 0),
             ],
             RiscVPseudoOp.LoadImmediate =>

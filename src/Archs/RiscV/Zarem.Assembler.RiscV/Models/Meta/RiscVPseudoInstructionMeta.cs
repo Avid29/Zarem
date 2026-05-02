@@ -9,7 +9,7 @@ namespace Zarem.Assembler.Models.Meta;
 /// <summary>
 /// Instruction metadata for parsing pseudo instructions.
 /// </summary>
-public record RiscVPseudoInstructionMeta : RiscVInstructionMetaBase
+public record RiscVPseudoInstructionMeta : RiscVInstructionMetaBase, IPseudoInstructionMeta
 {
     /// <summary>
     /// Gets the pseudo op for a pseudo-instruction.
@@ -18,11 +18,8 @@ public record RiscVPseudoInstructionMeta : RiscVInstructionMetaBase
     public required RiscVPseudoOp PseudoOp { get; init; }
 
     /// <summary>
-    /// Gets the number of real instructions required to execute the instruction.
+    /// Gets the expansion of the pseudo-instruction into real instructions.
     /// </summary>
-    /// <remarks>
-    /// This exists for pseudo instructions.
-    /// </remarks>
-    [JsonPropertyName("expansion_count")]
-    public required int? RealizedCount { get; init; }
+    [JsonPropertyName("expansion")]
+    public required string[][] Expansion { get; init; }
 }

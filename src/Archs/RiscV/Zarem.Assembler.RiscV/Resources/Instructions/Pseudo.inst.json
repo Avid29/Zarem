@@ -4,27 +4,46 @@
     "name": "nop",
     "pseudo_id": 0,
     "args": [],
-    "expansion_count": 1
+    "expansion": [
+      [ "add", "zero", "zero", "zero" ]
+    ]
+  },
+  {
+    "type": "pseudo",
+    "name": "ret",
+    "pseudo_id": 1,
+    "args": [],
+    "expansion": [
+      [ "jalr", "rd", "imm32 >> 12" ]
+    ]
   },
   {
     "type": "pseudo",
     "name": "li",
-    "pseudo_id": 1,
+    "pseudo_id": 2,
     "args": [ "rd", "imm32" ],
-    "expansion_count": 2
+    "expansion": [
+      [ "lui", "rd", "imm32 >> 12" ],
+      [ "addi", "rd", "rd", "imm32" ]
+    ]
   },
   {
     "type": "pseudo",
     "name": "move",
-    "pseudo_id": 2,
+    "pseudo_id": 3,
     "args": [ "rd", "rs1" ],
-    "expansion_count": 1
+    "expansion": [
+      [ "addi", "rd", "rs1", "0" ]
+    ]
   },
   {
     "type": "pseudo",
     "name": "la",
-    "pseudo_id": 3,
+    "pseudo_id": 4,
     "args": [ "rd", "imm32" ],
-    "expansion_count": 2
+    "expansion": [
+      [ "lui", "rd", "imm32 >> 12" ],
+      [ "addi", "rd", "rd", "imm32 & 0xFFF" ]
+    ]
   }
 ]

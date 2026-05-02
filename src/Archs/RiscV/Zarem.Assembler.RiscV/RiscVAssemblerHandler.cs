@@ -51,7 +51,7 @@ public class RiscVAssemblerHandler : IAssemblerHandler<RiscVAssemblerConfig>
 
         if (_instructionTable.TryGetInstruction(line.Instruction.Source, line.Args.Count, out var meta, out _, out _))
         {
-            var count = (meta as RiscVPseudoInstructionMeta)?.RealizedCount ?? 1;
+            var count = (meta as IPseudoInstructionMeta)?.Expansion.Length ?? 1;
             return count * 4;
         }
 

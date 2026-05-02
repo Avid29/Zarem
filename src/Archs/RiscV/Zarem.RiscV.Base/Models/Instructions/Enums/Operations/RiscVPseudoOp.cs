@@ -10,6 +10,7 @@ public enum RiscVPseudoOp
     #pragma warning disable CS1591
 
     NoOperation,
+    Return,
     LoadImmediate,
     Move,
     LoadAddress,
