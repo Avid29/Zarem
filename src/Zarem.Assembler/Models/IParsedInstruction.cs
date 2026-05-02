@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Collections.Generic;
+using Zarem.Models.Enums;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Models;
@@ -18,5 +19,5 @@ public interface IParsedInstruction
     /// <summary>
     /// Gets the reference info, if the instruction made any references.
     /// </summary>
-    List<RelocationEntry>? References { get; }
+    IReadOnlyList<RelocationEntry>? References { get; }
 }

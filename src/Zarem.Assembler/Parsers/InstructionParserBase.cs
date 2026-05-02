@@ -91,9 +91,12 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// Attempts to parse an instruction from a name and a list of arguments.
     /// </summary>
     /// <param name="line">The assembly line to parse.</param>
+    /// <param name="references">The list of relocation entries made by references in the instruction.</param>
     /// <returns>The parsed instruction.</returns>
-    protected TInstruction[]? Parse(AssemblyLine line)
+    public TInstruction[]? Parse(AssemblyLine line, out IReadOnlyList<RelocationEntry>? references)
     {
+        references = null;
+
         // Identify the instruction
         if (!TryDetermineInstruction(line, out _))
             return null;
@@ -126,7 +129,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             {
                 var tokenizedLine = ExpandTemplate(template, TemplateProfile);
                 var childParser = CreateSubParser();
-                var parsed = childParser.Parse(tokenizedLine);
+                var parsed = childParser.Parse(tokenizedLine, out _);
                 Guard.IsNotNull(parsed);
                 expansions[i] = parsed[0];
                 i++;
@@ -135,6 +138,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             return expansions;
         }
 
+        references = References;
         return [BuildInstruction()];
     }
 
@@ -148,6 +152,20 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// Parses an arg token span according to the expected argument type.
     /// </summary>
     protected abstract bool TryParseArg(ReadOnlySpan<Token> arg, TArg type);
+    /// <summary>
+    /// TODO: Document this
+    /// </summary>
+    protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet> CreateSubParser();
+
+    /// <summary>
+    /// Gets the substitution string for a given argument type, which is used to replace placeholders in pseudo-instruction templates.
+    /// </summary>
+    protected abstract string GetTemplateArgSubstitution(TArg argType);
+
+    /// <summary>
+    /// TODO: Document this
+    /// </summary>
+    protected abstract TInstruction BuildInstruction();
 
     /// <summary>
     /// Attempts to parse a register.
@@ -286,21 +304,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         // Tokenize the resulting template string
         return Tokenizer.TokenizeLine(result, profile)[0];
     }
-
-    /// <summary>
-    /// TODO: Document this
-    /// </summary>
-    protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet> CreateSubParser();
-
-    /// <summary>
-    /// Gets the substitution string for a given argument type, which is used to replace placeholders in pseudo-instruction templates.
-    /// </summary>
-    protected abstract string GetTemplateArgSubstitution(TArg argType);
-
-    /// <summary>
-    /// TODO: Document this
-    /// </summary>
-    protected abstract TInstruction BuildInstruction();
 
     /// <summary>
     /// Cleans a value to a specified bit count and shift amount, while also checking for any changes that occured during the cast.

@@ -64,20 +64,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     /// <inheritdoc/>
     protected override ITokenizerProfile TemplateProfile { get; } = new RiscVTokenizerProfile();
 
-    /// <summary>
-    /// Attempts to parse an instruction from a name and a list of arguments.
-    /// </summary>
-    /// <param name="line">The assembly line to parse.</param>
-    /// <returns>The parsed instruction.</returns>
-    public new RiscVParsedInstruction? Parse(AssemblyLine line)
-    {
-        var instructions = base.Parse(line);
-        if (instructions is null)
-            return null;
-
-        return new RiscVParsedInstruction(instructions, References);
-    }
-
     /// <inheritdoc/>
     protected override string GetTemplateArgSubstitution(RiscVArgument argType)
     {
@@ -158,6 +144,28 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
     }
+
+    /// <inheritdoc/>
+    protected override RiscVInstruction BuildInstruction()
+    {
+        Guard.IsNotNull(Meta);
+
+        return Meta switch
+        {
+            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, _rd, _rs1, _rs2),
+            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, _rd, _rs1, (short)Immediate),
+            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, _rd, Immediate),
+            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, _rs1, _rs2, Immediate),
+            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
+            JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
+
+            _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
+        };
+    }
+
+    /// <inheritdoc/>
+    protected override RiscVInstructionParser CreateSubParser()
+        => new(Config, _instructionTable, CurrentAddress, null, null);
 
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
@@ -270,26 +278,4 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
 
         return true;
     }
-
-    /// <inheritdoc/>
-    protected override RiscVInstruction BuildInstruction()
-    {
-        Guard.IsNotNull(Meta);
-
-        return Meta switch
-        {
-            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, _rd, _rs1, _rs2),
-            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, _rd, _rs1, (short)Immediate),
-            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, _rd, Immediate),
-            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, _rs1, _rs2, Immediate),
-            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
-            JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
-
-            _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
-        };
-    }
-
-    /// <inheritdoc/>
-    protected override RiscVInstructionParser CreateSubParser()
-        => new(Config, _instructionTable, CurrentAddress, null, null);
 }

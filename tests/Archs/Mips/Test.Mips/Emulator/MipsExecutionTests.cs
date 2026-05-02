@@ -126,12 +126,12 @@ public partial class MipsExecutionTests
         var tokenized = Tokenizer.TokenizeLine(@case.Input, MipsTokenizerProfile.Default)[0];
         var table = new MipsInstructionTable(new MipsAssemblerConfig(config.Version));
         var parser = new MipsInstructionParser(new(), table, default, null, null);
-        var parsed = parser.Parse(tokenized);
+        var parsed = parser.Parse(tokenized, out _);
         if (parsed is null)
             Assert.Fail();
 
         // TODO: Psuedo instruction support
-        var instruction = parsed.Instructions[0];
+        var instruction = parsed[0];
         var computer = new MipsComputer(config);
         var cpu = (MipsCpu<T>)computer.Cpu;
 

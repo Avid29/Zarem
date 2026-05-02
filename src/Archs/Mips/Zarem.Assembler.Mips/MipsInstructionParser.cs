@@ -70,20 +70,6 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
     /// <inheritdoc/>
     protected override ITokenizerProfile TemplateProfile { get; } = new MipsTokenizerProfile();
 
-    /// <summary>
-    /// Attempts to parse an instruction from a name and a list of arguments.
-    /// </summary>
-    /// <param name="line">The assembly line to parse.</param>
-    /// <returns>The parsed instruction.</returns>
-    public new MipsParsedInstruction? Parse(AssemblyLine line)
-    {
-        var instructions = base.Parse(line);
-        if (instructions is null)
-            return null;
-
-        return new MipsParsedInstruction(instructions, References);
-    }
-
     /// <inheritdoc/>
     protected override string GetTemplateArgSubstitution(MipsArgument argType)
     {
@@ -178,6 +164,40 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
     }
+
+    /// <inheritdoc/>
+    protected override MipsInstruction BuildInstruction()
+    {
+        Guard.IsNotNull(Meta);
+
+        return Meta switch
+        {
+            RTypeInstructionMeta r => MipsInstruction.CreateR(r.OperationCode, r.FuncCode, _rs, _rt, _rd, (byte)Immediate),
+            JTypeInstructionMeta j => MipsInstruction.CreateJ(j.OperationCode, (uint)Immediate),
+
+            RegImmInstructionMeta ri
+                => ri.Type is MipsInstructionType.RegisterImmediateBranch
+                ? MipsInstruction.CreateBranch(ri.RtCode, _rs, Immediate)
+                : MipsInstruction.CreateTrap(ri.RtCode, _rs, (short)Immediate),
+
+            CoProc0InstructionsMeta c0 when c0.Mfmc0FuncCode.HasValue => CoProc0Instruction.Create(c0.Mfmc0FuncCode.Value, _rt, (byte)_rd),
+            CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
+            CoProc0InstructionsMeta c0 => CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
+
+            CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (MipsFloatRegister)_rs),
+            FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (MipsFloatRegister)_rs, (MipsFloatRegister)_rd, (MipsFloatRegister)_rt),
+
+            ITypeInstructionMeta i => i.Type is MipsInstructionType.IBranch
+            ? MipsInstruction.CreateBranch(i.OperationCode, _rs, _rt, Immediate)
+            : MipsInstruction.CreateI(i.OperationCode, _rs, _rt, (short)Immediate),
+
+            _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
+        };
+    }
+
+    /// <inheritdoc/>
+    protected override MipsInstructionParser CreateSubParser()
+        => new(Config, _instructionTable, CurrentAddress, null, null);
 
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
@@ -282,38 +302,4 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
 
         return true;
     }
-
-    /// <inheritdoc/>
-    protected override MipsInstruction BuildInstruction()
-    {
-        Guard.IsNotNull(Meta);
-
-        return Meta switch
-        {
-            RTypeInstructionMeta r => MipsInstruction.CreateR(r.OperationCode, r.FuncCode, _rs, _rt, _rd, (byte)Immediate),
-            JTypeInstructionMeta j => MipsInstruction.CreateJ(j.OperationCode, (uint)Immediate),
-
-            RegImmInstructionMeta ri
-                => ri.Type is MipsInstructionType.RegisterImmediateBranch
-                ? MipsInstruction.CreateBranch(ri.RtCode, _rs, Immediate)
-                : MipsInstruction.CreateTrap(ri.RtCode, _rs, (short)Immediate),
-
-            CoProc0InstructionsMeta c0 when c0.Mfmc0FuncCode.HasValue => CoProc0Instruction.Create(c0.Mfmc0FuncCode.Value, _rt, (byte)_rd),
-            CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
-            CoProc0InstructionsMeta c0 => CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
-
-            CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (MipsFloatRegister)_rs),
-            FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (MipsFloatRegister)_rs, (MipsFloatRegister)_rd, (MipsFloatRegister)_rt),
-
-            ITypeInstructionMeta i => i.Type is MipsInstructionType.IBranch 
-            ? MipsInstruction.CreateBranch(i.OperationCode, _rs, _rt, Immediate)
-            : MipsInstruction.CreateI(i.OperationCode, _rs, _rt, (short)Immediate),
-
-            _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
-        };
-    }
-
-    /// <inheritdoc/>
-    protected override MipsInstructionParser CreateSubParser()
-        => new(Config, _instructionTable, CurrentAddress, null, null);
 }

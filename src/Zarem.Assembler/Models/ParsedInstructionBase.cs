@@ -1,6 +1,10 @@
 ﻿// Avishai Dernis 2026
 
+using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Zarem.Models.Enums;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Models;
@@ -9,20 +13,20 @@ namespace Zarem.Assembler.Models;
 /// A base class for a <see cref="IParsedInstruction"/> implementation that is backed by a raw instruction struct.
 /// </summary>
 /// <typeparam name="TRaw"></typeparam>
-public abstract class ParsedInstructionBase<TRaw> : IParsedInstruction
+public class ParsedInstructionBase<TRaw> : IParsedInstruction
     where TRaw : struct
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ParsedInstructionBase{TRaw}"/> class.
     /// </summary>
-    public ParsedInstructionBase(TRaw instruction, List<RelocationEntry>? references = null) : this([instruction], references)
+    public ParsedInstructionBase(TRaw instruction, IReadOnlyList<RelocationEntry>? references = null) : this([instruction], references)
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParsedInstructionBase{TRaw}"/> class.
     /// </summary>
-    public ParsedInstructionBase(TRaw[] instructions, List<RelocationEntry>? references = null)
+    public ParsedInstructionBase(TRaw[] instructions, IReadOnlyList<RelocationEntry>? references = null)
     {
         Instructions = instructions;
         References = references;
@@ -36,9 +40,34 @@ public abstract class ParsedInstructionBase<TRaw> : IParsedInstruction
     /// </remarks>
     public TRaw[] Instructions { get; }
 
-    /// <inheritdoc/>
-    public List<RelocationEntry>? References { get; }
+    /// <summary>
+    /// Gets the endianness of the instruction.
+    /// </summary>
+    public required Endianness Endianness { get; init; }
 
     /// <inheritdoc/>
-    public abstract byte[] RealizeBytes();
+    public IReadOnlyList<RelocationEntry>? References { get; }
+
+    /// <inheritdoc/>
+    public byte[] RealizeBytes()
+    {
+        byte[] bytes = new byte[Instructions.Length * sizeof(uint)];
+        Span<byte> destination = bytes;
+
+        for (int i = 0; i < Instructions.Length; i++)
+        {
+            // TODO: Handle instructions of different sizes (e.g. 16-bit compressed instructions in RISC-V).
+            var raw = Unsafe.As<TRaw, uint>(ref Instructions[i]);
+            if (Endianness is Endianness.Little)
+            {
+                BinaryPrimitives.WriteUInt32LittleEndian(destination[(i * 4)..], raw);
+            }
+            else
+            {
+                BinaryPrimitives.WriteUInt32BigEndian(destination[(i * 4)..], raw);
+            }
+        }
+
+        return bytes;
+    }
 }

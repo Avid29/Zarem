@@ -11,6 +11,7 @@ using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
 using Zarem.Models.Enums;
+using Zarem.Models.Instructions;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler;
@@ -67,6 +68,10 @@ public class RiscVAssemblerHandler : IAssemblerHandler<RiscVAssemblerConfig>
     public IParsedInstruction? ParseInstruction(AssemblyLine line, Address address, IReadOnlyDictionary<string, Symbol> symbols, ILogger? logger)
     {
         var parser = new RiscVInstructionParser(Config, _instructionTable, address, symbols, logger);
-        return parser.Parse(line);
+        var instructions = parser.Parse(line, out var references);
+        if (instructions is null)
+            return null;
+
+        return new ParsedInstructionBase<RiscVInstruction>(instructions, references) { Endianness = Endianness };
     }
 }
