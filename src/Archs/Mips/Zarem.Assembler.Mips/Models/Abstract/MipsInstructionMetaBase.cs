@@ -21,17 +21,8 @@ namespace Zarem.Assembler.Models.Abstract;
 [JsonDerivedType(typeof(CoProc1InstructionsMeta), "coproc1")]
 [JsonDerivedType(typeof(FloatInstructionMeta), "float")]
 [JsonDerivedType(typeof(MipsPseudoInstructionMeta), "pseudo")]
-public abstract record MipsInstructionMetaBase : InstructionMetaBase
+public abstract record MipsInstructionMetaBase : InstructionMetaBase<MipsArgument>
 {
-    /// <summary>
-    /// Gets the instruction parse type
-    /// </summary>
-    [JsonPropertyName("args")]
-    public required MipsArgument[] ArgumentPattern { get; init; }
-
-    /// <inheritdoc/>
-    public override int ArgumentCount => ArgumentPattern.Length;
-
     /// <summary>
     /// Gets the <see cref="MipsVersion"/> where the instruction was added.
     /// </summary>

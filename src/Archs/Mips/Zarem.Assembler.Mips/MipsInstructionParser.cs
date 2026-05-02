@@ -20,6 +20,7 @@ using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Extensions;
 using Zarem.Helpers;
 using Zarem.Models;
@@ -33,12 +34,10 @@ namespace Zarem.Assembler;
 /// <summary>
 /// A struct for parsing MIPS instructions.
 /// </summary>
-public class MipsInstructionParser : InstructionParserBase<MipsArgument, MipsGpRegister, MipsRegisterSet>
+public class MipsInstructionParser : InstructionParserBase<MipsInstruction, MipsInstructionMetaBase, MipsArgument, MipsGpRegister, MipsRegisterSet>
 {
     private readonly MipsInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
-
-    private MipsInstructionMetaBase? _meta;
 
     private MipsGpRegister _rs;
     private MipsGpRegister _rt;
@@ -68,83 +67,21 @@ public class MipsInstructionParser : InstructionParserBase<MipsArgument, MipsGpR
     /// <inheritdoc/>
     protected override MipsAssemblerConfig Config { get; }
 
+    /// <inheritdoc/>
+    protected override ITokenizerProfile TemplateProfile { get; } = new MipsTokenizerProfile();
+
     /// <summary>
     /// Attempts to parse an instruction from a name and a list of arguments.
     /// </summary>
     /// <param name="line">The assembly line to parse.</param>
     /// <returns>The parsed instruction.</returns>
-    public MipsParsedInstruction? Parse(AssemblyLine line)
+    public new MipsParsedInstruction? Parse(AssemblyLine line)
     {
-        // Attempt to load the instruction
-        // If successful, this will set the _meta and _format
-        if (!TryParseInstruction(line, out var name))
+        var instructions = base.Parse(line);
+        if (instructions is null)
             return null;
 
-        // Applies provided values
-        _rs = (MipsGpRegister)(_meta.FixedRS ?? default);
-        _rt = (MipsGpRegister)(_meta.FixedRT ?? default);
-        _rd = (MipsGpRegister)(_meta.FixedRD ?? default);
-
-        // Parse argument data according to pattern
-        MipsArgument[] pattern = _meta.ArgumentPattern;
-        for (int i = 0; i < line.Args.Count; i++)
-        {
-            // Split out next arg
-            var arg = line.Args[i];
-
-            // Empty argument
-            if (arg.Tokens.Length is 0)
-            {
-                var reportToken = arg.ProceedingComma ?? arg.PrecedingComma;
-                Guard.IsNotNull(reportToken);
-                _logger?.Log(Severity.Error, LogId.InvalidInstructionArg, reportToken, "EmptyArgument");
-                continue;
-            }
-
-            TryParseArg(arg.Tokens, pattern[i]);
-        }
-
-        // It's a pseudo instruction.
-        // Create a pseudo-instruction and return with reference
-        // as parsed instruction.
-        if (_meta is IPseudoInstructionMeta pMeta)
-        {
-            // Expand the pseudo-instruction into its component instructions, substituting arguments as necessary
-            var expansions = new MipsInstruction[pMeta.Expansion.Length];
-            var profile = new MipsTokenizerProfile();
-            int i = 0;
-            foreach (var template in pMeta.Expansion)
-            {
-                var tokenizedLine = ExpandTemplate(template, profile);
-                var childParser = new MipsInstructionParser(Config, _instructionTable, CurrentAddress, null, null);
-                var parsed = childParser.Parse(tokenizedLine);
-                Guard.IsNotNull(parsed);
-                expansions[i] = parsed.Instructions[0];
-                i++;
-            }
-
-            return new MipsParsedInstruction(expansions, References);
-        }
-
-        // Build an instruction using the information from
-        // _meta and all the parsed arguments
-        var instruction = BuildInstruction();
-
-        // Check for write back to zero register
-        // Give a warning if not an explicit nop operation
-        // TODO: Check on pseudo-instructions
-        if (instruction.GetWritebackRegister() is MipsGpRegister.Zero && name != "nop")
-        {
-            // Only log if the token can be parsed, and is not 0 for other reasons
-            // TODO: Is this true for move operations? Double check
-            var writebackArg = line.Args[0].Tokens;
-            if (writebackArg.Length is 1 && TryParseRegister(writebackArg, out var reg, MipsRegisterSet.GeneralPurpose, 32) && reg is MipsGpRegister.Zero)
-            {
-                _logger?.Log(Severity.Message, LogId.ZeroRegWriteback, writebackArg, "ZeroRegisterWriteback");
-            }
-        }
-
-        return new MipsParsedInstruction(instruction, References);
+        return new MipsParsedInstruction(instructions, References);
     }
 
     /// <inheritdoc/>
@@ -171,8 +108,8 @@ public class MipsInstructionParser : InstructionParserBase<MipsArgument, MipsGpR
         };
     }
 
-    [MemberNotNullWhen(true, nameof(_meta))]
-    private bool TryParseInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
+    /// <inheritdoc/>
+    protected override bool TryDetermineInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
     {
         // Get instruction name and ensure it's not null
         name = line.Instruction?.Source;
@@ -198,16 +135,16 @@ public class MipsInstructionParser : InstructionParserBase<MipsArgument, MipsGpR
             return false;
         }
 
-        _meta = metas.FirstOrDefault(x => x.ArgumentPattern.Length == line.Args.Count);
+        Meta = metas.FirstOrDefault(x => x.ArgumentCount == line.Args.Count);
 
-        if (_meta is null)
+        if (Meta is null)
         {
             _logger?.Log(Severity.Error, LogId.InvalidInstructionArgCount, line.Instruction, "WrongArgumentCount", name, line.Args.Count);
             return false;
         }
 
         // Check float format support via the specialized Float record
-        if (_meta is FloatInstructionMeta fMeta && fMeta.SupportedFormats is not null && !fMeta.SupportedFormats.Contains(_format))
+        if (Meta is FloatInstructionMeta fMeta && fMeta.SupportedFormats is not null && !fMeta.SupportedFormats.Contains(_format))
         {
             _logger?.Log(Severity.Error, LogId.InvalidFloatFormat, line.Instruction, $"DoesNotSupportFormat{_format}", name);
             return false;
@@ -216,7 +153,8 @@ public class MipsInstructionParser : InstructionParserBase<MipsArgument, MipsGpR
         return true;
     }
 
-    private bool TryParseArg(ReadOnlySpan<Token> arg, MipsArgument type)
+    /// <inheritdoc/>
+    protected override bool TryParseArg(ReadOnlySpan<Token> arg, MipsArgument type)
     {
         return type switch
         {
@@ -340,11 +278,12 @@ public class MipsInstructionParser : InstructionParserBase<MipsArgument, MipsGpR
         return true;
     }
 
-    private MipsInstruction BuildInstruction()
+    /// <inheritdoc/>
+    protected override MipsInstruction BuildInstruction()
     {
-        Guard.IsNotNull(_meta);
+        Guard.IsNotNull(Meta);
 
-        return _meta switch
+        return Meta switch
         {
             RTypeInstructionMeta r => MipsInstruction.CreateR(r.OperationCode, r.FuncCode, _rs, _rt, _rd, (byte)Immediate),
             JTypeInstructionMeta j => MipsInstruction.CreateJ(j.OperationCode, (uint)Immediate),
@@ -365,7 +304,11 @@ public class MipsInstructionParser : InstructionParserBase<MipsArgument, MipsGpR
             ? MipsInstruction.CreateBranch(i.OperationCode, _rs, _rt, Immediate)
             : MipsInstruction.CreateI(i.OperationCode, _rs, _rt, (short)Immediate),
 
-            _ => throw new NotSupportedException($"Metadata type {_meta.GetType().Name} is not supported for encoding.")
+            _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
         };
     }
+
+    /// <inheritdoc/>
+    protected override MipsInstructionParser CreateSubParser()
+        => new(Config, _instructionTable, CurrentAddress, null, null);
 }

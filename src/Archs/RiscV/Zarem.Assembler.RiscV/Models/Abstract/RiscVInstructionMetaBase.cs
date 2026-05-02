@@ -19,17 +19,8 @@ namespace Zarem.Assembler.Models.Abstract;
 [JsonDerivedType(typeof(UTypeInstructionMeta), "u-type")]
 [JsonDerivedType(typeof(JTypeInstructionMeta), "j-type")]
 [JsonDerivedType(typeof(RiscVPseudoInstructionMeta), "pseudo")]
-public abstract record RiscVInstructionMetaBase : InstructionMetaBase
+public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgument>
 {
-    /// <summary>
-    /// Gets the instruction argument pattern for parsing.
-    /// </summary>
-    [JsonPropertyName("args")]
-    public required RiscVArgument[] ArgumentPattern { get; init; }
-
-    /// <inheritdoc/>
-    public override int ArgumentCount =>  ArgumentPattern.Length;
-
     /// <summary>
     /// Gets the extension required to execute this instruction (e.g., M, A, F).
     /// </summary>

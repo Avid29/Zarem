@@ -5,7 +5,7 @@ namespace Zarem.Assembler.Models;
 /// <summary>
 /// An interface for pseudo instruction meta definitions.
 /// </summary>
-public interface IPseudoInstructionMeta
+public interface IPseudoInstructionMeta : IInstructionMeta
 {
     /// <summary>
     /// Gets the expansion of the pseudo-instruction into real instructions.

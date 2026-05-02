@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -28,7 +29,9 @@ namespace Zarem.Assembler.Parsers;
 /// <summary>
 /// A base class for instruction parsers.
 /// </summary>
-public abstract class InstructionParserBase<TArg, TRegister, TSet>
+public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet>
+    where TInstruction : struct
+    where TMeta : InstructionMetaBase<TArg>
     where TArg : unmanaged, Enum
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
@@ -73,6 +76,78 @@ public abstract class InstructionParserBase<TArg, TRegister, TSet>
     /// Gets the immediate value component of the instruction, if applicable.
     /// </summary>
     protected int Immediate { get; set; }
+
+    /// <summary>
+    /// Gets the metadata for the instruction being parsed, which may be used to guide parsing and template expansion.
+    /// </summary>
+    protected TMeta? Meta { get; set; }
+
+    /// <summary>
+    /// Gets the <see cref="ITokenizerProfile"/> used to tokenize pseudo-instruction templates for expansion.
+    /// </summary>
+    protected abstract ITokenizerProfile TemplateProfile { get; }
+
+    /// <summary>
+    /// Attempts to parse an instruction from a name and a list of arguments.
+    /// </summary>
+    /// <param name="line">The assembly line to parse.</param>
+    /// <returns>The parsed instruction.</returns>
+    protected TInstruction[]? Parse(AssemblyLine line)
+    {
+        // Identify the instruction
+        if (!TryDetermineInstruction(line, out _))
+            return null;
+
+        // Parse arguments
+        Guard.IsNotNull(Meta);
+        TArg[] pattern = Meta.ArgumentPattern;
+        for (int i = 0; i < line.Args.Count; i++)
+        {
+            var arg = line.Args[i];
+
+            // Empty argument
+            if (arg.Tokens.Length is 0)
+            {
+                var reportToken = arg.ProceedingComma ?? arg.PrecedingComma;
+                Guard.IsNotNull(reportToken);
+                _logger?.Log(Severity.Error, LogId.InvalidInstructionArg, reportToken, "EmptyArgument");
+                continue;
+            }
+
+            TryParseArg(arg.Tokens, pattern[i]);
+        }
+
+        // Handle pseudo-instruction expansion if needed
+        if (Meta is IPseudoInstructionMeta pMeta)
+        {
+            var expansions = new TInstruction[pMeta.Expansion.Length];
+            int i = 0;
+            foreach (var template in pMeta.Expansion)
+            {
+                var tokenizedLine = ExpandTemplate(template, TemplateProfile);
+                var childParser = CreateSubParser();
+                var parsed = childParser.Parse(tokenizedLine);
+                Guard.IsNotNull(parsed);
+                expansions[i] = parsed[0];
+                i++;
+            }
+
+            return expansions;
+        }
+
+        return [BuildInstruction()];
+    }
+
+    /// <summary>
+    /// Attempts to populate the <see cref="Meta"/> property by parsing the instruction token of the given line.
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(Meta))]
+    protected abstract bool TryDetermineInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name);
+
+    /// <summary>
+    /// Parses an arg token span according to the expected argument type.
+    /// </summary>
+    protected abstract bool TryParseArg(ReadOnlySpan<Token> arg, TArg type);
 
     /// <summary>
     /// Attempts to parse a register.
@@ -213,9 +288,19 @@ public abstract class InstructionParserBase<TArg, TRegister, TSet>
     }
 
     /// <summary>
+    /// TODO: Document this
+    /// </summary>
+    protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet> CreateSubParser();
+
+    /// <summary>
     /// Gets the substitution string for a given argument type, which is used to replace placeholders in pseudo-instruction templates.
     /// </summary>
     protected abstract string GetTemplateArgSubstitution(TArg argType);
+
+    /// <summary>
+    /// TODO: Document this
+    /// </summary>
+    protected abstract TInstruction BuildInstruction();
 
     /// <summary>
     /// Cleans a value to a specified bit count and shift amount, while also checking for any changes that occured during the cast.

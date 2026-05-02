@@ -16,6 +16,7 @@ using Zarem.Assembler.Models.Enums;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Helpers;
 using Zarem.Models;
 using Zarem.Models.Instructions;
@@ -28,12 +29,10 @@ namespace Zarem.Assembler;
 /// <summary>
 /// A struct for parsing RISC-V instructions.
 /// </summary>
-public class RiscVInstructionParser : InstructionParserBase<RiscVArgument, RiscVGpRegister, RiscVRegisterSet>
+public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, RiscVInstructionMetaBase, RiscVArgument, RiscVGpRegister, RiscVRegisterSet>
 {
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
-
-    private RiscVInstructionMetaBase? _meta;
 
     private RiscVGpRegister _rd;
     private RiscVGpRegister _rs1;
@@ -62,66 +61,21 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVArgument, RiscV
     /// <inheritdoc/>
     protected override RiscVAssemblerConfig Config { get; }
 
+    /// <inheritdoc/>
+    protected override ITokenizerProfile TemplateProfile { get; } = new RiscVTokenizerProfile();
+
     /// <summary>
     /// Attempts to parse an instruction from a name and a list of arguments.
     /// </summary>
     /// <param name="line">The assembly line to parse.</param>
     /// <returns>The parsed instruction.</returns>
-    public RiscVParsedInstruction? Parse(AssemblyLine line)
+    public new RiscVParsedInstruction? Parse(AssemblyLine line)
     {
-        // Attempt to load the instruction
-        // If successful, this will set the _meta and _format
-        if (!TryParseInstruction(line, out var name))
+        var instructions = base.Parse(line);
+        if (instructions is null)
             return null;
 
-        // Applies provided values
-        _rs1 = (RiscVGpRegister)(_meta.FixedRS1 ?? default);
-        _rs2 = (RiscVGpRegister)(_meta.FixedRS2 ?? default);
-        _rd = (RiscVGpRegister)(_meta.FixedRD ?? default);
-        Immediate = _meta.FixedImm ?? default;
-
-        // Parse argument data according to pattern
-        RiscVArgument[] pattern = _meta.ArgumentPattern;
-        for (int i = 0; i < line.Args.Count; i++)
-        {
-            // Split out next arg
-            var arg = line.Args[i];
-
-            // Empty argument
-            if (arg.Tokens.Length is 0)
-            {
-                var reportToken = arg.ProceedingComma ?? arg.PrecedingComma;
-                Guard.IsNotNull(reportToken);
-                _logger?.Log(Severity.Error, LogId.InvalidInstructionArg, reportToken, "EmptyArgument");
-                continue;
-            }
-
-            TryParseArg(arg.Tokens, pattern[i]);
-        }
-
-        if (_meta is IPseudoInstructionMeta pMeta)
-        {
-            // Expand the pseudo-instruction into its component instructions, substituting arguments as necessary
-            var expansions = new RiscVInstruction[pMeta.Expansion.Length];
-            var profile = new RiscVTokenizerProfile();
-            int i = 0;
-            foreach (var template in pMeta.Expansion)
-            {
-                var tokenizedLine = ExpandTemplate(template, profile);
-                var childParser = new RiscVInstructionParser(Config, _instructionTable, CurrentAddress, null, null);
-                var parsed = childParser.Parse(tokenizedLine);
-                Guard.IsNotNull(parsed);
-                expansions[i] = parsed.Instructions[0];
-                i++;
-            }
-
-            return new RiscVParsedInstruction(expansions, References);
-        }
-
-        // Build an instruction using the information from
-        // _meta and all the parsed arguments
-        var instruction = BuildInstruction();
-        return new RiscVParsedInstruction(instruction, References);
+        return new RiscVParsedInstruction(instructions, References);
     }
 
     /// <inheritdoc/>
@@ -148,8 +102,8 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVArgument, RiscV
         };
     }
 
-    [MemberNotNullWhen(true, nameof(_meta))]
-    private bool TryParseInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
+    /// <inheritdoc/>
+    protected override bool TryDetermineInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
     {
         // Get instruction name and ensure it's not null
         name = line.Instruction?.Source;
@@ -169,9 +123,9 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVArgument, RiscV
             return false;
         }
 
-        _meta = metas.FirstOrDefault(x => x.ArgumentPattern.Length == line.Args.Count);
+        Meta = metas.FirstOrDefault(x => x.ArgumentPattern.Length == line.Args.Count);
 
-        if (_meta is null)
+        if (Meta is null)
         {
             _logger?.Log(Severity.Error, LogId.InvalidInstructionArgCount, line.Instruction, "WrongArgumentCount", name, line.Args.Count);
             return false;
@@ -180,7 +134,8 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVArgument, RiscV
         return true;
     }
 
-    private bool TryParseArg(ReadOnlySpan<Token> arg, RiscVArgument type)
+    /// <inheritdoc/>
+    protected override bool TryParseArg(ReadOnlySpan<Token> arg, RiscVArgument type)
     {
         return type switch
         {
@@ -310,11 +265,12 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVArgument, RiscV
         return true;
     }
 
-    private RiscVInstruction BuildInstruction()
+    /// <inheritdoc/>
+    protected override RiscVInstruction BuildInstruction()
     {
-        Guard.IsNotNull(_meta);
+        Guard.IsNotNull(Meta);
 
-        return _meta switch
+        return Meta switch
         {
             RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, _rd, _rs1, _rs2),
             ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, _rd, _rs1, (short)Immediate),
@@ -323,7 +279,11 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVArgument, RiscV
             STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
             JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
 
-            _ => throw new NotSupportedException($"Metadata type {_meta.GetType().Name} is not supported for encoding.")
+            _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
         };
     }
+
+    /// <inheritdoc/>
+    protected override RiscVInstructionParser CreateSubParser()
+        => new(Config, _instructionTable, CurrentAddress, null, null);
 }
