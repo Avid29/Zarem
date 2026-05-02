@@ -152,8 +152,9 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// Parses an arg token span according to the expected argument type.
     /// </summary>
     protected abstract bool TryParseArg(ReadOnlySpan<Token> arg, TArg type);
+
     /// <summary>
-    /// TODO: Document this
+    /// Creates a new instruction parser for parsing pseudo-instruction expansion templates.
     /// </summary>
     protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet> CreateSubParser();
 
@@ -163,7 +164,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     protected abstract string GetTemplateArgSubstitution(TArg argType);
 
     /// <summary>
-    /// TODO: Document this
+    /// Builds an instruction from the parsed data.
     /// </summary>
     protected abstract TInstruction BuildInstruction();
 

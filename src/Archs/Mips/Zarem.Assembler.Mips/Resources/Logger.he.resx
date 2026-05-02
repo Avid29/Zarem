@@ -153,9 +153,6 @@
   <data name="WrongArgumentCount" xml:space="preserve">
     <value>פקודה ‎'{0}'‎ אינה יכולה לקבל ‎{1}‎ ארגומנטים.</value>
   </data>
-  <data name="ZeroRegisterWriteback" xml:space="preserve">
-    <value>פקודה זו כותבת לאוגר ‎$zero‎.</value>
-  </data>
   <data name="CastWarningSignChanged" xml:space="preserve">
     <value>הביטוי ‎'{0}'‎ הוערך לערך חתום ‎'{1}'‎ אך הומר לערך בלתי־חתום, והתוצאה היא ‎'{2}'‎.</value>
   </data>
@@ -176,9 +173,6 @@
   </data>
   <data name="CastWarningTruncatedHigh" xml:space="preserve">
     <value>הביטוי ‎'{0}'‎ הוערך ל־{1}‎ אך נחתך ל־{3}‎ סיביות, והתוצאה היא ‎'{2}'‎.</value>
-  </data>
-  <data name="EmptyArgument" xml:space="preserve">
-    <value>הארגומנט ריק.</value>
   </data>
   <data name="Needs64BitVersion" xml:space="preserve">
     <value>הפקודה '{0}' זמינה רק בגרסאות 64 סיביות של MIPS.</value>
