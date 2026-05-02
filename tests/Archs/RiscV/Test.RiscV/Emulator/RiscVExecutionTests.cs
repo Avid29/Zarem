@@ -60,12 +60,12 @@ public partial class RiscVExecutionTests
         var tokenized = Tokenizer.TokenizeLine(@case.Input, RiscVTokenizerProfile.Default)[0];
         var table = new RiscVInstructionTable(new(config.VersionInfo));
         var parser = new RiscVInstructionParser(new(), table, default, null, null);
-        var parsed = parser.Parse(tokenized);
+        var parsed = parser.Parse(tokenized, out _);
         if (parsed is null)
             Assert.Fail();
 
         // TODO: Psuedo instruction support
-        var instruction = parsed.Realize()[0];
+        var instruction = parsed[0];
         var computer = new RiscVComputer(config);
         var cpu = (RiscVCpu<T>)computer.Cpu;
 

@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
+using System.Text.Json.Serialization;
+using System.Threading;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
@@ -15,7 +18,9 @@ using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Enums;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
+using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Extensions;
 using Zarem.Helpers;
 using Zarem.Models;
@@ -29,12 +34,10 @@ namespace Zarem.Assembler;
 /// <summary>
 /// A struct for parsing MIPS instructions.
 /// </summary>
-public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsRegisterSet>
+public class MipsInstructionParser : InstructionParserBase<MipsInstruction, MipsInstructionMetaBase, MipsArgument, MipsGpRegister, MipsRegisterSet>
 {
     private readonly MipsInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
-
-    private MipsInstructionMetaBase? _meta;
 
     private MipsGpRegister _rs;
     private MipsGpRegister _rt;
@@ -64,82 +67,35 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
     /// <inheritdoc/>
     protected override MipsAssemblerConfig Config { get; }
 
-    /// <summary>
-    /// Attempts to parse an instruction from a name and a list of arguments.
-    /// </summary>
-    /// <param name="line">The assembly line to parse.</param>
-    /// <returns>The parsed instruction.</returns>
-    public MipsParsedInstruction? Parse(AssemblyLine line)
+    /// <inheritdoc/>
+    protected override ITokenizerProfile TemplateProfile { get; } = new MipsTokenizerProfile();
+
+    /// <inheritdoc/>
+    protected override string GetTemplateArgSubstitution(MipsArgument argType)
     {
-        // Attempt to load the instruction
-        // If successful, this will set the _meta and _format
-        if (!TryParseInstruction(line, out var name))
-            return null;
-
-        // Applies provided values
-        _rs = (MipsGpRegister)(_meta.FixedRS ?? default);
-        _rt = (MipsGpRegister)(_meta.FixedRT ?? default);
-        _rd = (MipsGpRegister)(_meta.FixedRD ?? default);
-
-        // Parse argument data according to pattern
-        MipsArgument[] pattern = _meta.ArgumentPattern;
-        for (int i = 0; i < line.Args.Count; i++)
+        return argType switch
         {
-            // Split out next arg
-            var arg = line.Args[i];
+            MipsArgument.RS => $"${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.GeneralPurpose)}",
+            MipsArgument.RT => $"${MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.GeneralPurpose)}",
+            MipsArgument.RD => $"${MipsRegisterTable.Instance.GetRegisterString(_rd, MipsRegisterSet.GeneralPurpose)}",
+            MipsArgument.FS => $"${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.FloatingPoints)}",
+            MipsArgument.FT => $"${MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.FloatingPoints)}",
+            MipsArgument.FD => $"${MipsRegisterTable.Instance.GetRegisterString(_rd, MipsRegisterSet.FloatingPoints)}",
+            MipsArgument.RS_Numbered => $"${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.Numbered)}",
+            MipsArgument.RT_Numbered => $"${MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.Numbered)}",
 
-            // Empty argument
-            if (arg.Tokens.Length is 0)
-            {
-                var reportToken = arg.ProceedingComma ?? arg.PrecedingComma;
-                Guard.IsNotNull(reportToken);
-                _logger?.Log(Severity.Error, LogId.InvalidInstructionArg, reportToken, "EmptyArgument");
-                continue;
-            }
+            // Immediate/FullImmediate uses the raw parsed value
+            MipsArgument.Immediate or MipsArgument.FullImmediate or MipsArgument.ShiftAmount or
+            MipsArgument.Offset or MipsArgument.LargeOffset or MipsArgument.Address => $"{Immediate}",
 
-            TryParseArg(arg.Tokens, pattern[i]);
-        }
+            MipsArgument.AddressBase => $"{Immediate}(${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.GeneralPurpose)})",
 
-        // It's a pseudo instruction.
-        // Create a pseudo-instruction and return with reference
-        // as parsed instruction.
-        if (_meta is MipsPseudoInstructionMeta pMeta)
-        {
-            var pseudo = new MipsPseudoInstruction
-            {
-                PseudoOp = pMeta.PseudoOp,
-                RS = _rs,
-                RT = _rt,
-                RD = _rd,
-                Immediate = Immediate,
-            };
-
-            return new MipsParsedInstruction(pseudo, References);
-        }
-
-        // Build an instruction using the information from
-        // _meta and all the parsed arguments
-        var instruction = BuildInstruction();
-
-        // Check for write back to zero register
-        // Give a warning if not an explicit nop operation
-        // TODO: Check on pseudo-instructions
-        if (instruction.GetWritebackRegister() is MipsGpRegister.Zero && name != "nop")
-        {
-            // Only log if the token can be parsed, and is not 0 for other reasons
-            // TODO: Is this true for move operations? Double check
-            var writebackArg = line.Args[0].Tokens;
-            if (writebackArg.Length is 1 && TryParseRegister(writebackArg, out var reg, MipsRegisterSet.GeneralPurpose, 32) && reg is MipsGpRegister.Zero)
-            {
-                _logger?.Log(Severity.Message, LogId.ZeroRegWriteback, writebackArg, "ZeroRegisterWriteback");
-            }
-        }
-
-        return new MipsParsedInstruction(instruction, References);
+            _ => ThrowHelper.ThrowArgumentException<string>(),
+        };
     }
 
-    [MemberNotNullWhen(true, nameof(_meta))]
-    private bool TryParseInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
+    /// <inheritdoc/>
+    protected override bool TryDetermineInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
     {
         // Get instruction name and ensure it's not null
         name = line.Instruction?.Source;
@@ -165,25 +121,31 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
             return false;
         }
 
-        _meta = metas.FirstOrDefault(x => x.ArgumentPattern.Length == line.Args.Count);
+        Meta = metas.FirstOrDefault(x => x.ArgumentCount == line.Args.Count);
 
-        if (_meta is null)
+        if (Meta is null)
         {
             _logger?.Log(Severity.Error, LogId.InvalidInstructionArgCount, line.Instruction, "WrongArgumentCount", name, line.Args.Count);
             return false;
         }
 
         // Check float format support via the specialized Float record
-        if (_meta is FloatInstructionMeta fMeta && fMeta.SupportedFormats is not null && !fMeta.SupportedFormats.Contains(_format))
+        if (Meta is FloatInstructionMeta fMeta && fMeta.SupportedFormats is not null && !fMeta.SupportedFormats.Contains(_format))
         {
             _logger?.Log(Severity.Error, LogId.InvalidFloatFormat, line.Instruction, $"DoesNotSupportFormat{_format}", name);
             return false;
         }
 
+        // Set fixed values
+        _rs = (MipsGpRegister)(Meta.FixedRS ?? default);
+        _rt = (MipsGpRegister)(Meta.FixedRT ?? default);
+        _rd = (MipsGpRegister)(Meta.FixedRD ?? default);
+
         return true;
     }
 
-    private bool TryParseArg(ReadOnlySpan<Token> arg, MipsArgument type)
+    /// <inheritdoc/>
+    protected override bool TryParseArg(ReadOnlySpan<Token> arg, MipsArgument type)
     {
         return type switch
         {
@@ -202,6 +164,40 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
     }
+
+    /// <inheritdoc/>
+    protected override MipsInstruction BuildInstruction()
+    {
+        Guard.IsNotNull(Meta);
+
+        return Meta switch
+        {
+            RTypeInstructionMeta r => MipsInstruction.CreateR(r.OperationCode, r.FuncCode, _rs, _rt, _rd, (byte)Immediate),
+            JTypeInstructionMeta j => MipsInstruction.CreateJ(j.OperationCode, (uint)Immediate),
+
+            RegImmInstructionMeta ri
+                => ri.Type is MipsInstructionType.RegisterImmediateBranch
+                ? MipsInstruction.CreateBranch(ri.RtCode, _rs, Immediate)
+                : MipsInstruction.CreateTrap(ri.RtCode, _rs, (short)Immediate),
+
+            CoProc0InstructionsMeta c0 when c0.Mfmc0FuncCode.HasValue => CoProc0Instruction.Create(c0.Mfmc0FuncCode.Value, _rt, (byte)_rd),
+            CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
+            CoProc0InstructionsMeta c0 => CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
+
+            CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (MipsFloatRegister)_rs),
+            FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (MipsFloatRegister)_rs, (MipsFloatRegister)_rd, (MipsFloatRegister)_rt),
+
+            ITypeInstructionMeta i => i.Type is MipsInstructionType.IBranch
+            ? MipsInstruction.CreateBranch(i.OperationCode, _rs, _rt, Immediate)
+            : MipsInstruction.CreateI(i.OperationCode, _rs, _rt, (short)Immediate),
+
+            _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
+        };
+    }
+
+    /// <inheritdoc/>
+    protected override MipsInstructionParser CreateSubParser()
+        => new(Config, _instructionTable, CurrentAddress, null, null);
 
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
@@ -305,34 +301,5 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
             return false;
 
         return true;
-    }
-
-    private MipsInstruction BuildInstruction()
-    {
-        Guard.IsNotNull(_meta);
-
-        return _meta switch
-        {
-            RTypeInstructionMeta r => MipsInstruction.CreateR(r.OperationCode, r.FuncCode, _rs, _rt, _rd, (byte)Immediate),
-            JTypeInstructionMeta j => MipsInstruction.CreateJ(j.OperationCode, (uint)Immediate),
-
-            RegImmInstructionMeta ri
-                => ri.Type is MipsInstructionType.RegisterImmediateBranch
-                ? MipsInstruction.CreateBranch(ri.RtCode, _rs, Immediate)
-                : MipsInstruction.CreateTrap(ri.RtCode, _rs, (short)Immediate),
-
-            CoProc0InstructionsMeta c0 when c0.Mfmc0FuncCode.HasValue => CoProc0Instruction.Create(c0.Mfmc0FuncCode.Value, _rt, (byte)_rd),
-            CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
-            CoProc0InstructionsMeta c0 => CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
-
-            CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (MipsFloatRegister)_rs),
-            FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (MipsFloatRegister)_rs, (MipsFloatRegister)_rd, (MipsFloatRegister)_rt),
-
-            ITypeInstructionMeta i => i.Type is MipsInstructionType.IBranch 
-            ? MipsInstruction.CreateBranch(i.OperationCode, _rs, _rt, Immediate)
-            : MipsInstruction.CreateI(i.OperationCode, _rs, _rt, (short)Immediate),
-
-            _ => throw new NotSupportedException($"Metadata type {_meta.GetType().Name} is not supported for encoding.")
-        };
     }
 }

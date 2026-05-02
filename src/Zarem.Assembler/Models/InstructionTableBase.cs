@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using Zarem.Assembler.Config;
 
 namespace Zarem.Assembler.Models;
 
@@ -15,7 +14,7 @@ namespace Zarem.Assembler.Models;
 /// </summary>
 public abstract class InstructionTableBase<TKey, TEntry>
     where TKey : notnull
-    where TEntry : InstructionMetaBase
+    where TEntry : IInstructionMeta
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="InstructionTableBase{TKey, TEntry}"/> class.

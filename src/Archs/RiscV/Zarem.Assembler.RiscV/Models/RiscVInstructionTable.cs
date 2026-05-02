@@ -63,7 +63,7 @@ public class RiscVInstructionTable : RiscVInstructionTableBase<string>
         metadata = null;
         if (TryGetInstruction(name, out var metadatas, out requiredBase, out requiredExtension))
         {
-            metadata = metadatas.FirstOrDefault(m => m.ArgumentCount == argCount);
+            metadata = metadatas.FirstOrDefault(m => m.ArgumentPattern.Length == argCount);
             return metadata is not null;
         }
 

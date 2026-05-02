@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Text.Json.Serialization;
 
 namespace Zarem.Assembler.Models;
@@ -7,11 +8,10 @@ namespace Zarem.Assembler.Models;
 /// <summary>
 /// A base type for an instruction meta defintion.
 /// </summary>
-public abstract record InstructionMetaBase
+public abstract record InstructionMetaBase<TArg> : IInstructionMeta
+    where TArg : unmanaged, Enum
 {
-    /// <summary>
-    /// Gets the name of the instruction.
-    /// </summary>
+    /// <inheritdoc/>
     [JsonPropertyName("name")]
     public required string Name { get; init; }
 
@@ -22,8 +22,12 @@ public abstract record InstructionMetaBase
     public string? Behavior { get; init; }
 
     /// <summary>
-    /// Gets the number of argument required by the instruction.
+    /// Gets the instruction argument pattern for parsing.
     /// </summary>
+    [JsonPropertyName("args")]
+    public required TArg[] ArgumentPattern { get; init; }
+
+    /// <inheritdoc/>
     [JsonIgnore]
-    public abstract int ArgumentCount { get; }
+    public int ArgumentCount => ArgumentPattern.Length;
 }

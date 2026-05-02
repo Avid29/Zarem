@@ -16,6 +16,7 @@ using Zarem.Assembler.Models.Enums;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Helpers;
 using Zarem.Models;
 using Zarem.Models.Instructions;
@@ -28,12 +29,10 @@ namespace Zarem.Assembler;
 /// <summary>
 /// A struct for parsing RISC-V instructions.
 /// </summary>
-public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, RiscVRegisterSet>
+public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, RiscVInstructionMetaBase, RiscVArgument, RiscVGpRegister, RiscVRegisterSet>
 {
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
-
-    private RiscVInstructionMetaBase? _meta;
 
     private RiscVGpRegister _rd;
     private RiscVGpRegister _rs1;
@@ -62,65 +61,35 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
     /// <inheritdoc/>
     protected override RiscVAssemblerConfig Config { get; }
 
-    /// <summary>
-    /// Attempts to parse an instruction from a name and a list of arguments.
-    /// </summary>
-    /// <param name="line">The assembly line to parse.</param>
-    /// <returns>The parsed instruction.</returns>
-    public RiscVParsedInstruction? Parse(AssemblyLine line)
+    /// <inheritdoc/>
+    protected override ITokenizerProfile TemplateProfile { get; } = new RiscVTokenizerProfile();
+
+    /// <inheritdoc/>
+    protected override string GetTemplateArgSubstitution(RiscVArgument argType)
     {
-        // Attempt to load the instruction
-        // If successful, this will set the _meta and _format
-        if (!TryParseInstruction(line, out var name))
-            return null;
-
-        // Applies provided values
-        _rs1 = (RiscVGpRegister)(_meta.FixedRS1 ?? default);
-        _rs2 = (RiscVGpRegister)(_meta.FixedRS2 ?? default);
-        _rd = (RiscVGpRegister)(_meta.FixedRD ?? default);
-        Immediate = _meta.FixedImm ?? default;
-
-        // Parse argument data according to pattern
-        RiscVArgument[] pattern = _meta.ArgumentPattern;
-        for (int i = 0; i < line.Args.Count; i++)
+        return argType switch
         {
-            // Split out next arg
-            var arg = line.Args[i];
+            RiscVArgument.RD => RiscVRegisterTable.Instance.GetRegisterString(_rd, RiscVRegisterSet.GeneralPurpose),
+            RiscVArgument.RS1 => RiscVRegisterTable.Instance.GetRegisterString(_rs1, RiscVRegisterSet.GeneralPurpose),
+            RiscVArgument.RS2 => RiscVRegisterTable.Instance.GetRegisterString(_rs2, RiscVRegisterSet.GeneralPurpose),
+            RiscVArgument.FRD => RiscVRegisterTable.Instance.GetRegisterString(_rd, RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRS1 => RiscVRegisterTable.Instance.GetRegisterString(_rs1, RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRS2 => RiscVRegisterTable.Instance.GetRegisterString(_rs2, RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRS3 => RiscVRegisterTable.Instance.GetRegisterString(_rs2, RiscVRegisterSet.FloatingPoints), // TODO
 
-            // Empty argument
-            if (arg.Tokens.Length is 0)
-            {
-                var reportToken = arg.ProceedingComma ?? arg.PrecedingComma;
-                Guard.IsNotNull(reportToken);
-                _logger?.Log(Severity.Error, LogId.InvalidInstructionArg, reportToken, "EmptyArgument");
-                continue;
-            }
+            RiscVArgument.Immediate or RiscVArgument.FullImmediate or RiscVArgument.BranchOffset or RiscVArgument.StoreOffset or
+            RiscVArgument.JumpOffset or RiscVArgument.UpperImmediate or RiscVArgument.UImm5 => $"{Immediate}",
 
-            TryParseArg(arg.Tokens, pattern[i]);
-        }
+            RiscVArgument.MemoryLoad or RiscVArgument.MemoryStore => $"{Immediate}({RiscVRegisterTable.Instance.GetRegisterString(_rs1, RiscVRegisterSet.GeneralPurpose)})",
 
-        if (_meta is RiscVPseudoInstructionMeta pMeta)
-        {
-            var pseudo = new RiscVPseudoInstruction
-            {
-                PseudoOp = pMeta.PseudoOp,
-                RS1 = _rs1,
-                RS2 = _rs2,
-                RD = _rd,
-                Immediate = Immediate,
-            };
+            RiscVArgument.Csr => "", // TODO
 
-            return new RiscVParsedInstruction(pseudo, References);
-        }
-
-        // Build an instruction using the information from
-        // _meta and all the parsed arguments
-        var instruction = BuildInstruction();
-        return new RiscVParsedInstruction(instruction, References);
+            _ => ThrowHelper.ThrowArgumentException<string>(),
+        };
     }
 
-    [MemberNotNullWhen(true, nameof(_meta))]
-    private bool TryParseInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
+    /// <inheritdoc/>
+    protected override bool TryDetermineInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
     {
         // Get instruction name and ensure it's not null
         name = line.Instruction?.Source;
@@ -140,18 +109,25 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             return false;
         }
 
-        _meta = metas.FirstOrDefault(x => x.ArgumentPattern.Length == line.Args.Count);
+        Meta = metas.FirstOrDefault(x => x.ArgumentPattern.Length == line.Args.Count);
 
-        if (_meta is null)
+        if (Meta is null)
         {
             _logger?.Log(Severity.Error, LogId.InvalidInstructionArgCount, line.Instruction, "WrongArgumentCount", name, line.Args.Count);
             return false;
         }
 
+        // Set fixed values
+        _rs1 = (RiscVGpRegister)(Meta.FixedRS1 ?? default);
+        _rs2 = (RiscVGpRegister)(Meta.FixedRS2 ?? default);
+        _rd = (RiscVGpRegister)(Meta.FixedRD ?? default);
+        Immediate = Meta.FixedImm ?? default;
+
         return true;
     }
 
-    private bool TryParseArg(ReadOnlySpan<Token> arg, RiscVArgument type)
+    /// <inheritdoc/>
+    protected override bool TryParseArg(ReadOnlySpan<Token> arg, RiscVArgument type)
     {
         return type switch
         {
@@ -168,6 +144,28 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
     }
+
+    /// <inheritdoc/>
+    protected override RiscVInstruction BuildInstruction()
+    {
+        Guard.IsNotNull(Meta);
+
+        return Meta switch
+        {
+            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, _rd, _rs1, _rs2),
+            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, _rd, _rs1, (short)Immediate),
+            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, _rd, Immediate),
+            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, _rs1, _rs2, Immediate),
+            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
+            JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
+
+            _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
+        };
+    }
+
+    /// <inheritdoc/>
+    protected override RiscVInstructionParser CreateSubParser()
+        => new(Config, _instructionTable, CurrentAddress, null, null);
 
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
@@ -279,22 +277,5 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             return false;
 
         return true;
-    }
-
-    private RiscVInstruction BuildInstruction()
-    {
-        Guard.IsNotNull(_meta);
-
-        return _meta switch
-        {
-            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, _rd, _rs1, _rs2),
-            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, _rd, _rs1, (short)Immediate),
-            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, _rd, Immediate),
-            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, _rs1, _rs2, Immediate),
-            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
-            JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
-
-            _ => throw new NotSupportedException($"Metadata type {_meta.GetType().Name} is not supported for encoding.")
-        };
     }
 }
