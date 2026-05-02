@@ -150,6 +150,11 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
             return false;
         }
 
+        // Set fixed values
+        _rs = (MipsGpRegister)(Meta.FixedRS ?? default);
+        _rt = (MipsGpRegister)(Meta.FixedRT ?? default);
+        _rd = (MipsGpRegister)(Meta.FixedRD ?? default);
+
         return true;
     }
 

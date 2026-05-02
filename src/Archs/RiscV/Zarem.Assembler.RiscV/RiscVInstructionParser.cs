@@ -131,6 +131,12 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             return false;
         }
 
+        // Set fixed values
+        _rs1 = (RiscVGpRegister)(Meta.FixedRS1 ?? default);
+        _rs2 = (RiscVGpRegister)(Meta.FixedRS2 ?? default);
+        _rd = (RiscVGpRegister)(Meta.FixedRD ?? default);
+        Immediate = Meta.FixedImm ?? default;
+
         return true;
     }
 
