@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Extensions.System;
@@ -13,8 +14,10 @@ using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Parsers.Enums;
 using Zarem.Assembler.Parsers.Expressions;
+using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
@@ -178,6 +181,31 @@ public abstract class InstructionParserBase<TRegister, TSet>
 
         return true;
     }
+
+    /// <summary>
+    /// Generates an <see cref="AssemblyLine"/> from a pseudo-instruction substitution template.
+    /// </summary>
+    protected AssemblyLine ExpandTemplate(string[] template, ITokenizerProfile profile)
+    {
+        var instruction = template[0];
+        var sb = new StringBuilder(instruction);
+        sb.Append(' ');
+
+        for (int i = 1; i < template.Length; i++)
+        {
+            if (i > 1)
+                sb.Append(", ");
+
+            sb.Append(template[i]);
+        }
+
+        var line = sb.ToString();
+    }
+
+    /// <summary>
+    /// Substitutes placeholders in a pseudo-instruction template with the original instruction's arguments.
+    /// </summary>
+    protected abstract string SubstituteTemplatePlaceholders(string line);
 
     /// <summary>
     /// Cleans a value to a specified bit count and shift amount, while also checking for any changes that occured during the cast.

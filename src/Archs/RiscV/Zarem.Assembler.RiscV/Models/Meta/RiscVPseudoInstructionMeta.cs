@@ -21,5 +21,5 @@ public record RiscVPseudoInstructionMeta : RiscVInstructionMetaBase, IPseudoInst
     /// Gets the expansion of the pseudo-instruction into real instructions.
     /// </summary>
     [JsonPropertyName("expansion")]
-    public required string[][] Expansion { get; init; }
+    public required string[] Expansion { get; init; }
 }

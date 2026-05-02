@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
+using System.Text.Json.Serialization;
+using System.Threading;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
@@ -15,6 +18,7 @@ using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Enums;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Parsers;
+using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Extensions;
 using Zarem.Helpers;
@@ -105,16 +109,18 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
         // as parsed instruction.
         if (_meta is MipsPseudoInstructionMeta pMeta)
         {
-            var pseudo = new MipsPseudoInstruction
+            // Expand the pseudo-instruction into its component instructions, substituting arguments as necessary
+            var expansions = new MipsInstruction[pMeta.Expansion.Length];
+            var profile = new MipsTokenizerProfile();
+            foreach (var template in pMeta.Expansion)
             {
-                PseudoOp = pMeta.PseudoOp,
-                RS = _rs,
-                RT = _rt,
-                RD = _rd,
-                Immediate = Immediate,
-            };
+                var lineStr = SubstituteTemplatePlaceholders(template);
+                var tokenizedLine = Tokenizer.TokenizeLine(lineStr, profile)[0];
+                var childParser = new MipsInstructionParser(Config, _instructionTable, CurrentAddress, null, null);
+                childParser.Parse(tokenizedLine);
+            }
 
-            return new MipsParsedInstruction(pseudo, References);
+            return new MipsParsedInstruction(expansions, References);
         }
 
         // Build an instruction using the information from
@@ -305,6 +311,57 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
             return false;
 
         return true;
+    }
+
+    /// <inheritdoc/>
+    protected override string SubstituteTemplatePlaceholders(string template)
+    {
+        string result = template;
+
+        foreach (MipsArgument argType in Enum.GetValues<MipsArgument>())
+        {
+            // Get the string representation used in JSON (e.g., "rs", "imm32")
+            string? placeholderName = GetJsonName(argType);
+            if (string.IsNullOrEmpty(placeholderName)) continue;
+
+            string searchPattern = $"${placeholderName}";
+            if (!result.Contains(searchPattern)) continue;
+
+            // Resolve the actual value from the parser's current state
+            string value = GetArgumentValueAsString(argType);
+            result = result.Replace(searchPattern, value);
+        }
+
+        return result;
+    }
+
+    private string GetArgumentValueAsString(MipsArgument argType)
+    {
+        return argType switch
+        {
+            MipsArgument.RS => MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.GeneralPurpose),
+            MipsArgument.RT => MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.GeneralPurpose),
+            MipsArgument.RD => MipsRegisterTable.Instance.GetRegisterString(_rd, MipsRegisterSet.GeneralPurpose),
+            MipsArgument.FS => MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.FloatingPoints),
+            MipsArgument.FT => MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.FloatingPoints),
+            MipsArgument.FD => MipsRegisterTable.Instance.GetRegisterString(_rd, MipsRegisterSet.FloatingPoints),
+
+            // Immediate/FullImmediate uses the raw parsed value
+            MipsArgument.Immediate or MipsArgument.FullImmediate or
+            MipsArgument.Offset or MipsArgument.Address => Immediate.ToString(),
+
+            MipsArgument.ShiftAmount => ((byte)Immediate).ToString(),
+
+            _ => ThrowHelper.ThrowArgumentException<string>(),
+        };
+    }
+
+    private static string? GetJsonName(MipsArgument val)
+    {
+        return typeof(MipsArgument)
+            .GetField(val.ToString())
+            ?.GetCustomAttribute<JsonStringEnumMemberNameAttribute>()
+            ?.Name;
     }
 
     private MipsInstruction BuildInstruction()

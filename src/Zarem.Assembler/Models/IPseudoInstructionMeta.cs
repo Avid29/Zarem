@@ -10,5 +10,5 @@ public interface IPseudoInstructionMeta
     /// <summary>
     /// Gets the expansion of the pseudo-instruction into real instructions.
     /// </summary>
-    string[][] Expansion { get; init; }
+    string[] Expansion { get; init; }
 }

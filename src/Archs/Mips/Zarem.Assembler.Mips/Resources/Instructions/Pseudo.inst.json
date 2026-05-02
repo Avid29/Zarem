@@ -7,7 +7,7 @@
     "added_in": "MipsI",
     "behavior": "sll $zero, $zero, 0",
     "expansion": [
-      [ "sll", "$zero", "$zero", "0" ]
+      [ "sll $zero, $zero, 0" ]
     ]
   },
   {
@@ -18,7 +18,7 @@
     "added_in": "MipsI",
     "behavior": "sll $zero, $zero, 1",
     "expansion": [
-      [ "sll", "$zero", "$zero", "1" ]
+      [ "sll $zero, $zero, 1" ]
     ]
   },
   {
@@ -29,7 +29,7 @@
     "added_in": "MipsI",
     "behavior": "beq $zero, $zero, offset",
     "expansion": [
-      [ "beq", "$zero", "$zero", "offset" ]
+      [ "beq $zero, $zero, offset" ]
     ]
   },
   {
@@ -41,7 +41,7 @@
     "removed_in": "Mips_R6",
     "behavior": "bgezal $zero, offset",
     "expansion": [
-      [ "bgezal", "$zero", "offset" ]
+      [ "bgezal $zero, offset" ]
     ]
   },
   {
@@ -52,8 +52,8 @@
     "added_in": "MipsI",
     "behavior": "slt $at, $rs, $rt; bne $at, $zero, offset",
     "expansion": [
-      [ "slt", "$at", "$rs", "$rt" ],
-      [ "bne", "$at", "$zero", "offset" ]
+      [ "slt $at, $rs, $rt" ],
+      [ "bne $at, $zero, offset" ]
     ]
   },
   {
@@ -64,8 +64,8 @@
     "added_in": "MipsI",
     "behavior": "lui $rt, upper; ori $rt, $rt, lower",
     "expansion": [
-      [ "lui", "$rt", "imm32 << 16" ],
-      [ "ori", "$rt", "$rt", "imm32 & 0xFFFF" ]
+      [ "lui $rt, imm32 << 16" ],
+      [ "ori $rt, $rt, imm32 & 0xFFFF" ]
     ]
   },
   {
@@ -75,9 +75,9 @@
     "args": [ "rd", "rs" ],
     "added_in": "MipsI",
     "expansion": [
-      [ "addu", "$rd", "$rs", "$zero" ],
-      [ "bgez", "$rs", "8" ],
-      [ "sub", "$rd", "$zero", "$rs" ]
+      [ "addu $rd, $rs, $zero" ],
+      [ "bgez $rs, 8" ],
+      [ "sub $rd, $zero, $rs" ]
     ]
   },
   {
@@ -86,9 +86,9 @@
     "pseudo_id": 7,
     "args": [ "rd", "rs" ],
     "added_in": "MipsI",
-    "behavior": "addu $rd, $rs, zero",
+    "behavior": "addu $rd, $rs, $zero",
     "expansion": [
-      [ "addu", "$rd", "$rs", "$zero" ]
+      [ "addu $rd, $rs, $zero" ]
     ]
   },
   {
@@ -98,8 +98,8 @@
     "args": [ "rd", "imm32" ],
     "added_in": "MipsI",
     "expansion": [
-      [ "lui", "$rd", "imm32 >> 16" ],
-      [ "ori", "$rd", "$rd", "imm32 & 0xFFFF" ]
+      [ "lui $rd, imm32 >> 16" ],
+      [ "ori $rd, $rd, imm32 & 0xFFFF" ]
     ]
   },
   {
@@ -110,8 +110,8 @@
     "added_in": "MipsI",
     "behavior": "slt $rd, $rs, $rt; xori $rd, $rd, 1",
     "expansion": [
-      [ "slt", "$rd", "$rs", "$rt" ],
-      [ "xori", "$rd", "$rd", "1" ]
+      [ "slt $rd, $rs, $rt" ],
+      [ "xori $rd, $rd, 1" ]
     ]
   }
 ]
