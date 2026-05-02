@@ -188,6 +188,44 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
         EmitRet(il, T.CreateTruncating(inst.JumpOffset));
     }
 
+    private void Load<TData>(ILGenerator il, RiscVInstruction inst, T pc)
+        where TData : unmanaged
+    {
+        var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, inst.Immediate, RiscVTrap.LoadAddressMisaligned);
+
+        // Write Back to RD
+        EmitStoreRegister(il, inst.RD, il =>
+        {
+            // Call Memory.Read<TData>(ulong)
+            var readMethod = ReadMethods[typeof(TData)];
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Callvirt, GetMemoryMethod);
+            il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
+            il.Emit(OpCodes.Conv_U8);
+            il.Emit(OpCodes.Callvirt, readMethod);
+
+            // Sign-Extension / Zero-Extension then convert to T
+            il.EmitConv<TData>();
+            il.EmitConv<T>();
+        });
+    }
+
+    private void Store<TData>(ILGenerator il, RiscVInstruction inst, T pc)
+        where TData : unmanaged
+    {
+        var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, inst.StoreOffset, RiscVTrap.StoreAddressMisaligned);
+
+        // Call Memory.Write<TData>(ulong, TData)
+        var writeMethod = WriteMethods[typeof(TData)];
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Callvirt, GetMemoryMethod);
+        il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
+        il.Emit(OpCodes.Conv_U8);
+        EmitLoadRegister(il, inst.RS2);                 // Arg 2: TData value (Truncate the RS2 register value)
+        il.EmitConv<TData>();
+        il.Emit(OpCodes.Callvirt, writeMethod);
+    }
+
     private void Branch(ILGenerator il, RiscVInstruction inst, T pc, OpCode conditionCode)
     {
         Label takeBranch = il.DefineLabel();
