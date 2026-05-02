@@ -20,6 +20,7 @@ entry:
     
 .data
 prompt:     .asciiz "Enter 6x6 board (use 0 for empty):\n"
+space:      .asciiz " " 
 newline:    .asciiz "\n" 
 buffer:     .space  37   # Buffer for string input
 
@@ -59,7 +60,7 @@ convert_loop:
     j       convert_loop
     
 read_done:
-    jalr    x0,     0(ra)
+    ret
     
 # Prints the board from 'board' back to console
 print_board:
@@ -72,13 +73,13 @@ print_loop:
     
     # Print the current digit
     lbu     a0,     0(t0)
-    addi    a0,     a0,     48          
-    li      a7,     11                
+    li      a7,     1
     ecall
-
-    # Print a space between numbers for better visibility
-    li      a0,     32                  # ASCII space
-    li      a7,     11
+    
+    # Print a space for visibility
+    la      a0,     space
+    li      a1,     0
+    li      a7,     1
     ecall
 
     addi    t1,     t1,     1           # Increment total
@@ -89,11 +90,13 @@ print_loop:
     blt     t5,     t6,     print_loop   
     
     # If we are here, t5 == 6. Print newline and reset t5.
-    li      a0,     10                  # ASCII Newline
-    li      a7,     11
+    la      a0,     newline
+    li      a1,     0
+    li      a7,     3
     ecall
+    
     li      t5,     0                   # Reset column counter
     j       print_loop
 
 print_done:
-    jalr    x0,     0(ra)
+    ret

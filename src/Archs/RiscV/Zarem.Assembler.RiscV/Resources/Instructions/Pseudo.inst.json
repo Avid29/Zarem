@@ -14,7 +14,7 @@
     "pseudo_id": 1,
     "args": [],
     "expansion": [
-      "jalr ${rd}, (${imm32}) >> 12"
+      "jalr x0, 0(ra)"
     ]
   },
   {

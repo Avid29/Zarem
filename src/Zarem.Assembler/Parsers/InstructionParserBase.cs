@@ -101,6 +101,8 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         if (!TryDetermineInstruction(line, out _))
             return null;
 
+        references = References;
+
         // Parse arguments
         Guard.IsNotNull(Meta);
         TArg[] pattern = Meta.ArgumentPattern;
@@ -138,7 +140,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             return expansions;
         }
 
-        references = References;
         return [BuildInstruction()];
     }
 

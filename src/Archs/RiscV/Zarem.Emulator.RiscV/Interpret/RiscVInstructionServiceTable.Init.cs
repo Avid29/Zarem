@@ -67,6 +67,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
          
         // Add Jump operations
         @base[GetLookupIndex(RiscVOpCode.JumpAndLink, 0)] = &JumpAndLink;
+        @base[GetLookupIndex(RiscVOpCode.JumpAndLinkRegister, 0)] = &JumpAndLinkRegister;
          
         // Add Branch operations
         @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchEqual)] = &BranchOn<XeqLogic<T>>;
