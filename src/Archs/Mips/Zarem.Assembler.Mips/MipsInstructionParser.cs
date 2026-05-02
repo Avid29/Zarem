@@ -107,7 +107,7 @@ public class MipsInstructionParser : InstructionParserBase<MipsArgument, MipsGpR
         // It's a pseudo instruction.
         // Create a pseudo-instruction and return with reference
         // as parsed instruction.
-        if (_meta is MipsPseudoInstructionMeta pMeta)
+        if (_meta is IPseudoInstructionMeta pMeta)
         {
             // Expand the pseudo-instruction into its component instructions, substituting arguments as necessary
             var expansions = new MipsInstruction[pMeta.Expansion.Length];

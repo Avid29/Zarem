@@ -99,9 +99,23 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVArgument, RiscV
             TryParseArg(arg.Tokens, pattern[i]);
         }
 
-        if (_meta is RiscVPseudoInstructionMeta pMeta)
+        if (_meta is IPseudoInstructionMeta pMeta)
         {
-            throw new NotImplementedException();
+            // Expand the pseudo-instruction into its component instructions, substituting arguments as necessary
+            var expansions = new RiscVInstruction[pMeta.Expansion.Length];
+            var profile = new RiscVTokenizerProfile();
+            int i = 0;
+            foreach (var template in pMeta.Expansion)
+            {
+                var tokenizedLine = ExpandTemplate(template, profile);
+                var childParser = new RiscVInstructionParser(Config, _instructionTable, CurrentAddress, null, null);
+                var parsed = childParser.Parse(tokenizedLine);
+                Guard.IsNotNull(parsed);
+                expansions[i] = parsed.Instructions[0];
+                i++;
+            }
+
+            return new RiscVParsedInstruction(expansions, References);
         }
 
         // Build an instruction using the information from
@@ -113,7 +127,25 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVArgument, RiscV
     /// <inheritdoc/>
     protected override string GetTemplateArgSubstitution(RiscVArgument argType)
     {
-        throw new NotImplementedException();
+        return argType switch
+        {
+            RiscVArgument.RD => RiscVRegisterTable.Instance.GetRegisterString(_rd, RiscVRegisterSet.GeneralPurpose),
+            RiscVArgument.RS1 => RiscVRegisterTable.Instance.GetRegisterString(_rs1, RiscVRegisterSet.GeneralPurpose),
+            RiscVArgument.RS2 => RiscVRegisterTable.Instance.GetRegisterString(_rs2, RiscVRegisterSet.GeneralPurpose),
+            RiscVArgument.FRD => RiscVRegisterTable.Instance.GetRegisterString(_rd, RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRS1 => RiscVRegisterTable.Instance.GetRegisterString(_rs1, RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRS2 => RiscVRegisterTable.Instance.GetRegisterString(_rs2, RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRS3 => RiscVRegisterTable.Instance.GetRegisterString(_rs2, RiscVRegisterSet.FloatingPoints), // TODO
+
+            RiscVArgument.Immediate or RiscVArgument.FullImmediate or RiscVArgument.BranchOffset or RiscVArgument.StoreOffset or
+            RiscVArgument.JumpOffset or RiscVArgument.UpperImmediate or RiscVArgument.UImm5 => $"{Immediate}",
+
+            RiscVArgument.MemoryLoad or RiscVArgument.MemoryStore => $"{Immediate}({RiscVRegisterTable.Instance.GetRegisterString(_rs1, RiscVRegisterSet.GeneralPurpose)})",
+
+            RiscVArgument.Csr => "", // TODO
+
+            _ => ThrowHelper.ThrowArgumentException<string>(),
+        };
     }
 
     [MemberNotNullWhen(true, nameof(_meta))]

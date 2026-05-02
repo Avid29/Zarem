@@ -65,7 +65,7 @@ public partial class RiscVExecutionTests
             Assert.Fail();
 
         // TODO: Psuedo instruction support
-        var instruction = parsed.Realize()[0];
+        var instruction = parsed.Instructions[0];
         var computer = new RiscVComputer(config);
         var cpu = (RiscVCpu<T>)computer.Cpu;
 

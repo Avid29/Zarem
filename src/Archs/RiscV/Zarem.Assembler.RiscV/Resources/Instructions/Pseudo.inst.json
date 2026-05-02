@@ -5,7 +5,7 @@
     "pseudo_id": 0,
     "args": [],
     "expansion": [
-      "add, zero, zero, zero"
+      "add zero, zero, zero"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "pseudo_id": 1,
     "args": [],
     "expansion": [
-      "jalr, ${rd}, (${imm32}) >> 12"
+      "jalr ${rd}, (${imm32}) >> 12"
     ]
   },
   {
@@ -33,7 +33,7 @@
     "pseudo_id": 3,
     "args": [ "rd", "rs1" ],
     "expansion": [
-      "addi, ${rd}, ${rs1}, 0"
+      "addi ${rd}, ${rs1}, 0"
     ]
   },
   {

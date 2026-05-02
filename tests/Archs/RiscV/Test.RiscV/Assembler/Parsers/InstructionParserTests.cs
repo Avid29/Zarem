@@ -86,8 +86,7 @@ public class InstructionParserTests
         // Validate execution
         Assert.IsNotNull(actual);
 
-        var result = actual?.Realize()[0];
-        Assert.IsTrue(result.HasValue);
+        var result = actual.Instructions[0];
 
         //#if DEBUG
         //        Assert.AreEqual(input, result.Value.Disassembled);
