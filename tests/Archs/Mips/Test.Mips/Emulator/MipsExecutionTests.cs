@@ -181,18 +181,18 @@ public partial class MipsExecutionTests
         if (writeback.HasValue)
         {
             // Ensure that the expected register was written to with the expected value
-            Assert.AreEqual(writeback.Value.Register, execution.GPR);
+            Assert.AreEqual(writeback.Value.Register, execution.WritebackGPRegister);
 
             var writeBackValue = writeback.Value.Value;
             if (writeBackValue.HasValue)
             {
-                Assert.AreEqual(writeBackValue.Value, cpu[execution.GPR]);
+                Assert.AreEqual(writeBackValue.Value, cpu[execution.WritebackGPRegister]);
             }
         }
         else
         {
             // If no register check was provided, we at least want to make sure no register was written to (as that would be unexpected)
-            Assert.AreEqual(MipsGpRegister.Zero, execution.GPR);
+            Assert.AreEqual(MipsGpRegister.Zero, execution.WritebackGPRegister);
         }
 
         var highLow = @case.ExpectedHighLow;

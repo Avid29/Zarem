@@ -161,8 +161,9 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             // Expression arguments
             (>= RiscVArgument.Immediate and <= RiscVArgument.FullImmediate) => TryParseExpressionArg(arg, type),
 
-            //// Address offset arguments
-            RiscVArgument.Memory => TryParseAddressOffsetArg(arg),
+            // Address offset arguments
+            RiscVArgument.MemoryLoad => TryParseAddressOffsetArg(arg, RiscVArgument.Immediate),
+            RiscVArgument.MemoryStore => TryParseAddressOffsetArg(arg, RiscVArgument.StoreOffset),
 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
@@ -214,7 +215,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             RiscVArgument.Immediate => RiscVReferenceType.Low12,
             RiscVArgument.UpperImmediate => RiscVReferenceType.High20,
             // 'Memory' in RISC-V loads/stores uses a 12-bit offset (%lo)
-            RiscVArgument.StoreOffset or RiscVArgument.Memory => RiscVReferenceType.Low12,
+            RiscVArgument.StoreOffset => RiscVReferenceType.Low12,
             // FullImmediate triggers a HI/LO pair
             RiscVArgument.FullImmediate => RiscVReferenceType.High20,   
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<RiscVReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
@@ -225,8 +226,8 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
         {
             // 5-bit unsigned immediate (e.g., vsetvli or CSRI)
             RiscVArgument.UImm5 => (5, 1, false),
-            RiscVArgument.Immediate or RiscVArgument.StoreOffset or
-            RiscVArgument.Memory => (12, 0, true),
+            RiscVArgument.Immediate or
+            RiscVArgument.StoreOffset => (12, 0, true),
             RiscVArgument.BranchOffset => (12, 1, true),
             RiscVArgument.JumpOffset => (20, 1, true),
             RiscVArgument.UpperImmediate => (20, 0, false),
@@ -260,7 +261,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
     /// <summary>
     /// Parses an argument as an address offset, assigning its components to immediate and $rs.
     /// </summary>
-    private bool TryParseAddressOffsetArg(ReadOnlySpan<Token> arg)
+    private bool TryParseAddressOffsetArg(ReadOnlySpan<Token> arg, RiscVArgument immType)
     {
         // NOTE: Be careful about forwards to other parse functions with regards to 
         // error logging. Address offset argument errors might be inappropriately logged.
@@ -270,7 +271,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
             return false;
 
         // Try parse offset component into immediate, return false if failed
-        if (!TryParseExpressionArg(offsetStr, RiscVArgument.Immediate))
+        if (!TryParseExpressionArg(offsetStr, immType))
             return false;
 
         // Parse register component into $rs, return false if failed

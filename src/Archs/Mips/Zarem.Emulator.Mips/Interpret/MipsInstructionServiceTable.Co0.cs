@@ -100,8 +100,8 @@ public partial class MipsInstructionServiceTable<T, TS>
             {
                 CoProc0Reg = CP0Registers.Status,
                 CoProc0WriteBack = T.CreateTruncating((uint)status),
-                WriteBack = T.CreateTruncating((uint)status),
-                GPR = inst.RT,
+                Writeback = T.CreateTruncating((uint)status),
+                WritebackGPRegister = inst.RT,
             };
         }
 

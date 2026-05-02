@@ -1,17 +1,14 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
-using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Events;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models;
-using Zarem.Emulator.TrapHandlers;
 using Zarem.Models.Instructions;
 using Zarem.Models.Versioning.Enums;
 
@@ -82,7 +79,7 @@ public sealed class RiscVInterpretCpu<T> : RiscVCpu<T>, IInterpretCpu<RiscVInter
         execution = default;
 
         trap = trap is RiscVTrap.None ? Execute(instruction, out execution) : trap;
-        //trap = trap is RiscVTrap.None ? MemAccess(execution, out memRead) : trap;
+        trap = trap is RiscVTrap.None ? MemAccess(execution, out memRead) : trap;
         trap = trap is RiscVTrap.None ? WriteBack(execution, memRead) : trap;
 
         // Handle trap, if any occurred
@@ -95,6 +92,52 @@ public sealed class RiscVInterpretCpu<T> : RiscVCpu<T>, IInterpretCpu<RiscVInter
     private RiscVTrap Execute(RiscVInstruction instruction, out RiscVExecution<T> execution)
         => _instructionServiceTable.Execute(instruction, out execution);
 
+    private RiscVTrap MemAccess(RiscVExecution<T> execution, out T read)
+    {
+        read = default;
+
+        ulong addr = ulong.CreateTruncating(execution.MemAddress);
+        ulong size = execution.MemSize;
+
+        // NOTE: Alignment was already checked during the execution phase.
+        // No need to check it here too.
+
+        if (execution.SideEffect is RiscVSideEffect.ReadMemory or RiscVSideEffect.ReadMemorySigned)
+        {
+            bool signed = execution.SideEffect is RiscVSideEffect.ReadMemorySigned;
+            read = size switch
+            {
+                1 => signed ? T.CreateSaturating(Memory.Read<sbyte>(addr)) : T.CreateTruncating(Memory.Read<byte>(addr)),
+                2 => signed ? T.CreateSaturating(Memory.Read<short>(addr)) : T.CreateTruncating(Memory.Read<ushort>(addr)),
+                4 => signed ? T.CreateSaturating(Memory.Read<int>(addr)) : T.CreateTruncating(Memory.Read<uint>(addr)),
+                8 => signed ? T.CreateSaturating(Memory.Read<long>(addr)) : T.CreateTruncating(Memory.Read<ulong>(addr)),
+                _ => ThrowHelper.ThrowInvalidOperationException<T>($"Invalid memory read size: {size}"),
+            };
+        }
+        else if (execution.SideEffect is RiscVSideEffect.WriteMemory)
+        {
+            switch (size)
+            {
+                case 1:
+                    Memory.Write(addr, byte.CreateTruncating(execution.Writeback));
+                    break;
+                case 2:
+                    Memory.Write(addr, ushort.CreateTruncating(execution.Writeback));
+                    break;
+                case 4:
+                    Memory.Write(addr, uint.CreateTruncating(execution.Writeback));
+                    break;
+                case 8:
+                    Memory.Write(addr, ulong.CreateTruncating(execution.Writeback));
+                    break;
+                default:
+                    throw new InvalidOperationException($"Invalid memory write size: {size}");
+            }
+        }
+
+        return RiscVTrap.None;
+    }
+
     private RiscVTrap WriteBack(RiscVExecution<T> execution, T memRead)
     {
         T nextPc = ProgramCounter + T.CreateTruncating(4);
@@ -106,6 +149,10 @@ public sealed class RiscVInterpretCpu<T> : RiscVCpu<T>, IInterpretCpu<RiscVInter
         {
             case RiscVSideEffect.ProgramCounter:
                 nextPc = execution.ProgramCounter;
+                break;
+            case RiscVSideEffect.ReadMemory:
+            case RiscVSideEffect.ReadMemorySigned:
+                RegisterFile[(int)execution.WritebackGPRegister] = memRead;
                 break;
         }
 

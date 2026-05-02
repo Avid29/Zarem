@@ -49,6 +49,9 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
                     (RiscVGpRegister.Saved8, T.CreateTruncating(RiscVExecutionTests.K0)),
                     (RiscVGpRegister.Saved9, T.CreateTruncating(RiscVExecutionTests.K1)),
                 ];
+
+            MemoryInitialization =
+                [(T.CreateTruncating(0x100), [0x12, 0x34, 0x56, 0x78])];
         }
     }
 
@@ -67,6 +70,11 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
         ExpectedWriteBack = (reg, writeBack);
     }
 
+    public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input, (T, byte[]) memory) : this(config, input)
+    {
+        ExpectedMemory = memory;
+    }
+
     public RiscVTrap ExpectedTrap { get; init; } = RiscVTrap.None;
 
     public T? ExpectedPC { get; init; } = null;
@@ -75,5 +83,9 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
 
     public (RiscVGpRegister Register, T? Value)? ExpectedWriteBack { get; init; } = null;
 
+    public (T Address, byte[] Data)? ExpectedMemory { get; init; }
+
     public (RiscVGpRegister Register, T Value)[] RegisterInitialization { get; init; } = [];
+
+    public (T Address, byte[] Data)[] MemoryInitialization { get; init; } = [];
 }

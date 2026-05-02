@@ -28,8 +28,8 @@ public readonly struct MipsExecution<T>
     {
         return new MipsExecution<T>
         {
-            GPR = dest,
-            WriteBack = writeBack,
+            WritebackGPRegister = dest,
+            Writeback = writeBack,
         };
     }
 
@@ -87,7 +87,7 @@ public readonly struct MipsExecution<T>
     {
         return new MipsExecution<T>
         {
-            GPR = dest,
+            WritebackGPRegister = dest,
             MemAddress = address,
             MemSize = (uint)size,
             SideEffect = signed ? MipsSideEffect.ReadMemorySigned : MipsSideEffect.ReadMemory,
@@ -101,7 +101,7 @@ public readonly struct MipsExecution<T>
     {
         return new MipsExecution<T>
         {
-            WriteBack = writeBack,
+            Writeback = writeBack,
             MemAddress = address,
             MemSize = (uint)size,
             SideEffect = MipsSideEffect.WriteMemory,
@@ -128,8 +128,8 @@ public readonly struct MipsExecution<T>
         return new MipsExecution<T>
         {
             ProgramCounter = absolutePC,
-            WriteBack = returnAddress,
-            GPR = raReg,
+            Writeback = returnAddress,
+            WritebackGPRegister = raReg,
         };
     }
 
@@ -181,7 +181,7 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Gets the writeback value to the selected GPR register.
     /// </summary>
-    public T WriteBack { get; init; }
+    public T Writeback { get; init; }
 
     /// <summary>
     /// Gets the general purpose register destination of the output.
@@ -189,7 +189,7 @@ public readonly struct MipsExecution<T>
     /// <remarks>
     /// <see cref="MipsGpRegister.Zero"/> if none.
     /// </remarks>
-    public MipsGpRegister GPR { get; init; }
+    public MipsGpRegister WritebackGPRegister { get; init; }
 
     /// <summary>
     /// Gets the type of secondary effect from the execution, if any.

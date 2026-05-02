@@ -3,7 +3,7 @@
     "type": "s-type",
     "name": "sb",
     "funct3": 0,
-    "args": [ "rs2", "mem" ],
+    "args": [ "rs2", "mem_store" ],
     "extension": "I",
     "behavior": "Mem8($rs1 + imm) = $rs2[7:0]"
   },
@@ -11,7 +11,7 @@
     "type": "s-type",
     "name": "sh",
     "funct3": 1,
-    "args": [ "rs2", "mem" ],
+    "args": [ "rs2", "mem_store" ],
     "extension": "I",
     "behavior": "Mem16($rs1 + imm) = $rs2[15:0]"
   },
@@ -19,7 +19,7 @@
     "type": "s-type",
     "name": "sw",
     "funct3": 2,
-    "args": [ "rs2", "mem" ],
+    "args": [ "rs2", "mem_store" ],
     "extension": "I",
     "behavior": "Mem32($rs1 + imm) = $rs2"
   }

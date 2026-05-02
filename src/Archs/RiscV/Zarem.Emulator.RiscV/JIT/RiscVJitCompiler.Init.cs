@@ -81,6 +81,17 @@ public partial class RiscVJitCompiler<T>
         @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned)] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Blt_Un);
         @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Bge_Un);
 
+        // Add memory operations
+        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadByte)] = Load<sbyte>;
+        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadHalfWord)] = Load<short>;
+        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadWord)] = Load<int>;
+        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadByteUnsigned)] = Load<byte>;
+        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadHalfWordUnsigned)] = Load<ushort>;
+        @base[GetLookupIndex(RiscVOpCode.Store, Funct3Code.StoreByte)] = Store<sbyte>;
+        @base[GetLookupIndex(RiscVOpCode.Store, Funct3Code.StoreHalfWord)] = Store<short>;
+        @base[GetLookupIndex(RiscVOpCode.Store, Funct3Code.StoreWord)] = Store<int>;
+
+        // Add misc operations
         @base[GetLookupIndex(RiscVOpCode.LoadUpperImmediate, 0)] = Lui;
 
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)

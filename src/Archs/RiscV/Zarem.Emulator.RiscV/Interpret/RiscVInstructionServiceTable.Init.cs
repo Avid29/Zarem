@@ -75,7 +75,18 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqual)] = &BranchOn<XgeLogic<T, TSigned>>;
         @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
         @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
-        
+
+        // Add memory operations
+        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadByte)] = &Load<sbyte>;
+        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadHalfWord)] = &Load<short>;
+        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadWord)] = &Load<int>;
+        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadByteUnsigned)] = &Load<byte>;
+        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadHalfWordUnsigned)] = &Load<ushort>;
+        @base[GetLookupIndex(RiscVOpCode.Store, Funct3Code.StoreByte)] = &Store<sbyte>;
+        @base[GetLookupIndex(RiscVOpCode.Store, Funct3Code.StoreHalfWord)] = &Store<short>;
+        @base[GetLookupIndex(RiscVOpCode.Store, Funct3Code.StoreWord)] = &Store<int>;
+
+        // Misc
         @base[GetLookupIndex(RiscVOpCode.LoadUpperImmediate, 0)] = &Lui;
 
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)

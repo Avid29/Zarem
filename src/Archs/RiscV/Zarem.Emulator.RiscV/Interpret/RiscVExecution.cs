@@ -13,7 +13,7 @@ public readonly struct RiscVExecution<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private readonly T _secondary1;
-    //private readonly ulong _secondary2;
+    private readonly ulong _secondary2;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVExecution{T}"/> struct.
@@ -52,6 +52,34 @@ public readonly struct RiscVExecution<T>
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVExecution{T}"/> struct.
+    /// </summary>
+    public static RiscVExecution<T> CreateMemRead(RiscVGpRegister dest, T address, int size, bool signed = true)
+    {
+        return new RiscVExecution<T>
+        {
+            WritebackGPRegister = dest,
+            MemAddress = address,
+            MemSize = (uint)size,
+            SideEffect = signed ? RiscVSideEffect.ReadMemorySigned : RiscVSideEffect.ReadMemory,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVExecution{T}"/> struct.
+    /// </summary>
+    public static RiscVExecution<T> CreateMemWrite(T writeBack, T address, int size)
+    {
+        return new RiscVExecution<T>
+        {
+            Writeback = writeBack,
+            MemAddress = address,
+            MemSize = (uint)size,
+            SideEffect = RiscVSideEffect.WriteMemory,
+        };
+    }
+
+    /// <summary>
     /// Gets the general purpose register destination of the output.
     /// </summary>
     /// <remarks>
@@ -80,5 +108,26 @@ public readonly struct RiscVExecution<T>
             _secondary1 = value;
             SideEffect = RiscVSideEffect.ProgramCounter;
         }
+    }
+
+    /// <summary>
+    /// Gets the memory address to read or write at, if applicable.
+    /// </summary>
+    public T MemAddress
+    {
+        get => _secondary1;
+        init => _secondary1 = value;
+    }
+
+    /// <summary>
+    /// Gets the size of the memory operation to perform, if applicable
+    /// </summary>
+    /// <remarks>
+    /// Number of bytes to read/write.
+    /// </remarks>
+    public ulong MemSize
+    {
+        get => _secondary2;
+        init => _secondary2 = value;
     }
 }
