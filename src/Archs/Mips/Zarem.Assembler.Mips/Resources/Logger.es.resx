@@ -153,9 +153,6 @@
   <data name="WrongArgumentCount" xml:space="preserve">
     <value>Instruction '{0}' cannot take '{1}' arguments.</value>
   </data>
-  <data name="ZeroRegisterWriteback" xml:space="preserve">
-    <value>This instruction writes to $zero.</value>
-  </data>
   <data name="CastWarningSignChanged" xml:space="preserve">
     <value>Expression '{0}' evaluated to signed value '{1}' but was cast to an unsigned value, resulting in '{2}'.</value>
   </data>
@@ -176,9 +173,6 @@
   </data>
   <data name="CastWarningTruncatedHigh" xml:space="preserve">
     <value>Expression '{0}' evaluated to {1} but was truncated to {3}-bits, resulting in '{2}'.</value>
-  </data>
-  <data name="EmptyArgument" xml:space="preserve">
-    <value>Argument is empty.</value>
   </data>
   <data name="Needs64BitVersion" xml:space="preserve">
     <value>The instruction '{0}' is only available in 64-bit versions of MIPS.</value>

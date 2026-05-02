@@ -26,7 +26,7 @@ namespace Zarem.Assembler.Parsers;
 /// <summary>
 /// A struct for parsing directives.
 /// </summary>
-public readonly struct DirectiveParser
+public unsafe readonly struct DirectiveParser
 {
     private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly AssemblerConfig? _config;
@@ -234,7 +234,7 @@ public readonly struct DirectiveParser
 
         // Allocate space
         int pos = 0;
-        int argSize = Unsafe.SizeOf<T>();
+        int argSize = sizeof(T);
         var bytes = new byte[args.Count * argSize];
 
         if (_realize)
@@ -277,7 +277,7 @@ public readonly struct DirectiveParser
     {
         directive = null;
 
-        int argSize = Unsafe.SizeOf<T>();
+        int argSize = sizeof(T);
         int pos = 0;
         var bytes = new byte[args.Count * argSize];
 
