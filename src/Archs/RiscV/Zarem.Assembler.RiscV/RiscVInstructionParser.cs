@@ -28,7 +28,7 @@ namespace Zarem.Assembler;
 /// <summary>
 /// A struct for parsing RISC-V instructions.
 /// </summary>
-public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, RiscVRegisterSet>
+public class RiscVInstructionParser : InstructionParserBase<RiscVArgument, RiscVGpRegister, RiscVRegisterSet>
 {
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
@@ -101,22 +101,19 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVGpRegister, Ris
 
         if (_meta is RiscVPseudoInstructionMeta pMeta)
         {
-            var pseudo = new RiscVPseudoInstruction
-            {
-                PseudoOp = pMeta.PseudoOp,
-                RS1 = _rs1,
-                RS2 = _rs2,
-                RD = _rd,
-                Immediate = Immediate,
-            };
-
-            return new RiscVParsedInstruction(pseudo, References);
+            throw new NotImplementedException();
         }
 
         // Build an instruction using the information from
         // _meta and all the parsed arguments
         var instruction = BuildInstruction();
         return new RiscVParsedInstruction(instruction, References);
+    }
+
+    /// <inheritdoc/>
+    protected override string GetTemplateArgSubstitution(RiscVArgument argType)
+    {
+        throw new NotImplementedException();
     }
 
     [MemberNotNullWhen(true, nameof(_meta))]

@@ -131,7 +131,7 @@ public partial class MipsExecutionTests
             Assert.Fail();
 
         // TODO: Psuedo instruction support
-        var instruction = parsed.Realize()[0];
+        var instruction = parsed.Instructions[0];
         var computer = new MipsComputer(config);
         var cpu = (MipsCpu<T>)computer.Cpu;
 

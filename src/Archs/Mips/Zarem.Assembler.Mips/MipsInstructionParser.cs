@@ -33,7 +33,7 @@ namespace Zarem.Assembler;
 /// <summary>
 /// A struct for parsing MIPS instructions.
 /// </summary>
-public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsRegisterSet>
+public class MipsInstructionParser : InstructionParserBase<MipsArgument, MipsGpRegister, MipsRegisterSet>
 {
     private readonly MipsInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
@@ -112,12 +112,15 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
             // Expand the pseudo-instruction into its component instructions, substituting arguments as necessary
             var expansions = new MipsInstruction[pMeta.Expansion.Length];
             var profile = new MipsTokenizerProfile();
+            int i = 0;
             foreach (var template in pMeta.Expansion)
             {
-                var lineStr = SubstituteTemplatePlaceholders(template);
-                var tokenizedLine = Tokenizer.TokenizeLine(lineStr, profile)[0];
+                var tokenizedLine = ExpandTemplate(template, profile);
                 var childParser = new MipsInstructionParser(Config, _instructionTable, CurrentAddress, null, null);
-                childParser.Parse(tokenizedLine);
+                var parsed = childParser.Parse(tokenizedLine);
+                Guard.IsNotNull(parsed);
+                expansions[i] = parsed.Instructions[0];
+                i++;
             }
 
             return new MipsParsedInstruction(expansions, References);
@@ -142,6 +145,30 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
         }
 
         return new MipsParsedInstruction(instruction, References);
+    }
+
+    /// <inheritdoc/>
+    protected override string GetTemplateArgSubstitution(MipsArgument argType)
+    {
+        return argType switch
+        {
+            MipsArgument.RS => $"${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.GeneralPurpose)}",
+            MipsArgument.RT => $"${MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.GeneralPurpose)}",
+            MipsArgument.RD => $"${MipsRegisterTable.Instance.GetRegisterString(_rd, MipsRegisterSet.GeneralPurpose)}",
+            MipsArgument.FS => $"${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.FloatingPoints)}",
+            MipsArgument.FT => $"${MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.FloatingPoints)}",
+            MipsArgument.FD => $"${MipsRegisterTable.Instance.GetRegisterString(_rd, MipsRegisterSet.FloatingPoints)}",
+            MipsArgument.RS_Numbered => $"${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.Numbered)}",
+            MipsArgument.RT_Numbered => $"${MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.Numbered)}",
+
+            // Immediate/FullImmediate uses the raw parsed value
+            MipsArgument.Immediate or MipsArgument.FullImmediate or MipsArgument.ShiftAmount or
+            MipsArgument.Offset or MipsArgument.LargeOffset or MipsArgument.Address => $"{Immediate}",
+
+            MipsArgument.AddressBase => $"{Immediate}(${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.GeneralPurpose)})",
+
+            _ => ThrowHelper.ThrowArgumentException<string>(),
+        };
     }
 
     [MemberNotNullWhen(true, nameof(_meta))]
@@ -311,57 +338,6 @@ public class MipsInstructionParser : InstructionParserBase<MipsGpRegister, MipsR
             return false;
 
         return true;
-    }
-
-    /// <inheritdoc/>
-    protected override string SubstituteTemplatePlaceholders(string template)
-    {
-        string result = template;
-
-        foreach (MipsArgument argType in Enum.GetValues<MipsArgument>())
-        {
-            // Get the string representation used in JSON (e.g., "rs", "imm32")
-            string? placeholderName = GetJsonName(argType);
-            if (string.IsNullOrEmpty(placeholderName)) continue;
-
-            string searchPattern = $"${placeholderName}";
-            if (!result.Contains(searchPattern)) continue;
-
-            // Resolve the actual value from the parser's current state
-            string value = GetArgumentValueAsString(argType);
-            result = result.Replace(searchPattern, value);
-        }
-
-        return result;
-    }
-
-    private string GetArgumentValueAsString(MipsArgument argType)
-    {
-        return argType switch
-        {
-            MipsArgument.RS => MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.GeneralPurpose),
-            MipsArgument.RT => MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.GeneralPurpose),
-            MipsArgument.RD => MipsRegisterTable.Instance.GetRegisterString(_rd, MipsRegisterSet.GeneralPurpose),
-            MipsArgument.FS => MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.FloatingPoints),
-            MipsArgument.FT => MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.FloatingPoints),
-            MipsArgument.FD => MipsRegisterTable.Instance.GetRegisterString(_rd, MipsRegisterSet.FloatingPoints),
-
-            // Immediate/FullImmediate uses the raw parsed value
-            MipsArgument.Immediate or MipsArgument.FullImmediate or
-            MipsArgument.Offset or MipsArgument.Address => Immediate.ToString(),
-
-            MipsArgument.ShiftAmount => ((byte)Immediate).ToString(),
-
-            _ => ThrowHelper.ThrowArgumentException<string>(),
-        };
-    }
-
-    private static string? GetJsonName(MipsArgument val)
-    {
-        return typeof(MipsArgument)
-            .GetField(val.ToString())
-            ?.GetCustomAttribute<JsonStringEnumMemberNameAttribute>()
-            ?.Name;
     }
 
     private MipsInstruction BuildInstruction()

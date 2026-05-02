@@ -128,7 +128,11 @@ public class InstructionParserTests
     [TestMethod(LoadImmediate)]
     public void LoadImmediateTest()
     {
-        MipsPseudoInstruction expected = new(MipsPseudoOp.LoadImmediate) { RT = MipsGpRegister.Temporary0, Immediate = 0x10001 };
+        MipsInstruction[] expected =
+        [
+            MipsInstruction.CreateI(MipsOpCode.LoadUpperImmediate, MipsGpRegister.Zero, MipsGpRegister.Temporary0, 0x0),
+            MipsInstruction.CreateI(MipsOpCode.OrImmediate, MipsGpRegister.Temporary0, MipsGpRegister.Temporary0, 0x1),
+        ];
         RunTest(LoadImmediate, new MipsParsedInstruction(expected));
     }
 
@@ -212,12 +216,10 @@ public class InstructionParserTests
 
         // Validate execution
         Assert.IsNotNull(actual);
-
-        var result = actual?.Realize()[0];
-        Assert.IsTrue(result.HasValue);
+        var result = actual.Instructions[0];
 
 #if DEBUG
-        Assert.AreEqual(input, result.Value.Disassembled);
+        Assert.AreEqual(input, result.Disassembled);
 #endif
     }
 
@@ -240,12 +242,9 @@ public class InstructionParserTests
             Assert.IsNotNull(expected);
             Assert.IsNotNull(actual);
 
-            var expectedReal = expected.Realize();
-            var actualReal = actual.Realize();
-
-            for (int i = 0 ; i < expectedReal.Length; i++)
+            for ( var i = 0; i < expected.Instructions.Length; i++)
             {
-                Assert.AreEqual(expectedReal[i], actualReal[i]);
+                Assert.AreEqual(expected.Instructions[i], actual.Instructions[i]);
             }
         }
 

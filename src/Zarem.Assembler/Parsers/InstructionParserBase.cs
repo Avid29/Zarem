@@ -3,8 +3,10 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Extensions.System;
@@ -26,7 +28,8 @@ namespace Zarem.Assembler.Parsers;
 /// <summary>
 /// A base class for instruction parsers.
 /// </summary>
-public abstract class InstructionParserBase<TRegister, TSet>
+public abstract class InstructionParserBase<TArg, TRegister, TSet>
+    where TArg : unmanaged, Enum
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
 {
@@ -185,27 +188,34 @@ public abstract class InstructionParserBase<TRegister, TSet>
     /// <summary>
     /// Generates an <see cref="AssemblyLine"/> from a pseudo-instruction substitution template.
     /// </summary>
-    protected AssemblyLine ExpandTemplate(string[] template, ITokenizerProfile profile)
+    protected AssemblyLine ExpandTemplate(string template, ITokenizerProfile profile)
     {
-        var instruction = template[0];
-        var sb = new StringBuilder(instruction);
-        sb.Append(' ');
+        string result = template;
 
-        for (int i = 1; i < template.Length; i++)
+        // Apply substitutions to the template
+        foreach (var argType in Enum.GetValues<TArg>())
         {
-            if (i > 1)
-                sb.Append(", ");
+            // Get the template name for the argument type, which is used as a placeholder in the template string
+            var argTemplate = typeof(TArg)
+                .GetField($"{argType}")
+                ?.GetCustomAttribute<JsonStringEnumMemberNameAttribute>()
+                ?.Name;
+            var argTemplatePattern = $"${{{argTemplate}}}";
 
-            sb.Append(template[i]);
+            var argSubstitution = GetTemplateArgSubstitution(argType);
+
+            Guard.IsNotNull(argTemplatePattern);
+            result = result.Replace(argTemplatePattern, argSubstitution);
         }
 
-        var line = sb.ToString();
+        // Tokenize the resulting template string
+        return Tokenizer.TokenizeLine(result, profile)[0];
     }
 
     /// <summary>
-    /// Substitutes placeholders in a pseudo-instruction template with the original instruction's arguments.
+    /// Gets the substitution string for a given argument type, which is used to replace placeholders in pseudo-instruction templates.
     /// </summary>
-    protected abstract string SubstituteTemplatePlaceholders(string line);
+    protected abstract string GetTemplateArgSubstitution(TArg argType);
 
     /// <summary>
     /// Cleans a value to a specified bit count and shift amount, while also checking for any changes that occured during the cast.
