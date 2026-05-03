@@ -1,8 +1,12 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Zarem.Models.Versioning.Enums;
 
@@ -13,14 +17,51 @@ namespace Zarem.Models.Versioning;
 /// </summary>
 public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
 {
+    private static readonly Dictionary<string, RiscVExtensions> _extensionMap;
+    private static readonly List<(string Name, RiscVExtensions Flag)> _standardExtensions;
+    private static readonly List<(string Name, RiscVExtensions Flag)> _zExtensions;
+
     [GeneratedRegex(@"^RV(32|64|128)(.*)$", RegexOptions.IgnoreCase)]
     private static partial Regex GetRiscVVersionRegex();
+
+    [GeneratedRegex(@"[\d+p\d+]*$", RegexOptions.IgnoreCase)]
+    private static partial Regex GetExtensionVersionSuffixRegex();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVVersionInfo"/> struct.
     /// </summary>
     public RiscVVersionInfo() : this(RiscVBaseVersion.RV32, RiscVExtensions.Integers)
     {
+    }
+
+    static RiscVVersionInfo()
+    {
+        _extensionMap = [];
+
+        var enumType = typeof(RiscVExtensions);
+        foreach (var field in enumType.GetFields(BindingFlags.Public | BindingFlags.Static))
+        {
+            var attr = field.GetCustomAttribute<JsonStringEnumMemberNameAttribute>();
+            if (attr != null && field.GetValue(null) is RiscVExtensions value)
+            {
+                // Skip 'General' for the map to avoid overlap during parsing, 
+                // handle it as a special case or bit-mask if preferred.
+                if (value == RiscVExtensions.General) continue;
+
+                _extensionMap[attr.Name] = value;
+            }
+        }
+
+        // Pre-sort for ToString() canonical order
+        _standardExtensions = [.. _extensionMap
+            .Where(kvp => kvp.Key.Length == 1)
+            .OrderBy(kvp => "IMAFDQLCBJTPN".IndexOf(kvp.Key[0])) // Standard RISC-V order
+            .Select(kvp => (kvp.Key, kvp.Value))];
+
+        _zExtensions = [.. _extensionMap
+            .Where(kvp => kvp.Key.Length > 1)
+            .OrderBy(kvp => kvp.Key)
+            .Select(kvp => (kvp.Key, kvp.Value))];
     }
 
     /// <summary>
@@ -67,16 +108,10 @@ public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out RiscVVersionInfo result)
     {
         result = default;
+        if (string.IsNullOrWhiteSpace(s)) return false;
 
-        if (string.IsNullOrWhiteSpace(s))
-            return false;
-
-        // Pattern: RV(32|64|128) followed by extension characters
-        // Note: This pattern captures the bit-width and the remaining characters
         var match = GetRiscVVersionRegex().Match(s);
-
-        if (!match.Success)
-            return false;
+        if (!match.Success) return false;
 
         // Parse Base
         RiscVBaseVersion baseVersion = match.Groups[1].Value switch
@@ -84,27 +119,39 @@ public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
             "32" => RiscVBaseVersion.RV32,
             "64" => RiscVBaseVersion.RV64,
             "128" => RiscVBaseVersion.RV128,
-            _ => RiscVBaseVersion.RV32 // Default or handle RV128 if enum supports it
+            _ => RiscVBaseVersion.RV32
         };
 
-        var extensions = RiscVExtensions.Integers; // 'I' is implied/required
-        string extChars = match.Groups[2].Value.ToUpperInvariant();
+        var extensions = RiscVExtensions.Integers;
+        string remainder = match.Groups[2].Value;
 
-        foreach (char c in extChars)
+        // Parse Standard Extensions (Single letters)
+        int i = 0;
+        while (i < remainder.Length && !char.IsDigit(remainder[i]) && remainder[i] != '_' && remainder[i] != '+')
         {
-            var flag = c switch
+            string single = remainder[i].ToString();
+            if (single == "G")
             {
-                'I' => RiscVExtensions.Integers,
-                'M' => RiscVExtensions.Multiplication,
-                'A' => RiscVExtensions.Atomic,
-                'F' => RiscVExtensions.FloatingPoint,
-                'D' => RiscVExtensions.DoubleFloatingPoint,
-                'C' => RiscVExtensions.Compressed,
-                'G' => RiscVExtensions.General,
-                _ => (RiscVExtensions)0 // Ignore unknown or handle Z-extensions
-            };
+                extensions |= RiscVExtensions.General;
+            }
+            else if (_extensionMap.TryGetValue(single, out var flag))
+            {
+                extensions |= flag;
+            }
+            i++;
+        }
 
-            extensions |= flag;
+        // Parse Multi-letter Extensions (Z-extensions)
+        // RISC-V spec usually uses '_' or '+' as separators for multi-letter names
+        var parts = remainder[i..].Split(['_', '+'], StringSplitOptions.RemoveEmptyEntries);
+        foreach (var part in parts)
+        {
+            // Remove version numbers if present (e.g., Zfh1p0 -> Zfh)
+            string cleanPart = GetExtensionVersionSuffixRegex().Replace(part, "");
+            if (_extensionMap.TryGetValue(cleanPart, out var flag))
+            {
+                extensions |= flag;
+            }
         }
 
         result = new RiscVVersionInfo(baseVersion, extensions);
@@ -115,36 +162,43 @@ public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
     public override string ToString()
     {
         var sb = new StringBuilder();
-
-        // Append the Base
         sb.Append(Base.ToString().ToUpperInvariant());
-        
-        // Apend extensions in canonical order
-        // 'I' is handled by the base, but if you have a separate bit, ensure it's first.
-        if (!CheckAppend(sb, RiscVExtensions.General, 'G'))
+
+        var currentExts = Extensions;
+
+        // If G is present, it replaces IMAFD
+        if (currentExts.HasFlag(RiscVExtensions.General))
         {
-            CheckAppend(sb, RiscVExtensions.Integers, 'I');
-            CheckAppend(sb, RiscVExtensions.Multiplication, 'M');
-            CheckAppend(sb, RiscVExtensions.Atomic, 'A');
-            CheckAppend(sb, RiscVExtensions.FloatingPoint, 'F');
-            CheckAppend(sb, RiscVExtensions.DoubleFloatingPoint, 'D');
+            sb.Append('G');
+
+            // Remove flags covered by G to avoid double printing
+            currentExts &= ~RiscVExtensions.General;
         }
-        else
+
+        // Append remaining Standard Extensions
+        foreach (var (name, flag) in _standardExtensions)
         {
-            CheckAppend(sb, RiscVExtensions.Compressed, 'C');
+            if (name == "I" && sb.ToString().Contains('G'))
+                continue;
+
+            if (currentExts.HasFlag(flag))
+            {
+                sb.Append(name);
+            }
+        }
+
+        // Append Multi-letter extensions with '+'
+        bool firstZ = true;
+        foreach (var (name, flag) in _zExtensions)
+        {
+            if (currentExts.HasFlag(flag))
+            {
+                sb.Append(firstZ ? "_" : "_"); // Use '_' or '+' per preference
+                sb.Append(name);
+                firstZ = false;
+            }
         }
 
         return sb.ToString();
-    }
-
-    private bool CheckAppend(StringBuilder sb, RiscVExtensions extension, char c)
-    {
-        if (Extensions.HasFlag(extension))
-        {
-            sb.Append(c);
-            return true;
-        }
-
-        return false;
     }
 }

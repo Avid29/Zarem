@@ -40,6 +40,13 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
     public double Version { get; init; } = 2.0;
 
     /// <summary>
+    /// Gets the fixed rd value, if applicable.
+    /// </summary>
+    [JsonPropertyName("rd_fixed")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public byte? FixedRD { get; init; }
+
+    /// <summary>
     /// Gets the fixed rs1 value, if applicable.
     /// </summary>
     [JsonPropertyName("rs1_fixed")]
@@ -54,11 +61,11 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
     public byte? FixedRS2 { get; init; }
 
     /// <summary>
-    /// Gets the fixed rd value, if applicable.
+    /// Gets the fixed rs3 value, if applicable.
     /// </summary>
-    [JsonPropertyName("rd_fixed")]
+    [JsonPropertyName("rs3_fixed")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public byte? FixedRD { get; init; }
+    public byte? FixedRS3 { get; init; }
 
     /// <summary>
     /// Gets the fixed immediate value, if applicable.
