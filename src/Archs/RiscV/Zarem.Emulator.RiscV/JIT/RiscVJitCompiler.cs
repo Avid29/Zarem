@@ -95,7 +95,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
 
     private void CompileInstruction(ILGenerator il, RiscVInstruction inst, T pc)
     {
-        var func7code = inst.OpCode is RiscVOpCode.Alu or RiscVOpCode.Alu32 or RiscVOpCode.Alu64 ? inst.Funct7 : Funct7Code.Base;
+        var func7code = inst.OpCode is RiscVOpCode.Op or RiscVOpCode.Op32 or RiscVOpCode.Op64 ? inst.Funct7 : Funct7Code.Base;
         var table = _func7Table[(int)func7code];
         var func = table[GetLookupIndex(inst)];
         func(il, inst, pc);

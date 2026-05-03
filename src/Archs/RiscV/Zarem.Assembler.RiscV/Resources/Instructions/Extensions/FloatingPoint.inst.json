@@ -1,0 +1,42 @@
+[
+  {
+    "type": "float",
+    "name": "fadd.fmt",
+    "op_code": 83,
+    "float_func": 0,
+    "args": [ "frd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fsub.fmt",
+    "op_code": 83,
+    "float_func": 4,
+    "args": [ "frd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fmul.fmt",
+    "op_code": 83,
+    "float_func": 8,
+    "args": [ "frd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fdiv.fmt",
+    "op_code": 83,
+    "float_func": 12,
+    "args": [ "frd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fsqrt.fmt",
+    "op_code": 83,
+    "float_func": 44,
+    "args": [ "frd", "frs1" ],
+    "extension": "F"
+  }
+]

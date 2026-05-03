@@ -22,6 +22,7 @@ using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Tables;
+using Zarem.Models.Versioning.Enums;
 
 namespace Zarem.Assembler;
 
@@ -32,11 +33,15 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
 {
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
+    private readonly FormatTable<RiscVFloatFormat> _formatTable = new();
+    private readonly FormatTable<RiscVIntFormat> _intFormatTable = new("int");
 
-    //private RiscVFloatFormat _format;
     private RiscVGpRegister _rd;
     private RiscVGpRegister _rs1;
     private RiscVGpRegister _rs2;
+    private RiscVGpRegister _rs3;
+    private RiscVFloatFormat _format;
+    private RiscVIntFormat _intFormat;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVInstructionParser"/> struct.
@@ -96,6 +101,24 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         Guard.IsNotNull(line.Instruction);
         Guard.IsNotNull(name);
 
+        // Parse out format from instruction name if present
+        var parts = name.Split('.');
+        for (int i = 1; i < parts.Length; i++)
+        {
+            if (_formatTable.TryGetFormat(parts[i], out var format))
+            {
+                _format = format;
+                parts[i] = _formatTable.Placeholder;
+            }
+            else if (_intFormatTable.TryGetFormat(parts[i], out var intFormat))
+            {
+                _intFormat = intFormat;
+                parts[i] = _intFormatTable.Placeholder;
+            }
+        }
+
+        name = string.Join('.', parts);
+
         if (!_instructionTable.TryGetInstruction(name, out var metas, out var requiredBase, out var requiredExtension))
         {
             (LogId id, string message) = requiredExtension switch
@@ -117,7 +140,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             return false;
         }
 
-        /*
+
         if (Meta is RiscVFloatInstructionMeta fMeta)
         {
             // Determine required extension based on the parsed format (.s, .d, .h, .q)
@@ -127,7 +150,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
                 RiscVFloatFormat.Double => RiscVExtensions.DoubleFloatingPoint,
                 RiscVFloatFormat.Half => RiscVExtensions.HalfPrecisionFloatingPoint,
                 RiscVFloatFormat.Quad => RiscVExtensions.QuadrupleFloatingPoint,
-                _ => RiscVExtensions.Integers // Fallback
+                _ => ThrowHelper.ThrowArgumentException<RiscVExtensions>(),
             };
 
             // Cross-reference with the Configured extensions
@@ -142,12 +165,12 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
                 return false;
             }
         }
-        */
 
         // Set fixed values
+        _rd = (RiscVGpRegister)(Meta.FixedRD ?? default);
         _rs1 = (RiscVGpRegister)(Meta.FixedRS1 ?? default);
         _rs2 = (RiscVGpRegister)(Meta.FixedRS2 ?? default);
-        _rd = (RiscVGpRegister)(Meta.FixedRD ?? default);
+        _rs3 = (RiscVGpRegister)(Meta.FixedRS3 ?? default);
         Immediate = Meta.FixedImm ?? default;
 
         return true;
@@ -185,6 +208,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, _rs1, _rs2, Immediate),
             STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
             JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
+            RiscVFloatInstructionMeta f => RiscVFloatInstruction.Create(f.OpCode, _format, f.Function, (RiscVFloatRegister)_rd, (RiscVFloatRegister)_rs1, (RiscVFloatRegister)_rs2),
 
             _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
         };

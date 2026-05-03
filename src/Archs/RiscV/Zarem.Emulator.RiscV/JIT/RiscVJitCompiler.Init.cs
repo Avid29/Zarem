@@ -62,9 +62,9 @@ public partial class RiscVJitCompiler<T>
         // Add ALU Immediate operations in the base register size
         switch (versionInfo.Base)
         {
-            case RiscVBaseVersion.RV32: InitAluOperations<T, int>(RiscVOpCode.Alu, RiscVOpCode.AluImmediate); break;
-            case RiscVBaseVersion.RV64: InitAluOperations<T, long>(RiscVOpCode.Alu, RiscVOpCode.AluImmediate); break;
-            case RiscVBaseVersion.RV128: InitAluOperations<T, Int128>(RiscVOpCode.Alu, RiscVOpCode.AluImmediate); break;
+            case RiscVBaseVersion.RV32: InitAluOperations<T, int>(RiscVOpCode.Op, RiscVOpCode.OpImmediate); break;
+            case RiscVBaseVersion.RV64: InitAluOperations<T, long>(RiscVOpCode.Op, RiscVOpCode.OpImmediate); break;
+            case RiscVBaseVersion.RV128: InitAluOperations<T, Int128>(RiscVOpCode.Op, RiscVOpCode.OpImmediate); break;
         }
 
         // Add system operations
@@ -97,12 +97,12 @@ public partial class RiscVJitCompiler<T>
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)
         {
             // Add explicitly 32-bit ALU operations
-            InitAluOperations<uint, int>(RiscVOpCode.Alu32, RiscVOpCode.AluImmediate32);
+            InitAluOperations<uint, int>(RiscVOpCode.Op32, RiscVOpCode.OpImmediate32);
         }
         if (versionInfo.Base is >= RiscVBaseVersion.RV128)
         {
             // Add explicitly 64-bit ALU operations
-            InitAluOperations<ulong, long>(RiscVOpCode.Alu64, RiscVOpCode.AluImmediate64);
+            InitAluOperations<ulong, long>(RiscVOpCode.Op64, RiscVOpCode.OpImmediate64);
         }
     }
      
@@ -117,17 +117,17 @@ public partial class RiscVJitCompiler<T>
             mulTable[i] = IllegalInstruction;
         }
 
-        InitMultiplyAluOperations<T, TSigned, TLong, TSignedLong>(RiscVOpCode.Alu);
+        InitMultiplyAluOperations<T, TSigned, TLong, TSignedLong>(RiscVOpCode.Op);
 
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)
         {
             // Add explicitly 32-bit operations
-            InitMultiplyAluOperations<uint, int, ulong, long>(RiscVOpCode.Alu32);
+            InitMultiplyAluOperations<uint, int, ulong, long>(RiscVOpCode.Op32);
         }
         if (versionInfo.Base is >= RiscVBaseVersion.RV128)
         {
             // Add explicitly 64-bit operations
-            InitMultiplyAluOperations<ulong, long, UInt128, Int128>(RiscVOpCode.Alu64);
+            InitMultiplyAluOperations<ulong, long, UInt128, Int128>(RiscVOpCode.Op64);
         }
     }
 

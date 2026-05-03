@@ -100,13 +100,9 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
 
         // Parse out format from instruction name if present
         var parts = name.Split('.');
-        if (parts.Length is >= 2)
+        if (_formatTable.TryGetFormat(parts[^1], out var format))
         {
-            if (!_formatTable.TryGetFloatFormat(parts[^1], out _format))
-            {
-                // TODO: Log invalid format error
-            }
-
+            _format = format;
             parts[^1] = _formatTable.Placeholder;
         }
 

@@ -8,7 +8,7 @@ namespace Zarem.Models.Instructions.Enums;
 /// An enum for float-point formats in MIPS floating point operations.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum MipsFloatFormat
+public enum MipsFloatFormat : byte
 {
 #pragma warning disable CS1591
 

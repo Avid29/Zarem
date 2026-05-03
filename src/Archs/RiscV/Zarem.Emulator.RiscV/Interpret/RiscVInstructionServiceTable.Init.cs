@@ -60,7 +60,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         var @base = _func7Table[(int)Funct7Code.Base];
 
         // Add ALU Immediate operations in the base register size
-        InitAluOperations<T, TSigned>(RiscVOpCode.Alu, RiscVOpCode.AluImmediate);
+        InitAluOperations<T, TSigned>(RiscVOpCode.Op, RiscVOpCode.OpImmediate);
 
         // Add system operations
         @base[GetLookupIndex(RiscVOpCode.System, Funct3Code.EcallBreak)] = &EcallBreak;
@@ -93,12 +93,12 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)
         {
             // Add explicitly 32-bit ALU operations
-            InitAluOperations<uint, int>(RiscVOpCode.Alu32, RiscVOpCode.AluImmediate32);
+            InitAluOperations<uint, int>(RiscVOpCode.Op32, RiscVOpCode.OpImmediate32);
         }
         if (versionInfo.Base is >= RiscVBaseVersion.RV128)
         {
             // Add explicitly 64-bit ALU operations
-            InitAluOperations<ulong, long>(RiscVOpCode.Alu64, RiscVOpCode.AluImmediate64);
+            InitAluOperations<ulong, long>(RiscVOpCode.Op64, RiscVOpCode.OpImmediate64);
         }
     }
 
@@ -112,17 +112,17 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
             mulTable[i] = &IllegalInstruction;
         }
 
-        InitMultiplyAluOperations<T, TSigned, TLong, TSignedLong>(RiscVOpCode.Alu);
+        InitMultiplyAluOperations<T, TSigned, TLong, TSignedLong>(RiscVOpCode.Op);
 
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)
         {
             // Add explicitly 32-bit operations
-            InitMultiplyAluOperations<uint, int, ulong, long>(RiscVOpCode.Alu32);
+            InitMultiplyAluOperations<uint, int, ulong, long>(RiscVOpCode.Op32);
         }
         if (versionInfo.Base is >= RiscVBaseVersion.RV128)
         {
             // Add explicitly 64-bit operations
-            InitMultiplyAluOperations<ulong, long, UInt128, Int128>(RiscVOpCode.Alu64);
+            InitMultiplyAluOperations<ulong, long, UInt128, Int128>(RiscVOpCode.Op64);
         }
     }
 

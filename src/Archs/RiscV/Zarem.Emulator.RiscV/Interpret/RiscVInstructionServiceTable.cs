@@ -39,7 +39,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : IRiscVIns
     /// <inheritdoc/>
     public RiscVTrap Execute(RiscVInstruction inst, out RiscVExecution<T> exec)
     {
-        var func7code = inst.OpCode is RiscVOpCode.Alu or RiscVOpCode.Alu32 or RiscVOpCode.Alu64 ? inst.Funct7 : Funct7Code.Base;
+        var func7code = inst.OpCode is RiscVOpCode.Op or RiscVOpCode.Op32 or RiscVOpCode.Op64 ? inst.Funct7 : Funct7Code.Base;
         var table = _func7Table[(int)func7code];
         var func = table[GetLookupIndex(inst)];
         return func(this, inst, out exec);

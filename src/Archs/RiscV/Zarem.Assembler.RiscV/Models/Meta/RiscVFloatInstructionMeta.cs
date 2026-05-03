@@ -1,9 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Functions;
+using Zarem.Models.Instructions.Enums.Operations;
 
 namespace Zarem.Assembler.Models.Meta;
 
@@ -13,15 +12,14 @@ namespace Zarem.Assembler.Models.Meta;
 public record RiscVFloatInstructionMeta : RiscVInstructionMetaBase
 {
     /// <summary>
-    /// Gets the instruction float function code.
+    /// Gets the instruction operation code.
     /// </summary>
-    [JsonPropertyName("float_func")]
-    public required RiscVFloatFuncCode Function { get; init; }
+    [JsonPropertyName("op_code")]
+    public RiscVOpCode OpCode { get; init; } = RiscVOpCode.OpImmediate;
 
     /// <summary>
     /// Gets the instruction float function code.
     /// </summary>
-    [JsonPropertyName("formats")]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public HashSet<RiscVFloatFormat>? SupportedFormats { get; init; }
+    [JsonPropertyName("float_func")]
+    public required RiscVFloatFuncCode Function { get; init; }
 }

@@ -15,7 +15,7 @@ public record ITypeInstructionMeta : RiscVInstructionMetaBase
     /// Gets the instruction operation code.
     /// </summary>
     [JsonPropertyName("op_code")]
-    public RiscVOpCode OpCode { get; init; } = RiscVOpCode.AluImmediate;
+    public RiscVOpCode OpCode { get; init; } = RiscVOpCode.OpImmediate;
 
     /// <summary>
     /// Gets the instruction function3 code.

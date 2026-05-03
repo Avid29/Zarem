@@ -44,7 +44,7 @@ public class FormatTable<TFormat>
     /// <summary>
     /// Attempts to get a float format by name.
     /// </summary>
-    public bool TryGetFloatFormat(string part, out TFormat format) => _nameToFormat.TryGetValue(part, out format);
+    public bool TryGetFormat(string part, out TFormat format) => _nameToFormat.TryGetValue(part, out format);
 
     /// <summary>
     /// Attempts to get a float-format string by value.
