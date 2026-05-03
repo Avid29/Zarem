@@ -15,7 +15,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
     private static MipsTrap DispatchCoProc1(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
         var fInst = (MipsFloatInstruction)inst;
-        var func = @this._coProc1RSTable[(int)fInst.CoProc1RSCode];
+        var func = @this._coProc1RSTable[(int)fInst.RSCode];
         return func(@this, fInst, out exec);
     }
 
@@ -23,7 +23,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         where TFormat : unmanaged, INumber<TFormat>
     {
         int index = GetFloatFuncTableIndex<TFormat>();
-        var func = @this._floatFuncTables[index][(int)inst.FloatFuncCode];
+        var func = @this._floatFuncTables[index][(int)inst.Function];
         return func(@this, inst, out exec);
     }
 

@@ -81,57 +81,59 @@ public struct MipsFloatInstruction
 {
     [FieldOffset(0)]
     private MipsInstruction _inst;
-    
+
     /// <summary>
     /// Creates a new floating-point coprocessor instruction.
     /// </summary>
-    public static MipsFloatInstruction Create(FloatFuncCode funcCode, MipsFloatFormat format, MipsFloatRegister fs, MipsFloatRegister fd, MipsFloatRegister ft = MipsFloatRegister.F0)
+    public static MipsFloatInstruction Create(MipsFloatFuncCode funcCode, MipsFloatFormat format, MipsFloatRegister fs, MipsFloatRegister fd, MipsFloatRegister ft = MipsFloatRegister.F0)
     {
-        MipsFloatInstruction value = default;
-        value.OpCode = MipsOpCode.Coprocessor1;
-        value.FloatFuncCode = funcCode;
-        value.Format = format;
-        value.FS = fs;
-        value.FD = fd;
-        value.FT = ft;
-        return value;
+        return new()
+        {
+            OpCode = MipsOpCode.Coprocessor1,
+            Function = funcCode,
+            Format = format,
+            FS = fs,
+            FD = fd,
+            FT = ft,
+        };
     }
-    
+
     /// <summary>
     /// Creates a new floating-point coprocessor instruction.
     /// </summary>
     public static MipsFloatInstruction Create(CoProc1RSCode code, MipsGpRegister rt, MipsFloatRegister fs)
     {
-        MipsFloatInstruction value = default;
-        value.OpCode = MipsOpCode.Coprocessor1;
-        value.CoProc1RSCode = code;
-        value.RT = rt;
-        value.FS = fs;
-        return value;
+        return new()
+        {
+            OpCode = MipsOpCode.Coprocessor1,
+            RSCode = code,
+            RT = rt,
+            FS = fs,
+        };
     }
 
     /// <summary>
     /// Gets the instruction's operation code.
     /// </summary>
     public MipsOpCode OpCode
-    { 
+    {
         readonly get => _inst.OpCode;
         private set => _inst.OpCode = value;
     }
 
     /// <summary>
-    /// Gets the instruction's float function code.
+    /// Gets the instruction's function code.
     /// </summary>
-    public FloatFuncCode FloatFuncCode
+    public MipsFloatFuncCode Function
     {
-        readonly get => (FloatFuncCode)_inst.FuncCode;
+        readonly get => (MipsFloatFuncCode)_inst.FuncCode;
         private set => _inst.FuncCode = (FunctionCode)value;
     }
 
     /// <summary>
     /// Gets the instruction's RS Code.
     /// </summary>
-    public CoProc1RSCode CoProc1RSCode
+    public CoProc1RSCode RSCode
     {
         readonly get => (CoProc1RSCode)_inst.RS;
         private set => _inst.RS = (MipsGpRegister)value;

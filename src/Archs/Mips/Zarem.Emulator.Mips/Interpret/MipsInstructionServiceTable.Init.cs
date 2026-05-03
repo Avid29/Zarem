@@ -310,36 +310,36 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         int index = GetFloatFuncTableIndex<TFormat>();
-        _floatFuncTables[index][(int)FloatFuncCode.Add] = &FloatAlu<AddLogic<TFormat>, TFormat>;
-        _floatFuncTables[index][(int)FloatFuncCode.Subtract] = &FloatAlu<SubLogic<TFormat>, TFormat>;
-        _floatFuncTables[index][(int)FloatFuncCode.Multiply] = &FloatAlu<MulLogic<TFormat>, TFormat>;
-        _floatFuncTables[index][(int)FloatFuncCode.Divide] = &FloatAlu<DivLogic<TFormat>, TFormat>;
-        _floatFuncTables[index][(int)FloatFuncCode.SquareRoot] = &FloatFAlu<SqrtLogic<TFormat>, TFormat>;
-        _floatFuncTables[index][(int)FloatFuncCode.AbsoluteValue] = &FloatFAlu<AbsLogic<TFormat>, TFormat>;
-        _floatFuncTables[index][(int)FloatFuncCode.Move] = &FloatFAlu<MovLogic<TFormat>, TFormat>;
-        _floatFuncTables[index][(int)FloatFuncCode.Negate] = &FloatFAlu<NegLogic<TFormat>, TFormat>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.Add] = &FloatAlu<AddLogic<TFormat>, TFormat>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.Subtract] = &FloatAlu<SubLogic<TFormat>, TFormat>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.Multiply] = &FloatAlu<MulLogic<TFormat>, TFormat>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.Divide] = &FloatAlu<DivLogic<TFormat>, TFormat>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.SquareRoot] = &FloatFAlu<SqrtLogic<TFormat>, TFormat>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.AbsoluteValue] = &FloatFAlu<AbsLogic<TFormat>, TFormat>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.Move] = &FloatFAlu<MovLogic<TFormat>, TFormat>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.Negate] = &FloatFAlu<NegLogic<TFormat>, TFormat>;
 
-        _floatFuncTables[index][(int)FloatFuncCode.Round_W] = &FloatRound<RoundLogic<TFormat>, TFormat, int>;
-        _floatFuncTables[index][(int)FloatFuncCode.Truncate_W] = &FloatRound<TruncLogic<TFormat>, TFormat, int>;
-        _floatFuncTables[index][(int)FloatFuncCode.Ceiling_W] = &FloatRound<CeilingLogic<TFormat>, TFormat, int>;
-        _floatFuncTables[index][(int)FloatFuncCode.Floor_W] = &FloatRound<FloorLogic<TFormat>, TFormat, int>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.Round_W] = &FloatRound<RoundLogic<TFormat>, TFormat, int>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.Truncate_W] = &FloatRound<TruncLogic<TFormat>, TFormat, int>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.Ceiling_W] = &FloatRound<CeilingLogic<TFormat>, TFormat, int>;
+        _floatFuncTables[index][(int)MipsFloatFuncCode.Floor_W] = &FloatRound<FloorLogic<TFormat>, TFormat, int>;
 
         if (version.Is64Bit())
         {
-            _floatFuncTables[index][(int)FloatFuncCode.Round_L] = &FloatRound<RoundLogic<TFormat>, TFormat, long>;
-            _floatFuncTables[index][(int)FloatFuncCode.Truncate_L] = &FloatRound<TruncLogic<TFormat>, TFormat, long>;
-            _floatFuncTables[index][(int)FloatFuncCode.Ceiling_L] = &FloatRound<CeilingLogic<TFormat>, TFormat, long>;
-            _floatFuncTables[index][(int)FloatFuncCode.Floor_L] = &FloatRound<FloorLogic<TFormat>, TFormat, long>;
+            _floatFuncTables[index][(int)MipsFloatFuncCode.Round_L] = &FloatRound<RoundLogic<TFormat>, TFormat, long>;
+            _floatFuncTables[index][(int)MipsFloatFuncCode.Truncate_L] = &FloatRound<TruncLogic<TFormat>, TFormat, long>;
+            _floatFuncTables[index][(int)MipsFloatFuncCode.Ceiling_L] = &FloatRound<CeilingLogic<TFormat>, TFormat, long>;
+            _floatFuncTables[index][(int)MipsFloatFuncCode.Floor_L] = &FloatRound<FloorLogic<TFormat>, TFormat, long>;
         }
 
         if (version >= MipsVersion.MipsIV)
         {
-            _floatFuncTables[index][(int)FloatFuncCode.Reciprical] = &FloatFAlu<RecipLogic<TFormat>, TFormat>;
+            _floatFuncTables[index][(int)MipsFloatFuncCode.Reciprical] = &FloatFAlu<RecipLogic<TFormat>, TFormat>;
         }
 
         if (version >= MipsVersion.Mips_R2)
         {
-            _floatFuncTables[index][(int)FloatFuncCode.RecipricalSquareRoot] = &FloatFAlu<RSqrtLogic<TFormat>, TFormat>;
+            _floatFuncTables[index][(int)MipsFloatFuncCode.RecipricalSquareRoot] = &FloatFAlu<RSqrtLogic<TFormat>, TFormat>;
         }
     }
 
@@ -347,17 +347,17 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         where TFormat : unmanaged, INumber<TFormat>
     {
         int index = GetFloatFuncTableIndex<TFormat>();
-        InitConvertFunc<TFormat, float>(index, FloatFuncCode.ConvertToSingle);
-        InitConvertFunc<TFormat, double>(index, FloatFuncCode.ConvertToDouble);
-        InitConvertFunc<TFormat, int>(index, FloatFuncCode.ConvertToWord);
+        InitConvertFunc<TFormat, float>(index, MipsFloatFuncCode.ConvertToSingle);
+        InitConvertFunc<TFormat, double>(index, MipsFloatFuncCode.ConvertToDouble);
+        InitConvertFunc<TFormat, int>(index, MipsFloatFuncCode.ConvertToWord);
 
         if (version.Is64Bit() && typeof(TFormat) != typeof(long))
         {
-            InitConvertFunc<TFormat, long>(index, FloatFuncCode.ConvertToLong);
+            InitConvertFunc<TFormat, long>(index, MipsFloatFuncCode.ConvertToLong);
         }
     }
 
-    private void InitConvertFunc<TFrom, TTo>(int index, FloatFuncCode code)
+    private void InitConvertFunc<TFrom, TTo>(int index, MipsFloatFuncCode code)
         where TFrom : unmanaged, INumber<TFrom>
         where TTo : unmanaged, INumber<TTo>
     {

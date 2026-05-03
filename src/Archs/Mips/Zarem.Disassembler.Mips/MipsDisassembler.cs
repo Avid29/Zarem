@@ -60,8 +60,8 @@ public class MipsDisassembler
 
             MipsInstructionType.Coproc0 => (byte)((CoProc0Instruction)instruction).CoProc0RSCode,
 
-            MipsInstructionType.Coproc1 => (byte)((MipsFloatInstruction)instruction).CoProc1RSCode,
-            MipsInstructionType.Float => (byte)((MipsFloatInstruction)instruction).FloatFuncCode,
+            MipsInstructionType.Coproc1 => (byte)((MipsFloatInstruction)instruction).RSCode,
+            MipsInstructionType.Float => (byte)((MipsFloatInstruction)instruction).Function,
 
             _ => 255,
         };

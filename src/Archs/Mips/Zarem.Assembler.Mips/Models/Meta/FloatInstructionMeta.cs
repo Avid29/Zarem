@@ -17,7 +17,7 @@ public record FloatInstructionMeta : MipsInstructionMetaBase
     /// Gets the instruction float function code.
     /// </summary>
     [JsonPropertyName("float_func")]
-    public required FloatFuncCode Function { get; init; }
+    public required MipsFloatFuncCode Function { get; init; }
 
     /// <summary>
     /// Gets the instruction float function code.

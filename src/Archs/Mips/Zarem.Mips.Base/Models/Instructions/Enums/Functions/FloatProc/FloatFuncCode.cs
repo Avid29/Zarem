@@ -7,7 +7,7 @@ namespace Zarem.Models.Instructions.Enums.Functions.FloatProc;
 /// <summary>
 /// An enum for <see cref="MipsOpCode.Coprocessor1"/> instruction function codes.
 /// </summary>
-public enum FloatFuncCode
+public enum MipsFloatFuncCode
 {
 #pragma warning disable CS1591
 

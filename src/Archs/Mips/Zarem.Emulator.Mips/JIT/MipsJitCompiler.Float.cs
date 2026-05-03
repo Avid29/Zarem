@@ -16,7 +16,7 @@ public partial class MipsJitCompiler<T>
     private void DispatchCoProc1(ILGenerator il, MipsFloatInstruction inst, T pc)
     {
         var fInst = inst;
-        var func = _coProc1RSTable[(int)fInst.CoProc1RSCode];
+        var func = _coProc1RSTable[(int)fInst.RSCode];
         func(il, fInst, pc);
     }
 
@@ -24,7 +24,7 @@ public partial class MipsJitCompiler<T>
         where TFormat : unmanaged, INumber<TFormat>
     {
         int index = GetFloatFuncTableIndex<TFormat>();
-        var func = _floatFuncTables[index][(int)inst.FloatFuncCode];
+        var func = _floatFuncTables[index][(int)inst.Function];
         func(il, inst, pc);
     }
 

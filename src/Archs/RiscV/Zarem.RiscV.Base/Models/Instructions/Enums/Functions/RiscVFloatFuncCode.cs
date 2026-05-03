@@ -5,7 +5,7 @@ namespace Zarem.Models.Instructions.Enums.Functions;
 /// <summary>
 /// An enum for the float-point function code field of RISC-V floating-point instructions.
 /// </summary>
-public enum FloatFuncCode : byte
+public enum RiscVFloatFuncCode : byte
 {
 
 #pragma warning disable CS1591

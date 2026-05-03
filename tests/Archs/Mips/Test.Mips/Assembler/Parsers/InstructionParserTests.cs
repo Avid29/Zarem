@@ -66,7 +66,7 @@ public class InstructionParserTests
             yield return [new InstructionParsingTestCase("di", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, MipsGpRegister.Zero, 12))];
             yield return [new InstructionParsingTestCase("di $t1", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, MipsGpRegister.Temporary1, 12))];
             yield return [new InstructionParsingTestCase("ei", CoProc0Instruction.Create(MFMC0FuncCode.EnableInterrupts, MipsGpRegister.Zero, 12))];
-            yield return [new InstructionParsingTestCase("cvt.S.D $f4, $f8", MipsFloatInstruction.Create(FloatFuncCode.ConvertToSingle, MipsFloatFormat.Double, MipsFloatRegister.F8, MipsFloatRegister.F4))];
+            yield return [new InstructionParsingTestCase("cvt.S.D $f4, $f8", MipsFloatInstruction.Create(MipsFloatFuncCode.ConvertToSingle, MipsFloatFormat.Double, MipsFloatRegister.F8, MipsFloatRegister.F4))];
         }
     }
 
