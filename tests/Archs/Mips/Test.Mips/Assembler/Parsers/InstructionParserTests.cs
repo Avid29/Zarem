@@ -12,9 +12,9 @@ using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
+using Zarem.Models.Instructions.Enums.Functions;
+using Zarem.Models.Instructions.Enums.Functions.CoProc0;
+using Zarem.Models.Instructions.Enums.Functions.FloatProc;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Models.Meta;
@@ -66,7 +66,7 @@ public class InstructionParserTests
             yield return [new InstructionParsingTestCase("di", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, MipsGpRegister.Zero, 12))];
             yield return [new InstructionParsingTestCase("di $t1", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, MipsGpRegister.Temporary1, 12))];
             yield return [new InstructionParsingTestCase("ei", CoProc0Instruction.Create(MFMC0FuncCode.EnableInterrupts, MipsGpRegister.Zero, 12))];
-            yield return [new InstructionParsingTestCase("cvt.S.D $f4, $f8", FloatInstruction.Create(FloatFuncCode.ConvertToSingle, MipsFloatFormat.Double, MipsFloatRegister.F8, MipsFloatRegister.F4))];
+            yield return [new InstructionParsingTestCase("cvt.S.D $f4, $f8", MipsFloatInstruction.Create(FloatFuncCode.ConvertToSingle, MipsFloatFormat.Double, MipsFloatRegister.F8, MipsFloatRegister.F4))];
         }
     }
 

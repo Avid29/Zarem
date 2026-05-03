@@ -5,11 +5,10 @@ using System.Runtime.InteropServices;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
+using Zarem.Models.Instructions.Enums.Functions;
+using Zarem.Models.Instructions.Enums.Functions.FloatProc;
 
 namespace Zarem.Models.Instructions;
-
 
 //                     MIPS Floating-Point Instructions Layout
 // ----------------------------------------------------------------------------
@@ -78,7 +77,7 @@ namespace Zarem.Models.Instructions;
 /// A struct representing an instruction utilizing the floating-point coprocessor.
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 4)]
-public struct FloatInstruction
+public struct MipsFloatInstruction
 {
     [FieldOffset(0)]
     private MipsInstruction _inst;
@@ -86,9 +85,9 @@ public struct FloatInstruction
     /// <summary>
     /// Creates a new floating-point coprocessor instruction.
     /// </summary>
-    public static FloatInstruction Create(FloatFuncCode funcCode, MipsFloatFormat format, MipsFloatRegister fs, MipsFloatRegister fd, MipsFloatRegister ft = MipsFloatRegister.F0)
+    public static MipsFloatInstruction Create(FloatFuncCode funcCode, MipsFloatFormat format, MipsFloatRegister fs, MipsFloatRegister fd, MipsFloatRegister ft = MipsFloatRegister.F0)
     {
-        FloatInstruction value = default;
+        MipsFloatInstruction value = default;
         value.OpCode = MipsOpCode.Coprocessor1;
         value.FloatFuncCode = funcCode;
         value.Format = format;
@@ -101,9 +100,9 @@ public struct FloatInstruction
     /// <summary>
     /// Creates a new floating-point coprocessor instruction.
     /// </summary>
-    public static FloatInstruction Create(CoProc1RSCode code, MipsGpRegister rt, MipsFloatRegister fs)
+    public static MipsFloatInstruction Create(CoProc1RSCode code, MipsGpRegister rt, MipsFloatRegister fs)
     {
-        FloatInstruction value = default;
+        MipsFloatInstruction value = default;
         value.OpCode = MipsOpCode.Coprocessor1;
         value.CoProc1RSCode = code;
         value.RT = rt;
@@ -130,7 +129,7 @@ public struct FloatInstruction
     }
 
     /// <summary>
-    /// Gets the instruction's format.
+    /// Gets the instruction's RS Code.
     /// </summary>
     public CoProc1RSCode CoProc1RSCode
     {
@@ -184,22 +183,22 @@ public struct FloatInstruction
     }
 
     /// <summary>
-    /// Casts a <see cref="uint"/> to a <see cref="FloatInstruction"/>.
+    /// Casts a <see cref="uint"/> to a <see cref="MipsFloatInstruction"/>.
     /// </summary>
-    public static explicit operator FloatInstruction(uint value) => Unsafe.As<uint, FloatInstruction>(ref value);
+    public static explicit operator MipsFloatInstruction(uint value) => Unsafe.As<uint, MipsFloatInstruction>(ref value);
 
     /// <summary>
-    /// Casts a <see cref="FloatInstruction"/> to a <see cref="uint"/>.
+    /// Casts a <see cref="MipsFloatInstruction"/> to a <see cref="uint"/>.
     /// </summary>
-    public static explicit operator uint(FloatInstruction value) => Unsafe.As<FloatInstruction, uint>(ref value);
+    public static explicit operator uint(MipsFloatInstruction value) => Unsafe.As<MipsFloatInstruction, uint>(ref value);
 
     /// <summary>
-    /// Casts an <see cref="MipsInstruction"/> to a <see cref="FloatInstruction"/>.
+    /// Casts an <see cref="MipsInstruction"/> to a <see cref="MipsFloatInstruction"/>.
     /// </summary>
-    public static implicit operator FloatInstruction(MipsInstruction value) => Unsafe.As<MipsInstruction, FloatInstruction>(ref value);
+    public static implicit operator MipsFloatInstruction(MipsInstruction value) => Unsafe.As<MipsInstruction, MipsFloatInstruction>(ref value);
 
     /// <summary>
-    /// Casts a <see cref="FloatInstruction"/> to a <see cref="MipsInstruction"/>.
+    /// Casts a <see cref="MipsFloatInstruction"/> to a <see cref="MipsInstruction"/>.
     /// </summary>
-    public static implicit operator MipsInstruction(FloatInstruction value) => Unsafe.As<FloatInstruction, MipsInstruction>(ref value);
+    public static implicit operator MipsInstruction(MipsFloatInstruction value) => Unsafe.As<MipsFloatInstruction, MipsInstruction>(ref value);
 }

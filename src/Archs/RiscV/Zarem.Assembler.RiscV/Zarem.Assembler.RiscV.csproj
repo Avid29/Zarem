@@ -13,7 +13,7 @@
     <EmbeddedResource Include="Resources\Instructions\System.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\SType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\UType.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\MultiplicationSet\RType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\Multiplication.inst.json" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,7 +3,7 @@
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Models.Instructions.Enums.SpecialFunctions;
+namespace Zarem.Models.Instructions.Enums.Functions;
 
 /// <summary>
 /// These values go in the <see cref="MipsArgument.RT"/> field of instructions with <see cref="MipsOpCode.RegisterImmediate"/>.

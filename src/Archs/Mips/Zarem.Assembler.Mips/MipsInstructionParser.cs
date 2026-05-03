@@ -184,8 +184,8 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
             CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
             CoProc0InstructionsMeta c0 => CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
 
-            CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (MipsFloatRegister)_rs),
-            FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (MipsFloatRegister)_rs, (MipsFloatRegister)_rd, (MipsFloatRegister)_rt),
+            CoProc1InstructionsMeta c1 => MipsFloatInstruction.Create(c1.RSCode, _rt, (MipsFloatRegister)_rs),
+            FloatInstructionMeta f => MipsFloatInstruction.Create(f.Function, _format, (MipsFloatRegister)_rs, (MipsFloatRegister)_rd, (MipsFloatRegister)_rt),
 
             ITypeInstructionMeta i => i.Type is MipsInstructionType.IBranch
             ? MipsInstruction.CreateBranch(i.OperationCode, _rs, _rt, Immediate)

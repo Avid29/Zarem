@@ -2,13 +2,14 @@
 
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Zarem.Helpers;
 using Zarem.Helpers.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
+using Zarem.Models.Instructions.Enums.Functions;
+using Zarem.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Services;
 
 namespace Zarem.Models.Instructions;
@@ -201,6 +202,7 @@ namespace Zarem.Models.Instructions;
 /// A struct representing a MIPS instruction.
 /// </summary>
 [DebuggerDisplay("{Disassembled}")]
+[StructLayout(LayoutKind.Explicit, Size = 4)]
 public struct MipsInstruction
 {
     // Universal
@@ -227,6 +229,7 @@ public struct MipsInstruction
     private const int ADDRESS_BIT_SIZE = 26;
     private const int ADDRESS_BIT_OFFSET = 0;
 
+    [FieldOffset(0)]
     private uint _inst;
 
     /// <summary>

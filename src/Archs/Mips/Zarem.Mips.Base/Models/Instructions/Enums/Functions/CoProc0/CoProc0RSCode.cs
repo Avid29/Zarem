@@ -3,7 +3,7 @@
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
+namespace Zarem.Models.Instructions.Enums.Functions.CoProc0;
 
 /// <summary>
 /// An enum for <see cref="MipsOpCode.Coprocessor0"/> instruction rs field function codes.

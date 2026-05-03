@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
+using Zarem.Models.Instructions.Enums.Functions;
 
 namespace Zarem.Assembler.Models.Meta;
 

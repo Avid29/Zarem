@@ -9,8 +9,8 @@ using Zarem.Extensions;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
+using Zarem.Models.Instructions.Enums.Functions;
+using Zarem.Models.Instructions.Enums.Functions.FloatProc;
 
 namespace Zarem.Emulator.Models;
 
@@ -270,7 +270,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
 
         for (int i = 0; i < _floatFuncTables.Length; i++)
         {
-            _floatFuncTables[i] = new delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[64];
+            _floatFuncTables[i] = new delegate*<MipsInstructionServiceTable<T, TS>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap>[64];
 
             for (int j = 0; j < 64; j++)
             {

@@ -2,7 +2,7 @@
 
 using Zarem.Models.Instructions.Enums.Operations;
 
-namespace Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
+namespace Zarem.Models.Instructions.Enums.Functions.FloatProc;
 
 /// <summary>
 /// An enum for <see cref="MipsOpCode.Coprocessor1"/> instruction function codes.

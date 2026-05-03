@@ -5,8 +5,8 @@ using Zarem.Assembler.Models.Abstract;
 using Zarem.Helpers.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
+using Zarem.Models.Instructions.Enums.Functions.CoProc0;
+using Zarem.Models.Instructions.Enums.Functions.FloatProc;
 
 namespace Zarem.Assembler.Models.Meta;
 

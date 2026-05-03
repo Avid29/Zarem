@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Zarem.Helpers;
 using Zarem.Models.Instructions.Enums.Functions;
 using Zarem.Models.Instructions.Enums.Operations;
@@ -11,6 +12,7 @@ namespace Zarem.Models.Instructions;
 /// <summary>
 /// A struct representing a RISC-V instruction.
 /// </summary>
+[StructLayout(LayoutKind.Explicit, Size = 4)]
 public struct RiscVInstruction
 {
     // Opcodes are 7 bits, Registers are 5 bits.
@@ -25,7 +27,8 @@ public struct RiscVInstruction
     private const int RS1_OFFSET = 15;
     private const int RS2_OFFSET = 20;
     private const int FUNCT7_OFFSET = 25;
-
+    
+    [FieldOffset(0)]
     private uint _inst;
 
     /// <summary>

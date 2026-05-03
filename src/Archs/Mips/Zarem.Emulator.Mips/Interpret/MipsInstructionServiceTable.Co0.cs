@@ -5,7 +5,7 @@ using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
+using Zarem.Models.Instructions.Enums.Functions.CoProc0;
 
 namespace Zarem.Emulator.Models;
 

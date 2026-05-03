@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Zarem.Assembler.Models.Abstract;
 using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.FloatProc;
+using Zarem.Models.Instructions.Enums.Functions.FloatProc;
 
 namespace Zarem.Assembler.Models.Meta;
 

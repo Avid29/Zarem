@@ -24,7 +24,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private delegate void MipsEmitter(ILGenerator il, MipsInstruction inst, T pc);
-    private delegate void MipsFloatEmitter(ILGenerator il, FloatInstruction inst, T pc);
+    private delegate void MipsFloatEmitter(ILGenerator il, MipsFloatInstruction inst, T pc);
 
     // Main tables
     private readonly MipsEmitter[] _opCodeTable = new MipsEmitter[64];
@@ -595,7 +595,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
     private void ReservedInstruction(ILGenerator il, MipsInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
 
-    private void ReservedInstruction(ILGenerator il, FloatInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
+    private void ReservedInstruction(ILGenerator il, MipsFloatInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
 
     private void MethodUnary<TData>(ILGenerator il, MipsInstruction inst, Action<ILGenerator> method)
         where TData : unmanaged, INumber<TData>
