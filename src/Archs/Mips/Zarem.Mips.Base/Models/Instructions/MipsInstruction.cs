@@ -2,13 +2,14 @@
 
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Zarem.Helpers;
 using Zarem.Helpers.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Operations;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
+using Zarem.Models.Instructions.Enums.Functions;
+using Zarem.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Services;
 
 namespace Zarem.Models.Instructions;
@@ -201,6 +202,7 @@ namespace Zarem.Models.Instructions;
 /// A struct representing a MIPS instruction.
 /// </summary>
 [DebuggerDisplay("{Disassembled}")]
+[StructLayout(LayoutKind.Explicit, Size = 4)]
 public struct MipsInstruction
 {
     // Universal
@@ -227,6 +229,7 @@ public struct MipsInstruction
     private const int ADDRESS_BIT_SIZE = 26;
     private const int ADDRESS_BIT_OFFSET = 0;
 
+    [FieldOffset(0)]
     private uint _inst;
 
     /// <summary>
@@ -239,37 +242,85 @@ public struct MipsInstruction
     /// Creates an R-Type instruction.
     /// </summary>
     public static MipsInstruction CreateR(MipsOpCode op, FunctionCode func, MipsGpRegister rs, MipsGpRegister rt, MipsGpRegister rd, byte sa = 0)
-        => new() { OpCode = op, FuncCode = func, RS = rs, RT = rt, RD = rd, ShiftAmount = sa };
+    {
+        return new()
+        {
+            OpCode = op,
+            FuncCode = func,
+            RS = rs,
+            RT = rt,
+            RD = rd,
+            ShiftAmount = sa
+        };
+    }
 
     /// <summary>
     /// Creates an I-Type instruction.
     /// </summary>
     public static MipsInstruction CreateI(MipsOpCode op, MipsGpRegister rs, MipsGpRegister rt, short imm)
-        => new() { OpCode = op, RS = rs, RT = rt, Immediate = imm };
+    {
+        return new()
+        {
+            OpCode = op,
+            RS = rs,
+            RT = rt,
+            Immediate = imm
+        };
+    }
 
     /// <summary>
     /// Creates a J-Type instruction.
     /// </summary>
     public static MipsInstruction CreateJ(MipsOpCode op, uint address)
-        => new() { OpCode = op, Address = address };
+    {
+        return new()
+        {
+            OpCode = op,
+            Address = address
+        };
+    }
 
     /// <summary>
     /// Creates a J-Type instruction.
     /// </summary>
     public static MipsInstruction CreateBranch(MipsOpCode op, MipsGpRegister rs, MipsGpRegister rt, int offset)
-        => new() { OpCode = op, RS = rs, RT = rt, Offset = offset };
+    {
+        return new()
+        {
+            OpCode = op,
+            RS = rs,
+            RT = rt,
+            Offset = offset
+        };
+    }
 
     /// <summary>
     /// Creates a J-Type instruction.
     /// </summary>
     public static MipsInstruction CreateBranch(RegImmFuncCode rtFunc, MipsGpRegister rs, int offset)
-        => new() { OpCode = MipsOpCode.RegisterImmediate, RTFuncCode = rtFunc, RS = rs, Offset = offset };
+    {
+        return new()
+        {
+            OpCode = MipsOpCode.RegisterImmediate,
+            RTFuncCode = rtFunc,
+            RS = rs,
+            Offset = offset
+        };
+    }
 
     /// <summary>
     /// Creates a J-Type instruction.
     /// </summary>
     public static MipsInstruction CreateTrap(RegImmFuncCode rtFunc, MipsGpRegister rs, short immediate)
-        => new() { OpCode = MipsOpCode.RegisterImmediate, RTFuncCode = rtFunc, RS = rs, Immediate = immediate };
+    {
+        return new()
+        {
+            OpCode = MipsOpCode.RegisterImmediate,
+            RTFuncCode = rtFunc,
+            RS = rs,
+            Immediate = immediate
+        };
+    }
 
     /// <summary>
     /// Gets a no operation instruction.

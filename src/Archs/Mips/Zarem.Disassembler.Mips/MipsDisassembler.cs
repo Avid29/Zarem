@@ -10,7 +10,8 @@ using Zarem.Disassembler.Models.Instructions;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
+using Zarem.Models.Instructions.Enums.Functions.CoProc0;
+using Zarem.Assembler.Models.Tables;
 
 namespace Zarem.Disassembler;
 
@@ -19,6 +20,8 @@ namespace Zarem.Disassembler;
 /// </summary>
 public class MipsDisassembler
 {
+    private FormatTable<MipsFloatFormat> _formatTable = new();
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsDisassembler"/> class.
     /// </summary>
@@ -60,8 +63,8 @@ public class MipsDisassembler
 
             MipsInstructionType.Coproc0 => (byte)((CoProc0Instruction)instruction).CoProc0RSCode,
 
-            MipsInstructionType.Coproc1 => (byte)((FloatInstruction)instruction).CoProc1RSCode,
-            MipsInstructionType.Float => (byte)((FloatInstruction)instruction).FloatFuncCode,
+            MipsInstructionType.Coproc1 => (byte)((MipsFloatInstruction)instruction).RSCode,
+            MipsInstructionType.Float => (byte)((MipsFloatInstruction)instruction).Function,
 
             _ => 255,
         };
@@ -80,7 +83,7 @@ public class MipsDisassembler
         // If the instruction is a float instruction, retrieve the format.
         MipsFloatFormat? format = null;
         if (instruction.Type is MipsInstructionType.Float)
-            format = ((FloatInstruction)instruction).Format;
+            format = ((MipsFloatInstruction)instruction).Format;
 
         bool hasFormat = instruction.Type is MipsInstructionType.Float;
         bool eretnc = funcCode2 is (byte)Co0FuncCode.ExceptionReturn && instruction.RD is (MipsGpRegister)1;
@@ -99,9 +102,9 @@ public class MipsDisassembler
 
         // Apply the format to the name if it exists
         var name = meta.Name;
-        if (format is not null)
+        if (format.HasValue)
         {
-            name = FloatFormatTable.ApplyFormat(name, format.Value);
+            name = _formatTable.ApplyFormat(name, format.Value);
         }
 
         StringBuilder pattern = new($"{name} ");
@@ -119,9 +122,9 @@ public class MipsDisassembler
                 MipsArgument.Address => instruction.Address,
                 MipsArgument.AddressBase => $"{instruction.Immediate}({GetRegisterString(instruction.RS, MipsRegisterSet.GeneralPurpose)})",
                 MipsArgument.FullImmediate => 0, // Won't happen until pseudo-instruction disassembly
-                MipsArgument.FS => GetRegisterString((MipsGpRegister)((FloatInstruction)instruction).FS, MipsRegisterSet.FloatingPoints),
-                MipsArgument.FT => GetRegisterString((MipsGpRegister)((FloatInstruction)instruction).FT, MipsRegisterSet.FloatingPoints),
-                MipsArgument.FD => GetRegisterString((MipsGpRegister)((FloatInstruction)instruction).FD, MipsRegisterSet.FloatingPoints),
+                MipsArgument.FS => GetRegisterString((MipsGpRegister)((MipsFloatInstruction)instruction).FS, MipsRegisterSet.FloatingPoints),
+                MipsArgument.FT => GetRegisterString((MipsGpRegister)((MipsFloatInstruction)instruction).FT, MipsRegisterSet.FloatingPoints),
+                MipsArgument.FD => GetRegisterString((MipsGpRegister)((MipsFloatInstruction)instruction).FD, MipsRegisterSet.FloatingPoints),
                 MipsArgument.RS_Numbered => GetRegisterString(instruction.RS, MipsRegisterSet.Numbered),
                 MipsArgument.RT_Numbered => GetRegisterString(instruction.RT, MipsRegisterSet.Numbered),
                 _ => "unknown",

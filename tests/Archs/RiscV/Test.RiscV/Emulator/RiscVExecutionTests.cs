@@ -3,17 +3,14 @@
 using System;
 using System.Numerics;
 using Zarem.Assembler;
-using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization;
-using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Versioning;
-using Zarem.Models.Versioning.Enums;
 
 namespace Test.RiscV.Emulator;
 

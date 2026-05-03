@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2025
 
 using Zarem.Assembler;
-using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Meta;
+using Zarem.Assembler.Models.Tables;
+using Zarem.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.SpecialFunctions.CoProc0;
 
 namespace Zarem.Disassembler.Models.Instructions;
 
@@ -56,7 +56,7 @@ public class InstructionTable : MipsInstructionTableBase<DisassemblerLookup>
                 (byte)MipsOpCode.Coprocessor1,
                 (byte)c1.RSCode),
 
-            FloatInstructionMeta f => new DisassemblerLookup(
+            MipsFloatInstructionMeta f => new DisassemblerLookup(
                 (byte)MipsOpCode.Coprocessor1,
                 (byte)f.Function,
                 IsFloat: true), // New flag to check bits [5:0] instead of [25:21]

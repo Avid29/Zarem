@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.Json.Serialization;
-using Zarem.Assembler.Models.Abstract;
 
 namespace Zarem.Assembler.Models.Meta;
 

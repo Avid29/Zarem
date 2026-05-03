@@ -14,20 +14,20 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
 {
     private static MipsTrap DispatchCoProc1(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        var fInst = (FloatInstruction)inst;
-        var func = @this._coProc1RSTable[(int)fInst.CoProc1RSCode];
+        var fInst = (MipsFloatInstruction)inst;
+        var func = @this._coProc1RSTable[(int)fInst.RSCode];
         return func(@this, fInst, out exec);
     }
 
-    private static MipsTrap DispatchFloatFunc<TFormat>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap DispatchFloatFunc<TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsFloatInstruction inst, out MipsExecution<T> exec)
         where TFormat : unmanaged, INumber<TFormat>
     {
         int index = GetFloatFuncTableIndex<TFormat>();
-        var func = @this._floatFuncTables[index][(int)inst.FloatFuncCode];
+        var func = @this._floatFuncTables[index][(int)inst.Function];
         return func(@this, inst, out exec);
     }
 
-    private static MipsTrap FloatAlu<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap FloatAlu<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsFloatInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
@@ -40,7 +40,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static MipsTrap FloatFAlu<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap FloatFAlu<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsFloatInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IFAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
@@ -53,7 +53,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static MipsTrap FloatRound<TLogic, TFrom, TTo>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap FloatRound<TLogic, TFrom, TTo>(MipsInstructionServiceTable<T, TS> @this, MipsFloatInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IRoundLogic<TFrom>
         where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
         where TTo : unmanaged, IBinaryInteger<TTo>, IMinMaxValue<TTo>
@@ -84,7 +84,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static MipsTrap FloatConvert<TFrom, TTo>(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap FloatConvert<TFrom, TTo>(MipsInstructionServiceTable<T, TS> @this, MipsFloatInstruction inst, out MipsExecution<T> exec)
         where TFrom : unmanaged, INumber<TFrom>
         where TTo : unmanaged, INumber<TTo>
     {
@@ -95,13 +95,13 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static MipsTrap MFC1(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap MFC1(MipsInstructionServiceTable<T, TS> @this, MipsFloatInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(@this._cpu.FloatProcessor[inst.FS]));
         return MipsTrap.None;
     }
 
-    private static MipsTrap MTC1(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap MTC1(MipsInstructionServiceTable<T, TS> @this, MipsFloatInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateFloatWriteback(inst.FS, @this._cpu[inst.RT]);
         return MipsTrap.None;

@@ -2,11 +2,11 @@
     x:Class="Zarem.IDE.Views.Pages.CheatSheet.UsagePatternsSubPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:adata="using:Zarem.Assembler.Models.Abstract"
     xmlns:cheat="using:Zarem.IDE.Controls.CheatSheet"
     xmlns:collections="using:CommunityToolkit.Mvvm.Collections"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mdata="using:Zarem.Assembler.Models.Meta"
     xmlns:palette="using:Zarem.IDE.Controls.CheatSheet.Palettes"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -51,7 +51,7 @@
                 ImmediateValueBrush="{StaticResource ImmArg}"
                 MiscArgBrush="{StaticResource MiscArg}" />
 
-            <DataTemplate x:Key="InstructionEntryTemplate" x:DataType="adata:MipsInstructionMetaBase">
+            <DataTemplate x:Key="InstructionEntryTemplate" x:DataType="mdata:MipsInstructionMetaBase">
                 <cheat:UsagePatternDisplay
                     ArgumentBrushPalette="{StaticResource ArgumentBrushPalette}"
                     FontFamily="Cascadia Code"

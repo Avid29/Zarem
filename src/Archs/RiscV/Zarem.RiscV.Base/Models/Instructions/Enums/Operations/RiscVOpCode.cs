@@ -7,19 +7,23 @@ namespace Zarem.Models.Instructions.Enums.Operations;
 /// </summary>
 public enum RiscVOpCode : byte
 {
-    #pragma warning disable CS1591
-
+#pragma warning disable CS1591
     Load = 0x03,
     MiscMem = 0x0f,
-    AddUpperImmateToPC = 0x17,
-    AluImmediate = 0x13,
-    AluImmediate32 = 0x1b,
+    AddUpperImmediateToPC = 0x17,
+    OpImmediate = 0x13,
+    OpImmediate32 = 0x1b,
     Store = 0x23,
-    Alu = 0x33,
-    Alu32 = 0x3b,
+    Op = 0x33,
+    Op32 = 0x3b,
     LoadUpperImmediate = 0x37,
-    AluImmediate64 = 0x4b,
-    Alu64 = 0x5b,
+    FloatMultiplyAdd = 0x43,
+    FloatMultiplySub = 0x47,
+    FloatNegMultiplySub = 0x4b,
+    OpImmediate64 = 0x4b,
+    FloatNegMultiplyAdd = 0x4f,
+    FloatCompute = 0x53,
+    Op64 = 0x5b,
     Branch = 0x63,
     JumpAndLinkRegister = 0x67,
     JumpAndLink = 0x6f,

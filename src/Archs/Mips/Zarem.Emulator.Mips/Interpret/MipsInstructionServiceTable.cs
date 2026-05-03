@@ -24,8 +24,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
     private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[] _regImmTable = new delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[32];
 
     // CoProcessor tables
-    private readonly delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[] _coProc1RSTable = new delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[32];
-    private readonly delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[][] _floatFuncTables;
+    private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap>[] _coProc1RSTable = new delegate*<MipsInstructionServiceTable<T, TS>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap>[32];
+    private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap>[][] _floatFuncTables;
 
     private readonly MipsCpu<T> _cpu;
     private readonly T* _regs;
@@ -39,7 +39,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         _regs = cpu.RegisterFile.Regs;
 
         var formatCount = cpu.Config.Version.Is64Bit() ? 4 : 3;
-        _floatFuncTables = new delegate*<MipsInstructionServiceTable<T, TS>, FloatInstruction, out MipsExecution<T>, MipsTrap>[formatCount][];
+        _floatFuncTables = new delegate*<MipsInstructionServiceTable<T, TS>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap>[formatCount][];
 
         InitTables(cpu.Config);
     }
@@ -500,7 +500,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.ReservedInstruction;
     }
 
-    private static MipsTrap ReservedInstruction(MipsInstructionServiceTable<T, TS> @this, FloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap ReservedInstruction(MipsInstructionServiceTable<T, TS> @this, MipsFloatInstruction inst, out MipsExecution<T> exec)
         => ReservedInstruction(@this, (MipsInstruction)inst, out exec);
 
     private static MipsTrap NotImplemented(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)

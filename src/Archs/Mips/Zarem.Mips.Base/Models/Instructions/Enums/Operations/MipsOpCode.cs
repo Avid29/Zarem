@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2024
 
-using Zarem.Models.Instructions.Enums.SpecialFunctions;
+using Zarem.Models.Instructions.Enums.Functions;
 
 namespace Zarem.Models.Instructions.Enums.Operations;
 

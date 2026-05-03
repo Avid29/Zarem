@@ -81,7 +81,6 @@ public unsafe partial class RiscVJitCompiler<T>
         return addrVar;
     }
 
-
     private void EmitRet(ILGenerator il, T pc) => EmitTrapRet(il, RiscVTrap.None, pc);
 
     private void EmitRet(ILGenerator il, Action<ILGenerator> pushAddress)

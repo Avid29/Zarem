@@ -6,19 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
-using System.Text.Json.Serialization;
-using System.Threading;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
-using Zarem.Assembler.Models;
-using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Enums;
 using Zarem.Assembler.Models.Meta;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
-using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Extensions;
@@ -38,6 +33,7 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
 {
     private readonly MipsInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
+    private readonly FormatTable<MipsFloatFormat> _formatTable = new();
 
     private MipsGpRegister _rs;
     private MipsGpRegister _rt;
@@ -103,8 +99,14 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
         Guard.IsNotNull(name);
 
         // Parse out format from instruction name if present
-        if (FloatFormatTable.TryGetFloatFormat(name, out _format, out var formattedName))
-            name = formattedName;
+        var parts = name.Split('.');
+        if (_formatTable.TryGetFormat(parts[^1], out var format))
+        {
+            _format = format;
+            parts[^1] = _formatTable.Placeholder;
+        }
+
+        name = string.Join('.', parts);
 
         if (!_instructionTable.TryGetInstruction(name, out var metas, out var version, out var is64bit, out var banned))
         {
@@ -130,7 +132,7 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
         }
 
         // Check float format support via the specialized Float record
-        if (Meta is FloatInstructionMeta fMeta && fMeta.SupportedFormats is not null && !fMeta.SupportedFormats.Contains(_format))
+        if (Meta is MipsFloatInstructionMeta fMeta && fMeta.SupportedFormats is not null && !fMeta.SupportedFormats.Contains(_format))
         {
             _logger?.Log(Severity.Error, LogId.InvalidFloatFormat, line.Instruction, $"DoesNotSupportFormat{_format}", name);
             return false;
@@ -184,8 +186,8 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
             CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
             CoProc0InstructionsMeta c0 => CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
 
-            CoProc1InstructionsMeta c1 => FloatInstruction.Create(c1.RSCode, _rt, (MipsFloatRegister)_rs),
-            FloatInstructionMeta f => FloatInstruction.Create(f.Function, _format, (MipsFloatRegister)_rs, (MipsFloatRegister)_rd, (MipsFloatRegister)_rt),
+            CoProc1InstructionsMeta c1 => MipsFloatInstruction.Create(c1.RSCode, _rt, (MipsFloatRegister)_rs),
+            MipsFloatInstructionMeta f => MipsFloatInstruction.Create(f.Function, _format, (MipsFloatRegister)_rs, (MipsFloatRegister)_rd, (MipsFloatRegister)_rt),
 
             ITypeInstructionMeta i => i.Type is MipsInstructionType.IBranch
             ? MipsInstruction.CreateBranch(i.OperationCode, _rs, _rt, Immediate)

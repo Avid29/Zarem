@@ -9,8 +9,8 @@ using Test.RiscV.Helpers;
 using Zarem.Assembler;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Meta;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization;
 using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
@@ -129,6 +129,7 @@ public class InstructionParserTests
 
     private static IEnumerable<object[]> GenerateTestList(RiscVVersionInfo version)
     {
+        var formatTable = new FormatTable<RiscVFloatFormat>();
         var table = new RiscVInstructionTable(new(version));
         var instructions = table.GetInstructions()
             .Where(i => i.IsValidFor(version));
@@ -139,8 +140,15 @@ public class InstructionParserTests
             if (instruction is RiscVPseudoInstructionMeta)
                 continue;
 
+            // Apply format to instruction name, if applicable
+            var name = instruction.Name;
+            if (instruction is RiscVFloatInstructionMeta fMeta)
+            {
+                name = formatTable.ApplyFormat(name, RiscVFloatFormat.Single);
+            }
+
             // Generate instruction
-            StringBuilder line = new(instruction.Name);
+            StringBuilder line = new(name);
             line.Append(' ');
 
             foreach (var arg in instruction.ArgumentPattern)

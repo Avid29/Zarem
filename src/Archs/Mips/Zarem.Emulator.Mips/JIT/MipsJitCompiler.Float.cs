@@ -13,22 +13,22 @@ namespace Zarem.Emulator.Models.JIT;
 public partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private void DispatchCoProc1(ILGenerator il, FloatInstruction inst, T pc)
+    private void DispatchCoProc1(ILGenerator il, MipsFloatInstruction inst, T pc)
     {
         var fInst = inst;
-        var func = _coProc1RSTable[(int)fInst.CoProc1RSCode];
+        var func = _coProc1RSTable[(int)fInst.RSCode];
         func(il, fInst, pc);
     }
 
-    private void DispatchFloatFunc<TFormat>(ILGenerator il, FloatInstruction inst, T pc)
+    private void DispatchFloatFunc<TFormat>(ILGenerator il, MipsFloatInstruction inst, T pc)
         where TFormat : unmanaged, INumber<TFormat>
     {
         int index = GetFloatFuncTableIndex<TFormat>();
-        var func = _floatFuncTables[index][(int)inst.FloatFuncCode];
+        var func = _floatFuncTables[index][(int)inst.Function];
         func(il, inst, pc);
     }
 
-    private void FloatAlu<TFormat>(ILGenerator il, FloatInstruction inst, OpCode ilOpCode)
+    private void FloatAlu<TFormat>(ILGenerator il, MipsFloatInstruction inst, OpCode ilOpCode)
         where TFormat : unmanaged
     {
         EmitStoreRegister<TFormat>(il, inst.FD, () =>
@@ -39,7 +39,7 @@ public partial class MipsJitCompiler<T>
         });
     }
 
-    private void FloatUnary<TFormat>(ILGenerator il, FloatInstruction inst, OpCode ilOpCode)
+    private void FloatUnary<TFormat>(ILGenerator il, MipsFloatInstruction inst, OpCode ilOpCode)
         where TFormat : unmanaged
     {
         EmitStoreRegister<TFormat>(il, inst.FD, () =>
@@ -49,7 +49,7 @@ public partial class MipsJitCompiler<T>
         });
     }
 
-    private void FloatUnary<TFormat>(ILGenerator il, FloatInstruction inst, string methodName)
+    private void FloatUnary<TFormat>(ILGenerator il, MipsFloatInstruction inst, string methodName)
         where TFormat : unmanaged
     {
         EmitStoreRegister<TFormat>(il, inst.FD, () =>
@@ -63,7 +63,7 @@ public partial class MipsJitCompiler<T>
         });
     }
 
-    private void FloatRound<TFrom, TTo>(ILGenerator il, FloatInstruction inst, string methodName)
+    private void FloatRound<TFrom, TTo>(ILGenerator il, MipsFloatInstruction inst, string methodName)
         where TFrom : unmanaged
         where TTo : unmanaged
     {
@@ -102,7 +102,7 @@ public partial class MipsJitCompiler<T>
         });
     }
 
-    private void MoveToFloat(ILGenerator il, FloatInstruction inst)
+    private void MoveToFloat(ILGenerator il, MipsFloatInstruction inst)
     {
         EmitStoreRegister<T>(il, inst.FS, () =>
         {
@@ -111,7 +111,7 @@ public partial class MipsJitCompiler<T>
         });
     }
 
-    private void MoveFromFloat(ILGenerator il, FloatInstruction inst)
+    private void MoveFromFloat(ILGenerator il, MipsFloatInstruction inst)
     {
         EmitStoreRegister(il, inst.RT, il =>
         {

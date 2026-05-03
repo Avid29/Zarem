@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.Json.Serialization;
-using Zarem.Assembler.Models.Abstract;
 using Zarem.Models.Instructions.Enums.Functions;
 using Zarem.Models.Instructions.Enums.Operations;
 
@@ -16,7 +15,7 @@ public record RTypeInstructionMeta : RiscVInstructionMetaBase
     /// Gets the instruction operation code.
     /// </summary>
     [JsonPropertyName("op_code")]
-    public RiscVOpCode OpCode { get; init; } = RiscVOpCode.Alu;
+    public RiscVOpCode OpCode { get; init; } = RiscVOpCode.Op;
 
     /// <summary>
     /// Gets the instruction function3 code.

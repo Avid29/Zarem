@@ -7,6 +7,7 @@ using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Meta;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;

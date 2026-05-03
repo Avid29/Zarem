@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System.Collections.Generic;
-using Zarem.Models.Enums;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Models;
