@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Assembler.Models;
+namespace Zarem.Assembler.Models.Meta;
 
 /// <summary>
 /// An interface for pseudo instruction meta definitions.

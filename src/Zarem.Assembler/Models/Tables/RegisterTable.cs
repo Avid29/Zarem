@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
-namespace Zarem.Assembler.Models;
+namespace Zarem.Assembler.Models.Tables;
 
 /// <summary>
 /// A base class for a register lookup table.

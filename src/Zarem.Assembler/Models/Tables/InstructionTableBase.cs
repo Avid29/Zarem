@@ -6,8 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using Zarem.Assembler.Models.Meta;
 
-namespace Zarem.Assembler.Models;
+namespace Zarem.Assembler.Models.Tables;
 
 /// <summary>
 /// A class for managing instruction lookup.

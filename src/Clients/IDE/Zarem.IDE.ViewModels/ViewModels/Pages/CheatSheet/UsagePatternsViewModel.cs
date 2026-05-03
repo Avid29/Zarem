@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using Zarem.Assembler.Models;
-using Zarem.Assembler.Models.Abstract;
+using Zarem.Assembler.Models.Meta;
 using Zarem.IDE.Models.CheatSheet;
 using Zarem.IDE.Services;
 

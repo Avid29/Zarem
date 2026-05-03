@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
-using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
 

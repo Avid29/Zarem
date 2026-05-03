@@ -1,12 +1,11 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.Json.Serialization;
-using Zarem.Assembler.Models.Meta;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Versioning;
 using Zarem.Models.Versioning.Enums;
 
-namespace Zarem.Assembler.Models.Abstract;
+namespace Zarem.Assembler.Models.Meta;
 
 /// <summary>
 /// A base type for a RISC-V instruction meta definition.
@@ -18,6 +17,7 @@ namespace Zarem.Assembler.Models.Abstract;
 [JsonDerivedType(typeof(BTypeInstructionMeta), "b-type")]
 [JsonDerivedType(typeof(UTypeInstructionMeta), "u-type")]
 [JsonDerivedType(typeof(JTypeInstructionMeta), "j-type")]
+[JsonDerivedType(typeof(FloatInstructionMeta), "float")]
 [JsonDerivedType(typeof(RiscVPseudoInstructionMeta), "pseudo")]
 public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgument>
 {
@@ -79,15 +79,15 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
     /// </summary>
     public bool IsValidFor(RiscVVersionInfo config)
     {
-        // 1. Check if the required extension is enabled in the flags
+        // Check if the required extension is enabled in the flags
         if (!config.Extensions.HasFlag(Extension))
             return false;
 
-        // 2. Check if the current CPU base width meets the minimum requirement
+        // Check if the current CPU base width meets the minimum requirement
         if ((int)config.Base < (int)MinBase)
             return false;
 
-        // 3. Optional: Check spec version if you're supporting multiple drafts
+        // Check spec version
         return config.SpecMajor >= (int)Version;
     }
 }

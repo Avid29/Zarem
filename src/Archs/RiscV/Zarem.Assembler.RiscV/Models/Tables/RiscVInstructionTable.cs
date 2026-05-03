@@ -3,10 +3,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Zarem.Assembler.Models.Abstract;
+using Zarem.Assembler.Models.Meta;
 using Zarem.Models.Versioning.Enums;
 
-namespace Zarem.Assembler.Models;
+namespace Zarem.Assembler.Models.Tables;
 
 /// <summary>
 /// A class for managing instruction lookup by name.

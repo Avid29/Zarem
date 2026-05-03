@@ -3,11 +3,10 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Zarem.Assembler.Helpers.Tables;
-using Zarem.Assembler.Models.Meta;
 using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 
-namespace Zarem.Assembler.Models.Abstract;
+namespace Zarem.Assembler.Models.Meta;
 
 /// <summary>
 /// A base type for a MIPS instruction meta defintion.

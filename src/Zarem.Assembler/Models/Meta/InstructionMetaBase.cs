@@ -3,7 +3,7 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace Zarem.Assembler.Models;
+namespace Zarem.Assembler.Models.Meta;
 
 /// <summary>
 /// A base type for an instruction meta defintion.

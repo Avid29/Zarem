@@ -10,10 +10,9 @@ using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logger;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
-using Zarem.Assembler.Models;
-using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Enums;
 using Zarem.Assembler.Models.Meta;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
@@ -23,6 +22,7 @@ using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Tables;
+using Zarem.Models.Versioning.Enums;
 
 namespace Zarem.Assembler;
 
@@ -34,6 +34,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
 
+    private RiscVFloatFormat _format;
     private RiscVGpRegister _rd;
     private RiscVGpRegister _rs1;
     private RiscVGpRegister _rs2;
@@ -115,6 +116,31 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         {
             _logger?.Log(Severity.Error, LogId.InvalidInstructionArgCount, line.Instruction, "WrongArgumentCount", name, line.Args.Count);
             return false;
+        }
+
+        if (Meta is FloatInstructionMeta fMeta)
+        {
+            // Determine required extension based on the parsed format (.s, .d, .h, .q)
+            RiscVExtensions formatRequirement = _format switch
+            {
+                RiscVFloatFormat.Single => RiscVExtensions.SingleFloatingPoint,
+                RiscVFloatFormat.Double => RiscVExtensions.DoubleFloatingPoint,
+                RiscVFloatFormat.Half => RiscVExtensions.HalfPrecisionFloatingPoint,
+                RiscVFloatFormat.Quad => RiscVExtensions.QuadrupleFloatingPoint,
+                _ => RiscVExtensions.Integers // Fallback
+            };
+
+            // Cross-reference with the Configured extensions
+            if (!Config.VersionInfo.Extensions.HasFlag(formatRequirement))
+            {
+                _logger?.Log(Severity.Error,
+                    LogId.NotInVersion,
+                    line.Instruction,
+                    "FormatRequiresExtension",
+                    _format,
+                    formatRequirement.GetJsonName()); // Uses your attribute-driven name
+                return false;
+            }
         }
 
         // Set fixed values

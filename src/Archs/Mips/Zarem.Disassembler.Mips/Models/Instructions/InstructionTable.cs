@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2025
 
 using Zarem.Assembler;
-using Zarem.Assembler.Models.Abstract;
 using Zarem.Assembler.Models.Meta;
-using Zarem.Models.Instructions.Enums.Operations;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Models.Instructions.Enums.Functions.CoProc0;
+using Zarem.Models.Instructions.Enums.Operations;
 
 namespace Zarem.Disassembler.Models.Instructions;
 
