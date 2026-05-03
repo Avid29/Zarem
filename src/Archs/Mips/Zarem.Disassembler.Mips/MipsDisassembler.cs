@@ -11,6 +11,7 @@ using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.Functions.CoProc0;
+using Zarem.Assembler.Models.Tables;
 
 namespace Zarem.Disassembler;
 
@@ -19,6 +20,8 @@ namespace Zarem.Disassembler;
 /// </summary>
 public class MipsDisassembler
 {
+    private FormatTable<MipsFloatFormat> _formatTable = new();
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsDisassembler"/> class.
     /// </summary>
@@ -99,9 +102,9 @@ public class MipsDisassembler
 
         // Apply the format to the name if it exists
         var name = meta.Name;
-        if (format is not null)
+        if (format.HasValue)
         {
-            name = FloatFormatTable.ApplyFormat(name, format.Value);
+            name = _formatTable.ApplyFormat(name, format.Value);
         }
 
         StringBuilder pattern = new($"{name} ");

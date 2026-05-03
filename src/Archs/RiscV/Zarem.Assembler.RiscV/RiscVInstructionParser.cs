@@ -22,7 +22,6 @@ using Zarem.Models.Instructions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Tables;
-using Zarem.Models.Versioning.Enums;
 
 namespace Zarem.Assembler;
 
@@ -34,7 +33,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
 
-    private RiscVFloatFormat _format;
+    //private RiscVFloatFormat _format;
     private RiscVGpRegister _rd;
     private RiscVGpRegister _rs1;
     private RiscVGpRegister _rs2;
@@ -118,7 +117,8 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             return false;
         }
 
-        if (Meta is FloatInstructionMeta fMeta)
+        /*
+        if (Meta is RiscVFloatInstructionMeta fMeta)
         {
             // Determine required extension based on the parsed format (.s, .d, .h, .q)
             RiscVExtensions formatRequirement = _format switch
@@ -138,10 +138,11 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
                     line.Instruction,
                     "FormatRequiresExtension",
                     _format,
-                    formatRequirement.GetJsonName()); // Uses your attribute-driven name
+                    formatRequirement); // TODO: Improve message
                 return false;
             }
         }
+        */
 
         // Set fixed values
         _rs1 = (RiscVGpRegister)(Meta.FixedRS1 ?? default);

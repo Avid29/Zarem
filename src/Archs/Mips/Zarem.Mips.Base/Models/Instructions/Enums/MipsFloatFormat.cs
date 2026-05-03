@@ -12,11 +12,11 @@ public enum MipsFloatFormat
 {
 #pragma warning disable CS1591
 
-    [JsonStringEnumMemberName("s")] Single = 0x10,
-    [JsonStringEnumMemberName("d")] Double = 0x11,
-    [JsonStringEnumMemberName("w")] Word = 0x14,
-    [JsonStringEnumMemberName("l")] Long = 0x15,
-    [JsonStringEnumMemberName("ps")] PairedSingle = 0x16,
+    [JsonStringEnumMemberName("S")] Single = 0x10,
+    [JsonStringEnumMemberName("D")] Double = 0x11,
+    [JsonStringEnumMemberName("W")] Word = 0x14,
+    [JsonStringEnumMemberName("L")] Long = 0x15,
+    [JsonStringEnumMemberName("PS")] PairedSingle = 0x16,
 
 #pragma warning restore CS1591
 }

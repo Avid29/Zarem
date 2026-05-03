@@ -14,6 +14,8 @@ using Zarem.Assembler.Config;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Meta;
+using Zarem.Assembler.Models.Tables;
+
 
 
 #if DEBUG

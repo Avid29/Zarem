@@ -34,6 +34,15 @@ public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVVersionInfo"/> struct.
+    /// </summary>
+    public RiscVVersionInfo(RiscVBaseVersion @base, RiscVExtensions extensions)
+    {
+        Base = @base;
+        Extensions = extensions | RiscVExtensions.Integers; // 'I' is always required
+    }
+
     static RiscVVersionInfo()
     {
         _extensionMap = [];
@@ -62,15 +71,6 @@ public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
             .Where(kvp => kvp.Key.Length > 1)
             .OrderBy(kvp => kvp.Key)
             .Select(kvp => (kvp.Key, kvp.Value))];
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RiscVVersionInfo"/> struct.
-    /// </summary>
-    public RiscVVersionInfo(RiscVBaseVersion @base, RiscVExtensions extensions)
-    {
-        Base = @base;
-        Extensions = extensions | RiscVExtensions.Integers; // 'I' is always required
     }
 
     /// <summary>

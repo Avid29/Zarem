@@ -10,7 +10,7 @@ namespace Zarem.Assembler.Models.Meta;
 /// <summary>
 /// Instruction metadata for parsing floating-point instructions.
 /// </summary>
-public record FloatInstructionMeta : MipsInstructionMetaBase
+public record MipsFloatInstructionMeta : MipsInstructionMetaBase
 {
     /// <summary>
     /// Gets the instruction float function code.

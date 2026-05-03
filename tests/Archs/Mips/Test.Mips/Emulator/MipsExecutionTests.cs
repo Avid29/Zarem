@@ -2,7 +2,7 @@
 
 using System.Numerics;
 using Zarem.Assembler;
-using Zarem.Assembler.Models;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Interpret;

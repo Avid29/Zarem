@@ -17,7 +17,7 @@ namespace Zarem.Assembler.Models.Meta;
 [JsonDerivedType(typeof(BTypeInstructionMeta), "b-type")]
 [JsonDerivedType(typeof(UTypeInstructionMeta), "u-type")]
 [JsonDerivedType(typeof(JTypeInstructionMeta), "j-type")]
-[JsonDerivedType(typeof(FloatInstructionMeta), "float")]
+[JsonDerivedType(typeof(RiscVFloatInstructionMeta), "float")]
 [JsonDerivedType(typeof(RiscVPseudoInstructionMeta), "pseudo")]
 public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgument>
 {

@@ -10,7 +10,7 @@ namespace Zarem.Assembler.Models.Meta;
 /// <summary>
 /// Instruction metadata for parsing RISC-V floating-Point instructions.
 /// </summary>
-public record FloatInstructionMeta : RiscVInstructionMetaBase
+public record RiscVFloatInstructionMeta : RiscVInstructionMetaBase
 {
     /// <summary>
     /// Gets the instruction float function code.

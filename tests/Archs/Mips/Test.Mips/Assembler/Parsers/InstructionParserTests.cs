@@ -15,11 +15,12 @@ using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Instructions.Enums.Functions;
 using Zarem.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Models.Instructions.Enums.Functions.FloatProc;
-using Zarem.Assembler.Models;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Models.Meta;
 using System.Linq;
 using Zarem.Assembler;
+using Zarem.Assembler.Models.Tables;
+
 
 
 #if DEBUG
@@ -256,6 +257,7 @@ public class InstructionParserTests
 
     private static IEnumerable<object[]> GenerateTestList(MipsVersion version)
     {
+        var formatTable = new FormatTable<MipsFloatFormat>();
         var table = new MipsInstructionTable(new(version));
         var instructions = table.GetInstructions()
             .Where(i => i.IsValidFor(version));
@@ -268,9 +270,9 @@ public class InstructionParserTests
 
             // Apply format to instruction name, if applicable
             var name = instruction.Name;
-            if (instruction is FloatInstructionMeta fMeta)
+            if (instruction is MipsFloatInstructionMeta fMeta)
             {
-                name = FloatFormatTable.ApplyFormat(name, ArgGenerator.RandomFormat(fMeta.SupportedFormats));
+                name = formatTable.ApplyFormat(name, ArgGenerator.RandomFormat(fMeta.SupportedFormats));
             }
 
             // Generate instruction

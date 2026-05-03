@@ -18,7 +18,7 @@ namespace Zarem.Assembler.Models.Meta;
 [JsonDerivedType(typeof(RegImmInstructionMeta), "reg_imm")]
 [JsonDerivedType(typeof(CoProc0InstructionsMeta), "coproc0")]
 [JsonDerivedType(typeof(CoProc1InstructionsMeta), "coproc1")]
-[JsonDerivedType(typeof(FloatInstructionMeta), "float")]
+[JsonDerivedType(typeof(MipsFloatInstructionMeta), "float")]
 [JsonDerivedType(typeof(MipsPseudoInstructionMeta), "pseudo")]
 public abstract record MipsInstructionMetaBase : InstructionMetaBase<MipsArgument>
 {
@@ -29,7 +29,7 @@ public abstract record MipsInstructionMetaBase : InstructionMetaBase<MipsArgumen
     public MipsVersion AddedIn { get; init; }
 
     /// <summary>
-    /// Gets the <see cref="MipsVersion"/> where the instruction was removed, if application.
+    /// Gets the <see cref="MipsVersion"/> where the instruction was removed, if applicable.
     /// </summary>
     [JsonPropertyName("removed_in")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

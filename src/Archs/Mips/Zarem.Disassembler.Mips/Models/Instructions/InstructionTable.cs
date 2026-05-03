@@ -56,7 +56,7 @@ public class InstructionTable : MipsInstructionTableBase<DisassemblerLookup>
                 (byte)MipsOpCode.Coprocessor1,
                 (byte)c1.RSCode),
 
-            FloatInstructionMeta f => new DisassemblerLookup(
+            MipsFloatInstructionMeta f => new DisassemblerLookup(
                 (byte)MipsOpCode.Coprocessor1,
                 (byte)f.Function,
                 IsFloat: true), // New flag to check bits [5:0] instead of [25:21]
