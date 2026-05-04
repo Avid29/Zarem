@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Models.Instructions.Enums.Functions;
+namespace Zarem.RiscV.Models.Instructions.Enums.Functions;
 
 /// <summary>
 /// An enum representing the funct3 field of a RISC-V instruction.

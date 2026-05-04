@@ -6,7 +6,7 @@
     xmlns:collections="using:CommunityToolkit.Mvvm.Collections"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:mdata="using:Zarem.Assembler.Models.Meta"
+    xmlns:mdata="using:Zarem.Mips.Assembler.Models.Meta"
     xmlns:palette="using:Zarem.IDE.Controls.CheatSheet.Palettes"
     d:DesignHeight="300"
     d:DesignWidth="400"

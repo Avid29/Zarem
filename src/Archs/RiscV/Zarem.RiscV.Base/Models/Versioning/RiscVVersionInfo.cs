@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Zarem.Models.Versioning.Enums;
+using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.Models.Versioning;
 

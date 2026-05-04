@@ -3,10 +3,10 @@
 using System;
 using Zarem.Attributes;
 using Zarem.Descriptors;
-using Zarem.Linker;
-using Zarem.Linker.Config;
+using Zarem.Mips.Linker;
+using Zarem.Mips.Linker.Config;
 
-namespace Zarem.MIPS;
+namespace Zarem.Mips;
 
 /// <summary>
 /// An <see cref="ILinkerDescriptor"/> for the MIPS linker.

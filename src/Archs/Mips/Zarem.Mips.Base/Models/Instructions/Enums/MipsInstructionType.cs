@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2024
 
-namespace Zarem.Models.Instructions.Enums;
+namespace Zarem.Mips.Models.Instructions.Enums;
 
 /// <summary>
 /// An enum for the mips instruction types.

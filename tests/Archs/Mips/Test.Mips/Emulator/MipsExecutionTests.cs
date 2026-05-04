@@ -2,18 +2,19 @@
 
 using System.Numerics;
 using Zarem.Assembler;
-using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Assembler;
+using Zarem.Mips.Assembler.Models.Tables;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Test.MIPS.Emulator;
+namespace Test.Mips.Emulator;
 
 [TestClass]
 public partial class MipsExecutionTests

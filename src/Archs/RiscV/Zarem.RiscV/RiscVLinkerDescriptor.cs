@@ -3,8 +3,8 @@
 using System;
 using Zarem.Attributes;
 using Zarem.Descriptors;
-using Zarem.Linker;
-using Zarem.Linker.Config;
+using Zarem.RiscV.Linker;
+using Zarem.RiscV.Linker.Config;
 
 namespace Zarem.RiscV;
 

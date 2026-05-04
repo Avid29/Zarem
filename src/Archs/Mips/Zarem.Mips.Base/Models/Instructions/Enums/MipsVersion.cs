@@ -3,7 +3,7 @@
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
-namespace Zarem.Models.Instructions.Enums;
+namespace Zarem.Mips.Models.Instructions.Enums;
 
 /// <summary>
 /// An enum for which version(s) a MIPS feature is supported.

@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Models.Instructions.Enums.Registers;
+namespace Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 /// <summary>
 /// An enum for register sets.

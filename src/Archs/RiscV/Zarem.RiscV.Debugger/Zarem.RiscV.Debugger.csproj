@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.RiscV.Debugger</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Zarem.Debugger\Zarem.Debugger.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Assembler\Zarem.RiscV.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Emulator\Zarem.RiscV.Emulator.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Base\Zarem.RiscV.Base.csproj" />
+  </ItemGroup>
+
+</Project>

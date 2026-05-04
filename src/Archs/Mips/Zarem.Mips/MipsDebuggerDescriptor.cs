@@ -2,10 +2,10 @@
 
 using System;
 using Zarem.Attributes;
-using Zarem.Debugger;
 using Zarem.Descriptors;
+using Zarem.Mips.Debugger;
 
-namespace Zarem.MIPS;
+namespace Zarem.Mips;
 
 /// <summary>
 /// An <see cref="IDebuggerDescriptor"/> for the MIPS debugger.

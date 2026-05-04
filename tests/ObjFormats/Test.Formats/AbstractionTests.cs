@@ -10,7 +10,9 @@ using Zarem.Assembler;
 using Zarem.Assembler.Models;
 using Zarem.Config;
 using Zarem.Linker;
-using Zarem.Linker.Config;
+using Zarem.Mips.Assembler;
+using Zarem.Mips.Linker;
+using Zarem.Mips.Linker.Config;
 
 namespace Test.ObjFormats;
 

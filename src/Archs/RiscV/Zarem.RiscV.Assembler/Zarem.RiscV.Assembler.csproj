@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.RiscV.Assembler</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Instructions\BType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint-Convert.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint-LoadStore.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\IType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\JType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Pseudo.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\RType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\System.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\SType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\UType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\Multiplication.inst.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Zarem.Assembler\Zarem.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Base\Zarem.RiscV.Base.csproj" />
+  </ItemGroup>
+
+</Project>

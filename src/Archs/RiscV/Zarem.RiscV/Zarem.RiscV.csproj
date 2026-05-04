@@ -6,10 +6,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Zarem\Zarem.csproj" />
-    <ProjectReference Include="..\Zarem.Assembler.RiscV\Zarem.Assembler.RiscV.csproj" />
-    <ProjectReference Include="..\Zarem.Debugger.RiscV\Zarem.Debugger.RiscV.csproj" />
-    <ProjectReference Include="..\Zarem.Emulator.RiscV\Zarem.Emulator.RiscV.csproj" />
-    <ProjectReference Include="..\Zarem.Linker.RiscV\Zarem.Linker.RiscV.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Assembler\Zarem.RiscV.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Debugger\Zarem.RiscV.Debugger.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Emulator\Zarem.RiscV.Emulator.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Linker\Zarem.RiscV.Linker.csproj" />
   </ItemGroup>
 
 </Project>

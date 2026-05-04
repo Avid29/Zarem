@@ -6,11 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using Zarem.Assembler.Models;
-using Zarem.Assembler.Models.Meta;
-using Zarem.Assembler.Models.Tables;
 using Zarem.IDE.Models.CheatSheet;
 using Zarem.IDE.Services;
+using Zarem.Mips.Assembler.Models.Meta;
+using Zarem.Mips.Assembler.Models.Tables;
 
 namespace Zarem.IDE.ViewModels.Pages.CheatSheet;
 

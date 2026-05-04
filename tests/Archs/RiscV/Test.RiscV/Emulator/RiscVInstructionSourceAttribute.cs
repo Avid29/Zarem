@@ -6,12 +6,12 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using Test.Archs.Emulator;
-using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
-using Zarem.Emulator.Machine.Enums;
-using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning;
-using Zarem.Models.Versioning.Enums;
+using Zarem.RiscV.Emulator.Config;
+using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Test.RiscV.Emulator;
 

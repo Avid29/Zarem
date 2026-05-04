@@ -1,13 +1,13 @@
 ﻿// Avishai Dernis 2024
 
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.Functions;
-using Zarem.Models.Instructions.Enums.Functions.CoProc0;
-using Zarem.Models.Instructions.Enums.Functions.FloatProc;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Functions;
+using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
+using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
 
-namespace Zarem.Helpers.Instructions;
+namespace Zarem.Mips.Helpers.Instructions;
 
 /// <summary>
 /// A static class containing helper methods related to instruction types.

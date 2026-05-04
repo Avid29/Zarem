@@ -2,8 +2,8 @@
 
 using System;
 using Zarem.Attributes;
-using Zarem.Debugger;
 using Zarem.Descriptors;
+using Zarem.RiscV.Debugger;
 
 namespace Zarem.RiscV;
 

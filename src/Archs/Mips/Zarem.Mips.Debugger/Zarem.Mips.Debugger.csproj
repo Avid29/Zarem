@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.Mips.Debugger</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Zarem.Debugger\Zarem.Debugger.csproj" />
+    <ProjectReference Include="..\Zarem.Mips.Assembler\Zarem.Mips.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.Mips.Emulator\Zarem.Mips.Emulator.csproj" />
+    <ProjectReference Include="..\Zarem.MIPS.Base\Zarem.Mips.Base.csproj" />
+  </ItemGroup>
+
+</Project>

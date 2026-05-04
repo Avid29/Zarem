@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Models.Instructions.Enums.Operations;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
 
-namespace Zarem.Models.Instructions.Enums.Functions.CoProc0;
+namespace Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
 
 /// <summary>
 /// An enum for <see cref="MipsOpCode.Coprocessor0"/> instruction function codes.

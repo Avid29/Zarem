@@ -5,7 +5,7 @@ using Zarem.Attributes;
 using Zarem.Descriptors;
 using Zarem.Descriptors.Base;
 
-namespace Zarem.MIPS;
+namespace Zarem.Mips;
 
 /// <summary>
 /// An <see cref="IArchitectureDescriptor"/> for the MIPS architecture.

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.Mips.Linker</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Zarem.Linker\Zarem.Linker.csproj" />
+    <ProjectReference Include="..\Zarem.Mips.Assembler\Zarem.Mips.Assembler.csproj" />
+  </ItemGroup>
+
+</Project>

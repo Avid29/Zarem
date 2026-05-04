@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Test.Zarem;
 using Zarem.Elf;
-using Zarem.MIPS;
+using Zarem.Mips;
 using Zarem.Registry;
 using Zarem.TrapHandlers;
 

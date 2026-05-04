@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2024
 
-using Zarem.Models.Instructions.Enums.Functions;
 
-namespace Zarem.Models.Instructions.Enums.Operations;
+// Avishai Dernis 2024
+
+using Zarem.Mips.Models.Instructions.Enums.Functions;
+
+namespace Zarem.Mips.Models.Instructions.Enums.Operations;
 
 /// <summary>
 /// An enum for instruction op codes.

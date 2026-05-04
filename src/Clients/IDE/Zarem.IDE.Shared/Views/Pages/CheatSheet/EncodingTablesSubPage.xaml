@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Zarem.IDE.Views.Pages.CheatSheet"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:reg="using:Zarem.Models.Instructions.Enums.Registers"
+    xmlns:mipsreg="using:Zarem.Mips.Models.Instructions.Enums.Registers"
     xmlns:tables="using:Zarem.Assembler.Helpers.Tables"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -37,10 +37,10 @@
                 SavedBrush="{StaticResource SavedRegister}"
                 TempBrush="{StaticResource TempRegister}" />
 
-            <DataTemplate x:Key="RegisterEncodingCellTemplate" x:DataType="reg:MipsGpRegister">
+            <DataTemplate x:Key="RegisterEncodingCellTemplate" x:DataType="mipsreg:MipsGpRegister">
                 <Border
                     Margin="1"
-                    Background="{x:Bind (reg:MipsGpRegister), Converter={StaticResource RegisterEncodingColorConverter}}"
+                    Background="{x:Bind (mipsreg:MipsGpRegister), Converter={StaticResource RegisterEncodingColorConverter}}"
                     CornerRadius="4">
                     <TextBlock
                         HorizontalAlignment="Center"
@@ -48,7 +48,7 @@
                         FontFamily="{StaticResource HappyMonkey}"
                         FontSize="18"
                         Foreground="Black"
-                        Text="{x:Bind tables:MipsRegisterTable.Instance.GetRegisterString((reg:MipsGpRegister), reg:MipsRegisterSet.GeneralPurpose)}" />
+                        Text="{x:Bind tables:MipsRegisterTable.Instance.GetRegisterString((mipsreg:MipsGpRegister), mipsreg:MipsRegisterSet.GeneralPurpose)}" />
                 </Border>
             </DataTemplate>
         </ResourceDictionary>

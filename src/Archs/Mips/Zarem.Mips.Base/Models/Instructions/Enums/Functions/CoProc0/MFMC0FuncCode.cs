@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Models.Instructions.Enums.Functions.CoProc0;
+namespace Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
 
 /// <summary>
 /// An enum for <see cref="CoProc0RSCode.MFMC0"/> instruction function codes.
