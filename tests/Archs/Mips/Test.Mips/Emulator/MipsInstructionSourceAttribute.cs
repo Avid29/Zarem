@@ -14,7 +14,7 @@ using Zarem.Extensions;
 using Zarem.Models.Instructions.Enums;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Test.MIPS.Emulator;
+namespace Test.Mips.Emulator;
 
 [AttributeUsage(AttributeTargets.Method)]
 public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmulatorConfig>

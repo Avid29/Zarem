@@ -21,14 +21,12 @@ using System.Linq;
 using Zarem.Assembler;
 using Zarem.Assembler.Models.Tables;
 
-
-
 #if DEBUG
 using Zarem.Disassembler.Services;
 using Zarem.Services;
 #endif
 
-namespace Test.MIPS.Assembler.Parsers;
+namespace Test.Mips.Assembler;
 
 [TestClass]
 public class InstructionParserTests

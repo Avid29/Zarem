@@ -18,7 +18,7 @@ using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning;
 using Zarem.Models.Versioning.Enums;
 
-namespace Test.RiscV.Assembler.Parsers;
+namespace Test.RiscV.Assembler;
 
 [TestClass]
 public class InstructionParserTests

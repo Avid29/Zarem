@@ -10,9 +10,17 @@ namespace Test.RiscV.Assembler;
 [TestClass]
 public class RiscVTokenizerTests : TokenizerTester
 {
+    [TestMethod("Empty")]
+    public async Task EmptyTest() => await RunTest("", []);
+
     [TestMethod("addi x10, x1, 42")]
-    public async Task SimpleTest() => await RunTest("addi x10, x1, 42",
-        ("addi", TokenType.Instruction), ("x10", TokenType.Register), (",", TokenType.Comma), ("x1", TokenType.Register), (",", TokenType.Comma), ("42", TokenType.Immediate));
+    public async Task SimpleTest()
+    {
+        var tokensBuilder = new TokenExpectationBuilder(MipsTokenizerProfile.Default)
+            .Instruction("addi").Reg("x10").Comma().Reg("x1").Comma().Imm("42");
+
+        await RunTest("addi x10, x1, 42", tokensBuilder.Build());
+    }
 
     private static async Task RunTest(string test, params (string, TokenType)[] canon) =>
         await RunTest(test, RiscVTokenizerProfile.Default, canon);

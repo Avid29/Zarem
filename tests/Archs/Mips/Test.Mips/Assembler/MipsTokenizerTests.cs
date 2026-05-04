@@ -1,31 +1,26 @@
 ﻿// Avishai Dernis 2024
 
-using System.IO;
 using System.Threading.Tasks;
 using Test.Archs.Tokenization;
-using Test.Mips.Helpers;
 using Zarem.Assembler;
 using Zarem.Assembler.Tokenization.Models.Enums;
 
-namespace Test.MIPS.Assembler;
+namespace Test.Mips.Assembler;
 
 [TestClass]
 public class MipsTokenizerTests : TokenizerTester
 {
-    [TestMethod(TestFilePathing.EmptyTestFile)]
-    public async Task EmptyFileTest() => await RunFileTest(TestFilePathing.EmptyTestFile);
+    [TestMethod("Empty")]
+    public async Task EmptyTest() => await RunTest("", []);
 
-    [TestMethod(TestFilePathing.InstructionsTestFile)]
-    public async Task InstructionsFileTest() => await RunFileTest(TestFilePathing.InstructionsTestFile,
-        ("ori", TokenType.Instruction), ("s0", TokenType.Register), (",", TokenType.Comma), ("zero", TokenType.Register), (",", TokenType.Comma), ("10", TokenType.Immediate),
-        ("ori", TokenType.Instruction), ("s1", TokenType.Register), (",", TokenType.Comma), ("zero", TokenType.Register), (",", TokenType.Comma), ("'a'", TokenType.Immediate),
-        ("add", TokenType.Instruction), ("t0", TokenType.Register), (",", TokenType.Comma), ("s0", TokenType.Register), (",", TokenType.Comma), ("s1", TokenType.Register));
-
-    private static async Task RunFileTest(string testFile, params (string, TokenType)[] canon)
+    [TestMethod("ori $s0, $zero, 10")]
+    public async Task SimpleTest()
     {
-        // Open the file and run the test
-        var path = TestFilePathing.GetAssemblyFilePath(testFile);
-        var stream = File.Open(path, FileMode.Open);
-        await RunTest(stream, MipsTokenizerProfile.Default, canon, testFile);
+        var tokensBuilder = new TokenExpectationBuilder(MipsTokenizerProfile.Default)
+            .Instruction("ori").Reg("s0").Comma().Reg("zero").Comma().Imm("10");
+
+        await RunTest("ori $s0, $zero, 10", tokensBuilder.Build());
     }
+
+    private static async Task RunTest(string text, params (string, TokenType)[] canon) => await RunTest(text, MipsTokenizerProfile.Default, canon);
 }

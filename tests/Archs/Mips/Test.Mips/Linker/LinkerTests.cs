@@ -7,7 +7,7 @@ using Zarem.Linker;
 using Zarem.Linker.Config;
 using Zarem.Models;
 
-namespace Test.MIPS.Linker;
+namespace Test.Mips.Linker;
 
 [TestClass]
 public class LinkerTests

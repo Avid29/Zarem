@@ -11,7 +11,7 @@ using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization;
 using Zarem.Models.Enums;
 
-namespace Test.MIPS.Assembler.Parsers;
+namespace Test.Mips.Assembler;
 
 // TODO: Test expressions in directive args
 

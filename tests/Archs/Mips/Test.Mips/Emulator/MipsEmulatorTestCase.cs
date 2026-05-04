@@ -8,7 +8,7 @@ using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Instructions.Enums.Registers;
 
-namespace Test.MIPS.Emulator;
+namespace Test.Mips.Emulator;
 
 public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConfig>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
