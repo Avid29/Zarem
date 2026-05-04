@@ -65,21 +65,19 @@
     </Project>
   </Folder>
   <Folder Name="/Plugins/Archs/RiscV/">
-    <Project Path="src/Archs/RiscV/Zarem.Assembler.RiscV/Zarem.RiscV.Assembler.csproj" Id="3d911770-bf60-4cd7-a0ec-e64bf829fe95">
-      <BuildType Solution="Alpha|*" Project="Debug" />
-    </Project>
-    <Project Path="src/Archs/RiscV/Zarem.Debugger.RiscV/Zarem.RiscV.Debugger.csproj" Id="4301033c-3ed8-4702-8592-6856ce15345a">
-      <BuildType Solution="Alpha|*" Project="Debug" />
-    </Project>
-    <Project Path="src/Archs/RiscV/Zarem.Emulator.RiscV/Zarem.RiscV.Emulator.csproj" Id="764aab63-d716-4e2d-807a-134369480fd6">
-      <BuildType Solution="Alpha|*" Project="Debug" />
-      <Build Solution="Alpha|*" Project="false" />
-      <Build Solution="Debug|arm64" Project="false" />
-    </Project>
-    <Project Path="src/Archs/RiscV/Zarem.Linker.RiscV/Zarem.RiscV.Linker.csproj" Id="9504807e-0cae-4fcd-a062-28480a57d323">
+    <Project Path="src/Archs/RiscV/Zarem.RiscV.Assembler/Zarem.RiscV.Assembler.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
     <Project Path="src/Archs/RiscV/Zarem.RiscV.Base/Zarem.RiscV.Base.csproj" Id="32597ba3-5177-4db4-8541-6e800567872d">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Archs/RiscV/Zarem.RiscV.Debugger/Zarem.RiscV.Debugger.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Archs/RiscV/Zarem.RiscV.Emulator/Zarem.RiscV.Emulator.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Archs/RiscV/Zarem.RiscV.Linker/Zarem.RiscV.Linker.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
     <Project Path="src/Archs/RiscV/Zarem.RiscV/Zarem.RiscV.csproj" Id="6297685e-37e2-4e1e-bbfe-14ba5152099f">

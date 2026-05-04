@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Zarem.Debugger\Zarem.Debugger.csproj" />
-    <ProjectReference Include="..\Zarem.Assembler.RiscV\Zarem.RiscV.Assembler.csproj" />
-    <ProjectReference Include="..\Zarem.Emulator.RiscV\Zarem.RiscV.Emulator.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Assembler\Zarem.RiscV.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Emulator\Zarem.RiscV.Emulator.csproj" />
     <ProjectReference Include="..\Zarem.RiscV.Base\Zarem.RiscV.Base.csproj" />
   </ItemGroup>
 

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Zarem.Linker\Zarem.Linker.csproj" />
-    <ProjectReference Include="..\Zarem.Assembler.RiscV\Zarem.RiscV.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Assembler\Zarem.RiscV.Assembler.csproj" />
   </ItemGroup>
 
 </Project>
