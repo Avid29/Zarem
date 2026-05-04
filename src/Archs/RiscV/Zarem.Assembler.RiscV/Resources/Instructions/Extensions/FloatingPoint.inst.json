@@ -114,6 +114,14 @@
   },
   {
     "type": "float",
+    "name": "fclass.fmt",
+    "funct5": 112,
+    "funct3": 1,
+    "args": [ "rd", "frs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
     "name": "fmadd.fmt",
     "op_code": 67,
     "args": [ "frd", "frs1", "frs2", "frs3" ],
