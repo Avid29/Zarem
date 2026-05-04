@@ -100,6 +100,20 @@
   },
   {
     "type": "float",
+    "name": "fmv.x.fmt",
+    "funct5": 112,
+    "args": [ "rd", "frs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fmv.fmt.x",
+    "funct5": 120,
+    "args": [ "frd", "rs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
     "name": "fmadd.fmt",
     "op_code": 67,
     "args": [ "frd", "frs1", "frs2", "frs3" ],
