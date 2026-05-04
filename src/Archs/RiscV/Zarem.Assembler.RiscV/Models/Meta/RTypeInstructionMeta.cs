@@ -12,19 +12,19 @@ namespace Zarem.Assembler.Models.Meta;
 public record RTypeInstructionMeta : RiscVInstructionMetaBase
 {
     /// <summary>
-    /// Gets the instruction operation code.
+    /// Gets the instruction' operation code.
     /// </summary>
     [JsonPropertyName("op_code")]
     public RiscVOpCode OpCode { get; init; } = RiscVOpCode.Op;
 
     /// <summary>
-    /// Gets the instruction function3 code.
+    /// Gets the instruction funct3 code.
     /// </summary>
     [JsonPropertyName("funct3")]
     public Funct3Code Funct3 { get; init; }
 
     /// <summary>
-    /// Gets the instruction function7 code.
+    /// Gets the instruction' funct7 code.
     /// </summary>
     [JsonPropertyName("funct7")]
     public Funct7Code Funct7 { get; init; } = Funct7Code.Base;

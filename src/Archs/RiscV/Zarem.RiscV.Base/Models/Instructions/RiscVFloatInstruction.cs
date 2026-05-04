@@ -20,15 +20,15 @@ public struct RiscVFloatInstruction
     private const int OPCODE_BIT_SIZE = 7;
     private const int REG_BIT_SIZE = 5;
     private const int FMT_BIT_SIZE = 2;
-    private const int RM_BIT_SIZE = 3;
-    private const int FUNCT_BIT_SIZE = 5;
+    private const int FUNCT3_BIT_SIZE = 3;
+    private const int FUNCT5_BIT_SIZE = 5;
 
     private const int OPCODE_OFFSET = 0;
     private const int RD_OFFSET = 7;
-    private const int RM_OFFSET = 12;
+    private const int FUNCT3_OFFSET = 12;
     private const int RS1_OFFSET = 15;
     private const int RS2_OFFSET = 20;
-    private const int FUNCT_OFFSET = 25;
+    private const int FUNCT5_OFFSET = 25;
     private const int FMT_OFFSET = 25;
     private const int RS3_OFFSET = 27;
 
@@ -38,14 +38,14 @@ public struct RiscVFloatInstruction
     /// <summary>
     /// Creates a new floating-point instruction.
     /// </summary>
-    public static RiscVFloatInstruction Create(RiscVOpCode opCode, RiscVFloatFormat format, RiscVFloatFuncCode function, RiscVFloatRegister rd, RiscVFloatRegister rs1, RiscVFloatRegister rs2, RiscVRoundingMode roundingMode = RiscVRoundingMode.Dynamic)
+    public static RiscVFloatInstruction Create(RiscVOpCode opCode, RiscVFloatFormat format, FloatFunc5Code funct5, RiscVFloatRegister rd, RiscVFloatRegister rs1, RiscVFloatRegister rs2, FloatFunct3Code funct3 = FloatFunct3Code.RoundToNearest)
     {
         return new()
         {
             OpCode = opCode,
             Format = format,
-            Function = function,
-            RoundingMode = roundingMode,
+            Funct5 = funct5,
+            Funct3 = funct3,
             RD = rd,
             RS1 = rs1,
             RS2 = rs2,
@@ -55,13 +55,13 @@ public struct RiscVFloatInstruction
     /// <summary>
     /// Creates a new floating-point instruction.
     /// </summary>
-    public static RiscVFloatInstruction Create(RiscVOpCode opCode, RiscVFloatFormat format, RiscVFloatRegister rd, RiscVFloatRegister rs1, RiscVFloatRegister rs2, RiscVFloatRegister rs3, RiscVRoundingMode roundingMode = RiscVRoundingMode.Dynamic)
+    public static RiscVFloatInstruction Create(RiscVOpCode opCode, RiscVFloatFormat format, RiscVFloatRegister rd, RiscVFloatRegister rs1, RiscVFloatRegister rs2, RiscVFloatRegister rs3, FloatFunct3Code funct3 = FloatFunct3Code.RoundToNearest)
     {
         return new()
         {
             OpCode = opCode,
             Format = format,
-            RoundingMode = roundingMode,
+            Funct3 = funct3,
             RD = rd,
             RS1 = rs1,
             RS2 = rs2,
@@ -90,23 +90,23 @@ public struct RiscVFloatInstruction
     }
 
     /// <summary>
-    /// Gets or sets the instruction's function code.
+    /// Gets or sets the instruction's funct5 code.
     /// </summary>
-    public RiscVFloatFuncCode Function
+    public FloatFunc5Code Funct5
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly get => (RiscVFloatFuncCode)BitField.GetField(_inst, FUNCT_BIT_SIZE, FUNCT_OFFSET);
-        set => BitField.SetField(ref _inst, FUNCT_BIT_SIZE, FUNCT_OFFSET, (byte)value);
+        readonly get => (FloatFunc5Code)BitField.GetField(_inst, FUNCT5_BIT_SIZE, FUNCT5_OFFSET);
+        set => BitField.SetField(ref _inst, FUNCT5_BIT_SIZE, FUNCT5_OFFSET, (byte)value);
     }
 
     /// <summary>
-    /// Gets or sets the instruction's rounding mode.
+    /// Gets or sets the instruction's funct3 code.
     /// </summary>
-    public RiscVRoundingMode RoundingMode
+    public FloatFunct3Code Funct3
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly get => (RiscVRoundingMode)BitField.GetField(_inst, RM_BIT_SIZE, RM_OFFSET);
-        set => BitField.SetField(ref _inst, RM_BIT_SIZE, RM_OFFSET, (byte)value);
+        readonly get => (FloatFunct3Code)BitField.GetField(_inst, FUNCT3_BIT_SIZE, FUNCT3_OFFSET);
+        set => BitField.SetField(ref _inst, FUNCT3_BIT_SIZE, FUNCT3_OFFSET, (byte)value);
     }
 
     /// <summary>

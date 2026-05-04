@@ -9,11 +9,13 @@ public enum RiscVOpCode : byte
 {
 #pragma warning disable CS1591
     Load = 0x03,
+    FloatLoad = 0x07,
     MiscMem = 0x0f,
     AddUpperImmediateToPC = 0x17,
     OpImmediate = 0x13,
     OpImmediate32 = 0x1b,
     Store = 0x23,
+    FloatStore = 0x27,
     Op = 0x33,
     Op32 = 0x3b,
     LoadUpperImmediate = 0x37,

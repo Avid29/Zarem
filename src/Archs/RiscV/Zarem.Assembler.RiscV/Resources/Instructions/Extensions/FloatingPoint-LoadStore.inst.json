@@ -1,0 +1,66 @@
+[
+  {
+    "type": "i-type",
+    "name": "flh",
+    "op_code": 7,
+    "funct3": 1,
+    "args": [ "frd", "mem_load" ],
+    "extension": "Zfh"
+  },
+  {
+    "type": "i-type",
+    "name": "flw",
+    "op_code": 7,
+    "funct3": 2,
+    "args": [ "frd", "mem_load" ],
+    "extension": "F"
+  },
+  {
+    "type": "i-type",
+    "name": "fld",
+    "op_code": 7,
+    "funct3": 3,
+    "args": [ "frd", "mem_load" ],
+    "extension": "D"
+  },
+  {
+    "type": "i-type",
+    "name": "flq",
+    "op_code": 7,
+    "funct3": 4,
+    "args": [ "frd", "mem_load" ],
+    "extension": "Q"
+  },
+  {
+    "type": "s-type",
+    "name": "fsh",
+    "op_code": 39,
+    "funct3": 1,
+    "args": [ "frs2", "mem_store" ],
+    "extension": "Zfh"
+  },
+  {
+    "type": "s-type",
+    "name": "fsw",
+    "op_code": 39,
+    "funct3": 2,
+    "args": [ "frs2", "mem_store" ],
+    "extension": "F"
+  },
+  {
+    "type": "s-type",
+    "name": "fsd",
+    "op_code": 39,
+    "funct3": 3,
+    "args": [ "frs2", "mem_store" ],
+    "extension": "D"
+  },
+  {
+    "type": "s-type",
+    "name": "fsd",
+    "op_code": 39,
+    "funct3": 4,
+    "args": [ "frs2", "mem_store" ],
+    "extension": "Q"
+  }
+]

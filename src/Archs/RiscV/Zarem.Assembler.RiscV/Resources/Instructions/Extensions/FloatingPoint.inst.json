@@ -2,41 +2,150 @@
   {
     "type": "float",
     "name": "fadd.fmt",
-    "op_code": 83,
-    "float_func": 0,
+    "funct5": 0,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
   },
   {
     "type": "float",
     "name": "fsub.fmt",
-    "op_code": 83,
-    "float_func": 4,
+    "funct5": 4,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
   },
   {
     "type": "float",
     "name": "fmul.fmt",
-    "op_code": 83,
-    "float_func": 8,
+    "funct5": 8,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
   },
   {
     "type": "float",
     "name": "fdiv.fmt",
-    "op_code": 83,
-    "float_func": 12,
+    "funct5": 12,
+    "args": [ "frd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fsgnj.fmt",
+    "funct5": 16,
+    "funct3": 0,
+    "args": [ "frd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fsgnjn.fmt",
+    "funct5": 16,
+    "funct3": 1,
+    "args": [ "frd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fsgnjx.fmt",
+    "funct5": 16,
+    "funct3": 2,
+    "args": [ "frd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fmin.fmt",
+    "funct5": 20,
+    "funct3": 0,
+    "args": [ "frd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fmax.fmt",
+    "funct5": 20,
+    "funct3": 1,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
   },
   {
     "type": "float",
     "name": "fsqrt.fmt",
-    "op_code": 83,
-    "float_func": 44,
+    "funct5": 44,
     "args": [ "frd", "frs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fle.fmt",
+    "funct5": 80,
+    "funct3": 0,
+    "args": [ "rd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "flt.fmt",
+    "funct5": 80,
+    "funct3": 1,
+    "args": [ "rd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "feq.fmt",
+    "funct5": 80,
+    "funct3": 2,
+    "args": [ "rd", "frs1", "frs2" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fmv.x.fmt",
+    "funct5": 112,
+    "args": [ "rd", "frs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fmv.fmt.x",
+    "funct5": 120,
+    "args": [ "frd", "rs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fclass.fmt",
+    "funct5": 112,
+    "funct3": 1,
+    "args": [ "rd", "frs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fmadd.fmt",
+    "op_code": 67,
+    "args": [ "frd", "frs1", "frs2", "frs3" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fmsub.fmt",
+    "op_code": 71,
+    "args": [ "frd", "frs1", "frs2", "frs3" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fnmsub.fmt",
+    "op_code": 75,
+    "args": [ "frd", "frs1", "frs2", "frs3" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fnmadd.fmt",
+    "op_code": 79,
+    "args": [ "frd", "frs1", "frs2", "frs3" ],
     "extension": "F"
   }
 ]
