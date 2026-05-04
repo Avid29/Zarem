@@ -47,7 +47,7 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
         MipsAssemblerConfig config,
         MipsInstructionTable? table,
         Address address,
-        IReadOnlyDictionary<string, Symbol>? symbols, 
+        IReadOnlyDictionary<string, Symbol>? symbols,
         ILogger? logger) : base(address, symbols, MipsRegisterTable.Instance, logger)
     {
         Config = config;
@@ -177,8 +177,7 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
             RTypeInstructionMeta r => MipsInstruction.CreateR(r.OperationCode, r.FuncCode, _rs, _rt, _rd, (byte)Immediate),
             JTypeInstructionMeta j => MipsInstruction.CreateJ(j.OperationCode, (uint)Immediate),
 
-            RegImmInstructionMeta ri
-                => ri.Type is MipsInstructionType.RegisterImmediateBranch
+            RegImmInstructionMeta ri => ri.Type is MipsInstructionType.RegisterImmediateBranch
                 ? MipsInstruction.CreateBranch(ri.RtCode, _rs, Immediate)
                 : MipsInstruction.CreateTrap(ri.RtCode, _rs, (short)Immediate),
 

@@ -208,7 +208,9 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, _rs1, _rs2, Immediate),
             STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
             JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
-            RiscVFloatInstructionMeta f => RiscVFloatInstruction.Create(f.OpCode, _format, f.Function, (RiscVFloatRegister)_rd, (RiscVFloatRegister)_rs1, (RiscVFloatRegister)_rs2),
+            RiscVFloatInstructionMeta f => f.Funct5 is null
+                ? RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)_rd, (RiscVFloatRegister)_rs1, (RiscVFloatRegister)_rs2, (RiscVFloatRegister)_rs3, f.Funct3)
+                : RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5.Value, (RiscVFloatRegister)_rd, (RiscVFloatRegister)_rs1, (RiscVFloatRegister)_rs2, f.Funct3),
 
             _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
         };
@@ -235,6 +237,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             RiscVArgument.FRD => new(new(ref _rd), RiscVRegisterSet.FloatingPoints),
             RiscVArgument.FRS1 => new(new(ref _rs1), RiscVRegisterSet.FloatingPoints),
             RiscVArgument.FRS2 => new(new(ref _rs2), RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRS3 => new(new(ref _rs3), RiscVRegisterSet.FloatingPoints),
 
             // Invalid target type
             _ => throw new ArgumentOutOfRangeException($"Argument of type '{target}' attempted to parse as a register.")
@@ -266,7 +269,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             // 'Memory' in RISC-V loads/stores uses a 12-bit offset (%lo)
             RiscVArgument.StoreOffset => RiscVReferenceType.Low12,
             // FullImmediate triggers a HI/LO pair
-            RiscVArgument.FullImmediate => RiscVReferenceType.High20,   
+            RiscVArgument.FullImmediate => RiscVReferenceType.High20,
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<RiscVReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
         };
 
@@ -301,7 +304,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             {
                 References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
             }
-            
+
         }
 
         return true;

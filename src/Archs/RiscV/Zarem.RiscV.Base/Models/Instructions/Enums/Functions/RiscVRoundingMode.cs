@@ -14,7 +14,6 @@ public enum RiscVRoundingMode : byte
     RoundDown = 0b010,
     RoundUp = 0b011,
     RoundToNearestMaxMagnitude = 0b100,
-
     Dynamic = 0b111,
 
 #pragma warning restore CS1591
