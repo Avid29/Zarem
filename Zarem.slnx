@@ -128,7 +128,6 @@
     <Project Path="tests/Archs/Mips/Test.Assembler.Mips.Live/Test.Assembler.Mips.Live.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
-    <Project Path="tests/Archs/Mips/Test.Mips.Asms/Test.Mips.Asms.vcxitems" Id="f152d20e-aa8a-4d50-9852-0eb0b4a962c4" />
     <Project Path="tests/Archs/Mips/Test.Mips/Test.Mips.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
