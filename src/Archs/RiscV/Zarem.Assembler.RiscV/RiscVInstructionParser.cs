@@ -34,14 +34,12 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
     private readonly FormatTable<RiscVFloatFormat> _formatTable = new();
-    private readonly FormatTable<RiscVIntFormat> _intFormatTable = new("int");
 
     private RiscVGpRegister _rd;
     private RiscVGpRegister _rs1;
     private RiscVGpRegister _rs2;
     private RiscVGpRegister _rs3;
     private RiscVFloatFormat _format;
-    private RiscVIntFormat _intFormat;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVInstructionParser"/> struct.
@@ -109,11 +107,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             {
                 _format = format;
                 parts[i] = _formatTable.Placeholder;
-            }
-            else if (_intFormatTable.TryGetFormat(parts[i], out var intFormat))
-            {
-                _intFormat = intFormat;
-                parts[i] = _intFormatTable.Placeholder;
             }
         }
 

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Instructions\BType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint-Convert.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint-LoadStore.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\IType.inst.json" />
