@@ -6,11 +6,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Zarem\Zarem.csproj" />
-    <ProjectReference Include="..\Zarem.Assembler.MIPS\Zarem.Assembler.Mips.csproj" />
-    <ProjectReference Include="..\Zarem.Debugger.MIPS\Zarem.Debugger.Mips.csproj" />
-    <ProjectReference Include="..\Zarem.Disassembler.MIPS\Zarem.Disassembler.Mips.csproj" />
-    <ProjectReference Include="..\Zarem.Emulator.MIPS\Zarem.Emulator.Mips.csproj" />
-    <ProjectReference Include="..\Zarem.Linker.MIPS\Zarem.Linker.Mips.csproj" />
+    <ProjectReference Include="..\Zarem.Mips.Assembler\Zarem.Mips.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.Mips.Debugger\Zarem.Mips.Debugger.csproj" />
+    <ProjectReference Include="..\Zarem.Mips.Disassembler\Zarem.Mips.Disassembler.csproj" />
+    <ProjectReference Include="..\Zarem.Mips.Emulator\Zarem.Mips.Emulator.csproj" />
+    <ProjectReference Include="..\Zarem.Mips.Linker\Zarem.Mips.Linker.csproj" />
   </ItemGroup>
 
 </Project>

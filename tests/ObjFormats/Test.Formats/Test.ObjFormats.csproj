@@ -5,8 +5,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\src\Archs\MIPS\Zarem.Assembler.MIPS\Zarem.Assembler.Mips.csproj" />
-	  <ProjectReference Include="..\..\..\src\Archs\MIPS\Zarem.Linker.MIPS\Zarem.Linker.Mips.csproj" />
+	  <ProjectReference Include="..\..\..\src\Archs\Mips\Zarem.Mips.Assembler\Zarem.Mips.Assembler.csproj" />
+	  <ProjectReference Include="..\..\..\src\Archs\Mips\Zarem.Mips.Linker\Zarem.Mips.Linker.csproj" />
 	  <ProjectReference Include="..\..\..\src\Zarem.Assembler\Zarem.Assembler.csproj" />
 	  <ProjectReference Include="..\..\Archs\MIPS\Test.MIPS\Test.Mips.csproj" />
 	</ItemGroup>

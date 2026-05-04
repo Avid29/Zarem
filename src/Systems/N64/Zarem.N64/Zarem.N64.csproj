@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Archs\Mips\Zarem.Emulator.Mips\Zarem.Emulator.Mips.csproj" />
+    <ProjectReference Include="..\..\..\Archs\Mips\Zarem.Mips.Emulator\Zarem.Mips.Emulator.csproj" />
     <ProjectReference Include="..\..\..\Zarem.Emulator.DirectX\Zarem.Emulator.DirectX.csproj" />
   </ItemGroup>
 

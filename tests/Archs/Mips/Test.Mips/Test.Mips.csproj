@@ -14,11 +14,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Assembler.MIPS\Zarem.Assembler.Mips.csproj" />
-	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Debugger.MIPS\Zarem.Debugger.Mips.csproj" />
-	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Disassembler.MIPS\Zarem.Disassembler.Mips.csproj" />
-	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Emulator.MIPS\Zarem.Emulator.Mips.csproj" />
-	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.Linker.MIPS\Zarem.Linker.Mips.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Archs\Mips\Zarem.Mips.Assembler\Zarem.Mips.Assembler.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Archs\Mips\Zarem.Mips.Debugger\Zarem.Mips.Debugger.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Archs\Mips\Zarem.Mips.Disassembler\Zarem.Mips.Disassembler.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Archs\Mips\Zarem.Mips.Emulator\Zarem.Mips.Emulator.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Archs\Mips\Zarem.Mips.Linker\Zarem.Mips.Linker.csproj" />
 	  <ProjectReference Include="..\..\..\..\src\Archs\MIPS\Zarem.MIPS.Base\Zarem.Mips.Base.csproj" />
 	  <ProjectReference Include="..\..\..\Test.Zarem\Test.Zarem.csproj" />
 	  <ProjectReference Include="..\..\Test.Archs\Test.Archs.csproj" />

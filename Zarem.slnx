@@ -42,41 +42,41 @@
   <Folder Name="/Plugins/" />
   <Folder Name="/Plugins/Archs/" />
   <Folder Name="/Plugins/Archs/Mips/">
-    <Project Path="src/Archs/Mips/Zarem.Assembler.Mips/Zarem.Assembler.Mips.csproj">
-      <BuildType Solution="Alpha|*" Project="Release" />
-    </Project>
-    <Project Path="src/Archs/Mips/Zarem.Debugger.Mips/Zarem.Debugger.Mips.csproj" Id="7c2da9e5-f431-458d-880a-1b1a91b0a498">
+    <Project Path="src/Archs/Mips/Zarem.Mips.Assembler/Zarem.Mips.Assembler.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
-    </Project>
-    <Project Path="src/Archs/Mips/Zarem.Disassembler.Mips/Zarem.Disassembler.Mips.csproj">
-      <BuildType Solution="Alpha|*" Project="Release" />
-    </Project>
-    <Project Path="src/Archs/Mips/Zarem.Emulator.Mips/Zarem.Emulator.Mips.csproj">
-      <BuildType Solution="Alpha|*" Project="Release" />
-    </Project>
-    <Project Path="src/Archs/Mips/Zarem.Linker.Mips/Zarem.Linker.Mips.csproj" Id="024c439e-9ffc-44ee-aa70-737b7f9c2a23">
-      <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="src/Archs/Mips/Zarem.Mips.Base/Zarem.Mips.Base.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
+    </Project>
+    <Project Path="src/Archs/Mips/Zarem.Mips.Debugger/Zarem.Mips.Debugger.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Archs/Mips/Zarem.Mips.Disassembler/Zarem.Mips.Disassembler.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Archs/Mips/Zarem.Mips.Emulator/Zarem.Mips.Emulator.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Archs/Mips/Zarem.Mips.Linker/Zarem.Mips.Linker.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
     <Project Path="src/Archs/Mips/Zarem.Mips/Zarem.Mips.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Plugins/Archs/RiscV/">
-    <Project Path="src/Archs/RiscV/Zarem.Assembler.RiscV/Zarem.Assembler.RiscV.csproj" Id="3d911770-bf60-4cd7-a0ec-e64bf829fe95">
+    <Project Path="src/Archs/RiscV/Zarem.Assembler.RiscV/Zarem.RiscV.Assembler.csproj" Id="3d911770-bf60-4cd7-a0ec-e64bf829fe95">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
-    <Project Path="src/Archs/RiscV/Zarem.Debugger.RiscV/Zarem.Debugger.RiscV.csproj" Id="4301033c-3ed8-4702-8592-6856ce15345a">
+    <Project Path="src/Archs/RiscV/Zarem.Debugger.RiscV/Zarem.RiscV.Debugger.csproj" Id="4301033c-3ed8-4702-8592-6856ce15345a">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
-    <Project Path="src/Archs/RiscV/Zarem.Emulator.RiscV/Zarem.Emulator.RiscV.csproj" Id="764aab63-d716-4e2d-807a-134369480fd6">
+    <Project Path="src/Archs/RiscV/Zarem.Emulator.RiscV/Zarem.RiscV.Emulator.csproj" Id="764aab63-d716-4e2d-807a-134369480fd6">
       <BuildType Solution="Alpha|*" Project="Debug" />
       <Build Solution="Alpha|*" Project="false" />
       <Build Solution="Debug|arm64" Project="false" />
     </Project>
-    <Project Path="src/Archs/RiscV/Zarem.Linker.RiscV/Zarem.Linker.RiscV.csproj" Id="9504807e-0cae-4fcd-a062-28480a57d323">
+    <Project Path="src/Archs/RiscV/Zarem.Linker.RiscV/Zarem.RiscV.Linker.csproj" Id="9504807e-0cae-4fcd-a062-28480a57d323">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
     <Project Path="src/Archs/RiscV/Zarem.RiscV.Base/Zarem.RiscV.Base.csproj" Id="32597ba3-5177-4db4-8541-6e800567872d">
