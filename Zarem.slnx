@@ -138,7 +138,7 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/Plugins/ModuleFormats/">
-    <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj">
+    <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj" DisplayName="Test.Elf">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/ObjFormats/Test.Formats/Test.ObjFormats.csproj">
