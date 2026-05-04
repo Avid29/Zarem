@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Zarem.Models.Instructions.Enums;
+namespace Zarem.Mips.Models.Instructions.Enums;
 
 /// <summary>
 /// An enum for argument types.

@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Disassembler.Models;
+namespace Zarem.Mips.Disassembler.Models;
 
 /// <summary>
 /// A type describing the info to lookup an instruction in a disassembler instruction table.

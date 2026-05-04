@@ -2,11 +2,12 @@
 
 using System.Text;
 using System.Text.Json.Serialization;
-using Zarem.Assembler.Helpers.Tables;
-using Zarem.Extensions;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Assembler.Models.Meta;
+using Zarem.Mips.Assembler.Helpers.Tables;
+using Zarem.Mips.Extensions;
+using Zarem.Mips.Models.Instructions.Enums;
 
-namespace Zarem.Assembler.Models.Meta;
+namespace Zarem.Mips.Assembler.Models.Meta;
 
 /// <summary>
 /// A base type for a MIPS instruction meta defintion.

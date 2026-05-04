@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2024
 
-namespace Zarem.Models.Instructions.Enums.Registers;
+namespace Zarem.Mips.Models.Instructions.Enums.Registers;
 
 /// <summary>
 /// An enum for general process registers.

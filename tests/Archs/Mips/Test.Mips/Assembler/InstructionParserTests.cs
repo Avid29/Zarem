@@ -8,22 +8,26 @@ using Test.Mips.Helpers;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.Functions;
-using Zarem.Models.Instructions.Enums.Functions.CoProc0;
-using Zarem.Models.Instructions.Enums.Functions.FloatProc;
 using Zarem.Assembler.Tokenization;
-using Zarem.Assembler.Models.Meta;
 using System.Linq;
 using Zarem.Assembler;
 using Zarem.Assembler.Models.Tables;
+using Zarem.Mips.Services;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
+using Zarem.Mips.Models.Instructions.Enums.Functions;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
+using Zarem.Mips.Assembler.Models.Meta;
+using Zarem.Mips.Assembler.Models.Tables;
+using Zarem.Mips.Assembler;
+
+
 
 #if DEBUG
-using Zarem.Disassembler.Services;
-using Zarem.Services;
+using Zarem.Mips.Disassembler.Services;
 #endif
 
 namespace Test.Mips.Assembler;

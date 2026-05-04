@@ -3,19 +3,20 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using Zarem.Assembler;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models;
 using Zarem.Assembler.Models.Meta;
-using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
+using Zarem.Mips.Assembler.Models.Tables;
+using Zarem.Mips.Models.Instructions;
 using Zarem.Models;
 using Zarem.Models.Enums;
-using Zarem.Models.Instructions;
 using Zarem.Models.Tables;
 
-namespace Zarem.Assembler;
+namespace Zarem.Mips.Assembler;
 
 /// <summary>
 /// An <see cref="IAssemblerHandler"/> for the MIPS architecture.

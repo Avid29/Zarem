@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Assembler.Models.Enums;
+namespace Zarem.RiscV.Assembler.Models.Enums;
 
 /// <summary>
 /// An enum for RISC-V relocation and reference types.

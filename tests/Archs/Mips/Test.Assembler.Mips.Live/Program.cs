@@ -6,21 +6,20 @@ using Zarem.Assembler;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models.Enums;
-using Zarem.Disassembler;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Assembler.Handlers;
-using Zarem.Assembler.Config;
 using Zarem.Assembler.Tokenization;
-using Zarem.Assembler.Models;
-using Zarem.Assembler.Models.Meta;
-using Zarem.Assembler.Models.Tables;
+using Zarem.Mips.Services;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Assembler.Models.Meta;
+using Zarem.Mips.Assembler;
+using Zarem.Mips.Assembler.Models.Tables;
+using Zarem.Mips.Disassembler;
+
 
 
 
 #if DEBUG
-using Zarem.Disassembler.Services;
-using Zarem.Services;
+using Zarem.Mips.Disassembler.Services;
 #endif
 
 namespace Test.Assembler.MIPS.Live;

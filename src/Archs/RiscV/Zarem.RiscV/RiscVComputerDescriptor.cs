@@ -3,9 +3,9 @@
 using System;
 using Zarem.Attributes;
 using Zarem.Descriptors;
-using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
+using Zarem.RiscV.Emulator.Config;
+using Zarem.RiscV.Emulator.Machine;
 
 namespace Zarem.RiscV;
 

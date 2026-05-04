@@ -3,17 +3,17 @@
 using CommunityToolkit.Diagnostics;
 using System.Linq;
 using System.Text;
-using Zarem.Assembler;
 using Zarem.Assembler.Helpers.Tables;
-using Zarem.Disassembler.Models;
-using Zarem.Disassembler.Models.Instructions;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Assembler.Models.Tables;
+using Zarem.Mips.Assembler;
+using Zarem.Mips.Disassembler.Models;
+using Zarem.Mips.Disassembler.Models.Instructions;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Disassembler;
+namespace Zarem.Mips.Disassembler;
 
 /// <summary>
 /// A MIPS disassembler.

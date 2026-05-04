@@ -1,9 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System.Xml.Serialization;
+using Zarem.Emulator.Config;
 using Zarem.Models.Versioning;
 
-namespace Zarem.Emulator.Config;
+namespace Zarem.RiscV.Emulator.Config;
 
 /// <summary>
 /// A class containing emulator configurations for the RISC emulator.

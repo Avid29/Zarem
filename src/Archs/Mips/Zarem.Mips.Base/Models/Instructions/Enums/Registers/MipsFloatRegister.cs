@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Models.Instructions.Enums.Registers;
+namespace Zarem.Mips.Models.Instructions.Enums.Registers;
 
 /// <summary>
 /// An enum for floating-point co-processor registers.

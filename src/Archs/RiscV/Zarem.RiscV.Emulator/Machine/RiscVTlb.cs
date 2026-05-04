@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2026
 
+
+// Avishai Dernis 2026
+
 using Zarem.Emulator.Machine.Interfaces;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.RiscV.Emulator.Machine;
 
 /// <summary>
 /// A RISC-V Translation Lookaside Buffer.

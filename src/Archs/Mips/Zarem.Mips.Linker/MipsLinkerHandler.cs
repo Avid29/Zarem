@@ -3,15 +3,15 @@
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
-using Zarem.Assembler.Models.Enums;
 using Zarem.Extensions.System.IO;
-using Zarem.Linker.Config;
 using Zarem.Linker.Handlers;
-using Zarem.Linker.Logging;
-using Zarem.Models.Instructions;
+using Zarem.Mips.Assembler.Models.Enums;
+using Zarem.Mips.Linker.Config;
+using Zarem.Mips.Linker.Logging;
+using Zarem.Mips.Models.Instructions;
 using Zarem.Models.Tables;
 
-namespace Zarem.Linker;
+namespace Zarem.Mips.Linker;
 
 /// <summary>
 /// A linker handler for the MIPS architecture.

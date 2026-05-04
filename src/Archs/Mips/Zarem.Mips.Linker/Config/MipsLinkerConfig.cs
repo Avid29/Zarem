@@ -1,9 +1,10 @@
 ﻿// Avishai Dernis 2024
 
 using System.Xml.Serialization;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Linker.Config;
+using Zarem.Mips.Models.Instructions.Enums;
 
-namespace Zarem.Linker.Config;
+namespace Zarem.Mips.Linker.Config;
 
 /// <summary>
 /// A class containing linker configurations.

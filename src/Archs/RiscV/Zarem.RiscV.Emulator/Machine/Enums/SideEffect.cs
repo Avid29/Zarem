@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Interpret;
 
-namespace Zarem.Emulator.Machine.Enums;
+// Avishai Dernis 2026
+
+using Zarem.RiscV.Emulator.Interpret;
+
+namespace Zarem.RiscV.Emulator.Machine.Enums;
 
 /// <summary>
 /// An enum describing the secondary effect of an <see cref="RiscVExecution{T}"/>.

@@ -9,14 +9,16 @@ using Test.RiscV.Helpers;
 using Zarem.Assembler;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning;
-using Zarem.Models.Versioning.Enums;
+using Zarem.RiscV.Assembler;
+using Zarem.RiscV.Assembler.Models.Meta;
+using Zarem.RiscV.Assembler.Models.Tables;
+using Zarem.RiscV.Models.Instructions;
+using Zarem.RiscV.Models.Instructions.Enums;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Test.RiscV.Assembler;
 

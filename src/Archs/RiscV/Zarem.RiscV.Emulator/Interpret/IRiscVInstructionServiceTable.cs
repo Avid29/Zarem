@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using Zarem.Emulator.Machine.Enums;
-using Zarem.Models.Instructions;
+using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models.Instructions;
 
-namespace Zarem.Emulator.Interpret;
+namespace Zarem.RiscV.Emulator.Interpret;
 
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="RiscVExecution{T}"/> models.

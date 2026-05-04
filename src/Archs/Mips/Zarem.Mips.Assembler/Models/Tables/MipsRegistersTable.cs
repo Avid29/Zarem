@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Zarem.Assembler.Models.Tables;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Assembler.Helpers.Tables;
 

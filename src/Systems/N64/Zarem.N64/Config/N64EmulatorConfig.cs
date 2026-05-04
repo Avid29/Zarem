@@ -2,7 +2,7 @@
 
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums;
 
 namespace Zarem.N64.Config;
 

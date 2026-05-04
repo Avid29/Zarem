@@ -5,12 +5,12 @@ using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Extensions;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.Functions;
-using Zarem.Models.Instructions.Enums.Functions.FloatProc;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Functions;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
+using Zarem.Mips.Extensions;
+using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models.JIT;
 

@@ -2,16 +2,17 @@
 
 using System;
 using System.Collections.Generic;
-using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Devices;
 using Zarem.Emulator.Devices.Interfaces;
-using Zarem.Emulator.Interpret;
-using Zarem.Emulator.JIT;
+using Zarem.Emulator.Machine;
 using Zarem.Models.Enums;
-using Zarem.Models.Versioning.Enums;
+using Zarem.RiscV.Emulator.Config;
+using Zarem.RiscV.Emulator.Interpret;
+using Zarem.RiscV.Emulator.JIT;
+using Zarem.RiscV.Models.Versioning.Enums;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.RiscV.Emulator.Machine;
 
 /// <summary>
 /// A class representing a computer system in the RISC-V interpreter.

@@ -17,7 +17,7 @@ using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.IDE.ViewModels.Pages.Interfaces;
-using Zarem.MIPS;
+using Zarem.Mips;
 using Zarem.Models.Tables;
 
 namespace Zarem.IDE.ViewModels.Pages;

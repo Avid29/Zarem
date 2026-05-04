@@ -4,15 +4,16 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Models;
-using Zarem.Models.Instructions;
-using Zarem.Models.Versioning.Enums;
+using Zarem.RiscV.Emulator.Config;
+using Zarem.RiscV.Emulator.Machine;
+using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models.Instructions;
+using Zarem.RiscV.Models.Versioning.Enums;
 
-namespace Zarem.Emulator.Interpret;
+namespace Zarem.RiscV.Emulator.Interpret;
 
 /// <summary>
 /// A class representing a RISC-V CPU.

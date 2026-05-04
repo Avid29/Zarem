@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Models.Instructions.Enums.Registers;
+namespace Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 /// <summary>
 /// An enum representing the general-purpose registers in RISC-V.

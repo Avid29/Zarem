@@ -1,10 +1,11 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Debugger.Viewer;
+namespace Zarem.Mips.Debugger.Viewer;
 
 /// <summary>
 /// An <see cref="IDebugViewer"/> for the <see cref="MipsComputer"/>

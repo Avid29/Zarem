@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Models.Instructions.Enums.Functions;
+namespace Zarem.RiscV.Models.Instructions.Enums.Functions;
 
 /// <summary>
 /// An enum for the float-point function code field of RISC-V floating-point instructions.

@@ -4,8 +4,9 @@ using CommunityToolkit.Diagnostics;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
+using Zarem.Linker.Logging;
 
-namespace Zarem.Linker.Logging;
+namespace Zarem.RiscV.Linker.Logging;
 
 /// <summary>
 /// A logger which simplifies logging events in the linker.

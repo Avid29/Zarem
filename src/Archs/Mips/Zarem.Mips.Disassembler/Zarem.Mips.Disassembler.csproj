@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <RootNamespace>Zarem.Disassembler</RootNamespace>
+	  <RootNamespace>Zarem.Mips.Disassembler</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,8 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.Json.Serialization;
+using Zarem.Assembler.Models.Meta;
 
-namespace Zarem.Assembler.Models.Meta;
+namespace Zarem.RiscV.Assembler.Models.Meta;
 
 /// <summary>
 /// Instruction metadata for parsing pseudo instructions.

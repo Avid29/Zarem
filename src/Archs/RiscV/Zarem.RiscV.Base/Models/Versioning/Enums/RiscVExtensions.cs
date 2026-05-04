@@ -3,7 +3,7 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace Zarem.Models.Versioning.Enums;
+namespace Zarem.RiscV.Models.Versioning.Enums;
 
 /// <summary>
 /// An enum for RISC-V extensions groups.

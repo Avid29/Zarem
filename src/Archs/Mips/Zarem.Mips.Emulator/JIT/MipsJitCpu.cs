@@ -6,7 +6,7 @@ using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Models.JIT;
-using Zarem.Models.Instructions;
+using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Emulator.JIT;
 

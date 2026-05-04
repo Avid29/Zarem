@@ -3,11 +3,12 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Zarem.Assembler.Models.Enums;
-using Zarem.Assembler.Models.Meta;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Mips.Assembler;
+using Zarem.Mips.Assembler.Models.Enums;
+using Zarem.Mips.Assembler.Models.Meta;
+using Zarem.Mips.Models.Instructions.Enums;
 
-namespace Zarem.Assembler.Models.Tables;
+namespace Zarem.Mips.Assembler.Models.Tables;
 
 /// <summary>
 /// A class for managing instruction lookup by name.

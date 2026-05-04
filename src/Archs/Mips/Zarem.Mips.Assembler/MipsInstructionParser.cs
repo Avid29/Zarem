@@ -6,25 +6,27 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Zarem.Assembler;
 using Zarem.Assembler.Helpers.Tables;
-using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
-using Zarem.Assembler.Models.Enums;
-using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
-using Zarem.Extensions;
 using Zarem.Helpers;
+using Zarem.Mips.Assembler.Logger;
+using Zarem.Mips.Assembler.Models.Enums;
+using Zarem.Mips.Assembler.Models.Meta;
+using Zarem.Mips.Assembler.Models.Tables;
+using Zarem.Mips.Extensions;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 using Zarem.Models;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Tables;
 
-namespace Zarem.Assembler;
+namespace Zarem.Mips.Assembler;
 
 /// <summary>
 /// A struct for parsing MIPS instructions.

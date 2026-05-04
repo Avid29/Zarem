@@ -1,9 +1,10 @@
 ﻿// Avishai Dernis 2024
 
-using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Models.Instructions.Enums.Functions;
+namespace Zarem.Mips.Models.Instructions.Enums.Functions;
 
 /// <summary>
 /// These values go in the <see cref="MipsArgument.RT"/> field of instructions with <see cref="MipsOpCode.RegisterImmediate"/>.

@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2025
 
 using System;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums;
 
-namespace Zarem.Assembler.Helpers.Tables;
+namespace Zarem.Mips.Assembler.Helpers.Tables;
 
 /// <summary>
 /// A class containing a constant table for argument lookup.

@@ -1,11 +1,12 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.Json.Serialization;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Assembler.Models.Meta;
 using Zarem.Models.Versioning;
-using Zarem.Models.Versioning.Enums;
+using Zarem.RiscV.Models.Instructions.Enums;
+using Zarem.RiscV.Models.Versioning.Enums;
 
-namespace Zarem.Assembler.Models.Meta;
+namespace Zarem.RiscV.Assembler.Models.Meta;
 
 /// <summary>
 /// A base type for a RISC-V instruction meta definition.

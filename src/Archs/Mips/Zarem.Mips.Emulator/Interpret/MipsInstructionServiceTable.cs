@@ -5,8 +5,8 @@ using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Extensions;
-using Zarem.Models.Instructions;
+using Zarem.Mips.Extensions;
+using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Emulator.Models;
 

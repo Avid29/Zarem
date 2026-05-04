@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Models.Instructions.Enums.Operations;
 
-namespace Zarem.Models.Instructions.Enums.Functions.FloatProc;
+// Avishai Dernis 2025
+
+using Zarem.Mips.Models.Instructions.Enums.Operations;
+
+namespace Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
 
 /// <summary>
 /// An enum for <see cref="MipsOpCode.Coprocessor1"/> instruction function codes.

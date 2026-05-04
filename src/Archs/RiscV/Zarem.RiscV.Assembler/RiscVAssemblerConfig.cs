@@ -3,9 +3,9 @@
 using System.Xml.Serialization;
 using Zarem.Assembler.Config;
 using Zarem.Models.Versioning;
-using Zarem.Models.Versioning.Enums;
+using Zarem.RiscV.Models.Versioning.Enums;
 
-namespace Zarem.Assembler;
+namespace Zarem.RiscV.Assembler;
 
 /// <summary>
 /// A class containing RISC-V assembler configuration info.

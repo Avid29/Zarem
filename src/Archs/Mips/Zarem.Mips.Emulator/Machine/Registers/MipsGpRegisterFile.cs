@@ -3,7 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums;
 
 namespace Zarem.Emulator.Machine.Registers;
 

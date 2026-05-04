@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.Assembler.Models.Enums;
+namespace Zarem.Mips.Assembler.Models.Enums;
 
 /// <summary>
 /// An enum for describing the method used to determine permissibility of pseudo instructions.

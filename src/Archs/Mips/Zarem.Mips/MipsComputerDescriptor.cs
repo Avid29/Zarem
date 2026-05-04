@@ -7,7 +7,7 @@ using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Interfaces;
 
-namespace Zarem.MIPS;
+namespace Zarem.Mips;
 
 /// <summary>
 /// An <see cref="IComputerDescriptor"/> for the MIPS emulator.

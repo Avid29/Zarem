@@ -6,25 +6,27 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Zarem.Assembler;
 using Zarem.Assembler.Helpers.Tables;
-using Zarem.Assembler.Logger;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
-using Zarem.Assembler.Models.Enums;
-using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Helpers;
 using Zarem.Models;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Registers;
 using Zarem.Models.Tables;
-using Zarem.Models.Versioning.Enums;
+using Zarem.RiscV.Assembler.Logger;
+using Zarem.RiscV.Assembler.Models.Enums;
+using Zarem.RiscV.Assembler.Models.Meta;
+using Zarem.RiscV.Assembler.Models.Tables;
+using Zarem.RiscV.Models.Instructions;
+using Zarem.RiscV.Models.Instructions.Enums;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Models.Versioning.Enums;
 
-namespace Zarem.Assembler;
+namespace Zarem.RiscV.Assembler;
 
 /// <summary>
 /// A struct for parsing RISC-V instructions.

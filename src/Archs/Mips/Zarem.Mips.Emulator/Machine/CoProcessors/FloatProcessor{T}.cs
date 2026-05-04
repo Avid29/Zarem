@@ -2,7 +2,7 @@
 
 using System;
 using System.Numerics;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine.CoProcessors;
 

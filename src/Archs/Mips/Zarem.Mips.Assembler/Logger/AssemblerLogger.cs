@@ -2,11 +2,12 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
 
-namespace Zarem.Assembler.Logging;
+namespace Zarem.Mips.Assembler.Logger;
 
 /// <summary>
 /// A logger which simplifies logging events in the assembler.
@@ -16,7 +17,7 @@ internal class AssemblerLogger : LocalLogger
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblerLogger"/> class.
     /// </summary>
-    public AssemblerLogger(ILogger parent) : base(parent, "Zarem.Assembler.Resources.Logger", typeof(AssemblerLogger).Assembly)
+    public AssemblerLogger(ILogger parent) : base(parent, "Zarem.Mips.Assembler.Resources.Logger", typeof(AssemblerLogger).Assembly)
     {
     }
 

@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.Json.Serialization;
-using Zarem.Models.Instructions.Enums.Functions;
-using Zarem.Models.Instructions.Enums.Operations;
+using Zarem.RiscV.Models.Instructions.Enums.Functions;
+using Zarem.RiscV.Models.Instructions.Enums.Operations;
 
-namespace Zarem.Assembler.Models.Meta;
+namespace Zarem.RiscV.Assembler.Models.Meta;
 
 /// <summary>
 /// Instruction metadata for parsing RISC-V I-Type instructions.

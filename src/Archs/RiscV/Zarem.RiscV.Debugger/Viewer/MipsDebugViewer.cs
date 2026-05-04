@@ -1,10 +1,11 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Machine;
+using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Machine.Interfaces;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Emulator.Machine;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Debugger.Viewer;
+namespace Zarem.RiscV.Debugger.Viewer;
 
 /// <summary>
 /// An <see cref="IDebugViewer"/> for the <see cref="RiscVComputer"/>

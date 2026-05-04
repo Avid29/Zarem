@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.Json.Serialization;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Functions;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Functions;
 
-namespace Zarem.Assembler.Models.Meta;
+namespace Zarem.Mips.Assembler.Models.Meta;
 
 /// <summary>
 /// Instruction metadata for parsing Register-Immeditate instructions.

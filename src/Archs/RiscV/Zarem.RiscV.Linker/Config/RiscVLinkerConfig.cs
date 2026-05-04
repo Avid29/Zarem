@@ -1,9 +1,10 @@
 ﻿// Avishai Dernis 2024
 
 using System.Xml.Serialization;
+using Zarem.Linker.Config;
 using Zarem.Models.Versioning;
 
-namespace Zarem.Linker.Config;
+namespace Zarem.RiscV.Linker.Config;
 
 /// <summary>
 /// A class containing linker configurations.

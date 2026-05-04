@@ -4,7 +4,8 @@ using System.Linq;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Linker;
-using Zarem.Linker.Config;
+using Zarem.Mips.Linker;
+using Zarem.Mips.Linker.Config;
 using Zarem.Models;
 
 namespace Test.Mips.Linker;

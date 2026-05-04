@@ -9,6 +9,7 @@ using Test.Mips.Helpers;
 using Zarem.Assembler;
 using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Enum;
+using Zarem.Mips.Assembler;
 
 namespace Test.ObjFormats;
 

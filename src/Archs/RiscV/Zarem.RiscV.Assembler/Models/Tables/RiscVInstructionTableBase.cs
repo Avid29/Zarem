@@ -3,10 +3,12 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using Zarem.Assembler.Models.Meta;
-using Zarem.Models.Versioning.Enums;
+using Zarem.Assembler.Models.Tables;
+using Zarem.RiscV.Assembler;
+using Zarem.RiscV.Assembler.Models.Meta;
+using Zarem.RiscV.Models.Versioning.Enums;
 
-namespace Zarem.Assembler.Models.Tables;
+namespace Zarem.RiscV.Assembler.Models.Tables;
 
 /// <summary>
 /// A class for managing instruction lookup.

@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using System;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Test.RiscV.Helpers;
 

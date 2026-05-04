@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <RootNamespace>Zarem.Linker</RootNamespace>
+	  <RootNamespace>Zarem.RiscV.Linker</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

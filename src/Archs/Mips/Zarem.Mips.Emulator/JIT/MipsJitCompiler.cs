@@ -11,9 +11,9 @@ using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Extensions;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Extensions;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models.JIT;
 

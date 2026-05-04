@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Zarem.Models.Instructions.Enums;
+namespace Zarem.RiscV.Models.Instructions.Enums;
 
 /// <summary>
 /// An enum for integer formats in RISC-V floating-point operations.

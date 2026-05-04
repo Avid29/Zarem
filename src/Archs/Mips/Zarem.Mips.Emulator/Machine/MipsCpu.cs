@@ -6,9 +6,9 @@ using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.TrapHandlers;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 using Zarem.Models.Enums;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Machine;
 

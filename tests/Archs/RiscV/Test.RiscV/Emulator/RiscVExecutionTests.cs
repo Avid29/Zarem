@@ -6,11 +6,13 @@ using Zarem.Assembler;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config.Enums;
-using Zarem.Emulator.Interpret;
-using Zarem.Emulator.JIT;
-using Zarem.Emulator.Machine;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Assembler;
+using Zarem.RiscV.Assembler.Models.Tables;
+using Zarem.RiscV.Emulator.Interpret;
+using Zarem.RiscV.Emulator.JIT;
+using Zarem.RiscV.Emulator.Machine;
+using Zarem.RiscV.Models.Instructions;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Test.RiscV.Emulator;
 

@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Interpret;
 
-namespace Zarem.Emulator.Machine.Enums;
+// Avishai Dernis 2026
+
+using Zarem.RiscV.Emulator.Interpret;
+
+namespace Zarem.RiscV.Emulator.Machine.Enums;
 
 /// <summary>
 /// An enum describing the kind of trap that occurred during an <see cref="RiscVExecution{T}"/>.

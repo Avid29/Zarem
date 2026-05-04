@@ -2,18 +2,18 @@
 
 #if DEBUG
 
-using Zarem.Assembler;
-using Zarem.Models.Instructions;
-using Zarem.Services.Interfaces;
+using Zarem.Mips.Assembler;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Services.Interfaces;
 
-namespace Zarem.Disassembler.Services;
+namespace Zarem.Mips.Disassembler.Services;
 
 /// <summary>
 /// An implementation of the <see cref="IDisassemblerService"/>.
 /// </summary>
 public class MipsDisassemblerService : IDisassemblerService
 {
-    private MipsDisassembler _disassembler;
+    private readonly MipsDisassembler _disassembler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsDisassemblerService"/> class.

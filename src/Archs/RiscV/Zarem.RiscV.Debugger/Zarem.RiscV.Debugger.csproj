@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <RootNamespace>Zarem.Debugger</RootNamespace>
+	  <RootNamespace>Zarem.RiscV.Debugger</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

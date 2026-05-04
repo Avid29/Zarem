@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using Zarem.Emulator.Machine.Enums;
+using Zarem.RiscV.Emulator.Machine.Enums;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.RiscV.Emulator.JIT;
 
 /// <summary>
 /// Represents a compiled block of MIPS instructions.

@@ -10,9 +10,9 @@ using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Extensions;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Extensions;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Test.Mips.Emulator;
 

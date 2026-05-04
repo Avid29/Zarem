@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Zarem.Models.Instructions.Enums.Functions;
+namespace Zarem.RiscV.Models.Instructions.Enums.Functions;
 
 /// <summary>
 /// An enum representing the rounding mode for floating-point instructions in RISC-V.

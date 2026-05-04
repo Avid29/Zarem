@@ -9,7 +9,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Zarem.Assembler;
 using Zarem.Components;
 using Zarem.Components.Interfaces;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
@@ -17,7 +16,8 @@ using Zarem.IDE.Services;
 using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
-using Zarem.MIPS;
+using Zarem.Mips.Assembler;
+using Zarem.Mips;
 
 namespace Zarem.IDE.ViewModels.Pages.Settings;
 

@@ -2,12 +2,14 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Config;
+using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Enums;
-using Zarem.Models.Instructions;
+using Zarem.RiscV.Emulator.Config;
+using Zarem.RiscV.Emulator.Machine;
+using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models.Instructions;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.RiscV.Emulator.JIT;
 
 /// <summary>
 /// A <see cref="RiscVJitCpu{T}"/> which uses JIT cross-compilation for execution.

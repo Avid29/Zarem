@@ -2,15 +2,15 @@
 
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Interfaces;
-using Zarem.Assembler.Models.Enums;
 using Zarem.Extensions.System.IO;
-using Zarem.Linker.Config;
 using Zarem.Linker.Handlers;
-using Zarem.Linker.Logging;
-using Zarem.Models.Instructions;
 using Zarem.Models.Tables;
+using Zarem.RiscV.Assembler.Models.Enums;
+using Zarem.RiscV.Linker.Config;
+using Zarem.RiscV.Linker.Logging;
+using Zarem.RiscV.Models.Instructions;
 
-namespace Zarem.Linker;
+namespace Zarem.RiscV.Linker;
 
 /// <summary>
 /// A linker handler for the RISC-V architecture.

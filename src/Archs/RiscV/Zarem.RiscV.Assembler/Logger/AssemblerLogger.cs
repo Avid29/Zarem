@@ -7,7 +7,7 @@ using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Tokenization.Models;
 
-namespace Zarem.Assembler.Logger;
+namespace Zarem.RiscV.Assembler.Logger;
 
 /// <summary>
 /// A logger which simplifies logging events in the assembler.
@@ -17,7 +17,7 @@ internal class AssemblerLogger : LocalLogger
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblerLogger"/> class.
     /// </summary>
-    public AssemblerLogger(ILogger parent) : base(parent, "Zarem.Assembler.Resources.Logger", typeof(AssemblerLogger).Assembly)
+    public AssemblerLogger(ILogger parent) : base(parent, "Zarem.RiscV.Assembler.Resources.Logger", typeof(AssemblerLogger).Assembly)
     {
     }
 

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Test.Mips.Helpers;
 using Test.ObjFormats;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.Models.Enums;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Mips.Assembler.Models.Enums;
+using Zarem.Mips.Models.Instructions.Enums;
 
 namespace Test.Elf;
 

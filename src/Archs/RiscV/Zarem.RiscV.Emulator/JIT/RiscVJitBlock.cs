@@ -1,8 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
+using Zarem.Emulator.JIT;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.RiscV.Emulator.JIT;
 
 /// <summary>
 /// A record for a RISC-V JIT Block.

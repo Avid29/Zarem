@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Services.Interfaces;
+using Zarem.Mips.Services.Interfaces;
 
-namespace Zarem.Services;
+namespace Zarem.Mips.Services;
 
 /// <summary>
 /// A collection of global services.

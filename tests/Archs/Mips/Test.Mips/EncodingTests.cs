@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2024
 
 using Test.Mips.Helpers;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.Registers;
-using Zarem.Models.Instructions.Enums.Functions;
+using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums.Functions;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Test.Mips;
 

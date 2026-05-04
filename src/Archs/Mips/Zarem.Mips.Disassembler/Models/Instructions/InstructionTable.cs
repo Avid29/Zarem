@@ -1,12 +1,12 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Assembler;
-using Zarem.Assembler.Models.Meta;
-using Zarem.Assembler.Models.Tables;
-using Zarem.Models.Instructions.Enums.Functions.CoProc0;
-using Zarem.Models.Instructions.Enums.Operations;
+using Zarem.Mips.Assembler;
+using Zarem.Mips.Assembler.Models.Meta;
+using Zarem.Mips.Assembler.Models.Tables;
+using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
 
-namespace Zarem.Disassembler.Models.Instructions;
+namespace Zarem.Mips.Disassembler.Models.Instructions;
 
 /// <summary>
 /// A class for managing instruction lookup by opcode and function code.

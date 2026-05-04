@@ -2,10 +2,10 @@
 
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Functions.FloatProc;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
 
-namespace Zarem.Assembler.Models.Meta;
+namespace Zarem.Mips.Assembler.Models.Meta;
 
 /// <summary>
 /// Instruction metadata for parsing floating-point instructions.

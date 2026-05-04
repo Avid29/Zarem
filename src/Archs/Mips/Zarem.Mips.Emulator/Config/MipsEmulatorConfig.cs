@@ -2,7 +2,7 @@
 
 using System.Xml.Serialization;
 using Zarem.Emulator.Config.Enums;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums;
 
 namespace Zarem.Emulator.Config;
 

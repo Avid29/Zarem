@@ -3,12 +3,12 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Helpers;
-using Zarem.Models.Instructions.Enums;
-using Zarem.Models.Instructions.Enums.Functions;
-using Zarem.Models.Instructions.Enums.Operations;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Models.Instructions.Enums;
+using Zarem.RiscV.Models.Instructions.Enums.Functions;
+using Zarem.RiscV.Models.Instructions.Enums.Operations;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Models.Instructions;
+namespace Zarem.RiscV.Models.Instructions;
 
 /// <summary>
 /// A struct representing an instruction utilizing the floating-point coprocessor.

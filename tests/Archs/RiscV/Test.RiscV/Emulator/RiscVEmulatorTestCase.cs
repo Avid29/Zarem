@@ -2,9 +2,9 @@
 
 using System.Numerics;
 using Test.Archs.Emulator;
-using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine.Enums;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Emulator.Config;
+using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Test.RiscV.Emulator;
 

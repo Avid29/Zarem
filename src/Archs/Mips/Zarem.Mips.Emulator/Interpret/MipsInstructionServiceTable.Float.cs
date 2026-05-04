@@ -6,7 +6,7 @@ using System.Numerics;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Models.Instructions;
+using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Emulator.Models;
 

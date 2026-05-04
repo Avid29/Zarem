@@ -7,14 +7,14 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Zarem.Assembler;
-using Zarem.Assembler.Helpers.Tables;
-using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.IDE.Controls.CheatSheet.Palettes;
 using Zarem.IDE.Services;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Mips.Assembler.Helpers.Tables;
+using Zarem.Mips.Assembler.Models.Meta;
+using Zarem.Mips.Models.Instructions.Enums;
 
 namespace Zarem.IDE.Controls.CheatSheet;
 

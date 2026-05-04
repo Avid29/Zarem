@@ -3,10 +3,10 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using Zarem.Assembler.Config;
-using Zarem.Assembler.Models.Enums;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Mips.Assembler.Models.Enums;
+using Zarem.Mips.Models.Instructions.Enums;
 
-namespace Zarem.Assembler;
+namespace Zarem.Mips.Assembler;
 
 /// <summary>
 /// A class containing MIPS assembler configuration info.

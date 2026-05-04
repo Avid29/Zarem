@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Zarem.Assembler.Models.Tables;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Assembler.Helpers.Tables;
 

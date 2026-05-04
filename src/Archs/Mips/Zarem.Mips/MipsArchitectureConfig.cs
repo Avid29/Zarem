@@ -1,13 +1,14 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Assembler;
 using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Emulator.Config;
 using Zarem.Linker.Config;
-using Zarem.Models.Instructions.Enums;
+using Zarem.Mips.Assembler;
+using Zarem.Mips.Linker.Config;
+using Zarem.Mips.Models.Instructions.Enums;
 
-namespace Zarem.MIPS;
+namespace Zarem.Mips;
 
 /// <summary>
 /// An <see cref="IArchitectureConfig"/> for the MIPS Architecture.

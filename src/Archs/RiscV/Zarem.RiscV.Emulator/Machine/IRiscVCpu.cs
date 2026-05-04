@@ -1,12 +1,12 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Interfaces;
-using Zarem.Models.Instructions;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Emulator.Config;
+using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models.Instructions;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.RiscV.Emulator.Machine;
 
 /// <summary>
 /// A class representing a RISC-V CPU.

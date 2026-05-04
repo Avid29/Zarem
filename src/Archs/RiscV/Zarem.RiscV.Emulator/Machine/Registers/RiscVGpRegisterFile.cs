@@ -2,8 +2,9 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Zarem.Emulator.Machine;
 
-namespace Zarem.Emulator.Machine.Registers;
+namespace Zarem.RiscV.Emulator.Machine.Registers;
 
 /// <summary>
 /// A class representing a register file.

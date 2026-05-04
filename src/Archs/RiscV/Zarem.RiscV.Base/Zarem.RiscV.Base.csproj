@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <RootNamespace>Zarem</RootNamespace>
+	  <RootNamespace>Zarem.RiscV</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

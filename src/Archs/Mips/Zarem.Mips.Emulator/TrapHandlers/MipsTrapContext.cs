@@ -4,7 +4,7 @@ using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.TrapHandlers.Interfaces;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.TrapHandlers;
 

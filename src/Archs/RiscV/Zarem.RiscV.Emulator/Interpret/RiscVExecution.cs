@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using Zarem.Emulator.Machine.Enums;
-using Zarem.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Interpret;
+namespace Zarem.RiscV.Emulator.Interpret;
 
 /// <summary>
 /// A struct representing the results of an instruction's execution.

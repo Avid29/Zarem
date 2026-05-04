@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Models.Instructions;
 
-namespace Zarem.Services.Interfaces;
+// Avishai Dernis 2025
+
+using Zarem.Mips.Models.Instructions;
+
+namespace Zarem.Mips.Services.Interfaces;
 
 #if DEBUG
 
