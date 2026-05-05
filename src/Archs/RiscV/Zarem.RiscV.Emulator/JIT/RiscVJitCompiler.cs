@@ -254,7 +254,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
         // Branch taken
         il.MarkLabel(takeBranch);
 
-        T targetPc = pc + T.CreateTruncating(inst.BranchOffset) + T.CreateTruncating(4);
+        T targetPc = pc + T.CreateTruncating(inst.BranchOffset);
         EmitRet(il, targetPc);
     }
 

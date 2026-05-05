@@ -169,9 +169,9 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
 
         // Branch Equality
         yield return [new RiscVEmulatorTestCase<T>(config, "beq t1, t2, 80") { ExpectedPC = T.CreateTruncating(4) }];
-        yield return [new RiscVEmulatorTestCase<T>(config, "beq t0, t0, 80") { ExpectedPC = T.CreateTruncating(84) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "beq t0, t0, 80") { ExpectedPC = T.CreateTruncating(80) }];
         yield return [new RiscVEmulatorTestCase<T>(config, "bne t0, t0, 80") { ExpectedPC = T.CreateTruncating(4) }];
-        yield return [new RiscVEmulatorTestCase<T>(config, "bne t2, t1, 80") { ExpectedPC = T.CreateTruncating(84) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "bne t2, t1, 80") { ExpectedPC = T.CreateTruncating(80) }];
     }
 
     private static IEnumerable<object[]> GetMemoryInstructionTests<T>(RiscVEmulatorConfig config)
