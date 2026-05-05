@@ -42,13 +42,13 @@ public class RiscVLinkerHandler : ILinkerHandler<RiscVLinkerConfig>
         var instruction = (RiscVInstruction)value;
 
         long target = (long)symbolVirtual + relocation.Addend;
-        long relativeTarget = target - ((long)patchVirtual + 4);
+        long relativeTarget = target - (long)patchVirtual;
 
         value = (RiscVReferenceType)relocation.Type switch
         {
             RiscVReferenceType.Low12 => RISCV_Low12(instruction, target),
             RiscVReferenceType.High20 => RISCV_High20(instruction, target),
-            RiscVReferenceType.Jump20 => RISCV_Jump20(instruction, target),
+            RiscVReferenceType.Jump20 => RISCV_Jump20(instruction, relativeTarget),
             RiscVReferenceType.Branch20 => RISCV_Branch20(instruction, relativeTarget),
             _ => Invalid_Type(value, relocation.Type, localLogger)
         };

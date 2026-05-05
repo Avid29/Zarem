@@ -141,7 +141,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : IRiscVIns
     {
         var rs1 = T.CreateTruncating(@this._processor[inst.RS1]);
         var rs2 = T.CreateTruncating(@this._processor[inst.RS2]);
-        var jump = @this._processor.ProgramCounter + T.CreateTruncating(inst.BranchOffset) + T.CreateTruncating(4);
+        var jump = @this._processor.ProgramCounter + T.CreateTruncating(inst.BranchOffset);
         exec = TLogic.Check(rs1, rs2) ? RiscVExecution<T>.CreateJump(jump) : default;
         return RiscVTrap.None;
     }
@@ -213,4 +213,12 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned> : IRiscVIns
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int GetLookupIndex(RiscVOpCode op, Funct3Code funct3)
         => (int)op << 3 | (int)funct3;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static (int low, int high) GetLookupRange(RiscVOpCode op)
+    {
+        var low = (int)op << 3;
+        var high = low | 0b111;
+        return (low, high);
+    }
 }

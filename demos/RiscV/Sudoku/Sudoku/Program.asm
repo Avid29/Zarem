@@ -68,6 +68,7 @@ print_board:
     li      t1,     0                   # index
     li      t2,     36                  # limit
 
+    li      t6,     6
 print_loop:
     beq     t1,     t2,     print_done
     
@@ -79,7 +80,7 @@ print_loop:
     # Print a space for visibility
     la      a0,     space
     li      a1,     0
-    li      a7,     1
+    li      a7,     3
     ecall
 
     addi    t1,     t1,     1           # Increment total
