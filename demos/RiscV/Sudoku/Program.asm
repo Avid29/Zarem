@@ -12,18 +12,35 @@ entry:
     # Solve the board
     li      a0,     0
     jal     solve_sudoku
+    beq     a0,     zero, no_solution 
     
-    # Print the result
+    # Solution found
+    la      a0,     solved_str
+    li      a2,     0
+    li      a7,     3
+    ecall
     jal     print_board
+    j       exit
     
+    # No solution found
+no_solution:
+
+    la      a0,     no_solution_str
+    li      a2,     0
+    li      a7,     3
+    ecall
+    
+exit:
     # Exit gracefully
     li      a7,     9
     ecall
     
 .data
-prompt:     .asciiz "Enter 6x6 board (use 0 for empty):\n"
+prompt:     .asciiz "Enter 6x6 board string (36 chars, 0 for empty):\n"
 space:      .asciiz " " 
 newline:    .asciiz "\n" 
+solved_str:    .asciiz "\nSolved:\n" 
+no_solution_str:    .asciiz "No solution\n" 
 buffer:     .space  37   # Buffer for string input
 
 .text
