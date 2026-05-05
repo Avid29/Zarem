@@ -64,9 +64,9 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
 
         // Add system operations
         @base[GetLookupIndex(RiscVOpCode.System, Funct3Code.EcallBreak)] = &EcallBreak;
-         
+
         // Add Jump operations
-        @base[GetLookupIndex(RiscVOpCode.JumpAndLink, 0)] = &JumpAndLink;
+        InitRange(@base, GetLookupRange(RiscVOpCode.JumpAndLink), &JumpAndLink);
         @base[GetLookupIndex(RiscVOpCode.JumpAndLinkRegister, 0)] = &JumpAndLinkRegister;
          
         // Add Branch operations
@@ -164,5 +164,11 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         mulTable[GetLookupIndex(opCode, Funct3Code.DivideUnsigned)] = &AluR<DivLogic<T2>, T2>;
         mulTable[GetLookupIndex(opCode, Funct3Code.Remainder)] = &AluR<RemLogic<T2Signed>, T2Signed>;
         mulTable[GetLookupIndex(opCode, Funct3Code.RemainderUnsigned)] = &AluR<RemLogic<T2>, T2>;
+    }
+
+    private static void InitRange(delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[] table, (int low, int high) range, delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
+    {
+        for (int i = range.low; i <= range.high; i++)
+            table[i] = func;
     }
 }

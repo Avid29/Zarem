@@ -24,8 +24,6 @@ using Zarem.Mips.Assembler.Models.Meta;
 using Zarem.Mips.Assembler.Models.Tables;
 using Zarem.Mips.Assembler;
 
-
-
 #if DEBUG
 using Zarem.Mips.Disassembler.Services;
 #endif
@@ -77,9 +75,17 @@ public class InstructionParserTests
     {
         get
         {
+            // Invalid instruction name
             yield return [new InstructionParsingTestCase("xkcd $t0, $s0, $s1", LogId.InvalidInstructionName)];
+
+            // Invalid argument counts
             yield return [new InstructionParsingTestCase("add $t0, $s0", LogId.InvalidInstructionArgCount)];
             yield return [new InstructionParsingTestCase("add $t0, $s0, $s1, $s1", LogId.InvalidInstructionArgCount)];
+
+            // Invalid registers
+            //yield return [new InstructionParsingTestCase("jr $s", LogId.InvalidRegisterArgument)];
+            //yield return [new InstructionParsingTestCase("jr $s80", LogId.InvalidRegisterArgument)];
+            //yield return [new InstructionParsingTestCase("jr $80", LogId.InvalidRegisterArgument)];
         }
     }
 

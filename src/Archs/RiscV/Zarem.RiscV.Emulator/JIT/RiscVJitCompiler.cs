@@ -186,6 +186,21 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
         EmitRet(il, T.CreateTruncating(inst.JumpOffset));
     }
 
+    private void JumpAndLinkRegister(ILGenerator il, RiscVInstruction inst, T pc)
+    {
+        // Link if needed
+        if (inst.RD is not RiscVGpRegister.Zero)
+        {
+            EmitStoreRegister(il, inst.RD, il =>
+            {
+                EmitLoadRegister<T>(il, inst.RS1);
+            });
+        }
+
+        // Return
+        EmitRet(il, T.CreateTruncating(inst.JumpOffset));
+    }
+
     private void Load<TData>(ILGenerator il, RiscVInstruction inst, T pc)
         where TData : unmanaged
     {
@@ -239,7 +254,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
         // Branch taken
         il.MarkLabel(takeBranch);
 
-        T targetPc = pc + T.CreateTruncating(inst.BranchOffset) + T.CreateTruncating(4);
+        T targetPc = pc + T.CreateTruncating(inst.BranchOffset);
         EmitRet(il, targetPc);
     }
 
@@ -259,4 +274,12 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int GetLookupIndex(RiscVOpCode op, Funct3Code funct3)
         => (int)op << 3 | (int)funct3;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static (int low, int high) GetLookupRange(RiscVOpCode op)
+    {
+        var low = (int)op << 3;
+        var high = low | 0b111;
+        return (low, high);
+    }
 }

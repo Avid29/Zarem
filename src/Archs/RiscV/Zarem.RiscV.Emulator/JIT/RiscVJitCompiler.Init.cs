@@ -71,7 +71,8 @@ public partial class RiscVJitCompiler<T>
         @base[GetLookupIndex(RiscVOpCode.System, Funct3Code.EcallBreak)] = (il, inst, pc) => EmitTrapRet(il, inst.Immediate is 1 ? RiscVTrap.Breakpoint : RiscVTrap.EnvironmentCallFromUMode, pc);
 
         // Add Jump operations
-        @base[GetLookupIndex(RiscVOpCode.JumpAndLink, 0)] = JumpAndLink;
+        InitRange(@base, GetLookupRange(RiscVOpCode.JumpAndLink), JumpAndLink);
+        @base[GetLookupIndex(RiscVOpCode.JumpAndLinkRegister, 0)] = JumpAndLinkRegister;
 
         // Add Branch operations
         @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchEqual)] = (il, inst, pc) => Branch(il, inst, pc, OpCodes.Beq);
@@ -169,5 +170,11 @@ public partial class RiscVJitCompiler<T>
         mulTable[GetLookupIndex(opCode, Funct3Code.DivideUnsigned)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Div_Un);
         mulTable[GetLookupIndex(opCode, Funct3Code.Remainder)] = (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Rem);
         mulTable[GetLookupIndex(opCode, Funct3Code.RemainderUnsigned)] = (il, inst, pc) => AluR<T2>(il, inst, OpCodes.Rem_Un);
+    }
+
+    private static void InitRange(RiscVEmitter[] table, (int low, int high) range, RiscVEmitter func)
+    {
+        for (int i = range.low; i <= range.high; i++)
+            table[i] = func;
     }
 }
