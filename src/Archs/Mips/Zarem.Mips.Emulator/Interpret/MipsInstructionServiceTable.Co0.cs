@@ -3,19 +3,19 @@
 using System;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models;
 
 public partial class MipsInstructionServiceTable<T, TS>
 {
-    private static MipsTrap CreateCoProc0Execution(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CreateCoProc0Execution(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?
-        if (@this._cpu.CoProcessor0.PrivilegeMode is not PrivilegeMode.Kernel)
+        if (cpu.CoProcessor0.PrivilegeMode is not PrivilegeMode.Kernel)
         {
             exec = default;
             return MipsTrap.ReservedInstruction;
@@ -27,7 +27,7 @@ public partial class MipsInstructionServiceTable<T, TS>
             // C0 Instructions
             CoProc0RSCode.C0 => coInst.Co0FuncCode switch
             {
-                Co0FuncCode.ExceptionReturn => @this.Eret(),
+                Co0FuncCode.ExceptionReturn => Eret(cpu),
                 Co0FuncCode.ReadIndexedTLBEntry => MipsExecution<T>.CreateEffect(MipsSideEffect.TLBRead),
                 Co0FuncCode.WriteIndexedTLBEntry => MipsExecution<T>.CreateEffect(MipsSideEffect.TLBWriteIndexed),
                 Co0FuncCode.WriteRandomTLBEntry => MipsExecution<T>.CreateEffect(MipsSideEffect.TLBWriteRandom),
@@ -39,15 +39,15 @@ public partial class MipsInstructionServiceTable<T, TS>
             // MFMC0 Instructions
             CoProc0RSCode.MFMC0 => coInst.MFMC0FuncCode switch
             {
-                MFMC0FuncCode.EnableInterrupts => @this.SetInterrupts(inst, true),
-                MFMC0FuncCode.DisableInterrupts => @this.SetInterrupts(inst, false),
+                MFMC0FuncCode.EnableInterrupts => SetInterrupts(cpu, inst, true),
+                MFMC0FuncCode.DisableInterrupts => SetInterrupts(cpu, inst, false),
 
                 _ => throw new NotImplementedException()
             },
 
             // Move instructions
-            CoProc0RSCode.MFC0 => MipsExecution<T>.CreateWriteback(inst.RT, @this._cpu.CoProcessor0[(CP0Registers)inst.RD]),
-            CoProc0RSCode.MTC0 => MipsExecution<T>.CreateWriteback((CP0Registers)inst.RD, @this._cpu[inst.RT]),
+            CoProc0RSCode.MFC0 => MipsExecution<T>.CreateWriteback(inst.RT, cpu.CoProcessor0[(CP0Registers)inst.RD]),
+            CoProc0RSCode.MTC0 => MipsExecution<T>.CreateWriteback((CP0Registers)inst.RD, cpu[inst.RT]),
 
             _ => throw new NotImplementedException()
         };
@@ -55,15 +55,15 @@ public partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private MipsExecution<T> Eret()
+    private static MipsExecution<T> Eret(MipsInterpretCpu<T> cpu)
     {
         // Retrieve the status register value
-        var status = _cpu.CoProcessor0.StatusRegister;
+        var status = cpu.CoProcessor0.StatusRegister;
 
         // Determine the target program counter based on the error level
         T targetPC = status.ErrorLevel
-            ? _cpu.CoProcessor0[CP0Registers.ErrorEPC]
-            : _cpu.CoProcessor0[CP0Registers.ExceptionPC];
+            ? cpu.CoProcessor0[CP0Registers.ErrorEPC]
+            : cpu.CoProcessor0[CP0Registers.ExceptionPC];
 
         // Clear the appropriate level bit in the status register
         if (status.ErrorLevel)
@@ -85,10 +85,10 @@ public partial class MipsInstructionServiceTable<T, TS>
         };
     }
 
-    private MipsExecution<T> SetInterrupts(CoProc0Instruction inst, bool enabled)
+    private static MipsExecution<T> SetInterrupts(MipsInterpretCpu<T> cpu, CoProc0Instruction inst, bool enabled)
     {
         // Retrieve the status register
-        var status = _cpu.CoProcessor0.StatusRegister;
+        var status = cpu.CoProcessor0.StatusRegister;
 
         // Apply the update function
         status.InteruptEnabled = enabled;
