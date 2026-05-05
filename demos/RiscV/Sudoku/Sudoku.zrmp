@@ -2,7 +2,7 @@
 <Project>
   <Name>Sudoku</Name>
   <ArchitectureConfig Type="RISC-V">
-    <VersionInfo>RV32I</VersionInfo>
+    <VersionInfo>RV32M</VersionInfo>
     <AssemblerConfig Type="RISC-V" />
     <EmulatorConfig Type="RISC-V">
       <TrapHost>Zarem</TrapHost>
