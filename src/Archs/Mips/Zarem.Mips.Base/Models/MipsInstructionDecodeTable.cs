@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Functions;
-using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
 
@@ -21,13 +20,9 @@ public class MipsInstructionDecodeTable<T>
     private readonly T[] _opTable = new T[64];
     private readonly T[] _specialTable = new T[64];
     private readonly T[] _special2Table = new T[64];
-    private readonly T[] _special3Table = new T[64];
     private readonly T[] _regImmTable = new T[32];
 
     // Coprocessor1
-    private readonly T[] _coProc0Table = new T[32];
-    private readonly T[] _coProc0FuncTable = new T[64];
-    private readonly T[] _coProcMfmc0FuncTable = new T[64];
     private readonly T[] _coProc1Table = new T[32];
     private readonly T[] _floatTable = new T[4 * 64];   // Float: 4 formats (S, D, W, L) * 64 func codes
 
@@ -42,10 +37,6 @@ public class MipsInstructionDecodeTable<T>
         Array.Fill(_specialTable, reserved);
         Array.Fill(_special2Table, reserved);
         Array.Fill(_regImmTable, reserved);
-        Array.Fill(_coProc0Table, reserved);
-        Array.Fill(_coProc0FuncTable, reserved);
-        Array.Fill(_coProcMfmc0FuncTable, reserved);
-        Array.Fill(_coProc1Table, reserved);
         Array.Fill(_floatTable, reserved);
     }
 
@@ -60,25 +51,11 @@ public class MipsInstructionDecodeTable<T>
         // Nested Switch/Table Dispatch
         return op switch
         {
-            MipsOpCode.Special => _specialTable[(int)instruction.FuncCode],                 // SPECIAL
-            MipsOpCode.Special2 => _special2Table[(int)instruction.Func2Code],              // SPECIAL2
-            MipsOpCode.Special3 => _special3Table[(int)instruction.Func3Code],              // SPECIAL2
-            MipsOpCode.RegisterImmediate => _regImmTable[(int)instruction.RTFuncCode],      // REGIMM
-            MipsOpCode.Coprocessor0 => LookupCoProc0(instruction),                          // COP0
-            MipsOpCode.Coprocessor1 => LookupFloat(instruction),                            // COP1
-            _ => _opTable[(int)op]                                                          // Standard
-        };
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private T LookupCoProc0(CoProc0Instruction instruction)
-    {
-        var rsCode = instruction.CoProc0RSCode;
-        return rsCode switch
-        {
-            CoProc0RSCode.C0 => _coProc0FuncTable[(int)instruction.Co0FuncCode],
-            CoProc0RSCode.MFMC0 => _coProcMfmc0FuncTable[(int)instruction.MFMC0FuncCode],
-            _ => _coProc0Table[(int)rsCode],
+            MipsOpCode.Special => _specialTable[(int)instruction.FuncCode],             // SPECIAL
+            MipsOpCode.Special2 => _special2Table[(int)instruction.Func2Code],          // SPECIAL2
+            MipsOpCode.RegisterImmediate => _regImmTable[(int)instruction.RTFuncCode],  // REGIMM
+            MipsOpCode.Coprocessor1 => LookupFloat(instruction),                        // COP1
+            _ => _opTable[(int)op]                                                      // Standard
         };
     }
 
@@ -118,43 +95,12 @@ public class MipsInstructionDecodeTable<T>
     /// <summary>
     /// Registers an instruction.
     /// </summary>
-    public void Register(Func3Code funcCode, T value) => _special3Table[(int)funcCode] = value;
-
-    /// <summary>
-    /// Registers an instruction.
-    /// </summary>
     public void Register(RegImmFuncCode funcCode, T value) => _regImmTable[(int)funcCode] = value;
 
     /// <summary>
     /// Registers an instruction.
     /// </summary>
-    public void Register(CoProc0RSCode funcCode, T value) => _coProc0Table[(int)funcCode] = value;
-
-    /// <summary>
-    /// Registers an instruction.
-    /// </summary>
-    public void Register(Co0FuncCode funcCode, T value) => _coProc0FuncTable[(int)funcCode] = value;
-
-    /// <summary>
-    /// Registers an instruction.
-    /// </summary>
-    public void Register(MFMC0FuncCode funcCode, T value) => _coProcMfmc0FuncTable[(int)funcCode] = value;
-
-    /// <summary>
-    /// Registers an instruction.
-    /// </summary>
     public void Register(CoProc1RSCode funcCode, T value) => _coProc1Table[(int)funcCode] = value;
-
-    /// <summary>
-    /// Registers an instruction.
-    /// </summary>
-    public void Register(MipsFloatFuncCode funcCode, T value)
-    {
-        Register(MipsFloatFormat.Single, funcCode, value);
-        Register(MipsFloatFormat.Double, funcCode, value);
-        Register(MipsFloatFormat.Word, funcCode, value);
-        Register(MipsFloatFormat.Long, funcCode, value);
-    }
 
     /// <summary>
     /// Registers an instruction.

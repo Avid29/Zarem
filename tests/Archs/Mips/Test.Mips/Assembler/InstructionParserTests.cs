@@ -285,8 +285,7 @@ public class InstructionParserTests
 
             // Generate instruction
             StringBuilder line = new(name);
-            if (instruction.ArgumentCount is not 0)
-                line.Append(' ');
+            line.Append(' ');
 
             foreach (var arg in instruction.ArgumentPattern)
             {

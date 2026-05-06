@@ -1,16 +1,16 @@
 ﻿// Avishai Dernis 2025
 
+using CommunityToolkit.Diagnostics;
+using System.Linq;
 using System.Text;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Mips.Assembler;
-using Zarem.Mips.Assembler.Models.Meta;
-using Zarem.Mips.Assembler.Models.Tables;
-using Zarem.Mips.Models;
+using Zarem.Mips.Disassembler.Models;
+using Zarem.Mips.Disassembler.Models.Instructions;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums;
-using Zarem.Mips.Models.Instructions.Enums.Functions;
-using Zarem.Mips.Models.Instructions.Enums.Operations;
+using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Disassembler;
@@ -18,19 +18,28 @@ namespace Zarem.Mips.Disassembler;
 /// <summary>
 /// A MIPS disassembler.
 /// </summary>
-public partial class MipsDisassembler
+public class MipsDisassembler
 {
-    private readonly MipsInstructionDecodeTable<MipsInstructionMetaBase?> _instructionTable;
-    private readonly FormatTable<MipsFloatFormat> _formatTable = new();
+    private FormatTable<MipsFloatFormat> _formatTable = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsDisassembler"/> class.
     /// </summary>
     public MipsDisassembler(MipsAssemblerConfig config)
     {
-        _instructionTable = new MipsInstructionDecodeTable<MipsInstructionMetaBase?>(null);
-        Initialize(config);
+        Config = config;
+        InstructionTable = new InstructionTable(config);
     }
+
+    /// <summary>
+    /// Gets the assembler configuration to use for disassembly.
+    /// </summary>
+    public MipsAssemblerConfig Config { get; }
+
+    /// <summary>
+    /// Gets the instruction table for this disassembler instance.
+    /// </summary>
+    public InstructionTable InstructionTable { get; }
 
     /// <summary>
     /// Disassembles the <paramref name="instruction"/> into a string.
@@ -39,25 +48,66 @@ public partial class MipsDisassembler
     /// <returns>The instruction as a string.</returns>
     public string Disassemble(MipsInstruction instruction)
     {
-        var meta = _instructionTable.Lookup(instruction);
-        if (meta is null)
+        byte funcCode = instruction.Type switch
+        {
+            // Technically could be done with 'or', but clarity is nice.
+            MipsInstructionType.BasicR => (byte)instruction.FuncCode,
+            MipsInstructionType.Special2R => (byte)instruction.Func2Code,
+            MipsInstructionType.Special3R => (byte)instruction.Func3Code,
+
+            MipsInstructionType.BasicI or
+            MipsInstructionType.BasicJ => 0,
+
+            MipsInstructionType.RegisterImmediateTrap or
+            MipsInstructionType.RegisterImmediateBranch => (byte)instruction.RTFuncCode,
+
+            MipsInstructionType.Coproc0 => (byte)((CoProc0Instruction)instruction).CoProc0RSCode,
+
+            MipsInstructionType.Coproc1 => (byte)((MipsFloatInstruction)instruction).RSCode,
+            MipsInstructionType.Float => (byte)((MipsFloatInstruction)instruction).Function,
+
+            _ => 255,
+        };
+
+        byte funcCode2 = instruction.Type switch
+        {
+            MipsInstructionType.Coproc0 => funcCode switch
+            {
+                (byte)CoProc0RSCode.C0 => (byte)((CoProc0Instruction)instruction).Co0FuncCode,
+                (byte)CoProc0RSCode.MFMC0 => (byte)((CoProc0Instruction)instruction).MFMC0FuncCode,
+                _ => 255,
+            },
+            _ => 255,
+        };
+
+        // If the instruction is a float instruction, retrieve the format.
+        MipsFloatFormat? format = null;
+        if (instruction.Type is MipsInstructionType.Float)
+            format = ((MipsFloatInstruction)instruction).Format;
+
+        bool hasFormat = instruction.Type is MipsInstructionType.Float;
+        bool eretnc = funcCode2 is (byte)Co0FuncCode.ExceptionReturn && instruction.RD is (MipsGpRegister)1;
+        var key = new DisassemblerLookup((byte)instruction.OpCode, funcCode, funcCode2, hasFormat || eretnc);
+        if (!InstructionTable.TryGetInstruction(key, out var metas, out _, out _, out _))
         {
             return "Unknown instruction";
         }
 
+        // Take the metadata with the most arguments, prefer in-version instructions
+        var meta = metas
+            .OrderByDescending(x => x.ArgumentPattern.Length)
+            .FirstOrDefault();
+
+        Guard.IsNotNull(meta);
+
         // Apply the format to the name if it exists
         var name = meta.Name;
-        if (meta is MipsFloatInstructionMeta)
+        if (format.HasValue)
         {
-            var format = ((MipsFloatInstruction)instruction).Format;
-            name = _formatTable.ApplyFormat(name, format);
+            name = _formatTable.ApplyFormat(name, format.Value);
         }
 
-        StringBuilder pattern = new($"{name}");
-
-        if (meta.ArgumentCount is not 0)
-            pattern.Append(' ');
-
+        StringBuilder pattern = new($"{name} ");
         for (int i = 0; i < meta.ArgumentPattern.Length; i++)
         {
             pattern.Append(meta.ArgumentPattern[i] switch
@@ -87,60 +137,6 @@ public partial class MipsDisassembler
         }
 
         return $"{pattern}";
-    }
-
-    private void Initialize(MipsAssemblerConfig config)
-    {
-        var instructions = new MipsInstructionTable(config).GetInstructions();
-        foreach (var instruction in instructions)
-        {
-            switch (instruction)
-            {
-                case ITypeInstructionMeta i:
-                    _instructionTable.Register(i.OperationCode, i);
-                    break;
-                case JTypeInstructionMeta j:
-                    _instructionTable.Register(j.OperationCode, j);
-                    break;
-                case RTypeInstructionMeta r:
-                    switch (r.OperationCode)
-                    {
-                        case MipsOpCode.Special:
-                            _instructionTable.Register(r.FuncCode, r);
-                            break;
-                        case MipsOpCode.Special2:
-                            _instructionTable.Register((Func2Code)r.FuncCode, r);
-                            break;
-                        case MipsOpCode.Special3:
-                            _instructionTable.Register((Func3Code)r.FuncCode, r);
-                            break;
-                    }
-                    break;
-                case RegImmInstructionMeta r:
-                    _instructionTable.Register(r.RtCode, r);
-                    break;
-                case CoProc0InstructionsMeta c0:
-                    if (c0.FuncCode.HasValue)
-                    {
-                        _instructionTable.Register(c0.FuncCode.Value, c0);
-                    }
-                    else if (c0.Mfmc0FuncCode.HasValue)
-                    {
-                        _instructionTable.Register(c0.Mfmc0FuncCode.Value, c0);
-                    }
-                    else
-                    {
-                        _instructionTable.Register(c0.RSCode, c0);
-                    }
-                    break;
-                case CoProc1InstructionsMeta c1:
-                    _instructionTable.Register(c1.RSCode, c1);
-                    break;
-                case MipsFloatInstructionMeta f:
-                    _instructionTable.Register(f.Function, f);
-                    break;
-            }
-        }
     }
 
     private static string GetRegisterString(MipsGpRegister register, MipsRegisterSet set) => $"${MipsRegisterTable.Instance.GetRegisterString(register, set)}";
