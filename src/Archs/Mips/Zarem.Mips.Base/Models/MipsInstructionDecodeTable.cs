@@ -111,6 +111,20 @@ public class MipsInstructionDecodeTable<T>
         _floatTable[(fmt << 6) | (int)funcCode] = value;
     }
 
+    /// <summary>
+    /// Gets the <see cref="MipsFloatFormat"/> of a given primitive
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static MipsFloatFormat GetFloatFuncTableIndex<TFormat>()
+        where TFormat : unmanaged
+    {
+        if (typeof(TFormat) == typeof(float)) return MipsFloatFormat.Single;
+        if (typeof(TFormat) == typeof(double)) return MipsFloatFormat.Double;
+        if (typeof(TFormat) == typeof(int)) return MipsFloatFormat.Word;
+        if (typeof(TFormat) == typeof(long)) return MipsFloatFormat.Long;
+        else return ThrowHelper.ThrowFormatException<MipsFloatFormat>();
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int GetFloatFormatIndex(MipsFloatFormat format)
     {

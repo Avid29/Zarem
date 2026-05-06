@@ -102,13 +102,4 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         else if (typeof(TFormat) == typeof(long)) return (IFloatRegisterIndexer<TFormat>)cpu.FloatProcessor.Longs;
         else throw new InvalidOperationException();
     }
-
-    private static MipsFloatFormat GetFloatFuncTableIndex<TFormat>()
-    {
-        if (typeof(TFormat) == typeof(float)) return MipsFloatFormat.Single;
-        if (typeof(TFormat) == typeof(double)) return MipsFloatFormat.Double; 
-        if (typeof(TFormat) == typeof(int)) return MipsFloatFormat.Word;
-        if (typeof(TFormat) == typeof(long)) return MipsFloatFormat.Long;
-        else return ThrowHelper.ThrowFormatException<MipsFloatFormat>();
-    }
 }

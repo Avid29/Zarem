@@ -5,12 +5,13 @@ using System.Numerics;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.Enums;
+using Zarem.Mips.Extensions;
+using Zarem.Mips.Models;
+using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Functions;
-using Zarem.Mips.Models.Instructions.Enums.Operations;
-using Zarem.Mips.Models.Instructions;
-using Zarem.Mips.Extensions;
 using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
 
 namespace Zarem.Emulator.Models;
 
@@ -267,7 +268,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
     private void InitFloatFuncs<TFormat>(MipsVersion version)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
-        var format = GetFloatFuncTableIndex<TFormat>();
+        var format = MipsInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
         Register(format, MipsFloatFuncCode.Add, &FloatAlu<AddLogic<TFormat>, TFormat>);
         Register(format, MipsFloatFuncCode.Subtract, &FloatAlu<SubLogic<TFormat>, TFormat>);
         Register(format, MipsFloatFuncCode.Multiply, &FloatAlu<MulLogic<TFormat>, TFormat>);
@@ -304,7 +305,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
     private void InitConvertFuncs<TFormat>(MipsVersion version)
         where TFormat : unmanaged, INumber<TFormat>
     {
-        var format = GetFloatFuncTableIndex<TFormat>();
+        var format = MipsInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
         InitConvertFunc<TFormat, float>(format, MipsFloatFuncCode.ConvertToSingle);
         InitConvertFunc<TFormat, double>(format, MipsFloatFuncCode.ConvertToDouble);
         InitConvertFunc<TFormat, int>(format, MipsFloatFuncCode.ConvertToWord);
