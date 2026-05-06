@@ -66,17 +66,11 @@ public abstract class InstructionTableBase<TKey, TEntry>
     /// </summary>
     protected void Initialize(Assembly assembly)
     {
-        var resources = assembly.GetManifestResourceNames();
-        resources = [.. resources.Where(x => x.EndsWith("inst.json"))];
+        var instructions = LoadInstructions(assembly);
 
-        foreach (var resource in resources)
+        foreach (var instruction in instructions)
         {
-            var instructions = LoadInstructionSet(assembly, resource);
-
-            foreach (var instruction in instructions)
-            {
-                LoadInstruction(instruction);
-            }
+            LoadInstruction(instruction);
         }
     }
 
@@ -98,6 +92,16 @@ public abstract class InstructionTableBase<TKey, TEntry>
         }
 
         instructions.Add(metadata);
+    }
+
+    /// <summary>
+    /// Loads the instructions in an assembly.
+    /// </summary>
+    public static TEntry[] LoadInstructions(Assembly assembly)
+    {
+        var resources = assembly.GetManifestResourceNames();
+        resources = [.. resources.Where(x => x.EndsWith("inst.json"))];
+        return [.. resources.SelectMany(x => LoadInstructionSet(assembly, x))];
     }
 
     private static TEntry[] LoadInstructionSet(Assembly assembly, string resourceName)
