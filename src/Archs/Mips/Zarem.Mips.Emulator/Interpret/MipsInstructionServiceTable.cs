@@ -1,11 +1,13 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Mips.Extensions;
+using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Emulator.Models;
@@ -18,28 +20,20 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
     where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
 {
     // Main tables
-    private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[] _opCodeTable = new delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[64];
-    private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[] _specialTable = new delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[64];
-    private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[] _special2Table = new delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[64];
-    private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[] _regImmTable = new delegate*<MipsInstructionServiceTable<T, TS>, MipsInstruction, out MipsExecution<T>, MipsTrap>[32];
+    private readonly MipsInstructionDecodeTable<IntPtr> _instructionTable;
 
-    // CoProcessor tables
-    private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap>[] _coProc1RSTable = new delegate*<MipsInstructionServiceTable<T, TS>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap>[32];
-    private readonly delegate*<MipsInstructionServiceTable<T, TS>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap>[][] _floatFuncTables;
-
-    private readonly MipsCpu<T> _cpu;
+    private readonly MipsInterpretCpu<T> _cpu;
     private readonly T* _regs;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionServiceTable{T, TSigned}"/> struct.
     /// </summary>
-    public MipsInstructionServiceTable(MipsCpu<T> cpu)
+    public MipsInstructionServiceTable(MipsInterpretCpu<T> cpu)
     {
         _cpu = cpu;
         _regs = cpu.RegisterFile.Regs;
 
-        var formatCount = cpu.Config.Version.Is64Bit() ? 4 : 3;
-        _floatFuncTables = new delegate*<MipsInstructionServiceTable<T, TS>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap>[formatCount][];
+        _instructionTable = new MipsInstructionDecodeTable<IntPtr>(GetFunctionPtrValue(&ReservedInstruction));
 
         InitTables(cpu.Config);
     }
@@ -47,83 +41,65 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
     /// <inheritdoc/>
     public MipsTrap Execute(MipsInstruction instruction, out MipsExecution<T> execution)
     {
-        var func = _opCodeTable[(int)instruction.OpCode];
-        return func(this, instruction, out execution);
+        var func = (delegate*<MipsInterpretCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap>)_instructionTable.Lookup(instruction);
+        return func(_cpu, instruction, out execution);
     }
 
-    private static MipsTrap DispatchSpecial(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
-    {
-        var func = @this._specialTable[(int)inst.FuncCode];
-        return func(@this, inst, out exec);
-    }
-
-    private static MipsTrap DispatchSpecial2(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
-    {
-        var func = @this._special2Table[(int)inst.FuncCode];
-        return func(@this, inst, out exec);
-    }
-
-    private static MipsTrap DispatchRegImm(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
-    {
-        var func = @this._regImmTable[(int)inst.RTFuncCode];
-        return func(@this, inst, out exec);
-    }
-
-    private static MipsTrap Shift<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Shift<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IShiftLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         exec = MipsExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Execute(rt, inst.ShiftAmount)));
         return MipsTrap.None;
     }
 
-    private static MipsTrap ShiftPlus32<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap ShiftPlus32<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IShiftLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         exec = MipsExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Execute(rt, inst.ShiftAmount + 32)));
         return MipsTrap.None;
     }
 
-    private static MipsTrap ShiftVar<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap ShiftVar<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IShiftLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
-        var rs = int.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = int.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         exec = MipsExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Execute(rt, rs)));
         return MipsTrap.None;
     }
 
-    private static MipsTrap AluR<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap AluR<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, INumber<TFormat>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         exec = MipsExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Compute(rs, rt)));
         return MipsTrap.None;
     }
 
-    private static MipsTrap SignedAluR<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap SignedAluR<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, INumber<TFormat>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         var result = T.CreateTruncating(TS.CreateTruncating(TLogic.Compute(rs, rt)));
         exec = MipsExecution<T>.CreateWriteback(inst.RD, result);
         return MipsTrap.None;
     }
 
-    private static MipsTrap CheckedAluR<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CheckedAluR<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICheckedAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         var result = TLogic.Compute(rs, rt);
 
         if (TLogic.Overflow(rs, rt, result))
@@ -137,31 +113,31 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.None;
     }
 
-    private static MipsTrap AluI<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap AluI<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
         var imm = TFormat.CreateTruncating(inst.Immediate);
         exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(TLogic.Compute(rs, imm)));
         return MipsTrap.None;
     }
 
-    private static MipsTrap AluISigned<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap AluISigned<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
         var imm = TFormat.CreateSaturating(inst.Immediate);
         exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(TLogic.Compute(rs, imm)));
         return MipsTrap.None;
     }
 
-    private static MipsTrap CheckedAluI<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CheckedAluI<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICheckedAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
         var imm = TFormat.CreateTruncating(inst.Immediate);
         var result = TLogic.Compute(rs, imm);
 
@@ -176,13 +152,13 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.None;
     }
 
-    private static MipsTrap MultR<TLogic, TFormat, TLong>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap MultR<TLogic, TFormat, TLong>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IMultLogic<TFormat, TLong>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
         where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         TLong value = TLogic.Compute(rs, rt);
 
         int shift = sizeof(TFormat) * 8;
@@ -195,13 +171,13 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.None;
     }
 
-    private static MipsTrap SignedMultR<TLogic, TFormat, TLong>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap SignedMultR<TLogic, TFormat, TLong>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IMultLogic<TFormat, TLong>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
         where TLong : unmanaged, IBinaryInteger<TLong>, ISignedNumber<TLong>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         TLong value = TLogic.Compute(rs, rt);
 
         int shift = sizeof(TFormat) * 8;
@@ -214,19 +190,19 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.None;
     }
 
-    private static MipsTrap MultAddR<TLogic, TFormat, TLong>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap MultAddR<TLogic, TFormat, TLong>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IMultAddLogic<TFormat, TLong>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
         where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
 
         int shift = sizeof(TFormat) * 8;
         TLong mask = TLong.CreateTruncating(TFormat.AllBitsSet);
 
-        TLong hiPart = TLong.CreateTruncating(@this._cpu.RegisterFile.High) << shift;
-        TLong loPart = TLong.CreateTruncating(@this._cpu.RegisterFile.Low) & mask;
+        TLong hiPart = TLong.CreateTruncating(cpu.RegisterFile.High) << shift;
+        TLong loPart = TLong.CreateTruncating(cpu.RegisterFile.Low) & mask;
         TLong @base = hiPart | loPart;
 
         TLong value = TLogic.Compute(rs, rt, @base);
@@ -238,19 +214,19 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.None;
     }
 
-    private static MipsTrap SignedMultAddR<TLogic, TFormat, TLong>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap SignedMultAddR<TLogic, TFormat, TLong>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IMultAddLogic<TFormat, TLong>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
         where TLong : unmanaged, IBinaryInteger<TLong>, ISignedNumber<TLong>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
 
         int shift = sizeof(TFormat) * 8;
         TLong mask = (TLong.One << shift) - TLong.One;
 
-        TLong hiPart = TLong.CreateTruncating(@this._cpu.RegisterFile.High) << shift;
-        TLong loPart = TLong.CreateTruncating(@this._cpu.RegisterFile.Low) & mask;
+        TLong hiPart = TLong.CreateTruncating(cpu.RegisterFile.High) << shift;
+        TLong loPart = TLong.CreateTruncating(cpu.RegisterFile.Low) & mask;
         TLong @base = hiPart | loPart;
 
         TLong value = TLogic.Compute(rs, rt, @base);
@@ -262,77 +238,77 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.None;
     }
 
-    private static MipsTrap DivR<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap DivR<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IDivLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         var rem = T.CreateTruncating(TLogic.Remainder(rs, rt));
         var div = T.CreateTruncating(TLogic.Divisor(rs, rt));
         exec = MipsExecution<T>.CreateHighLow((rem, div));
         return MipsTrap.None;
     }
 
-    private static MipsTrap SignedDivR<TLogic, TFormat>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap SignedDivR<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IDivLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
-        var rs = TFormat.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = TFormat.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = TFormat.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         var rem = T.CreateTruncating(TS.CreateTruncating(TLogic.Remainder(rs, rt)));
         var div = T.CreateTruncating(TS.CreateTruncating(TLogic.Divisor(rs, rt)));
         exec = MipsExecution<T>.CreateHighLow((rem, div));
         return MipsTrap.None;
     }
 
-    private static MipsTrap Trap<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Trap<TLogic>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ITrapLogic
     {
         exec = default;
         return TLogic.Trap();
     }
 
-    private static MipsTrap BranchOn<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap BranchOn<TLogic>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
-        var rt = T.CreateTruncating(@this._cpu[inst.RT]);
-        var jump = @this._cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+        var rs = T.CreateTruncating(cpu[inst.RS]);
+        var rt = T.CreateTruncating(cpu[inst.RT]);
+        var jump = cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
         exec = TLogic.Check(rs, rt) ? MipsExecution<T>.CreateJump(jump) : default;
         return MipsTrap.None;
     }
 
-    private static MipsTrap BranchLinkOn<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap BranchLinkOn<TLogic>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
-        var rt = T.CreateTruncating(@this._cpu[inst.RT]);
-        var jump = @this._cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
-        var ret = @this._cpu.ProgramCounter + T.CreateTruncating(4);
+        var rs = T.CreateTruncating(cpu[inst.RS]);
+        var rt = T.CreateTruncating(cpu[inst.RT]);
+        var jump = cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+        var ret = cpu.ProgramCounter + T.CreateTruncating(4);
         exec = TLogic.Check(rs, rt) ? MipsExecution<T>.CreateJumpAndLink(jump, ret) : default;
         return MipsTrap.None;
     }
 
-    private static MipsTrap BranchOnLikely<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap BranchOnLikely<TLogic>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
-        var rt = T.CreateTruncating(@this._cpu[inst.RT]);
+        var rs = T.CreateTruncating(cpu[inst.RS]);
+        var rt = T.CreateTruncating(cpu[inst.RT]);
 
         // PC + 4 is the Delay Slot. inst.Offset is relative to the Delay Slot.
-        var jumpTarget = @this._cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+        var jumpTarget = cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
 
         if (TLogic.Check(rs, rt))
         {
             // Branch Taken: Execute delay slot, then jump.
             exec = MipsExecution<T>.CreateJump(jumpTarget);
         }
-        else if (!@this._cpu.Config.DisableDelaySlots)
+        else if (!cpu.Config.DisableDelaySlots)
         {
             // Branch NOT Taken: Nullify (skip) the delay slot.
             // We force a jump to PC + 8 to bypass the delay slot entirely.
-            var skipDelaySlot = @this._cpu.ProgramCounter + T.CreateTruncating(8);
+            var skipDelaySlot = cpu.ProgramCounter + T.CreateTruncating(8);
             exec = MipsExecution<T>.CreateJump(skipDelaySlot, force: true);
         }
         else
@@ -343,24 +319,24 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.None;
     }
 
-    private static MipsTrap BranchLinkOnLikely<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap BranchLinkOnLikely<TLogic>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
-        var rt = T.CreateTruncating(@this._cpu[inst.RT]);
+        var rs = T.CreateTruncating(cpu[inst.RS]);
+        var rt = T.CreateTruncating(cpu[inst.RT]);
 
-        var jumpTarget = @this._cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
-        var linkAddr = @this._cpu.ProgramCounter + T.CreateTruncating(8);
+        var jumpTarget = cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
+        var linkAddr = cpu.ProgramCounter + T.CreateTruncating(8);
 
         if (TLogic.Check(rs, rt))
         {
             // Taken: Link, execute delay slot, then jump.
             exec = MipsExecution<T>.CreateJumpAndLink(jumpTarget, linkAddr);
         }
-        else if (!@this._cpu.Config.DisableDelaySlots)
+        else if (!cpu.Config.DisableDelaySlots)
         {
             // NOT Taken: Skip delay slot. No linking occurs on failed Branch Likely.
-            var skipDelaySlot = @this._cpu.ProgramCounter + T.CreateTruncating(8);
+            var skipDelaySlot = cpu.ProgramCounter + T.CreateTruncating(8);
             exec = MipsExecution<T>.CreateJump(skipDelaySlot, force: true);
         }
         else
@@ -371,38 +347,38 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.None;
     }
 
-    private static MipsTrap TrapOn<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap TrapOn<TLogic>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
-        var rt = T.CreateTruncating(@this._cpu[inst.RT]);
+        var rs = T.CreateTruncating(cpu[inst.RS]);
+        var rt = T.CreateTruncating(cpu[inst.RT]);
         exec = default;
         return TLogic.Check(rs, rt) ? MipsTrap.Trap : MipsTrap.None;
     }
 
-    private static MipsTrap TrapOnI<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap TrapOnI<TLogic>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._cpu[inst.RS]);
+        var rs = T.CreateTruncating(cpu[inst.RS]);
         var imm = T.CreateTruncating(TS.CreateSaturating(inst.Immediate));
         exec = default;
         return TLogic.Check(rs, imm) ? MipsTrap.Trap : MipsTrap.None;
     }
 
-    private static MipsTrap Move<TLogic>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Move<TLogic>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
-        var rs = T.CreateTruncating(@this._regs[(int)inst.RS]);
-        var rt = T.CreateTruncating(@this._regs[(int)inst.RT]);
+        var rs = T.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
+        var rt = T.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RT]);
         exec = TLogic.Check(rs, rt) ? MipsExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(rs)) : default;
         return MipsTrap.None;
     }
 
-    private static MipsTrap Load<TData>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Load<TData>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TData : unmanaged, IBinaryInteger<TData>
     {
         T offset = T.CreateTruncating(inst.Immediate);
-        T baseAddr = T.CreateTruncating(@this._regs[(int)inst.RS]);
+        T baseAddr = T.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
         T addr = baseAddr + offset;
 
         // Alignment check (bytes are always aligned)
@@ -418,11 +394,11 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.None;
     }
 
-    private static MipsTrap Store<TData>(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Store<TData>(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TData : unmanaged
     {
         T offset = T.CreateTruncating(inst.Immediate);
-        T baseAddr = T.CreateTruncating(@this._regs[(int)inst.RS]);
+        T baseAddr = T.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
         T addr = baseAddr + offset;
 
         // Alignment check (bytes are always aligned)
@@ -433,76 +409,76 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
             return MipsTrap.AddressErrorStore;
         }
 
-        exec = MipsExecution<T>.CreateMemWrite(@this._regs[(int)inst.RT], addr, size);
+        exec = MipsExecution<T>.CreateMemWrite(cpu.RegisterFile.Regs[(int)inst.RT], addr, size);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Jump(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Jump(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateJump(T.CreateTruncating(inst.Address));
         return MipsTrap.None;
     }
 
-    private static MipsTrap JumpLink(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap JumpLink(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        var linkOffset = @this._cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
-        exec = MipsExecution<T>.CreateJumpAndLink(T.CreateTruncating(inst.Address), @this._cpu.ProgramCounter + linkOffset);
+        var linkOffset = cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
+        exec = MipsExecution<T>.CreateJumpAndLink(T.CreateTruncating(inst.Address), cpu.ProgramCounter + linkOffset);
         return MipsTrap.None;
     }
 
-    private static MipsTrap JumpR(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap JumpR(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateJump(@this._regs[(int)inst.RS]);
+        exec = MipsExecution<T>.CreateJump(cpu.RegisterFile.Regs[(int)inst.RS]);
         return MipsTrap.None;
     }
 
-    private static MipsTrap JumpLinkR(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap JumpLinkR(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        var linkOffset = @this._cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
-        var rs = @this._regs[(int)inst.RS];
-        exec = MipsExecution<T>.CreateJumpAndLink(rs, @this._cpu.ProgramCounter + linkOffset, inst.RD);
+        var linkOffset = cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
+        var rs = cpu.RegisterFile.Regs[(int)inst.RS];
+        exec = MipsExecution<T>.CreateJumpAndLink(rs, cpu.ProgramCounter + linkOffset, inst.RD);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mfhi(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Mfhi(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateWriteback(inst.RD, @this._cpu.RegisterFile.High);
+        exec = MipsExecution<T>.CreateWriteback(inst.RD, cpu.RegisterFile.High);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mthi(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Mthi(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateHigh(@this._regs[(int)inst.RS]);
+        exec = MipsExecution<T>.CreateHigh(cpu.RegisterFile.Regs[(int)inst.RS]);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mflo(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Mflo(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateWriteback(inst.RD, @this._cpu.RegisterFile.Low);
+        exec = MipsExecution<T>.CreateWriteback(inst.RD, cpu.RegisterFile.Low);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mtlo(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Mtlo(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
-        exec = MipsExecution<T>.CreateLow(@this._regs[(int)inst.RS]);
+        exec = MipsExecution<T>.CreateLow(cpu.RegisterFile.Regs[(int)inst.RS]);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Lui(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Lui(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(inst.Immediate << 16));
         return MipsTrap.None;
     }
 
-    private static MipsTrap ReservedInstruction(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap ReservedInstruction(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = default;
         return MipsTrap.ReservedInstruction;
     }
 
-    private static MipsTrap ReservedInstruction(MipsInstructionServiceTable<T, TS> @this, MipsFloatInstruction inst, out MipsExecution<T> exec)
-        => ReservedInstruction(@this, (MipsInstruction)inst, out exec);
+    private static MipsTrap ReservedInstruction(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+        => ReservedInstruction(cpu, (MipsInstruction)inst, out exec);
 
-    private static MipsTrap NotImplemented(MipsInstructionServiceTable<T, TS> @this, MipsInstruction inst, out MipsExecution<T> exec)
-        => throw new UnimplementedInstructionException(ulong.CreateTruncating(@this._cpu.ProgramCounter));
+    private static MipsTrap NotImplemented(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+        => throw new UnimplementedInstructionException(ulong.CreateTruncating(cpu.ProgramCounter));
 }

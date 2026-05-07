@@ -11,7 +11,7 @@ using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Mips.Extensions;
+using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
@@ -24,17 +24,8 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private delegate void MipsEmitter(ILGenerator il, MipsInstruction inst, T pc);
-    private delegate void MipsFloatEmitter(ILGenerator il, MipsFloatInstruction inst, T pc);
 
-    // Main tables
-    private readonly MipsEmitter[] _opCodeTable = new MipsEmitter[64];
-    private readonly MipsEmitter[] _specialTable = new MipsEmitter[64];
-    private readonly MipsEmitter[] _special2Table = new MipsEmitter[64];
-    private readonly MipsEmitter[] _regImmTable = new MipsEmitter[32];
-
-    // CoProcessor tables
-    private readonly MipsFloatEmitter[] _coProc1RSTable = new MipsFloatEmitter[32];
-    private readonly MipsFloatEmitter[][] _floatFuncTables;
+    private readonly MipsInstructionDecodeTable<MipsEmitter> _instructionTable;
 
     private readonly MethodInfo _clzMethod;
     private readonly Dictionary<Type, MethodInfo> _multiplyMethod = [];
@@ -51,6 +42,8 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     public MipsJitCompiler(MipsJitCpu<T> cpu) : base(cpu)
     {
         _cpu = cpu;
+
+        _instructionTable = new MipsInstructionDecodeTable<MipsEmitter>(ReservedInstruction);
 
         var clzMethod = typeof(BitOperations).GetMethod(nameof(BitOperations.LeadingZeroCount), [typeof(uint)]);
         Guard.IsNotNull(clzMethod);
@@ -75,9 +68,6 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             _castDownMethods[type] = castDownMethod;
             _rightShiftMethods[type] = rightShiftMethod;
         }
-
-        var formatCount = _cpu.Config.Version.Is64Bit() ? 4 : 3;
-        _floatFuncTables = new MipsFloatEmitter[formatCount][];
 
         InitTables(_cpu.Config);
     }
@@ -131,28 +121,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
     }
 
-    private void CompileInstruction(ILGenerator il, MipsInstruction inst, T pc)
+    private void CompileInstruction(ILGenerator il, MipsInstruction instruction, T pc)
     {
-        var emitter = _opCodeTable[(int)inst.OpCode];
-        emitter(il, inst, pc);
-    }
-
-    private void DispatchSpecial(ILGenerator il, MipsInstruction inst, T pc)
-    {
-        var emmiter = _specialTable[(int)inst.FuncCode];
-        emmiter(il, inst, pc);
-    }
-
-    private void DispatchSpecial2(ILGenerator il, MipsInstruction inst, T pc)
-    {
-        var emmiter = _special2Table[(int)inst.FuncCode];
-        emmiter(il, inst, pc);
-    }
-
-    private void DispatchRegImm(ILGenerator il, MipsInstruction inst, T pc)
-    {
-        var emmiter = _regImmTable[(int)inst.RTFuncCode];
-        emmiter(il, inst, pc);
+        var emitter = _instructionTable.Lookup(instruction);
+        emitter(il, instruction, pc);
     }
 
     private void Shift<TData>(ILGenerator il, MipsInstruction inst, OpCode ilOpCode)
@@ -594,8 +566,6 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     }
 
     private void ReservedInstruction(ILGenerator il, MipsInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
-
-    private void ReservedInstruction(ILGenerator il, MipsFloatInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
 
     private void MethodUnary<TData>(ILGenerator il, MipsInstruction inst, Action<ILGenerator> method)
         where TData : unmanaged, INumber<TData>

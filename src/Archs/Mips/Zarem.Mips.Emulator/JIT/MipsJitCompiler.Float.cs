@@ -13,21 +13,6 @@ namespace Zarem.Emulator.Models.JIT;
 public partial class MipsJitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private void DispatchCoProc1(ILGenerator il, MipsFloatInstruction inst, T pc)
-    {
-        var fInst = inst;
-        var func = _coProc1RSTable[(int)fInst.RSCode];
-        func(il, fInst, pc);
-    }
-
-    private void DispatchFloatFunc<TFormat>(ILGenerator il, MipsFloatInstruction inst, T pc)
-        where TFormat : unmanaged, INumber<TFormat>
-    {
-        int index = GetFloatFuncTableIndex<TFormat>();
-        var func = _floatFuncTables[index][(int)inst.Function];
-        func(il, inst, pc);
-    }
-
     private void FloatAlu<TFormat>(ILGenerator il, MipsFloatInstruction inst, OpCode ilOpCode)
         where TFormat : unmanaged
     {
@@ -118,14 +103,5 @@ public partial class MipsJitCompiler<T>
             EmitLoadRegister<T>(il, inst.FS);
             il.EmitConv<T>();
         });
-    }
-
-    private static int GetFloatFuncTableIndex<TFormat>()
-    {
-        if (typeof(TFormat) == typeof(float)) return 0;
-        if (typeof(TFormat) == typeof(double)) return 1;
-        if (typeof(TFormat) == typeof(int)) return 2;
-        if (typeof(TFormat) == typeof(long)) return 3;
-        else return ThrowHelper.ThrowFormatException<int>();
     }
 }
