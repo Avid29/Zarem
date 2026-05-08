@@ -7,10 +7,10 @@ using System.Data;
 using System.Linq;
 using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Messages.Navigation;
+using Zarem.IDE.Messages.Project;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Windowing;
 using Zarem.IDE.ViewModels.Pages;
-using Zarem.ViewModels.Pages;
 
 namespace Zarem.IDE.ViewModels;
 
@@ -23,7 +23,6 @@ public partial class WindowViewModel : ObservableRecipient
     private readonly IBuildService _buildService;
     private readonly IConsoleService _consoleService;
     private readonly IDebugService _debugService;
-    private readonly ILocalizationService _localizationService;
     private readonly IProjectService _projectService;
     private readonly IWindowingService _windowingService;
 
@@ -35,7 +34,6 @@ public partial class WindowViewModel : ObservableRecipient
         IBuildService buildService,
         IConsoleService consoleService,
         IDebugService debugService,
-        ILocalizationService localizationService,
         IProjectService projectService,
         IWindowingService windowingService,
         MainViewModel mainViewModel,
@@ -45,7 +43,6 @@ public partial class WindowViewModel : ObservableRecipient
         _buildService = buildService;
         _consoleService = consoleService;
         _debugService = debugService;
-        _localizationService = localizationService;
         _projectService = projectService;
         _windowingService = windowingService;
 
@@ -91,5 +88,14 @@ public partial class WindowViewModel : ObservableRecipient
             return panel.OpenPages.OfType<FilePageViewModel>()
                 .Where(x => x.File is not null).Select(x => x.File!);
         }
+    }
+
+    /// <inheritdoc/>
+    protected override void OnActivated()
+    {
+        _messenger.Register<WindowViewModel, ProjectClosedMessage>(this, async (r, m) =>
+        {
+            await PanelViewModel.ClosePagesAsync();
+        });
     }
 }
