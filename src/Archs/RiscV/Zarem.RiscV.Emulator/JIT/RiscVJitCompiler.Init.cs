@@ -18,6 +18,7 @@ public partial class RiscVJitCompiler<T>
     private void InitTables(RiscVEmulatorConfig config)
     {
         var versionInfo = config.VersionInfo;
+
         // Populate base table
         InitBaseTable(versionInfo);
 

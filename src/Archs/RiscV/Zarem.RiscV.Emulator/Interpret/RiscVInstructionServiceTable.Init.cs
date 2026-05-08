@@ -19,21 +19,6 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
     {
         var versionInfo = config.VersionInfo;
 
-        // Set default behavior to use empty table
-        for (int i = 0; i < 128; i++)
-        {
-            _func7Table[i] = _emptyTable;
-        }
-
-        // Set default behavior to illegal instruction trap, and modified to use the same array as base
-        var @base = _func7Table[(int)Funct7Code.Base] = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
-        _func7Table[(int)Funct7Code.Modified] = @base;
-        for (int i = 0; i < 1024; i++)
-        {
-            @base[i] = &IllegalInstruction;
-            _emptyTable[i] = &IllegalInstruction;
-        }
-
         // Populate base table
         InitBaseTable(versionInfo);
 
@@ -57,38 +42,36 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
 
     private void InitBaseTable(RiscVVersionInfo versionInfo)
     {
-        var @base = _func7Table[(int)Funct7Code.Base];
-
         // Add ALU Immediate operations in the base register size
         InitAluOperations<T, TSigned>(RiscVOpCode.Op, RiscVOpCode.OpImmediate);
 
         // Add system operations
-        @base[GetLookupIndex(RiscVOpCode.System, Funct3Code.EcallBreak)] = &EcallBreak;
+        Register(RiscVOpCode.System, Funct3Code.EcallBreak, &EcallBreak);
 
         // Add Jump operations
-        InitRange(@base, GetLookupRange(RiscVOpCode.JumpAndLink), &JumpAndLink);
-        @base[GetLookupIndex(RiscVOpCode.JumpAndLinkRegister, 0)] = &JumpAndLinkRegister;
+        Register(RiscVOpCode.JumpAndLink, &JumpAndLink);
+        Register(RiscVOpCode.JumpAndLinkRegister, 0, &JumpAndLinkRegister);
          
         // Add Branch operations
-        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchEqual)] = &BranchOn<XeqLogic<T>>;
-        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchNotEqual)] = &BranchOn<XneLogic<T>>;
-        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThan)] = &BranchOn<XltLogic<T, TSigned>>;
-        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqual)] = &BranchOn<XgeLogic<T, TSigned>>;
-        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned)] = &BranchOn<XltuLogic<T>>;
-        @base[GetLookupIndex(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned)] = &BranchOn<XgeuLogic<T>>;
+        Register(RiscVOpCode.Branch, Funct3Code.BranchEqual, &BranchOn<XeqLogic<T>>);
+        Register(RiscVOpCode.Branch, Funct3Code.BranchNotEqual, &BranchOn<XneLogic<T>>);
+        Register(RiscVOpCode.Branch, Funct3Code.BranchLessThan, &BranchOn<XltLogic<T, TSigned>>);
+        Register(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqual, &BranchOn<XgeLogic<T, TSigned>>);
+        Register(RiscVOpCode.Branch, Funct3Code.BranchLessThanUnsigned, &BranchOn<XltuLogic<T>>);
+        Register(RiscVOpCode.Branch, Funct3Code.BranchGreaterThanOrEqualUnsigned, &BranchOn<XgeuLogic<T>>);
 
         // Add memory operations
-        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadByte)] = &Load<sbyte>;
-        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadHalfWord)] = &Load<short>;
-        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadWord)] = &Load<int>;
-        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadByteUnsigned)] = &Load<byte>;
-        @base[GetLookupIndex(RiscVOpCode.Load, Funct3Code.LoadHalfWordUnsigned)] = &Load<ushort>;
-        @base[GetLookupIndex(RiscVOpCode.Store, Funct3Code.StoreByte)] = &Store<sbyte>;
-        @base[GetLookupIndex(RiscVOpCode.Store, Funct3Code.StoreHalfWord)] = &Store<short>;
-        @base[GetLookupIndex(RiscVOpCode.Store, Funct3Code.StoreWord)] = &Store<int>;
+        Register(RiscVOpCode.Load, Funct3Code.LoadByte, &Load<sbyte>);
+        Register(RiscVOpCode.Load, Funct3Code.LoadHalfWord, &Load<short>);
+        Register(RiscVOpCode.Load, Funct3Code.LoadWord, &Load<int>);
+        Register(RiscVOpCode.Load, Funct3Code.LoadByteUnsigned, &Load<byte>);
+        Register(RiscVOpCode.Load, Funct3Code.LoadHalfWordUnsigned, &Load<ushort>);
+        Register(RiscVOpCode.Store, Funct3Code.StoreByte, &Store<sbyte>);
+        Register(RiscVOpCode.Store, Funct3Code.StoreHalfWord, &Store<short>);
+        Register(RiscVOpCode.Store, Funct3Code.StoreWord, &Store<int>);
 
         // Misc
-        @base[GetLookupIndex(RiscVOpCode.LoadUpperImmediate, 0)] = &Lui;
+        Register(RiscVOpCode.LoadUpperImmediate, 0, &Lui);
 
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)
         {
@@ -106,12 +89,6 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         where TLong : struct, IBinaryInteger<TLong>
         where TSignedLong : struct, IBinaryInteger<TSignedLong>
     {
-        var mulTable = _func7Table[(int)Funct7Code.MExtension] = new delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[1024];
-        for (var i = 0; i < 1024; i++)
-        {
-            mulTable[i] = &IllegalInstruction;
-        }
-
         InitMultiplyAluOperations<T, TSigned, TLong, TSignedLong>(RiscVOpCode.Op);
 
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)
@@ -130,23 +107,22 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
         where T2Signed : unmanaged, IBinaryInteger<T2Signed>, ISignedNumber<T2Signed>
     {
-        var @base = _func7Table[(int)Funct7Code.Base];
-        @base[GetLookupIndex(rOpCode, Funct3Code.Arithmetic)] = &ModifyableAluR<AddLogic<T2>, SubLogic<T2>, T2>;
-        @base[GetLookupIndex(rOpCode, Funct3Code.ShiftLeft)] = &ShiftR<SllLogic<T2>, T2>;
-        @base[GetLookupIndex(rOpCode, Funct3Code.SetLessThan)] = &AluR<SltLogic<T2Signed>, T2Signed>;
-        @base[GetLookupIndex(rOpCode, Funct3Code.SetLessThanUnsigned)] = &AluR<SltLogic<T2>, T2>;
-        @base[GetLookupIndex(rOpCode, Funct3Code.Xor)] = &AluR<XorLogic<T2>, T2>;
-        @base[GetLookupIndex(rOpCode, Funct3Code.ShiftRight)] = &ModifyableShiftR<SrlLogic<T2>, SraLogic<T2Signed>, T2, T2Signed>;
-        @base[GetLookupIndex(rOpCode, Funct3Code.Or)] = &AluR<OrLogic<T2>, T2>;
-        @base[GetLookupIndex(rOpCode, Funct3Code.And)] = &AluR<AndLogic<T2>, T2>;
-        @base[GetLookupIndex(iOpCode, Funct3Code.Arithmetic)] = &AluI<AddLogic<T2>, T2>;
-        @base[GetLookupIndex(iOpCode, Funct3Code.ShiftLeft)] = &ShiftI<SllLogic<T2>, T2>;
-        @base[GetLookupIndex(iOpCode, Funct3Code.SetLessThan)] = &AluISigned<SltLogic<T2Signed>, T2Signed>;
-        @base[GetLookupIndex(iOpCode, Funct3Code.SetLessThanUnsigned)] = &AluI<SltLogic<T2>, T2>;
-        @base[GetLookupIndex(iOpCode, Funct3Code.Xor)] = &AluI<XorLogic<T2>, T2>;
-        @base[GetLookupIndex(iOpCode, Funct3Code.ShiftRight)] = &ModifyableShiftI<SrlLogic<T2>, SraLogic<T2Signed>, T2, T2Signed>;
-        @base[GetLookupIndex(iOpCode, Funct3Code.Or)] = &AluI<OrLogic<T2>, T2>;
-        @base[GetLookupIndex(iOpCode, Funct3Code.And)] = &AluI<AndLogic<T2>, T2>;
+        Register(rOpCode, Funct3Code.Arithmetic, &ModifyableAluR<AddLogic<T2>, SubLogic<T2>, T2>);
+        Register(rOpCode, Funct3Code.ShiftLeft, &ShiftR<SllLogic<T2>, T2>);
+        Register(rOpCode, Funct3Code.SetLessThan, &AluR<SltLogic<T2Signed>, T2Signed>);
+        Register(rOpCode, Funct3Code.SetLessThanUnsigned, &AluR<SltLogic<T2>, T2>);
+        Register(rOpCode, Funct3Code.Xor, &AluR<XorLogic<T2>, T2>);
+        Register(rOpCode, Funct3Code.ShiftRight, &ModifyableShiftR<SrlLogic<T2>, SraLogic<T2Signed>, T2, T2Signed>);
+        Register(rOpCode, Funct3Code.Or, &AluR<OrLogic<T2>, T2>);
+        Register(rOpCode, Funct3Code.And, &AluR<AndLogic<T2>, T2>);
+        Register(iOpCode, Funct3Code.Arithmetic, &AluI<AddLogic<T2>, T2>);
+        Register(iOpCode, Funct3Code.ShiftLeft, &ShiftI<SllLogic<T2>, T2>);
+        Register(iOpCode, Funct3Code.SetLessThan, &AluISigned<SltLogic<T2Signed>, T2Signed>);
+        Register(iOpCode, Funct3Code.SetLessThanUnsigned, &AluI<SltLogic<T2>, T2>);
+        Register(iOpCode, Funct3Code.Xor, &AluI<XorLogic<T2>, T2>);
+        Register(iOpCode, Funct3Code.ShiftRight, &ModifyableShiftI<SrlLogic<T2>, SraLogic<T2Signed>, T2, T2Signed>);
+        Register(iOpCode, Funct3Code.Or, &AluI<OrLogic<T2>, T2>);
+        Register(iOpCode, Funct3Code.And, &AluI<AndLogic<T2>, T2>);
     }
 
     private void InitMultiplyAluOperations<T2, T2Signed, T2Long, T2SignedLong>(RiscVOpCode opCode)
@@ -155,20 +131,25 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         where T2Long : struct, IBinaryInteger<T2Long>
         where T2SignedLong : struct, IBinaryInteger<T2SignedLong>
     {
-        var mulTable = _func7Table[(int)Funct7Code.MExtension];
-        mulTable[GetLookupIndex(opCode, Funct3Code.Multiply)] = &AluR<MulLogic<T2Signed>, T2Signed>;
-        mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHigh)] = &AluR<MulhLogic<T2Signed, T2SignedLong>, T2Signed>;
-        mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHighSignedUnsigned)] = &AluR<MulhsuLogic<T2Signed, T2SignedLong>, T2Signed>;
-        mulTable[GetLookupIndex(opCode, Funct3Code.MultiplyHighUnsigned)] = &AluR<MulhLogic<T2, T2Long>, T2>;
-        mulTable[GetLookupIndex(opCode, Funct3Code.Divide)] = &AluR<DivLogic<T2Signed>, T2Signed>;
-        mulTable[GetLookupIndex(opCode, Funct3Code.DivideUnsigned)] = &AluR<DivLogic<T2>, T2>;
-        mulTable[GetLookupIndex(opCode, Funct3Code.Remainder)] = &AluR<RemLogic<T2Signed>, T2Signed>;
-        mulTable[GetLookupIndex(opCode, Funct3Code.RemainderUnsigned)] = &AluR<RemLogic<T2>, T2>;
+        Register(Funct7Code.MExtension, opCode, Funct3Code.Multiply, &AluR<MulLogic<T2Signed>, T2Signed>);
+        Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHigh, &AluR<MulhLogic<T2Signed, T2SignedLong>, T2Signed>);
+        Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHighSignedUnsigned, &AluR<MulhsuLogic<T2Signed, T2SignedLong>, T2Signed>);
+        Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHighUnsigned, &AluR<MulhLogic<T2, T2Long>, T2>);
+        Register(Funct7Code.MExtension, opCode, Funct3Code.Divide, &AluR<DivLogic<T2Signed>, T2Signed>);
+        Register(Funct7Code.MExtension, opCode, Funct3Code.DivideUnsigned, &AluR<DivLogic<T2>, T2>);
+        Register(Funct7Code.MExtension, opCode, Funct3Code.Remainder, &AluR<RemLogic<T2Signed>, T2Signed>);
+        Register(Funct7Code.MExtension, opCode, Funct3Code.RemainderUnsigned, &AluR<RemLogic<T2>, T2>);
     }
 
-    private static void InitRange(delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>[] table, (int low, int high) range, delegate*<RiscVInstructionServiceTable<T, TSigned>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
-    {
-        for (int i = range.low; i <= range.high; i++)
-            table[i] = func;
-    }
+    private void Register(RiscVOpCode opCode, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
+        => _instructionTable.Register(opCode, (IntPtr)func);
+
+    private void Register(RiscVOpCode opCode, Funct3Code funct3, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
+        => _instructionTable.Register(opCode, funct3, (IntPtr)func);
+
+    private void Register(Funct7Code funct7, RiscVOpCode opCode, Funct3Code funct3, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
+        => _instructionTable.Register(funct7, opCode, funct3, (IntPtr)func);
+
+    private static IntPtr GetFunctionPtrValue(delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
+        => (IntPtr)func;
 }

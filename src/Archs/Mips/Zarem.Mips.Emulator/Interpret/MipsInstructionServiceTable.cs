@@ -19,11 +19,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TS : unmanaged, IBinaryInteger<TS>, ISignedNumber<TS>
 {
-    // Main tables
     private readonly MipsInstructionDecodeTable<IntPtr> _instructionTable;
-
     private readonly MipsInterpretCpu<T> _cpu;
-    private readonly T* _regs;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionServiceTable{T, TSigned}"/> struct.
@@ -31,7 +28,6 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
     public MipsInstructionServiceTable(MipsInterpretCpu<T> cpu)
     {
         _cpu = cpu;
-        _regs = cpu.RegisterFile.Regs;
 
         _instructionTable = new MipsInstructionDecodeTable<IntPtr>(GetFunctionPtrValue(&ReservedInstruction));
 

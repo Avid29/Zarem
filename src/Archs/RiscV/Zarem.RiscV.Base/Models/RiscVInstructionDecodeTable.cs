@@ -60,13 +60,13 @@ public class RiscVInstructionDecodeTable<T> : InstructionDecodeTable<T, RiscVIns
     /// <summary>
     /// Registers an instruction.
     /// </summary>
-    public void Register(RiscVOpCode opCode, Funct3Code func3, T value)
-        => Register(Funct7Code.Base, opCode, func3, value);
+    public void Register(RiscVOpCode opCode, Funct3Code funct3, T value)
+        => Register(Funct7Code.Base, opCode, funct3, value);
 
     /// <summary>
     /// Registers an instruction.
     /// </summary>
-    public void Register(Funct7Code funct7, RiscVOpCode opCode, Funct3Code func3, T value)
+    public void Register(Funct7Code funct7, RiscVOpCode opCode, Funct3Code funct3, T value)
     {
         var table = _funct7Table[(int)funct7];
         if (table == _emptyTable)
@@ -76,7 +76,7 @@ public class RiscVInstructionDecodeTable<T> : InstructionDecodeTable<T, RiscVIns
             _funct7Table[(int)funct7] = table;
         }
 
-        table[GetLookupIndex(opCode, func3)] = value;
+        table[GetLookupIndex(opCode, funct3)] = value;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
