@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using Zarem.Emulator.Extensions;
 using Zarem.RiscV.Emulator.JIT;
 using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
@@ -23,9 +24,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
 {
     private delegate void RiscVEmitter(ILGenerator il, RiscVInstruction inst, T pc);
 
-    // Tables
-    private readonly RiscVEmitter[][] _func7Table = new RiscVEmitter[128][];
-    private readonly RiscVEmitter[] _emptyTable = new RiscVEmitter[1024];
+    private readonly RiscVInstructionDecodeTable<RiscVEmitter> _instructionTable;
 
     private readonly RiscVJitCpu<T> _cpu;
 
@@ -38,6 +37,8 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
     public RiscVJitCompiler(RiscVJitCpu<T> cpu) : base(cpu)
     {
         _cpu = cpu;
+
+        _instructionTable = new RiscVInstructionDecodeTable<RiscVEmitter>(IllegalInstruction);
 
         InitTables(cpu.Config);
     }
@@ -93,9 +94,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
 
     private void CompileInstruction(ILGenerator il, RiscVInstruction inst, T pc)
     {
-        var func7code = inst.OpCode is RiscVOpCode.Op or RiscVOpCode.Op32 or RiscVOpCode.Op64 ? inst.Funct7 : Funct7Code.Base;
-        var table = _func7Table[(int)func7code];
-        var func = table[GetLookupIndex(inst)];
+        var func = _instructionTable.Lookup(inst);
         func(il, inst, pc);
     }
 
@@ -266,20 +265,4 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
     }
 
     private void IllegalInstruction(ILGenerator il, RiscVInstruction inst, T pc) => EmitTrapRet(il, RiscVTrap.IllegalInstruction, pc);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int GetLookupIndex(RiscVInstruction instruction)
-        => GetLookupIndex(instruction.OpCode, instruction.Funct3);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int GetLookupIndex(RiscVOpCode op, Funct3Code funct3)
-        => (int)op << 3 | (int)funct3;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static (int low, int high) GetLookupRange(RiscVOpCode op)
-    {
-        var low = (int)op << 3;
-        var high = low | 0b111;
-        return (low, high);
-    }
 }
