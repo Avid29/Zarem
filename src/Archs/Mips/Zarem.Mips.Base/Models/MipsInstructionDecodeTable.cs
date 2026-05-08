@@ -8,14 +8,14 @@ using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Functions;
 using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
+using Zarem.Models;
 
 namespace Zarem.Mips.Models;
 
 /// <summary>
-/// A class for looking 
+/// An <see cref="InstructionDecodeTable{T, TInstruction}"/> for the MIPS architecture.
 /// </summary>
-/// <typeparam name="T"></typeparam>
-public class MipsInstructionDecodeTable<T>
+public class MipsInstructionDecodeTable<T> : InstructionDecodeTable<T, MipsInstruction>
 {
     private readonly T[] _opTable = new T[64];
     private readonly T[] _specialTable = new T[64];
@@ -27,10 +27,8 @@ public class MipsInstructionDecodeTable<T>
     private readonly T[] _floatTable = new T[4 * 64];   // Float: 4 formats (S, D, W, L) * 64 func codes
 
     /// <summary>
-    /// Initializes a new instance of the MipsInstructionTable class with the specified value representing an invalid
-    /// instruction.
+    /// Initializes a new instance of the <see cref="MipsInstructionDecodeTable{T}"/> class.
     /// </summary>
-    /// <param name="reserved">The value to use for invalid or unrecognized instructions. This value is returned when a lookup fails to match a valid instruction.</param>
     public MipsInstructionDecodeTable(T reserved)
     {
         Array.Fill(_opTable, reserved);
@@ -40,11 +38,9 @@ public class MipsInstructionDecodeTable<T>
         Array.Fill(_floatTable, reserved);
     }
 
-    /// <summary>
-    /// Looks up an instruction
-    /// </summary>
+    /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public T Lookup(MipsInstruction instruction)
+    public override T Lookup(MipsInstruction instruction)
     {
         var op = instruction.OpCode; // Primary OpCode (bits 31-26)
 
