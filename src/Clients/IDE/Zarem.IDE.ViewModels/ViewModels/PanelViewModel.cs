@@ -98,16 +98,26 @@ public class PanelViewModel : ObservableObject
     }
 
     /// <summary>
+    /// Closes all pages in the panel.
+    /// </summary>
+    public async Task ClosePagesAsync()
+    {
+        for (int i = 0; i < OpenPages.Count;)
+        {
+            var page = OpenPages[i];
+            if (!await ClosePageAsync(page))
+                i++;
+        }
+    }
+
+    /// <summary>
     /// Closes a page.
     /// </summary>
-    /// <remarks>
-    /// Does not save the file.
-    /// </remarks>
-    public async Task ClosePageAsync(PageViewModel? page, bool confirmIfDirty = true)
+    public async Task<bool> ClosePageAsync(PageViewModel? page, bool confirmIfDirty = true)
     {
         page ??= CurrentPage;
         if (page is null)
-            return;
+            return false;
 
         bool confirm = confirmIfDirty && page.IsDirty;
         var confirmation = PopupResult.Secondary;
@@ -129,7 +139,7 @@ public class PanelViewModel : ObservableObject
 
         // Cancel operation if popup ignored
         if (confirmation is PopupResult.Closed)
-            return;
+            return false;
 
         // We can now close the page
         ClosePage(page);
@@ -137,6 +147,8 @@ public class PanelViewModel : ObservableObject
         // Save changes if save was selected
         if (confirmation is PopupResult.Primary)
             await page.SaveAsync();
+
+        return true;
     }
 
     /// <summary>
@@ -145,7 +157,7 @@ public class PanelViewModel : ObservableObject
     /// <remarks>
     /// Does not save the file.
     /// </remarks>
-    public void ClosePage(PageViewModel? page)
+    private void ClosePage(PageViewModel? page)
     {
         page ??= CurrentPage;
         if (page is null)

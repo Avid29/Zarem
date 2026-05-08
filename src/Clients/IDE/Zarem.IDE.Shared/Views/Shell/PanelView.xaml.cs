@@ -53,8 +53,11 @@ public sealed partial class PanelView : UserControl
         var newWindow = WindowHelper.CreateWindow<PanelWindow>();
         newWindow.Activate();
 
+        if (currentWindow is null)
+            return;
+
         // Close the page on the current window and open on the new window
-        currentWindow?.ViewModel.PanelViewModel.ClosePage(page);
+        await currentWindow.ViewModel.PanelViewModel.ClosePageAsync(page, false);
         newWindow.ViewModel.PanelViewModel.OpenPage(page);
     }
 
