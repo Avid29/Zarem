@@ -1,6 +1,8 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Numerics;
+using Zarem.Helpers;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
@@ -12,6 +14,8 @@ namespace Zarem.RiscV.Emulator.Interpret;
 public readonly struct RiscVExecution<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    private const int REG_BITCOUNT = 5;
+
     private readonly T _secondary1;
     private readonly ulong _secondary2;
 
@@ -25,6 +29,41 @@ public readonly struct RiscVExecution<T>
             WritebackGPRegister = dest,
             Writeback = writeback,
         };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVExecution{T}"/> struct.
+    /// </summary>
+    public unsafe static RiscVExecution<T> CreateFloatWriteback<TFloat>(RiscVFloatRegister dest, TFloat writeBack)
+        where TFloat : unmanaged, INumber<TFloat>
+    {
+        long longValue = writeBack switch
+        {
+            int i => i,
+            uint ui => ui,
+            long l => l,
+            ulong ul => (long)ul,
+            float f => BitConverter.SingleToInt32Bits(f),
+            double d => BitConverter.DoubleToInt64Bits(d),
+            _ => long.CreateTruncating(writeBack),
+        };
+
+        if (sizeof(TFloat) == sizeof(float))
+        {
+            return new RiscVExecution<T>
+            {
+                FloatReg = dest,
+                FWordWriteBack = (int)longValue,
+            };
+        }
+        else
+        {
+            return new RiscVExecution<T>
+            {
+                FloatReg = dest,
+                FLongWriteBack = longValue,
+            };
+        }
     }
 
     /// <summary>
@@ -129,5 +168,40 @@ public readonly struct RiscVExecution<T>
     {
         get => _secondary2;
         init => _secondary2 = value;
+    }
+
+    /// <summary>
+    /// Gets the floating-point register for writeback.
+    /// </summary>
+    public RiscVFloatRegister FloatReg
+    {
+        get => (RiscVFloatRegister)byte.CreateTruncating(BitField.GetField(_secondary1, REG_BITCOUNT, 0));
+        init => BitField.SetField(ref _secondary1, REG_BITCOUNT, 0, T.CreateTruncating((byte)value));
+    }
+
+    /// <summary>
+    /// Gets the value being written to the float processor as a <see cref="int"/>.
+    /// </summary>
+    public int FWordWriteBack
+    {
+        get => (int)FLongWriteBack;
+        init
+        {
+            _secondary2 = (uint)value;
+            SideEffect = RiscVSideEffect.WriteSingle;
+        }
+    }
+
+    /// <summary>
+    /// Gets the value being written to the float processor as a <see cref="long"/>.
+    /// </summary>
+    public long FLongWriteBack
+    {
+        get => (long)_secondary2;
+        init
+        {
+            _secondary2 = (ulong)value;
+            SideEffect = RiscVSideEffect.WriteDouble;
+        }
     }
 }

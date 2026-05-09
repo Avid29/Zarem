@@ -25,12 +25,17 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
         RegisterFile = new(32);
     }
 
-    internal RegisterFile<T> RegisterFile { get; }
+    internal FormattedRegisterFile<T> RegisterFile { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="float"/>.
     /// </summary>
-    public IFormattedRegisterIndexer<float> Singles => new SingleIndexer<T>(RegisterFile.Regs);
+    public IFormattedRegisterIndexer<float> Singles => RegisterFile.Singles;
+
+    /// <summary>
+    /// Gets an indexer for accessing the registers on the coprocessor as an <see cref="int"/>.
+    /// </summary>
+    public IFormattedRegisterIndexer<int> Words => RegisterFile.Words;
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="double"/>.
@@ -42,16 +47,10 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
             return sizeof(T) switch
             {
                 sizeof(uint) => new PairedDoubleIndexer(RegisterFile.Regs),
-                sizeof(ulong) => new DoubleIndexer<T>(RegisterFile.Regs),
-                _ => ThrowHelper.ThrowNotSupportedException<IFormattedRegisterIndexer<double>>(),
+                _ => RegisterFile.Doubles,
             };
         }
     }
-
-    /// <summary>
-    /// Gets an indexer for accessing the registers on the coprocessor as an <see cref="int"/>.
-    /// </summary>
-    public IFormattedRegisterIndexer<int> Words => new WordIndexer<T>(RegisterFile.Regs);
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="long"/>.
@@ -63,7 +62,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
             return sizeof(T) switch
             {
                 sizeof(uint) => new PairedLongIndexer(RegisterFile.Regs),
-                sizeof(ulong) => new LongIndexer<T>(RegisterFile.Regs),
+                sizeof(ulong) => RegisterFile.Longs,
                 _ => ThrowHelper.ThrowNotSupportedException<IFormattedRegisterIndexer<long>>(),
             };
         }

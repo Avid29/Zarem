@@ -46,9 +46,9 @@ public struct RiscVFloatInstruction
             Format = format,
             Funct5 = funct5,
             Funct3 = funct3,
-            RD = rd,
-            RS1 = rs1,
-            RS2 = rs2,
+            FRD = rd,
+            FRS1 = rs1,
+            FRS2 = rs2,
         };
     }
 
@@ -62,10 +62,10 @@ public struct RiscVFloatInstruction
             OpCode = opCode,
             Format = format,
             Funct3 = funct3,
-            RD = rd,
-            RS1 = rs1,
-            RS2 = rs2,
-            RS3 = rs3,
+            FRD = rd,
+            FRS1 = rs1,
+            FRS2 = rs2,
+            FRS3 = rs3,
         };
     }
 
@@ -110,9 +110,9 @@ public struct RiscVFloatInstruction
     }
 
     /// <summary>
-    /// Gets or sets the instruction's RD register.
+    /// Gets or sets the instruction's FRD register.
     /// </summary>
-    public RiscVFloatRegister RD
+    public RiscVFloatRegister FRD
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => (RiscVFloatRegister)BitField.GetField(_inst, REG_BIT_SIZE, RD_OFFSET);
@@ -120,9 +120,9 @@ public struct RiscVFloatInstruction
     }
 
     /// <summary>
-    /// Gets or sets the instruction's RS1 register.
+    /// Gets or sets the instruction's FRS1 register.
     /// </summary>
-    public RiscVFloatRegister RS1
+    public RiscVFloatRegister FRS1
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => (RiscVFloatRegister)BitField.GetField(_inst, REG_BIT_SIZE, RS1_OFFSET);
@@ -130,9 +130,9 @@ public struct RiscVFloatInstruction
     }
 
     /// <summary>
-    /// Gets or sets the instruction's RS2 register.
+    /// Gets or sets the instruction's FRS2 register.
     /// </summary>
-    public RiscVFloatRegister RS2
+    public RiscVFloatRegister FRS2
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => (RiscVFloatRegister)BitField.GetField(_inst, REG_BIT_SIZE, RS2_OFFSET);
@@ -140,9 +140,9 @@ public struct RiscVFloatInstruction
     }
 
     /// <summary>
-    /// Gets or sets the instruction's RS3 register.
+    /// Gets or sets the instruction's FRS3 register.
     /// </summary>
-    public RiscVFloatRegister RS3
+    public RiscVFloatRegister FRS3
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => (RiscVFloatRegister)BitField.GetField(_inst, REG_BIT_SIZE, RS3_OFFSET);

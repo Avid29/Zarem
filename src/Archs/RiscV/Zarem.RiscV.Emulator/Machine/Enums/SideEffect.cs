@@ -15,10 +15,14 @@ public enum RiscVSideEffect
 #pragma warning disable CS1591
 
     None,
+    ProgramCounter,
     ReadMemory,
     ReadMemorySigned,
     WriteMemory,
-    ProgramCounter,
+    WriteHalf,
+    WriteSingle,
+    WriteDouble,
+    WriteQuad,
 
 #pragma warning restore CS1591
 }

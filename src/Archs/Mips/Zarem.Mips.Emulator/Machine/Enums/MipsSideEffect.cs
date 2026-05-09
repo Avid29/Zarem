@@ -43,6 +43,19 @@ public enum MipsSideEffect
     HighLow = Low | High,
 
     /// <summary>
+    /// Writes back to the program counter.
+    /// </summary>
+    /// <remarks>
+    /// Utilizes the delay slot if not disabled by the configuration.
+    /// </remarks>
+    ProgramCounter,
+
+    /// <summary>
+    /// Writes back to the program counter, ignoring the delay slot.
+    /// </summary>
+    ForceProgramCounter,
+
+    /// <summary>
     /// Reads from memory.
     /// </summary>
     ReadMemory,
@@ -58,19 +71,6 @@ public enum MipsSideEffect
     WriteMemory,
 
     /// <summary>
-    /// Writes back to the program counter.
-    /// </summary>
-    /// <remarks>
-    /// Utilizes the delay slot if not disabled by the configuration.
-    /// </remarks>
-    ProgramCounter,
-
-    /// <summary>
-    /// Writes back to the program counter, ignoring the delay slot.
-    /// </summary>
-    ForceProgramCounter,
-
-    /// <summary>
     /// Writes to co-processor.
     /// </summary>
     WriteCoProc0,
@@ -81,7 +81,7 @@ public enum MipsSideEffect
     /// <remarks>
     /// Could be a float, could be an int.
     /// </remarks>
-    WriteFloat,
+    WriteSingle,
 
     /// <summary>
     /// Writes a dword to the floating-point processor.

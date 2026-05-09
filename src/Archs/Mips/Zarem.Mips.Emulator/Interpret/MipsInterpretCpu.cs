@@ -184,7 +184,7 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
             case MipsSideEffect.WriteCoProc0:
                 CoProcessor0[execution.CoProc0Reg] = execution.CoProc0WriteBack;
                 break;
-            case MipsSideEffect.WriteFloat:
+            case MipsSideEffect.WriteSingle:
                 FloatProcessor.Words[(int)execution.FloatReg] = execution.FWordWriteBack;
                 break;
             case MipsSideEffect.WriteDouble:
