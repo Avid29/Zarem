@@ -6,7 +6,9 @@ using Zarem.Models.Versioning;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
+using Zarem.RiscV.Models.Instructions.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
 using Zarem.RiscV.Models.Versioning.Enums;
@@ -141,6 +143,13 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         Register(Funct7Code.MExtension, opCode, Funct3Code.RemainderUnsigned, &AluR<RemLogic<T2>, T2>);
     }
 
+    private void InitFloatOperations<TFormat>()
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        var format = RiscVInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
+        //Register(format, FloatFunc5Code.Add, );
+    }
+
     private void Register(RiscVOpCode opCode, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(opCode, (IntPtr)func);
 
@@ -149,6 +158,9 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
 
     private void Register(Funct7Code funct7, RiscVOpCode opCode, Funct3Code funct3, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(funct7, opCode, funct3, (IntPtr)func);
+
+    private void Register(RiscVFloatFormat format, FloatFunc5Code funct5, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
+        => _instructionTable.Register(format, funct5, (IntPtr)func);
 
     private static IntPtr GetFunctionPtrValue(delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
         => (IntPtr)func;

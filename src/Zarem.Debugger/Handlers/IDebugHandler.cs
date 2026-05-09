@@ -2,7 +2,7 @@
 
 using System;
 using Zarem.Debugger.Viewer;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine;
 
 namespace Zarem.Debugger.Handlers;
 

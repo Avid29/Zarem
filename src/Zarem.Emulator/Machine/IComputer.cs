@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Zarem.Emulator.Devices.Interfaces;
+using Zarem.Emulator.Machine.CPU;
+using Zarem.Emulator.Machine.Memory;
 using Zarem.Models;
 
-namespace Zarem.Emulator.Machine.Interfaces;
+namespace Zarem.Emulator.Machine;
 
 /// <summary>
 /// An interface for an emulated computer.

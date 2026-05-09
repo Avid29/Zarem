@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.TrapHandlers.Interfaces;
 using Zarem.RiscV.Emulator.Machine;
 using Zarem.RiscV.Emulator.Machine.Enums;

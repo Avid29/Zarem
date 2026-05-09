@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Zarem.Emulator.Devices.Interfaces;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.Emulator.Machine.Memory;
 
 /// <summary>
 /// A class for handling the mapping of memory and MMIO devices.

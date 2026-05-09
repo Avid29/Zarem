@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.Memory;
 
 namespace Zarem.Emulator.Machine;
 

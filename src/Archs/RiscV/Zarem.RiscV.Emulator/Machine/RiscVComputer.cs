@@ -6,6 +6,7 @@ using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Devices;
 using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Memory;
 using Zarem.Models.Enums;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Interpret;

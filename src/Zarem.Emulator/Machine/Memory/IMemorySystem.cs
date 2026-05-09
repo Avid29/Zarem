@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Emulator.Machine.Interfaces;
+namespace Zarem.Emulator.Machine.Memory;
 
 /// <summary>
 /// An interface for a computer's memory system.

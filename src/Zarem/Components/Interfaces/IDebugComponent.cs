@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Debugger;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine;
 
 namespace Zarem.Components.Interfaces;
 

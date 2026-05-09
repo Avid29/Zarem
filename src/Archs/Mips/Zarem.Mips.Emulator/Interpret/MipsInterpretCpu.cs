@@ -6,8 +6,10 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models;
 using Zarem.Mips.Extensions;
 using Zarem.Mips.Models.Instructions;
@@ -183,10 +185,10 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
                 CoProcessor0[execution.CoProc0Reg] = execution.CoProc0WriteBack;
                 break;
             case MipsSideEffect.WriteFloat:
-                FloatProcessor.Words[execution.FloatReg] = execution.FWordWriteBack;
+                FloatProcessor.Words[(int)execution.FloatReg] = execution.FWordWriteBack;
                 break;
             case MipsSideEffect.WriteDouble:
-                FloatProcessor.Longs[execution.FloatReg] = execution.FLongWriteBack;
+                FloatProcessor.Longs[(int)execution.FloatReg] = execution.FLongWriteBack;
                 break;
                 // TODO: Handle TLB side effects
         }

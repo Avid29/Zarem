@@ -1,5 +1,8 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Machine.CoProcessors;
+
 namespace Zarem.Emulator.Machine.CoProcessors;
 
 /// <summary>
@@ -10,20 +13,20 @@ public interface IFloatProcessor
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="float"/>.
     /// </summary>
-    IFloatRegisterIndexer<float> Singles { get; }
+    IFormattedRegisterIndexer<float> Singles { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="double"/>.
     /// </summary>
-    IFloatRegisterIndexer<double> Doubles { get; }
+    IFormattedRegisterIndexer<double> Doubles { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as an <see cref="int"/>.
     /// </summary>
-    IFloatRegisterIndexer<int> Words { get; }
+    IFormattedRegisterIndexer<int> Words { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="long"/>.
     /// </summary>
-    IFloatRegisterIndexer<long> Longs { get; }
+    IFormattedRegisterIndexer<long> Longs { get; }
 }

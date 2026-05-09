@@ -2,7 +2,7 @@
 
 using System;
 using Zarem.Descriptors.Base;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine;
 
 namespace Zarem.Descriptors;
 

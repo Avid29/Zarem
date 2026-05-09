@@ -2,7 +2,7 @@
 
 using System;
 using System.IO;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.Memory;
 
 namespace Zarem.Emulator.Helpers;
 

@@ -8,6 +8,7 @@ using Zarem.Emulator.Devices;
 using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.JIT;
+using Zarem.Emulator.Machine.Memory;
 using Zarem.Mips.Extensions;
 using Zarem.Models.Enums;
 

@@ -5,7 +5,6 @@ using Zarem.Attributes;
 using Zarem.Descriptors;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Interfaces;
 
 namespace Zarem.Mips;
 

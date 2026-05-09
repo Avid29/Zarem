@@ -1,7 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.CPU;
+using Zarem.Emulator.Machine.Memory;
 using Zarem.Models.Enums;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Machine.Enums;

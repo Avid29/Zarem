@@ -3,9 +3,11 @@
 using System;
 using System.Threading;
 using Zarem.Emulator.Events;
+using Zarem.Emulator.Machine.Memory;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Enums;
 
-namespace Zarem.Emulator.Machine.Interfaces;
+namespace Zarem.Emulator.Machine.CPU;
 
 /// <summary>
 /// An interface for the CPU state.

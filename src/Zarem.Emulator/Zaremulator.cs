@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using Zarem.Emulator.Exceptions;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Localization;
 using Zarem.Models;

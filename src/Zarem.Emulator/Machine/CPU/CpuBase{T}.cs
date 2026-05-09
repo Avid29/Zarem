@@ -6,10 +6,11 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Zarem.Emulator.Events;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.Memory;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Enums;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.Emulator.Machine.CPU;
 
 /// <summary>
 /// A base class for an emulated CPU.

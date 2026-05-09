@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
+using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.JIT;
 using Zarem.Mips.Models.Instructions;
 

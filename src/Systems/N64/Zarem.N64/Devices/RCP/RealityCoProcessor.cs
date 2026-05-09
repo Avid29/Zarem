@@ -4,7 +4,7 @@ using Silk.NET.Direct3D11;
 using Silk.NET.DXGI;
 using System;
 using Zarem.Emulator.Devices.Interfaces;
-using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Memory;
 
 namespace Zarem.N64.Devices.RCP;
 

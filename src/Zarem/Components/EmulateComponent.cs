@@ -4,7 +4,7 @@ using Zarem.Components.Interfaces;
 using Zarem.Descriptors;
 using Zarem.Emulator;
 using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine;
 
 namespace Zarem.Components;
 

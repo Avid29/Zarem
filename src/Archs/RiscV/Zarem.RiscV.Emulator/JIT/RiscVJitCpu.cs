@@ -3,7 +3,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.JIT;
-using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Memory;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Machine;
 using Zarem.RiscV.Emulator.Machine.Enums;

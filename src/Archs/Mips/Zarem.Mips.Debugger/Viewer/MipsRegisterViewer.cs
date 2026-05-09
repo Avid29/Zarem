@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using Zarem.Assembler.Helpers.Tables;
 using Zarem.Debugger.Viewer;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Debugger.Viewer;

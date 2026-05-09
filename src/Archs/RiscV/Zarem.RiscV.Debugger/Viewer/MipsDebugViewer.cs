@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Debugger.Viewer;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine;
 using Zarem.RiscV.Emulator.Machine;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
