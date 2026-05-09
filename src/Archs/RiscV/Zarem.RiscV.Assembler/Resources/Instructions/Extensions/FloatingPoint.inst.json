@@ -9,28 +9,28 @@
   {
     "type": "float",
     "name": "fsub.fmt",
-    "funct5": 4,
+    "funct5": 1,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
   },
   {
     "type": "float",
     "name": "fmul.fmt",
-    "funct5": 8,
+    "funct5": 2,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
   },
   {
     "type": "float",
     "name": "fdiv.fmt",
-    "funct5": 12,
+    "funct5": 3,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
   },
   {
     "type": "float",
     "name": "fsgnj.fmt",
-    "funct5": 16,
+    "funct5": 4,
     "funct3": 0,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
@@ -38,7 +38,7 @@
   {
     "type": "float",
     "name": "fsgnjn.fmt",
-    "funct5": 16,
+    "funct5": 4,
     "funct3": 1,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
@@ -46,7 +46,7 @@
   {
     "type": "float",
     "name": "fsgnjx.fmt",
-    "funct5": 16,
+    "funct5": 4,
     "funct3": 2,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
@@ -54,7 +54,7 @@
   {
     "type": "float",
     "name": "fmin.fmt",
-    "funct5": 20,
+    "funct5": 5,
     "funct3": 0,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
@@ -62,7 +62,7 @@
   {
     "type": "float",
     "name": "fmax.fmt",
-    "funct5": 20,
+    "funct5": 5,
     "funct3": 1,
     "args": [ "frd", "frs1", "frs2" ],
     "extension": "F"
@@ -70,14 +70,14 @@
   {
     "type": "float",
     "name": "fsqrt.fmt",
-    "funct5": 44,
+    "funct5": 11,
     "args": [ "frd", "frs1" ],
     "extension": "F"
   },
   {
     "type": "float",
     "name": "fle.fmt",
-    "funct5": 80,
+    "funct5": 20,
     "funct3": 0,
     "args": [ "rd", "frs1", "frs2" ],
     "extension": "F"
@@ -85,7 +85,7 @@
   {
     "type": "float",
     "name": "flt.fmt",
-    "funct5": 80,
+    "funct5": 20,
     "funct3": 1,
     "args": [ "rd", "frs1", "frs2" ],
     "extension": "F"
@@ -93,7 +93,7 @@
   {
     "type": "float",
     "name": "feq.fmt",
-    "funct5": 80,
+    "funct5": 20,
     "funct3": 2,
     "args": [ "rd", "frs1", "frs2" ],
     "extension": "F"
@@ -101,23 +101,23 @@
   {
     "type": "float",
     "name": "fmv.x.fmt",
-    "funct5": 112,
+    "funct5": 28,
+    "args": [ "rd", "frs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fclass.fmt",
+    "funct5": 28,
+    "funct3": 1,
     "args": [ "rd", "frs1" ],
     "extension": "F"
   },
   {
     "type": "float",
     "name": "fmv.fmt.x",
-    "funct5": 120,
+    "funct5": 30,
     "args": [ "frd", "rs1" ],
-    "extension": "F"
-  },
-  {
-    "type": "float",
-    "name": "fclass.fmt",
-    "funct5": 112,
-    "funct3": 1,
-    "args": [ "rd", "frs1" ],
     "extension": "F"
   },
   {
