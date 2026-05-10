@@ -472,9 +472,6 @@ public unsafe partial class MipsInstructionServiceTable<T, TS> : IMipsInstructio
         return MipsTrap.ReservedInstruction;
     }
 
-    private static MipsTrap ReservedInstruction(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
-        => ReservedInstruction(cpu, (MipsInstruction)inst, out exec);
-
     private static MipsTrap NotImplemented(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         => throw new UnimplementedInstructionException(ulong.CreateTruncating(cpu.ProgramCounter));
 }

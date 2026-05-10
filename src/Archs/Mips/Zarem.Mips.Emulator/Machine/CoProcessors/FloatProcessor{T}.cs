@@ -1,10 +1,15 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
+using System.Runtime.InteropServices.Swift;
+using Zarem.Emulator.Machine.CoProcessors;
+using Zarem.Emulator.Machine.Registers;
+using Zarem.Emulator.Machine.Registers.Indexers;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Machine.CoProcessors;
+namespace Zarem.Mips.Emulator.Machine.CoProcessors;
 
 /// <summary>
 /// a class representing the floating-point coprocessor unit.
@@ -18,43 +23,50 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
     public FloatProcessor()
     {
         RegisterFile = new(32);
-
-        Singles = new SingleIndexer(this);
-        Words = new WordIndexer(this);
-        
-        if (sizeof(T) == sizeof(uint))
-        {
-            Doubles = new PairedDoubleIndexer(this);
-            Longs = new PairedLongIndexer(this);
-        }
-        else
-        {
-            Doubles = new DoubleIndexer(this);
-            Longs = new LongIndexer(this);
-        }
     }
 
-    internal RegisterFile<T> RegisterFile { get; }
+    internal FormattedRegisterFile<T> RegisterFile { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="float"/>.
     /// </summary>
-    public IFloatRegisterIndexer<float> Singles { get; }
-
-    /// <summary>
-    /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="double"/>.
-    /// </summary>
-    public IFloatRegisterIndexer<double> Doubles { get; }
+    public IFormattedRegisterIndexer<float> Singles => RegisterFile.Singles;
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as an <see cref="int"/>.
     /// </summary>
-    public IFloatRegisterIndexer<int> Words { get; }
+    public IFormattedRegisterIndexer<int> Words => RegisterFile.Words;
+
+    /// <summary>
+    /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="double"/>.
+    /// </summary>
+    public IFormattedRegisterIndexer<double> Doubles
+    {
+        get
+        {
+            return sizeof(T) switch
+            {
+                sizeof(uint) => new PairedDoubleIndexer(RegisterFile.Regs),
+                _ => RegisterFile.Doubles,
+            };
+        }
+    }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="long"/>.
     /// </summary>
-    public IFloatRegisterIndexer<long> Longs { get; }
+    public IFormattedRegisterIndexer<long> Longs
+    {
+        get
+        {
+            return sizeof(T) switch
+            {
+                sizeof(uint) => new PairedLongIndexer(RegisterFile.Regs),
+                sizeof(ulong) => RegisterFile.Longs,
+                _ => ThrowHelper.ThrowNotSupportedException<IFormattedRegisterIndexer<long>>(),
+            };
+        }
+    }
 
     /// <summary>
     /// Gets or sets the value of a register on the coprocessor.
@@ -70,95 +82,35 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.
     /// </summary>
-    public class SingleIndexer(FloatProcessor<T> parent) : IFloatRegisterIndexer<float>
+    public readonly struct PairedDoubleIndexer(T* regs) : IFormattedRegisterIndexer<double>
     {
-        private readonly FloatProcessor<T> _parent = parent;
+        private readonly T* _regs = regs;
 
         /// <inheritdoc/>
-        public float this[MipsFloatRegister reg]
-        {
-            get => BitConverter.UInt32BitsToSingle(uint.CreateTruncating(_parent[reg]));
-            set => _parent[reg] = T.CreateTruncating(BitConverter.SingleToUInt32Bits(value));
-        }
-    }
-
-    /// <summary>
-    /// An wrapper to access floating-point register pairs as doubles.
-    /// </summary>
-    public class WordIndexer(FloatProcessor<T> parent) : IFloatRegisterIndexer<int>
-    {
-        private readonly FloatProcessor<T> _parent = parent;
-
-        /// <inheritdoc/>
-        public int this[MipsFloatRegister reg]
-        {
-            get => int.CreateTruncating(_parent[reg]);
-            set => _parent[reg] = T.CreateTruncating(value);
-        }
-    }
-
-    /// <summary>
-    /// An wrapper to access floating-point register pairs as doubles.
-    /// </summary>
-    public class DoubleIndexer(FloatProcessor<T> parent) : IFloatRegisterIndexer<double>
-    {
-        private readonly FloatProcessor<T> _parent = parent;
-
-        /// <inheritdoc/>
-        public double this[MipsFloatRegister reg]
-        {
-            get => BitConverter.UInt64BitsToDouble(ulong.CreateTruncating(_parent[reg]));
-            set => _parent[reg] = T.CreateTruncating(BitConverter.DoubleToUInt64Bits(value));
-        }
-    }
-
-    /// <summary>
-    /// An wrapper to access floating-point register pairs as doubles.
-    /// </summary>
-    public class LongIndexer(FloatProcessor<T> parent) : IFloatRegisterIndexer<long>
-    {
-        private readonly FloatProcessor<T> _parent = parent;
-
-        /// <inheritdoc/>
-        public long this[MipsFloatRegister reg]
-        {
-            get => long.CreateTruncating(_parent[reg]);
-            set => _parent[reg] = T.CreateTruncating(value);
-        }
-    }
-
-    /// <summary>
-    /// An wrapper to access floating-point register pairs as doubles.
-    /// </summary>
-    public class PairedDoubleIndexer(FloatProcessor<T> parent) : IFloatRegisterIndexer<double>
-    {
-        private readonly FloatProcessor<T> _parent = parent;
-
-        /// <inheritdoc/>
-        public double this[MipsFloatRegister reg]
+        public double this[int reg]
         {
             get
             {
                 // Register much be even
-                if ((int)reg % 2 is not 0)
+                if (reg % 2 is not 0)
                     return double.NaN;
 
                 // Convert the register pair to a double
-                uint low = uint.CreateTruncating(_parent.RegisterFile[(int)reg]);
-                uint high = uint.CreateTruncating(_parent.RegisterFile[(int)(reg + 1)]);
+                uint low = uint.CreateTruncating(_regs[reg]);
+                uint high = uint.CreateTruncating(_regs[reg + 1]);
                 ulong combined = ((ulong)high << 32) | low;
                 return BitConverter.UInt64BitsToDouble(combined);
             }
             set
             {
                 // Register much be even
-                if ((int)reg % 2 is not 0)
+                if (reg % 2 is not 0)
                     return;
 
                 // Split the double into two uints
                 var integer = BitConverter.DoubleToUInt64Bits(value);
-                _parent.RegisterFile[(int)reg] = T.CreateTruncating(integer & 0xFFFF_FFFF);
-                _parent.RegisterFile[(int)(reg + 1)] = T.CreateTruncating(integer >> 32);
+                _regs[reg] = T.CreateTruncating(integer & 0xFFFF_FFFF);
+                _regs[reg + 1] = T.CreateTruncating(integer >> 32);
             }
         }
     }
@@ -166,33 +118,33 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.
     /// </summary>
-    public class PairedLongIndexer(FloatProcessor<T> parent) : IFloatRegisterIndexer<long>
+    public readonly struct PairedLongIndexer(T* regs) : IFormattedRegisterIndexer<long>
     {
-        private readonly FloatProcessor<T> _parent = parent;
+        private readonly T* _regs = regs;
 
         /// <inheritdoc/>
-        public long this[MipsFloatRegister reg]
+        public long this[int reg]
         {
             get
             {
                 // Register much be even
-                if ((int)reg % 2 is not 0)
+                if (reg % 2 is not 0)
                     return 0;
 
                 // Convert the register pair to a double
-                uint low = uint.CreateTruncating(_parent.RegisterFile[(int)reg]);
-                uint high = uint.CreateTruncating(_parent.RegisterFile[(int)(reg + 1)]);
+                uint low = uint.CreateTruncating(_regs[reg]);
+                uint high = uint.CreateTruncating(_regs[reg + 1]);
                 return (long)(((ulong)high << 32) | low);
             }
             set
             {
                 // Register much be even
-                if ((int)reg % 2 is not 0)
+                if (reg % 2 is not 0)
                     return;
 
                 // Split the double into two uints
-                _parent.RegisterFile[(int)reg] = T.CreateTruncating(value & 0xFFFF_FFFF);
-                _parent.RegisterFile[(int)(reg + 1)] = T.CreateTruncating(value >> 32);
+                _regs[reg] = T.CreateTruncating(value & 0xFFFF_FFFF);
+                _regs[reg + 1] = T.CreateTruncating(value >> 32);
             }
         }
     }

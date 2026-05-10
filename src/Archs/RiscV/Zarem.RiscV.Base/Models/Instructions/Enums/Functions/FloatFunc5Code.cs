@@ -9,17 +9,17 @@ public enum FloatFunc5Code : byte
 {
 #pragma warning disable CS1591
     Add = 0,
-    Subtract = 4,
-    Multiply = 8,
-    Divide = 12,
-    SignInject = 16,
-    MinMax = 20,
-    SquareRoot = 44,
-    Compare = 80,
-    ConvertInt = 96,
-    ConvertFloat = 112,
-    MoveXToF = 120,
-    MoveFToX = 112,
-    Classify = 112
+    Subtract = 1,
+    Multiply = 2,
+    Divide = 3,
+    SignInject = 4,
+    MinMax = 5,
+    SquareRoot = 11,
+    Compare = 20,
+    ConvertInt = 24,
+    ConvertFloat = 28,
+    MoveXToF = 28,
+    MoveFToX = 30,
+    Classify = 28
 #pragma warning restore CS1591
 }

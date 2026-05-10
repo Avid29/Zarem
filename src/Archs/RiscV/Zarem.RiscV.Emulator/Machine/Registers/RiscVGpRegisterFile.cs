@@ -2,7 +2,7 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Registers;
 
 namespace Zarem.RiscV.Emulator.Machine.Registers;
 

@@ -4,7 +4,8 @@ using System;
 using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Memory;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.Extensions;
 using Zarem.N64.Devices.RCP.Enums;
 

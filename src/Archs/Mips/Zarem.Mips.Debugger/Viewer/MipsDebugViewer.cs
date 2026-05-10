@@ -2,7 +2,6 @@
 
 using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Debugger.Viewer;

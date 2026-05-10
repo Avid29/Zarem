@@ -309,7 +309,7 @@ public readonly struct MipsExecution<T>
         init
         {
             _secondary2 = (uint)value;
-            SideEffect = MipsSideEffect.WriteFloat;
+            SideEffect = MipsSideEffect.WriteSingle;
         }
     }
 
@@ -324,24 +324,6 @@ public readonly struct MipsExecution<T>
             _secondary2 = (ulong)value;
             SideEffect = MipsSideEffect.WriteDouble;
         }
-    }
-
-    /// <summary>
-    /// Gets the value being written to the float processor as a <see cref="float"/>.
-    /// </summary>
-    public float FFloatWriteBack
-    {
-        get => BitConverter.Int32BitsToSingle(FWordWriteBack);
-        init => FWordWriteBack = BitConverter.SingleToInt32Bits(value);
-    }
-
-    /// <summary>
-    /// Gets the value being written to the float processor as a <see cref="double"/>.
-    /// </summary>
-    public double FDoubleWriteBack
-    {
-        get => BitConverter.Int64BitsToDouble(FLongWriteBack);
-        init => FLongWriteBack = BitConverter.DoubleToInt64Bits(value);
     }
 
     /// <summary>

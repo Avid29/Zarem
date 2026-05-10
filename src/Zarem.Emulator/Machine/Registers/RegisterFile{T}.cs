@@ -4,9 +4,8 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Zarem.Emulator.Machine.Interfaces;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.Emulator.Machine.Registers;
 
 /// <summary>
 /// A register file.

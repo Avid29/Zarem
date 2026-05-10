@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Numerics;
 
-namespace Zarem.Emulator.Machine.Interfaces;
+namespace Zarem.Emulator.Machine.Memory;
 
 /// <summary>
 /// An interface for RAM in a computer.

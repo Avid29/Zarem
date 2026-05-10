@@ -2,7 +2,8 @@
 
 using System;
 using System.Buffers.Binary;
-using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.Memory;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.N64.Devices.RCP.Enums;
 
 namespace Zarem.N64.Devices.RCP;

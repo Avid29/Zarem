@@ -7,7 +7,8 @@ using System.Threading;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Events;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.CPU;
+using Zarem.Emulator.Machine.Memory;
 using Zarem.Models;
 
 namespace Zarem.Emulator.Machine;

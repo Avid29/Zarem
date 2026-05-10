@@ -3,7 +3,7 @@
 using System;
 using Zarem.Debugger.Handlers;
 using Zarem.Debugger.Viewer;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine;
 using Zarem.RiscV.Debugger.Viewer;
 using Zarem.RiscV.Emulator.Machine;
 using Zarem.RiscV.Models.Instructions;

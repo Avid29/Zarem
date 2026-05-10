@@ -215,7 +215,7 @@ public partial class MipsExecutionTests
         {
             Assert.AreEqual(expectedFloatWord.Value.Register, execution.FloatReg);
             Assert.AreEqual(expectedFloatWord.Value.Value, execution.FWordWriteBack);
-            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatProcessor.Words[execution.FloatReg]);
+            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatProcessor.Words[(int)execution.FloatReg]);
         }
 
         var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
@@ -223,7 +223,7 @@ public partial class MipsExecutionTests
         {
             Assert.AreEqual(expectedFloatLong.Value.Register, execution.FloatReg);
             Assert.AreEqual(expectedFloatLong.Value.Value, execution.FLongWriteBack);
-            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatProcessor.Longs[execution.FloatReg]);
+            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatProcessor.Longs[(int)execution.FloatReg]);
         }
 
         var expectedPC = @case.ExpectedPC;
@@ -276,13 +276,13 @@ public partial class MipsExecutionTests
         var expectedFloatWord = @case.ExpectedWordFloatWriteBack;
         if (expectedFloatWord.HasValue)
         {
-            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatProcessor.Words[expectedFloatWord.Value.Register]);
+            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatProcessor.Words[(int)expectedFloatWord.Value.Register]);
         }
 
         var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
         if (expectedFloatLong.HasValue)
         {
-            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatProcessor.Longs[expectedFloatLong.Value.Register]);
+            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatProcessor.Longs[(int)expectedFloatLong.Value.Register]);
         }
 
         var expectedPC = @case.ExpectedPC;

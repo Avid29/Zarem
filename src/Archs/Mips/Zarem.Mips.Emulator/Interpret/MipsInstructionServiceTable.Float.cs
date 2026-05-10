@@ -1,17 +1,15 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using Zarem.Emulator.Interpret;
-using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Enums;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.Mips.Models.Instructions;
-using Zarem.Mips.Models.Instructions.Enums;
 
 namespace Zarem.Emulator.Models;
 
-public unsafe partial class MipsInstructionServiceTable<T, TS>
+public partial class MipsInstructionServiceTable<T, TS>
 {
     private static MipsTrap FloatAlu<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
@@ -19,8 +17,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
     {
         var indexer = GetFloatRegisterIndexer<TFormat>(cpu);
         var destination = inst.FD;
-        var fs = indexer[inst.FS];
-        var ft = indexer[inst.FT];
+        var fs = indexer[(int)inst.FS];
+        var ft = indexer[(int)inst.FT];
         var value = TLogic.Compute(fs, ft);
         exec = MipsExecution<T>.CreateFloatWriteback(destination, value);
         return MipsTrap.None;
@@ -32,8 +30,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
     {
         var indexer = GetFloatRegisterIndexer<TFormat>(cpu);
         var destination = inst.FD;
-        var fs = indexer[inst.FS];
-        var ft = indexer[inst.FT];
+        var fs = indexer[(int)inst.FS];
         var value = TLogic.Compute(fs);
         exec = MipsExecution<T>.CreateFloatWriteback(destination, value);
         return MipsTrap.None;
@@ -45,7 +42,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         where TTo : unmanaged, IBinaryInteger<TTo>, IMinMaxValue<TTo>
     {
         var indexer = GetFloatRegisterIndexer<TFrom>(cpu);
-        var source = indexer[inst.FS];
+        var source = indexer[(int)inst.FS];
         var rounded = TLogic.Compute(source);
 
         // MIPS behavior: Handle out-of-range values before they hit the RegisterFile
@@ -75,7 +72,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         where TTo : unmanaged, INumber<TTo>
     {
         var indexer = GetFloatRegisterIndexer<TFrom>(cpu);
-        var source = indexer[inst.FS];
+        var source = indexer[(int)inst.FS];
         var result = TTo.CreateTruncating(source);
         exec = MipsExecution<T>.CreateFloatWriteback(inst.FD, result);
         return MipsTrap.None;
@@ -93,13 +90,13 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static IFloatRegisterIndexer<TFormat> GetFloatRegisterIndexer<TFormat>(MipsInterpretCpu<T> cpu)
+    private static IFormattedRegisterIndexer<TFormat> GetFloatRegisterIndexer<TFormat>(MipsInterpretCpu<T> cpu)
         where TFormat : unmanaged, INumber<TFormat>
     {
-        if (typeof(TFormat) == typeof(float)) return (IFloatRegisterIndexer<TFormat>)cpu.FloatProcessor.Singles;
-        else if (typeof(TFormat) == typeof(double)) return (IFloatRegisterIndexer<TFormat>)cpu.FloatProcessor.Doubles;
-        else if (typeof(TFormat) == typeof(int)) return (IFloatRegisterIndexer<TFormat>)cpu.FloatProcessor.Words;
-        else if (typeof(TFormat) == typeof(long)) return (IFloatRegisterIndexer<TFormat>)cpu.FloatProcessor.Longs;
+        if (typeof(TFormat) == typeof(float)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatProcessor.Singles;
+        else if (typeof(TFormat) == typeof(double)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatProcessor.Doubles;
+        else if (typeof(TFormat) == typeof(int)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatProcessor.Words;
+        else if (typeof(TFormat) == typeof(long)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatProcessor.Longs;
         else throw new InvalidOperationException();
     }
 }

@@ -1,15 +1,14 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Machine.CoProcessors;
+namespace Zarem.Emulator.Machine.Registers;
 
 /// <summary>
-/// An interface for indexing the FPU registers with different formats.
+/// An interface for indexing registers with different formats.
 /// </summary>
 /// <typeparam name="T">The indexer's format.</typeparam>
-public interface IFloatRegisterIndexer<T>
+public interface IFormattedRegisterIndexer<T>
     where T : INumber<T>
 {
     /// <summary>
@@ -17,5 +16,5 @@ public interface IFloatRegisterIndexer<T>
     /// </summary>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
-    T this[MipsFloatRegister reg] { get; set; }
+    T this[int reg] { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.CPU;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions;
@@ -17,6 +18,12 @@ public interface IRiscVCpu : ICpu<IRiscVCpu, RiscVInstruction, RiscVTrap>
     /// Gets the emulation configuration.
     /// </summary>
     public RiscVEmulatorConfig Config { get; }
+
+    /// <summary>
+    /// Gets the floating-point register file.
+    /// </summary>
+
+    public IFormattedRegisterFile? FloatRegisterFile { get; }
 
     /// <summary>
     /// Gets or sets the value of a general-purpose register on the processor.

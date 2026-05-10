@@ -8,10 +8,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Helpers;
-using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Models.Enums;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.Emulator.Machine.Memory;
 
 /// <summary>
 /// Handles the operations of a physical bus in an emulated computer.

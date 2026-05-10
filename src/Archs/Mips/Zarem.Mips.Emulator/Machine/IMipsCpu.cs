@@ -2,8 +2,8 @@
 
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.CoProcessors;
+using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 

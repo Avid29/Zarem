@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Emulator.Machine.Interfaces;
+namespace Zarem.Emulator.Machine.Registers;
 
 /// <summary>
 /// An interface for accessing an <see cref="RegisterFile{T}"/> without a concrete type.

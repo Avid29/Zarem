@@ -1,27 +1,31 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Machine.Registers;
-using Zarem.Mips.Emulator.Machine.CoProcessors;
+using System;
 
-namespace Zarem.Emulator.Machine.CoProcessors;
+namespace Zarem.Emulator.Machine.Registers;
 
 /// <summary>
-/// An interface for a <see cref="FloatProcessor{T}"/> without a concrete type.
+/// An interface for a register file with different indexable formats.
 /// </summary>
-public interface IFloatProcessor
+public interface IFormattedRegisterFile
 {
+    /// <summary>
+    /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="Half"/>.
+    /// </summary>
+    IFormattedRegisterIndexer<Half> Halves { get; }
+
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="float"/>.
     /// </summary>
     IFormattedRegisterIndexer<float> Singles { get; }
 
     /// <summary>
-    /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="double"/>.
+    /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="float"/>.
     /// </summary>
     IFormattedRegisterIndexer<double> Doubles { get; }
 
     /// <summary>
-    /// Gets an indexer for accessing the registers on the coprocessor as an <see cref="int"/>.
+    /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="int"/>.
     /// </summary>
     IFormattedRegisterIndexer<int> Words { get; }
 

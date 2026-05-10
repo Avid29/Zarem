@@ -4,9 +4,8 @@ using System;
 using System.IO;
 using System.Numerics;
 using Zarem.Emulator.Helpers;
-using Zarem.Emulator.Machine.Interfaces;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.Emulator.Machine.Memory;
 
 internal class VirtualMemorySystem : IVirtualMemoryAccessor
 {

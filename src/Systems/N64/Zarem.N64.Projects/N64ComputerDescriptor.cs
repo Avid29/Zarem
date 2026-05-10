@@ -3,7 +3,7 @@
 using System;
 using Zarem.Attributes;
 using Zarem.Descriptors;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine;
 using Zarem.N64.Config;
 
 namespace Zarem.N64;

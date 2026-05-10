@@ -3,7 +3,7 @@
 using System;
 using System.Buffers;
 using System.Text;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.Memory;
 
 namespace Zarem.Emulator.Extensions;
 

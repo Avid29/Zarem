@@ -1,7 +1,10 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Numerics;
-using Zarem.Emulator.Machine;
+using Zarem.Emulator.Machine.CPU;
+using Zarem.Emulator.Machine.Memory;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.Models.Enums;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Machine.Enums;
@@ -9,6 +12,7 @@ using Zarem.RiscV.Emulator.Machine.Registers;
 using Zarem.RiscV.Emulator.TrapHandlers;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.RiscV.Emulator.Machine;
 
@@ -18,6 +22,8 @@ namespace Zarem.RiscV.Emulator.Machine;
 public abstract class RiscVCpu<T> : CpuBase<T>, IRiscVCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    private const int FloatRegisterCount = 32;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVCpu{T}"/> class.
     /// </summary>
@@ -27,6 +33,12 @@ public abstract class RiscVCpu<T> : CpuBase<T>, IRiscVCpu
         RegisterFile = new();
         Tlb = new RiscVTlb();
         Memory = new MemorySystem(bus, Tlb);
+
+        var extensions = Config.VersionInfo.Extensions;
+        if (extensions.HasFlag(RiscVExtensions.QuadrupleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<UInt128>(FloatRegisterCount);
+        else if (extensions.HasFlag(RiscVExtensions.DoubleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<ulong>(FloatRegisterCount);
+        else if (extensions.HasFlag(RiscVExtensions.SingleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<uint>(FloatRegisterCount);
+        else if (extensions.HasFlag(RiscVExtensions.HalfPrecisionFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<ushort>(FloatRegisterCount); // This should be illegal, but best to be careful
     }
 
     /// <inheritdoc/>
@@ -40,6 +52,9 @@ public abstract class RiscVCpu<T> : CpuBase<T>, IRiscVCpu
 
     /// <inheritdoc/>
     public override RiscVGPRegisterFile<T> RegisterFile { get; }
+
+    /// <inheritdoc/>
+    public IFormattedRegisterFile? FloatRegisterFile { get; }
 
     /// <summary>
     /// Gets the translation look-aside buffer.

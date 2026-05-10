@@ -6,7 +6,10 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using Test.Archs.Emulator;
+using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 using Zarem.Models.Versioning;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Machine.Enums;
@@ -70,7 +73,8 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
             .Concat(GetLogicalInstructionTests<T>(config))
             .Concat(GetJumpBranchInstructionTests<T>(config))
             .Concat(GetMemoryInstructionTests<T>(config))
-            .Concat(GetSystemInstructionTests<T>(config));
+            .Concat(GetSystemInstructionTests<T>(config))
+            .Concat(GetFloatArithmeticInstructionTests<T>(config));
     }
 
     private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TSigned>(RiscVEmulatorConfig config)
@@ -196,5 +200,23 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         // Syscall and break
         yield return [new RiscVEmulatorTestCase<T>(config, "ecall", RiscVTrap.EnvironmentCallFromUMode)];
         yield return [new RiscVEmulatorTestCase<T>(config, "ebreak", RiscVTrap.Breakpoint)];
+    }
+    
+    private static IEnumerable<object[]> GetFloatArithmeticInstructionTests<T>(RiscVEmulatorConfig config)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        if (config.ExecutionMode is not ExecutionMode.Interpret)
+            yield break;
+
+        if (config.VersionInfo.Extensions.HasFlag(RiscVExtensions.SingleFloatingPoint))
+        {
+            // Single
+            yield return [new RiscVEmulatorTestCase<T>(config, "fadd.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f + 2.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fsub.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f - 2.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fmul.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f * 2.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fdiv.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f / 2.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fabs.S fa0, ft7", RiscVFloatRegister.Argument0, 2f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fneg.S fa0, ft5", RiscVFloatRegister.Argument0, -2f)];
+        }
     }
 }

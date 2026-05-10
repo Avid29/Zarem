@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Zarem.Emulator.Machine.Interfaces;
+namespace Zarem.Emulator.Machine.CPU;
 
 /// <summary>
 /// An interface for a cpu in an emulated machine.

@@ -6,7 +6,9 @@ using Zarem.Models.Versioning;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
+using Zarem.RiscV.Models.Instructions.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
 using Zarem.RiscV.Models.Versioning.Enums;
@@ -19,10 +21,9 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
     {
         var versionInfo = config.VersionInfo;
 
-        // Populate base table
         InitBaseTable(versionInfo);
+        InitFloatTable(versionInfo);
 
-        // Init
         if (versionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
         {
             switch (versionInfo.Base)
@@ -141,6 +142,26 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         Register(Funct7Code.MExtension, opCode, Funct3Code.RemainderUnsigned, &AluR<RemLogic<T2>, T2>);
     }
 
+    private void InitFloatTable(RiscVVersionInfo versionInfo)
+    {
+        InitFloatOperations<Half>(versionInfo, RiscVExtensions.HalfPrecisionFloatingPoint);
+        InitFloatOperations<float>(versionInfo, RiscVExtensions.SingleFloatingPoint);
+        InitFloatOperations<double>(versionInfo, RiscVExtensions.DoubleFloatingPoint);
+    }
+
+    private void InitFloatOperations<TFormat>(RiscVVersionInfo versionInfo, RiscVExtensions flag)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        if (!versionInfo.Extensions.HasFlag(flag))
+            return;
+
+        var format = RiscVInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
+        Register(format, FloatFunc5Code.Add, &FloatAlu<AddLogic<TFormat>, TFormat>);
+        Register(format, FloatFunc5Code.Subtract, &FloatAlu<SubLogic<TFormat>, TFormat>);
+        Register(format, FloatFunc5Code.Multiply, &FloatAlu<MulLogic<TFormat>, TFormat>);
+        Register(format, FloatFunc5Code.Divide, &FloatAlu<DivLogic<TFormat>, TFormat>);
+    }
+
     private void Register(RiscVOpCode opCode, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(opCode, (IntPtr)func);
 
@@ -149,6 +170,9 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
 
     private void Register(Funct7Code funct7, RiscVOpCode opCode, Funct3Code funct3, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(funct7, opCode, funct3, (IntPtr)func);
+
+    private void Register(RiscVFloatFormat format, FloatFunc5Code funct5, delegate*<RiscVInterpretCpu<T>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func)
+        => _instructionTable.Register(format, funct5, (IntPtr)func);
 
     private static IntPtr GetFunctionPtrValue(delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
         => (IntPtr)func;
