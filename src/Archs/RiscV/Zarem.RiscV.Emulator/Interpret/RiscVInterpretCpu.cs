@@ -155,6 +155,15 @@ public sealed class RiscVInterpretCpu<T> : RiscVCpu<T>, IInterpretCpu<RiscVInter
             case RiscVSideEffect.ReadMemorySigned:
                 RegisterFile[(int)execution.WritebackGPRegister] = memRead;
                 break;
+            case RiscVSideEffect.WriteHalf:
+                FloatRegisterFile?.Halves[(int)execution.FloatReg] = execution.HalfWriteBack;
+                break;
+            case RiscVSideEffect.WriteSingle:
+                FloatRegisterFile?.Singles[(int)execution.FloatReg] = execution.SingleWriteBack;
+                break;
+            case RiscVSideEffect.WriteDouble:
+                FloatRegisterFile?.Doubles[(int)execution.FloatReg] = execution.DoubleWriteBack;
+                break;
         }
 
         // Apply the program counter update
