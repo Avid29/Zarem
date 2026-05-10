@@ -71,6 +71,10 @@ public partial class RiscVExecutionTests
         foreach (var (reg, value) in @case.RegisterInitialization)
             cpu[reg] = value;
 
+        // Initialize the register file with the provided values
+        foreach (var (reg, value) in @case.FPRInitialization)
+            cpu.FloatRegisterFile?.Singles[(int)reg] = value;
+
         // Initialize the memory, if specified in the test case
         foreach (var (address, data) in @case.MemoryInitialization)
             computer.Memory.Write(ulong.CreateTruncating(address), data);
@@ -110,6 +114,24 @@ public partial class RiscVExecutionTests
         {
             // If no register check was provided, we at least want to make sure no register was written to (as that would be unexpected)
             Assert.AreEqual(RiscVGpRegister.Zero, execution.WritebackGPRegister);
+        }
+
+        var expectedSingle = @case.ExpectedSingleWriteBack;
+        if (expectedSingle.HasValue)
+        {
+            Assert.IsNotNull(computer.Cpu.FloatRegisterFile);
+            Assert.AreEqual(expectedSingle.Value.Register, execution.FloatReg);
+            Assert.AreEqual(expectedSingle.Value.Value, execution.FWordWriteBack);
+            Assert.AreEqual(expectedSingle.Value.Value, computer.Cpu.FloatRegisterFile.Singles[(int)execution.FloatReg]);
+        }
+
+        var expectedFloatLong = @case.ExpectedDoubleWriteBack;
+        if (expectedFloatLong.HasValue)
+        {
+            Assert.IsNotNull(computer.Cpu.FloatRegisterFile);
+            Assert.AreEqual(expectedFloatLong.Value.Register, execution.FloatReg);
+            Assert.AreEqual(expectedFloatLong.Value.Value, execution.FLongWriteBack);
+            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatRegisterFile.Doubles[(int)execution.FloatReg]);
         }
 
         var expectedMemory = @case.ExpectedMemory;

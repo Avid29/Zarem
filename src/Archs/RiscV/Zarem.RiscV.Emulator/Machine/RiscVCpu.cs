@@ -53,9 +53,7 @@ public abstract class RiscVCpu<T> : CpuBase<T>, IRiscVCpu
     /// <inheritdoc/>
     public override RiscVGPRegisterFile<T> RegisterFile { get; }
 
-    /// <summary>
-    /// Gets the floating-point register file.
-    /// </summary>
+    /// <inheritdoc/>
     public IFormattedRegisterFile? FloatRegisterFile { get; }
 
     /// <summary>

@@ -26,6 +26,7 @@ public class RiscVInstructionDecodeTable<T> : InstructionDecodeTable<T, RiscVIns
     public RiscVInstructionDecodeTable(T illegal)
     {
         Array.Fill(_funct7Table, _emptyTable);
+        Array.Fill(_floatTable, illegal);
         Array.Fill(_emptyTable, illegal);
 
         var @base = new T[1024];

@@ -21,10 +21,9 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
     {
         var versionInfo = config.VersionInfo;
 
-        // Populate base table
         InitBaseTable(versionInfo);
+        InitFloatTable(versionInfo);
 
-        // Init
         if (versionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
         {
             switch (versionInfo.Base)
@@ -143,9 +142,19 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         Register(Funct7Code.MExtension, opCode, Funct3Code.RemainderUnsigned, &AluR<RemLogic<T2>, T2>);
     }
 
-    private void InitFloatOperations<TFormat>()
+    private void InitFloatTable(RiscVVersionInfo versionInfo)
+    {
+        InitFloatOperations<Half>(versionInfo, RiscVExtensions.HalfPrecisionFloatingPoint);
+        InitFloatOperations<float>(versionInfo, RiscVExtensions.SingleFloatingPoint);
+        InitFloatOperations<double>(versionInfo, RiscVExtensions.DoubleFloatingPoint);
+    }
+
+    private void InitFloatOperations<TFormat>(RiscVVersionInfo versionInfo, RiscVExtensions flag)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
+        if (!versionInfo.Extensions.HasFlag(flag))
+            return;
+
         var format = RiscVInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
         Register(format, FloatFunc5Code.Add, &FloatAlu<AddLogic<TFormat>, TFormat>);
         Register(format, FloatFunc5Code.Subtract, &FloatAlu<SubLogic<TFormat>, TFormat>);
