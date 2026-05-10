@@ -63,40 +63,30 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
 
                     // F4 - F11: Small "Clean" Floats (Single Precision)
                     // Using values that have exact representations in binary
-                    (RiscVFloatRegister.Temporary4, float.CreateTruncating(BitConverter.SingleToUInt32Bits(1.0f))),
-                    (RiscVFloatRegister.Temporary5, float.CreateTruncating(BitConverter.SingleToUInt32Bits(2.0f))),
-                    (RiscVFloatRegister.Temporary6, float.CreateTruncating(BitConverter.SingleToUInt32Bits(0.5f))),
-                    (RiscVFloatRegister.Temporary7, float.CreateTruncating(BitConverter.SingleToUInt32Bits(-2.0f))),
-                    (RiscVFloatRegister.Saved0, float.CreateTruncating(BitConverter.SingleToUInt32Bits(10.5f))),
-                    (RiscVFloatRegister.Saved1, float.CreateTruncating(BitConverter.SingleToUInt32Bits(2.5f))),
-                    (RiscVFloatRegister.Argument0, float.CreateTruncating(BitConverter.SingleToUInt32Bits(1.25f))),
-                    (RiscVFloatRegister.Argument1, float.CreateTruncating(BitConverter.SingleToUInt32Bits(-0.75f))),
-
-                    // F12 - F19: Double Precision Pairs (f12/13, f14/15, etc.)
-                    // f12/f13 = 1.0, f14/f15 = 0.5, f16/f17 = -2.0, f18/f19 = PI (approx)
-                    (RiscVFloatRegister.Argument2, float.CreateTruncating(BitConverter.DoubleToUInt64Bits(2.0))),
-                    
-                    (RiscVFloatRegister.Argument4, float.CreateTruncating(BitConverter.DoubleToUInt64Bits(0.5))),
-
-                    (RiscVFloatRegister.Argument6, float.CreateTruncating(BitConverter.DoubleToUInt64Bits(-2.0))),
-
-                    (RiscVFloatRegister.Saved2, float.CreateTruncating(BitConverter.DoubleToUInt64Bits(Math.PI))),
+                    (RiscVFloatRegister.Temporary4, 1.0f),
+                    (RiscVFloatRegister.Temporary5, 2.0f),
+                    (RiscVFloatRegister.Temporary6, 0.5f),
+                    (RiscVFloatRegister.Temporary7, -2.0f),
+                    (RiscVFloatRegister.Saved0, 10.5f),
+                    (RiscVFloatRegister.Saved1, 2.5f),
+                    (RiscVFloatRegister.Argument0, 1.25f),
+                    (RiscVFloatRegister.Argument1, -0.75f),
 
                     // F20 - F27: IEEE 754 Edge Cases (Single Precision)
-                    (RiscVFloatRegister.Saved4, float.CreateTruncating(BitConverter.SingleToUInt32Bits(float.PositiveInfinity))),
-                    (RiscVFloatRegister.Saved5, float.CreateTruncating(BitConverter.SingleToUInt32Bits(float.NegativeInfinity))),
-                    (RiscVFloatRegister.Saved6, float.CreateTruncating(BitConverter.SingleToUInt32Bits(float.NaN))),
-                    (RiscVFloatRegister.Saved7, float.CreateTruncating(BitConverter.SingleToUInt32Bits(0.0f))),
-                    (RiscVFloatRegister.Saved8, float.CreateTruncating(BitConverter.SingleToUInt32Bits(-0.0f))),
-                    (RiscVFloatRegister.Saved9, float.CreateTruncating(BitConverter.SingleToUInt32Bits(float.Epsilon))),
-                    (RiscVFloatRegister.Saved10, float.CreateTruncating(BitConverter.SingleToUInt32Bits(float.MaxValue))),
-                    (RiscVFloatRegister.Saved11, float.CreateTruncating(BitConverter.SingleToUInt32Bits(float.MinValue))),
+                    (RiscVFloatRegister.Saved4, float.PositiveInfinity),
+                    (RiscVFloatRegister.Saved5, float.NegativeInfinity),
+                    (RiscVFloatRegister.Saved6, float.NaN),
+                    (RiscVFloatRegister.Saved7, 0.0f),
+                    (RiscVFloatRegister.Saved8, -0.0f),
+                    (RiscVFloatRegister.Saved9, float.Epsilon),
+                    (RiscVFloatRegister.Saved10, float.MaxValue),
+                    (RiscVFloatRegister.Saved11, float.MinValue),
 
                     // F28 - F31: Large Integers (to test Rounding/Overflow traps)
-                    (RiscVFloatRegister.Temporary8, float.CreateTruncating((uint)int.MaxValue)),
-                    (RiscVFloatRegister.Temporary9, float.CreateTruncating(0)), // Upper bits for F28 if treated as Long
-                    (RiscVFloatRegister.Temporary10, float.CreateTruncating((uint)int.MinValue)),
-                    (RiscVFloatRegister.Temporary11, float.CreateTruncating(0xFFFFFFFF)) // All bits set
+                    (RiscVFloatRegister.Temporary8, int.MaxValue),
+                    (RiscVFloatRegister.Temporary9, 0), // Upper bits for F28 if treated as Long
+                    (RiscVFloatRegister.Temporary10, (uint)int.MinValue),
+                    (RiscVFloatRegister.Temporary11, 0xFFFFFFFF) // All bits set
                 ];
 
             MemoryInitialization =

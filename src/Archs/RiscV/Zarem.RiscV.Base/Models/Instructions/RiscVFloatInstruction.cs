@@ -28,8 +28,8 @@ public struct RiscVFloatInstruction
     private const int FUNCT3_OFFSET = 12;
     private const int RS1_OFFSET = 15;
     private const int RS2_OFFSET = 20;
-    private const int FUNCT5_OFFSET = 25;
     private const int FMT_OFFSET = 25;
+    private const int FUNCT5_OFFSET = 27;
     private const int RS3_OFFSET = 27;
 
     [FieldOffset(0)]

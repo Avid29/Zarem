@@ -20,7 +20,7 @@ public partial class RiscVInstructionServiceTable<T, TSigned>
         var frs1 = indexer[(int)inst.FRS1];
         var frs2 = indexer[(int)inst.FRS2];
         var value = TLogic.Compute(frs1, frs2);
-        exec = RiscVExecution<T>.CreateFloatWriteback<TFormat>(inst.FRD, value);
+        exec = RiscVExecution<T>.CreateFloatWriteback(inst.FRD, value);
         return RiscVTrap.None;
     }
 

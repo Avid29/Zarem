@@ -121,7 +121,7 @@ public partial class RiscVExecutionTests
         {
             Assert.IsNotNull(computer.Cpu.FloatRegisterFile);
             Assert.AreEqual(expectedSingle.Value.Register, execution.FloatReg);
-            Assert.AreEqual(expectedSingle.Value.Value, execution.FWordWriteBack);
+            Assert.AreEqual(expectedSingle.Value.Value, execution.SingleWriteBack);
             Assert.AreEqual(expectedSingle.Value.Value, computer.Cpu.FloatRegisterFile.Singles[(int)execution.FloatReg]);
         }
 
@@ -130,7 +130,7 @@ public partial class RiscVExecutionTests
         {
             Assert.IsNotNull(computer.Cpu.FloatRegisterFile);
             Assert.AreEqual(expectedFloatLong.Value.Register, execution.FloatReg);
-            Assert.AreEqual(expectedFloatLong.Value.Value, execution.FLongWriteBack);
+            Assert.AreEqual(expectedFloatLong.Value.Value, execution.DoubleWriteBack);
             Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatRegisterFile.Doubles[(int)execution.FloatReg]);
         }
 

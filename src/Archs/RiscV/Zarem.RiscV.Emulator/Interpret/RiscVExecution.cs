@@ -2,6 +2,7 @@
 
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Zarem.Helpers;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
@@ -37,32 +38,34 @@ public readonly struct RiscVExecution<T>
     public unsafe static RiscVExecution<T> CreateFloatWriteback<TFloat>(RiscVFloatRegister dest, TFloat writeBack)
         where TFloat : unmanaged, INumber<TFloat>
     {
-        long longValue = writeBack switch
-        {
-            int i => i,
-            uint ui => ui,
-            long l => l,
-            ulong ul => (long)ul,
-            float f => BitConverter.SingleToInt32Bits(f),
-            double d => BitConverter.DoubleToInt64Bits(d),
-            _ => long.CreateTruncating(writeBack),
-        };
-
-        if (sizeof(TFloat) == sizeof(float))
+        if (sizeof(TFloat) == sizeof(Half))
         {
             return new RiscVExecution<T>
             {
                 FloatReg = dest,
-                FWordWriteBack = (int)longValue,
+                HalfWriteBack = Unsafe.As<TFloat, Half>(ref writeBack),
+            };
+        }
+        else if (sizeof(TFloat) == sizeof(float))
+        {
+            return new RiscVExecution<T>
+            {
+                FloatReg = dest,
+                SingleWriteBack = Unsafe.As<TFloat, float>(ref writeBack),
+            };
+        }
+        else if (sizeof(TFloat) == sizeof(double))
+        {
+            return new RiscVExecution<T>
+            {
+                FloatReg = dest,
+                DoubleWriteBack = Unsafe.As<TFloat, double>(ref writeBack),
             };
         }
         else
         {
-            return new RiscVExecution<T>
-            {
-                FloatReg = dest,
-                FLongWriteBack = longValue,
-            };
+            // TODO: Error
+            return default;
         }
     }
 
@@ -180,27 +183,40 @@ public readonly struct RiscVExecution<T>
     }
 
     /// <summary>
-    /// Gets the value being written to the float processor as a <see cref="int"/>.
+    /// Gets the value being written to the float processor as a <see cref="Half"/>.
     /// </summary>
-    public int FWordWriteBack
+    public Half HalfWriteBack
     {
-        get => (int)FLongWriteBack;
+        get => BitConverter.UInt16BitsToHalf((ushort)_secondary2);
         init
         {
-            _secondary2 = (uint)value;
+            _secondary2 = BitConverter.HalfToUInt16Bits(value);
+            SideEffect = RiscVSideEffect.WriteHalf;
+        }
+    }
+
+    /// <summary>
+    /// Gets the value being written to the float processor as a <see cref="float"/>.
+    /// </summary>
+    public float SingleWriteBack
+    {
+        get => BitConverter.UInt32BitsToSingle((uint)_secondary2);
+        init
+        {
+            _secondary2 = BitConverter.SingleToUInt32Bits(value);
             SideEffect = RiscVSideEffect.WriteSingle;
         }
     }
 
     /// <summary>
-    /// Gets the value being written to the float processor as a <see cref="long"/>.
+    /// Gets the value being written to the float processor as a <see cref="double"/>.
     /// </summary>
-    public long FLongWriteBack
+    public double DoubleWriteBack
     {
-        get => (long)_secondary2;
+        get => BitConverter.UInt64BitsToDouble((uint)_secondary2);
         init
         {
-            _secondary2 = (ulong)value;
+            _secondary2 = BitConverter.DoubleToUInt64Bits(value);
             SideEffect = RiscVSideEffect.WriteDouble;
         }
     }
