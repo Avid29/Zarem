@@ -215,6 +215,7 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
             yield return [new RiscVEmulatorTestCase<T>(config, "fsub.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f - 2.5f)];
             yield return [new RiscVEmulatorTestCase<T>(config, "fmul.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f * 2.5f)];
             yield return [new RiscVEmulatorTestCase<T>(config, "fdiv.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f / 2.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fsqrt.S fa0, fs0", RiscVFloatRegister.Argument0, MathF.Sqrt(10.5f))];
         }
     }
 }
