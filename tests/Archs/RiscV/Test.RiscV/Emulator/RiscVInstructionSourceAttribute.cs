@@ -208,14 +208,23 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         if (config.ExecutionMode is not ExecutionMode.Interpret)
             yield break;
 
-        if (config.VersionInfo.Extensions.HasFlag(RiscVExtensions.SingleFloatingPoint))
+        unchecked
         {
-            // Single
-            yield return [new RiscVEmulatorTestCase<T>(config, "fadd.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f + 2.5f)];
-            yield return [new RiscVEmulatorTestCase<T>(config, "fsub.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f - 2.5f)];
-            yield return [new RiscVEmulatorTestCase<T>(config, "fmul.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f * 2.5f)];
-            yield return [new RiscVEmulatorTestCase<T>(config, "fdiv.S fa0, fs0, fs1", RiscVFloatRegister.Argument0, 10.5f / 2.5f)];
-            yield return [new RiscVEmulatorTestCase<T>(config, "fsqrt.S fa0, fs0", RiscVFloatRegister.Argument0, MathF.Sqrt(10.5f))];
+            if (config.VersionInfo.Extensions.HasFlag(RiscVExtensions.SingleFloatingPoint))
+            {
+                // Arithmetic
+                yield return [new RiscVEmulatorTestCase<T>(config, "fadd.S fa0, fs0, fs1", 10.5f + 2.5f)];
+                yield return [new RiscVEmulatorTestCase<T>(config, "fsub.S fa0, fs0, fs1", 10.5f - 2.5f)];
+                yield return [new RiscVEmulatorTestCase<T>(config, "fmul.S fa0, fs0, fs1", 10.5f * 2.5f)];
+                yield return [new RiscVEmulatorTestCase<T>(config, "fdiv.S fa0, fs0, fs1", 10.5f / 2.5f)];
+                yield return [new RiscVEmulatorTestCase<T>(config, "fsqrt.S fa0, fs0", MathF.Sqrt(10.5f))];
+
+                // Convert
+                yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.S.W fa0, t1", 20f)];
+                yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.S.WU fa0, t5", (uint)-20)];
+                yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.W.S a0, ft3", T.CreateTruncating(-10))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.WU.S a0, ft2", T.CreateTruncating(10))];
+            }
         }
     }
 }

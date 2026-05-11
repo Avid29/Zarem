@@ -7,10 +7,11 @@ using Zarem.Emulator.Machine.Registers;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions;
+using Zarem.RiscV.Models.Instructions.Enums;
 
 namespace Zarem.Emulator.Models;
 
-public partial class RiscVInstructionServiceTable<T, TSigned>
+public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
 {
     private static RiscVTrap FloatAlu<TLogic, TFormat>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
@@ -35,6 +36,71 @@ public partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
+    private static RiscVTrap FloatConvertTo<TTo>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
+    {
+        delegate*<RiscVInterpretCpu<T>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func = inst.IntFormat switch
+        {
+            RiscVIntFormat.Word => &FloatConvertTo<int, TTo>,
+            RiscVIntFormat.WordUnsigned => &FloatConvertTo<uint, TTo>,
+            RiscVIntFormat.Long => &FloatConvertTo<long, TTo>,
+            RiscVIntFormat.LongUnsigned => &FloatConvertTo<ulong, TTo>,
+            _ => &IllegalInstruction,
+        };
+
+        return func(cpu, inst, out exec);
+    }
+
+    private static RiscVTrap FloatConvertFrom<TFrom>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
+    {
+        delegate*<RiscVInterpretCpu<T>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func = inst.IntFormat switch
+        {
+            RiscVIntFormat.Word => &FloatConvertFrom<TFrom, int>,
+            RiscVIntFormat.WordUnsigned => &FloatConvertFrom<TFrom, uint>,
+            RiscVIntFormat.Long => &FloatConvertFrom<TFrom, long>,
+            RiscVIntFormat.LongUnsigned => &FloatConvertFrom<TFrom, ulong>,
+            _ => &IllegalInstruction,
+        };
+
+        return func(cpu, inst, out exec);
+    }
+
+    private static RiscVTrap FloatConvertTo<TFrom, TTo>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TFrom : unmanaged, INumber<TFrom>
+        where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
+    {
+        var source = TFrom.CreateTruncating(cpu.RegisterFile.Regs[(int)((RiscVInstruction)inst).RS1]);
+        var result = TTo.CreateTruncating(source);
+        exec = RiscVExecution<T>.CreateFloatWriteback(inst.FRD, result);
+        return RiscVTrap.None;
+    }
+
+    private static RiscVTrap FloatConvertFrom<TFrom, TTo>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
+        where TTo : unmanaged, INumber<TTo>, IMinMaxValue<TTo>
+    {
+        var indexer = GetFloatRegisterIndexer<TFrom>(cpu);
+        var source = indexer[(int)inst.FRS1];
+
+        TTo result;
+
+        if (TFrom.IsNaN(source))
+        {
+            result = TTo.MaxValue;
+        }
+        else
+        {
+            result = TTo.CreateTruncating(source);
+        }
+
+        exec = RiscVExecution<T>.CreateWriteback(((RiscVInstruction)inst).RD, T.CreateTruncating(result));
+        return RiscVTrap.None;
+    }
+
+    private static RiscVTrap IllegalInstruction(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        => IllegalInstruction(cpu, inst, out exec);
+
     private static IFormattedRegisterIndexer<TFormat> GetFloatRegisterIndexer<TFormat>(RiscVInterpretCpu<T> cpu)
         where TFormat : unmanaged, INumber<TFormat>
     {
@@ -42,10 +108,9 @@ public partial class RiscVInstructionServiceTable<T, TSigned>
         Guard.IsNotNull(cpu.FloatRegisterFile);
 #endif
 
-        if (typeof(TFormat) == typeof(float)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatRegisterFile.Singles;
+        if (typeof(TFormat) == typeof(Half)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatRegisterFile.Halves;
+        else if (typeof(TFormat) == typeof(float)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatRegisterFile.Singles;
         else if (typeof(TFormat) == typeof(double)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatRegisterFile.Doubles;
-        else if (typeof(TFormat) == typeof(int)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatRegisterFile.Words;
-        else if (typeof(TFormat) == typeof(long)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatRegisterFile.Longs;
         else throw new InvalidOperationException();
     }
 }

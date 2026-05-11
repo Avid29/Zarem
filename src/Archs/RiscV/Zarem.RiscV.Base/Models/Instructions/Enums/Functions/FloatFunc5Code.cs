@@ -16,8 +16,8 @@ public enum FloatFunc5Code : byte
     MinMax = 5,
     SquareRoot = 11,
     Compare = 20,
-    ConvertInt = 24,
-    ConvertFloat = 28,
+    ConvertToInt = 24,
+    ConvertToFloat = 28,
     MoveXToF = 28,
     MoveFToX = 30,
     Classify = 28
