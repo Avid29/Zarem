@@ -160,6 +160,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         Register(format, FloatFunc5Code.Subtract, &FloatAlu<SubLogic<TFormat>, TFormat>);
         Register(format, FloatFunc5Code.Multiply, &FloatAlu<MulLogic<TFormat>, TFormat>);
         Register(format, FloatFunc5Code.Divide, &FloatAlu<DivLogic<TFormat>, TFormat>);
+        Register(format, FloatFunc5Code.MinMax, &FloatMinMax<TFormat>);
         Register(format, FloatFunc5Code.SquareRoot, &FloatFAlu<SqrtLogic<TFormat>, TFormat>);
         Register(format, FloatFunc5Code.ConvertToInt, &FloatConvertFrom<TFormat>);
         Register(format, FloatFunc5Code.ConvertToFloat, &FloatConvertTo<TFormat>);

@@ -8,6 +8,7 @@ using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums;
+using Zarem.RiscV.Models.Instructions.Enums.Functions;
 
 namespace Zarem.Emulator.Models;
 
@@ -32,6 +33,28 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         var indexer = GetFloatRegisterIndexer<TFormat>(cpu);
         var frs1 = indexer[(int)inst.FRS1];
         var value = TLogic.Compute(frs1);
+        exec = RiscVExecution<T>.CreateFloatWriteback(inst.FRD, value);
+        return RiscVTrap.None;
+    }
+
+    private static RiscVTrap FloatMinMax<TFormat>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        var indexer = GetFloatRegisterIndexer<TFormat>(cpu);
+        var frs1 = indexer[(int)inst.FRS1];
+        var frs2 = indexer[(int)inst.FRS2];
+        TFormat value;
+        switch (inst.Funct3)
+        {
+            case FloatFunct3Code.FloatMin:
+                value = TFormat.Min(frs1, frs2);
+                break;
+            case FloatFunct3Code.FloatMax:
+                value = TFormat.Max(frs1, frs2);
+                break;
+            default:
+                return IllegalInstruction(cpu, inst, out exec);
+        }
         exec = RiscVExecution<T>.CreateFloatWriteback(inst.FRD, value);
         return RiscVTrap.None;
     }
