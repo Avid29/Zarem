@@ -150,6 +150,16 @@ public struct RiscVFloatInstruction
     }
 
     /// <summary>
+    /// Gets or sets the instruction's integer format.
+    /// </summary>
+    public RiscVIntFormat IntFormat
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly get => (RiscVIntFormat)FRS2;
+        set => FRS2 = (RiscVFloatRegister)value;
+    }
+
+    /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="RiscVFloatInstruction"/>.
     /// </summary>
     public static explicit operator RiscVFloatInstruction(uint value) => Unsafe.As<uint, RiscVFloatInstruction>(ref value);

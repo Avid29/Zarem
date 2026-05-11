@@ -112,7 +112,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             }
         }
 
-        name = string.Join('.', parts);
+        name = string.Join('.', parts).ToLowerInvariant();
 
         if (!_instructionTable.TryGetInstruction(name, out var metas, out var requiredBase, out var requiredExtension))
         {

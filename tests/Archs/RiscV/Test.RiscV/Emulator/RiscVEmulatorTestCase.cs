@@ -59,7 +59,7 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
                     (RiscVFloatRegister.Temporary0, float.CreateTruncating(2)),
                     (RiscVFloatRegister.Temporary1, float.CreateTruncating(0)),
                     (RiscVFloatRegister.Temporary2, float.CreateTruncating(10)),
-                    (RiscVFloatRegister.Temporary3, float.CreateTruncating((uint)-10)),
+                    (RiscVFloatRegister.Temporary3, float.CreateTruncating(-10)),
 
                     // F4 - F11: Small "Clean" Floats (Single Precision)
                     // Using values that have exact representations in binary
@@ -99,9 +99,9 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
         ExpectedTrap = trap;
     }
 
-    public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input, T writeBack) : this(config, input)
+    public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input, T writeBack, RiscVGpRegister reg = RiscVGpRegister.Argument0) : this(config, input)
     {
-        ExpectedWriteBack = (RiscVGpRegister.Argument0, writeBack);
+        ExpectedWriteBack = (reg, writeBack);
     }
 
     public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input, RiscVGpRegister reg, T? writeBack = null) : this(config, input)
@@ -109,7 +109,7 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
         ExpectedWriteBack = (reg, writeBack);
     }
 
-    public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input, RiscVFloatRegister reg, float writeBack) : this(config, input)
+    public RiscVEmulatorTestCase(RiscVEmulatorConfig config, string input, float writeBack, RiscVFloatRegister reg = RiscVFloatRegister.Argument0) : this(config, input)
     {
         ExpectedSingleWriteBack = (reg, writeBack);
     }
