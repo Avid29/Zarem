@@ -85,6 +85,54 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
+    private enum Classification : ushort
+    {
+        None = 0x0,
+        NegativeInfinity = 0x1,
+        NegativeNormal = 0x2,
+        NegativeSubnormal = 0x4,
+        NegativeZero = 0x8,
+        PositiveZero = 0x10,
+        PositiveSubnormal = 0x20,
+        PositiveNormal = 0x40,
+        PositiveInfinity = 0x80,
+        SignalingNaN = 0x100,
+        QuietNaN = 0x200,
+    };
+
+    private static RiscVTrap FloatClassifiy<TFormat>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        var indexer = GetFloatRegisterIndexer<TFormat>(cpu);
+        var frs1 = indexer[(int)inst.FRS1];
+
+        Classification classification = Classification.None;
+
+        // Check each condition based on the RISC-V specification for fclass
+        if (TFormat.IsNegative(frs1))
+        {
+            if (TFormat.IsInfinity(frs1)) classification = Classification.NegativeInfinity;
+            else if (TFormat.IsNormal(frs1)) classification = Classification.NegativeNormal;
+            else if (TFormat.IsSubnormal(frs1)) classification = Classification.NegativeSubnormal;
+            else if (TFormat.IsZero(frs1)) classification = Classification.NegativeZero;
+        }
+        else if (TFormat.IsPositive(frs1))
+        {
+            if (TFormat.IsInfinity(frs1)) classification = Classification.PositiveInfinity;
+            else if (TFormat.IsNormal(frs1)) classification = Classification.PositiveNormal;
+            else if (TFormat.IsSubnormal(frs1)) classification = Classification.PositiveSubnormal;
+            else if (TFormat.IsZero(frs1)) classification = Classification.PositiveZero;
+        }
+        else if (TFormat.IsNaN(frs1))
+        {
+            // TODO: Differentiate signaling/quiet NaN
+            classification = Classification.QuietNaN;
+        }
+
+        exec = RiscVExecution<T>.CreateWriteback(((RiscVInstruction)inst).RD, T.CreateTruncating((short)classification));
+        return RiscVTrap.None;
+    }
+
     private static RiscVTrap FloatConvertTo<TTo>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
     {

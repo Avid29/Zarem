@@ -165,6 +165,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         Register(format, FloatFunc5Code.Compare, &FloatCompare<TFormat>);
         Register(format, FloatFunc5Code.ConvertToInt, &FloatConvertFrom<TFormat>);
         Register(format, FloatFunc5Code.ConvertToFloat, &FloatConvertTo<TFormat>);
+        Register(format, FloatFunc5Code.Classify, &FloatClassifiy<TFormat>);
     }
 
     private void Register(RiscVOpCode opCode, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
