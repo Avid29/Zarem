@@ -59,6 +59,32 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
+    private static RiscVTrap FloatCompare<TFormat>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        var indexer = GetFloatRegisterIndexer<TFormat>(cpu);
+        var frs1 = indexer[(int)inst.FRS1];
+        var frs2 = indexer[(int)inst.FRS2];
+        bool compare;
+        switch (inst.Funct3)
+        {
+            case FloatFunct3Code.FloatLessOrEqual:
+                compare = frs1 <= frs2;
+                break;
+            case FloatFunct3Code.FloatLessThan:
+                compare = frs1 < frs2;
+                break;
+            case FloatFunct3Code.FloatEqual:
+                compare = frs1 == frs2;
+                break;
+            default:
+                return IllegalInstruction(cpu, inst, out exec);
+        }
+
+        exec = RiscVExecution<T>.CreateWriteback(((RiscVInstruction)inst).RD, compare ? T.One : T.Zero);
+        return RiscVTrap.None;
+    }
+
     private static RiscVTrap FloatConvertTo<TTo>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
     {
