@@ -17,7 +17,7 @@ namespace Zarem.RiscV.Models;
 public class RiscVInstructionDecodeTable<T> : InstructionDecodeTable<T, RiscVInstruction>
 {
     private readonly T[][] _funct7Table = new T[128][];
-    private readonly T[] _floatTable = new T[32 * 4];
+    private readonly T[] _floatTable = new T[32 * 8 * 4];
     private readonly T[] _emptyTable = new T[128 * 8];
 
     /// <summary>
@@ -83,9 +83,17 @@ public class RiscVInstructionDecodeTable<T> : InstructionDecodeTable<T, RiscVIns
     /// <summary>
     /// Registers an instruction.
     /// </summary>
+    public void Register(RiscVFloatFormat format, FloatFunc5Code funct5, FloatFunct3Code funct3, T value)
+    {
+        _floatTable[GetLookupIndex(format, funct5, funct3)] = value;
+    }
+
+    /// <summary>
+    /// Registers an instruction.
+    /// </summary>
     public void Register(RiscVFloatFormat format, FloatFunc5Code funct5, T value)
     {
-        _floatTable[GetLookupIndex(format, funct5)] = value;
+        _floatTable[GetLookupIndex(format, funct5, 0)] = value;
     }
 
     /// <summary>
@@ -108,13 +116,13 @@ public class RiscVInstructionDecodeTable<T> : InstructionDecodeTable<T, RiscVIns
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int GetLookupIndex(RiscVFloatInstruction instruction)
-        => GetLookupIndex(instruction.Format, instruction.Funct5);
+        => GetLookupIndex(instruction.Format, instruction.Funct5, instruction.Funct3);
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int GetLookupIndex(RiscVOpCode op, Funct3Code funct3)
         => (int)op << 3 | (int)funct3;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int GetLookupIndex(RiscVFloatFormat format, FloatFunc5Code funct5)
-        => (int)format << 5 | (int)funct5;
+    private static int GetLookupIndex(RiscVFloatFormat format, FloatFunc5Code funct5, FloatFunct3Code funct3)
+        => (int)format << 8 | (int)funct5 << 3| (int)funct3;
 }
