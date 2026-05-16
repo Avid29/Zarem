@@ -19,7 +19,7 @@ public enum FloatFunc5Code : byte
     ConvertToInt = 24,
     ConvertToFloat = 28,
     MoveXToF = 28,
+    Classify = 28,
     MoveFToX = 30,
-    Classify = 28
 #pragma warning restore CS1591
 }

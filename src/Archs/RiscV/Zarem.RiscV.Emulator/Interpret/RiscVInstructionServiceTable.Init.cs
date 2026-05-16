@@ -162,8 +162,10 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         Register(format, FloatFunc5Code.Divide, &FloatAlu<DivLogic<TFormat>, TFormat>);
         Register(format, FloatFunc5Code.MinMax, &FloatMinMax<TFormat>);
         Register(format, FloatFunc5Code.SquareRoot, &FloatFAlu<SqrtLogic<TFormat>, TFormat>);
+        Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatClassify, &FloatCompare<TFormat>);
         Register(format, FloatFunc5Code.ConvertToInt, &FloatConvertFrom<TFormat>);
         Register(format, FloatFunc5Code.ConvertToFloat, &FloatConvertTo<TFormat>);
+        Register(format, FloatFunc5Code.Classify, &FloatClassifiy<TFormat>);
     }
 
     private void Register(RiscVOpCode opCode, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
@@ -174,6 +176,9 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
 
     private void Register(Funct7Code funct7, RiscVOpCode opCode, Funct3Code funct3, delegate*<RiscVInterpretCpu<T>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(funct7, opCode, funct3, (IntPtr)func);
+
+    private void Register(RiscVFloatFormat format, FloatFunc5Code funct5, FloatFunct3Code funct3, delegate*<RiscVInterpretCpu<T>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func)
+        => _instructionTable.Register(format, funct5, funct3, (IntPtr)func);
 
     private void Register(RiscVFloatFormat format, FloatFunc5Code funct5, delegate*<RiscVInterpretCpu<T>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(format, funct5, (IntPtr)func);

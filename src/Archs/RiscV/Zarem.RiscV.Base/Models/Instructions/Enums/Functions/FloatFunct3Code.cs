@@ -27,12 +27,13 @@ public enum FloatFunct3Code : byte
     FloatMax = 0b001,
 
     // --- Comparisons (FEQ / FLT / FLE) ---
-    FloatEqual = 0b010,
-    FloatLessThan = 0b001,
     FloatLessOrEqual = 0b000,
+    FloatLessThan = 0b001,
+    FloatEqual = 0b010,
 
     // --- Classify / Move (FCLASS / FMV) ---
-    FloatClassifyOrMove = 0b000,
+    FloatMove = 0b000,
+    FloatClassify = 0b001,
 
 #pragma warning restore CS1591
 }
