@@ -10,7 +10,7 @@ namespace Zarem.Emulator.Machine.Registers;
 /// <summary>
 /// A register file.
 /// </summary>
-public unsafe class RegisterFile<T> : IRegisterFile, IDisposable
+public unsafe class RegisterFile<T> : IRegisterFile<T>, IDisposable
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <summary>
@@ -22,9 +22,7 @@ public unsafe class RegisterFile<T> : IRegisterFile, IDisposable
         Count = count;
     }
 
-    /// <summary>
-    /// Gets an unsafe point to the registers
-    /// </summary>
+    /// <inheritdoc/>
     public T* Regs { get; }
 
     /// <inheritdoc/>

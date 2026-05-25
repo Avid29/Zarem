@@ -7,7 +7,7 @@ namespace Zarem.Emulator.Machine.Registers;
 /// <summary>
 /// An interface for a register file with different indexable formats.
 /// </summary>
-public interface IFormattedRegisterFile
+public interface IFormattedRegisterFile : IRegisterFile
 {
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="Half"/>.
