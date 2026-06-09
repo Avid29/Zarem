@@ -34,11 +34,13 @@ public abstract class RiscVCpu<T> : CpuBase<T>, IRiscVCpu
         Tlb = new RiscVTlb();
         Memory = new MemorySystem(bus, Tlb);
 
-        var extensions = Config.VersionInfo.Extensions;
-        if (extensions.HasFlag(RiscVExtensions.QuadrupleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<UInt128>(FloatRegisterCount);
-        else if (extensions.HasFlag(RiscVExtensions.DoubleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<ulong>(FloatRegisterCount);
-        else if (extensions.HasFlag(RiscVExtensions.SingleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<uint>(FloatRegisterCount);
-        else if (extensions.HasFlag(RiscVExtensions.HalfPrecisionFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<ushort>(FloatRegisterCount); // This should be illegal, but best to be careful
+        FloatRegisterFile = new FormattedRegisterFile<T>(FloatRegisterCount);
+
+        //var extensions = Config.VersionInfo.Extensions;
+        //if (extensions.HasFlag(RiscVExtensions.QuadrupleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<UInt128>(FloatRegisterCount);
+        //else if (extensions.HasFlag(RiscVExtensions.DoubleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<ulong>(FloatRegisterCount);
+        //else if (extensions.HasFlag(RiscVExtensions.SingleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<uint>(FloatRegisterCount);
+        //else if (extensions.HasFlag(RiscVExtensions.HalfPrecisionFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<ushort>(FloatRegisterCount); // This should be illegal, but best to be careful
     }
 
     /// <inheritdoc/>
