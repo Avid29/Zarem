@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
@@ -130,6 +131,26 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         }
 
         exec = RiscVExecution<T>.CreateWriteback(((RiscVInstruction)inst).RD, T.CreateTruncating((short)classification));
+        return RiscVTrap.None;
+    }
+
+    private static RiscVTrap FloatMoveTo<TTo>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
+    {
+        var source = cpu.RegisterFile.Regs[(int)((RiscVInstruction)inst).RS1];
+        exec = RiscVExecution<T>.CreateFloatWriteback(inst.FRD, source);
+        return RiscVTrap.None;
+    }
+
+    private static RiscVTrap FloatMoveFrom<TFrom>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
+    {
+#if DEBUG
+        Guard.IsNotNull(cpu.FloatRegisterFile);
+#endif
+
+        var source = cpu.FloatRegisterFile.Regs[(int)((RiscVInstruction)inst).RS1];
+        exec = RiscVExecution<T>.CreateFloatWriteback(inst.FRD, source);
         return RiscVTrap.None;
     }
 

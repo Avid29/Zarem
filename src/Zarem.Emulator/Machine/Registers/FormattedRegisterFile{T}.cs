@@ -10,7 +10,7 @@ namespace Zarem.Emulator.Machine.Registers;
 /// A register file with indexers for different formats.
 /// </summary>
 /// <param name="count"></param>
-public unsafe class FormattedRegisterFile<T>(int count) : RegisterFile<T>(count), IFormattedRegisterFile
+public unsafe class FormattedRegisterFile<T>(int count) : RegisterFile<T>(count), IFormattedRegisterFile<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <inheritdoc/>

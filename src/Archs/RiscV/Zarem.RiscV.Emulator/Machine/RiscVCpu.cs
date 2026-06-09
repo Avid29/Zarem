@@ -54,7 +54,10 @@ public abstract class RiscVCpu<T> : CpuBase<T>, IRiscVCpu
     public override RiscVGPRegisterFile<T> RegisterFile { get; }
 
     /// <inheritdoc/>
-    public IFormattedRegisterFile? FloatRegisterFile { get; }
+    public IFormattedRegisterFile<T>? FloatRegisterFile { get; }
+
+    /// <inheritdoc/>
+    IFormattedRegisterFile? IRiscVCpu.FloatRegisterFile => FloatRegisterFile;
 
     /// <summary>
     /// Gets the translation look-aside buffer.
