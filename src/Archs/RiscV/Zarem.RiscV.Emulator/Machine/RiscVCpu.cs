@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Numerics;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
@@ -12,7 +11,6 @@ using Zarem.RiscV.Emulator.Machine.Registers;
 using Zarem.RiscV.Emulator.TrapHandlers;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
-using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.RiscV.Emulator.Machine;
 
