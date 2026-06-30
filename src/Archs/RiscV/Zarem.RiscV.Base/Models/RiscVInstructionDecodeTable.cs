@@ -93,7 +93,10 @@ public class RiscVInstructionDecodeTable<T> : InstructionDecodeTable<T, RiscVIns
     /// </summary>
     public void Register(RiscVFloatFormat format, FloatFunc5Code funct5, T value)
     {
-        _floatTable[GetLookupIndex(format, funct5, 0)] = value;
+        for (int i = 0; i < 8; i++)
+        {
+            _floatTable[GetLookupIndex(format, funct5, (FloatFunct3Code)i)] = value;
+        }
     }
 
     /// <summary>
