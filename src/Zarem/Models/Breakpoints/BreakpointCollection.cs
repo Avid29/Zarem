@@ -7,7 +7,7 @@ using Zarem.Models.Files;
 namespace Zarem.Models.Breakpoints;
 
 /// <summary>
-/// A collection of breakpoints in a <see cref=""/>
+/// A collection of breakpoints in an file.
 /// </summary>
 public class BreakpointCollection
 {
