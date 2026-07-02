@@ -49,7 +49,7 @@ public class LineResolver
         if (!_lineLookup.TryGetValue(filePath, out var list))
             return null;
 
-        return BinarySearch(list, lineNumber);
+        return BinarySearch(list, lineNumber, preferLower: false);
     }
 
     /// <summary>
@@ -57,23 +57,23 @@ public class LineResolver
     /// </summary>
     /// <param name="address">The virtual address</param>
     public SourceRange? GetSourceLocation(ulong address)
-        => BinarySearch(_sourceLookup, address);
+        => BinarySearch(_sourceLookup, address, preferLower: true);
 
-    private static T? BinarySearch<T>(SortedList<ulong, T> list, ulong key)
+    private static T? BinarySearch<T>(SortedList<ulong, T> list, ulong key, bool preferLower = false)
     {
         if (list.Count is 0)
             return default;
 
-        int index = BinarySearchKeys(list.Keys, key);
+        int index = BinarySearchKeys(list.Keys, key, preferLower);
 
-        if (index is -1)
+        if (index is < 0 || index >= list.Count)
             return default;
 
         return list.Values[index];
 
     }
 
-    private static int BinarySearchKeys(IList<ulong> list, ulong key)
+    private static int BinarySearchKeys(IList<ulong> list, ulong key, bool preferLower)
     {
         int low = 0;
         int high = list.Count - 1;
@@ -84,6 +84,9 @@ public class LineResolver
             if (list[mid] < key) low = mid + 1;
             else high = mid - 1;
         }
-        return high; // Returns the index of the greatest key less than the search key
+
+        return preferLower
+            ? high // Returns the index of the greatest key less than or equal to the search key
+            : low; // Returns the index of the smallest key greater than or equal to the search key
     }
 }
