@@ -103,7 +103,8 @@ public abstract class RegisterTable<TRegister, TSet>
     protected abstract Dictionary<TSet, Regex> NumericalSetRegexTable { get; }
 
     /// <summary>
-    /// Map a set to a format string, e.g. RegisterSet.GP -> "x{0}"
+    /// Gets a dictionary mapping a set to a format string, e.g. RegisterSet.GP -> "x{0}"
     /// </summary>
     protected abstract Dictionary<TSet, string> NumericalSetFormatTable { get; }
+
 }

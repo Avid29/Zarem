@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Zarem.Debugger;
 using Zarem.DebugSessions;
 using Zarem.Helpers;
@@ -16,7 +17,7 @@ namespace Zarem.IDE.ViewModels.Pages;
 /// </summary>
 public class RegisterViewerViewModel : DebugPageViewModel
 {
-    private IDispatcherService _dispatcherService;
+    private readonly IDispatcherService _dispatcherService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterViewerViewModel"/> class.
@@ -39,7 +40,7 @@ public class RegisterViewerViewModel : DebugPageViewModel
     /// <summary>
     /// Gets the collection of registers being viewed.
     /// </summary>
-    public ObservableCollection<BindableRegister> Registers { get; }
+    public ObservableCollection<IGrouping<string?, BindableRegister>> Registers { get; }
 
     /// <summary>
     /// Gets or sets whether or not the debugger is halted.
@@ -57,10 +58,13 @@ public class RegisterViewerViewModel : DebugPageViewModel
         if (viewer is null)
             return;
 
-        foreach (var reg in viewer.Registers.RegisterNames)
-        {
-            Registers.Add(new BindableRegister(reg, viewer.Registers));
-        }
+        var groups = viewer.RegisterViewer.Registers
+            .Select(x => new BindableRegister(x, viewer.RegisterViewer))
+            .GroupBy(x => x.RegisterMeta.Category);
+
+        Registers.Clear();
+        foreach ( var group in groups)
+            Registers.Add(group);
 
         session.Debugger?.Halted += Debugger_Halted;
         session.Debugger?.Resumed += Debugger_Resumed;
@@ -78,7 +82,7 @@ public class RegisterViewerViewModel : DebugPageViewModel
     {
         _dispatcherService.RunOnUIThread(() =>
         {
-            foreach (var reg in Registers)
+            foreach (var reg in Registers.SelectMany(g => g.Select(x => x)))
             {
                 reg.Invalidate();
             }

@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Zarem.Assembler.Helpers.Tables;
+using Zarem.Debugger.Models;
 using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
@@ -9,9 +10,9 @@ using Zarem.RiscV.Models.Instructions.Enums.Registers;
 namespace Zarem.RiscV.Debugger.Viewer;
 
 /// <summary>
-/// A class wrapping an <see cref="IRegisterFile"/> as an <see cref="IRegisterGroup"/>.
+/// A class wrapping an <see cref="IRegisterFile"/> as an <see cref="IRegisterViewer"/>.
 /// </summary>
-public class RiscVRegisterViewer : IRegisterGroup
+public class RiscVRegisterViewer : IRegisterViewer
 {
     private readonly IRegisterFile _registers;
     private readonly RiscVRegisterSet _set;
@@ -37,13 +38,18 @@ public class RiscVRegisterViewer : IRegisterGroup
     }
 
     /// <inheritdoc/>
-    public IEnumerable<string> RegisterNames
+    public IEnumerable<RegisterMeta> Registers
     {
         get
         {
             for (var i = 0; i < _registers.Count; i++)
             {
-                yield return RiscVRegisterTable.Instance.GetRegisterString((RiscVGpRegister)i, RiscVRegisterSet.GeneralPurpose);
+                var name = RiscVRegisterTable.Instance.GetRegisterString((RiscVGpRegister)i, RiscVRegisterSet.GeneralPurpose);
+                var category = RiscVRegisterTable.Instance.GetRegisterCategory((RiscVGpRegister)i, RiscVRegisterSet.GeneralPurpose);
+
+                // TODO: Localize category
+
+                yield return new RegisterMeta(name, $"{category}");
             }
         }
     }
