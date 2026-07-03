@@ -12,7 +12,7 @@ public interface IDebugViewer
     /// <summary>
     /// Gets the registers for the debug view.
     /// </summary>
-    IRegisterGroup Registers { get; }
+    IRegisterViewer RegisterViewer { get; }
 
     ///// <summary>
     ///// Gets the register groups for the debug view.

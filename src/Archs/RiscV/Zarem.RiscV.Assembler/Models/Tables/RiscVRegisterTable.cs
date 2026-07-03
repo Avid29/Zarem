@@ -12,7 +12,7 @@ namespace Zarem.Assembler.Helpers.Tables;
 /// <summary>
 /// A class containing a lookup table for RISC-V registers.
 /// </summary>
-public partial class RiscVRegisterTable : RegisterTable<RiscVGpRegister, RiscVRegisterSet>
+public partial class RiscVRegisterTable : RegisterTable<RiscVGpRegister, RiscVRegisterSet, RiscVRegisterCategory>
 {
     private static readonly Lazy<RiscVRegisterTable> _instance = new();
 
@@ -88,5 +88,85 @@ public partial class RiscVRegisterTable : RegisterTable<RiscVGpRegister, RiscVRe
         { RiscVRegisterSet.GeneralPurpose, "x{0}" },
         { RiscVRegisterSet.FloatingPoints, "f{0}" },
         { RiscVRegisterSet.Numbered, "x{0}" }
+    };
+
+    /// <inheritdoc/>
+    protected override Dictionary<RiscVRegisterSet, Dictionary<RiscVGpRegister, RiscVRegisterCategory>> RegisterCategoryTable { get; } = new()
+    {
+        {
+            RiscVRegisterSet.GeneralPurpose, new Dictionary<RiscVGpRegister, RiscVRegisterCategory>
+            {
+                { RiscVGpRegister.Zero, RiscVRegisterCategory.Special },
+                { RiscVGpRegister.ReturnAddress, RiscVRegisterCategory.Special },
+                { RiscVGpRegister.StackPointer, RiscVRegisterCategory.Special },
+                { RiscVGpRegister.GlobalPointer, RiscVRegisterCategory.Special },
+                { RiscVGpRegister.ThreadPointer, RiscVRegisterCategory.Special },
+                { RiscVGpRegister.Temporary0, RiscVRegisterCategory.Temporary },
+                { RiscVGpRegister.Temporary1, RiscVRegisterCategory.Temporary },
+                { RiscVGpRegister.Temporary2, RiscVRegisterCategory.Temporary },
+                { RiscVGpRegister.Saved0, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.FramePointer, RiscVRegisterCategory.Special },
+                { RiscVGpRegister.Saved1, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Argument0, RiscVRegisterCategory.Argument },
+                { RiscVGpRegister.Argument1, RiscVRegisterCategory.Argument },
+                { RiscVGpRegister.Argument2, RiscVRegisterCategory.Argument },
+                { RiscVGpRegister.Argument3, RiscVRegisterCategory.Argument },
+                { RiscVGpRegister.Argument4, RiscVRegisterCategory.Argument },
+                { RiscVGpRegister.Argument5, RiscVRegisterCategory.Argument },
+                { RiscVGpRegister.Argument6, RiscVRegisterCategory.Argument },
+                { RiscVGpRegister.Argument7, RiscVRegisterCategory.Argument },
+                { RiscVGpRegister.Saved2, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Saved3, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Saved4, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Saved5, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Saved6, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Saved7, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Saved8, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Saved9, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Saved10, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Saved11, RiscVRegisterCategory.Saved },
+                { RiscVGpRegister.Temporary3, RiscVRegisterCategory.Temporary },
+                { RiscVGpRegister.Temporary4, RiscVRegisterCategory.Temporary },
+                { RiscVGpRegister.Temporary5, RiscVRegisterCategory.Temporary },
+                { RiscVGpRegister.Temporary6, RiscVRegisterCategory.Temporary },
+            }
+        },
+        {
+            RiscVRegisterSet.FloatingPoints, new Dictionary<RiscVGpRegister, RiscVRegisterCategory>
+            {
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary0, RiscVRegisterCategory.Temporary },
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary1, RiscVRegisterCategory.Temporary },
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary2, RiscVRegisterCategory.Temporary },
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary3, RiscVRegisterCategory.Temporary },
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary4, RiscVRegisterCategory.Temporary },
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary5, RiscVRegisterCategory.Temporary },
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary6, RiscVRegisterCategory.Temporary },
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary7, RiscVRegisterCategory.Temporary },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved0, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved1, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Argument0, RiscVRegisterCategory.Argument },
+                { (RiscVGpRegister)RiscVFloatRegister.Argument1, RiscVRegisterCategory.Argument },
+                { (RiscVGpRegister)RiscVFloatRegister.Argument2, RiscVRegisterCategory.Argument },
+                { (RiscVGpRegister)RiscVFloatRegister.Argument3, RiscVRegisterCategory.Argument },
+                { (RiscVGpRegister)RiscVFloatRegister.Argument4, RiscVRegisterCategory.Argument },
+                { (RiscVGpRegister)RiscVFloatRegister.Argument5, RiscVRegisterCategory.Argument },
+                { (RiscVGpRegister)RiscVFloatRegister.Argument6, RiscVRegisterCategory.Argument },
+                { (RiscVGpRegister)RiscVFloatRegister.Argument7, RiscVRegisterCategory.Argument },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved2, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved3, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved4, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved5, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved6, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved7, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved8, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved9, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved10, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Saved11, RiscVRegisterCategory.Saved },
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary8, RiscVRegisterCategory.Temporary},
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary9, RiscVRegisterCategory.Temporary},
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary10, RiscVRegisterCategory.Temporary},
+                { (RiscVGpRegister)RiscVFloatRegister.Temporary11, RiscVRegisterCategory.Temporary},
+            }
+        }
     };
 }

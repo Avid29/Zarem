@@ -1,6 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Linq;
+using Zarem.Debugger.Models;
 using Zarem.Debugger.Viewer;
 using Zarem.IDE.Models.Enums;
 
@@ -11,31 +13,31 @@ namespace Zarem.IDE.Bindables;
 /// </summary>
 public class BindableRegister : ObservableObject
 {
-    private readonly IRegisterGroup _group;
+    private readonly IRegisterViewer _group;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BindableRegister"/> class.
     /// </summary>
-    public BindableRegister(string registerName, IRegisterGroup group)
+    public BindableRegister(RegisterMeta registerMeta, IRegisterViewer group)
     {
         _group = group;
-        RegisterName = registerName;
+        RegisterMeta = registerMeta;
     }
 
     /// <summary>
     /// Gets the register's name.
     /// </summary>
-    public string RegisterName { get; }
+    public RegisterMeta RegisterMeta { get; }
 
     /// <summary>
     /// Get's the register's value
     /// </summary>
     public ulong Value
     {
-        get => _group[RegisterName] ?? 0;
+        get => _group[RegisterMeta.Name] ?? 0;
         set
         {
-            _group[RegisterName] = value;
+            _group[RegisterMeta.Name] = value;
             OnPropertyChanged();
         }
     }

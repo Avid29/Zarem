@@ -18,13 +18,18 @@
 
     <UserControl.Resources>
         <helpers:ViewModelProxy x:Key="ViewModelProxy" ViewModel="{x:Bind ViewModel, Mode=OneWay}" />
+
+        <CollectionViewSource
+            x:Name="RegisterViewSource"
+            IsSourceGrouped="True"
+            Source="{x:Bind ViewModel.Registers, Mode=OneWay}" />
     </UserControl.Resources>
 
     <GridView
         Padding="12"
         IsItemClickEnabled="{x:Bind ViewModel.IsHalted, Mode=OneWay}"
         ItemClick="GridView_ItemClick"
-        ItemsSource="{x:Bind ViewModel.Registers, Mode=OneWay}"
+        ItemsSource="{x:Bind RegisterViewSource.View, Mode=OneWay}"
         Opacity="{x:Bind local:RegisterViewer.GetOpacityByHalted(ViewModel.IsHalted), Mode=OneWay}"
         SelectionMode="None">
         <GridView.ItemsPanel>
@@ -32,6 +37,16 @@
                 <ItemsWrapGrid MaximumRowsOrColumns="16" Orientation="Horizontal" />
             </ItemsPanelTemplate>
         </GridView.ItemsPanel>
+
+        <!--<GridView.GroupStyle>
+            <GroupStyle>
+                <GroupStyle.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Key}" />
+                    </DataTemplate>
+                </GroupStyle.HeaderTemplate>
+            </GroupStyle>
+        </GridView.GroupStyle>-->
 
         <GridView.ItemTemplate>
             <DataTemplate x:DataType="bindable:BindableRegister">
@@ -100,7 +115,7 @@
                     </Border.ContextFlyout>
                     <controls:RegisterDisplay
                         Mode="{x:Bind DisplayMode, Mode=OneWay}"
-                        RegisterName="{x:Bind RegisterName, Mode=OneWay}"
+                        RegisterName="{x:Bind RegisterMeta.Name, Mode=OneWay}"
                         Session="{Binding Source={StaticResource ViewModelProxy}, Path=ViewModel.Session, Mode=OneWay}"
                         SymbolResolver="{Binding Source={StaticResource ViewModelProxy}, Path=ViewModel.SymbolResolver, Mode=OneWay}"
                         Value="{x:Bind Value, Mode=OneWay}" />

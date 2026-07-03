@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Zarem.Assembler.Helpers.Tables;
+using Zarem.Debugger.Models;
 using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
@@ -9,9 +10,9 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 namespace Zarem.Mips.Debugger.Viewer;
 
 /// <summary>
-/// A class wrapping an <see cref="IRegisterFile"/> as an <see cref="IRegisterGroup"/>.
+/// A class wrapping an <see cref="IRegisterFile"/> as an <see cref="IRegisterViewer"/>.
 /// </summary>
-public class MipsRegisterViewer : IRegisterGroup
+public class MipsRegisterViewer : IRegisterViewer
 {
     private readonly IRegisterFile _registers;
     private readonly MipsRegisterSet _set;
@@ -37,13 +38,18 @@ public class MipsRegisterViewer : IRegisterGroup
     }
 
     /// <inheritdoc/>
-    public IEnumerable<string> RegisterNames
+    public IEnumerable<RegisterMeta> Registers
     {
         get
         {
             for (var i = 0; i < _registers.Count; i++)
             {
-                yield return MipsRegisterTable.Instance.GetRegisterString((MipsGpRegister)i, MipsRegisterSet.GeneralPurpose);
+                var name = MipsRegisterTable.Instance.GetRegisterString((MipsGpRegister)i, MipsRegisterSet.GeneralPurpose);
+                var category = MipsRegisterTable.Instance.GetRegisterCategory((MipsGpRegister)i, MipsRegisterSet.GeneralPurpose);
+
+                // TODO: Localize category
+
+                yield return new RegisterMeta(name, $"{category}");
             }
         }
     }

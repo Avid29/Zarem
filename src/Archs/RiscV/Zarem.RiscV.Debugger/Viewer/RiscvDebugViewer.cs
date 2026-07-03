@@ -18,11 +18,11 @@ public class RiscVDebugViewer : IDebugViewer
     {
         _riscVComputer = riscVComputer;
 
-        Registers = new RiscVRegisterViewer(_riscVComputer.Cpu.RegisterFile, RiscVRegisterSet.GeneralPurpose);
+        RegisterViewer = new RiscVRegisterViewer(_riscVComputer.Cpu.RegisterFile, RiscVRegisterSet.GeneralPurpose);
     }
 
     /// <inheritdoc/>
-    public IRegisterGroup Registers { get; }
+    public IRegisterViewer RegisterViewer { get; }
 
     /// <inheritdoc/>
     public static IDebugViewer? Create(IComputer computer)
