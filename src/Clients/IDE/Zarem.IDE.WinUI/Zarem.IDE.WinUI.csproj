@@ -44,7 +44,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="WinUIEdit" Version="0.0.4-prerelease" />
+		<PackageReference Include="WinUIEdit" Version="0.0.5-prerelease" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
