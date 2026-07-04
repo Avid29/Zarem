@@ -39,7 +39,7 @@ public sealed partial class ScintillaCodeEditor
         //editor.MarkerSetBack(2, ToInt(Colors.LightGray));
 
         // Define execution markers
-        editor.MarkerDefine(ExecutionPointIndex, MarkerSymbol.LeftRect);
+        editor.MarkerDefine(ExecutionPointIndex, MarkerSymbol.Arrow);
         editor.MarkerSetBack(ExecutionPointIndex, ToInt(Colors.Yellow));
         editor.MarkerSetFore(ExecutionPointIndex, ToInt(Colors.Black));
         margin0Mask |= (1 << ExecutionPointIndex);
