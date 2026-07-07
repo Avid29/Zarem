@@ -307,10 +307,10 @@
     <value>דיווח באג</value>
   </data>
   <data name="ExecutionModeMFSI.Text" xml:space="preserve">
-    <value>שיטת אמולציה</value>
+    <value>שיטת הרצה</value>
   </data>
   <data name="InterpretRMFI.Text" xml:space="preserve">
-    <value>לפרש</value>
+    <value>פירוש (אינטרפרט)</value>
   </data>
   <data name="JITRMFI.Text" xml:space="preserve">
     <value>JIT (ג'אסט-אין-טיים)</value>

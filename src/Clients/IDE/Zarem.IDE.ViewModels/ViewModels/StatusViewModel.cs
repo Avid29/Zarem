@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using System.Diagnostics.Contracts;
 using Zarem.IDE.Messages.Build;
 using Zarem.IDE.Models.Enums;
 using Zarem.IDE.Services;
