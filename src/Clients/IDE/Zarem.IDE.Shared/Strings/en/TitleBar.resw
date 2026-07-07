@@ -306,4 +306,13 @@
   <data name="ReportBugMFI.Text" xml:space="preserve">
     <value>Report a Bug</value>
   </data>
+  <data name="ExecutionModeMFSI.Text" xml:space="preserve">
+    <value>Execution Mode</value>
+  </data>
+  <data name="InterpretRMFI.Text" xml:space="preserve">
+    <value>Interpret</value>
+  </data>
+  <data name="JITRMFI.Text" xml:space="preserve">
+    <value>JIT (Just-In-Time)</value>
+  </data>
 </root>

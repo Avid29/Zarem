@@ -437,6 +437,7 @@
                     </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
 
+                <!--  Continue/Stop  -->
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/ContinueMFI"
                     Command="{x:Bind ViewModel.StepCommand}"
@@ -523,6 +524,32 @@
                     </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}" />
+
+                <!--  Execution Mode  -->
+                <MenuFlyoutSubItem
+                    x:Uid="/TitleBar/ExecutionModeMFSI"
+                    IsEnabled="False"
+                    Text="Execution Mode">
+                    <MenuFlyoutSubItem.Items>
+                        <RadioMenuFlyoutItem
+                            x:Uid="/TitleBar/InterpretRMFI"
+                            GroupName="ExecutionMode"
+                            Text="Interpret">
+                            <RadioMenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE950;" />
+                            </RadioMenuFlyoutItem.Icon>
+                        </RadioMenuFlyoutItem>
+                        <RadioMenuFlyoutItem
+                            x:Uid="/TitleBar/JITRMFI"
+                            GroupName="ExecutionMode"
+                            Text="JIT (Just-In-Time)">
+                            <RadioMenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE945;" />
+                            </RadioMenuFlyoutItem.Icon>
+                        </RadioMenuFlyoutItem>
+                    </MenuFlyoutSubItem.Items>
+                </MenuFlyoutSubItem>
+                <MenuFlyoutSeparator />
 
                 <!--  Breakpoints  -->
                 <MenuFlyoutItem

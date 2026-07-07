@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Files;
+using Zarem.Emulator.Config.Enums;
 
 namespace Zarem.IDE.ViewModels;
 
