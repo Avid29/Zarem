@@ -7,7 +7,7 @@ namespace Zarem.Config;
 /// <summary>
 /// A model for project configurations.
 /// </summary>
-public interface IProjectConfig
+public interface IProjectConfig : IConfig
 {   
     /// <summary>
     /// Gets or sets the project name.

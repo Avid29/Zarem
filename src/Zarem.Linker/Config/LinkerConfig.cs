@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.Config;
 using Zarem.Linker.Enums;
 
 namespace Zarem.Linker.Config;
@@ -7,7 +8,7 @@ namespace Zarem.Linker.Config;
 /// <summary>
 /// A base class for a linker configuration.
 /// </summary>
-public class LinkerConfig
+public class LinkerConfig : ConfigBase
 {
     /// <summary>
     /// Gets or sets the name of the entry point symbol.

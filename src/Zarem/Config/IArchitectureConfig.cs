@@ -9,7 +9,7 @@ namespace Zarem.Config;
 /// <summary>
 /// An interface for an architecture's configuration.
 /// </summary>
-public interface IArchitectureConfig
+public interface IArchitectureConfig : IConfig
 {
     /// <summary>
     /// Gets the assembler configuration.

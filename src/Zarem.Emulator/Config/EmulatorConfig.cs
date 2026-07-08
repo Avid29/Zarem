@@ -9,7 +9,7 @@ namespace Zarem.Emulator.Config;
 /// <summary>
 /// A class containing emulator configurations.
 /// </summary>
-public class EmulatorConfig : IConfig
+public class EmulatorConfig : ConfigBase
 {
     /// <summary>
     /// Gets or sets the emulator's trap handler.
@@ -23,5 +23,5 @@ public class EmulatorConfig : IConfig
     /// <summary>
     /// Gets or sets the emulator's execution mode.
     /// </summary>
-    public ExecutionMode ExecutionMode { get; set; }
+    public ExecutionMode ExecutionMode { get; init; }
 }

@@ -13,7 +13,7 @@ namespace Zarem.Mips;
 /// <summary>
 /// An <see cref="IArchitectureConfig"/> for the MIPS Architecture.
 /// </summary>
-public sealed class MipsArchitectureConfig : IArchitectureConfig
+public sealed class MipsArchitectureConfig : ConfigBase, IArchitectureConfig
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsArchitectureConfig"/> class.
@@ -32,7 +32,7 @@ public sealed class MipsArchitectureConfig : IArchitectureConfig
     public MipsVersion Version
     {
         get => field;
-        set
+        init
         {
             field = value;
             AssemblerConfig?.Version = value;
@@ -45,7 +45,7 @@ public sealed class MipsArchitectureConfig : IArchitectureConfig
     public MipsAssemblerConfig AssemblerConfig
     {
         get;
-        set
+        init
         {
             field = value;
             value?.Version = Version;
@@ -56,7 +56,7 @@ public sealed class MipsArchitectureConfig : IArchitectureConfig
     public MipsEmulatorConfig EmulatorConfig
     {
         get;
-        set
+        init
         {
             field = value;
             value?.Version = Version;
@@ -67,7 +67,7 @@ public sealed class MipsArchitectureConfig : IArchitectureConfig
     public MipsLinkerConfig LinkerConfig
     {
         get;
-        set
+        init
         {
             field = value;
             value?.Version = Version;
@@ -79,4 +79,16 @@ public sealed class MipsArchitectureConfig : IArchitectureConfig
     EmulatorConfig IArchitectureConfig.EmulatorConfig => EmulatorConfig;
 
     LinkerConfig IArchitectureConfig.LinkerConfig => LinkerConfig;
+
+    /// <inheritdoc/>
+    public override object Clone()
+    {
+        return new MipsArchitectureConfig
+        {
+            Version = Version,
+            AssemblerConfig = (MipsAssemblerConfig)AssemblerConfig.Clone(),
+            EmulatorConfig = (MipsEmulatorConfig)EmulatorConfig.Clone(),
+            LinkerConfig = (MipsLinkerConfig)LinkerConfig.Clone()
+        };
+    }
 }

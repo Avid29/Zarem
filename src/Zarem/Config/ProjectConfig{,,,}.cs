@@ -35,4 +35,16 @@ public partial class ProjectConfig : IProjectConfig
 
     /// <inheritdoc/>
     public FormatConfig? FormatConfig { get; init; }
+
+    /// <inheritdoc/>
+    public object Clone()
+    {
+        return new ProjectConfig
+        {
+            Name = Name,
+            ConfigPath = ConfigPath,
+            ArchitectureConfig = (IArchitectureConfig?)ArchitectureConfig?.Clone(),
+            FormatConfig = (FormatConfig?)FormatConfig?.Clone()
+        };
+    }
 }
