@@ -526,7 +526,7 @@
                 <MenuFlyoutSeparator Visibility="{x:Bind ViewModel.MainViewModel.StatusViewModel.IsRunning, Mode=OneWay}" />
 
                 <!--  Execution Mode  -->
-                <MenuFlyoutSubItem
+                <!--<MenuFlyoutSubItem
                     x:Uid="/TitleBar/ExecutionModeMFSI"
                     IsEnabled="False"
                     Text="Execution Mode">
@@ -549,7 +549,7 @@
                         </RadioMenuFlyoutItem>
                     </MenuFlyoutSubItem.Items>
                 </MenuFlyoutSubItem>
-                <MenuFlyoutSeparator />
+                <MenuFlyoutSeparator />-->
 
                 <!--  Breakpoints  -->
                 <MenuFlyoutItem
