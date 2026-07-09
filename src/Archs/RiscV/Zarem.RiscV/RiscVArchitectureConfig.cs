@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Emulator.Config;
@@ -14,7 +15,7 @@ namespace Zarem.RiscV;
 /// <summary>
 /// An <see cref="IArchitectureConfig"/> for the RISC-V Architecture.
 /// </summary>
-public sealed class RiscVArchitectureConfig : IArchitectureConfig
+public sealed class RiscVArchitectureConfig : ConfigBase, IArchitectureConfig
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVArchitectureConfig"/> class.
@@ -80,4 +81,16 @@ public sealed class RiscVArchitectureConfig : IArchitectureConfig
     EmulatorConfig IArchitectureConfig.EmulatorConfig => EmulatorConfig;
 
     LinkerConfig IArchitectureConfig.LinkerConfig => LinkerConfig;
+
+    /// <inheritdoc/>
+    public override object Clone()
+    {
+        return new RiscVArchitectureConfig
+        {
+            VersionInfo = VersionInfo,
+            AssemblerConfig = (RiscVAssemblerConfig)AssemblerConfig.Clone(),
+            EmulatorConfig = (RiscVEmulatorConfig)EmulatorConfig.Clone(),
+            LinkerConfig = (RiscVLinkerConfig)LinkerConfig.Clone()
+        };
+    }
 }
