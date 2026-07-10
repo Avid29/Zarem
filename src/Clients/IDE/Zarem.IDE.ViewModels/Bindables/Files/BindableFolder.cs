@@ -25,7 +25,7 @@ public partial class BindableFolder : BindableFileTrackingFileItem<IFolder>, IBi
     /// <inheritdoc/>
     public override IFolder FileItem
     {
-        get => field;
+        get;
         set
         {
             if (SetProperty(ref field, value))

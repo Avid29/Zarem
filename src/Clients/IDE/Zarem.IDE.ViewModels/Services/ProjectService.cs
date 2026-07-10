@@ -71,7 +71,7 @@ public class ProjectService : IProjectService
     /// <inheritdoc/>
     public IProject? Project
     {
-        get => field;
+        get;
         set
         {
             field = value;

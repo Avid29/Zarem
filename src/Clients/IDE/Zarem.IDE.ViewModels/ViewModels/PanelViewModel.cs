@@ -14,7 +14,7 @@ namespace Zarem.IDE.ViewModels;
 /// <summary>
 /// A view model for tracking the open files.
 /// </summary>
-public class PanelViewModel : ObservableObject
+public partial class PanelViewModel : ObservableObject
 {
     private readonly ILocalizationService _localizationService;
     private readonly IPopupService _popupService;
@@ -35,17 +35,9 @@ public class PanelViewModel : ObservableObject
     /// <summary>
     /// Gets or sets the currently selected file.
     /// </summary>
-    public PageViewModel? CurrentPage
-    {
-        get;
-        set
-        {
-            if (SetProperty(ref field, value))
-            {
-                OnPropertyChanged(nameof(IsPageOpen));
-            }
-        }
-    }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsPageOpen))]
+    public partial PageViewModel? CurrentPage { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether or not a page is open.

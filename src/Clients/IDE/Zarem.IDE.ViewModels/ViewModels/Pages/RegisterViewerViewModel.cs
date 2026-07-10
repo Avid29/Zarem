@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Zarem.IDE.ViewModels.Pages;
 /// <summary>
 /// A view model for the register viewer.
 /// </summary>
-public class RegisterViewerViewModel : DebugPageViewModel
+public partial class RegisterViewerViewModel : DebugPageViewModel
 {
     private readonly IDispatcherService _dispatcherService;
 
@@ -45,11 +46,8 @@ public class RegisterViewerViewModel : DebugPageViewModel
     /// <summary>
     /// Gets or sets whether or not the debugger is halted.
     /// </summary>
-    public bool IsHalted
-    {
-        get => field;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial bool IsHalted { get; set; }
 
     /// <inheritdoc/>
     protected override void RegisterSession(DebugSession session)
