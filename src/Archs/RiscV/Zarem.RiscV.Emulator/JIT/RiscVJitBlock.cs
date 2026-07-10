@@ -14,7 +14,7 @@ public record RiscVJitBlock<T> : JitBlock<T, RiscVBlockDelegate<T>>
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVJitBlock{T}"/> class.
     /// </summary>
-    public RiscVJitBlock(RiscVBlockDelegate<T> @delegate, int size) : base(@delegate, size)
+    public RiscVJitBlock(RiscVBlockDelegate<T> @delegate, T size) : base(@delegate, size)
     {
     }
 }

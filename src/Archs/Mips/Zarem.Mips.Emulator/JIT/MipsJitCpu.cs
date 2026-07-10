@@ -7,6 +7,7 @@ using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.JIT;
+using Zarem.Mips.Emulator.JIT;
 using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Emulator.JIT;
@@ -59,7 +60,7 @@ public partial class MipsJitCpu<T> : MipsCpu<T>
             HandleTrap(trap);
 
         // Return the number of instructions executed.
-        return compiledBlock.Size;
+        return long.CreateTruncating(compiledBlock.Size);
     }
 
     private void OnAddressWritten(object? sender, ulong e)

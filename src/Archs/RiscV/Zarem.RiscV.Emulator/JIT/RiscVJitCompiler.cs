@@ -25,7 +25,6 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
     private delegate void RiscVEmitter(ILGenerator il, RiscVInstruction inst, T pc);
 
     private readonly RiscVInstructionDecodeTable<RiscVEmitter> _instructionTable;
-
     private readonly RiscVJitCpu<T> _cpu;
 
     private readonly HashSet<RiscVGpRegister> _loadRegs = [];
@@ -67,7 +66,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
         }
 
         var @delegate = (RiscVBlockDelegate<T>)method.CreateDelegate(typeof(RiscVBlockDelegate<T>));
-        return new(@delegate, int.CreateTruncating(endPc - startPc));
+        return new(@delegate, endPc - startPc);
     }
 
     /// <summary>
