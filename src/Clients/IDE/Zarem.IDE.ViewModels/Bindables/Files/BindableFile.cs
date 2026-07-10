@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2024
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Zarem.IDE.Bindables.Files.Abstract;
@@ -26,18 +27,10 @@ public partial class BindableFile : BindableFileItem<IFile>, IBindableFile
     }
 
     /// <inheritdoc/>
-    public override IFile FileItem
-    {
-        get;
-        set
-        {
-            if (SetProperty(ref field, value))
-            {
-                OnPropertyChanged(nameof(Name));
-                OnPropertyChanged(nameof(Path));
-            }
-        }
-    }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Name))]
+    [NotifyPropertyChangedFor(nameof(Path))]
+    public override partial IFile FileItem { get; set; }
 
     /// <inheritdoc/>
     public SourceFile? SourceFile { get; init; }

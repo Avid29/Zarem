@@ -11,7 +11,7 @@ namespace Zarem.IDE.ViewModels;
 /// <summary>
 /// A view model for the status bar.
 /// </summary>
-public class StatusViewModel : ObservableRecipient
+public partial class StatusViewModel : ObservableRecipient
 {
     private readonly IMessenger _messenger;
     private readonly IStateService _stateService;
@@ -64,9 +64,6 @@ public class StatusViewModel : ObservableRecipient
     /// <summary>
     /// Gets the build status message.
     /// </summary>
-    public string? StatusMessage
-    {
-        get;
-        private set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial string? StatusMessage { get; private set; }
 }

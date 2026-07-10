@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Linq;
 using Zarem.DebugSessions;
@@ -11,7 +12,7 @@ namespace Zarem.IDE.ViewModels.Pages;
 /// <summary>
 /// A view model for the graphical output viewer.
 /// </summary>
-public class GraphicalOutputPageViewModel : DebugPageViewModel
+public partial class GraphicalOutputPageViewModel : DebugPageViewModel
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="GraphicalOutputPageViewModel"/> class.
@@ -27,11 +28,8 @@ public class GraphicalOutputPageViewModel : DebugPageViewModel
     /// <summary>
     /// Gets or sets the graphics device being viewed.
     /// </summary>
-    public IGraphicsDevice? GraphicsDevice
-    {
-        get => field;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial IGraphicsDevice? GraphicsDevice { get; set; }
 
     /// <inheritdoc/>
     protected override void RegisterSession(DebugSession session)

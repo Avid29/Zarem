@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
@@ -51,36 +52,20 @@ public partial class CreateProjectViewModel : PageViewModel
     /// <summary>
     /// Gets or sets the name of the project to create.
     /// </summary>
-    public string? ProjectName
-    {
-        get;
-        set
-        {
-            if(SetProperty(ref field, value))
-            {
-                OnPropertyChanged(nameof(CreationPath));
-                OnPropertyChanged(nameof(NameConflict));
-                OnPropertyChanged(nameof(ReadyToCreate));
-            }
-        }
-    }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CreationPath))]
+    [NotifyPropertyChangedFor(nameof(NameConflict))]
+    [NotifyPropertyChangedFor(nameof(ReadyToCreate))]
+    public partial string? ProjectName { get; set; }
 
     /// <summary>
     /// Gets or sets the path of the folder to create the folder in.
     /// </summary>
-    public string? FolderPath
-    {
-        get;
-        set
-        {
-            if (SetProperty(ref field, value))
-            {
-                OnPropertyChanged(nameof(CreationPath));
-                OnPropertyChanged(nameof(NameConflict));
-                OnPropertyChanged(nameof(ReadyToCreate));
-            }
-        }
-    }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CreationPath))]
+    [NotifyPropertyChangedFor(nameof(NameConflict))]
+    [NotifyPropertyChangedFor(nameof(ReadyToCreate))]
+    public partial string? FolderPath { get; set; }
 
     /// <summary>
     /// Gets the path where the project will be created.
@@ -104,11 +89,8 @@ public partial class CreateProjectViewModel : PageViewModel
     /// <summary>
     /// Gets or sets the selected architecture for the project.
     /// </summary>
-    public IArchitectureDescriptor Architecture
-    {
-        get => field;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial IArchitectureDescriptor Architecture { get; set; }
 
     /// <summary>
     /// Gets a list of available architectures.
@@ -118,11 +100,8 @@ public partial class CreateProjectViewModel : PageViewModel
     /// <summary>
     /// Gets or sets the selected module format for the project.
     /// </summary>
-    public IModuleFormatDescriptor ModuleFormat
-    {
-        get => field;
-        set => SetProperty(ref field, value); 
-    }
+    [ObservableProperty]
+    public partial IModuleFormatDescriptor ModuleFormat { get; set; }
 
     /// <summary>
     /// Gets a list of the avilable formats

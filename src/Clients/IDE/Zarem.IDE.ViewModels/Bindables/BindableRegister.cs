@@ -11,7 +11,7 @@ namespace Zarem.IDE.Bindables;
 /// <summary>
 /// A bindable wrapper for viewing a register.
 /// </summary>
-public class BindableRegister : ObservableObject
+public partial class BindableRegister : ObservableObject
 {
     private readonly IRegisterViewer _group;
 
@@ -45,11 +45,8 @@ public class BindableRegister : ObservableObject
     /// <summary>
     /// Gets or sets the register's display mode.
     /// </summary>
-    public RegisterDisplayMode DisplayMode
-    {
-        get => field;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial RegisterDisplayMode DisplayMode { get; set; }
 
     /// <summary>
     /// Invalidates the current <see cref="Value"/> and invokes a property changed.

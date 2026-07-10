@@ -2,12 +2,11 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Zarem.ViewModels.Pages;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Files;
-using Zarem.Emulator.Config.Enums;
+using Zarem.ViewModels.Pages;
 
 namespace Zarem.IDE.ViewModels;
 
@@ -50,11 +49,8 @@ public partial class MainViewModel : ObservableRecipient
     /// <summary>
     /// Gets the currently focused <see cref="PanelViewModel"/>.
     /// </summary>
-    public PanelViewModel? FocusedPanel
-    {
-        get;
-        private set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial PanelViewModel? FocusedPanel { get; private set; }
 
     /// <summary>
     /// Gets a list of all panels.
