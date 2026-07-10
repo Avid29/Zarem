@@ -27,6 +27,8 @@ public class RiscVJitCpu<T> : RiscVCpu<T>
     {
         _blockCache = new();
         _jitCompiler = new RiscVJitCompiler<T>(this);
+
+        bus.AddressWritten += OnAddressWritten;
     }
 
     /// <inheritdoc/>
@@ -57,5 +59,13 @@ public class RiscVJitCpu<T> : RiscVCpu<T>
 
         // Return the number of instructions executed.
         return long.CreateTruncating(compiledBlock.Size);
+    }
+
+    private void OnAddressWritten(object? sender, ulong e)
+    {
+        // Invalidate the JIT cache for the page that was modified.
+        // This allows self-modifying code to work correctly, as the next time the CPU tries to execute
+        // from that address, it will recompile the block.
+        _blockCache.InvalidateBlock(T.CreateTruncating(e));
     }
 }
