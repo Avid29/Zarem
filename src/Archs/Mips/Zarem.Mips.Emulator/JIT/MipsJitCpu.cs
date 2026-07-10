@@ -65,7 +65,9 @@ public partial class MipsJitCpu<T> : MipsCpu<T>
 
     private void OnAddressWritten(object? sender, ulong e)
     {
-        // TODO: Targeted block invalidation
-        _blockCache.Clear();
+        // Invalidate the JIT cache for the page that was modified.
+        // This allows self-modifying code to work correctly, as the next time the CPU tries to execute
+        // from that address, it will recompile the block.
+        _blockCache.InvalidatePage(T.CreateTruncating(e));
     }
 }
