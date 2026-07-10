@@ -105,7 +105,6 @@ public partial class RiscVRegisterTable : RegisterTable<RiscVGpRegister, RiscVRe
                 { RiscVGpRegister.Temporary1, RiscVRegisterCategory.Temporary },
                 { RiscVGpRegister.Temporary2, RiscVRegisterCategory.Temporary },
                 { RiscVGpRegister.Saved0, RiscVRegisterCategory.Saved },
-                { RiscVGpRegister.FramePointer, RiscVRegisterCategory.Special },
                 { RiscVGpRegister.Saved1, RiscVRegisterCategory.Saved },
                 { RiscVGpRegister.Argument0, RiscVRegisterCategory.Argument },
                 { RiscVGpRegister.Argument1, RiscVRegisterCategory.Argument },
