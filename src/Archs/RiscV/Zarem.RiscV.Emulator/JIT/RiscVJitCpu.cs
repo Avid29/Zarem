@@ -56,6 +56,6 @@ public class RiscVJitCpu<T> : RiscVCpu<T>
             HandleTrap(trap);
 
         // Return the number of instructions executed.
-        return compiledBlock.Size;
+        return long.CreateTruncating(compiledBlock.Size);
     }
 }

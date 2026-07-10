@@ -11,6 +11,7 @@ using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Mips.Emulator.JIT;
 using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
@@ -96,7 +97,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         }
 
         var @delegate = (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
-        return new(@delegate, int.CreateTruncating(endPc - startPc));
+        return new(@delegate, endPc - startPc);
     }
 
     /// <summary>

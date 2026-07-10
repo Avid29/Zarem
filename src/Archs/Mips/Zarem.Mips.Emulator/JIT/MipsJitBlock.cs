@@ -1,8 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
+using Zarem.Emulator.JIT;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.Mips.Emulator.JIT;
 
 /// <summary>
 /// A record for a MIPS JIT Block.
@@ -13,7 +14,7 @@ public record MipsJitBlock<T> : JitBlock<T, MipsBlockDelegate<T>>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsJitBlock{T}"/> class.
     /// </summary>
-    public MipsJitBlock(MipsBlockDelegate<T> @delegate, int size) : base(@delegate, size)
+    public MipsJitBlock(MipsBlockDelegate<T> @delegate, T size) : base(@delegate, size)
     {
     }
 }
