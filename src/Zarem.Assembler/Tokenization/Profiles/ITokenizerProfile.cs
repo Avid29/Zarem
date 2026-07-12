@@ -32,6 +32,14 @@ public interface ITokenizerProfile
     char RegisterPrefix { get; }
 
     /// <summary>
+    /// Gets the character prefix for an explicit relocation in the for the tokenizer.
+    /// </summary>
+    /// <remarks>
+    /// For example, @ in GNU/AT-T x86 or % in MIPS/RISC-V.
+    /// </remarks>
+    char RelocationPrefix { get; }
+
+    /// <summary>
     /// Gets the regex for identifying a register in the ISA.
     /// </summary>
     /// <remarks>
@@ -39,4 +47,13 @@ public interface ITokenizerProfile
     /// Otherwise, any token that begins with the prefix can be classified by the regex (which should include the prefix).
     /// </remarks>
     Regex RegisterRegex { get; }
+
+    /// <summary>
+    /// Gets the regex for identifying valid explicit relocation symbols in the ISA.
+    /// </summary>
+    /// <remarks>
+    /// If the ISA relocation prefix does not conflict with any other token types, this regex can be a simple match for the prefix.
+    /// Otherwise, it should be a more specific regex that matches valid relocation symbols.
+    /// </remarks>
+    Regex RelocationRegex { get; }
 }

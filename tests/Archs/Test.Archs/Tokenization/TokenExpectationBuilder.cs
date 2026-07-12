@@ -46,6 +46,22 @@ public class TokenExpectationBuilder
         return Append(imm, TokenType.Immediate);
     }
 
+    public TokenExpectationBuilder Reloc(string reloc, bool prefix = false)
+    {
+        if (prefix && _profile.RelocationPrefix is not '\0')
+        {
+            Append($"{_profile.RelocationPrefix}", TokenType.RelocationPrefix);
+        }
+
+        return Append(reloc, TokenType.Relocation);
+    }
+
     public TokenExpectationBuilder Comma()
         => Append(",", TokenType.Comma);
+
+    public TokenExpectationBuilder Open()
+        => Append("(", TokenType.OpenParenthesis);
+
+    public TokenExpectationBuilder Close()
+        => Append(")", TokenType.CloseParenthesis);
 }

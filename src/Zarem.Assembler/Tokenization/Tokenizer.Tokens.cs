@@ -8,6 +8,7 @@ using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Tokenization.Models;
 using System.Runtime.CompilerServices;
+using Zarem.Assembler.Tokenization.Profiles;
 
 namespace Zarem.Assembler.Tokenization;
 
@@ -34,7 +35,9 @@ public partial class Tokenizer
                 return false;
 
             // Track if the new token is meaningful
-            bool meaningful = newToken.Type is not (TokenType.Comment or TokenType.Whitespace or TokenType.RegisterPrefix or TokenType.ImmediatePrefix);
+            bool meaningful = newToken.Type is not
+                (TokenType.Comment or TokenType.Whitespace or
+                TokenType.RegisterPrefix or TokenType.ImmediatePrefix or TokenType.RelocationPrefix);
 
             if (meaningful || _mode is TokenizerMode.IDE or TokenizerMode.BehaviorExpression)
                 classified.Add(newToken);
@@ -49,7 +52,7 @@ public partial class Tokenizer
                 classified = [];
                 _state = TokenizerState.LineBegin;
             }
-            else if (meaningful && newToken.Type is not (TokenType.LabelDeclaration or TokenType.RegisterPrefix or TokenType.ImmediatePrefix))
+            else if (meaningful && newToken.Type is not (TokenType.LabelDeclaration or TokenType.RegisterPrefix or TokenType.ImmediatePrefix or TokenType.RelocationPrefix))
             {
                 // If a meaningful token was appended, we are no longer at the start. 
                 // we also remain at the start after label declarations
@@ -70,7 +73,7 @@ public partial class Tokenizer
         advance = 1;
 
         // Stage 1: Trivial classifications
-        if (TrySimpleReclass(tokens[0], out var simple))
+        if (TrySimpleReclass(tokens[0], tokens, out var simple))
             return simple;
 
         // Stage 2: Multi-token merges (registers, directives, and labels)
@@ -86,7 +89,7 @@ public partial class Tokenizer
         return tokens[0];
     }
 
-    private bool TrySimpleReclass(Token current, out Token? classified)
+    private bool TrySimpleReclass(Token current, ReadOnlySpan<Token> tokens, out Token? classified)
     {
         classified = null;
 
@@ -124,16 +127,25 @@ public partial class Tokenizer
         // Handle prefixes
         if (current.Source.Length is 1)
         {
+            // Handle register prefix
             if (_profile.RegisterPrefix != '\0' && current.Source[0] == _profile.RegisterPrefix)
             {
                 type = TokenType.RegisterPrefix;
                 _state = TokenizerState.RegisterPrefixed;
             }
-
+            // Handle immediate prefix
             else if (_profile.ImmediatePrefix != '\0' && current.Source[0] == _profile.ImmediatePrefix)
             {
                 type = TokenType.ImmediatePrefix;
                 _state = TokenizerState.ImmediatePrefixed;
+            }
+            // Handle relocation prefix
+            // The relocation prefix can conflict with other token types, so we need to check the next token to see if it is a valid relocation symbol
+            else if (_profile.RelocationPrefix != '\0' && current.Source[0] == _profile.RelocationPrefix &&
+                _profile.RelocationRegex.IsMatch(Peek(tokens)?.Source ?? ""))
+            {
+                type = TokenType.RelocationPrefix;
+                _state = TokenizerState.RelocationPrefixed;
             }
         }
 
@@ -150,6 +162,14 @@ public partial class Tokenizer
     {
         var current = tokens[0];
         var peek = Peek(tokens);
+
+        // Handle explicit relocation
+        if (_state is TokenizerState.RelocationPrefixed)
+        {
+            merged = ReClassify(TokenType.Relocation, current);
+            advance = 1;
+            return true;
+        }
 
         // Handle register 
         if (_profile.RegisterPrefix is '\0' && _state is not TokenizerState.LineBegin)

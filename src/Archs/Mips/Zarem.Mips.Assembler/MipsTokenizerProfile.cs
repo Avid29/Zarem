@@ -16,13 +16,16 @@ public partial class MipsTokenizerProfile : ITokenizerProfile
     public static MipsTokenizerProfile Default { get; } = new();
 
     /// <inheritdoc/>
-    public char RegisterPrefix => '$';
+    public char CommentPrefix => '#';
 
     /// <inheritdoc/>
     public char ImmediatePrefix => '\0';
 
     /// <inheritdoc/>
-    public char CommentPrefix => '#';
+    public char RegisterPrefix => '$';
+
+    /// <inheritdoc/>
+    public char RelocationPrefix => '%';
 
     /// <inheritdoc/>
     /// <remarks>
@@ -31,7 +34,12 @@ public partial class MipsTokenizerProfile : ITokenizerProfile
     /// </remarks>
     public Regex RegisterRegex { get; } = GetRegisterRegex();
 
-    [GeneratedRegex(@"^\$(zero|at|v[0-1]|a[0-3]|t[0-9]|s[0-7]|k[0-1]|gp|sp|fp|ra|[0-9]|[1-2][0-9]|3[0-1])$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    /// <inheritdoc/>
+    public Regex RelocationRegex { get; } = GetRelocationRegex();
+
+    [GeneratedRegex(@"^(zero|at|v[0-1]|a[0-3]|t[0-9]|s[0-7]|k[0-1]|gp|sp|fp|ra|[0-9]|[1-2][0-9]|3[0-1])$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex GetRegisterRegex();
 
+    [GeneratedRegex(@"^(hi|lo|got|pcrel_hi|pcrel_lo|call16|got_hi|got_lo|got_disp|got_page|got_ofst|neg|gp_rel|tlsgd|tlsldm|dtprel_hi|dtprel_lo|tprel_hi|tprel_lo)$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    private static partial Regex GetRelocationRegex();
 }
