@@ -28,5 +28,8 @@ public enum Operation
     Negation,
     Not,
 
+    // Other
+    Function,
+
 #pragma warning restore CS1591
 }

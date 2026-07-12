@@ -135,6 +135,8 @@ public readonly partial struct ExpressionParser
             TokenType.Operator when TryGetUnaryOperator(token.Source, out var op)
                 => TryParseUnaryOperator(ref tokens, token, op, out result),
 
+            TokenType.Relocation => TryParseRelocation(ref tokens, token, out result),
+
             _ => _logger?.Log(Severity.Error, LogId.UnexpectedToken, token, "UnexpectedToken", token) ?? false,
         };
 
@@ -260,6 +262,41 @@ public readonly partial struct ExpressionParser
         result = new UnaryOperNode(opToken, op)
         {
             Child = child
+        };
+        return true;
+    }
+
+    private bool TryParseRelocation(ref ReadOnlySpan<Token> tokens, Token token, [NotNullWhen(true)] out ExpNode? result)
+    {
+        result = null;
+
+        // The relocation operator must be followed by an open parenthesis
+        if (tokens.IsEmpty || tokens[0].Type is not TokenType.OpenParenthesis)
+        {
+            _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "ExpectedOpenParenthesis", token);
+            return false;
+        }
+
+        // Consume the open parenthesis
+        var openParenToken = tokens.Next();
+        Guard.IsNotNull(openParenToken);
+
+        // Parse the inner expression with a minimum binding power of 0
+        var inner = ParsePrecedence(ref tokens, 0);
+        if (inner is null)
+            return false; // Child node could not be parsed. Error already logged
+
+        if (tokens.IsEmpty || tokens[0].Type is not TokenType.CloseParenthesis)
+        {
+            _logger?.Log(Severity.Error, LogId.UnparsableExpression, token, "ExpectedClosingParenthesis", token);
+            return false;
+        }
+
+        // Consume the closing parenthesis
+        tokens.Next();
+        result = new RelocationNode(token)
+        {
+            Child = inner
         };
         return true;
     }

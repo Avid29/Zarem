@@ -275,6 +275,28 @@ public readonly struct Evaluator<T>
         return true;
     }
 
+    /// <summary>
+    /// Attempts to perform a relocation operation.
+    /// </summary>
+    /// <param name="node">The relocation node.</param>
+    /// <param name="value">The expression value.</param>
+    /// <param name="result">The result of the relocation operation.</param>
+    /// <returns>Whether or not the relocation operation was successful.</returns>
+    public readonly bool TryRelocation(RelocationNode node, ExpressionResult<T> value, out ExpressionResult<T> result)
+    {
+        result = default;
+
+        // Cannot wrap an explicit relocation operation in another relocation operation
+        if (value.RelocationNode is not null)
+        {
+            Logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "NestedRelocation");
+            return false;
+        }
+
+        result = new(value.Addend, value.SymbolNode, node);
+        return true;
+    }
+
     private readonly bool CheckRelocatable(BinaryOperNode node, ExpressionResult<T> left, ExpressionResult<T> right, string operation)
     {
         return CheckRelocatable(node.LeftChild, left, operation) || CheckRelocatable(node.RightChild, right, operation);

@@ -16,10 +16,11 @@ public readonly struct ExpressionResult<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="ExpressionResult{T}"/> struct.
     /// </summary>
-    public ExpressionResult(T value, SymbolNode? reference = null)
+    public ExpressionResult(T value, SymbolNode? reference = null, RelocationNode? relocation = null)
     {
         Addend = value;
         SymbolNode = reference;
+        RelocationNode = relocation;
     }
 
     /// <summary>
@@ -40,6 +41,11 @@ public readonly struct ExpressionResult<T>
     /// Gets the symbol node referenced in the expression.
     /// </summary>
     public SymbolNode? SymbolNode { get; }
+
+    /// <summary>
+    /// Gets the relocation node referenced in the expression.
+    /// </summary>
+    public RelocationNode? RelocationNode { get; }
 
     /// <summary>
     /// Gets the symbol referenced in the expression.
