@@ -53,6 +53,11 @@ public readonly struct ExpressionResult<T>
     public Symbol? Symbol => SymbolNode?.Value;
 
     /// <summary>
+    /// Gets the relocation type for the expression.
+    /// </summary>
+    public string? RelocationType => RelocationNode?.RelocationType;
+
+    /// <summary>
     /// Gets whether or not the expression is absolute.
     /// </summary>
     [MemberNotNullWhen(false, nameof(Symbol))]

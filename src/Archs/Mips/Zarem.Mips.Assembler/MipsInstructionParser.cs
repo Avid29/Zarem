@@ -241,17 +241,6 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
     /// </summary>
     private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, MipsArgument target)
     {
-        var type = target switch
-        {
-            MipsArgument.Address => MipsReferenceType.JumpTarget26,
-            MipsArgument.Immediate => MipsReferenceType.Low16,
-            MipsArgument.Offset => MipsReferenceType.PCRelative16,
-            MipsArgument.LargeOffset => MipsReferenceType.PCRelative26,
-            // FullImmediate triggers a HI/LO pair
-            MipsArgument.FullImmediate => MipsReferenceType.High16,
-            _ => MipsReferenceType.None,
-        };
-
         // Determine casting details for the argument
         (int bitCount, int shiftAmount, bool signed) = target switch
         {
@@ -266,6 +255,38 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
 
         if (!TryParseExpression(arg, bitCount, shiftAmount, signed, out var expResult))
             return false;
+
+        MipsReferenceType requestedType = MipsReferenceType.None;
+
+        if (expResult.RelocationType is not null)
+        {
+            requestedType = expResult.RelocationType switch
+            {
+                "hi" => MipsReferenceType.High16,
+                "lo" => MipsReferenceType.Low16,
+                "got" => MipsReferenceType.GlobalOffsetTable16,
+                "call16" => MipsReferenceType.Call16,
+                _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsReferenceType>($"Relocation type '{expResult.RelocationType}' is not supported for MIPS."),
+            };
+
+            if (bitCount != 16)
+            {
+                _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
+                return false;
+            }
+        }
+
+        // Determine the reference type based on the target argument type and requested relocation type
+        var type = requestedType is MipsReferenceType.None ? target switch
+        {
+            MipsArgument.Address => MipsReferenceType.JumpTarget26,
+            MipsArgument.Immediate => MipsReferenceType.Low16,
+            MipsArgument.Offset => MipsReferenceType.PCRelative16,
+            MipsArgument.LargeOffset => MipsReferenceType.PCRelative26,
+
+            // FullImmediate is handled since it triggers a HI/LO pair
+            MipsArgument.FullImmediate or _ => MipsReferenceType.None,
+        } : requestedType;
 
         if (expResult.IsSymbolic)
         {
