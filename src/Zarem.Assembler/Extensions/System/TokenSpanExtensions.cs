@@ -70,6 +70,25 @@ public static class TokenSpanExtensions
     }
 
     /// <summary>
+    /// Gets the index of the last instance of a token type in a span of tokens.
+    /// </summary>
+    /// <param name="line">The line to scan.</param>
+    /// <param name="type">The type of the token to find.</param>
+    /// <param name="token">The token found.</param>
+    /// <returns>The index of the last token of the <paramref name="type"/>, or -1 if none is found.</returns>
+    public static int FindLast(this ReadOnlySpan<Token> line, TokenType type, out Token? token)
+    {
+        for (int i = line.Length - 1; i >= 0; i--)
+        {
+            token = line[i];
+            if (token.Type == type)
+                return i;
+        }
+        token = null;
+        return -1;
+    }
+
+    /// <summary>
     /// Converts a token span into a string.
     /// </summary>
     public static string Print(this ReadOnlySpan<Token> line)

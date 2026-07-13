@@ -253,8 +253,8 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         register = [];
 
         // Find matched parenthesis start and end
-        var parIndex = arg.FindNext(TokenType.OpenParenthesis, out _);
-        var closeIndex = arg.FindNext(TokenType.CloseParenthesis, out _);
+        var parIndex = arg.FindLast(TokenType.OpenParenthesis, out _);
+        var closeIndex = arg.FindLast(TokenType.CloseParenthesis, out _);
         if (parIndex is -1 || closeIndex is -1)
         {
             // TODO: Improve messaging
