@@ -294,6 +294,12 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
         {
             References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
         }
+        else if (type is MipsReferenceType.High16)
+        {
+            // TODO: Remove hacky solution to adjust offsets
+            // on constants
+            Immediate >>= 16;
+        }
 
         return true;
     }

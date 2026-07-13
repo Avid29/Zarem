@@ -59,7 +59,7 @@
     "added_in": "MipsI",
     "expansion": [
       "lui ${rt}, %hi((${imm32}) >> 16)",
-      "ori ${rt}, ${rt}, %lo((${imm32}) & 0xFFFF)"
+      "addiu ${rt}, ${rt}, %lo(${imm32})"
     ]
   },
   {
@@ -91,8 +91,8 @@
     "args": [ "rd", "imm32" ],
     "added_in": "MipsI",
     "expansion": [
-      "lui ${rd}, %hi((${imm32}) >> 16)",
-      "ori ${rd}, ${rd}, %lo((${imm32}) & 0xFFFF)"
+      "lui ${rd}, %hi(${imm32})",
+      "addiu ${rd}, ${rd}, %lo(${imm32})"
     ]
   },
   {
