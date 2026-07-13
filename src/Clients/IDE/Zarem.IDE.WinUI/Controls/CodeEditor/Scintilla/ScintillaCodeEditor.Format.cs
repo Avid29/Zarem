@@ -17,11 +17,12 @@ public partial class ScintillaCodeEditor
     private const int RegisterStyleIndex = 2;
     private const int ImmediateStyleIndex = 3;
     private const int ReferenceStyleIndex = 4;
-    private const int OperatorStyleIndex = 5;
-    private const int DirectiveStyleIndex = 6;
-    private const int StringStyleIndex = 7;
-    private const int CommentStyleIndex = 8;
-    private const int MacroStyleIndex = 9;
+    private const int RelocationStyleIndex = 5;
+    private const int OperatorStyleIndex = 6;
+    private const int DirectiveStyleIndex = 7;
+    private const int StringStyleIndex = 8;
+    private const int CommentStyleIndex = 9;
+    private const int MacroStyleIndex = 10;
 
     // 14 is reserved for the line indicators
 
@@ -41,6 +42,7 @@ public partial class ScintillaCodeEditor
         editor.StyleSetFore(RegisterStyleIndex, ToInt(ColorScheme.RegisterHighlightColor));
         editor.StyleSetFore(ImmediateStyleIndex, ToInt(ColorScheme.ImmediateHighlightColor));
         editor.StyleSetFore(ReferenceStyleIndex, ToInt(ColorScheme.ReferenceHighlightColor));
+        editor.StyleSetFore(RelocationStyleIndex, ToInt(ColorScheme.RelocationHighlightColor));
         editor.StyleSetFore(OperatorStyleIndex, ToInt(ColorScheme.OperatorHighlightColor));
         editor.StyleSetFore(DirectiveStyleIndex, ToInt(ColorScheme.DirectiveHighlightColor));
         editor.StyleSetFore(StringStyleIndex, ToInt(ColorScheme.StringHighlightColor));
@@ -92,6 +94,7 @@ public partial class ScintillaCodeEditor
                     TokenType.Instruction => InstructionStyleIndex,
                     TokenType.Register or TokenType.RegisterPrefix => RegisterStyleIndex,
                     TokenType.Immediate or TokenType.ImmediatePrefix => ImmediateStyleIndex,
+                    TokenType.Relocation or TokenType.RelocationPrefix => RelocationStyleIndex,
 
                     TokenType.Reference or
                     TokenType.LabelDeclaration => ReferenceStyleIndex,

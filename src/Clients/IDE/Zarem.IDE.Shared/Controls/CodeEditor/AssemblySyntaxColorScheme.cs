@@ -76,6 +76,11 @@ public partial class AssemblySyntaxColorScheme : DependencyObject
     public Color ReferenceHighlightColor { get; private set; }
 
     /// <summary>
+    /// Gets or sets the color to use for highlighting relocation tokens.
+    /// </summary>
+    public Color RelocationHighlightColor { get; private set; }
+
+    /// <summary>
     /// Gets or sets the color to use for highlighting operator tokens.
     /// </summary>
     public Color OperatorHighlightColor { get; private set; }
@@ -147,6 +152,7 @@ public partial class AssemblySyntaxColorScheme : DependencyObject
         RegisterHighlightColor = syntax.Register.ToColor();
         ImmediateHighlightColor = syntax.Immediate.ToColor();
         ReferenceHighlightColor = syntax.Reference.ToColor();
+        RelocationHighlightColor = syntax.Relocation.ToColor();
         OperatorHighlightColor = syntax.Operator.ToColor();
         DirectiveHighlightColor = syntax.Directive.ToColor();
         StringHighlightColor = syntax.String.ToColor();
