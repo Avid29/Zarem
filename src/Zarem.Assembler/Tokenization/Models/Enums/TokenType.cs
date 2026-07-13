@@ -23,6 +23,8 @@ public enum TokenType
     ImmediatePrefix,
     Immediate,
     Directive,
+    RelocationPrefix,
+    Relocation,
     Operator,
 
     LabelDeclaration,

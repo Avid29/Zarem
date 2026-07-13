@@ -8,6 +8,7 @@
     "register": "#B48C00",
     "immediate": "#1EB400",
     "reference": "#CC0000",
+    "relocation": "#CCCCCC",
     "operator": "#CCCCCC",
     "directive": "#FF7EFF",
     "string": "#D9FF00",

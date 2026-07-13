@@ -19,5 +19,11 @@ public abstract class AttSyntaxProfile : ITokenizerProfile
     public char RegisterPrefix => '%';
 
     /// <inheritdoc/>
+    public char RelocationPrefix => '%';
+
+    /// <inheritdoc/>
     public abstract Regex RegisterRegex { get; }
+
+    /// <inheritdoc/>
+    public abstract Regex RelocationRegex { get; }
 }

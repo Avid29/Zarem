@@ -34,6 +34,12 @@ public record SyntaxHighlightingScheme
     public required string Reference { get; init; }
 
     /// <summary>
+    /// Gets the syntax highlighting color for references.
+    /// </summary>
+    [JsonPropertyName("relocation")]
+    public required string Relocation { get; init; }
+
+    /// <summary>
     /// Gets the syntax highlighting color for operators.
     /// </summary>
     [JsonPropertyName("operator")]

@@ -177,4 +177,7 @@
   <data name="Needs64BitVersion" xml:space="preserve">
     <value>הפקודה '{0}' זמינה רק בגרסאות 64 סיביות של MIPS.</value>
   </data>
+  <data name="InvalidRelocationType" xml:space="preserve">
+    <value>Invalid relocation type %{0}.</value>
+  </data>
 </root>

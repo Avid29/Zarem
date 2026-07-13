@@ -130,6 +130,7 @@ public partial class ZaremCodeEditor
                 TokenType.Instruction => ColorScheme.InstructionHighlightColor,
                 TokenType.Register or TokenType.RegisterPrefix => ColorScheme.RegisterHighlightColor,
                 TokenType.Immediate or TokenType.ImmediatePrefix => ColorScheme.ImmediateHighlightColor,
+                TokenType.Relocation or TokenType.RelocationPrefix => ColorScheme.RelocationHighlightColor,
 
                 TokenType.Reference or
                 TokenType.LabelDeclaration => ColorScheme.ReferenceHighlightColor,

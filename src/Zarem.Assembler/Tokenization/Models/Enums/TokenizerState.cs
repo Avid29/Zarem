@@ -22,8 +22,7 @@ public enum TokenizerState
     ArgumentPhase,
     RegisterPrefixed,
     ImmediatePrefixed,
-
-
+    RelocationPrefixed,
 
 #pragma warning restore CS1591
 }

@@ -22,5 +22,14 @@ public class MipsTokenizerTests : TokenizerTester
         await RunTest("ori $s0, $zero, 10", tokensBuilder.Build());
     }
 
+    [TestMethod("ori $s0, $zero, %hi(10)")]
+    public async Task RelocTest()
+    {
+        var tokensBuilder = new TokenExpectationBuilder(MipsTokenizerProfile.Default)
+            .Instruction("ori").Reg("s0").Comma().Reg("zero").Comma().Reloc("hi").Open().Imm("10").Close();
+
+        await RunTest("ori $s0, $zero, %hi(10)", tokensBuilder.Build());
+    }
+
     private static async Task RunTest(string text, params (string, TokenType)[] canon) => await RunTest(text, MipsTokenizerProfile.Default, canon);
 }

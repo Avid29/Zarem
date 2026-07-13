@@ -44,6 +44,7 @@ public abstract class OperNode : ExpNode
         Operation.Negation => 1,
         Operation.UnaryPlus => 1,
         Operation.Not => 1,
+        Operation.Function => 0,
         _ => ThrowHelper.ThrowArgumentException<int>("Cannot assess priority of invalid operation.")
     };
 }

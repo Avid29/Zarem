@@ -35,17 +35,32 @@ public class SettingsService : ISettingsService
     private void EstablishDefaults()
     {
         // App
-        Local.SetValue(SettingsKeys.AppTheme, Theme.Default, false);
-        Local.SetValue<string?>(SettingsKeys.LanguageOverride, null, false);
-        Local.SetValue(SettingsKeys.RestoreOpenProject, true, false);
+        ValidateSetting(SettingsKeys.AppTheme, Theme.Default);
+        ValidateSetting<string?>(SettingsKeys.LanguageOverride, null);
+        ValidateSetting(SettingsKeys.RestoreOpenProject, true);
 
         // Editor
-        Local.SetValue(SettingsKeys.RealTimeAssembly, true, false);
-        Local.SetValue(SettingsKeys.AnnotationThreshold, AnnotationThreshold.Errors, false);
-        Local.SetValue($"{SettingsKeys.EditorColorSchemeBase}-Dark", SettingsKeys.DefaultDarkColorScheme, false);
-        Local.SetValue($"{SettingsKeys.EditorColorSchemeBase}-Light", SettingsKeys.DefaultLightColorScheme, false);
+        ValidateSetting(SettingsKeys.RealTimeAssembly, true);
+        ValidateSetting(SettingsKeys.AnnotationThreshold, AnnotationThreshold.Errors);
+        ValidateSetting($"{SettingsKeys.EditorColorSchemeBase}-Dark", SettingsKeys.DefaultDarkColorScheme);
+        ValidateSetting($"{SettingsKeys.EditorColorSchemeBase}-Light", SettingsKeys.DefaultLightColorScheme);
 
         // Assembler
-        Local.SetValue<string?>(SettingsKeys.AssemblerLanguageOverride, null, false);
+        ValidateSetting<string?>(SettingsKeys.AssemblerLanguageOverride, null);
+    }
+
+    private void ValidateSetting<T>(string key, T defaultValue)
+    {
+        bool isValid = true;
+        try
+        {
+            Local.GetValue<T>(key);
+        }
+        catch
+        {
+            isValid = false;
+        }
+
+        Local.SetValue(key, defaultValue, !isValid);
     }
 }

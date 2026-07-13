@@ -32,6 +32,7 @@ public enum LogId : uint
     ExternalBranching,
     IntegerTruncated,
     InvalidRelocatable,
+    InvalidRelocationType,
     ZeroRegWriteback,
 
     // Expression parser

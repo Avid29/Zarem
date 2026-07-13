@@ -257,6 +257,48 @@ public readonly struct Evaluator<T>
     }
 
     /// <summary>
+    /// SLL of <paramref name="left"/> and <paramref name="right"/>.
+    /// </summary>
+    /// <param name="node">The expression node being evaluated.</param>
+    /// <param name="left">The left-hand child.</param>
+    /// <param name="right">The right-hand child.</param>
+    /// <param name="result">SLL of <paramref name="left"/> and <paramref name="right"/>.</param>
+    /// <returns>Whether or not the SLL of the items could be taken.</returns>
+    public readonly bool TrySll(BinaryOperNode node, ExpressionResult<T> left, ExpressionResult<T> right, out ExpressionResult<T> result)
+    {
+        result = default;
+
+        // Cannot SRL relocatable addressing
+        if (CheckRelocatable(node, left, right, "SLL"))
+            return false;
+
+        var x = BigInteger.CreateTruncating(left.Addend) << int.CreateTruncating(right.Addend);
+        result = new(T.CreateTruncating(x));
+        return true;
+    }
+
+    /// <summary>
+    /// SRL of <paramref name="left"/> and <paramref name="right"/>.
+    /// </summary>
+    /// <param name="node">The expression node being evaluated.</param>
+    /// <param name="left">The left-hand child.</param>
+    /// <param name="right">The right-hand child.</param>
+    /// <param name="result">SRL of <paramref name="left"/> and <paramref name="right"/>.</param>
+    /// <returns>Whether or not the SRL of the items could be taken.</returns>
+    public readonly bool TrySrl(BinaryOperNode node, ExpressionResult<T> left, ExpressionResult<T> right, out ExpressionResult<T> result)
+    {
+        result = default;
+
+        // Cannot SRL relocatable addressing
+        if (CheckRelocatable(node, left, right, "SRL"))
+            return false;
+
+        var x = BigInteger.CreateTruncating(left.Addend) >> int.CreateTruncating(right.Addend);
+        result = new(T.CreateTruncating(x));
+        return true;
+    }
+
+    /// <summary>
     /// Logical NOT of <paramref name="value"/>.
     /// </summary>
     /// <param name="node">The expression node being evaluated.</param>
@@ -272,6 +314,28 @@ public readonly struct Evaluator<T>
             return false;
 
         result = new(~value.Addend);
+        return true;
+    }
+
+    /// <summary>
+    /// Attempts to perform a relocation operation.
+    /// </summary>
+    /// <param name="node">The relocation node.</param>
+    /// <param name="value">The expression value.</param>
+    /// <param name="result">The result of the relocation operation.</param>
+    /// <returns>Whether or not the relocation operation was successful.</returns>
+    public readonly bool TryRelocation(RelocationNode node, ExpressionResult<T> value, out ExpressionResult<T> result)
+    {
+        result = default;
+
+        // Cannot wrap an explicit relocation operation in another relocation operation
+        if (value.RelocationNode is not null)
+        {
+            Logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, "NestedRelocation");
+            return false;
+        }
+
+        result = new(value.Addend, value.SymbolNode, node);
         return true;
     }
 

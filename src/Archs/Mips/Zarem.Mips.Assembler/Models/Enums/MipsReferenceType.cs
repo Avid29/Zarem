@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2024
 
+using System.Text.Json.Serialization;
+
 namespace Zarem.Mips.Assembler.Models.Enums;
 
 /// <summary>
@@ -35,11 +37,13 @@ public enum MipsReferenceType : uint
     /// <summary>
     /// High 16-bits of a 32-bit address.
     /// </summary>
+    [JsonPropertyName("hi")]
     High16 = 5,
 
     /// <summary>
     /// Low 16-bits of a 32-bit address. 
     /// </summary>
+    [JsonPropertyName("lo")]
     Low16 = 6,
 
     /// <summary>
@@ -55,6 +59,7 @@ public enum MipsReferenceType : uint
     /// <summary>
     /// 16-bit offset to a global offset table entry
     /// </summary>
+    [JsonPropertyName("got")]
     GlobalOffsetTable16 = 9,
 
     /// <summary>
@@ -65,6 +70,7 @@ public enum MipsReferenceType : uint
     /// <summary>
     /// 16-bit PC-relative call reference.
     /// </summary>
+    [JsonPropertyName("call16")]
     Call16 = 11,
 
     /// <summary>
@@ -75,5 +81,5 @@ public enum MipsReferenceType : uint
     /// <summary>
     /// 26-bit PC-relative reference for brances.
     /// </summary>
-    PCRelative26 = 10,
+    PCRelative26 = 13,
 }

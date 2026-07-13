@@ -140,7 +140,7 @@ public class InstructionParserTests
         MipsInstruction[] expected =
         [
             MipsInstruction.CreateI(MipsOpCode.LoadUpperImmediate, MipsGpRegister.Zero, MipsGpRegister.Temporary0, 0x0),
-            MipsInstruction.CreateI(MipsOpCode.OrImmediate, MipsGpRegister.Temporary0, MipsGpRegister.Temporary0, 0x1),
+            MipsInstruction.CreateI(MipsOpCode.AddImmediateUnsigned, MipsGpRegister.Temporary0, MipsGpRegister.Temporary0, 0x1),
         ];
         RunTest(LoadImmediate, expected);
     }
@@ -251,7 +251,7 @@ public class InstructionParserTests
             Assert.IsNotNull(expected);
             Assert.IsNotNull(actual);
 
-            for ( var i = 0; i < expected.Length; i++)
+            for (var i = 0; i < expected.Length; i++)
             {
                 Assert.AreEqual(expected[i], actual[i]);
             }
