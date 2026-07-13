@@ -200,7 +200,7 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
 
     /// <inheritdoc/>
     protected override MipsInstructionParser CreateSubParser()
-        => new(Config, _instructionTable, CurrentAddress, null, null);
+        => new(Config, _instructionTable, CurrentAddress, Symbols, null);
 
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
@@ -285,20 +285,14 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
             MipsArgument.LargeOffset => MipsReferenceType.PCRelative26,
 
             // FullImmediate is handled since it triggers a HI/LO pair
+            // Which is handled in the child parser pass after expansion,
+            // so we don't need to add a relocation entry here.
             MipsArgument.FullImmediate or _ => MipsReferenceType.None,
         } : requestedType;
 
-        if (expResult.IsSymbolic)
+        if (expResult.IsSymbolic && type is not MipsReferenceType.None)
         {
-            if (target is MipsArgument.FullImmediate)
-            {
-                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)MipsReferenceType.High16, default));
-                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress + 4, (uint)MipsReferenceType.Low16, default));
-            }
-            else
-            {
-                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
-            }
+            References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
         }
 
         return true;

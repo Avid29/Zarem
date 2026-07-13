@@ -35,7 +35,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
 {
-    private readonly IReadOnlyDictionary<string, Symbol>? _symbols;
     private readonly RegisterTable<TRegister, TSet> _registerTable;
     private readonly AssemblerLogger? _logger;
 
@@ -45,7 +44,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     public InstructionParserBase(Address address, IReadOnlyDictionary<string, Symbol>? symbols, RegisterTable<TRegister, TSet> registerTable, ILogger? logger)
     {
         CurrentAddress = address;
-        _symbols = symbols;
+        Symbols = symbols;
         _registerTable = registerTable;
 
         References = [];
@@ -85,6 +84,11 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// Gets the <see cref="ITokenizerProfile"/> used to tokenize pseudo-instruction templates for expansion.
     /// </summary>
     protected abstract ITokenizerProfile TemplateProfile { get; }
+
+    /// <summary>
+    /// Gets the symbol table used for resolving symbols during expression parsing.
+    /// </summary>
+    protected IReadOnlyDictionary<string, Symbol>? Symbols { get; }
 
     /// <summary>
     /// Attempts to parse an instruction from a name and a list of arguments.
@@ -130,7 +134,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             {
                 var tokenizedLine = ExpandTemplate(template, TemplateProfile);
                 var childParser = CreateSubParser();
-                var parsed = childParser.Parse(tokenizedLine, out _);
+                var parsed = childParser.Parse(tokenizedLine, out references);
                 Guard.IsNotNull(parsed);
                 expansions[i] = parsed[0];
                 i++;
@@ -230,7 +234,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// </summary>
     protected bool TryParseExpression(ReadOnlySpan<Token> tokens, int bitCount, int shift, bool signed, out ExpressionResult<long> expResult)
     {
-        if (!ExpressionParser.TryParse(tokens, out expResult, _symbols, _logger?.Parent))
+        if (!ExpressionParser.TryParse(tokens, out expResult, Symbols, _logger?.Parent))
             return false;
 
         long val = expResult.IsAbsolute ? expResult.Addend : 0;
