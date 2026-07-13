@@ -2,13 +2,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Assembler.Extensions;
 using Zarem.Assembler.Tokenization.Models;
-using System.Runtime.CompilerServices;
-using Zarem.Assembler.Tokenization.Profiles;
+using Zarem.Assembler.Tokenization.Models.Enums;
 
 namespace Zarem.Assembler.Tokenization;
 
@@ -46,7 +45,7 @@ public partial class Tokenizer
             if (newToken.Type is TokenType.SemiColon)
             {
                 // Append the current line
-                lines.Add(new AssemblyLine([..classified]));
+                lines.Add(new AssemblyLine([.. classified]));
 
                 // Begin new assembly line
                 classified = [];
@@ -63,144 +62,25 @@ public partial class Tokenizer
             span = span[advance..];
         }
 
-        lines.Add(new AssemblyLine([..classified]));
+        lines.Add(new AssemblyLine([.. classified]));
 
         return true;
     }
 
     private Token? ReTokenizeSpan(ReadOnlySpan<Token> tokens, out int advance)
     {
-        advance = 1;
+        var current = tokens[0];
 
-        // Stage 1: Trivial classifications
-        if (TrySimpleReclass(tokens[0], tokens, out var simple))
-            return simple;
-
-        // Stage 2: Multi-token merges (registers, directives, and labels)
-        if (TryMergeTokens(tokens, out var merged, ref advance))
-            return merged;
-
-        // Stage 3: Check for either references or instruction names
-        if (TryInstructionOrReference(tokens, out var result, ref advance))
+        // Handle basic reclassification
+        if (CheckPreclassified(current, out var result, out advance) ||
+            TryHandlePrefix(tokens, out result, out advance) ||
+            TryClassifyOperators(tokens, out result, out advance) ||
+            TryClassifyRelocation(current, out result, out advance) ||
+            TryClassifyRegister(current, out result, out advance) ||
+            TryClassifyImmediate(tokens, out result, out advance))
             return result;
 
-        // Token could not be classified
-        // Return as-is
-        return tokens[0];
-    }
-
-    private bool TrySimpleReclass(Token current, ReadOnlySpan<Token> tokens, out Token? classified)
-    {
-        classified = null;
-
-        // Handle by determining a proper type
-        TokenType type = current.Type switch
-        {
-            // Handle no-change types
-            TokenType.String => TokenType.String,
-            TokenType.Whitespace => TokenType.Whitespace,
-            TokenType.Comment => TokenType.Comment,
-
-            // Handle chars
-            TokenType.Char => TokenType.Immediate,
-
-            // Handle operators
-            _ => current.Source switch
-            {
-                "(" => TokenType.OpenParenthesis,
-                ")" => TokenType.CloseParenthesis,
-                "[" => TokenType.OpenBracket,
-                "]" => TokenType.CloseBracket,
-                "," => TokenType.Comma,
-                ";" => TokenType.SemiColon,
-
-                "+" or "-" or "*" or "/" or "%" or
-                "|" or "&" or "^" or "~" => TokenType.Operator,
-
-                // Behavior mode only?
-                "!" or "<" or ">" => TokenType.Operator,
-                "=" => TokenType.Assign,
-                _ => TokenType.Unknown,
-            },
-        };
-
-        // Handle prefixes
-        if (current.Source.Length is 1)
-        {
-            // Handle register prefix
-            if (_profile.RegisterPrefix != '\0' && current.Source[0] == _profile.RegisterPrefix)
-            {
-                type = TokenType.RegisterPrefix;
-                _state = TokenizerState.RegisterPrefixed;
-            }
-            // Handle immediate prefix
-            else if (_profile.ImmediatePrefix != '\0' && current.Source[0] == _profile.ImmediatePrefix)
-            {
-                type = TokenType.ImmediatePrefix;
-                _state = TokenizerState.ImmediatePrefixed;
-            }
-            // Handle relocation prefix
-            // The relocation prefix can conflict with other token types, so we need to check the next token to see if it is a valid relocation symbol
-            else if (_profile.RelocationPrefix != '\0' && current.Source[0] == _profile.RelocationPrefix &&
-                _profile.RelocationRegex.IsMatch(Peek(tokens)?.Source ?? ""))
-            {
-                type = TokenType.RelocationPrefix;
-                _state = TokenizerState.RelocationPrefixed;
-            }
-        }
-
-        // Type not found. Return false
-        if (type is TokenType.Unknown)
-            return false;
-
-        // Type was found. Reclassify the token and return true
-        classified = ReClassify(type, current);
-        return true;
-    }
-
-    private bool TryMergeTokens(ReadOnlySpan<Token> tokens, out Token? merged, ref int advance)
-    {
-        var current = tokens[0];
         var peek = Peek(tokens);
-
-        // Handle explicit relocation
-        if (_state is TokenizerState.RelocationPrefixed)
-        {
-            merged = ReClassify(TokenType.Relocation, current);
-            advance = 1;
-            return true;
-        }
-
-        // Handle register 
-        if (_profile.RegisterPrefix is '\0' && _state is not TokenizerState.LineBegin)
-        {
-            if (_profile.RegisterRegex.IsMatch(current.Source))
-            {
-                // Handle non-prefixed registers
-                merged = ReClassify(TokenType.Register, current);
-                advance = 1;
-                return true;
-            }
-        }
-        else if (_state is TokenizerState.RegisterPrefixed)
-        {
-            merged = ReClassify(TokenType.Register, current);
-            advance = 1;
-            return true;
-        }
-
-        // Handle merging immediates tokens
-        if (_state is not TokenizerState.LineBegin)
-        {
-            // Check for Standard Immediates
-            if (TryConsumeNumericBody(tokens, out merged, out var numericAdvance))
-            {
-                advance = numericAdvance;
-                return true;
-            }
-        }
-
-        // Determine appropriate type
         (var type, bool merge) = _state switch
         {
             TokenizerState.LineBegin when Peek(tokens, skipWhitespace: true)?.Source is "=" => (TokenType.MacroDeclaration, false),
@@ -209,27 +89,33 @@ public partial class Tokenizer
             _ => (TokenType.Unknown, false),
         };
 
-        // Type not found
-        merged = null;
-        if (type is TokenType.Unknown)
-            return false;
-
-        // Type found, and it doesn't need to merge
-        if (!merge)
+        if (type is not TokenType.Unknown)
         {
-            merged = ReClassify(type, current);
-            return true;
+            if (merge && TryMerge(tokens, type, out result, out advance))
+            {
+                return result;
+            }
+            else
+            {
+                return ReClassify(type, current);
+            }
         }
 
-        // Attempt to merge current and peek into the appropriate type
-        return TryMerge(tokens, type, out merged, ref advance); 
+        // Check for either references or instruction names
+        if (TryInstructionOrReference(tokens, out result, out advance))
+            return result;
+
+        // Token could not be classified
+        // Return as-is
+        return tokens[0];
     }
 
-    private bool TryInstructionOrReference(ReadOnlySpan<Token> tokens, out Token? result, ref int advance)
+    private bool TryInstructionOrReference(ReadOnlySpan<Token> tokens, out Token? result, out int advance)
     {
         // Grab the current token
         var current = tokens[0];
         result = null;
+        advance = 1;
 
         if (!current.IsIdentifier())
             return false;
@@ -263,8 +149,152 @@ public partial class Tokenizer
         return true;
     }
 
-    private static bool TryMerge(ReadOnlySpan<Token> tokens, TokenType type, out Token? merged, ref int advance)
+    private bool TryHandlePrefix(ReadOnlySpan<Token> tokens, [NotNullWhen(true)] out Token? result, out int advance)
     {
+        advance = 1;
+        result = null;
+        var current = tokens[0];
+        if (current.Source.Length is not 1)
+            return false;
+
+        var type = TokenType.Unknown;
+
+        // Handle register prefix
+        if (_profile.RegisterPrefix != '\0' && current.Source[0] == _profile.RegisterPrefix)
+        {
+            type = TokenType.RegisterPrefix;
+            _state = TokenizerState.RegisterPrefixed;
+        }
+        // Handle immediate prefix
+        else if (_profile.ImmediatePrefix != '\0' && current.Source[0] == _profile.ImmediatePrefix)
+        {
+            type = TokenType.ImmediatePrefix;
+            _state = TokenizerState.ImmediatePrefixed;
+        }
+        // Handle relocation prefix
+        // The relocation prefix can conflict with other token types, so we need to check the next token to see if it is a valid relocation symbol
+        else if (_profile.RelocationPrefix != '\0' && current.Source[0] == _profile.RelocationPrefix &&
+            _profile.RelocationRegex.IsMatch(Peek(tokens)?.Source ?? ""))
+        {
+            type = TokenType.RelocationPrefix;
+            _state = TokenizerState.RelocationPrefixed;
+        }
+
+        if (type is TokenType.Unknown)
+            return false;
+
+        result = ReClassify(type, current);
+        return true;
+    }
+
+    private bool TryClassifyRelocation(Token current, [NotNullWhen(true)] out Token? result, out int advance)
+    {
+        advance = 1;
+        result = null;
+        if (_state is not TokenizerState.RelocationPrefixed)
+            return false;
+
+        result = ReClassify(TokenType.Relocation, current);
+        return true;
+    }
+
+    private bool TryClassifyRegister(Token current, [NotNullWhen(true)] out Token? result, out int advance)
+    {
+        advance = 1;
+
+        bool isPrefixedRegister = _state is TokenizerState.RegisterPrefixed;
+        bool isNonPrefixedRegister =
+            _profile.RegisterPrefix is '\0' &&
+            _state is not TokenizerState.LineBegin &&
+            _profile.RegisterRegex.IsMatch(current.Source);
+
+        if (isPrefixedRegister || isNonPrefixedRegister)
+        {
+            result = ReClassify(TokenType.Register, current);
+            return true;
+        }
+
+        result = null;
+        return false;
+    }
+
+    private bool TryClassifyImmediate(ReadOnlySpan<Token> tokens, [NotNullWhen(true)] out Token? result, out int advance)
+    {
+        result = null;
+        advance = 0;
+
+        if (_state is TokenizerState.LineBegin)
+            return false;
+
+        return TryConsumeNumericBody(tokens, out result, out advance);
+    }
+
+    private static bool TryClassifyOperators(ReadOnlySpan<Token> tokens, [NotNullWhen(true)] out Token? result, out int advance)
+    {
+        var current = tokens[0].Source;
+        var next = Peek(tokens)?.Source;
+
+        (TokenType type, advance) = current switch
+        {
+            "(" => (TokenType.OpenParenthesis, 1),
+            ")" => (TokenType.CloseParenthesis, 1),
+            "[" => (TokenType.OpenBracket, 1),
+            "]" => (TokenType.CloseBracket, 1),
+            "," => (TokenType.Comma, 1),
+            ";" => (TokenType.SemiColon, 1),
+
+            "+" or "-" or "*" or "/" or "%" or
+            "|" or "&" or "^" or "~" => (TokenType.Operator, 1),
+
+            ">" when next is ">" or "=" => (TokenType.Operator, 2),
+            ">" => (TokenType.Operator, 1),
+
+            "<" when next is "<" or "=" => (TokenType.Operator, 2),
+            "<" => (TokenType.Operator, 1),
+
+            "!" when next is "=" => (TokenType.Operator, 2),
+            "!" => (TokenType.Operator, 1),
+
+            "=" when next is "=" => (TokenType.Operator, 2),
+            "=" => (TokenType.Assign, 1),
+
+            _ => (TokenType.Unknown, 0),
+        };
+
+        (bool success, result) = advance switch
+        {
+            0 => (false, null),
+            1 => (true, ReClassify(type, tokens[0])),
+            _ => (true, Merge(type, tokens[0], tokens[1..advance])),
+        };
+
+        return success;
+    }
+
+    /// <remarks>
+    /// Also reclassified chars as an immediate.
+    /// </remarks>
+    private static bool CheckPreclassified(Token token, [NotNullWhen(true)] out Token? result, out int advance)
+    {
+        advance = 1;
+
+        if (token.Type is TokenType.Char)
+        {
+            result = ReClassify(TokenType.Immediate, token);
+            return true;
+        }
+
+        result = null;
+        if (token.Type is not (TokenType.String or TokenType.Comment or TokenType.Whitespace))
+            return false;
+
+        result = token;
+        return true;
+    }
+
+    private static bool TryMerge(ReadOnlySpan<Token> tokens, TokenType type, out Token? merged, out int advance)
+    {
+        advance = 1;
         merged = null;
 
         // Condition not met or tokens not found
@@ -277,7 +307,7 @@ public partial class Tokenizer
         return true;
     }
 
-    private static Token Merge(TokenType type, Token @base, params Token?[] tokens)
+    private static Token Merge(TokenType type, Token @base, params ReadOnlySpan<Token?> tokens)
     {
         // Generate new text
         var source = new StringBuilder(@base.Source);
@@ -324,7 +354,7 @@ public partial class Tokenizer
     /// <summary>
     /// Attempts to consume a numeric pattern (Decimal or Integer) starting at a specific token offset.
     /// </summary>
-    private static bool TryConsumeNumericBody(ReadOnlySpan<Token> tokens, out Token? merged, out int advance)
+    private static bool TryConsumeNumericBody(ReadOnlySpan<Token> tokens, [NotNullWhen(true)] out Token? merged, out int advance)
     {
         merged = null;
         advance = 0;
