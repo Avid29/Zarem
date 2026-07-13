@@ -74,6 +74,9 @@ public class BinaryOperNode : OperNode
             Operation.Or => evaluator.TryOr(this, left, right, out result),
             Operation.Xor => evaluator.TryXor(this, left, right, out result),
 
+            // Shift
+            Operation.LeftShift => evaluator.TrySll(this, left, right, out result),
+            Operation.RightShift => evaluator.TrySrl(this, left, right, out result),
 
             _ => ThrowHelper.ThrowArgumentException<bool>(),
         };
