@@ -318,4 +318,16 @@
   <data name="InvalidAddressOffsetArgument" xml:space="preserve">
     <value>הארגומנט ‎'{0}'‎ אינו היסט כתובת תקין.</value>
   </data>
+  <data name="CantSLLRelocatable" xml:space="preserve">
+    <value>לא ניתן לבצע פעולת SLL עם סימבול בר־הזזה.</value>
+  </data>
+  <data name="CantSRLRelocatable" xml:space="preserve">
+    <value>לא ניתן לבצע פעולת SRL עם סימבול בר־הזזה.</value>
+  </data>
+  <data name="CantSLLFloatingPoint" xml:space="preserve">
+    <value>לא ניתן לבצע פעולת SLL עם ערך נקודה צפה.</value>
+  </data>
+  <data name="CantSRLFloatingPoint" xml:space="preserve">
+    <value>לא ניתן לבצע פעולת SRL עם ערך נקודה צפה.</value>
+  </data>
 </root>

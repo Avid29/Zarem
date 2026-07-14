@@ -25,6 +25,8 @@ public class ExpressionParserTests
         ["9 & 3", 9 & 3],
         ["9 | 3", 9 | 3],
         ["9 ^ 3", 9 ^ 3],
+        ["9 >> 3", 9 >> 3],
+        ["9 << 3", 9 << 3],
         ["~10", ~10],
         ["10 * -10", 10 * -10],
         ["0b1010", 0b1010],
@@ -79,6 +81,13 @@ public class ExpressionParserTests
         [@"3.2"],
     ];
 
+    public static IEnumerable<object[]> FloatFailureTestsList =>
+    [
+        ["2 << 2"],
+        ["3.2 << 2"],
+        ["3.2 << 3.2"],
+    ];
+
     [DataTestMethod]
     [DynamicData(nameof(IntegerSuccessTestsList))]
     public void IntegerSuccessTests(string input, long expected)
@@ -93,6 +102,11 @@ public class ExpressionParserTests
     [DynamicData(nameof(IntegerFailureTestsList))]
     public void IntegerFailureTests(string input)
         => RunTest<long>(input);
+
+    [DataTestMethod]
+    [DynamicData(nameof(FloatFailureTestsList))]
+    public void FloatFailureTests(string input)
+        => RunTest<double>(input);
 
     private static void RunTest<T>(string input, T? expected = null)
         where T : unmanaged, IBinaryNumber<T>

@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Zarem.Assembler.Logging;
@@ -268,8 +269,8 @@ public readonly struct Evaluator<T>
     {
         result = default;
 
-        // Cannot SRL relocatable addressing
-        if (CheckRelocatable(node, left, right, "SLL"))
+        // Cannot SLL floating-points or relocatable addressing
+        if (CheckFloating(node, "SLL") || CheckRelocatable(node, left, right, "SLL"))
             return false;
 
         var x = BigInteger.CreateTruncating(left.Addend) << int.CreateTruncating(right.Addend);
@@ -289,8 +290,8 @@ public readonly struct Evaluator<T>
     {
         result = default;
 
-        // Cannot SRL relocatable addressing
-        if (CheckRelocatable(node, left, right, "SRL"))
+        // Cannot SLL floating-points or relocatable addressing
+        if (CheckFloating(node, "SRL") || CheckRelocatable(node, left, right, "SRL"))
             return false;
 
         var x = BigInteger.CreateTruncating(left.Addend) >> int.CreateTruncating(right.Addend);
@@ -351,6 +352,19 @@ public readonly struct Evaluator<T>
         if (value.IsSymbolic)
         {
             Logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, $"Cant{operation}Relocatable");
+            return true;
+        }
+
+        return false;
+    }
+
+    private readonly bool CheckFloating(BinaryOperNode node, string operation)
+    {
+        if (typeof(T) == typeof(Half) ||
+            typeof(T) == typeof(float) ||
+            typeof(T) == typeof(double))
+        {
+            Logger?.Log(Severity.Error, LogId.InvalidExpressionOperation, node.ExpressionToken, $"Cant{operation}FloatingPoint");
             return true;
         }
 
