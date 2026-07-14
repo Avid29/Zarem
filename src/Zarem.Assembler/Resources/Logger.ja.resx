@@ -318,4 +318,16 @@
   <data name="InvalidAddressOffsetArgument" xml:space="preserve">
     <value>Argument '{0}' is not a valid address offset.</value>
   </data>
+  <data name="CantSLLRelocatable" xml:space="preserve">
+    <value>Cannot perform SLL operation with a relocatable symbol.</value>
+  </data>
+  <data name="CantSRLRelocatable" xml:space="preserve">
+    <value>Cannot perform SRL operation with a relocatable symbol.</value>
+  </data>
+  <data name="CantSLLFloatingPoint" xml:space="preserve">
+    <value>Cannot perform SLL operation with a floating-point value.</value>
+  </data>
+  <data name="CantSRLFloatingPoint" xml:space="preserve">
+    <value>Cannot perform SRL operation with a floating-point value.</value>
+  </data>
 </root>
