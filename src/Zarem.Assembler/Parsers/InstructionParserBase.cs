@@ -37,16 +37,18 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
 {
     private readonly RegisterTable<TRegister, TSet> _registerTable;
     private readonly AssemblerLogger? _logger;
+    private readonly Dictionary<TArg, AssemblyArg> _argTable;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterParser{TRegister, TSet}"/> struct.
     /// </summary>
     public InstructionParserBase(Address address, IReadOnlyDictionary<string, Symbol>? symbols, RegisterTable<TRegister, TSet> registerTable, ILogger? logger)
     {
+        _registerTable = registerTable;
+        _argTable = [];
+
         CurrentAddress = address;
         Symbols = symbols;
-        _registerTable = registerTable;
-
         References = [];
 
         if (logger is not null)
@@ -112,6 +114,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         for (int i = 0; i < line.Args.Count; i++)
         {
             var arg = line.Args[i];
+            var type = pattern[i];
 
             // Empty argument
             if (arg.Tokens.Length is 0)
@@ -122,24 +125,42 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
                 continue;
             }
 
-            TryParseArg(arg.Tokens, pattern[i]);
+            // Parse the argument
+            // Only track the argument if successfully parsed
+            if(TryParseArg(arg.Tokens, type))
+                _argTable[type] = arg;
         }
 
         // Handle pseudo-instruction expansion if needed
         if (Meta is IPseudoInstructionMeta pMeta)
         {
+            var childReferences = new List<RelocationEntry>();
+
+            // Parse each expansion component
             var expansions = new TInstruction[pMeta.Expansion.Length];
             int i = 0;
             foreach (var template in pMeta.Expansion)
             {
+                // Parse expansion child component
                 var tokenizedLine = ExpandTemplate(template, TemplateProfile);
-                var childParser = CreateSubParser();
+                var childParser = CreateSubParser(CurrentAddress + (i * 4)); // TODO: Handle different size instructions. THIS IS A HUGE ASSUMPTION
                 var parsed = childParser.Parse(tokenizedLine, out references);
+
+                // Append the component
                 Guard.IsNotNull(parsed);
                 expansions[i] = parsed[0];
+
+                // Track references
+                if (references is not null)
+                {
+                    childReferences.AddRange(references);
+                }
+
+                // Increment
                 i++;
             }
 
+            references = childReferences;
             return expansions;
         }
 
@@ -160,12 +181,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// <summary>
     /// Creates a new instruction parser for parsing pseudo-instruction expansion templates.
     /// </summary>
-    protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet> CreateSubParser();
-
-    /// <summary>
-    /// Gets the substitution string for a given argument type, which is used to replace placeholders in pseudo-instruction templates.
-    /// </summary>
-    protected abstract string GetTemplateArgSubstitution(TArg argType);
+    protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet> CreateSubParser(Address address);
 
     /// <summary>
     /// Builds an instruction from the parsed data.
@@ -286,21 +302,25 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// <summary>
     /// Generates an <see cref="AssemblyLine"/> from a pseudo-instruction substitution template.
     /// </summary>
-    protected AssemblyLine ExpandTemplate(string template, ITokenizerProfile profile)
+    private AssemblyLine ExpandTemplate(string template, ITokenizerProfile profile)
     {
         string result = template;
 
         // Apply substitutions to the template
         foreach (var argType in Enum.GetValues<TArg>())
         {
+            // Skip args not present in the arg table
+            if (!_argTable.ContainsKey(argType))
+                continue;
+
             // Get the template name for the argument type, which is used as a placeholder in the template string
             var argTemplate = typeof(TArg)
                 .GetField($"{argType}")
                 ?.GetCustomAttribute<JsonStringEnumMemberNameAttribute>()
                 ?.Name;
-            var argTemplatePattern = $"${{{argTemplate}}}";
 
-            var argSubstitution = GetTemplateArgSubstitution(argType);
+            var argTemplatePattern = $"${{{argTemplate}}}";
+            var argSubstitution = $"{_argTable[argType]}";
 
             Guard.IsNotNull(argTemplatePattern);
             result = result.Replace(argTemplatePattern, argSubstitution);

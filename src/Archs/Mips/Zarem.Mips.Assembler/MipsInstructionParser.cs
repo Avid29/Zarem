@@ -68,29 +68,6 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
     /// <inheritdoc/>
     protected override ITokenizerProfile TemplateProfile { get; } = new MipsTokenizerProfile();
 
-    /// <inheritdoc/>
-    protected override string GetTemplateArgSubstitution(MipsArgument argType)
-    {
-        return argType switch
-        {
-            MipsArgument.RS => $"${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.GeneralPurpose)}",
-            MipsArgument.RT => $"${MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.GeneralPurpose)}",
-            MipsArgument.RD => $"${MipsRegisterTable.Instance.GetRegisterString(_rd, MipsRegisterSet.GeneralPurpose)}",
-            MipsArgument.FS => $"${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.FloatingPoints)}",
-            MipsArgument.FT => $"${MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.FloatingPoints)}",
-            MipsArgument.FD => $"${MipsRegisterTable.Instance.GetRegisterString(_rd, MipsRegisterSet.FloatingPoints)}",
-            MipsArgument.RS_Numbered => $"${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.Numbered)}",
-            MipsArgument.RT_Numbered => $"${MipsRegisterTable.Instance.GetRegisterString(_rt, MipsRegisterSet.Numbered)}",
-
-            // Immediate/FullImmediate uses the raw parsed value
-            MipsArgument.Immediate or MipsArgument.FullImmediate or MipsArgument.ShiftAmount or
-            MipsArgument.Offset or MipsArgument.LargeOffset or MipsArgument.Address => $"{Immediate}",
-
-            MipsArgument.AddressBase => $"{Immediate}(${MipsRegisterTable.Instance.GetRegisterString(_rs, MipsRegisterSet.GeneralPurpose)})",
-
-            _ => ThrowHelper.ThrowArgumentException<string>(),
-        };
-    }
 
     /// <inheritdoc/>
     protected override bool TryDetermineInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
@@ -199,8 +176,8 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
     }
 
     /// <inheritdoc/>
-    protected override MipsInstructionParser CreateSubParser()
-        => new(Config, _instructionTable, CurrentAddress, Symbols, null);
+    protected override MipsInstructionParser CreateSubParser(Address address)
+        => new(Config, _instructionTable, address, Symbols, null);
 
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
