@@ -34,6 +34,19 @@ public class Token
     /// </summary>
     public TokenType Type { get; init; }
 
+    /// <summary>
+    /// Gets the prefix token, if one exists.
+    /// </summary>
+    public Token? PrefixToken { get; init; }
+
     /// <inheritdoc/>
-    public override string ToString() => Source;
+    public override string ToString()
+    {
+        if (PrefixToken is not null)
+        {
+            return $"{PrefixToken}{Source}";
+        }
+
+        return $"{Source}";
+    }
 }

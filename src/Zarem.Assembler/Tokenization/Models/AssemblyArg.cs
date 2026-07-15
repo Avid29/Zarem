@@ -1,13 +1,14 @@
 ﻿// Avishai Dernis 2025
 
 using System;
+using System.Text;
 
 namespace Zarem.Assembler.Tokenization.Models;
 
 /// <summary>
 /// An argument in assembly.
 /// </summary>
-public struct AssemblyArg
+public readonly struct AssemblyArg
 {
     private readonly ArraySegment<Token> _tokens;
 
@@ -35,4 +36,16 @@ public struct AssemblyArg
     /// Gets the <see cref="Token"/> for the comma proceeding the argument.
     /// </summary>
     public Token? ProceedingComma { get; }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        var builder = new StringBuilder();
+        foreach(var token in _tokens)
+        {
+            builder.Append($"{token}");
+        }
+        
+        return $"{builder}";
+    }
 }

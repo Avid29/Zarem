@@ -22,6 +22,7 @@ public partial class Tokenizer
     private readonly StringBuilder _cache;
 
     private TokenizerState _state;
+    private Token? _prefix;
 
     private SourceLocation _location;
     private SourceLocation _cacheLocation;
