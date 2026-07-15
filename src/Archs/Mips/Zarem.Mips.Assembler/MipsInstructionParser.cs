@@ -68,7 +68,6 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
     /// <inheritdoc/>
     protected override ITokenizerProfile TemplateProfile { get; } = new MipsTokenizerProfile();
 
-
     /// <inheritdoc/>
     protected override bool TryDetermineInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
     {
@@ -233,8 +232,7 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
         if (!TryParseExpression(arg, bitCount, shiftAmount, signed, out var expResult))
             return false;
 
-        MipsReferenceType requestedType = MipsReferenceType.None;
-
+        var requestedType = MipsReferenceType.None;
         if (expResult.RelocationType is not null)
         {
             requestedType = expResult.RelocationType switch
