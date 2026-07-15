@@ -33,6 +33,7 @@ public class RiscVProjectTests : ProjectTestsBase
     }
 
     [DataTestMethod]
+    [DoNotParallelize]
     [DynamicData(nameof(ProjectsPaths), DynamicDataDisplayName = nameof(GetProjectDisplayName))]
     public Task RunTestAsync(string projectPath) => RunProjectTest(projectPath);
 

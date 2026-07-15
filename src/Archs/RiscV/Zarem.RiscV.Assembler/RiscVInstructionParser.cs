@@ -70,30 +70,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     protected override ITokenizerProfile TemplateProfile { get; } = new RiscVTokenizerProfile();
 
     /// <inheritdoc/>
-    protected override string GetTemplateArgSubstitution(RiscVArgument argType)
-    {
-        return argType switch
-        {
-            RiscVArgument.RD => RiscVRegisterTable.Instance.GetRegisterString(_rd, RiscVRegisterSet.GeneralPurpose),
-            RiscVArgument.RS1 => RiscVRegisterTable.Instance.GetRegisterString(_rs1, RiscVRegisterSet.GeneralPurpose),
-            RiscVArgument.RS2 => RiscVRegisterTable.Instance.GetRegisterString(_rs2, RiscVRegisterSet.GeneralPurpose),
-            RiscVArgument.FRD => RiscVRegisterTable.Instance.GetRegisterString(_rd, RiscVRegisterSet.FloatingPoints),
-            RiscVArgument.FRS1 => RiscVRegisterTable.Instance.GetRegisterString(_rs1, RiscVRegisterSet.FloatingPoints),
-            RiscVArgument.FRS2 => RiscVRegisterTable.Instance.GetRegisterString(_rs2, RiscVRegisterSet.FloatingPoints),
-            RiscVArgument.FRS3 => RiscVRegisterTable.Instance.GetRegisterString(_rs2, RiscVRegisterSet.FloatingPoints), // TODO
-
-            RiscVArgument.Immediate or RiscVArgument.FullImmediate or RiscVArgument.BranchOffset or RiscVArgument.StoreOffset or
-            RiscVArgument.JumpOffset or RiscVArgument.UpperImmediate or RiscVArgument.UImm5 => $"{Immediate}",
-
-            RiscVArgument.MemoryLoad or RiscVArgument.MemoryStore => $"{Immediate}({RiscVRegisterTable.Instance.GetRegisterString(_rs1, RiscVRegisterSet.GeneralPurpose)})",
-
-            RiscVArgument.Csr => "", // TODO
-
-            _ => ThrowHelper.ThrowArgumentException<string>(),
-        };
-    }
-
-    /// <inheritdoc/>
     protected override bool TryDetermineInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name)
     {
         // Get instruction name and ensure it's not null
@@ -212,8 +188,8 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     }
 
     /// <inheritdoc/>
-    protected override RiscVInstructionParser CreateSubParser()
-        => new(Config, _instructionTable, CurrentAddress, null, null);
+    protected override RiscVInstructionParser CreateSubParser(Address address)
+        => new(Config, _instructionTable, address, null, null);
 
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.

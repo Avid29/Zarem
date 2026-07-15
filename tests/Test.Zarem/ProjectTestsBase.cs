@@ -49,7 +49,6 @@ public abstract class ProjectTestsBase
                 await CSharpScript.EvaluateAsync(expectedScript);
             });
 
-
             Assert.AreEqual(expectedOutput, actualOutput, $"Mismatch for input: {simulatedInput}");
         }
     }

@@ -184,6 +184,7 @@ public partial class Tokenizer
             return false;
 
         result = ReClassify(type, current);
+        _prefix = result;
         return true;
     }
 
@@ -229,7 +230,7 @@ public partial class Tokenizer
         return TryConsumeNumericBody(tokens, out result, out advance);
     }
 
-    private static bool TryClassifyOperators(ReadOnlySpan<Token> tokens, [NotNullWhen(true)] out Token? result, out int advance)
+    private bool TryClassifyOperators(ReadOnlySpan<Token> tokens, [NotNullWhen(true)] out Token? result, out int advance)
     {
         var current = tokens[0].Source;
         var next = Peek(tokens)?.Source;
@@ -274,7 +275,7 @@ public partial class Tokenizer
     /// <remarks>
     /// Also reclassified chars as an immediate.
     /// </remarks>
-    private static bool CheckPreclassified(Token token, [NotNullWhen(true)] out Token? result, out int advance)
+    private bool CheckPreclassified(Token token, [NotNullWhen(true)] out Token? result, out int advance)
     {
         advance = 1;
 
@@ -292,7 +293,7 @@ public partial class Tokenizer
         return true;
     }
 
-    private static bool TryMerge(ReadOnlySpan<Token> tokens, TokenType type, out Token? merged, out int advance)
+    private bool TryMerge(ReadOnlySpan<Token> tokens, TokenType type, out Token? merged, out int advance)
     {
         advance = 1;
         merged = null;
@@ -307,7 +308,7 @@ public partial class Tokenizer
         return true;
     }
 
-    private static Token Merge(TokenType type, Token @base, params ReadOnlySpan<Token?> tokens)
+    private Token Merge(TokenType type, Token @base, params ReadOnlySpan<Token?> tokens)
     {
         // Generate new text
         var source = new StringBuilder(@base.Source);
@@ -316,11 +317,15 @@ public partial class Tokenizer
             source.Append(token?.Source);
         }
 
-        return new Token($"{source}")
+        var result = new Token($"{source}")
         {
             Type = type,
             Location = @base.Location,
+            PrefixToken = _prefix,
         };
+
+        _prefix = null;
+        return result;
     }
 
     private static Token? Peek(ReadOnlySpan<Token> tokens, int n = 1, bool skipWhitespace = false)
@@ -342,19 +347,23 @@ public partial class Tokenizer
         return token;
     }
 
-    private static Token ReClassify(TokenType type, Token original)
+    private Token ReClassify(TokenType type, Token original)
     {
-        return new Token(original.Source)
+        var result = new Token(original.Source)
         {
             Location = original.Location,
-            Type = type
+            Type = type,
+            PrefixToken = _prefix,
         };
+
+        _prefix = null;
+        return result;
     }
 
     /// <summary>
     /// Attempts to consume a numeric pattern (Decimal or Integer) starting at a specific token offset.
     /// </summary>
-    private static bool TryConsumeNumericBody(ReadOnlySpan<Token> tokens, [NotNullWhen(true)] out Token? merged, out int advance)
+    private bool TryConsumeNumericBody(ReadOnlySpan<Token> tokens, [NotNullWhen(true)] out Token? merged, out int advance)
     {
         merged = null;
         advance = 0;
