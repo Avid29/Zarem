@@ -23,8 +23,8 @@
     "pseudo_id": 2,
     "args": [ "rd", "imm32" ],
     "expansion": [
-      "lui ${rd}, (${imm32}) >> 12",
-      "addi ${rd}, ${rd}, (${imm32}) & 0xFFF"
+      "lui ${rd}, %hi(${imm32})",
+      "addi ${rd}, ${rd}, %lo(${imm32})"
     ]
   },
   {
@@ -42,8 +42,8 @@
     "pseudo_id": 4,
     "args": [ "rd", "imm32" ],
     "expansion": [
-      "lui ${rd}, (${imm32}) >> 12",
-      "addi ${rd}, ${rd}, (${imm32}) & 0xFFF"
+      "lui ${rd}, %hi(${imm32})",
+      "addi ${rd}, ${rd}, %lo(${imm32})"
     ]
   }
 ]

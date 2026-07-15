@@ -189,7 +189,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
 
     /// <inheritdoc/>
     protected override RiscVInstructionParser CreateSubParser(Address address)
-        => new(Config, _instructionTable, address, null, null);
+        => new(Config, _instructionTable, address, Symbols, null);
 
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
@@ -231,19 +231,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     /// </summary>
     private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, RiscVArgument target)
     {
-        var type = target switch
-        {
-            RiscVArgument.JumpOffset => RiscVReferenceType.Jump20,
-            RiscVArgument.BranchOffset => RiscVReferenceType.Branch20,
-            RiscVArgument.Immediate => RiscVReferenceType.Low12,
-            RiscVArgument.UpperImmediate => RiscVReferenceType.High20,
-            // 'Memory' in RISC-V loads/stores uses a 12-bit offset (%lo)
-            RiscVArgument.StoreOffset => RiscVReferenceType.Low12,
-            // FullImmediate triggers a HI/LO pair
-            RiscVArgument.FullImmediate => RiscVReferenceType.High20,
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<RiscVReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
-        };
-
         // Determine casting details for the RISC-V argument
         (int bitCount, int shiftAmount, bool signed) = target switch
         {
@@ -264,18 +251,45 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         if (!TryParseExpression(arg, bitCount, shiftAmount, signed, out var expResult))
             return false;
 
-        if (expResult.IsSymbolic)
+        var requestedType = RiscVReferenceType.None;
+        if (expResult.RelocationType is not null)
         {
-            if (target is RiscVArgument.FullImmediate)
+            (requestedType, int bits) = expResult.RelocationType switch
             {
-                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)RiscVReferenceType.High20, default));
-                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress + 4, (uint)RiscVReferenceType.Low12, default));
-            }
-            else
-            {
-                References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
-            }
+                "hi" => (RiscVReferenceType.High20, 20),
+                "lo" => (RiscVReferenceType.Low12, 12),
+                _ => ThrowHelper.ThrowArgumentOutOfRangeException<(RiscVReferenceType, int)>($"Relocation type '{expResult.RelocationType}' is not supported for RISC-V."),
+            };
 
+            if (bitCount != bits)
+            {
+                _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
+                return false;
+            }
+        }
+
+        var type = requestedType is RiscVReferenceType.None ? target switch
+        {
+            RiscVArgument.JumpOffset => RiscVReferenceType.Jump20,
+            RiscVArgument.BranchOffset => RiscVReferenceType.Branch20,
+            RiscVArgument.Immediate => RiscVReferenceType.Low12,
+            RiscVArgument.UpperImmediate => RiscVReferenceType.High20,
+            // 'Memory' in RISC-V loads/stores uses a 12-bit offset (%lo)
+            RiscVArgument.StoreOffset => RiscVReferenceType.Low12,
+            // FullImmediate triggers a HI/LO pair
+            RiscVArgument.FullImmediate => RiscVReferenceType.High20,
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<RiscVReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
+        } : requestedType;
+
+        if (expResult.IsSymbolic && type is not RiscVReferenceType.None)
+        {
+            References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
+        }
+        else if (type is RiscVReferenceType.High20)
+        {
+            // TODO: Remove hacky solution to adjust offsets
+            // on constants
+            Immediate >>= 12;
         }
 
         return true;
