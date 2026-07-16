@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2025
 
+using Zarem.Attributes.Register;
+
 namespace Zarem.Mips.Models.Instructions.Enums.Registers;
 
 /// <summary>
@@ -21,13 +23,14 @@ public enum MipsRegisterSet
     /// <remarks>
     /// This has an equivelant value to <see cref="None"/>, except that is used in the interpreter.
     /// </remarks>
-    Numbered = None,
+    [RegisterSet("{0}")] Numbered = None,
 
 #pragma warning disable CS1591
 
-    GeneralPurpose,
+    [RegisterSet("{0}", typeof(MipsGpRegister), @"^\$?([0-9]+)$")] GeneralPurpose,
+    [RegisterSet("f{0}", typeof(MipsFloatRegister), @"^\$?f([0-9]+)$")] FloatingPoints,
+    
     CoProc0,
-    FloatingPoints,
 
 #pragma warning restore CS1591
 }

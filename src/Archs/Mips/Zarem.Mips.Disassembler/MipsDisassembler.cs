@@ -3,7 +3,6 @@
 using CommunityToolkit.Diagnostics;
 using System.Linq;
 using System.Text;
-using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Mips.Assembler;
 using Zarem.Mips.Disassembler.Models;
@@ -139,5 +138,5 @@ public class MipsDisassembler
         return $"{pattern}";
     }
 
-    private static string GetRegisterString(MipsGpRegister register, MipsRegisterSet set) => $"${MipsRegisterTable.Instance.GetRegisterString(register, set)}";
+    private static string GetRegisterString(MipsGpRegister register, MipsRegisterSet set) => $"${RegisterTable<MipsGpRegister, MipsRegisterSet>.GetRegisterString(register, set)}";
 }

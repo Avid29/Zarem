@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2025
 
+using Zarem.Attributes.Register;
+
 namespace Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 /// <summary>
@@ -21,12 +23,12 @@ public enum RiscVRegisterSet
     /// <remarks>
     /// This has an equivelant value to <see cref="None"/>, except that is used in the interpreter.
     /// </remarks>
-    Numbered = None,
+    [RegisterSet("x{0}")] Numbered = None,
 
 #pragma warning disable CS1591
 
-    GeneralPurpose,
-    FloatingPoints,
+    [RegisterSet("x{0}", typeof(RiscVGpRegister), @"^x([0-9]+)$")] GeneralPurpose,
+    [RegisterSet("f{0}", typeof(RiscVFloatRegister), @"^f([0-9]+)$")] FloatingPoints,
 
 #pragma warning restore CS1591
 }

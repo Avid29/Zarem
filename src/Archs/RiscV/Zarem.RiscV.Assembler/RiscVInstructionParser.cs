@@ -7,14 +7,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Zarem.Assembler;
-using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
-using Zarem.Helpers;
+using Zarem.Attributes.Arguments;
 using Zarem.Models;
 using Zarem.Models.Tables;
 using Zarem.RiscV.Assembler.Logger;
@@ -51,7 +50,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         RiscVInstructionTable? table,
         Address address,
         IReadOnlyDictionary<string, Symbol>? symbols,
-        ILogger? logger) : base(address, symbols, RiscVRegisterTable.Instance, logger)
+        ILogger? logger) : base(address, symbols, logger)
     {
         Config = config;
 
@@ -147,74 +146,31 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         return true;
     }
 
-    /// <inheritdoc/>
-    protected override bool TryParseArg(ReadOnlySpan<Token> arg, RiscVArgument type)
-    {
-        return type switch
-        {
-            // Register arguments
-            (>= RiscVArgument.RD and <= RiscVArgument.FRS3) => TryParseRegisterArg(arg, type),
-
-            // Expression arguments
-            (>= RiscVArgument.Immediate and <= RiscVArgument.FullImmediate) => TryParseExpressionArg(arg, type),
-
-            // Address offset arguments
-            RiscVArgument.MemoryLoad => TryParseAddressOffsetArg(arg, RiscVArgument.Immediate),
-            RiscVArgument.MemoryStore => TryParseAddressOffsetArg(arg, RiscVArgument.StoreOffset),
-
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
-        };
-    }
-
-    /// <inheritdoc/>
-    protected override RiscVInstruction BuildInstruction()
-    {
-        Guard.IsNotNull(Meta);
-
-        return Meta switch
-        {
-            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, _rd, _rs1, _rs2),
-            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, _rd, _rs1, (short)Immediate),
-            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, _rd, Immediate),
-            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, _rs1, _rs2, Immediate),
-            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
-            JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
-            RiscVFloatInstructionMeta f => f.Funct5 is null
-                ? RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)_rd, (RiscVFloatRegister)_rs1, (RiscVFloatRegister)_rs2, (RiscVFloatRegister)_rs3, f.Funct3)
-                : RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5.Value, (RiscVFloatRegister)_rd, (RiscVFloatRegister)_rs1, (RiscVFloatRegister)_rs2, f.Funct3),
-
-            _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
-        };
-    }
-
-    /// <inheritdoc/>
-    protected override RiscVInstructionParser CreateSubParser(Address address)
-        => new(Config, _instructionTable, address, Symbols, null);
-
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
     /// </summary>
-    private bool TryParseRegisterArg(ReadOnlySpan<Token> arg, RiscVArgument target)
+    protected override bool TryParseRegister(ReadOnlySpan<Token> arg, RiscVArgument target, RegisterArgumentAttribute<RiscVRegisterSet> attr)
     {
+        var set = attr.RegisterSet;
+
         // Get reference to selected register argument
-        RefTuple<Ref<RiscVGpRegister>, RiscVRegisterSet> pair = target switch
+        Ref<RiscVGpRegister> regRef = target switch
         {
             // General Purpose Registers
-            RiscVArgument.RD => new(new(ref _rd), RiscVRegisterSet.GeneralPurpose),
-            RiscVArgument.RS1 => new(new(ref _rs1), RiscVRegisterSet.GeneralPurpose),
-            RiscVArgument.RS2 => new(new(ref _rs2), RiscVRegisterSet.GeneralPurpose),
+            RiscVArgument.RD => new(ref _rd),
+            RiscVArgument.RS1 => new(ref _rs1),
+            RiscVArgument.RS2 => new(ref _rs2),
 
             // Float Registers
-            RiscVArgument.FRD => new(new(ref _rd), RiscVRegisterSet.FloatingPoints),
-            RiscVArgument.FRS1 => new(new(ref _rs1), RiscVRegisterSet.FloatingPoints),
-            RiscVArgument.FRS2 => new(new(ref _rs2), RiscVRegisterSet.FloatingPoints),
-            RiscVArgument.FRS3 => new(new(ref _rs3), RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRD => new(ref _rd),
+            RiscVArgument.FRS1 => new(ref _rs1),
+            RiscVArgument.FRS2 => new(ref _rs2),
+            RiscVArgument.FRS3 => new(ref _rs3),
 
             // Invalid target type
             _ => throw new ArgumentOutOfRangeException($"Argument of type '{target}' attempted to parse as a register.")
         };
 
-        (Ref<RiscVGpRegister> regRef, RiscVRegisterSet set) = pair;
         ref RiscVGpRegister reg = ref regRef.Value;
 
         if (!TryParseRegister(arg, out var register, set, 32))
@@ -229,26 +185,9 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     /// <summary>
     /// Parses an argument as an expression and assigns it to the target component
     /// </summary>
-    private bool TryParseExpressionArg(ReadOnlySpan<Token> arg, RiscVArgument target)
+    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, RiscVArgument target, ImmediateArgumentAttribute attr)
     {
-        // Determine casting details for the RISC-V argument
-        (int bitCount, int shiftAmount, bool signed) = target switch
-        {
-            // 5-bit unsigned immediate (e.g., vsetvli or CSRI)
-            RiscVArgument.UImm5 => (5, 1, false),
-            RiscVArgument.Immediate or
-            RiscVArgument.StoreOffset => (12, 0, true),
-            RiscVArgument.BranchOffset => (12, 1, true),
-            RiscVArgument.JumpOffset => (20, 1, true),
-            RiscVArgument.UpperImmediate => (20, 0, false),
-            RiscVArgument.Csr => (12, 0, false),
-            RiscVArgument.FullImmediate => (32, 0, true),
-
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<(int, int, bool)>(
-                $"Argument of type '{target}' attempted to parse as an expression.")
-        };
-
-        if (!TryParseExpression(arg, bitCount, shiftAmount, signed, out var expResult))
+        if (!TryParseExpression(arg, attr.BitCount, attr.Signed, attr.ShiftAmount, out var expResult))
             return false;
 
         var requestedType = RiscVReferenceType.None;
@@ -261,7 +200,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
                 _ => ThrowHelper.ThrowArgumentOutOfRangeException<(RiscVReferenceType, int)>($"Relocation type '{expResult.RelocationType}' is not supported for RISC-V."),
             };
 
-            if (bitCount != bits)
+            if (attr.BitCount != bits)
             {
                 _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
                 return false;
@@ -295,26 +234,28 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         return true;
     }
 
-    /// <summary>
-    /// Parses an argument as an address offset, assigning its components to immediate and $rs.
-    /// </summary>
-    private bool TryParseAddressOffsetArg(ReadOnlySpan<Token> arg, RiscVArgument immType)
+    /// <inheritdoc/>
+    protected override RiscVInstruction BuildInstruction()
     {
-        // NOTE: Be careful about forwards to other parse functions with regards to 
-        // error logging. Address offset argument errors might be inappropriately logged.
+        Guard.IsNotNull(Meta);
 
-        // Split the string into an offset and a register, return false if failed
-        if (!SplitOffsetBase(arg, out var offsetStr, out var regStr))
-            return false;
+        return Meta switch
+        {
+            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, _rd, _rs1, _rs2),
+            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, _rd, _rs1, (short)Immediate),
+            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, _rd, Immediate),
+            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, _rs1, _rs2, Immediate),
+            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
+            JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
+            RiscVFloatInstructionMeta f => f.Funct5 is null
+                ? RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)_rd, (RiscVFloatRegister)_rs1, (RiscVFloatRegister)_rs2, (RiscVFloatRegister)_rs3, f.Funct3)
+                : RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5.Value, (RiscVFloatRegister)_rd, (RiscVFloatRegister)_rs1, (RiscVFloatRegister)_rs2, f.Funct3),
 
-        // Try parse offset component into immediate, return false if failed
-        if (!TryParseExpressionArg(offsetStr, immType))
-            return false;
-
-        // Parse register component into $rs, return false if failed
-        if (!TryParseRegisterArg(regStr, RiscVArgument.RS1))
-            return false;
-
-        return true;
+            _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
+        };
     }
+
+    /// <inheritdoc/>
+    protected override RiscVInstructionParser CreateSubParser(Address address)
+        => new(Config, _instructionTable, address, Symbols, null);
 }

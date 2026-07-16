@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Collections.Generic;
-using Zarem.Assembler.Helpers.Tables;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Debugger.Models;
 using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Machine.Registers;
@@ -29,10 +29,10 @@ public class MipsRegisterViewer : IRegisterViewer
     /// <inheritdoc/>
     public ulong? this[string registerName]
     {
-        get => MipsRegisterTable.Instance.TryGetRegister(registerName, out var reg, out var set, out _) && set == _set ? _registers[(int)reg] : null;
+        get => RegisterTable<MipsGpRegister, MipsRegisterSet>.TryGetRegister(registerName, out var reg, out var set, out _) && set == _set ? _registers[(int)reg] : null;
         set
         {
-            if (value.HasValue && MipsRegisterTable.Instance.TryGetRegister(registerName, out var reg, out var set, out _) && set == _set)
+            if (value.HasValue && RegisterTable<MipsGpRegister, MipsRegisterSet>.TryGetRegister(registerName, out var reg, out var set, out _) && set == _set)
                 _registers[(int)reg] = (uint)value.Value;
         }
     }
@@ -44,8 +44,8 @@ public class MipsRegisterViewer : IRegisterViewer
         {
             for (var i = 0; i < _registers.Count; i++)
             {
-                var name = MipsRegisterTable.Instance.GetRegisterString((MipsGpRegister)i, MipsRegisterSet.GeneralPurpose);
-                var category = MipsRegisterTable.Instance.GetRegisterCategory((MipsGpRegister)i, MipsRegisterSet.GeneralPurpose);
+                var name = RegisterTable<MipsGpRegister, MipsRegisterSet>.GetRegisterString((MipsGpRegister)i, MipsRegisterSet.GeneralPurpose);
+                var category = RegisterTable<MipsGpRegister, MipsRegisterSet, MipsRegisterCategory>.GetRegisterCategory((MipsGpRegister)i, MipsRegisterSet.GeneralPurpose);
 
                 // TODO: Localize category
 
