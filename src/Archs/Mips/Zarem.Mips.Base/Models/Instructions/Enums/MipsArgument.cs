@@ -67,7 +67,7 @@ public enum MipsArgument
 
     // Memory syntax
     [JsonStringEnumMemberName("offset_rs")]
-    [SplitArgument<MipsArgument>(RS, Offset)]
+    [SplitArgument<MipsArgument>(RS, Immediate)]
     AddressBase,
 
     // RS/RT Register argument for coprocessors. Must use numbered register name.

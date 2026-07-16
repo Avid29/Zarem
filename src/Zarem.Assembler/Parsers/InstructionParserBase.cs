@@ -20,6 +20,7 @@ using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Assembler.Tokenization.Profiles;
+using Zarem.Attributes;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
@@ -36,8 +37,9 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     where TSet : unmanaged, Enum
 {
     private readonly RegisterTable<TRegister, TSet> _registerTable;
+    private readonly ArgumentTable<TArg> _argTable;
+    private readonly Dictionary<TArg, AssemblyArg> _parsedArgTable;
     private readonly AssemblerLogger? _logger;
-    private readonly Dictionary<TArg, AssemblyArg> _argTable;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterParser{TRegister, TSet}"/> struct.
@@ -45,7 +47,8 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     public InstructionParserBase(Address address, IReadOnlyDictionary<string, Symbol>? symbols, RegisterTable<TRegister, TSet> registerTable, ILogger? logger)
     {
         _registerTable = registerTable;
-        _argTable = [];
+        _parsedArgTable = [];
+        _argTable = new();
 
         CurrentAddress = address;
         Symbols = symbols;
@@ -128,7 +131,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             // Parse the argument
             // Only track the argument if successfully parsed
             if(TryParseArg(arg.Tokens, type))
-                _argTable[type] = arg;
+                _parsedArgTable[type] = arg;
         }
 
         // Handle pseudo-instruction expansion if needed
@@ -174,11 +177,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     protected abstract bool TryDetermineInstruction(AssemblyLine line, [NotNullWhen(true)] out string? name);
 
     /// <summary>
-    /// Parses an arg token span according to the expected argument type.
-    /// </summary>
-    protected abstract bool TryParseArg(ReadOnlySpan<Token> arg, TArg type);
-
-    /// <summary>
     /// Creates a new instruction parser for parsing pseudo-instruction expansion templates.
     /// </summary>
     protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet> CreateSubParser(Address address);
@@ -187,6 +185,16 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// Builds an instruction from the parsed data.
     /// </summary>
     protected abstract TInstruction BuildInstruction();
+
+    /// <summary>
+    /// Parses an argument as a register and assigns it to the target component.
+    /// </summary>
+    protected abstract bool TryParseRegister(ReadOnlySpan<Token> arg, TArg target);
+
+    /// <summary>
+    /// Parses an argument as an expression and assigns it to the target component
+    /// </summary>
+    protected abstract bool TryParseExpression(ReadOnlySpan<Token> arg, TArg target);
 
     /// <summary>
     /// Attempts to parse a register.
@@ -299,6 +307,39 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         return true;
     }
 
+    private bool TryParseArg(ReadOnlySpan<Token> arg, TArg type)
+    {
+        var attr = _argTable.GetAttribute(type);
+
+        return attr switch
+        {
+            RegisterArgumentAttribute<TSet> => TryParseRegister(arg, type),
+            ImmediateArgumentAttribute => TryParseExpression(arg, type),
+            SplitArgumentAttribute<TArg> split => TryParseAddressOffset(arg, split.RegisterArgument, split.ImmediateArgument),
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
+        };
+    }
+
+    private bool TryParseAddressOffset(ReadOnlySpan<Token> arg, TArg reg, TArg imm)
+    {
+        // NOTE: Be careful about forwards to other parse functions with regards to 
+        // error logging. Address offset argument errors might be inappropriately logged.
+
+        // Split the string into an offset and a register, return false if failed
+        if (!SplitOffsetBase(arg, out var offsetStr, out var regStr))
+            return false;
+
+        // Try parse offset component into immediate, return false if failed
+        if (!TryParseExpression(offsetStr, imm))
+            return false;
+
+        // Parse register component into $rs, return false if failed
+        if (!TryParseRegister(regStr, reg))
+            return false;
+
+        return true;
+    }
+
     /// <summary>
     /// Generates an <see cref="AssemblyLine"/> from a pseudo-instruction substitution template.
     /// </summary>
@@ -310,7 +351,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         foreach (var argType in Enum.GetValues<TArg>())
         {
             // Skip args not present in the arg table
-            if (!_argTable.ContainsKey(argType))
+            if (!_parsedArgTable.ContainsKey(argType))
                 continue;
 
             // Get the template name for the argument type, which is used as a placeholder in the template string
@@ -320,7 +361,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
                 ?.Name;
 
             var argTemplatePattern = $"${{{argTemplate}}}";
-            var argSubstitution = $"{_argTable[argType]}";
+            var argSubstitution = $"{_parsedArgTable[argType]}";
 
             Guard.IsNotNull(argTemplatePattern);
             result = result.Replace(argTemplatePattern, argSubstitution);
