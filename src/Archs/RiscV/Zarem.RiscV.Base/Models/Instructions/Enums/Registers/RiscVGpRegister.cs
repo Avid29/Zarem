@@ -46,10 +46,10 @@ public enum RiscVGpRegister : byte
     [Register<RiscVRegisterCategory>("s10", RiscVRegisterCategory.Saved)] Saved10 = 26,
     [Register<RiscVRegisterCategory>("s11", RiscVRegisterCategory.Saved)] Saved11 = 27,
     
-    [Register<RiscVRegisterCategory>("s3", RiscVRegisterCategory.Temporary)] Temporary3 = 28,
-    [Register<RiscVRegisterCategory>("s4", RiscVRegisterCategory.Temporary)] Temporary4 = 29,
-    [Register<RiscVRegisterCategory>("s5", RiscVRegisterCategory.Temporary)] Temporary5 = 30,
-    [Register<RiscVRegisterCategory>("s6", RiscVRegisterCategory.Temporary)] Temporary6 = 31
+    [Register<RiscVRegisterCategory>("t3", RiscVRegisterCategory.Temporary)] Temporary3 = 28,
+    [Register<RiscVRegisterCategory>("t4", RiscVRegisterCategory.Temporary)] Temporary4 = 29,
+    [Register<RiscVRegisterCategory>("t5", RiscVRegisterCategory.Temporary)] Temporary5 = 30,
+    [Register<RiscVRegisterCategory>("t6", RiscVRegisterCategory.Temporary)] Temporary6 = 31
 
 #pragma warning restore CS1591
 }

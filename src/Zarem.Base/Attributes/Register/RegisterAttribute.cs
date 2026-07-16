@@ -8,25 +8,18 @@ namespace Zarem.Attributes.Register;
 /// An attribute that describes register.
 /// </summary>
 [AttributeUsage(AttributeTargets.Field)]
-public class RegisterAttribute<TCategory> : Attribute
-    where TCategory : unmanaged, Enum
+public class RegisterAttribute : Attribute
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="RegisterAttribute{TCategory}"/> class.
+    /// Initializes a new instance of the <see cref="RegisterAttribute"/> class.
     /// </summary>
-    public RegisterAttribute(string alias, TCategory category)
+    public RegisterAttribute(string alias)
     {
         Alias = alias;
-        Category = category;
     }
 
     /// <summary>
     /// Gets or sets the register's alias.
     /// </summary>
     public string Alias { get; }
-
-    /// <summary>
-    /// Gets or sets the register's category.
-    /// </summary>
-    public TCategory Category { get; }
 }

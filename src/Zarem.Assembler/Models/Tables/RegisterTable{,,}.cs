@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Zarem.Attributes.Register;
 
 namespace Zarem.Assembler.Models.Tables;
@@ -68,12 +69,12 @@ public abstract class RegisterTable<TRegister, TSet, TCategory> : RegisterTable<
             if (attr is null)
                 continue;
 
-            var value = field.GetValue(null);
-            var key = (TRegister?)Convert.ChangeType(value, typeof(TRegister));
-            if (key is null)
+            var rawValue = field.GetValue(null);
+            if (rawValue is null)
                 continue;
 
-            table[key.Value] = attr.Category;
+            byte x = Convert.ToByte(rawValue);
+            table[Unsafe.As<byte, TRegister>(ref x)] = attr.Category;
         }
 
         return table;
