@@ -1,6 +1,8 @@
 ﻿// Avishai Dernis 2025
 
 using System.Text.Json.Serialization;
+using Zarem.Attributes;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Models.Instructions.Enums;
 
@@ -13,50 +15,69 @@ public enum MipsArgument
 #pragma warning disable CS1591
 
     // General Registers
-    [JsonStringEnumMemberName("rs")] RS,
-    [JsonStringEnumMemberName("rt")] RT,
-    [JsonStringEnumMemberName("rd")] RD,
+    [JsonStringEnumMemberName("rs")]
+    [RegisterArgument<MipsRegisterSet>(MipsRegisterSet.GeneralPurpose)]
+    RS,
 
-    [JsonStringEnumMemberName("sa")] ShiftAmount,
-
-    /// <summary>
-    /// The 16 bit immediate value.
-    /// </summary>
-    [JsonStringEnumMemberName("imm")] Immediate,
-
-    /// <summary>
-    /// A branch's offset.
-    /// </summary>
-    [JsonStringEnumMemberName("offset")] Offset,
-
-    /// <summary>
-    /// The 26-bit immediate value.
-    /// </summary>
-    [JsonStringEnumMemberName("target")] Address,
-
-    /// <summary>
-    /// An base memory address from a register, and a 16-bit offset.
-    /// </summary>
-    [JsonStringEnumMemberName("offset_rs")] AddressBase,
-
-    /// <summary>
-    /// A 32 bit immediate value.
-    /// </summary>
-    [JsonStringEnumMemberName("imm32")] FullImmediate,
+    [JsonStringEnumMemberName("rt")]
+    [RegisterArgument<MipsRegisterSet>(MipsRegisterSet.GeneralPurpose)]
+    RT,
+    
+    [JsonStringEnumMemberName("rd")]
+    [RegisterArgument<MipsRegisterSet>(MipsRegisterSet.GeneralPurpose)]
+    RD,
 
     // Floating Point Registers
-    [JsonStringEnumMemberName("fs")] FS,
-    [JsonStringEnumMemberName("ft")] FT,
-    [JsonStringEnumMemberName("fd")] FD,
+    [JsonStringEnumMemberName("fs")]
+    [RegisterArgument<MipsRegisterSet>(MipsRegisterSet.FloatingPoints)]
+    FS,
+
+    [JsonStringEnumMemberName("ft")]
+    [RegisterArgument<MipsRegisterSet>(MipsRegisterSet.FloatingPoints)]
+    FT,
+
+    [JsonStringEnumMemberName("fd")]
+    [RegisterArgument<MipsRegisterSet>(MipsRegisterSet.FloatingPoints)]
+    FD,
+
+    // Immediates
+    [JsonStringEnumMemberName("sa")]
+    [ImmediateArgument(5, false)]
+    ShiftAmount,
+
+    [JsonStringEnumMemberName("imm")]
+    [ImmediateArgument(16, true)]
+    Immediate,
+
+    [JsonStringEnumMemberName("offset")]
+    [ImmediateArgument(16, true, 2)]
+    Offset,
+
+    [JsonStringEnumMemberName("target")]
+    [ImmediateArgument(26, false)]
+    Address,
+
+    [JsonStringEnumMemberName("offset26")]
+    [ImmediateArgument(26, false, 2)]
+    LargeOffset,
+
+    [JsonStringEnumMemberName("imm32")]
+    [ImmediateArgument(32, false)]
+    FullImmediate,
+
+    // Memory syntax
+    [JsonStringEnumMemberName("offset_rs")]
+    [SplitArgument<MipsArgument>(RS, Offset)]
+    AddressBase,
 
     // RS/RT Register argument for coprocessors. Must use numbered register name.
-    [JsonStringEnumMemberName("rs_num")] RS_Numbered,
-    [JsonStringEnumMemberName("rt_num")] RT_Numbered,
-
-    /// <summary>
-    /// A 26-bit branch offset.
-    /// </summary>
-    [JsonStringEnumMemberName("offset26")] LargeOffset,
+    [JsonStringEnumMemberName("rs_num")]
+    [RegisterArgument<MipsRegisterSet>(MipsRegisterSet.FloatingPoints)]
+    RS_Numbered,
+    
+    [JsonStringEnumMemberName("rt_num")]
+    [RegisterArgument<MipsRegisterSet>(MipsRegisterSet.FloatingPoints)] 
+    RT_Numbered,
 
 #pragma warning restore CS1591
 }
