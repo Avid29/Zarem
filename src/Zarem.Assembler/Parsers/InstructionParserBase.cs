@@ -36,16 +36,14 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
 {
-    private readonly RegisterTable<TRegister, TSet> _registerTable;
     private readonly Dictionary<TArg, AssemblyArg> _parsedArgTable;
     private readonly AssemblerLogger? _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterParser{TRegister, TSet}"/> struct.
     /// </summary>
-    public InstructionParserBase(Address address, IReadOnlyDictionary<string, Symbol>? symbols, RegisterTable<TRegister, TSet> registerTable, ILogger? logger)
+    public InstructionParserBase(Address address, IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
     {
-        _registerTable = registerTable;
         _parsedArgTable = [];
 
         CurrentAddress = address;
@@ -221,7 +219,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         }
 
         // Get named register from table
-        if (!_registerTable.TryGetRegister(token.Source, out register, out TSet parsedSet, out bool indexed))
+        if (!RegisterTable<TRegister, TSet>.TryGetRegister(token.Source, out register, out TSet parsedSet, out bool indexed))
         {
             // Register does not exist in table
             _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, token, "RegisterNotFound", token);

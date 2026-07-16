@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Zarem.Assembler;
-using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models.Tables;
@@ -15,7 +14,6 @@ using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Attributes.Arguments;
-using Zarem.Helpers;
 using Zarem.Models;
 using Zarem.Models.Tables;
 using Zarem.RiscV.Assembler.Logger;
@@ -52,7 +50,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         RiscVInstructionTable? table,
         Address address,
         IReadOnlyDictionary<string, Symbol>? symbols,
-        ILogger? logger) : base(address, symbols, RiscVRegisterTable.Instance, logger)
+        ILogger? logger) : base(address, symbols, logger)
     {
         Config = config;
 

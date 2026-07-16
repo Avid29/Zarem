@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Test.Mips.Helpers;
-using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Tokenization;
@@ -23,6 +22,7 @@ using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
 using Zarem.Mips.Assembler.Models.Meta;
 using Zarem.Mips.Assembler.Models.Tables;
 using Zarem.Mips.Assembler;
+
 
 #if DEBUG
 using Zarem.Mips.Disassembler.Services;
@@ -315,5 +315,5 @@ public class InstructionParserTests
         }
     }
 
-    private static string GetRegisterString(MipsGpRegister register, MipsRegisterSet set) => $"${MipsRegisterTable.Instance.GetRegisterString(register, set)}";
+    private static string GetRegisterString(MipsGpRegister register, MipsRegisterSet set) => $"${RegisterTable<MipsGpRegister, MipsRegisterSet>.GetRegisterString(register, set)}";
 }

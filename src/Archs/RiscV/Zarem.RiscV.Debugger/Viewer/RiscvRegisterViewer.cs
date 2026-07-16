@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Collections.Generic;
-using Zarem.Assembler.Helpers.Tables;
+using Zarem.Assembler.Models.Tables;
 using Zarem.Debugger.Models;
 using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Machine.Registers;
@@ -29,10 +29,10 @@ public class RiscVRegisterViewer : IRegisterViewer
     /// <inheritdoc/>
     public ulong? this[string registerName]
     {
-        get => RiscVRegisterTable.Instance.TryGetRegister(registerName, out var reg, out var set, out _) && set == _set ? _registers[(int)reg] : null;
+        get => RegisterTable<RiscVGpRegister, RiscVRegisterSet>.TryGetRegister(registerName, out var reg, out var set, out _) && set == _set ? _registers[(int)reg] : null;
         set
         {
-            if (value.HasValue && RiscVRegisterTable.Instance.TryGetRegister(registerName, out var reg, out var set, out _) && set == _set)
+            if (value.HasValue && RegisterTable<RiscVGpRegister, RiscVRegisterSet>.TryGetRegister(registerName, out var reg, out var set, out _) && set == _set)
                 _registers[(int)reg] = (uint)value.Value;
         }
     }
@@ -44,8 +44,8 @@ public class RiscVRegisterViewer : IRegisterViewer
         {
             for (var i = 0; i < _registers.Count; i++)
             {
-                var name = RiscVRegisterTable.Instance.GetRegisterString((RiscVGpRegister)i, RiscVRegisterSet.GeneralPurpose);
-                var category = RiscVRegisterTable.Instance.GetRegisterCategory((RiscVGpRegister)i, RiscVRegisterSet.GeneralPurpose);
+                var name = RegisterTable<RiscVGpRegister, RiscVRegisterSet>.GetRegisterString((RiscVGpRegister)i, RiscVRegisterSet.GeneralPurpose);
+                var category = RegisterTable<RiscVGpRegister, RiscVRegisterSet, RiscVRegisterCategory>.GetRegisterCategory((RiscVGpRegister)i, RiscVRegisterSet.GeneralPurpose);
 
                 // TODO: Localize category
 

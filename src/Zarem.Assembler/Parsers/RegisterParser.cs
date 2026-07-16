@@ -19,16 +19,13 @@ public readonly struct RegisterParser<TRegister, TSet>
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
 {
-    private readonly RegisterTable<TRegister, TSet> _table;
     private readonly AssemblerLogger? _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterParser{TRegister, TSet}"/> struct.
     /// </summary>
-    public RegisterParser(RegisterTable<TRegister, TSet> table, ILogger? logger)
+    public RegisterParser(ILogger? logger)
     {
-        _table = table;
-
         if (logger is not null)
         {
             _logger = new AssemblerLogger(logger);
@@ -55,7 +52,7 @@ public readonly struct RegisterParser<TRegister, TSet>
         }
 
         // Get named register from table
-        if (!_table.TryGetRegister(arg.Source, out register, out TSet parsedSet, out bool indexed))
+        if (!RegisterTable<TRegister, TSet>.TryGetRegister(arg.Source, out register, out TSet parsedSet, out bool indexed))
         {
             // Register does not exist in table
             _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "RegisterNotFound", arg);

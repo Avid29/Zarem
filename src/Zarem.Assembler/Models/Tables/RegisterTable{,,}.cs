@@ -11,7 +11,7 @@ namespace Zarem.Assembler.Models.Tables;
 /// <summary>
 /// A base class for a register lookup table.
 /// </summary>
-public abstract class RegisterTable<TRegister, TSet, TCategory> : RegisterTable<TRegister, TSet>
+public static class RegisterTable<TRegister, TSet, TCategory>
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
     where TCategory : unmanaged, Enum
@@ -30,7 +30,7 @@ public abstract class RegisterTable<TRegister, TSet, TCategory> : RegisterTable<
     /// <param name="set">The set the register belongs to.</param>
     /// <returns>The category of the register.</returns>
     /// <exception cref="ArgumentException"></exception>
-    public TCategory GetRegisterCategory(TRegister register, TSet set)
+    public static TCategory GetRegisterCategory(TRegister register, TSet set)
     {
         if (_categoryTable.TryGetValue(set, out var table) && table.TryGetValue(register, out var category))
             return category;

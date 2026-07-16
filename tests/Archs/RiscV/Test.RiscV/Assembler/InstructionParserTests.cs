@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Text;
 using Test.RiscV.Helpers;
 using Zarem.Assembler;
-using Zarem.Assembler.Helpers.Tables;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization;
@@ -181,5 +180,5 @@ public class InstructionParserTests
         }
     }
 
-    private static string GetRegisterString(RiscVGpRegister register, RiscVRegisterSet set) => $"{RiscVRegisterTable.Instance.GetRegisterString(register, set)}";
+    private static string GetRegisterString(RiscVGpRegister register, RiscVRegisterSet set) => $"{RegisterTable<RiscVGpRegister, RiscVRegisterSet>.GetRegisterString(register, set)}";
 }

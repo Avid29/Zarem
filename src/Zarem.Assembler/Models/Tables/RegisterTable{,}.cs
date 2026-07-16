@@ -13,7 +13,7 @@ namespace Zarem.Assembler.Models.Tables;
 /// <summary>
 /// A base class for a register lookup table.
 /// </summary>
-public abstract class RegisterTable<TRegister, TSet>
+public static class RegisterTable<TRegister, TSet>
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
 {
@@ -38,7 +38,7 @@ public abstract class RegisterTable<TRegister, TSet>
     /// <param name="registerSet">Which register set the discovered register belongs to.</param>
     /// <param name="indexed">Whether or not the register was named by index.</param>
     /// <returns>Whether or not an register exists by that name.</returns>
-    public bool TryGetRegister(string name, out TRegister register, out TSet registerSet, out bool indexed)
+    public static bool TryGetRegister(string name, out TRegister register, out TSet registerSet, out bool indexed)
     {
         register = default;
         registerSet = default;
@@ -84,7 +84,7 @@ public abstract class RegisterTable<TRegister, TSet>
     /// <param name="register">The register value.</param>
     /// <param name="set">The set the register belongs to.</param>
     /// <returns>The name of the register as a string.</returns>
-    public string GetRegisterString(TRegister register, TSet set)
+    public static string GetRegisterString(TRegister register, TSet set)
     {
         // Try to find a the ABI name
         if (_nameTables.TryGetValue(set, out var table))
