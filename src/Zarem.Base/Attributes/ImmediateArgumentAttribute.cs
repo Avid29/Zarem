@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2026
 
+using System;
+
 namespace Zarem.Attributes;
 
 /// <summary>
@@ -17,12 +19,18 @@ public class ImmediateArgumentAttribute : AssemblerArgumentAttribute
         ShiftAmount = shiftAmount;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the bit count of the argument's immediate.
+    /// </summary>
     public int BitCount { get; }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets whether or not the argument's immediate is signed.
+    /// </summary>
     public bool Signed { get; }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the shift amount of the argument's immediate.
+    /// </summary>
     public int ShiftAmount { get; }
 }
