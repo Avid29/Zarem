@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using System.Text.Json.Serialization;
-using Zarem.Attributes;
+using Zarem.Attributes.Arguments;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Models.Instructions.Enums;

@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.Json.Serialization;
-using Zarem.Attributes;
+using Zarem.Attributes.Arguments;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Zarem.RiscV.Models.Instructions.Enums;

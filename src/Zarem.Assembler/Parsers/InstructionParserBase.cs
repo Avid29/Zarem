@@ -20,7 +20,7 @@ using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Assembler.Tokenization.Profiles;
-using Zarem.Attributes;
+using Zarem.Attributes.Arguments;
 using Zarem.Models;
 using Zarem.Models.Tables;
 
@@ -37,7 +37,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     where TSet : unmanaged, Enum
 {
     private readonly RegisterTable<TRegister, TSet> _registerTable;
-    private readonly ArgumentTable<TArg> _argTable;
     private readonly Dictionary<TArg, AssemblyArg> _parsedArgTable;
     private readonly AssemblerLogger? _logger;
 
@@ -48,7 +47,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     {
         _registerTable = registerTable;
         _parsedArgTable = [];
-        _argTable = new();
 
         CurrentAddress = address;
         Symbols = symbols;
@@ -261,9 +259,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         if (!ExpressionParser.TryParse(tokens, out expResult, Symbols, _logger?.Parent))
             return false;
 
-        long val = expResult.IsAbsolute ? expResult.Addend : 0;
-        CleanInteger(ref val, tokens, bitCount, shift, signed);
-        Immediate = (int)val;
+        Immediate = expResult.IsAbsolute ? (int)CleanInteger(expResult.Addend, tokens, bitCount, shift, signed) : 0;
         return true;
     }
 
@@ -309,7 +305,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
 
     private bool TryParseArg(ReadOnlySpan<Token> arg, TArg type)
     {
-        var attr = _argTable.GetAttribute(type);
+        var attr = ArgumentTable<TArg>.GetAttribute(type);
 
         return attr switch
         {
@@ -383,7 +379,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// <param name="shiftAmount">The number of bits that will drop from the bottom.</param>
     /// <param name="signed">Whether or not the new value should be signed.</param>
     /// <returns>Whether or not the value can be safely cast.</returns>
-    private void CleanInteger(ref long value, ReadOnlySpan<Token> arg, int bitCount, int shiftAmount, bool signed)
+    private long CleanInteger(long value, ReadOnlySpan<Token> arg, int bitCount, int shiftAmount, bool signed)
     {
         var original = value;
 
@@ -433,5 +429,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         {
             _logger?.Log(Severity.Warning, LogId.IntegerTruncated, arg, $"CastWarning{changes}", arg.Print(), original, value, bitCount, shiftAmount);
         }
+
+        return value;
     }
 }

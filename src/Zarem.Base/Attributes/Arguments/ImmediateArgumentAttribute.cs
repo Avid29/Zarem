@@ -2,12 +2,12 @@
 
 using System;
 
-namespace Zarem.Attributes;
+namespace Zarem.Attributes.Arguments;
 
 /// <summary>
-/// A <see cref="AssemblerArgumentAttribute"/> for immediate arguments.
+/// A <see cref="ArgumentAttribute"/> for immediate arguments.
 /// </summary>
-public class ImmediateArgumentAttribute : AssemblerArgumentAttribute
+public class ImmediateArgumentAttribute : ArgumentAttribute
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ImmediateArgumentAttribute"/> class.

@@ -2,12 +2,12 @@
 
 using System;
 
-namespace Zarem.Attributes;
+namespace Zarem.Attributes.Arguments;
 
 /// <summary>
-/// A <see cref="AssemblerArgumentAttribute"/> for split arguments.
+/// A <see cref="ArgumentAttribute"/> for split arguments.
 /// </summary>
-public class SplitArgumentAttribute<TArg> : AssemblerArgumentAttribute
+public class SplitArgumentAttribute<TArg> : ArgumentAttribute
     where TArg : unmanaged, Enum
 {
     /// <summary>

@@ -15,6 +15,11 @@ public abstract class RegisterTable<TRegister, TSet>
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
 {
+    static RegisterTable()
+    {
+
+    }
+
     /// <summary>
     /// Attempts to get a register by name.
     /// </summary>
@@ -106,5 +111,4 @@ public abstract class RegisterTable<TRegister, TSet>
     /// Gets a dictionary mapping a set to a format string, e.g. RegisterSet.GP -> "x{0}"
     /// </summary>
     protected abstract Dictionary<TSet, string> NumericalSetFormatTable { get; }
-
 }

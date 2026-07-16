@@ -14,5 +14,9 @@ public enum RiscVRegisterCategory
     Temporary,
     Argument,
 
+    FloatSaved,
+    FloatTemporary,
+    FloatArgument,
+
 #pragma warning restore CS1591
 }

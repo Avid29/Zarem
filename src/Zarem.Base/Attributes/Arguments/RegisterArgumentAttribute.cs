@@ -2,12 +2,12 @@
 
 using System;
 
-namespace Zarem.Attributes;
+namespace Zarem.Attributes.Arguments;
 
 /// <summary>
-/// A <see cref="AssemblerArgumentAttribute"/> for register arguments.
+/// A <see cref="ArgumentAttribute"/> for register arguments.
 /// </summary>
-public class RegisterArgumentAttribute<TSet> : AssemblerArgumentAttribute
+public class RegisterArgumentAttribute<TSet> : ArgumentAttribute
     where TSet : unmanaged, Enum
 {
     /// <summary>

@@ -14,7 +14,7 @@ using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
-using Zarem.Attributes;
+using Zarem.Attributes.Arguments;
 using Zarem.Helpers;
 using Zarem.Mips.Assembler.Logger;
 using Zarem.Mips.Assembler.Models.Enums;

@@ -2,9 +2,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
+using System.Reflection;
+using Zarem.Attributes.Register;
 
 namespace Zarem.Assembler.Models.Tables;
 
@@ -16,6 +15,13 @@ public abstract class RegisterTable<TRegister, TSet, TCategory> : RegisterTable<
     where TSet : unmanaged, Enum
     where TCategory : unmanaged, Enum
 {
+    private static readonly Dictionary<TSet, Dictionary<TRegister, TCategory>> _categoryTable;
+
+    static RegisterTable()
+    {
+        _categoryTable = BuildCategoryTable();
+    }
+
     /// <summary>
     /// Attempts to get a register's category by value.
     /// </summary>
@@ -25,15 +31,51 @@ public abstract class RegisterTable<TRegister, TSet, TCategory> : RegisterTable<
     /// <exception cref="ArgumentException"></exception>
     public TCategory GetRegisterCategory(TRegister register, TSet set)
     {
-        if (RegisterCategoryTable.TryGetValue(set, out var table) && table.TryGetValue(register, out var category))
+        if (_categoryTable.TryGetValue(set, out var table) && table.TryGetValue(register, out var category))
             return category;
 
         // TODO: Should this just return default?
         throw new ArgumentException($"Register {register} in set {set} does not have a category defined.");
     }
 
-    /// <summary>
-    /// Gets a dictionary mapping a set and register to a category.
-    /// </summary>
-    protected abstract Dictionary<TSet, Dictionary<TRegister, TCategory>> RegisterCategoryTable { get; }
+    private static Dictionary<TSet, Dictionary<TRegister, TCategory>> BuildCategoryTable()
+    {
+        var table = new Dictionary<TSet, Dictionary<TRegister, TCategory>>();
+
+        foreach(var field in typeof(TSet).GetFields(BindingFlags.Public | BindingFlags.Static))
+        {
+            var attr = field.GetCustomAttribute<RegisterSetAttribute>();
+            if (attr?.SetType is null || field.GetValue(null) is not TSet value)
+                continue;
+
+            var subTable = BuildSetCategoryTable(attr.SetType);
+            if (subTable.Count is 0)
+                continue;
+
+            table[value] = subTable;
+        }
+
+        return table;
+    }
+
+    private static Dictionary<TRegister, TCategory> BuildSetCategoryTable(Type setType)
+    {
+        var table = new Dictionary<TRegister, TCategory>();
+
+        foreach (var field in setType.GetFields(BindingFlags.Public | BindingFlags.Static))
+        {
+            var attr = field.GetCustomAttribute<RegisterAttribute<TCategory>>();
+            if (attr is null)
+                continue;
+
+            var value = field.GetValue(null);
+            var key = (TRegister?)Convert.ChangeType(value, typeof(TRegister));
+            if (key is null)
+                continue;
+
+            table[key.Value] = attr.Category;
+        }
+
+        return table;
+    }
 }
