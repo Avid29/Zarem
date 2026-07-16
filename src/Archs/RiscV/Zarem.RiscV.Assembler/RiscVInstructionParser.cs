@@ -151,27 +151,28 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
     /// </summary>
-    protected override bool TryParseRegister(ReadOnlySpan<Token> arg, RiscVArgument target)
+    protected override bool TryParseRegister(ReadOnlySpan<Token> arg, RiscVArgument target, RegisterArgumentAttribute<RiscVRegisterSet> attr)
     {
+        var set = attr.RegisterSet;
+
         // Get reference to selected register argument
-        RefTuple<Ref<RiscVGpRegister>, RiscVRegisterSet> pair = target switch
+        Ref<RiscVGpRegister> regRef = target switch
         {
             // General Purpose Registers
-            RiscVArgument.RD => new(new(ref _rd), RiscVRegisterSet.GeneralPurpose),
-            RiscVArgument.RS1 => new(new(ref _rs1), RiscVRegisterSet.GeneralPurpose),
-            RiscVArgument.RS2 => new(new(ref _rs2), RiscVRegisterSet.GeneralPurpose),
+            RiscVArgument.RD => new(ref _rd),
+            RiscVArgument.RS1 => new(ref _rs1),
+            RiscVArgument.RS2 => new(ref _rs2),
 
             // Float Registers
-            RiscVArgument.FRD => new(new(ref _rd), RiscVRegisterSet.FloatingPoints),
-            RiscVArgument.FRS1 => new(new(ref _rs1), RiscVRegisterSet.FloatingPoints),
-            RiscVArgument.FRS2 => new(new(ref _rs2), RiscVRegisterSet.FloatingPoints),
-            RiscVArgument.FRS3 => new(new(ref _rs3), RiscVRegisterSet.FloatingPoints),
+            RiscVArgument.FRD => new(ref _rd),
+            RiscVArgument.FRS1 => new(ref _rs1),
+            RiscVArgument.FRS2 => new(ref _rs2),
+            RiscVArgument.FRS3 => new(ref _rs3),
 
             // Invalid target type
             _ => throw new ArgumentOutOfRangeException($"Argument of type '{target}' attempted to parse as a register.")
         };
 
-        (Ref<RiscVGpRegister> regRef, RiscVRegisterSet set) = pair;
         ref RiscVGpRegister reg = ref regRef.Value;
 
         if (!TryParseRegister(arg, out var register, set, 32))

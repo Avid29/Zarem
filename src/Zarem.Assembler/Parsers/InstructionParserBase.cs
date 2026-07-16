@@ -189,7 +189,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// <summary>
     /// Parses an argument as a register and assigns it to the target component.
     /// </summary>
-    protected abstract bool TryParseRegister(ReadOnlySpan<Token> arg, TArg target);
+    protected abstract bool TryParseRegister(ReadOnlySpan<Token> arg, TArg target, RegisterArgumentAttribute<TSet> attr);
 
     /// <summary>
     /// Parses an argument as an expression and assigns it to the target component
@@ -313,7 +313,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
 
         return attr switch
         {
-            RegisterArgumentAttribute<TSet> => TryParseRegister(arg, type),
+            RegisterArgumentAttribute<TSet> reg => TryParseRegister(arg, type, reg),
             ImmediateArgumentAttribute imm => TryParseExpression(arg, type, imm),
             SplitArgumentAttribute<TArg> split => TryParseAddressOffset(arg, split.RegisterArgument, split.ImmediateArgument),
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),

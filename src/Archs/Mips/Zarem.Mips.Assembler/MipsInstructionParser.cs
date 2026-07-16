@@ -179,26 +179,30 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
     }
 
     /// <inheritdoc/>
-    protected override bool TryParseRegister(ReadOnlySpan<Token> arg, MipsArgument target)
+    protected override bool TryParseRegister(ReadOnlySpan<Token> arg, MipsArgument target, RegisterArgumentAttribute<MipsRegisterSet> attr)
     {
+        var set = attr.RegisterSet;
+
         // Get reference to selected register argument
-        RefTuple<Ref<MipsGpRegister>, MipsRegisterSet> pair = target switch
+        Ref<MipsGpRegister> regRef = target switch
         {
             // General Purpose Registers
-            MipsArgument.RS => new(new(ref _rs), MipsRegisterSet.GeneralPurpose),
-            MipsArgument.RT => new(new(ref _rt), MipsRegisterSet.GeneralPurpose),
-            MipsArgument.RD => new(new(ref _rd), MipsRegisterSet.GeneralPurpose),
+            MipsArgument.RS => new(ref _rs),
+            MipsArgument.RT => new(ref _rt),
+            MipsArgument.RD => new(ref _rd),
+
             // Float Registers
-            MipsArgument.FS => new(new(ref _rs), MipsRegisterSet.FloatingPoints),
-            MipsArgument.FT => new(new(ref _rt), MipsRegisterSet.FloatingPoints),
-            MipsArgument.FD => new(new(ref _rd), MipsRegisterSet.FloatingPoints),
+            MipsArgument.FS => new(ref _rs),
+            MipsArgument.FT => new(ref _rt),
+            MipsArgument.FD => new(ref _rd),
+
             // RT Register for coprocessors
-            MipsArgument.RT_Numbered => new(new(ref _rt), MipsRegisterSet.Numbered),
+            MipsArgument.RT_Numbered => new(ref _rt),
+
             // Invalid target type
             _ => throw new ArgumentOutOfRangeException($"Argument of type '{target}' attempted to parse as a register.")
         };
 
-        (Ref<MipsGpRegister> regRef, MipsRegisterSet set) = pair;
         ref MipsGpRegister reg = ref regRef.Value;
 
         if (!TryParseRegister(arg, out var register, set, 32))
