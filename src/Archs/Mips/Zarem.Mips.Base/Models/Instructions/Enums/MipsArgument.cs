@@ -54,7 +54,7 @@ public enum MipsArgument
     Offset,
 
     [JsonStringEnumMemberName("target")]
-    [ImmediateArgument(26, false)]
+    [ImmediateArgument(26, false, 2)]
     Address,
 
     [JsonStringEnumMemberName("offset26")]

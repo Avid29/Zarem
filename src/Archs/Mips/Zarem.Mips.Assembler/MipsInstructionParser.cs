@@ -14,6 +14,7 @@ using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
+using Zarem.Attributes;
 using Zarem.Helpers;
 using Zarem.Mips.Assembler.Logger;
 using Zarem.Mips.Assembler.Models.Enums;
@@ -125,21 +126,9 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
     }
 
     /// <inheritdoc/>
-    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, MipsArgument target)
+    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, MipsArgument target, ImmediateArgumentAttribute attr)
     {
-        // Determine casting details for the argument
-        (int bitCount, int shiftAmount, bool signed) = target switch
-        {
-            MipsArgument.ShiftAmount => (5, 0, false),
-            MipsArgument.Offset => (16, 2, false),
-            MipsArgument.Immediate => (16, 0, true),
-            MipsArgument.Address => (26, 2, false),
-            MipsArgument.LargeOffset => (26, 2, true),
-            MipsArgument.FullImmediate => (32, 0, true),
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<(byte, byte, bool)>($"Argument of type '{target}' attempted to parse as an expression."),
-        };
-
-        if (!TryParseExpression(arg, bitCount, shiftAmount, signed, out var expResult))
+        if (!TryParseExpression(arg, attr.BitCount, attr.Signed, attr.ShiftAmount, out var expResult))
             return false;
 
         var requestedType = MipsReferenceType.None;
@@ -154,7 +143,7 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
                 _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsReferenceType>($"Relocation type '{expResult.RelocationType}' is not supported for MIPS."),
             };
 
-            if (bitCount != 16)
+            if (attr.BitCount != 16)
             {
                 _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
                 return false;

@@ -194,7 +194,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// <summary>
     /// Parses an argument as an expression and assigns it to the target component
     /// </summary>
-    protected abstract bool TryParseExpression(ReadOnlySpan<Token> arg, TArg target);
+    protected abstract bool TryParseExpression(ReadOnlySpan<Token> arg, TArg target, ImmediateArgumentAttribute attr);
 
     /// <summary>
     /// Attempts to parse a register.
@@ -256,7 +256,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// <summary>
     /// Attempts to parse an expression.
     /// </summary>
-    protected bool TryParseExpression(ReadOnlySpan<Token> tokens, int bitCount, int shift, bool signed, out ExpressionResult<long> expResult)
+    protected bool TryParseExpression(ReadOnlySpan<Token> tokens, int bitCount, bool signed, int shift, out ExpressionResult<long> expResult)
     {
         if (!ExpressionParser.TryParse(tokens, out expResult, Symbols, _logger?.Parent))
             return false;
@@ -314,7 +314,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         return attr switch
         {
             RegisterArgumentAttribute<TSet> => TryParseRegister(arg, type),
-            ImmediateArgumentAttribute => TryParseExpression(arg, type),
+            ImmediateArgumentAttribute imm => TryParseExpression(arg, type, imm),
             SplitArgumentAttribute<TArg> split => TryParseAddressOffset(arg, split.RegisterArgument, split.ImmediateArgument),
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
@@ -330,11 +330,11 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             return false;
 
         // Try parse offset component into immediate, return false if failed
-        if (!TryParseExpression(offsetStr, imm))
+        if (!TryParseArg(offsetStr, imm))
             return false;
 
         // Parse register component into $rs, return false if failed
-        if (!TryParseRegister(regStr, reg))
+        if (!TryParseArg(regStr, reg))
             return false;
 
         return true;

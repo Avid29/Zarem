@@ -14,6 +14,7 @@ using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
+using Zarem.Attributes;
 using Zarem.Helpers;
 using Zarem.Models;
 using Zarem.Models.Tables;
@@ -185,26 +186,9 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     /// <summary>
     /// Parses an argument as an expression and assigns it to the target component
     /// </summary>
-    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, RiscVArgument target)
+    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, RiscVArgument target, ImmediateArgumentAttribute attr)
     {
-        // Determine casting details for the RISC-V argument
-        (int bitCount, int shiftAmount, bool signed) = target switch
-        {
-            // 5-bit unsigned immediate (e.g., vsetvli or CSRI)
-            RiscVArgument.UImm5 => (5, 1, false),
-            RiscVArgument.Immediate or
-            RiscVArgument.StoreOffset => (12, 0, true),
-            RiscVArgument.BranchOffset => (12, 1, true),
-            RiscVArgument.JumpOffset => (20, 1, true),
-            RiscVArgument.UpperImmediate => (20, 0, false),
-            RiscVArgument.Csr => (12, 0, false),
-            RiscVArgument.FullImmediate => (32, 0, true),
-
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<(int, int, bool)>(
-                $"Argument of type '{target}' attempted to parse as an expression.")
-        };
-
-        if (!TryParseExpression(arg, bitCount, shiftAmount, signed, out var expResult))
+        if (!TryParseExpression(arg, attr.BitCount, attr.Signed, attr.ShiftAmount, out var expResult))
             return false;
 
         var requestedType = RiscVReferenceType.None;
@@ -217,7 +201,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
                 _ => ThrowHelper.ThrowArgumentOutOfRangeException<(RiscVReferenceType, int)>($"Relocation type '{expResult.RelocationType}' is not supported for RISC-V."),
             };
 
-            if (bitCount != bits)
+            if (attr.BitCount != bits)
             {
                 _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
                 return false;
