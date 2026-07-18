@@ -6,7 +6,7 @@
     xmlns:c="using:CommunityToolkit.WinUI.Converters"
     xmlns:convert="using:Zarem.IDE.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:data="using:Zarem.IDE.Models.CheatSheet"
+    xmlns:data="using:Zarem.CheatSheet.Models"
     xmlns:local="using:Zarem.IDE.Controls.CheatSheet"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:selector="using:Zarem.IDE.Selectors"

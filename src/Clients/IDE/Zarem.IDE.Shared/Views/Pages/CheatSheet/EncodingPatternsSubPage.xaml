@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Zarem.IDE.Views.Pages.CheatSheet"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:Zarem.IDE.Models.CheatSheet"
+    xmlns:models="using:Zarem.CheatSheet.Models"
     xmlns:palette="using:Zarem.IDE.Controls.CheatSheet.Palettes"
     d:DesignHeight="300"
     d:DesignWidth="400"

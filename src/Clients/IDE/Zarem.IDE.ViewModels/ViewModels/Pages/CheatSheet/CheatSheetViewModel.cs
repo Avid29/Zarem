@@ -1,8 +1,10 @@
 ﻿// Avishai Dernis 2025
 
 using System.Collections.ObjectModel;
+using Zarem.CheatSheet;
 using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels.Pages.Abstract;
+using Zarem.Mips.CheatSheet;
 
 namespace Zarem.IDE.ViewModels.Pages.CheatSheet;
 
@@ -20,9 +22,11 @@ public class CheatSheetViewModel : PageViewModel
     {
         _localizationService = localizationService;
 
+        var page = CheatSheetPage.LoadCheatSheet(typeof(MipsCheatSheet).Assembly);
+
         SubPages = [
                 new UsagePatternsViewModel(localizationService),
-                new EncodingPatternsViewModel(localizationService),
+                new EncodingPatternsViewModel(page, localizationService),
                 new EncodingTablesViewModel(localizationService)
             ];
     }

@@ -14,25 +14,25 @@ namespace Zarem.CheatSheet;
 /// </summary>
 public class CheatSheetPage
 {
-    private CheatSheetPage()
-    {
-
-    }
-
-    /// <summary>
-    /// Loads a cheatsheet from an assembly's resources.
-    /// </summary>
-    public static CheatSheetPage LoadCheatSheet(Assembly assembly)
+    private CheatSheetPage(Assembly assembly)
     {
         // Get resource groups
         var resources = assembly.GetManifestResourceNames();
         var encodingPatternResources = resources.Where(x => x.EndsWith(".ep.json"));
         var instructionGroupsResources = resources.Where(x => x.EndsWith(".ig.json"));
 
-        var patternsGroups = LoadEncodingPatterns(assembly, encodingPatternResources);
-
-        return new CheatSheetPage();
+        EncodingPatterns = LoadEncodingPatterns(assembly, encodingPatternResources);
     }
+
+    /// <summary>
+    /// Gets the list of encoding pattern groups.
+    /// </summary>
+    public List<EncodingPattern[]> EncodingPatterns { get; }
+
+    /// <summary>
+    /// Loads a cheatsheet from an assembly's resources.
+    /// </summary>
+    public static CheatSheetPage LoadCheatSheet(Assembly assembly) => new(assembly);
 
     private static Stream? LoadResource(Assembly assembly, string filename) =>
         assembly.GetManifestResourceStream(filename);
