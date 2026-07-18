@@ -10,10 +10,10 @@ namespace Zarem.CheatSheet.Models;
 public class InstructionCollection
 {
     /// <summary>
-    /// Gets or sets the name of the instruction.
+    /// Gets or sets the name of the instruction collection.
     /// </summary>
     [JsonPropertyName("name")]
-    public required string CollectionName { get; set; }
+    public required string Name { get; set; }
 
     /// <summary>
     /// Gets or sets the groups of instruction in the collection.

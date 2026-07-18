@@ -25,7 +25,7 @@ public class CheatSheetViewModel : PageViewModel
         var page = CheatSheetPage.LoadCheatSheet(typeof(MipsCheatSheet).Assembly);
 
         SubPages = [
-                new UsagePatternsViewModel(localizationService),
+                new UsagePatternsViewModel(page, localizationService),
                 new EncodingPatternsViewModel(page, localizationService),
                 new EncodingTablesViewModel(localizationService)
             ];

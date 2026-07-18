@@ -5,11 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="InstructionCollections.json" />
     <EmbeddedResource Include="EncodingPatterns.json" />
-    <EmbeddedResource Include="InstructionGroups\Common.ig.json" />
-    <EmbeddedResource Include="InstructionGroups\CoProc0.ig.json" />
-    <EmbeddedResource Include="InstructionGroups\Float.ig.json" />
-    <EmbeddedResource Include="InstructionGroups\Specialized.ig.json" />
   </ItemGroup>
 
   <ItemGroup>

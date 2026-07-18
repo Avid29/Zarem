@@ -117,20 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommonInstructionsTB.Text" xml:space="preserve">
-    <value>Common Instructions</value>
-  </data>
   <data name="InstructionUsageTablesTB.Text" xml:space="preserve">
     <value>Instruction Usage Tables</value>
-  </data>
-  <data name="CoProc0InstructionsTB.Text" xml:space="preserve">
-    <value>CoProcessor0 Instruction</value>
-  </data>
-  <data name="FloatInstructionsTB.Text" xml:space="preserve">
-    <value>Floating-Point Instructions</value>
-  </data>
-  <data name="SpecializedInstructionsTB.Text" xml:space="preserve">
-    <value>Specialized Instructions</value>
   </data>
   <data name="InstructionEncodingPatternsTB.Text" xml:space="preserve">
     <value>Instruction Encoding Patterns</value>
@@ -140,60 +128,6 @@
   </data>
   <data name="GeneralPurposeRegisterEncodingTB.Text" xml:space="preserve">
     <value>General Purpose Register Encoding</value>
-  </data>
-  <data name="InstructionGroup/SignedArithmetic" xml:space="preserve">
-    <value>Arithmetic (Signed)</value>
-  </data>
-  <data name="InstructionGroup/UnsignedArithmetic" xml:space="preserve">
-    <value>Arithmetic (Unsigned)</value>
-  </data>
-  <data name="InstructionGroup/Logical" xml:space="preserve">
-    <value>Logical</value>
-  </data>
-  <data name="InstructionGroup/Memory" xml:space="preserve">
-    <value>Memory</value>
-  </data>
-  <data name="InstructionGroup/Jump" xml:space="preserve">
-    <value>Jump</value>
-  </data>
-  <data name="InstructionGroup/Data" xml:space="preserve">
-    <value>Data</value>
-  </data>
-  <data name="InstructionGroup/Branch" xml:space="preserve">
-    <value>Branch</value>
-  </data>
-  <data name="InstructionGroup/Compare" xml:space="preserve">
-    <value>Compare</value>
-  </data>
-  <data name="InstructionGroup/System" xml:space="preserve">
-    <value>System</value>
-  </data>
-  <data name="InstructionGroup/Move" xml:space="preserve">
-    <value>Move</value>
-  </data>
-  <data name="InstructionGroup/Interrupts" xml:space="preserve">
-    <value>Interrupts</value>
-  </data>
-  <data name="InstructionGroup/TLB" xml:space="preserve">
-    <value>Translation Lookaside Buffer</value>
-  </data>
-  <data name="InstructionGroup/Debug" xml:space="preserve">
-    <value>Debug</value>
-  </data>
-  <data name="InstructionGroup/FPArithmetic" xml:space="preserve">
-    <value>Floating-Point Arithmetic</value>
-  </data>
-  <data name="InstructionGroup/FPRounding" xml:space="preserve">
-    <value>Floating-Point Rounding</value>
-  </data>
-  <data name="InstructionGroup/FPConversion" xml:space="preserve">
-    <value>Floating-Point Conversion</value>
-  </data>
-  <data name="InstructionGroup/FPConditionalMove" xml:space="preserve">
-    <value>Conditional Move</value>
-  </data>
-  <data name="InstructionGroup/Trap" xml:space="preserve">
-    <value>Trap</value>
   </data>
   <data name="Usage/address" xml:space="preserve">
     <value>address</value>

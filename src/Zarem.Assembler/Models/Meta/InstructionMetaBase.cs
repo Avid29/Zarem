@@ -29,5 +29,9 @@ public abstract record InstructionMetaBase<TArg> : IInstructionMeta
 
     /// <inheritdoc/>
     [JsonIgnore]
+    public string Identifier => $"{Name}:{ArgumentPattern.Length}";
+
+    /// <inheritdoc/>
+    [JsonIgnore]
     public int ArgumentCount => ArgumentPattern.Length;
 }

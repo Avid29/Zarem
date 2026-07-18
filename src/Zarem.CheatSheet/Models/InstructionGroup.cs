@@ -13,7 +13,7 @@ public class InstructionGroup
     /// Gets or sets the name of the instruction group.
     /// </summary>
     [JsonPropertyName("name")]
-    public required string GroupName { get; set; }
+    public required string Name { get; set; }
 
     /// <summary>
     /// Gets or sets the instructions in the group.

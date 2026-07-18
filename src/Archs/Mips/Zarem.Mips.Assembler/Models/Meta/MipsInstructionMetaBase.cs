@@ -65,14 +65,6 @@ public abstract record MipsInstructionMetaBase : InstructionMetaBase<MipsArgumen
     public byte? FixedRD { get; init; }
 
     /// <summary>
-    /// Gets an identifier for the instruction, including the argument pattern.
-    /// </summary>
-    /// <remarks>
-    /// Introduces a variable argument count. Currently this appears to be an adequate approach.
-    /// </remarks>
-    public string Identifier => $"{Name}:{ArgumentPattern.Length}";
-
-    /// <summary>
     /// Gets a string showing the usage pattern for the instruction.
     /// </summary>
     public string UsagePattern

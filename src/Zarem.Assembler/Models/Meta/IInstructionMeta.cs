@@ -16,4 +16,12 @@ public interface IInstructionMeta
     /// Gets the number of arguments the instruction takes.
     /// </summary>
     int ArgumentCount { get; }
+
+    /// <summary>
+    /// Gets an identifier for the instruction, including the argument pattern.
+    /// </summary>
+    /// <remarks>
+    /// Introduces a variable argument count. Currently this appears to be an adequate approach.
+    /// </remarks>
+    string Identifier { get; }
 }
