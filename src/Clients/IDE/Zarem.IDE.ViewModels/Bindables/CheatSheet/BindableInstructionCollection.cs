@@ -21,7 +21,11 @@ public class BindableInstructionCollection
 
         foreach (var group in collection.Groups)
         {
-            Groups.Add(new BindableInstructionGroup(group, metas));
+            var bGroup = new BindableInstructionGroup(group, metas);
+            if (bGroup.Metas.Length is 0)
+                continue;
+
+            Groups.Add(bGroup);
         }
     }
 
