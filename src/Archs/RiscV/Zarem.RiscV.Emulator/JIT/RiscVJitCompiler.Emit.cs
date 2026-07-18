@@ -9,7 +9,7 @@ using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.JIT;
 
-public unsafe partial class RiscVJitCompiler<T>
+public unsafe partial class RiscVJitCompiler<T, TFloat>
 {
     /// <inheritdoc/>
     protected override void EmitSetupLocalRegisters(ILGenerator il) => EmitSetupLocalRegisters(il, _cpu.RegisterFile, _loadRegs);

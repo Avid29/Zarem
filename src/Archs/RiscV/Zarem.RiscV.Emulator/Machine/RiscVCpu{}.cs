@@ -20,10 +20,8 @@ namespace Zarem.RiscV.Emulator.Machine;
 public abstract class RiscVCpu<T> : CpuBase<T>, IRiscVCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private const int FloatRegisterCount = 32;
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="RiscVCpu{T}"/> class.
+    /// Initializes a new instance of the <see cref="RiscVCpu{T, TFloat}"/> class.
     /// </summary>
     public RiscVCpu(RiscVEmulatorConfig config, PhysicalBus bus)
     {
@@ -31,14 +29,6 @@ public abstract class RiscVCpu<T> : CpuBase<T>, IRiscVCpu
         RegisterFile = new();
         Tlb = new RiscVTlb();
         Memory = new MemorySystem(bus, Tlb);
-
-        FloatRegisterFile = new FormattedRegisterFile<T>(FloatRegisterCount);
-
-        //var extensions = Config.VersionInfo.Extensions;
-        //if (extensions.HasFlag(RiscVExtensions.QuadrupleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<UInt128>(FloatRegisterCount);
-        //else if (extensions.HasFlag(RiscVExtensions.DoubleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<ulong>(FloatRegisterCount);
-        //else if (extensions.HasFlag(RiscVExtensions.SingleFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<uint>(FloatRegisterCount);
-        //else if (extensions.HasFlag(RiscVExtensions.HalfPrecisionFloatingPoint)) FloatRegisterFile = new FormattedRegisterFile<ushort>(FloatRegisterCount); // This should be illegal, but best to be careful
     }
 
     /// <inheritdoc/>
@@ -54,10 +44,7 @@ public abstract class RiscVCpu<T> : CpuBase<T>, IRiscVCpu
     public override RiscVGPRegisterFile<T> RegisterFile { get; }
 
     /// <inheritdoc/>
-    public IFormattedRegisterFile<T>? FloatRegisterFile { get; }
-
-    /// <inheritdoc/>
-    IFormattedRegisterFile? IRiscVCpu.FloatRegisterFile => FloatRegisterFile;
+    public abstract IFormattedRegisterFile? FloatRegisterFile { get; }
 
     /// <summary>
     /// Gets the translation look-aside buffer.

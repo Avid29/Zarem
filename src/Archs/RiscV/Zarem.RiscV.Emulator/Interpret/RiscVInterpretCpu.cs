@@ -18,8 +18,9 @@ namespace Zarem.RiscV.Emulator.Interpret;
 /// <summary>
 /// A class representing a RISC-V CPU.
 /// </summary>
-public sealed class RiscVInterpretCpu<T> : RiscVCpu<T>, IInterpretCpu<RiscVInterpretCpu<T>, RiscVInstruction, RiscVExecution<T>, RiscVTrap>
+public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, RiscVExecution<T>, RiscVTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private readonly IRiscVInstructionServiceTable<T> _instructionServiceTable;
 
@@ -28,12 +29,11 @@ public sealed class RiscVInterpretCpu<T> : RiscVCpu<T>, IInterpretCpu<RiscVInter
     /// </summary>
     public RiscVInterpretCpu(RiscVEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
-
         _instructionServiceTable = config.VersionInfo.Base switch
         {
-            RiscVBaseVersion.RV32 => new RiscVInstructionServiceTable<T, int>(this),
-            RiscVBaseVersion.RV64 => new RiscVInstructionServiceTable<T, long>(this),
-            RiscVBaseVersion.RV128 => new RiscVInstructionServiceTable<T, Int128>(this),
+            RiscVBaseVersion.RV32 => new RiscVInstructionServiceTable<T, TFloat, int>(this),
+            RiscVBaseVersion.RV64 => new RiscVInstructionServiceTable<T, TFloat, long>(this),
+            RiscVBaseVersion.RV128 => new RiscVInstructionServiceTable<T, TFloat, Int128>(this),
             _ => throw new NotImplementedException()
         };
     }

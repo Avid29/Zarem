@@ -6,7 +6,7 @@ using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.JIT;
 
-public partial class RiscVJitCompiler<T>
+public partial class RiscVJitCompiler<T, TFloat>
 {
     private const int MaxBlockSize = 1024;
 

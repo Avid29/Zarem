@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using Zarem.Emulator.Config.Enums;
@@ -34,24 +35,38 @@ public sealed class RiscVComputer : ComputerBase
         var bus = new PhysicalBus(_memoryMapper, Endianness.Little);
         MapDevices(_memoryMapper);
 
-        Cpu = config.ExecutionMode switch
+        // Determine gpr size
+        var gprType = config.VersionInfo.Base switch
         {
-            ExecutionMode.Interpret => config.VersionInfo.Base switch
-            {
-                RiscVBaseVersion.RV32 => new RiscVInterpretCpu<uint>(config, bus),
-                RiscVBaseVersion.RV64 => new RiscVInterpretCpu<ulong>(config, bus),
-                RiscVBaseVersion.RV128 => new RiscVInterpretCpu<UInt128>(config, bus),
-                _ => throw new NotImplementedException(),
-            },
-            ExecutionMode.JustInTime => config.VersionInfo.Base switch
-            {
-                RiscVBaseVersion.RV32 => new RiscVJitCpu<uint>(config, bus),
-                RiscVBaseVersion.RV64 => new RiscVJitCpu<ulong>(config, bus),
-                RiscVBaseVersion.RV128 => new RiscVJitCpu<UInt128>(config, bus),
-                _ => throw new NotImplementedException(),
-            },
+            RiscVBaseVersion.RV32 => typeof(uint),
+            RiscVBaseVersion.RV64 => typeof(ulong),
+            RiscVBaseVersion.RV128 => typeof(UInt128),
+            _ => throw new NotSupportedException()
+        };
+
+        // Determine float reg size
+        var extensions = Config.VersionInfo.Extensions;
+        var floatType = typeof(byte); // Sentinel type meaning no float extension
+
+        if (extensions.HasFlag(RiscVExtensions.QuadrupleFloatingPoint)) floatType = typeof(UInt128);
+        else if (extensions.HasFlag(RiscVExtensions.DoubleFloatingPoint)) floatType = typeof(ulong);
+        else if (extensions.HasFlag(RiscVExtensions.SingleFloatingPoint)) floatType = typeof(uint);
+        // Half should not be possible, since it should always require single. Best to be careful though
+        else if (extensions.HasFlag(RiscVExtensions.HalfPrecisionFloatingPoint)) floatType = typeof(ushort);
+
+        // Determine the CPU implementation type
+        var cpuType = config.ExecutionMode switch
+        {
+            ExecutionMode.Interpret => typeof(RiscVInterpretCpu<,>),
+            ExecutionMode.JustInTime => typeof(RiscVJitCpu<,>),
             _ => throw new NotImplementedException(),
         };
+
+        // Construct the CPU
+        var closedCpuType = cpuType.MakeGenericType(gprType, floatType);
+        var cpu = (IRiscVCpu?)Activator.CreateInstance(closedCpuType, config, bus);
+        Guard.IsNotNull(cpu);
+        Cpu = cpu;
 
         Cpu.ShutdownRequested += Processor_ShutdownRequested;
     }

@@ -13,7 +13,7 @@ using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.JIT;
 
-public partial class RiscVJitCompiler<T>
+public partial class RiscVJitCompiler<T, TFloat>
 {
     private void InitTables(RiscVEmulatorConfig config)
     {

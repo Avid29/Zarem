@@ -2,6 +2,7 @@
 
 using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Zarem.Assembler;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config.Enums;
@@ -23,34 +24,35 @@ public partial class RiscVExecutionTests
 
     [DataTestMethod]
     [RiscVInstructionSource("RV32I", ExecutionMode.Interpret)]
-    public void InstructionTests_RV32_I(RiscVEmulatorTestCase<uint> @case) => RunTest(@case);
+    public void InstructionTests_RV32_I(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV32I", ExecutionMode.JustInTime)]
-    public void InstructionTests_RV32_I_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest(@case);
+    public void InstructionTests_RV32_I_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV32G", ExecutionMode.Interpret)]
-    public void InstructionTests_RV32_G(RiscVEmulatorTestCase<uint> @case) => RunTest(@case);
+    public void InstructionTests_RV32_G(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV32G", ExecutionMode.JustInTime)]
-    public void InstructionTests_RV32_G_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest(@case);
+    public void InstructionTests_RV32_G_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV64I", ExecutionMode.Interpret)]
-    public void InstructionTests_RV64_I(RiscVEmulatorTestCase<ulong> @case) => RunTest(@case);
+    public void InstructionTests_RV64_I(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, byte>(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV64G", ExecutionMode.Interpret)]
-    public void InstructionTests_RV64_G(RiscVEmulatorTestCase<ulong> @case) => RunTest(@case);
+    public void InstructionTests_RV64_G(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
 
     [DataTestMethod]
     [RiscVInstructionSource("RV128I", ExecutionMode.Interpret)]
-    public void InstructionTests_RV128_I(RiscVEmulatorTestCase<UInt128> @case) => RunTest(@case);
+    public void InstructionTests_RV128_I(RiscVEmulatorTestCase<UInt128> @case) => RunTest<UInt128, byte>(@case);
 
-    private static void RunTest<T>(RiscVEmulatorTestCase<T> @case)
+    private static void RunTest<T, TFloat>(RiscVEmulatorTestCase<T> @case)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
     {
         var config = @case.Config;
 
@@ -79,20 +81,21 @@ public partial class RiscVExecutionTests
         foreach (var (address, data) in @case.MemoryInitialization)
             computer.Memory.Write(ulong.CreateTruncating(address), data);
 
-        if (cpu is RiscVJitCpu<T>)
+        if (cpu is RiscVJitCpu<T, TFloat>)
         {
-            RunJitChecks(computer, instruction, @case);
+            RunJitChecks<T, TFloat>(computer, instruction, @case);
         }
-        else if (cpu is RiscVInterpretCpu<T>)
+        else if (cpu is RiscVInterpretCpu<T, TFloat>)
         {
-            RunInterpretChecks(computer, instruction, @case);
+            RunInterpretChecks<T, TFloat>(computer, instruction, @case);
         }
     }
 
-    private static void RunInterpretChecks<T>(RiscVComputer computer, RiscVInstruction instruction, RiscVEmulatorTestCase<T> @case)
+    private static void RunInterpretChecks<T, TFloat>(RiscVComputer computer, RiscVInstruction instruction, RiscVEmulatorTestCase<T> @case)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
     {
-        var cpu = (RiscVInterpretCpu<T>)computer.Cpu;
+        var cpu = (RiscVInterpretCpu<T, TFloat>)computer.Cpu;
         cpu.Insert(instruction, out var execution, out var trap);
 
         // Ensure that the expected trap was raised (if any)
@@ -149,10 +152,11 @@ public partial class RiscVExecutionTests
         }
     }
 
-    private static void RunJitChecks<T>(RiscVComputer computer, RiscVInstruction instruction, RiscVEmulatorTestCase<T> @case)
+    private static void RunJitChecks<T, TFloat>(RiscVComputer computer, RiscVInstruction instruction, RiscVEmulatorTestCase<T> @case)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
     {
-        var cpu = (RiscVJitCpu<T>)computer.Cpu;
+        var cpu = (RiscVJitCpu<T, TFloat>)computer.Cpu;
         cpu.Insert(instruction, out var trap);
 
         // Ensure that the expected trap was raised (if any)
