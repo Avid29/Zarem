@@ -54,10 +54,32 @@
                         SectionBrushPalette="{StaticResource SectionBrushPalette}" />
                 </StackPanel>
             </DataTemplate>
+
+            <DataTemplate x:Key="EncodingPatternGroupTemplate" x:DataType="models:EncodingPatternGroup">
+                <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <Expander.Header>
+                        <TextBlock
+                            Margin="8,0"
+                            Text="{x:Bind Name}"
+                            TextTrimming="CharacterEllipsis" />
+                    </Expander.Header>
+                    <ItemsRepeater
+                        Margin="24,0"
+                        ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
+                        ItemsSource="{x:Bind Patterns}" />
+                </Expander>
+            </DataTemplate>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel
+    <ItemsRepeater
+        Margin="48,16"
+        HorizontalAlignment="Stretch"
+        ItemTemplate="{StaticResource EncodingPatternGroupTemplate}"
+        ItemsSource="{x:Bind ViewModel.CheatSheet.EncodingPatterns}" />
+
+    <!--<StackPanel
         Margin="48,16"
         HorizontalAlignment="Stretch"
         Spacing="4">
@@ -117,5 +139,5 @@
                 ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
                 ItemsSource="{x:Bind ViewModel.UniquePatterns, Mode=OneWay}" />
         </Expander>
-    </StackPanel>
+    </StackPanel>-->
 </UserControl>

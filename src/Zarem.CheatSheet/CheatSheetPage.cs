@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using Zarem.CheatSheet.Models;
+using Zarem.Localization;
 
 namespace Zarem.CheatSheet;
 
@@ -16,19 +17,28 @@ public class CheatSheetPage
 {
     private CheatSheetPage(Assembly assembly)
     {
+        // Get localizer
+        var @namespace = $"{assembly.GetName().Name}.Resources";
+        Localizer = new Localizer(@namespace, assembly);
+
         // Get resource groups
         var resources = assembly.GetManifestResourceNames();
-        var encodingPatternResources = resources.Where(x => x.EndsWith(".ep.json"));
+        var encodingPatternResource = resources.First(x => x.EndsWith("EncodingPatterns.json"));
         var instructionGroupsResources = resources.Where(x => x.EndsWith(".ig.json"));
 
-        EncodingPatterns = LoadEncodingPatterns(assembly, encodingPatternResources);
+        EncodingPatterns = LoadEncodingPatterns(assembly, encodingPatternResource);
     }
+
+    /// <summary>
+    /// Gets the localizer for the <see cref="CheatSheetPage"/>.
+    /// </summary>
+    public Localizer Localizer { get; }
 
     /// <summary>
     /// Gets the list of encoding pattern groups.
     /// </summary>
-    public List<EncodingPattern[]> EncodingPatterns { get; }
-
+    public EncodingPatternGroup[]? EncodingPatterns { get; }
+    
     /// <summary>
     /// Loads a cheatsheet from an assembly's resources.
     /// </summary>
@@ -37,22 +47,16 @@ public class CheatSheetPage
     private static Stream? LoadResource(Assembly assembly, string filename) =>
         assembly.GetManifestResourceStream(filename);
 
-    private static List<EncodingPattern[]> LoadEncodingPatterns(Assembly assembly, IEnumerable<string> resources)
+    private static EncodingPatternGroup[]? LoadEncodingPatterns(Assembly assembly, string resource)
     {
-        var patternGroups = new List<EncodingPattern[]>();
-        foreach (var resource in resources)
-        {
-            using var stream = LoadResource(assembly, resource);
-            if (stream is null)
-                continue;
+        using var stream = LoadResource(assembly, resource);
+        if (stream is null)
+            return null;
 
-            var patterns = JsonSerializer.Deserialize<EncodingPattern[]>(stream);
-            if (patterns is null)
-                continue;
+        var patterns = JsonSerializer.Deserialize<EncodingPatternGroup[]>(stream);
+        if (patterns is null)
+            return null;
 
-            patternGroups.Add(patterns);
-        }
-
-        return patternGroups;
+        return patterns;
     }
 }

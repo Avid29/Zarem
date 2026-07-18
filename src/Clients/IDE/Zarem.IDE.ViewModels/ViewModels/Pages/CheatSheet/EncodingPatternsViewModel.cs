@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Collections.ObjectModel;
+using System.Linq;
 using Zarem.CheatSheet;
 using Zarem.CheatSheet.Models;
 using Zarem.IDE.Services;
@@ -21,33 +22,14 @@ public class EncodingPatternsViewModel : CheatSheetSubPageViewModel
     {
         _localizationService = localizationService;
 
-        // TODO: Remove hard coded groups
-        PrimaryEncodingPatterns = new(cheatSheet.EncodingPatterns[0]);
-        CoProcessor1Patterns = new(cheatSheet.EncodingPatterns[1]);
-        CoProcessor0Patterns = new(cheatSheet.EncodingPatterns[2]);
-        UniquePatterns = new(cheatSheet.EncodingPatterns[3]);
+        CheatSheet = cheatSheet;
     }
 
     /// <inheritdoc/>
     public override string Title => _localizationService["/CheatSheet/InstructionEncodingPatternsTitle"];
 
     /// <summary>
-    /// Gets an <see cref="ObservableCollection{EncodingPattern}"/> of the primary encoding patterns.
+    /// Gets the <see cref="CheatSheetPage"/>.
     /// </summary>
-    public ObservableCollection<EncodingPattern> PrimaryEncodingPatterns { get; }
-
-    /// <summary>
-    /// Gets an <see cref="ObservableCollection{EncodingPattern}"/> of the coprocessor1 encoding patterns.
-    /// </summary>
-    public ObservableCollection<EncodingPattern> CoProcessor1Patterns { get; }
-
-    /// <summary>
-    /// Gets an <see cref="ObservableCollection{EncodingPattern}"/> of the coprocessor0 encoding patterns.
-    /// </summary>
-    public ObservableCollection<EncodingPattern> CoProcessor0Patterns { get; }
-
-    /// <summary>
-    /// Gets an <see cref="ObservableCollection{EncodingPattern}"/> of unique encoding patterns.
-    /// </summary>
-    public ObservableCollection<EncodingPattern> UniquePatterns { get; }
+    public CheatSheetPage CheatSheet { get; }
 }
