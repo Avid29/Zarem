@@ -1,7 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System.CommandLine;
-
 namespace Zarem.Console.Commands.Interfaces;
 
 /// <summary>

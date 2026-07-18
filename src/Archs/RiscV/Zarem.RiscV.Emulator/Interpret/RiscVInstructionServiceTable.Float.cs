@@ -3,7 +3,6 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;

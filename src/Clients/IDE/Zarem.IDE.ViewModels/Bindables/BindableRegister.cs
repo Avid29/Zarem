@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Linq;
 using Zarem.Debugger.Models;
 using Zarem.Debugger.Viewer;
 using Zarem.IDE.Models.Enums;

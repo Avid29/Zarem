@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Test.Mips.Helpers;
 using Zarem.Assembler;
-using Zarem.Assembler.Handlers;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Mips.Assembler;
 

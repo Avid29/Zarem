@@ -40,7 +40,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     private readonly AssemblerLogger? _logger;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RegisterParser{TRegister, TSet}"/> struct.
+    /// Initializes a new instance of the <see cref="InstructionParserBase{TInstruction, TMeta, TArg, TRegister, TSet}"/> class.
     /// </summary>
     public InstructionParserBase(Address address, IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
     {
@@ -323,11 +323,11 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         if (!SplitOffsetBase(arg, out var offsetStr, out var regStr))
             return false;
 
-        // Try parse offset component into immediate, return false if failed
+        // Try parse offset component, return false if failed
         if (!TryParseArg(offsetStr, imm))
             return false;
 
-        // Parse register component into $rs, return false if failed
+        // Parse register component, return false if failed
         if (!TryParseArg(regStr, reg))
             return false;
 
@@ -354,10 +354,9 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
                 ?.GetCustomAttribute<JsonStringEnumMemberNameAttribute>()
                 ?.Name;
 
+            // Swap the argument template component for the argument body
             var argTemplatePattern = $"${{{argTemplate}}}";
             var argSubstitution = $"{_parsedArgTable[argType]}";
-
-            Guard.IsNotNull(argTemplatePattern);
             result = result.Replace(argTemplatePattern, argSubstitution);
         }
 

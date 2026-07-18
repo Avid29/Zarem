@@ -2,15 +2,12 @@
 
 using CommunityToolkit.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Zarem.Emulator.Machine;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Serialization;
 

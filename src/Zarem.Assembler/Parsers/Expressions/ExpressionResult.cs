@@ -2,7 +2,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Zarem.Assembler.Tokenization.Models;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Parsers.Expressions;

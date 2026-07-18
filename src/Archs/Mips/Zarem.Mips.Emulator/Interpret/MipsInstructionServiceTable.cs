@@ -4,9 +4,7 @@ using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Interpret;
-using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Mips.Extensions;
 using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
 

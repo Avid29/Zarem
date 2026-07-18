@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System.Numerics;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Parsers.Expressions.Abstract;
 using Zarem.Assembler.Parsers.Expressions.Enums;

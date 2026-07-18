@@ -1,14 +1,12 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Diagnostics;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Zarem.Bindables.Files;
 using Zarem.IDE.Bindables.Files.Interfaces;
-using Zarem.IDE.Services;
 using Zarem.IDE.Services.Files.Models;
 
 namespace Zarem.IDE.Services.Files;

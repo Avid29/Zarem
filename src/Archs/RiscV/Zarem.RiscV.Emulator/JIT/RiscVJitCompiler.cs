@@ -4,14 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using Zarem.Emulator.Extensions;
 using Zarem.RiscV.Emulator.JIT;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
-using Zarem.RiscV.Models.Instructions.Enums.Functions;
-using Zarem.RiscV.Models.Instructions.Enums.Operations;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.JIT;

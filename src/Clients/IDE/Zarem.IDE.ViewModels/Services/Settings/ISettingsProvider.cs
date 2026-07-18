@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-using System;
-using System.Numerics;
-
 namespace Zarem.IDE.Services.Settings;
 
 /// <summary>

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Zarem.Assembler.Models.Tables;
-using Zarem.RiscV.Assembler;
 using Zarem.RiscV.Assembler.Models.Meta;
 using Zarem.RiscV.Models.Versioning.Enums;
 
