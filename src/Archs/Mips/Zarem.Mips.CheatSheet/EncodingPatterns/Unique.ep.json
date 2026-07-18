@@ -1,0 +1,111 @@
+[
+  {
+    "name": "SyscallBreakSdbbp",
+    "sections": [
+      {
+        "name": "OP Code",
+        "size": 6,
+        "offset": 26,
+        "type": 0
+      },
+      {
+        "name": "Code",
+        "size": 20,
+        "offset": 6,
+        "type": 4
+      },
+      {
+        "name": "Func Code",
+        "size": 6,
+        "offset": 0,
+        "type": 1
+      }
+    ]
+  },
+  {
+    "name": "Sync",
+    "sections": [
+      {
+        "name": "OP Code",
+        "size": 6,
+        "offset": 26,
+        "type": 0,
+        "value": 0
+      },
+      {
+        "size": 15,
+        "offset": 11,
+        "type": -1,
+        "value":  0
+      },
+      {
+        "name": "Sync Type",
+        "size": 5,
+        "offset": 6,
+        "type": 6
+      },
+      {
+        "name": "Func Code",
+        "size": 6,
+        "offset": 0,
+        "type": 1,
+        "value": 15
+      }
+    ]
+  },
+  {
+    "name": "CachePref",
+    "sections": [
+      {
+        "name": "OP Code",
+        "size": 6,
+        "offset": 26,
+        "type": 0,
+        "value": 0
+      },
+      {
+        "name": "RS",
+        "size": 5,
+        "offset": 21,
+        "type": 3
+      },
+      {
+        "name": "Op/Hint",
+        "size": 5,
+        "offset": 16,
+        "type": 6
+      },
+      {
+        "name": "Offset",
+        "size": 16,
+        "offset": 0,
+        "type": 4
+      }
+    ]
+  },
+  {
+    "name": "ExecutionHazardBarrier",
+    "sections": [
+      {
+        "name": "OP Code",
+        "size": 6,
+        "offset": 26,
+        "type": 0,
+        "value": 0
+      },
+      {
+        "size": 20,
+        "offset": 6,
+        "type": -1,
+        "value": 3
+      },
+      {
+        "name": "Func Code",
+        "size": 6,
+        "offset": 0,
+        "type": 1,
+        "value": 0
+      }
+    ]
+  }
+]

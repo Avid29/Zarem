@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Zarem.Assembler\Zarem.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.CheatSheet\Zarem.CheatSheet.csproj" />
     <ProjectReference Include="..\Zarem.Debugger\Zarem.Debugger.csproj" />
     <ProjectReference Include="..\Zarem.Disassembler\Zarem.Disassembler.csproj" />
     <ProjectReference Include="..\Zarem.Emulator\Zarem.Emulator.csproj" />

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.Mips.CheatSheet</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="EncodingPatterns\CoProcessor0.ep.json" />
+    <EmbeddedResource Include="EncodingPatterns\CoProcessor1.ep.json" />
+    <EmbeddedResource Include="EncodingPatterns\Primary.ep.json" />
+    <EmbeddedResource Include="EncodingPatterns\Unique.ep.json" />
+    <EmbeddedResource Include="InstructionGroups\Common.ig.json" />
+    <EmbeddedResource Include="InstructionGroups\CoProc0.ig.json" />
+    <EmbeddedResource Include="InstructionGroups\Float.ig.json" />
+    <EmbeddedResource Include="InstructionGroups\Specialized.ig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zarem.Mips.Base\Zarem.Mips.Base.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.CheatSheet</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+  	  <ProjectReference Include="..\Zarem.Assembler\Zarem.Assembler.csproj" />
+  	  <ProjectReference Include="..\Zarem.Base\Zarem.Base.csproj" />
+  </ItemGroup>
+
+</Project>

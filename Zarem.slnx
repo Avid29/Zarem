@@ -48,6 +48,9 @@
     <Project Path="src/Archs/Mips/Zarem.Mips.Base/Zarem.Mips.Base.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
+    <Project Path="src/Archs/Mips/Zarem.Mips.CheatSheet/Zarem.Mips.CheatSheet.csproj" Id="6833c3b5-db36-4ec3-8a00-94c8f8501e8a">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
     <Project Path="src/Archs/Mips/Zarem.Mips.Debugger/Zarem.Mips.Debugger.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
@@ -138,7 +141,7 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/Plugins/ModuleFormats/">
-    <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj" DisplayName="Test.Elf">
+    <Project Path="tests/ObjFormats/Test.ELF/Test.ELF.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
     <Project Path="tests/ObjFormats/Test.Formats/Test.ObjFormats.csproj">
@@ -160,6 +163,9 @@
   </Project>
   <Project Path="src/Zarem.Base/Zarem.Base.csproj">
     <BuildType Solution="Alpha|*" Project="Release" />
+  </Project>
+  <Project Path="src/Zarem.CheatSheet/Zarem.CheatSheet.csproj" Id="bd0eba9b-447d-4036-aae6-0678e5c7df96">
+    <BuildType Solution="Alpha|*" Project="Debug" />
   </Project>
   <Project Path="src/Zarem.Debugger/Zarem.Debugger.csproj" Id="2a72c433-6cac-4d50-bf58-4f5f5cb2ba83">
     <BuildType Solution="Alpha|*" Project="Debug" />

@@ -1,0 +1,72 @@
+{
+  "name": "Float",
+  "groups": [
+    {
+      "name": "Move",
+      "instructions": [
+        "mov.fmt:2",
+        "mfc1:2",
+        "mtc1:2",
+        "cfc1:2",
+        "ctc1:2",
+        "lwc1:2",
+        "swc1:2",
+        "ldc1:2",
+        "sdc1:2",
+        "lwxc1:2",
+        "swxc1:2",
+        "ldxc1:2",
+        "sdxc1:2"
+      ]
+    },
+    {
+      "name": "FPArithmetic",
+      "instructions": [
+        "add.fmt:3",
+        "sub.fmt:3",
+        "mul.fmt:3",
+        "div.fmt:3",
+        "abs.fmt:2",
+        "neg.fmt:2",
+        "sqrt.fmt:2",
+        "recip.fmt:2",
+        "rsqrt.fmt:2",
+        "madd.fmt:4",
+        "msub.fmt:4",
+        "nmadd.fmt:4",
+        "nmsub.fmt:4"
+      ]
+    },
+    {
+      "name": "FPRounding",
+      "instructions": [
+        "round.W.fmt:2",
+        "round.L.fmt:2",
+        "trunc.W.fmt:2",
+        "trunc.L.fmt:2",
+        "floor.W.fmt:2",
+        "floor.L.fmt:2",
+        "ceil.W.fmt:2",
+        "ceil.L.fmt:2"
+      ]
+    },
+    {
+      "name": "FPConversion",
+      "instructions": [
+        "cvt.S.fmt:2",
+        "cvt.D.fmt:2",
+        "cvt.W.fmt:2",
+        "cvt.L.fmt:2"
+      ]
+    },
+    {
+      "name": "FPConditionalMove",
+      "instructions": [
+        "movz.fmt:3",
+        "movn.fmt:3",
+        "movt.fmt:3",
+        "movf.fmt:3"
+      ]
+    }
+  ]
+}
