@@ -12,21 +12,22 @@ using Zarem.RiscV.Models.Instructions;
 namespace Zarem.RiscV.Emulator.JIT;
 
 /// <summary>
-/// A <see cref="RiscVJitCpu{T}"/> which uses JIT cross-compilation for execution.
+/// A <see cref="RiscVJitCpu{T, TFloat}"/> which uses JIT cross-compilation for execution.
 /// </summary>
-public class RiscVJitCpu<T> : RiscVCpu<T>
+public class RiscVJitCpu<T, TFloat> : RiscVCpu<T, TFloat>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
-    private readonly JitBlockCache<T, RiscVJitBlock<T>> _blockCache;
-    private readonly RiscVJitCompiler<T> _jitCompiler;
+    private readonly JitBlockCache<T, RiscVJitBlock<T, TFloat>> _blockCache;
+    private readonly RiscVJitCompiler<T, TFloat> _jitCompiler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RiscVCpu{T}"/> class.
+    /// Initializes a new instance of the <see cref="RiscVJitCpu{T, TFloat}"/> class.
     /// </summary>
     public RiscVJitCpu(RiscVEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
         _blockCache = new();
-        _jitCompiler = new RiscVJitCompiler<T>(this);
+        _jitCompiler = new RiscVJitCompiler<T, TFloat>(this);
 
         bus.AddressWritten += OnAddressWritten;
     }

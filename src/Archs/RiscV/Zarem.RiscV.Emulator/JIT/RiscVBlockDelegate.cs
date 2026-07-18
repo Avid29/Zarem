@@ -6,11 +6,13 @@ using Zarem.RiscV.Emulator.Machine.Enums;
 namespace Zarem.RiscV.Emulator.JIT;
 
 /// <summary>
-/// Represents a compiled block of MIPS instructions.
+/// Represents a compiled block of RISC-V instructions.
 /// </summary>
-/// <typeparam name="T">The register width (uint or ulong).</typeparam>
+/// <typeparam name="T">The register width (uint, ulong, or UInt128).</typeparam>
+/// <typeparam name="TFloat">The float register width (uint, ulong, or UInt128).</typeparam>
 /// <param name="cpu">The CPU instance to operate on.</param>
 /// <param name="trap">The trap which caused the block to exit.</param>
 /// <returns>The Program Counter where execution should continue.</returns>
-public delegate T RiscVBlockDelegate<T>(RiscVJitCpu<T> cpu, out RiscVTrap trap)
-    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>;
+public delegate T RiscVBlockDelegate<T, TFloat>(RiscVJitCpu<T, TFloat> cpu, out RiscVTrap trap)
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>;

@@ -16,21 +16,22 @@ namespace Zarem.Emulator.JIT;
 /// <summary>
 /// A class which compiles blocks of RISC-V code into JIT IL code.
 /// </summary>
-public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister, RiscVTrap>
+public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGpRegister, RiscVTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private delegate void RiscVEmitter(ILGenerator il, RiscVInstruction inst, T pc);
 
     private readonly RiscVInstructionDecodeTable<RiscVEmitter> _instructionTable;
-    private readonly RiscVJitCpu<T> _cpu;
+    private readonly RiscVJitCpu<T, TFloat> _cpu;
 
     private readonly HashSet<RiscVGpRegister> _loadRegs = [];
     private readonly HashSet<RiscVGpRegister> _storeRegs = [];
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RiscVJitCompiler{T}"/> class.
+    /// Initializes a new instance of the <see cref="RiscVJitCompiler{T, TFloat}"/> class.
     /// </summary>
-    public RiscVJitCompiler(RiscVJitCpu<T> cpu) : base(cpu)
+    public RiscVJitCompiler(RiscVJitCpu<T, TFloat> cpu) : base(cpu)
     {
         _cpu = cpu;
 
@@ -44,9 +45,9 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
     /// </summary>
     /// <param name="startPc">The entry point of the JIT block.</param>
     /// <returns>The method block.</returns>
-    public RiscVJitBlock<T> CompileBlock(T startPc)
+    public RiscVJitBlock<T, TFloat> CompileBlock(T startPc)
     {
-        Type[] parameterTypes = [typeof(RiscVJitCpu<T>), typeof(RiscVTrap).MakeByRefType()];
+        Type[] parameterTypes = [typeof(RiscVJitCpu<T, TFloat>), typeof(RiscVTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
@@ -62,16 +63,16 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
             currentPc += T.CreateTruncating(4);
         }
 
-        var @delegate = (RiscVBlockDelegate<T>)method.CreateDelegate(typeof(RiscVBlockDelegate<T>));
+        var @delegate = (RiscVBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(RiscVBlockDelegate<T, TFloat>));
         return new(@delegate, endPc - startPc);
     }
 
     /// <summary>
     /// Compiles a single instruction as a cli dynamic method.
     /// </summary>
-    public RiscVBlockDelegate<T> CompileLoneInstruction(RiscVInstruction inst, T pc)
+    public RiscVBlockDelegate<T, TFloat> CompileLoneInstruction(RiscVInstruction inst, T pc)
     {
-        Type[] parameterTypes = [typeof(RiscVJitCpu<T>), typeof(RiscVTrap).MakeByRefType()];
+        Type[] parameterTypes = [typeof(RiscVJitCpu<T, TFloat>), typeof(RiscVTrap).MakeByRefType()];
         var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
@@ -85,7 +86,7 @@ public unsafe partial class RiscVJitCompiler<T> : JitCompiler<T, RiscVGpRegister
             EmitRet(il, pc + T.CreateTruncating(4));
         }
 
-        return (RiscVBlockDelegate<T>)method.CreateDelegate(typeof(RiscVBlockDelegate<T>));
+        return (RiscVBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(RiscVBlockDelegate<T, TFloat>));
     }
 
     private void CompileInstruction(ILGenerator il, RiscVInstruction inst, T pc)

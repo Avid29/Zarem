@@ -12,9 +12,9 @@ using Zarem.RiscV.Models.Instructions.Enums.Functions;
 
 namespace Zarem.Emulator.Models;
 
-public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
+public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
 {
-    private static RiscVTrap FloatAlu<TLogic, TFormat>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatAlu<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
@@ -26,7 +26,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap FloatFAlu<TLogic, TFormat>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatFAlu<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TLogic : struct, IFAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
@@ -37,7 +37,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap FloatMinMax<TFormat>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatMinMax<TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         var indexer = GetFloatRegisterIndexer<TFormat>(cpu);
@@ -59,7 +59,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap FloatCompare<TFormat>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatCompare<TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         var indexer = GetFloatRegisterIndexer<TFormat>(cpu);
@@ -100,7 +100,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         QuietNaN = 0x200,
     };
 
-    private static RiscVTrap FloatClassifiy<TFormat>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatClassifiy<TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         var indexer = GetFloatRegisterIndexer<TFormat>(cpu);
@@ -133,7 +133,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap FloatMoveTo<TTo>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatMoveTo<TTo>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
     {
         var source = cpu.RegisterFile.Regs[(int)((RiscVInstruction)inst).RS1];
@@ -141,7 +141,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap FloatMoveFrom<TFrom>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatMoveFrom<TFrom>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
     {
 #if DEBUG
@@ -153,10 +153,10 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap FloatConvertTo<TTo>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatConvertTo<TTo>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
     {
-        delegate*<RiscVInterpretCpu<T>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func = inst.IntFormat switch
+        delegate*<RiscVInterpretCpu<T, TFloat>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func = inst.IntFormat switch
         {
             RiscVIntFormat.Word => &FloatConvertTo<int, TTo>,
             RiscVIntFormat.WordUnsigned => &FloatConvertTo<uint, TTo>,
@@ -168,10 +168,10 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return func(cpu, inst, out exec);
     }
 
-    private static RiscVTrap FloatConvertFrom<TFrom>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatConvertFrom<TFrom>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
     {
-        delegate*<RiscVInterpretCpu<T>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func = inst.IntFormat switch
+        delegate*<RiscVInterpretCpu<T, TFloat>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func = inst.IntFormat switch
         {
             RiscVIntFormat.Word => &FloatConvertFrom<TFrom, int>,
             RiscVIntFormat.WordUnsigned => &FloatConvertFrom<TFrom, uint>,
@@ -183,7 +183,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return func(cpu, inst, out exec);
     }
 
-    private static RiscVTrap FloatConvertTo<TFrom, TTo>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatConvertTo<TFrom, TTo>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TFrom : unmanaged, INumber<TFrom>
         where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
     {
@@ -193,7 +193,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap FloatConvertFrom<TFrom, TTo>(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap FloatConvertFrom<TFrom, TTo>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
         where TTo : unmanaged, INumber<TTo>, IMinMaxValue<TTo>
     {
@@ -215,10 +215,10 @@ public unsafe partial class RiscVInstructionServiceTable<T, TSigned>
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap IllegalInstruction(RiscVInterpretCpu<T> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap IllegalInstruction(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         => IllegalInstruction(cpu, inst, out exec);
 
-    private static IFormattedRegisterIndexer<TFormat> GetFloatRegisterIndexer<TFormat>(RiscVInterpretCpu<T> cpu)
+    private static IFormattedRegisterIndexer<TFormat> GetFloatRegisterIndexer<TFormat>(RiscVInterpretCpu<T, TFloat> cpu)
         where TFormat : unmanaged, INumber<TFormat>
     {
 #if DEBUG
