@@ -12,8 +12,6 @@ public class Localizer : IStringLocalizer
 {
     private readonly ResourceManager _resourceManager;
 
-    internal static Localizer Resources { get; } = new("Zarem.Resources", typeof(Localizer).Assembly);
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Localizer"/> class.
     /// </summary>

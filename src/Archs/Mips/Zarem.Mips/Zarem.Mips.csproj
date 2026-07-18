@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Zarem\Zarem.csproj" />
     <ProjectReference Include="..\Zarem.Mips.Assembler\Zarem.Mips.Assembler.csproj" />
+    <ProjectReference Include="..\Zarem.Mips.CheatSheet\Zarem.Mips.CheatSheet.csproj" />
     <ProjectReference Include="..\Zarem.Mips.Debugger\Zarem.Mips.Debugger.csproj" />
     <ProjectReference Include="..\Zarem.Mips.Disassembler\Zarem.Mips.Disassembler.csproj" />
     <ProjectReference Include="..\Zarem.Mips.Emulator\Zarem.Mips.Emulator.csproj" />

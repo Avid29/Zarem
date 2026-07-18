@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.Mips.CheatSheet</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="InstructionCollections.json" />
+    <EmbeddedResource Include="EncodingPatterns.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zarem.Mips.Base\Zarem.Mips.Base.csproj" />
+  </ItemGroup>
+
+</Project>

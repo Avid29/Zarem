@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Zarem.IDE.Views.Pages.CheatSheet"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:Zarem.IDE.Models.CheatSheet"
+    xmlns:models="using:Zarem.CheatSheet.Models"
     xmlns:palette="using:Zarem.IDE.Controls.CheatSheet.Palettes"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -54,68 +54,32 @@
                         SectionBrushPalette="{StaticResource SectionBrushPalette}" />
                 </StackPanel>
             </DataTemplate>
+
+            <DataTemplate x:Key="EncodingPatternGroupTemplate" x:DataType="models:EncodingPatternGroup">
+                <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <Expander.Header>
+                        <TextBlock
+                            Margin="8,0"
+                            Text="{x:Bind Name}"
+                            TextTrimming="CharacterEllipsis" />
+                    </Expander.Header>
+                    <ItemsRepeater
+                        Margin="24,0"
+                        ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
+                        ItemsSource="{x:Bind Patterns}" />
+                </Expander>
+            </DataTemplate>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel
+    <ItemsRepeater
         Margin="48,16"
         HorizontalAlignment="Stretch"
-        Spacing="4">
-        <StackPanel.ChildrenTransitions>
-            <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True" />
-        </StackPanel.ChildrenTransitions>
-
-        <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <Expander.Header>
-                <TextBlock
-                    x:Uid="/CheatSheet/PrimaryInstructionTypePatternsTB"
-                    Margin="8,0"
-                    Text="Primary Instruction Types Encoding Patterns"
-                    TextTrimming="CharacterEllipsis" />
-            </Expander.Header>
-            <ItemsRepeater
-                Margin="24,0"
-                ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
-                ItemsSource="{x:Bind ViewModel.PrimaryEncodingPatterns, Mode=OneWay}" />
-        </Expander>
-        <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <Expander.Header>
-                <TextBlock
-                    x:Uid="/CheatSheet/CoProc0InstructionTypePatternsTB"
-                    Margin="8,0"
-                    Text="CoProcessor0 Instruction Types Encoding Patterns"
-                    TextTrimming="CharacterEllipsis" />
-            </Expander.Header>
-            <ItemsRepeater
-                Margin="24,0"
-                ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
-                ItemsSource="{x:Bind ViewModel.CoProcessor0Patterns, Mode=OneWay}" />
-        </Expander>
-        <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <Expander.Header>
-                <TextBlock
-                    x:Uid="/CheatSheet/CoProc1InstructionTypePatternsTB"
-                    Margin="8,0"
-                    Text="Floating-Point CoProcessor Instruction Types Encoding Patterns"
-                    TextTrimming="CharacterEllipsis" />
-            </Expander.Header>
-            <ItemsRepeater
-                Margin="24,0"
-                ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
-                ItemsSource="{x:Bind ViewModel.CoProcessor1Patterns, Mode=OneWay}" />
-        </Expander>
-        <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <Expander.Header>
-                <TextBlock
-                    x:Uid="/CheatSheet/UniqueInstructionPatternsTB"
-                    Margin="8,0"
-                    Text="Unique Instruction Encoding Patterns"
-                    TextTrimming="CharacterEllipsis" />
-            </Expander.Header>
-            <ItemsRepeater
-                Margin="24,0"
-                ItemTemplate="{StaticResource EncodingPatternDisplayTemplate}"
-                ItemsSource="{x:Bind ViewModel.UniquePatterns, Mode=OneWay}" />
-        </Expander>
-    </StackPanel>
+        ItemTemplate="{StaticResource EncodingPatternGroupTemplate}"
+        ItemsSource="{x:Bind ViewModel.CheatSheet.EncodingPatternsGroups}">
+        <ItemsRepeater.Layout>
+            <StackLayout Spacing="4" />
+        </ItemsRepeater.Layout>
+    </ItemsRepeater>
 </UserControl>

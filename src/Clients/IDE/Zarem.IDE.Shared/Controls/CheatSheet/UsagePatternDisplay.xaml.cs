@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Zarem.Assembler;
+using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;
@@ -31,9 +32,9 @@ public sealed partial class UsagePatternDisplay : UserControl
         InitializeComponent();
     }
 
-    public MipsInstructionMetaBase? Metadata
+    public IInstructionMeta? Metadata
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -57,9 +58,13 @@ public sealed partial class UsagePatternDisplay : UserControl
             return;
 
         var localizer = App.Current.Services.GetRequiredService<ILocalizationService>();
-        UpdateNameDisplay(Metadata, localizer);
-        UpdateUsageDisplay(Metadata.ArgumentPattern, localizer);
-        UpdateBehaviorDisplay(Metadata.Behavior, localizer);
+
+        if (Metadata is MipsInstructionMetaBase mipsMeta)
+        {
+            UpdateNameDisplay(mipsMeta, localizer);
+            UpdateUsageDisplay(mipsMeta.ArgumentPattern, localizer);
+            UpdateBehaviorDisplay(mipsMeta.Behavior, localizer);
+        }
     }
 
     private void UpdateNameDisplay(MipsInstructionMetaBase data, ILocalizationService localizer)

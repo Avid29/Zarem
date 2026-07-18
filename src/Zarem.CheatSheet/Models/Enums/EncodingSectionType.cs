@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.IDE.Models.CheatSheet.Enums;
+namespace Zarem.CheatSheet.Models.Enums;
 
 /// <summary>
 /// An enum representing the purpose of an encoding pattern section.

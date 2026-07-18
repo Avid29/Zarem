@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Zarem.IDE.Models.CheatSheet;
+namespace Zarem.CheatSheet.Models;
 
 /// <summary>
 /// A class representing the detials of an instruction encoding type.

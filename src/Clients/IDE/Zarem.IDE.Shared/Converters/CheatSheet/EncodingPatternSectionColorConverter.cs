@@ -4,8 +4,8 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using System;
+using Zarem.CheatSheet.Models.Enums;
 using Zarem.IDE.Controls.CheatSheet.Palettes;
-using Zarem.IDE.Models.CheatSheet.Enums;
 using Zarem.Mips.Models.Instructions.Enums;
 
 namespace Zarem.IDE.Converters;

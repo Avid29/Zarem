@@ -1,0 +1,273 @@
+[
+  {
+    "name": "Common",
+    "groups": [
+      {
+        "name": "SignedArithmetic",
+        "instructions": [
+          "add:3",
+          "addi:3",
+          "sub:3",
+          "mul:3",
+          "mult:2",
+          "div:2",
+          "sra:3",
+          "srav:3",
+          "madd:2",
+          "msub:2"
+        ]
+      },
+      {
+        "name": "UnsignedArithmetic",
+        "instructions": [
+          "addu:3",
+          "addiu:3",
+          "subu:3",
+          "multu:2",
+          "divu:2",
+          "maddu:2",
+          "msubu:2"
+        ]
+      },
+      {
+        "name": "Logical",
+        "instructions": [
+          "and:3",
+          "andi:3",
+          "or:3",
+          "ori:3",
+          "xor:3",
+          "xori:3",
+          "nor:3",
+          "sll:3",
+          "srl:3",
+          "sllv:3",
+          "srlv:3"
+        ]
+      },
+      {
+        "name": "Data",
+        "instructions": [
+          "lui:2",
+          "mflo:1",
+          "mfhi:1",
+          "mtlo:1",
+          "mthi:1"
+        ]
+      },
+      {
+        "name": "Memory",
+        "instructions": [
+          "lb:2",
+          "sb:2",
+          "lh:2",
+          "sh:2",
+          "lw:2",
+          "sw:2",
+          "lbu:2",
+          "lhu:2"
+        ]
+      },
+      {
+        "name": "Jump",
+        "instructions": [
+          "j:1",
+          "jal:1",
+          "jr:1",
+          "jalr:1"
+        ]
+      },
+      {
+        "name": "Branch",
+        "instructions": [
+          "beq:3",
+          "bne:3",
+          "blez:2",
+          "bgtz:2",
+          "bltz:2",
+          "bgez:2"
+        ]
+      },
+      {
+        "name": "Compare",
+        "instructions": [
+          "slt:3",
+          "slti:3",
+          "sltu:3",
+          "sltiu:3"
+        ]
+      },
+      {
+        "name": "System",
+        "instructions": [
+          "syscall:0",
+          "break:0"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Float",
+    "groups": [
+      {
+        "name": "Move",
+        "instructions": [
+          "mov.fmt:2",
+          "mfc1:2",
+          "mtc1:2",
+          "cfc1:2",
+          "ctc1:2",
+          "lwc1:2",
+          "swc1:2",
+          "ldc1:2",
+          "sdc1:2",
+          "lwxc1:2",
+          "swxc1:2",
+          "ldxc1:2",
+          "sdxc1:2"
+        ]
+      },
+      {
+        "name": "FPArithmetic",
+        "instructions": [
+          "add.fmt:3",
+          "sub.fmt:3",
+          "mul.fmt:3",
+          "div.fmt:3",
+          "abs.fmt:2",
+          "neg.fmt:2",
+          "sqrt.fmt:2",
+          "recip.fmt:2",
+          "rsqrt.fmt:2",
+          "madd.fmt:4",
+          "msub.fmt:4",
+          "nmadd.fmt:4",
+          "nmsub.fmt:4"
+        ]
+      },
+      {
+        "name": "FPRounding",
+        "instructions": [
+          "round.W.fmt:2",
+          "round.L.fmt:2",
+          "trunc.W.fmt:2",
+          "trunc.L.fmt:2",
+          "floor.W.fmt:2",
+          "floor.L.fmt:2",
+          "ceil.W.fmt:2",
+          "ceil.L.fmt:2"
+        ]
+      },
+      {
+        "name": "FPConversion",
+        "instructions": [
+          "cvt.S.fmt:2",
+          "cvt.D.fmt:2",
+          "cvt.W.fmt:2",
+          "cvt.L.fmt:2"
+        ]
+      },
+      {
+        "name": "FPConditionalMove",
+        "instructions": [
+          "movz.fmt:3",
+          "movn.fmt:3",
+          "movt.fmt:3",
+          "movf.fmt:3"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "CoProc0",
+    "groups": [
+      {
+        "name": "Move",
+        "instructions": [
+          "mfc0:2",
+          "mfc0:3",
+          "mtc0:2",
+          "mtc0:3"
+        ]
+      },
+      {
+        "name": "Interrupts",
+        "instructions": [
+          "ei:0",
+          "ei:1",
+          "di:0",
+          "di:1",
+          "eret:0",
+          "wait:0"
+        ]
+      },
+      {
+        "name": "TLB",
+        "instructions": [
+          "tlbp:0",
+          "tlbr:0",
+          "tlbwi:0",
+          "tlbwr:0"
+        ]
+      },
+      {
+        "name": "Debug",
+        "instructions": [
+          "deret:0"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Specialized",
+    "groups": [
+      {
+        "name": "Logical",
+        "instructions": [
+          "ext",
+          "ins",
+          "seb",
+          "seh",
+          "wsbh",
+          "clz",
+          "clo"
+        ]
+      },
+      {
+        "name": "Jump",
+        "instructions": [
+          "jr.hb:1",
+          "jalr:2",
+          "jalr.hb:1",
+          "jalr.hb:2",
+          "jalx:1"
+        ]
+      },
+      {
+        "name": "Trap",
+        "instructions": [
+          "teq:2",
+          "tne:2",
+          "teqi:2",
+          "tnei:2",
+          "tge:2",
+          "tlt:2",
+          "tgeu:2",
+          "tltu:2",
+          "tgei:2",
+          "tlti:2",
+          "tgeui:2",
+          "tltui:2"
+        ]
+      },
+      {
+        "name": "System",
+        "instructions": [
+          "sdbbp:1",
+          "ehb:0",
+          "wrpgpr:2"
+        ]
+      }
+    ]
+  }
+]

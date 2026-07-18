@@ -13,14 +13,6 @@
     <EmbeddedResource Include="Resources\ColorSchemes\Terminal-Light.json" />
     <EmbeddedResource Include="Resources\ColorSchemes\Zarem-Dark.json" />
     <EmbeddedResource Include="Resources\ColorSchemes\Zarem-Light.json" />
-    <EmbeddedResource Include="Resources\EncodingPatterns\UniqueEncodings.json" />
-    <EmbeddedResource Include="Resources\EncodingPatterns\CoProcessor0Encodings.json" />
-    <EmbeddedResource Include="Resources\EncodingPatterns\CoProcessor1Encodings.json" />
-    <EmbeddedResource Include="Resources\EncodingPatterns\PrimaryEncodings.json" />
-    <EmbeddedResource Include="Resources\Instructions\FloatInstructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\SpecializedInstructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\CoProc0Instructions.json" />
-    <EmbeddedResource Include="Resources\Instructions\CommonInstructions.json" />
   </ItemGroup>
 
   <ItemGroup>

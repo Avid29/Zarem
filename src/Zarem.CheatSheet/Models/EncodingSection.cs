@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2025
 
 using System.Text.Json.Serialization;
-using Zarem.IDE.Models.CheatSheet.Enums;
+using Zarem.CheatSheet.Models.Enums;
 
-namespace Zarem.IDE.Models.CheatSheet;
+namespace Zarem.CheatSheet.Models;
 
 /// <summary>
 /// A class representing a section of encodings in the cheatsheet.

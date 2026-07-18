@@ -2,8 +2,8 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Zarem.CheatSheet.Models;
 using Zarem.IDE.Controls.CheatSheet.Palettes;
-using Zarem.IDE.Models.CheatSheet;
 
 namespace Zarem.IDE.Controls.CheatSheet;
 

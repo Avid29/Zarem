@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Zarem.IDE.Models.CheatSheet;
+namespace Zarem.CheatSheet.Models;
 
 /// <summary>
 /// A class representing a collection of groups of instructions.
@@ -10,10 +10,10 @@ namespace Zarem.IDE.Models.CheatSheet;
 public class InstructionCollection
 {
     /// <summary>
-    /// Gets or sets the name of the instruction.
+    /// Gets or sets the name of the instruction collection.
     /// </summary>
     [JsonPropertyName("name")]
-    public required string CollectionName { get; set; }
+    public required string Name { get; set; }
 
     /// <summary>
     /// Gets or sets the groups of instruction in the collection.
