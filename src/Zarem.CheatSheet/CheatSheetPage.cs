@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,7 +25,9 @@ public class CheatSheetPage
         var encodingPatternResource = resources.First(x => x.EndsWith("EncodingPatterns.json"));
         var instructionGroupsResources = resources.Where(x => x.EndsWith(".ig.json"));
 
-        EncodingPatterns = LoadEncodingPatterns(assembly, encodingPatternResource);
+        EncodingPatternsGroups = LoadEncodingPatterns(assembly, encodingPatternResource);
+
+        Localize();
     }
 
     /// <summary>
@@ -37,7 +38,7 @@ public class CheatSheetPage
     /// <summary>
     /// Gets the list of encoding pattern groups.
     /// </summary>
-    public EncodingPatternGroup[]? EncodingPatterns { get; }
+    public EncodingPatternGroup[]? EncodingPatternsGroups { get; }
     
     /// <summary>
     /// Loads a cheatsheet from an assembly's resources.
@@ -58,5 +59,34 @@ public class CheatSheetPage
             return null;
 
         return patterns;
+    }
+
+    private void Localize()
+    {
+        // TODO: Improve localization system
+
+        if (EncodingPatternsGroups is null)
+            return;
+
+        foreach (var group in EncodingPatternsGroups)
+        {
+            group.Name = Localizer[$"EncodingGroup/{group.Name}"] ?? group.Name;
+
+            foreach (var pattern in group.Patterns)
+            {
+                pattern.Name = Localizer[$"EncodingPattern/{pattern.Name}"] ?? pattern.Name;
+
+                if (pattern.Sections is null)
+                    continue;
+
+                foreach(var section in pattern.Sections)
+                {
+                    if (section.Name is null)
+                        continue;
+
+                    section.Name = Localizer[$"EncodingSection/{section.Name}"] ?? section.Name;
+                }
+            }
+        }
     }
 }

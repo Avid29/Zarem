@@ -13,7 +13,7 @@ public record EncodingPatternGroup
     /// Gets or sets the name of the group.
     /// </summary>
     [JsonPropertyName("name")]
-    public required string? Name { get; init; }
+    public required string Name { get; set; }
 
     /// <summary>
     /// Gets or sets the the encoding .
