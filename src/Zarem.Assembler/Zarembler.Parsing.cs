@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Diagnostics;
-using System.Net.Sockets;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Models.Directives;

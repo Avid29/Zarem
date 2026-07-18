@@ -3,10 +3,8 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
-using System.Runtime.InteropServices.Swift;
 using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Emulator.Machine.Registers.Indexers;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Emulator.Machine.CoProcessors;

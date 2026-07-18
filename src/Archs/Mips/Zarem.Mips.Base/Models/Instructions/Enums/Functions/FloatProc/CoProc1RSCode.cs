@@ -1,7 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Mips.Models.Instructions;
-using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 

@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using Zarem.Assembler.Config;
 using Zarem.Config;
 using Zarem.Emulator.Config;

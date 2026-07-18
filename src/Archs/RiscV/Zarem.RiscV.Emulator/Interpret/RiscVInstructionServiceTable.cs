@@ -2,15 +2,12 @@
 
 using System;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using Zarem.Emulator.Exceptions;
 using Zarem.RiscV.Emulator.Interpret;
-using Zarem.RiscV.Emulator.Machine;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
-using Zarem.RiscV.Models.Instructions.Enums.Operations;
 
 namespace Zarem.Emulator.Models;
 

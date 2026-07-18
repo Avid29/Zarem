@@ -9,13 +9,11 @@ using Microsoft.UI.Xaml.Shapes;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Zarem.Assembler;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models.Enums;
 

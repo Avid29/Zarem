@@ -1,10 +1,7 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Numerics;
 using Test.Archs.Emulator;
-using Zarem.Emulator.Config;
-using Zarem.Mips.Models.Instructions.Enums.Registers;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;

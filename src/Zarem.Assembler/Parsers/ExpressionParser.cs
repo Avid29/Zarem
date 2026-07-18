@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Logging;

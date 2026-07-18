@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Zarem.RiscV.Assembler;
 using Zarem.RiscV.Assembler.Models.Meta;
 using Zarem.RiscV.Models.Versioning.Enums;
 

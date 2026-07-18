@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Assembler.Handlers;
 using Zarem.Linker.Config;
 
 namespace Zarem.Linker.Handlers;

@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Models.Files;
 
 namespace Zarem.Models.Breakpoints;
 

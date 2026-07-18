@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
 
 namespace Zarem.Mips.Models.Instructions.Enums.Functions;

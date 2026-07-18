@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using WinUIEditor;
-using Zarem.Debugger.Models;
 using Zarem.Models.Breakpoints;
 using Zarem.Models.Tables;
 

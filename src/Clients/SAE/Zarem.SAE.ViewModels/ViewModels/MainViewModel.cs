@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Zarem.Emulator.Config.Enums;
 using Zarem.N64;
 using Zarem.N64.Config;

@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Zarem.Assembler;
 using Zarem.Assembler.Logging;
-using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Components.Interfaces;
 using Zarem.Helpers;

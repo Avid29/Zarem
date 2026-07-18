@@ -1,7 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-using System;
-using System.Linq;
 using System.Text.Json.Serialization;
 using Zarem.IDE.Models.CheatSheet.Enums;
 
