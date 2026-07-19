@@ -36,7 +36,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
 {
-    private readonly Dictionary<TArg, AssemblyArg> _parsedArgTable;
+    private readonly Dictionary<TArg, AssemblyArg> _argTable;
     private readonly AssemblerLogger? _logger;
 
     /// <summary>
@@ -44,7 +44,8 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// </summary>
     public InstructionParserBase(Address address, IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
     {
-        _parsedArgTable = [];
+        _argTable = [];
+        ParsedArgTable = [];
 
         CurrentAddress = address;
         Symbols = symbols;
@@ -92,6 +93,11 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     protected IReadOnlyDictionary<string, Symbol>? Symbols { get; }
 
     /// <summary>
+    /// Gets a table of parsed arguments.
+    /// </summary>
+    protected Dictionary<TArg, object?> ParsedArgTable { get; }
+
+    /// <summary>
     /// Attempts to parse an instruction from a name and a list of arguments.
     /// </summary>
     /// <param name="line">The assembly line to parse.</param>
@@ -126,8 +132,8 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
 
             // Parse the argument
             // Only track the argument if successfully parsed
-            if(TryParseArg(arg.Tokens, type))
-                _parsedArgTable[type] = arg;
+            if (TryParseArg(arg.Tokens, type))
+                _argTable[type] = arg;
         }
 
         // Handle pseudo-instruction expansion if needed
@@ -183,70 +189,26 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     protected abstract TInstruction BuildInstruction();
 
     /// <summary>
-    /// Parses an argument as a register and assigns it to the target component.
-    /// </summary>
-    protected abstract bool TryParseRegister(ReadOnlySpan<Token> arg, TArg target, RegisterArgumentAttribute<TSet> attr);
-
-    /// <summary>
     /// Parses an argument as an expression and assigns it to the target component
     /// </summary>
     protected abstract bool TryParseExpression(ReadOnlySpan<Token> arg, TArg target, ImmediateArgumentAttribute attr);
 
     /// <summary>
-    /// Attempts to parse a register.
+    /// Gets a parsed argument as a certain type.
     /// </summary>
-    /// <param name="arg">The token to parse as a register.</param>
-    /// <param name="register">The resulting register.</param>
-    /// <param name="set">The register set the register needs to belong ot.</param>
-    /// <param name="bounds">The bounds of a numerical register in the set.</param>
-    /// <returns>Whether or not a register was successfuly parsed.</returns>
-    protected bool TryParseRegister(ReadOnlySpan<Token> arg, out TRegister register, TSet set, int bounds)
+    protected T GetParsedArgument<T>(TArg arg, params TArg[] alts)
+        where T : unmanaged
     {
-        register = default;
-
-        if (arg.Length is not 1)
+        if (!ParsedArgTable.TryGetValue(arg, out object? result))
         {
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "ArgumentNotARegister", arg.Print());
-            return false;
-        }
-
-        // Check that argument is register argument
-        var token = arg[0];
-        if (token.Type is not TokenType.Register)
-        {
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, token, "ArgumentNotARegister", token);
-            return false;
-        }
-
-        // Get named register from table
-        if (!RegisterTable<TRegister, TSet>.TryGetRegister(token.Source, out register, out TSet parsedSet, out bool indexed))
-        {
-            // Register does not exist in table
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, token, "RegisterNotFound", token);
-            return false;
-        }
-
-        var index = Unsafe.As<TRegister, int>(ref register);
-        if (index >= bounds)
-        {
-            var (message, msgArg) = indexed switch
+            foreach (var alt in alts)
             {
-                true => ("RegisterNumberNotFound", (object)index),
-                false => ("RegisterNotIndexable", token)
-            };
-
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, message, msgArg);
-            return false;
+                if (ParsedArgTable.TryGetValue(alt, out result))
+                    break;
+            }
         }
 
-        // Match register set
-        if (!EqualityComparer<TSet>.Default.Equals(parsedSet, default) && !EqualityComparer<TSet>.Default.Equals(parsedSet, set))
-        {
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, $"RegisterWrongSet", token);
-            return false;
-        }
-
-        return true;
+        return (T?)result ?? default;
     }
 
     /// <summary>
@@ -314,6 +276,57 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         };
     }
 
+    private bool TryParseRegister(ReadOnlySpan<Token> arg, TArg target, RegisterArgumentAttribute<TSet> attr)
+    {
+        var bounds = 32; // TODO: Handle ISAs with non-32 reg counts
+
+        if (arg.Length is not 1)
+        {
+            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, "ArgumentNotARegister", arg.Print());
+            return false;
+        }
+
+        // Check that argument is register argument
+        var token = arg[0];
+        if (token.Type is not TokenType.Register)
+        {
+            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, token, "ArgumentNotARegister", token);
+            return false;
+        }
+
+        // Get named register from table
+        if (!RegisterTable<TRegister, TSet>.TryGetRegister(token.Source, out var register, out TSet parsedSet, out bool indexed))
+        {
+            // Register does not exist in table
+            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, token, "RegisterNotFound", token);
+            return false;
+        }
+
+        var index = Unsafe.As<TRegister, int>(ref register);
+        if (index >= bounds)
+        {
+            var (message, msgArg) = indexed switch
+            {
+                true => ("RegisterNumberNotFound", (object)index),
+                false => ("RegisterNotIndexable", token)
+            };
+
+            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, message, msgArg);
+            return false;
+        }
+
+        // Match register set
+        if (!EqualityComparer<TSet>.Default.Equals(parsedSet, default) && !EqualityComparer<TSet>.Default.Equals(parsedSet, attr.RegisterSet))
+        {
+            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, $"RegisterWrongSet", token);
+            return false;
+        }
+
+        ParsedArgTable[target] = register;
+
+        return true;
+    }
+
     private bool TryParseAddressOffset(ReadOnlySpan<Token> arg, TArg reg, TArg imm)
     {
         // NOTE: Be careful about forwards to other parse functions with regards to 
@@ -345,7 +358,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         foreach (var argType in Enum.GetValues<TArg>())
         {
             // Skip args not present in the arg table
-            if (!_parsedArgTable.ContainsKey(argType))
+            if (!_argTable.ContainsKey(argType))
                 continue;
 
             // Get the template name for the argument type, which is used as a placeholder in the template string
@@ -356,7 +369,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
 
             // Swap the argument template component for the argument body
             var argTemplatePattern = $"${{{argTemplate}}}";
-            var argSubstitution = $"{_parsedArgTable[argType]}";
+            var argSubstitution = $"{_argTable[argType]}";
             result = result.Replace(argTemplatePattern, argSubstitution);
         }
 

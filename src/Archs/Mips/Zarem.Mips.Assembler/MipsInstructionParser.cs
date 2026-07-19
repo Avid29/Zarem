@@ -36,9 +36,6 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
     private readonly AssemblerLogger? _logger;
     private readonly FormatTable<MipsFloatFormat> _formatTable = new();
 
-    private MipsGpRegister _rs;
-    private MipsGpRegister _rt;
-    private MipsGpRegister _rd;
     private MipsFloatFormat _format;
 
     /// <summary>
@@ -116,9 +113,9 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
         }
 
         // Set fixed values
-        _rs = (MipsGpRegister)(Meta.FixedRS ?? default);
-        _rt = (MipsGpRegister)(Meta.FixedRT ?? default);
-        _rd = (MipsGpRegister)(Meta.FixedRD ?? default);
+        if (Meta.FixedRS.HasValue) ParsedArgTable[MipsArgument.RS] = (MipsGpRegister?)Meta.FixedRS;
+        if (Meta.FixedRT.HasValue) ParsedArgTable[MipsArgument.RT] = (MipsGpRegister?)Meta.FixedRT;
+        if (Meta.FixedRD.HasValue) ParsedArgTable[MipsArgument.RD] = (MipsGpRegister?)Meta.FixedRD;
 
         return true;
     }
@@ -177,65 +174,33 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
     }
 
     /// <inheritdoc/>
-    protected override bool TryParseRegister(ReadOnlySpan<Token> arg, MipsArgument target, RegisterArgumentAttribute<MipsRegisterSet> attr)
-    {
-        var set = attr.RegisterSet;
-
-        // Get reference to selected register argument
-        Ref<MipsGpRegister> regRef = target switch
-        {
-            // General Purpose Registers
-            MipsArgument.RS => new(ref _rs),
-            MipsArgument.RT => new(ref _rt),
-            MipsArgument.RD => new(ref _rd),
-
-            // Float Registers
-            MipsArgument.FS => new(ref _rs),
-            MipsArgument.FT => new(ref _rt),
-            MipsArgument.FD => new(ref _rd),
-
-            // RT Register for coprocessors
-            MipsArgument.RT_Numbered => new(ref _rt),
-
-            // Invalid target type
-            _ => throw new ArgumentOutOfRangeException($"Argument of type '{target}' attempted to parse as a register.")
-        };
-
-        ref MipsGpRegister reg = ref regRef.Value;
-
-        if (!TryParseRegister(arg, out var register, set, 32))
-            return false;
-
-        // Cache register as appropriate argument type
-        reg = register;
-
-        return true;
-    }
-
-    /// <inheritdoc/>
     protected override MipsInstruction BuildInstruction()
     {
         Guard.IsNotNull(Meta);
 
+        var rs = GetParsedArgument<MipsGpRegister>(MipsArgument.RS, MipsArgument.FS);
+        var rt = GetParsedArgument<MipsGpRegister>(MipsArgument.RT, MipsArgument.FT);
+        var rd = GetParsedArgument<MipsGpRegister>(MipsArgument.RD, MipsArgument.FD);
+
         return Meta switch
         {
-            RTypeInstructionMeta r => MipsInstruction.CreateR(r.OperationCode, r.FuncCode, _rs, _rt, _rd, (byte)Immediate),
+            RTypeInstructionMeta r => MipsInstruction.CreateR(r.OperationCode, r.FuncCode, rs, rt, rd, (byte)Immediate),
             JTypeInstructionMeta j => MipsInstruction.CreateJ(j.OperationCode, (uint)Immediate),
 
             RegImmInstructionMeta ri => ri.Type is MipsInstructionType.RegisterImmediateBranch
-                ? MipsInstruction.CreateBranch(ri.RtCode, _rs, Immediate)
-                : MipsInstruction.CreateTrap(ri.RtCode, _rs, (short)Immediate),
+                ? MipsInstruction.CreateBranch(ri.RtCode, rs, Immediate)
+                : MipsInstruction.CreateTrap(ri.RtCode, rs, (short)Immediate),
 
-            CoProc0InstructionsMeta c0 when c0.Mfmc0FuncCode.HasValue => CoProc0Instruction.Create(c0.Mfmc0FuncCode.Value, _rt, (byte)_rd),
-            CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, _rd),
-            CoProc0InstructionsMeta c0 => CoProc0Instruction.Create(c0.RSCode, _rt, _rd),
+            CoProc0InstructionsMeta c0 when c0.Mfmc0FuncCode.HasValue => CoProc0Instruction.Create(c0.Mfmc0FuncCode.Value, rt, (byte)rd),
+            CoProc0InstructionsMeta c0 when c0.FuncCode.HasValue => CoProc0Instruction.Create(c0.FuncCode.Value, rd),
+            CoProc0InstructionsMeta c0 => CoProc0Instruction.Create(c0.RSCode, rt, rd),
 
-            CoProc1InstructionsMeta c1 => MipsFloatInstruction.Create(c1.RSCode, _rt, (MipsFloatRegister)_rs),
-            MipsFloatInstructionMeta f => MipsFloatInstruction.Create(f.Function, _format, (MipsFloatRegister)_rs, (MipsFloatRegister)_rd, (MipsFloatRegister)_rt),
+            CoProc1InstructionsMeta c1 => MipsFloatInstruction.Create(c1.RSCode, rt, (MipsFloatRegister)rs),
+            MipsFloatInstructionMeta f => MipsFloatInstruction.Create(f.Function, _format, (MipsFloatRegister)rs, (MipsFloatRegister)rd, (MipsFloatRegister)rt),
 
             ITypeInstructionMeta i => i.Type is MipsInstructionType.IBranch
-            ? MipsInstruction.CreateBranch(i.OperationCode, _rs, _rt, Immediate)
-            : MipsInstruction.CreateI(i.OperationCode, _rs, _rt, (short)Immediate),
+            ? MipsInstruction.CreateBranch(i.OperationCode, rs, rt, Immediate)
+            : MipsInstruction.CreateI(i.OperationCode, rs, rt, (short)Immediate),
 
             _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
         };
