@@ -36,10 +36,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     private readonly AssemblerLogger? _logger;
     private readonly FormatTable<RiscVFloatFormat> _formatTable = new();
 
-    private RiscVGpRegister _rd;
-    private RiscVGpRegister _rs1;
-    private RiscVGpRegister _rs2;
-    private RiscVGpRegister _rs3;
     private RiscVFloatFormat _format;
 
     /// <summary>
@@ -137,47 +133,11 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         }
 
         // Set fixed values
-        _rd = (RiscVGpRegister)(Meta.FixedRD ?? default);
-        _rs1 = (RiscVGpRegister)(Meta.FixedRS1 ?? default);
-        _rs2 = (RiscVGpRegister)(Meta.FixedRS2 ?? default);
-        _rs3 = (RiscVGpRegister)(Meta.FixedRS3 ?? default);
+        if (Meta.FixedRD.HasValue)ParsedArgTable[RiscVArgument.RD] = (RiscVGpRegister?)Meta.FixedRD;
+        if (Meta.FixedRS1.HasValue)ParsedArgTable[RiscVArgument.RS1] = (RiscVGpRegister?)Meta.FixedRS1;
+        if (Meta.FixedRS2.HasValue)ParsedArgTable[RiscVArgument.RS2] = (RiscVGpRegister?)Meta.FixedRS2;
+        if (Meta.FixedRS3.HasValue)ParsedArgTable[RiscVArgument.FRS3] = (RiscVGpRegister?)Meta.FixedRS3;
         Immediate = Meta.FixedImm ?? default;
-
-        return true;
-    }
-
-    /// <summary>
-    /// Parses an argument as a register and assigns it to the target component.
-    /// </summary>
-    protected override bool TryParseRegister(ReadOnlySpan<Token> arg, RiscVArgument target, RegisterArgumentAttribute<RiscVRegisterSet> attr)
-    {
-        var set = attr.RegisterSet;
-
-        // Get reference to selected register argument
-        Ref<RiscVGpRegister> regRef = target switch
-        {
-            // General Purpose Registers
-            RiscVArgument.RD => new(ref _rd),
-            RiscVArgument.RS1 => new(ref _rs1),
-            RiscVArgument.RS2 => new(ref _rs2),
-
-            // Float Registers
-            RiscVArgument.FRD => new(ref _rd),
-            RiscVArgument.FRS1 => new(ref _rs1),
-            RiscVArgument.FRS2 => new(ref _rs2),
-            RiscVArgument.FRS3 => new(ref _rs3),
-
-            // Invalid target type
-            _ => throw new ArgumentOutOfRangeException($"Argument of type '{target}' attempted to parse as a register.")
-        };
-
-        ref RiscVGpRegister reg = ref regRef.Value;
-
-        if (!TryParseRegister(arg, out var register, set, 32))
-            return false;
-
-        // Cache register as appropriate argument type
-        reg = register;
 
         return true;
     }
@@ -239,17 +199,22 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     {
         Guard.IsNotNull(Meta);
 
+        var rd = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RD, RiscVArgument.FRD);
+        var rs1 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS1, RiscVArgument.FRS1);
+        var rs2 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS2, RiscVArgument.FRS2);
+        var rs3 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.FRS3);
+
         return Meta switch
         {
-            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, _rd, _rs1, _rs2),
-            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, _rd, _rs1, (short)Immediate),
-            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, _rd, Immediate),
-            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, _rs1, _rs2, Immediate),
-            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, _rs1, _rs2, (short)Immediate),
-            JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, _rd, Immediate),
+            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, rd, rs1, rs2),
+            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, rd, rs1, (short)Immediate),
+            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, rd, Immediate),
+            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, rs1, rs2, Immediate),
+            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, rs1, rs2, (short)Immediate),
+            JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, rd, Immediate),
             RiscVFloatInstructionMeta f => f.Funct5 is null
-                ? RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)_rd, (RiscVFloatRegister)_rs1, (RiscVFloatRegister)_rs2, (RiscVFloatRegister)_rs3, f.Funct3)
-                : RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5.Value, (RiscVFloatRegister)_rd, (RiscVFloatRegister)_rs1, (RiscVFloatRegister)_rs2, f.Funct3),
+                ? RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, f.Funct3)
+                : RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, f.Funct3),
 
             _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
         };
