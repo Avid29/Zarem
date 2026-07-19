@@ -29,18 +29,19 @@ namespace Zarem.Assembler.Parsers;
 /// <summary>
 /// A base class for instruction parsers.
 /// </summary>
-public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet>
+public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet, TRef>
     where TInstruction : struct
     where TMeta : InstructionMetaBase<TArg>
     where TArg : unmanaged, Enum
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
+    where TRef : unmanaged, Enum
 {
     private readonly Dictionary<TArg, AssemblyArg> _argTable;
     private readonly AssemblerLogger? _logger;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionParserBase{TInstruction, TMeta, TArg, TRegister, TSet}"/> class.
+    /// Initializes a new instance of the <see cref="InstructionParserBase{TInstruction, TMeta, TArg, TRegister, TSet, TRef}"/> class.
     /// </summary>
     public InstructionParserBase(Address address, IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
     {
@@ -181,7 +182,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// <summary>
     /// Creates a new instruction parser for parsing pseudo-instruction expansion templates.
     /// </summary>
-    protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet> CreateSubParser(Address address);
+    protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet, TRef> CreateSubParser(Address address);
 
     /// <summary>
     /// Builds an instruction from the parsed data.
@@ -191,7 +192,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// <summary>
     /// Parses an argument as an expression and assigns it to the target component
     /// </summary>
-    protected abstract bool TryParseExpression(ReadOnlySpan<Token> arg, TArg target, ImmediateArgumentAttribute attr);
+    protected abstract bool TryParseExpression(ReadOnlySpan<Token> arg, TArg target, ImmediateArgumentAttribute<TRef> attr);
 
     /// <summary>
     /// Gets a parsed argument as a certain type.
@@ -270,7 +271,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         return attr switch
         {
             RegisterArgumentAttribute<TSet> reg => TryParseRegister(arg, type, reg),
-            ImmediateArgumentAttribute imm => TryParseExpression(arg, type, imm),
+            ImmediateArgumentAttribute<TRef> imm => TryParseExpression(arg, type, imm),
             SplitArgumentAttribute<TArg> split => TryParseAddressOffset(arg, split.RegisterArgument, split.ImmediateArgument),
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };

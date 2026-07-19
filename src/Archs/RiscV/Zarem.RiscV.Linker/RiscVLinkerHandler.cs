@@ -5,9 +5,9 @@ using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Extensions.System.IO;
 using Zarem.Linker.Handlers;
 using Zarem.Models.Tables;
-using Zarem.RiscV.Assembler.Models.Enums;
 using Zarem.RiscV.Linker.Config;
 using Zarem.RiscV.Linker.Logging;
+using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions;
 
 namespace Zarem.RiscV.Linker;

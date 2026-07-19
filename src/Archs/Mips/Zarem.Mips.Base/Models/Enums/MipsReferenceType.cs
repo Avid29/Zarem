@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Zarem.Mips.Assembler.Models.Enums;
+namespace Zarem.Mips.Models.Enums;
 
 /// <summary>
 /// An enum for the type of references and relocations.

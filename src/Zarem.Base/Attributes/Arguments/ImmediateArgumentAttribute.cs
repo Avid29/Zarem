@@ -1,20 +1,22 @@
 ﻿// Avishai Dernis 2026
 
+using System;
+
 namespace Zarem.Attributes.Arguments;
 
 /// <summary>
 /// A <see cref="ArgumentAttribute"/> for immediate arguments.
 /// </summary>
-public class ImmediateArgumentAttribute : ArgumentAttribute
+public class ImmediateArgumentAttribute<TRef> : ArgumentAttribute
+    where TRef : unmanaged, Enum
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ImmediateArgumentAttribute"/> class.
+    /// Initializes a new instance of the <see cref="ImmediateArgumentAttribute{TRef}"/> class.
     /// </summary>
-    public ImmediateArgumentAttribute(int bitCount, bool signed, int shiftAmount = 0)
+    public ImmediateArgumentAttribute(int bitCount, bool signed)
     {
         BitCount = bitCount;
         Signed = signed;
-        ShiftAmount = shiftAmount;
     }
 
     /// <summary>
@@ -30,5 +32,10 @@ public class ImmediateArgumentAttribute : ArgumentAttribute
     /// <summary>
     /// Gets the shift amount of the argument's immediate.
     /// </summary>
-    public int ShiftAmount { get; }
+    public int ShiftAmount { get; set; } = 0;
+
+    /// <summary>
+    /// Gets the default relocation type for the 
+    /// </summary>
+    public TRef DefaultRelocation { get; set; } = default;
 }

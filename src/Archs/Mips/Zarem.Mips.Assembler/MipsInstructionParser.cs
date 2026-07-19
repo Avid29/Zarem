@@ -15,10 +15,10 @@ using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Attributes.Arguments;
 using Zarem.Mips.Assembler.Logger;
-using Zarem.Mips.Assembler.Models.Enums;
 using Zarem.Mips.Assembler.Models.Meta;
 using Zarem.Mips.Assembler.Models.Tables;
 using Zarem.Mips.Extensions;
+using Zarem.Mips.Models.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
@@ -30,7 +30,7 @@ namespace Zarem.Mips.Assembler;
 /// <summary>
 /// A struct for parsing MIPS instructions.
 /// </summary>
-public class MipsInstructionParser : InstructionParserBase<MipsInstruction, MipsInstructionMetaBase, MipsArgument, MipsGpRegister, MipsRegisterSet>
+public class MipsInstructionParser : InstructionParserBase<MipsInstruction, MipsInstructionMetaBase, MipsArgument, MipsGpRegister, MipsRegisterSet, MipsReferenceType>
 {
     private readonly MipsInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
@@ -121,15 +121,15 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
     }
 
     /// <inheritdoc/>
-    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, MipsArgument target, ImmediateArgumentAttribute attr)
+    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, MipsArgument target, ImmediateArgumentAttribute<MipsReferenceType> attr)
     {
         if (!TryParseExpression(arg, attr.BitCount, attr.Signed, attr.ShiftAmount, out var expResult))
             return false;
 
-        var requestedType = MipsReferenceType.None;
+        var type = attr.DefaultRelocation;
         if (expResult.RelocationType is not null)
         {
-            requestedType = expResult.RelocationType switch
+            type = expResult.RelocationType switch
             {
                 "hi" => MipsReferenceType.High16,
                 "lo" => MipsReferenceType.Low16,
@@ -144,20 +144,6 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
                 return false;
             }
         }
-
-        // Determine the reference type based on the target argument type and requested relocation type
-        var type = requestedType is MipsReferenceType.None ? target switch
-        {
-            MipsArgument.Address => MipsReferenceType.JumpTarget26,
-            MipsArgument.Immediate => MipsReferenceType.Low16,
-            MipsArgument.Offset => MipsReferenceType.PCRelative16,
-            MipsArgument.LargeOffset => MipsReferenceType.PCRelative26,
-
-            // FullImmediate is handled since it triggers a HI/LO pair
-            // Which is handled in the child parser pass after expansion,
-            // so we don't need to add a relocation entry here.
-            MipsArgument.FullImmediate or _ => MipsReferenceType.None,
-        } : requestedType;
 
         if (expResult.IsSymbolic && type is not MipsReferenceType.None)
         {
