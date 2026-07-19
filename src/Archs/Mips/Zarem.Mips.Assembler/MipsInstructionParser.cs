@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Diagnostics;
-using CommunityToolkit.HighPerformance;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,12 +12,11 @@ using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
-using Zarem.Attributes.Arguments;
 using Zarem.Mips.Assembler.Logger;
-using Zarem.Mips.Assembler.Models.Enums;
 using Zarem.Mips.Assembler.Models.Meta;
 using Zarem.Mips.Assembler.Models.Tables;
 using Zarem.Mips.Extensions;
+using Zarem.Mips.Models.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
@@ -30,7 +28,7 @@ namespace Zarem.Mips.Assembler;
 /// <summary>
 /// A struct for parsing MIPS instructions.
 /// </summary>
-public class MipsInstructionParser : InstructionParserBase<MipsInstruction, MipsInstructionMetaBase, MipsArgument, MipsGpRegister, MipsRegisterSet>
+public class MipsInstructionParser : InstructionParserBase<MipsInstruction, MipsInstructionMetaBase, MipsArgument, MipsGpRegister, MipsRegisterSet, MipsReferenceType>
 {
     private readonly MipsInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
@@ -116,59 +114,6 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
         if (Meta.FixedRS.HasValue) ParsedArgTable[MipsArgument.RS] = (MipsGpRegister?)Meta.FixedRS;
         if (Meta.FixedRT.HasValue) ParsedArgTable[MipsArgument.RT] = (MipsGpRegister?)Meta.FixedRT;
         if (Meta.FixedRD.HasValue) ParsedArgTable[MipsArgument.RD] = (MipsGpRegister?)Meta.FixedRD;
-
-        return true;
-    }
-
-    /// <inheritdoc/>
-    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, MipsArgument target, ImmediateArgumentAttribute attr)
-    {
-        if (!TryParseExpression(arg, attr.BitCount, attr.Signed, attr.ShiftAmount, out var expResult))
-            return false;
-
-        var requestedType = MipsReferenceType.None;
-        if (expResult.RelocationType is not null)
-        {
-            requestedType = expResult.RelocationType switch
-            {
-                "hi" => MipsReferenceType.High16,
-                "lo" => MipsReferenceType.Low16,
-                "got" => MipsReferenceType.GlobalOffsetTable16,
-                "call16" => MipsReferenceType.Call16,
-                _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsReferenceType>($"Relocation type '{expResult.RelocationType}' is not supported for MIPS."),
-            };
-
-            if (attr.BitCount != 16)
-            {
-                _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
-                return false;
-            }
-        }
-
-        // Determine the reference type based on the target argument type and requested relocation type
-        var type = requestedType is MipsReferenceType.None ? target switch
-        {
-            MipsArgument.Address => MipsReferenceType.JumpTarget26,
-            MipsArgument.Immediate => MipsReferenceType.Low16,
-            MipsArgument.Offset => MipsReferenceType.PCRelative16,
-            MipsArgument.LargeOffset => MipsReferenceType.PCRelative26,
-
-            // FullImmediate is handled since it triggers a HI/LO pair
-            // Which is handled in the child parser pass after expansion,
-            // so we don't need to add a relocation entry here.
-            MipsArgument.FullImmediate or _ => MipsReferenceType.None,
-        } : requestedType;
-
-        if (expResult.IsSymbolic && type is not MipsReferenceType.None)
-        {
-            References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
-        }
-        else if (type is MipsReferenceType.High16)
-        {
-            // TODO: Remove hacky solution to adjust offsets
-            // on constants
-            Immediate >>= 16;
-        }
 
         return true;
     }

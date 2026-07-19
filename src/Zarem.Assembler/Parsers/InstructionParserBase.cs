@@ -29,27 +29,29 @@ namespace Zarem.Assembler.Parsers;
 /// <summary>
 /// A base class for instruction parsers.
 /// </summary>
-public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet>
+public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet, TRef>
     where TInstruction : struct
     where TMeta : InstructionMetaBase<TArg>
     where TArg : unmanaged, Enum
     where TRegister : unmanaged, Enum
     where TSet : unmanaged, Enum
+    where TRef : unmanaged, Enum
 {
     private readonly Dictionary<TArg, AssemblyArg> _argTable;
+    private readonly List<RelocationEntry> _references;
     private readonly AssemblerLogger? _logger;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionParserBase{TInstruction, TMeta, TArg, TRegister, TSet}"/> class.
+    /// Initializes a new instance of the <see cref="InstructionParserBase{TInstruction, TMeta, TArg, TRegister, TSet, TRef}"/> class.
     /// </summary>
     public InstructionParserBase(Address address, IReadOnlyDictionary<string, Symbol>? symbols, ILogger? logger)
     {
         _argTable = [];
+        _references = [];
         ParsedArgTable = [];
 
         CurrentAddress = address;
         Symbols = symbols;
-        References = [];
 
         if (logger is not null)
         {
@@ -63,9 +65,9 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     protected abstract AssemblerConfig Config { get; }
 
     /// <summary>
-    /// Gets the list of relocation entries 
+    /// Gets the <see cref="ITokenizerProfile"/> used to tokenize pseudo-instruction templates for expansion.
     /// </summary>
-    protected List<RelocationEntry> References { get; }
+    protected abstract ITokenizerProfile TemplateProfile { get; }
 
     /// <summary>
     /// Gets the current address.
@@ -81,11 +83,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// Gets the metadata for the instruction being parsed, which may be used to guide parsing and template expansion.
     /// </summary>
     protected TMeta? Meta { get; set; }
-
-    /// <summary>
-    /// Gets the <see cref="ITokenizerProfile"/> used to tokenize pseudo-instruction templates for expansion.
-    /// </summary>
-    protected abstract ITokenizerProfile TemplateProfile { get; }
 
     /// <summary>
     /// Gets the symbol table used for resolving symbols during expression parsing.
@@ -111,7 +108,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         if (!TryDetermineInstruction(line, out _))
             return null;
 
-        references = References;
 
         // Parse arguments
         Guard.IsNotNull(Meta);
@@ -139,36 +135,11 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         // Handle pseudo-instruction expansion if needed
         if (Meta is IPseudoInstructionMeta pMeta)
         {
-            var childReferences = new List<RelocationEntry>();
-
-            // Parse each expansion component
-            var expansions = new TInstruction[pMeta.Expansion.Length];
-            int i = 0;
-            foreach (var template in pMeta.Expansion)
-            {
-                // Parse expansion child component
-                var tokenizedLine = ExpandTemplate(template, TemplateProfile);
-                var childParser = CreateSubParser(CurrentAddress + (i * 4)); // TODO: Handle different size instructions. THIS IS A HUGE ASSUMPTION
-                var parsed = childParser.Parse(tokenizedLine, out references);
-
-                // Append the component
-                Guard.IsNotNull(parsed);
-                expansions[i] = parsed[0];
-
-                // Track references
-                if (references is not null)
-                {
-                    childReferences.AddRange(references);
-                }
-
-                // Increment
-                i++;
-            }
-
-            references = childReferences;
-            return expansions;
+            return ParseMetaExpansion(pMeta, out references);
         }
 
+
+        references = _references;
         return [BuildInstruction()];
     }
 
@@ -181,17 +152,12 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     /// <summary>
     /// Creates a new instruction parser for parsing pseudo-instruction expansion templates.
     /// </summary>
-    protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet> CreateSubParser(Address address);
+    protected abstract InstructionParserBase<TInstruction, TMeta, TArg, TRegister, TSet, TRef> CreateSubParser(Address address);
 
     /// <summary>
     /// Builds an instruction from the parsed data.
     /// </summary>
     protected abstract TInstruction BuildInstruction();
-
-    /// <summary>
-    /// Parses an argument as an expression and assigns it to the target component
-    /// </summary>
-    protected abstract bool TryParseExpression(ReadOnlySpan<Token> arg, TArg target, ImmediateArgumentAttribute attr);
 
     /// <summary>
     /// Gets a parsed argument as a certain type.
@@ -211,58 +177,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         return (T?)result ?? default;
     }
 
-    /// <summary>
-    /// Attempts to parse an expression.
-    /// </summary>
-    protected bool TryParseExpression(ReadOnlySpan<Token> tokens, int bitCount, bool signed, int shift, out ExpressionResult<long> expResult)
-    {
-        if (!ExpressionParser.TryParse(tokens, out expResult, Symbols, _logger?.Parent))
-            return false;
-
-        Immediate = expResult.IsAbsolute ? (int)CleanInteger(expResult.Addend, tokens, bitCount, shift, signed) : 0;
-        return true;
-    }
-
-    /// <summary>
-    /// Splits an address offset argument into a token span for the offset and the address register token.
-    /// </summary>
-    /// <remarks>
-    /// Upon return offset and register do not need to be valid offset and register strings.
-    /// The register is just the component in parenthesis. The offset is just the component before the parenthesis.
-    /// Nothing may follow the parenthesis.
-    /// </remarks>
-    protected bool SplitOffsetBase(ReadOnlySpan<Token> arg, out ReadOnlySpan<Token> offset, out ReadOnlySpan<Token> register)
-    {
-        offset = arg;
-        register = [];
-
-        // Find matched parenthesis start and end
-        var parIndex = arg.FindLast(TokenType.OpenParenthesis, out _);
-        var closeIndex = arg.FindLast(TokenType.CloseParenthesis, out _);
-        if (parIndex is -1 || closeIndex is -1)
-        {
-            // TODO: Improve messaging
-            _logger?.Log(Severity.Error, LogId.InvalidAddressOffsetArgument, arg, "InvalidAddressOffsetArgument", arg.Print());
-            return false;
-        }
-
-        // Offset is everything before the parenthesis
-        offset = arg[..parIndex];
-
-        // Register is everything between the parenthesis
-        register = arg[(parIndex + 1)..closeIndex];
-
-        // Ensure there's no content following the parenthesis.
-        if (!arg[(closeIndex + 1)..].IsEmpty)
-        {
-            // TODO: Improve messaging
-            _logger?.Log(Severity.Error, LogId.InvalidAddressOffsetArgument, arg, "InvalidAddressOffsetArgument", arg.Print());
-            return false;
-        }
-
-        return true;
-    }
-
     private bool TryParseArg(ReadOnlySpan<Token> arg, TArg type)
     {
         var attr = ArgumentTable<TArg>.GetAttribute(type);
@@ -270,7 +184,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         return attr switch
         {
             RegisterArgumentAttribute<TSet> reg => TryParseRegister(arg, type, reg),
-            ImmediateArgumentAttribute imm => TryParseExpression(arg, type, imm),
+            ImmediateArgumentAttribute<TRef> imm => TryParseExpression(arg, type, imm),
             SplitArgumentAttribute<TArg> split => TryParseAddressOffset(arg, split.RegisterArgument, split.ImmediateArgument),
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<bool>($"Argument of type '{type}' is not within parsable type range."),
         };
@@ -327,6 +241,49 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         return true;
     }
 
+    private bool TryParseExpression(ReadOnlySpan<Token> arg, TArg target, ImmediateArgumentAttribute<TRef> attr)
+    {
+        // Parse the expression
+        if (!ExpressionParser.TryParse<long>(arg, out var expResult, Symbols, _logger?.Parent))
+            return false;
+
+        Immediate = expResult.IsAbsolute ? (int)CleanInteger(expResult.Addend, arg, attr.BitCount, attr.ShiftAmount, attr.Signed) : 0;
+
+        // Resolve the relocation type
+        var type = attr.DefaultRelocation;
+        if (expResult.RelocationType is not null)
+        {
+            if (!ReferenceTypeTable<TRef>.TryGetReferenceType(expResult.RelocationType, out type))
+            {
+                ThrowHelper.ThrowArgumentOutOfRangeException($"Relocation type '{expResult.RelocationType}' is not a valid relocation type.");
+            }
+        }
+
+        // Fetch the relocation type
+        // If this fails, it is because the relocation type is none, and no action is needed
+        if(ReferenceTypeTable<TRef>.TryGetReferenceType(type, out var refAttr))
+        {
+            // Vaildate that the relocation type is valid for the argument
+            if (attr.BitCount != refAttr.BitCount)
+            {
+                _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
+                return false;
+            }
+
+            // Create reference entry or adjust immediate
+            if (expResult.IsSymbolic)
+            {
+                _references.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, Unsafe.As<TRef, uint>(ref type), default));
+            }
+            else
+            {
+                Immediate >>= refAttr.ShiftAmount;
+            }
+        }
+
+        return true;
+    }
+
     private bool TryParseAddressOffset(ReadOnlySpan<Token> arg, TArg reg, TArg imm)
     {
         // NOTE: Be careful about forwards to other parse functions with regards to 
@@ -345,6 +302,68 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             return false;
 
         return true;
+    }
+
+    private bool SplitOffsetBase(ReadOnlySpan<Token> arg, out ReadOnlySpan<Token> offset, out ReadOnlySpan<Token> register)
+    {
+        offset = arg;
+        register = [];
+
+        // Find matched parenthesis start and end
+        var parIndex = arg.FindLast(TokenType.OpenParenthesis, out _);
+        var closeIndex = arg.FindLast(TokenType.CloseParenthesis, out _);
+        if (parIndex is -1 || closeIndex is -1)
+        {
+            // TODO: Improve messaging
+            _logger?.Log(Severity.Error, LogId.InvalidAddressOffsetArgument, arg, "InvalidAddressOffsetArgument", arg.Print());
+            return false;
+        }
+
+        // Offset is everything before the parenthesis
+        offset = arg[..parIndex];
+
+        // Register is everything between the parenthesis
+        register = arg[(parIndex + 1)..closeIndex];
+
+        // Ensure there's no content following the parenthesis.
+        if (!arg[(closeIndex + 1)..].IsEmpty)
+        {
+            // TODO: Improve messaging
+            _logger?.Log(Severity.Error, LogId.InvalidAddressOffsetArgument, arg, "InvalidAddressOffsetArgument", arg.Print());
+            return false;
+        }
+
+        return true;
+    }
+
+    private TInstruction[] ParseMetaExpansion(IPseudoInstructionMeta pMeta, out IReadOnlyList<RelocationEntry>? references)
+    {
+        // Parse each expansion component
+        var expansions = new TInstruction[pMeta.Expansion.Length];
+        int i = 0;
+        foreach (var template in pMeta.Expansion)
+        {
+            // Parse expansion child component
+            var tokenizedLine = ExpandTemplate(template, TemplateProfile);
+            var childParser = CreateSubParser(CurrentAddress + (i * 4)); // TODO: Handle different size instructions. THIS IS A HUGE ASSUMPTION
+            var parsed = childParser.Parse(tokenizedLine, out var childReferences);
+
+            // Append the component
+            Guard.IsNotNull(parsed);
+            expansions[i] = parsed[0];
+
+            // Track references
+            if (childReferences is not null)
+            {
+                _references.AddRange(childReferences);
+            }
+
+            // Increment
+            i++;
+        }
+
+        references = _references;
+        return expansions;
     }
 
     /// <summary>

@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Diagnostics;
-using CommunityToolkit.HighPerformance;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,13 +12,12 @@ using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
-using Zarem.Attributes.Arguments;
 using Zarem.Models;
 using Zarem.Models.Tables;
 using Zarem.RiscV.Assembler.Logger;
-using Zarem.RiscV.Assembler.Models.Enums;
 using Zarem.RiscV.Assembler.Models.Meta;
 using Zarem.RiscV.Assembler.Models.Tables;
+using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
@@ -30,7 +28,7 @@ namespace Zarem.RiscV.Assembler;
 /// <summary>
 /// A struct for parsing RISC-V instructions.
 /// </summary>
-public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, RiscVInstructionMetaBase, RiscVArgument, RiscVGpRegister, RiscVRegisterSet>
+public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, RiscVInstructionMetaBase, RiscVArgument, RiscVGpRegister, RiscVRegisterSet, RiscVReferenceType>
 {
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
@@ -138,58 +136,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         if (Meta.FixedRS2.HasValue)ParsedArgTable[RiscVArgument.RS2] = (RiscVGpRegister?)Meta.FixedRS2;
         if (Meta.FixedRS3.HasValue)ParsedArgTable[RiscVArgument.FRS3] = (RiscVGpRegister?)Meta.FixedRS3;
         Immediate = Meta.FixedImm ?? default;
-
-        return true;
-    }
-
-    /// <summary>
-    /// Parses an argument as an expression and assigns it to the target component
-    /// </summary>
-    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, RiscVArgument target, ImmediateArgumentAttribute attr)
-    {
-        if (!TryParseExpression(arg, attr.BitCount, attr.Signed, attr.ShiftAmount, out var expResult))
-            return false;
-
-        var requestedType = RiscVReferenceType.None;
-        if (expResult.RelocationType is not null)
-        {
-            (requestedType, int bits) = expResult.RelocationType switch
-            {
-                "hi" => (RiscVReferenceType.High20, 20),
-                "lo" => (RiscVReferenceType.Low12, 12),
-                _ => ThrowHelper.ThrowArgumentOutOfRangeException<(RiscVReferenceType, int)>($"Relocation type '{expResult.RelocationType}' is not supported for RISC-V."),
-            };
-
-            if (attr.BitCount != bits)
-            {
-                _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
-                return false;
-            }
-        }
-
-        var type = requestedType is RiscVReferenceType.None ? target switch
-        {
-            RiscVArgument.JumpOffset => RiscVReferenceType.Jump20,
-            RiscVArgument.BranchOffset => RiscVReferenceType.Branch20,
-            RiscVArgument.Immediate => RiscVReferenceType.Low12,
-            RiscVArgument.UpperImmediate => RiscVReferenceType.High20,
-            // 'Memory' in RISC-V loads/stores uses a 12-bit offset (%lo)
-            RiscVArgument.StoreOffset => RiscVReferenceType.Low12,
-            // FullImmediate triggers a HI/LO pair
-            RiscVArgument.FullImmediate => RiscVReferenceType.High20,
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<RiscVReferenceType>($"Argument of type '{target}' cannot reference relocatable symbols."),
-        } : requestedType;
-
-        if (expResult.IsSymbolic && type is not RiscVReferenceType.None)
-        {
-            References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
-        }
-        else if (type is RiscVReferenceType.High20)
-        {
-            // TODO: Remove hacky solution to adjust offsets
-            // on constants
-            Immediate >>= 12;
-        }
 
         return true;
     }

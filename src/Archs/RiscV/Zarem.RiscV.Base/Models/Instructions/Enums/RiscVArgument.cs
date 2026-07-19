@@ -2,6 +2,7 @@
 
 using System.Text.Json.Serialization;
 using Zarem.Attributes.Arguments;
+using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Zarem.RiscV.Models.Instructions.Enums;
@@ -46,36 +47,36 @@ public enum RiscVArgument : byte
 
     // Immediates
     [JsonStringEnumMemberName("imm")]
-    [ImmediateArgument(12, true)]
+    [ImmediateArgument<RiscVReferenceType>(12, true, DefaultRelocation = RiscVReferenceType.Low12)]
     Immediate,
     
     [JsonStringEnumMemberName("store_offset")]
-    [ImmediateArgument(12, true)]
+    [ImmediateArgument<RiscVReferenceType>(12, true, DefaultRelocation = RiscVReferenceType.Low12)]
     StoreOffset,
     
     [JsonStringEnumMemberName("branch_offset")]
-    [ImmediateArgument(12, true, 1)]
+    [ImmediateArgument<RiscVReferenceType>(12, true, ShiftAmount = 1, DefaultRelocation = RiscVReferenceType.Branch12)]
     BranchOffset,
     
     [JsonStringEnumMemberName("upper_imm")]
-    [ImmediateArgument(20, false)]
+    [ImmediateArgument<RiscVReferenceType>(20, false, DefaultRelocation = RiscVReferenceType.High20)]
     UpperImmediate,
     
     [JsonStringEnumMemberName("jump_offset")]
-    [ImmediateArgument(20, true, 1)]
+    [ImmediateArgument<RiscVReferenceType>(20, true, ShiftAmount = 1, DefaultRelocation = RiscVReferenceType.Jump20)]
     JumpOffset,
     
     [JsonStringEnumMemberName("imm32")]
-    [ImmediateArgument(32, true)]
+    [ImmediateArgument<RiscVReferenceType>(32, true)]
     FullImmediate,
 
     // System
     [JsonStringEnumMemberName("csr")]
-    [ImmediateArgument(12, false)]
+    [ImmediateArgument<RiscVReferenceType>(12, false)]
     Csr,      // 12-bit CSR address
     
     [JsonStringEnumMemberName("csri")]
-    [ImmediateArgument(5, false, 1)]
+    [ImmediateArgument<RiscVReferenceType>(5, false, ShiftAmount = 1)]
     UImm5,    // 5-bit immediate for CSRI
 
     // Memory syntax (e.g., 8(sp))

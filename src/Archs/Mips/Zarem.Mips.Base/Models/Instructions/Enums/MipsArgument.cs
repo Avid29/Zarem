@@ -2,6 +2,8 @@
 
 using System.Text.Json.Serialization;
 using Zarem.Attributes.Arguments;
+using Zarem.Mips.Assembler.Models.Enums;
+using Zarem.Mips.Models.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Models.Instructions.Enums;
@@ -42,27 +44,27 @@ public enum MipsArgument
 
     // Immediates
     [JsonStringEnumMemberName("sa")]
-    [ImmediateArgument(5, false)]
+    [ImmediateArgument<MipsReferenceType>(5, false)]
     ShiftAmount,
 
     [JsonStringEnumMemberName("imm")]
-    [ImmediateArgument(16, true)]
+    [ImmediateArgument<MipsReferenceType>(16, true, DefaultRelocation = MipsReferenceType.Low16)]
     Immediate,
 
     [JsonStringEnumMemberName("offset")]
-    [ImmediateArgument(16, true, 2)]
+    [ImmediateArgument<MipsReferenceType>(16, true, ShiftAmount = 2, DefaultRelocation = MipsReferenceType.PCRelative16)]
     Offset,
 
     [JsonStringEnumMemberName("target")]
-    [ImmediateArgument(26, false, 2)]
+    [ImmediateArgument<MipsReferenceType>(26, false, ShiftAmount = 2, DefaultRelocation = MipsReferenceType.JumpTarget26)]
     Address,
 
     [JsonStringEnumMemberName("offset26")]
-    [ImmediateArgument(26, false, 2)]
+    [ImmediateArgument<MipsReferenceType>(26, false, ShiftAmount = 2)]
     LargeOffset,
 
     [JsonStringEnumMemberName("imm32")]
-    [ImmediateArgument(32, false)]
+    [ImmediateArgument<MipsReferenceType>(32, false)]
     FullImmediate,
 
     // Memory syntax

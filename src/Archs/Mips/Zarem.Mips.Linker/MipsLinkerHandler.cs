@@ -5,9 +5,9 @@ using Zarem.Assembler.Logging.Enum;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Extensions.System.IO;
 using Zarem.Linker.Handlers;
-using Zarem.Mips.Assembler.Models.Enums;
 using Zarem.Mips.Linker.Config;
 using Zarem.Mips.Linker.Logging;
+using Zarem.Mips.Models.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Models.Tables;
 
