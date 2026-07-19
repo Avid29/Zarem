@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Diagnostics;
-using CommunityToolkit.HighPerformance;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,7 +12,6 @@ using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
-using Zarem.Attributes.Arguments;
 using Zarem.Mips.Assembler.Logger;
 using Zarem.Mips.Assembler.Models.Meta;
 using Zarem.Mips.Assembler.Models.Tables;
@@ -116,45 +114,6 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
         if (Meta.FixedRS.HasValue) ParsedArgTable[MipsArgument.RS] = (MipsGpRegister?)Meta.FixedRS;
         if (Meta.FixedRT.HasValue) ParsedArgTable[MipsArgument.RT] = (MipsGpRegister?)Meta.FixedRT;
         if (Meta.FixedRD.HasValue) ParsedArgTable[MipsArgument.RD] = (MipsGpRegister?)Meta.FixedRD;
-
-        return true;
-    }
-
-    /// <inheritdoc/>
-    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, MipsArgument target, ImmediateArgumentAttribute<MipsReferenceType> attr)
-    {
-        if (!TryParseExpression(arg, attr.BitCount, attr.Signed, attr.ShiftAmount, out var expResult))
-            return false;
-
-        var type = attr.DefaultRelocation;
-        if (expResult.RelocationType is not null)
-        {
-            type = expResult.RelocationType switch
-            {
-                "hi" => MipsReferenceType.High16,
-                "lo" => MipsReferenceType.Low16,
-                "got" => MipsReferenceType.GlobalOffsetTable16,
-                "call16" => MipsReferenceType.Call16,
-                _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsReferenceType>($"Relocation type '{expResult.RelocationType}' is not supported for MIPS."),
-            };
-
-            if (attr.BitCount != 16)
-            {
-                _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
-                return false;
-            }
-        }
-
-        if (expResult.IsSymbolic && type is not MipsReferenceType.None)
-        {
-            References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
-        }
-        else if (type is MipsReferenceType.High16)
-        {
-            // TODO: Remove hacky solution to adjust offsets
-            // on constants
-            Immediate >>= 16;
-        }
 
         return true;
     }

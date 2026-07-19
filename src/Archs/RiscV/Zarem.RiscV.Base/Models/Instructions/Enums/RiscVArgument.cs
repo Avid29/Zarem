@@ -55,7 +55,7 @@ public enum RiscVArgument : byte
     StoreOffset,
     
     [JsonStringEnumMemberName("branch_offset")]
-    [ImmediateArgument<RiscVReferenceType>(12, true, ShiftAmount = 1, DefaultRelocation = RiscVReferenceType.Branch20)]
+    [ImmediateArgument<RiscVReferenceType>(12, true, ShiftAmount = 1, DefaultRelocation = RiscVReferenceType.Branch12)]
     BranchOffset,
     
     [JsonStringEnumMemberName("upper_imm")]

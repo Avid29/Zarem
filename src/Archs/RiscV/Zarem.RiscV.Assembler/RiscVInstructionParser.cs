@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Diagnostics;
-using CommunityToolkit.HighPerformance;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,7 +12,6 @@ using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
-using Zarem.Attributes.Arguments;
 using Zarem.Models;
 using Zarem.Models.Tables;
 using Zarem.RiscV.Assembler.Logger;
@@ -138,45 +136,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         if (Meta.FixedRS2.HasValue)ParsedArgTable[RiscVArgument.RS2] = (RiscVGpRegister?)Meta.FixedRS2;
         if (Meta.FixedRS3.HasValue)ParsedArgTable[RiscVArgument.FRS3] = (RiscVGpRegister?)Meta.FixedRS3;
         Immediate = Meta.FixedImm ?? default;
-
-        return true;
-    }
-
-    /// <summary>
-    /// Parses an argument as an expression and assigns it to the target component
-    /// </summary>
-    protected override bool TryParseExpression(ReadOnlySpan<Token> arg, RiscVArgument target, ImmediateArgumentAttribute<RiscVReferenceType> attr)
-    {
-        if (!TryParseExpression(arg, attr.BitCount, attr.Signed, attr.ShiftAmount, out var expResult))
-            return false;
-
-        var type = attr.DefaultRelocation;
-        if (expResult.RelocationType is not null)
-        {
-            (type, int bits) = expResult.RelocationType switch
-            {
-                "hi" => (RiscVReferenceType.High20, 20),
-                "lo" => (RiscVReferenceType.Low12, 12),
-                _ => ThrowHelper.ThrowArgumentOutOfRangeException<(RiscVReferenceType, int)>($"Relocation type '{expResult.RelocationType}' is not supported for RISC-V."),
-            };
-
-            if (attr.BitCount != bits)
-            {
-                _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
-                return false;
-            }
-        }
-
-        if (expResult.IsSymbolic && type is not RiscVReferenceType.None)
-        {
-            References.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, (uint)type, default));
-        }
-        else if (type is RiscVReferenceType.High20)
-        {
-            // TODO: Remove hacky solution to adjust offsets
-            // on constants
-            Immediate >>= 12;
-        }
 
         return true;
     }
