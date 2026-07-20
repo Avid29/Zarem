@@ -2,18 +2,14 @@
 
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Zarem.Assembler;
 using Zarem.Assembler.Models.Meta;
-using Zarem.Assembler.Tokenization;
-using Zarem.Assembler.Tokenization.Models;
-using Zarem.Assembler.Tokenization.Models.Enums;
+using Zarem.Assembler.Models.Tables;
 using Zarem.IDE.Controls.CheatSheet.Palettes;
 using Zarem.IDE.Services;
-using Zarem.Mips.Assembler.Helpers.Tables;
 using Zarem.Mips.Assembler.Models.Meta;
 using Zarem.Mips.Models.Instructions.Enums;
 
@@ -57,17 +53,14 @@ public sealed partial class UsagePatternDisplay : UserControl
         if (Metadata is null)
             return;
 
-        var localizer = App.Current.Services.GetRequiredService<ILocalizationService>();
-
         if (Metadata is MipsInstructionMetaBase mipsMeta)
         {
-            UpdateNameDisplay(mipsMeta, localizer);
-            UpdateUsageDisplay(mipsMeta.ArgumentPattern, localizer);
-            UpdateBehaviorDisplay(mipsMeta.Behavior, localizer);
+            UpdateNameDisplay(mipsMeta);
+            UpdateUsageDisplay(mipsMeta.ArgumentPattern);
         }
     }
 
-    private void UpdateNameDisplay(MipsInstructionMetaBase data, ILocalizationService localizer)
+    private void UpdateNameDisplay(MipsInstructionMetaBase data)
     {
         // Construct a new Paragraph with the instruction name
         var block = new Paragraph();
@@ -120,13 +113,13 @@ public sealed partial class UsagePatternDisplay : UserControl
         NameTextBlock.Blocks.Add(block);
     }
 
-    private void UpdateUsageDisplay(MipsArgument[] args, ILocalizationService localizer)
+    private void UpdateUsageDisplay(MipsArgument[] args)
     {
         var usage = new Paragraph();
         for (int i = 0; i < args.Length; i++)
         {
             var arg = args[i];
-            usage.Inlines.Add(CreateArgumentRun(arg, localizer));
+            usage.Inlines.Add(CreateArgumentRun(arg));
             if (i != args.Length - 1)
             {
                 usage.Inlines.Add(new Run { Text = ", " }); // Add comma between arguments
@@ -137,93 +130,34 @@ public sealed partial class UsagePatternDisplay : UserControl
         UsagePatternTextBlock.Blocks.Add(usage);
     }
 
-    private void UpdateBehaviorDisplay(string? behavior, ILocalizationService localizer)
+    private Run CreateArgumentRun(MipsArgument arg)
     {
-        if (string.IsNullOrWhiteSpace(behavior))
-        {
-            BehaviorTextBlock.Visibility = Visibility.Collapsed;
-            return;
-        }
-        BehaviorTextBlock.Visibility = Visibility.Visible;
+        var profile = new MipsTokenizerProfile();
+        var text = ArgumentTable<MipsArgument>.GetDisplay(arg, profile);
 
-        // Create a new Paragraph for the behavior text
-        // Tokenize the behavior string
-        var paragraph = new Paragraph();
-        var tokens = Tokenizer.TokenizeLine(behavior, MipsTokenizerProfile.Default, null, TokenizerMode.BehaviorExpression);
-
-        // TODO: Can there be multi-line behavioral expressions?
-
-        foreach (var token in tokens[0].Tokens)
-        {
-            paragraph.Inlines.Add(CreateTokenRun(token, localizer));
-        }
-
-        BehaviorTextBlock.Blocks.Clear();
-        BehaviorTextBlock.Blocks.Add(paragraph);
-    }
-
-    private Inline CreateTokenRun(Token token, ILocalizationService? localizer = null)
-    {
-        // Handle strict argument tokens
-        if (ArgumentTable.TryGetArgument(token.Source, out var arg))
-            return CreateArgumentRun(arg, localizer);
-
-        var run = new Run
-        {
-            Text = token.Source,
-        };
-
-        if (token.Type is TokenType.Register or TokenType.RegisterPrefix)
-        {
-            run.Foreground = ArgumentBrushPalette?.MiscArgBrush;
-        }
-
-        return run;
-    }
-
-    private Inline CreateArgumentRun(MipsArgument arg, ILocalizationService? localizer = null)
-    {
         return arg switch
         {
             MipsArgument.RS or MipsArgument.RT or MipsArgument.RD => new Run
             {
-                Text = ArgumentTable.GetArgPatternString(arg),
+                Text = text,
                 Foreground = ArgumentBrushPalette?.GPRegisterBrush,
             },
             MipsArgument.FS or MipsArgument.FT or MipsArgument.FD or MipsArgument.RT_Numbered => new Run
             {
-                Text = ArgumentTable.GetArgPatternString(arg),
+                Text = text,
                 Foreground = ArgumentBrushPalette?.CPRegisterBrush,
             },
             MipsArgument.Immediate or MipsArgument.Offset or MipsArgument.Address or
             MipsArgument.ShiftAmount or MipsArgument.FullImmediate => new Run
             {
-                Text = localizer is not null
-                        ? localizer[$"/CheatSheet/Usage/{ArgumentTable.GetArgPatternString(arg)}"]
-                        : ArgumentTable.GetArgPatternString(arg),
+                Text = text,
                 Foreground = ArgumentBrushPalette?.ImmediateValueBrush,
             },
-            MipsArgument.AddressBase => new Span
+            MipsArgument.AddressBase => new Run
             {
-                Inlines =
-                {
-                    new Run
-                    {
-                        Text = localizer is not null
-                        ? localizer[$"/CheatSheet/Usage/{ArgumentTable.GetArgPatternString(MipsArgument.Offset)}"]
-                        : ArgumentTable.GetArgPatternString(MipsArgument.Offset),
-                        Foreground = ArgumentBrushPalette?.ImmediateValueBrush,
-                    },
-                    new Run { Text = "(" },
-                    new Run
-                    {
-                        Text = ArgumentTable.GetArgPatternString(MipsArgument.RS),
-                        Foreground = ArgumentBrushPalette?.GPRegisterBrush,
-                    },
-                    new Run { Text = ")" },
-                }
+                Text = text,
+                Foreground = ArgumentBrushPalette?.MiscArgBrush,
             },
-
             _ => throw new System.NotImplementedException(),
         };
     }

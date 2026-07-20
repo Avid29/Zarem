@@ -1,8 +1,10 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Attributes.Arguments;
 
 namespace Zarem.Assembler.Models.Tables;
@@ -36,5 +38,29 @@ public static class ArgumentTable<TArg>
     {
         _attributeTable.TryGetValue(argument, out var value);
         return value;
+    }
+
+    /// <summary>
+    /// Gets the usage display for an argument.
+    /// </summary>
+    public static string GetDisplay(TArg argument, ITokenizerProfile profile)
+    {
+        var attr = GetAttribute(argument);
+        Guard.IsNotNull(attr);
+
+        // Special case: Split
+        if (attr is SplitArgumentAttribute<TArg> split)
+        {
+            var imm = GetDisplay(split.ImmediateArgument, profile);
+            var reg = GetDisplay(split.RegisterArgument, profile);
+            return $"{imm}({reg})";
+        }
+
+        char prefix = '\0';
+        var openAttrType = attr.GetType().GetGenericTypeDefinition();
+        if (openAttrType == typeof(RegisterArgumentAttribute<>)) prefix = profile.RegisterPrefix;
+        if (openAttrType == typeof(ImmediateArgumentAttribute<>)) prefix = profile.ImmediatePrefix;
+
+        return prefix is '\0' ? attr.Alias : $"{prefix}{attr.Alias}";
     }
 }

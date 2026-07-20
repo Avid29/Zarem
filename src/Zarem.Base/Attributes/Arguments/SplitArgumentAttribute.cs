@@ -13,7 +13,7 @@ public class SplitArgumentAttribute<TArg> : ArgumentAttribute
     /// <summary>
     /// Initializes a new instance of the <see cref="SplitArgumentAttribute{TArg}"/> class.
     /// </summary>
-    public SplitArgumentAttribute(TArg register, TArg imm)
+    public SplitArgumentAttribute(string alias, TArg register, TArg imm) : base(alias)
     {
         RegisterArgument = register;
         ImmediateArgument = imm;
