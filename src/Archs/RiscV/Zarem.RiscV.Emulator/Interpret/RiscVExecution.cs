@@ -38,12 +38,14 @@ public readonly struct RiscVExecution<T>
     public unsafe static RiscVExecution<T> CreateFloatWriteback<TFloat>(RiscVFloatRegister dest, TFloat writeBack)
         where TFloat : unmanaged, INumber<TFloat>
     {
+        void* src = Unsafe.AsPointer(ref writeBack);
+
         if (sizeof(TFloat) == sizeof(Half))
         {
             return new RiscVExecution<T>
             {
                 FloatReg = dest,
-                HalfWriteBack = Unsafe.As<TFloat, Half>(ref writeBack),
+                HalfWriteBack = *(Half*)src,
             };
         }
         else if (sizeof(TFloat) == sizeof(float))
@@ -51,7 +53,7 @@ public readonly struct RiscVExecution<T>
             return new RiscVExecution<T>
             {
                 FloatReg = dest,
-                SingleWriteBack = Unsafe.As<TFloat, float>(ref writeBack),
+                SingleWriteBack = *(float*)src,
             };
         }
         else if (sizeof(TFloat) == sizeof(double))
@@ -59,7 +61,7 @@ public readonly struct RiscVExecution<T>
             return new RiscVExecution<T>
             {
                 FloatReg = dest,
-                DoubleWriteBack = Unsafe.As<TFloat, double>(ref writeBack),
+                DoubleWriteBack = *(double*)src,
             };
         }
         else

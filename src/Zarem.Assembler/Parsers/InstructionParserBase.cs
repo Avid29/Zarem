@@ -15,7 +15,6 @@ using Zarem.Assembler.Logging.Interfaces;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Parsers.Enums;
-using Zarem.Assembler.Parsers.Expressions;
 using Zarem.Assembler.Tokenization;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Models.Enums;

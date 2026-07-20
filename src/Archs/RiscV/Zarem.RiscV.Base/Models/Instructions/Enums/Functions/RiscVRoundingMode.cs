@@ -12,7 +12,7 @@ public enum RiscVRoundingMode : byte
 {
 #pragma warning disable CS1591
 
-    [JsonStringEnumMemberName("rne")] RoundToNearest = 0b000,
+    [JsonStringEnumMemberName("rne")] RoundToNearestEven = 0b000,
     [JsonStringEnumMemberName("rtz")] RoundTowardsZero = 0b001,
     [JsonStringEnumMemberName("rdn")] RoundDown = 0b010,
     [JsonStringEnumMemberName("rup")] RoundUp = 0b011,

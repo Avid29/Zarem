@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using Zarem.Emulator.Machine.Registers;
+using Zarem.RiscV.Emulator.Enums;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions;
@@ -85,20 +86,16 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         return RiscVTrap.None;
     }
 
-    private enum Classification : ushort
+    private static RiscVTrap FloatMacGuffin<TTo>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
     {
-        None = 0x0,
-        NegativeInfinity = 0x1,
-        NegativeNormal = 0x2,
-        NegativeSubnormal = 0x4,
-        NegativeZero = 0x8,
-        PositiveZero = 0x10,
-        PositiveSubnormal = 0x20,
-        PositiveNormal = 0x40,
-        PositiveInfinity = 0x80,
-        SignalingNaN = 0x100,
-        QuietNaN = 0x200,
-    };
+        return (byte)inst.FRS2 switch
+        {
+            0 when inst.Funct3 is FloatFunct3Code.FloatMoveFrom => FloatMoveTo<TTo>(cpu, inst, out exec),
+            0 when inst.Funct3 is FloatFunct3Code.FloatClassify => FloatClassifiy<TTo>(cpu, inst, out exec),
+            _ =>  FloatConvertTo<TTo>(cpu, inst, out exec),
+        };
+    }
 
     private static RiscVTrap FloatClassifiy<TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
@@ -106,27 +103,27 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         var indexer = GetFloatRegisterIndexer<TFormat>(cpu);
         var frs1 = indexer[(int)inst.FRS1];
 
-        Classification classification = Classification.None;
+        var classification = FloatClassification.None;
 
         // Check each condition based on the RISC-V specification for fclass
         if (TFormat.IsNegative(frs1))
         {
-            if (TFormat.IsInfinity(frs1)) classification = Classification.NegativeInfinity;
-            else if (TFormat.IsNormal(frs1)) classification = Classification.NegativeNormal;
-            else if (TFormat.IsSubnormal(frs1)) classification = Classification.NegativeSubnormal;
-            else if (TFormat.IsZero(frs1)) classification = Classification.NegativeZero;
+            if (TFormat.IsInfinity(frs1)) classification = FloatClassification.NegativeInfinity;
+            else if (TFormat.IsNormal(frs1)) classification = FloatClassification.NegativeNormal;
+            else if (TFormat.IsSubnormal(frs1)) classification = FloatClassification.NegativeSubnormal;
+            else if (TFormat.IsZero(frs1)) classification = FloatClassification.NegativeZero;
         }
         else if (TFormat.IsPositive(frs1))
         {
-            if (TFormat.IsInfinity(frs1)) classification = Classification.PositiveInfinity;
-            else if (TFormat.IsNormal(frs1)) classification = Classification.PositiveNormal;
-            else if (TFormat.IsSubnormal(frs1)) classification = Classification.PositiveSubnormal;
-            else if (TFormat.IsZero(frs1)) classification = Classification.PositiveZero;
+            if (TFormat.IsInfinity(frs1)) classification = FloatClassification.PositiveInfinity;
+            else if (TFormat.IsNormal(frs1)) classification = FloatClassification.PositiveNormal;
+            else if (TFormat.IsSubnormal(frs1)) classification = FloatClassification.PositiveSubnormal;
+            else if (TFormat.IsZero(frs1)) classification = FloatClassification.PositiveZero;
         }
         else if (TFormat.IsNaN(frs1))
         {
             // TODO: Differentiate signaling/quiet NaN
-            classification = Classification.QuietNaN;
+            classification = FloatClassification.QuietNaN;
         }
 
         exec = RiscVExecution<T>.CreateWriteback(((RiscVInstruction)inst).RD, T.CreateTruncating((short)classification));
