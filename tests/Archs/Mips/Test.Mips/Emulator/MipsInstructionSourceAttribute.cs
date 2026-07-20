@@ -10,9 +10,9 @@ using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Mips.Extensions;
-using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Versioning;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Test.Mips.Emulator;
 
@@ -22,23 +22,23 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
     public const uint K0 = MipsExecutionTests.K0;
     public const uint K1 = MipsExecutionTests.K1;
 
-    private readonly MipsVersion _version;
+    private readonly MipsVersionInfo _versionInfo;
     private readonly ExecutionMode _mode;
 
-    public MipsInstructionSourceAttribute(MipsVersion version, ExecutionMode mode)
+    public MipsInstructionSourceAttribute(string versionStr, ExecutionMode mode)
     {
-        _version = version;
+        _versionInfo = MipsVersionInfo.Parse(versionStr);
         _mode = mode;
     }
 
     public override IEnumerable<object[]> GetData(MethodInfo methodInfo)
     {
-        var config = new MipsEmulatorConfig(_version)
+        var config = new MipsEmulatorConfig(_versionInfo)
         {
             ExecutionMode = _mode,
         };
 
-        return _version.Is64Bit()
+        return _versionInfo.Is64Bit
             ? GetVersionTests<ulong, long, UInt128>(config)
             : GetVersionTests<uint, int, ulong>(config);
     }
@@ -67,7 +67,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
         where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>, IMinMaxValue<TLong>
     {
-        var noDelayConfig = new MipsEmulatorConfig(config.Version)
+        var noDelayConfig = new MipsEmulatorConfig(config.VersionInfo)
         {
             TrapHost = config.TrapHost,
             ExecutionMode = config.ExecutionMode,
@@ -158,7 +158,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         yield return [new MipsEmulatorTestCase<T>(config, "divu $t3, $zero", MipsTrap.None)];
         yield return [new MipsEmulatorTestCase<T>(config, "div $t3, $zero", MipsTrap.None)];
 
-        if (config.Version is >= MipsVersion.Mips_R1)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.R1)
         {
             // GPR Multiply
             yield return [new MipsEmulatorTestCase<T>(config, "mul $v0, $t3, $t2", T.CreateTruncating(30 * 20))];
@@ -167,7 +167,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
             yield return [new MipsEmulatorTestCase<T>(config, "mul $v0, $a1, $a1", T.CreateTruncating(unchecked(int.MinValue * int.MinValue)))];     // min * min
         }
 
-        if (config.Version is >= MipsVersion.Mips_R1 and < MipsVersion.Mips_R6)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.R1 and < MipsBaseVersion.R6)
         {
             // Multiply and Add/Subtract
             yield return [new MipsEmulatorTestCase<T>(config, "maddu $t3, $t2", (T.CreateTruncating(0x1234), T.CreateTruncating(0x5678 + (30 * 20))))];
@@ -177,7 +177,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         }
 
         // Not arithmetic, but fixed width
-        if (config.Version is >= MipsVersion.Mips_R1)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.R1)
         {
             // Niche bit-manipulation
             // TODO: ext, ins, seb, seh, wsbh, wshd
@@ -185,7 +185,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
             yield return [new MipsEmulatorTestCase<T>(config, "clo $v0, $k0", T.CreateTruncating(BitOperations.LeadingZeroCount(~K0)))];
         }
 
-        if (config.Version is >= MipsVersion.MipsIII && config.Version.Is64Bit())
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsIII && config.VersionInfo.Is64Bit)
         {
             // Unsigned
             yield return [new MipsEmulatorTestCase<T>(config, "daddu $v0, $t2, $t1", T.CreateTruncating(30))];
@@ -232,7 +232,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         yield return [new MipsEmulatorTestCase<T>(config, "sllv $v0, $t8, $s4", T.CreateTruncating(101 << 4))];
         yield return [new MipsEmulatorTestCase<T>(config, "srlv $v0, $t8, $s4", T.CreateTruncating(101 >> 4))];
 
-        if (config.Version is >= MipsVersion.MipsIII && config.Version.Is64Bit())
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsIII && config.VersionInfo.Is64Bit)
         {
             yield return [new MipsEmulatorTestCase<T>(config, "dsll $v0, $t8, 4", T.CreateTruncating(101 << 4))];
             yield return [new MipsEmulatorTestCase<T>(config, "dsrl $v0, $t8, 4", T.CreateTruncating(101 >> 4))];
@@ -297,7 +297,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         yield return [new MipsEmulatorTestCase<T>(config, "bgez $s5, 80") { ExpectedPC = noBranchAddress }];
 
         // Branch Likely
-        if (config.Version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsII and < MipsBaseVersion.R6)
         {
             // If branch likely fails, it must skip the delay slot (PC + 8)
             var likelyFailAddress = config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
@@ -359,7 +359,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
     private static IEnumerable<object[]> GetTrapInstructionTests<T>(MipsEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
-        if (config.Version >= MipsVersion.MipsII)
+        if (config.VersionInfo.Base >= MipsBaseVersion.MipsII)
         {
             // Equality
             yield return [new MipsEmulatorTestCase<T>(config, "teq $t2, $t3", MipsTrap.None)];
@@ -393,7 +393,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         }
 
         // Trap immediate
-        if (config.Version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsII and < MipsBaseVersion.R6)
         {
             // Equality
             yield return [new MipsEmulatorTestCase<T>(config, "teqi $t2, 30", MipsTrap.None)];
@@ -433,7 +433,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         // lui
         yield return [new MipsEmulatorTestCase<T>(config, "lui $v0, 0x1234", T.CreateTruncating(0x12340000))];
 
-        if (config.Version is < MipsVersion.Mips_R6)
+        if (config.VersionInfo.Base is < MipsBaseVersion.R6)
         {
             // Move from/to high and low registers
             yield return [new MipsEmulatorTestCase<T>(config, "mtlo $k0", (T.CreateTruncating(0x1234), T.CreateTruncating(K0)))];
@@ -442,7 +442,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
             yield return [new MipsEmulatorTestCase<T>(config, "mfhi $v0", T.CreateTruncating(0x1234))];
         }
 
-        if (config.Version is >= MipsVersion.MipsIV)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsIV)
         {
             // movz/movn
             yield return [new MipsEmulatorTestCase<T>(config, "movz $k0, $k1, $t0", MipsGpRegister.Kernel0, T.CreateTruncating(K1))];
@@ -463,7 +463,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         if (config.ExecutionMode is ExecutionMode.JustInTime)
             yield break;
 
-        if (config.Version is >= MipsVersion.MipsII)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsII)
         {
             // Exception Return
             yield return [new MipsEmulatorTestCase<T>(config, "eret", MipsTrap.ReservedInstruction)];
@@ -476,7 +476,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
             }];
         }
 
-        if (config.Version is >= MipsVersion.Mips_R2)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.R2)
         {
             // Enable Interrupts
             yield return [new MipsEmulatorTestCase<T>(config, "ei", MipsTrap.ReservedInstruction)];
@@ -531,19 +531,19 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         yield return [new MipsEmulatorTestCase<T>(config, "abs.D $f16, $f16", MipsFloatRegister.F16, 2d)];
         yield return [new MipsEmulatorTestCase<T>(config, "neg.D $f16, $f12", MipsFloatRegister.F16, -2d)];
 
-        if (config.Version is >= MipsVersion.MipsII)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsII)
         {
             yield return [new MipsEmulatorTestCase<T>(config, "sqrt.S $f16, $f8", MipsFloatRegister.F16, MathF.Sqrt(10.5f))];
             yield return [new MipsEmulatorTestCase<T>(config, "sqrt.D $f16, $f12", MipsFloatRegister.F16, Math.Sqrt(2d))];
         }
 
-        if (config.Version is >= MipsVersion.MipsIV)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsIV)
         {
             yield return [new MipsEmulatorTestCase<T>(config, "recip.S $f16, $f9", MipsFloatRegister.F16, float.ReciprocalEstimate(2.5f))];
             yield return [new MipsEmulatorTestCase<T>(config, "recip.D $f16, $f12", MipsFloatRegister.F16, double.ReciprocalEstimate(2d))];
         }
 
-        if (config.Version is >= MipsVersion.Mips_R2)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.R2)
         {
             yield return [new MipsEmulatorTestCase<T>(config, "rsqrt.S $f16, $f9", MipsFloatRegister.F16, float.ReciprocalSqrtEstimate(2.5f))];
             yield return [new MipsEmulatorTestCase<T>(config, "rsqrt.D $f16, $f12", MipsFloatRegister.F16, double.ReciprocalSqrtEstimate(2d))];
@@ -565,7 +565,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         yield return [new MipsEmulatorTestCase<T>(config, "cvt.S.W $f16, $f0", MipsFloatRegister.F16, 2f)];     // To Single
         yield return [new MipsEmulatorTestCase<T>(config, "cvt.D.W $f16, $f0", MipsFloatRegister.F16, 2d)];     // To Double
 
-        if (config.Version is >= MipsVersion.MipsIII && config.Version.Is64Bit())
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsIII && config.VersionInfo.Is64Bit)
         {
             // To long
             yield return [new MipsEmulatorTestCase<T>(config, "cvt.L.S $f16, $f5", MipsFloatRegister.F16, 2L)];     // From Single
@@ -587,7 +587,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
     private static IEnumerable<object[]> GetFloatRoundInstructionTests<T>(MipsEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
-        if (config.Version is >= MipsVersion.MipsII)
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsII)
         {
             // Round
             yield return [new MipsEmulatorTestCase<T>(config, "round.W.S $f16, $f10", MipsFloatRegister.F16, 1)];
@@ -602,7 +602,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
             yield return [new MipsEmulatorTestCase<T>(config, "floor.W.D $f16, $f18", MipsFloatRegister.F16, 3)];
         }
 
-        if (config.Version is >= MipsVersion.MipsIII && config.Version.Is64Bit())
+        if (config.VersionInfo.Base is >= MipsBaseVersion.MipsIII && config.VersionInfo.Is64Bit)
         {
             // Long
             yield return [new MipsEmulatorTestCase<T>(config, "round.L.S $f16, $f10", MipsFloatRegister.F16, 1L)];

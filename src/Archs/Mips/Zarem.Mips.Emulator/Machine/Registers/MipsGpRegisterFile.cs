@@ -3,7 +3,8 @@
 using CommunityToolkit.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Versioning;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Machine.Registers;
 
@@ -16,8 +17,8 @@ public unsafe class MipsGPRegisterFile<T> : RegisterFile<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsGPRegisterFile{T}"/> class.
     /// </summary>
-    public MipsGPRegisterFile(MipsVersion version) :
-        base(version is < MipsVersion.Mips32R6 ? 34 : 32)
+    public MipsGPRegisterFile(MipsVersionInfo versionInfo) :
+        base(versionInfo.Base is < MipsBaseVersion.R6 ? 34 : 32)
     {
     }
 

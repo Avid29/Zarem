@@ -15,7 +15,6 @@ using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Mips.Assembler.Logger;
 using Zarem.Mips.Assembler.Models.Meta;
 using Zarem.Mips.Assembler.Models.Tables;
-using Zarem.Mips.Extensions;
 using Zarem.Mips.Models.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums;
@@ -85,9 +84,9 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
             (LogId id, string message) = version switch
             {
                 not null when banned => (LogId.DisabledFeatureInUse, "InstructionDisabled"),
-                not null when Config is null || version > Config.Version => (LogId.NotInVersion, "RequiresVersion"),
+                not null when Config is null || version > Config.VersionInfo.Base => (LogId.NotInVersion, "RequiresVersion"),
                 not null => (LogId.NotInVersion, "RemovedInVersion"),
-                null when Config is not null && is64bit && !Config.Version.Is64Bit() => (LogId.NotInVersion, "Needs64BitVersion"),
+                null when Config is not null && is64bit && !Config.VersionInfo.Is64Bit => (LogId.NotInVersion, "Needs64BitVersion"),
                 null => (LogId.InvalidInstructionName, "NoInstructionNamed")
             };
 

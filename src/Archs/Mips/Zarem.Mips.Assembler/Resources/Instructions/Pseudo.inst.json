@@ -4,7 +4,7 @@
     "name": "nop",
     "pseudo_id": 0,
     "args": [],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "expansion": [
       "sll $zero, $zero, 0"
     ]
@@ -14,7 +14,7 @@
     "name": "ssnop",
     "pseudo_id": 1,
     "args": [],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "expansion": [
       "sll $zero, $zero, 1"
     ]
@@ -24,7 +24,7 @@
     "name": "b",
     "pseudo_id": 2,
     "args": [ "offset" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "expansion": [
       "beq $zero, $zero, ${offset}"
     ]
@@ -34,8 +34,8 @@
     "name": "bal",
     "pseudo_id": 3,
     "args": [ "offset" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips_R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "expansion": [
       "bgezal $zero, offset"
     ]
@@ -45,7 +45,7 @@
     "name": "blt",
     "pseudo_id": 4,
     "args": [ "rs", "rt", "offset" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "expansion": [
       "slt $at, ${rs}, ${rt}" ,
       "bne $at, $zero, ${offset}"
@@ -56,7 +56,7 @@
     "name": "li",
     "pseudo_id": 5,
     "args": [ "rt", "imm32" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "expansion": [
       "lui ${rt}, %hi((${imm32}) >> 16)",
       "addiu ${rt}, ${rt}, %lo(${imm32})"
@@ -67,7 +67,7 @@
     "name": "abs",
     "pseudo_id": 6,
     "args": [ "rd", "rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "expansion": [
       "addu ${rd}, ${rs}, $zero",
       "bgez ${rs}, 8",
@@ -79,7 +79,7 @@
     "name": "move",
     "pseudo_id": 7,
     "args": [ "rd", "rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "expansion": [
       "addu ${rd}, ${rs}, $zero"
     ]
@@ -89,7 +89,7 @@
     "name": "la",
     "pseudo_id": 8,
     "args": [ "rd", "imm32" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "expansion": [
       "lui ${rd}, %hi(${imm32})",
       "addiu ${rd}, ${rd}, %lo(${imm32})"
@@ -100,7 +100,7 @@
     "name": "sge",
     "pseudo_id": 9,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "expansion": [
       "slt ${rd}, ${rs}, ${rt}",
       "xori ${rd}, ${rd}, 1"

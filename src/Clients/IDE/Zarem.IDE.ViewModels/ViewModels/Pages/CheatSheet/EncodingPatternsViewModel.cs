@@ -1,9 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-using System.Collections.ObjectModel;
-using System.Linq;
 using Zarem.CheatSheet;
-using Zarem.CheatSheet.Models;
 using Zarem.IDE.Services;
 
 namespace Zarem.IDE.ViewModels.Pages.CheatSheet;

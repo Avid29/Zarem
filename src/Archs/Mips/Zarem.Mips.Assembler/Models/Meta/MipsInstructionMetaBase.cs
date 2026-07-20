@@ -5,11 +5,9 @@ using System.Text.Json.Serialization;
 using Zarem.Assembler;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Models.Tables;
-using Zarem.Attributes.Arguments;
-using Zarem.Mips.Extensions;
-using Zarem.Mips.Models.Enums;
 using Zarem.Mips.Models.Instructions.Enums;
-using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Versioning;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Mips.Assembler.Models.Meta;
 
@@ -28,17 +26,17 @@ namespace Zarem.Mips.Assembler.Models.Meta;
 public abstract record MipsInstructionMetaBase : InstructionMetaBase<MipsArgument>
 {
     /// <summary>
-    /// Gets the <see cref="MipsVersion"/> where the instruction was added.
+    /// Gets the <see cref="MipsBaseVersion"/> where the instruction was added.
     /// </summary>
     [JsonPropertyName("added_in")]
-    public MipsVersion AddedIn { get; init; }
+    public MipsBaseVersion AddedIn { get; init; }
 
     /// <summary>
-    /// Gets the <see cref="MipsVersion"/> where the instruction was removed, if applicable.
+    /// Gets the <see cref="MipsBaseVersion"/> where the instruction was removed, if applicable.
     /// </summary>
     [JsonPropertyName("removed_in")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public MipsVersion? RemovedIn { get; init; }
+    public MipsBaseVersion? RemovedIn { get; init; }
 
     /// <summary>
     /// Gets whether or not the instruction only exists in 64-bit MIPS.
@@ -100,10 +98,10 @@ public abstract record MipsInstructionMetaBase : InstructionMetaBase<MipsArgumen
     /// <summary>
     /// Check if an instruction is valid for a given version.
     /// </summary>
-    public bool IsValidFor(MipsVersion version)
+    public bool IsValidFor(MipsVersionInfo versionInfo)
     {
-        bool inRange = version >= AddedIn && !(RemovedIn.HasValue && version >= RemovedIn);
-        bool sufficientRegisterSize = !Is64Bit || version.Is64Bit();
+        bool inRange = versionInfo.Base >= AddedIn && !(RemovedIn.HasValue && versionInfo.Base >= RemovedIn);
+        bool sufficientRegisterSize = !Is64Bit || versionInfo.Is64Bit;
         return inRange && sufficientRegisterSize;
     }
 }

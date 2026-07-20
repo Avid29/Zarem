@@ -4,7 +4,7 @@
     "name": "bltz",
     "rt_code": 0,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "if ($rs < 0) $pc = address"
   },
   {
@@ -12,7 +12,7 @@
     "name": "bgez",
     "rt_code": 1,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "if ($rs >= 0) $pc = address"
   },
   {
@@ -20,8 +20,8 @@
     "name": "bltzl",
     "rt_code": 2,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs < 0) $pc = address"
   },
   {
@@ -29,8 +29,8 @@
     "name": "bgezl",
     "rt_code": 3,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs >= 0) $pc = address"
   },
   {
@@ -38,8 +38,8 @@
     "name": "tgei",
     "rt_code": 8,
     "args": [ "rs", "imm" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs >= immediate) trap"
   },
   {
@@ -47,8 +47,8 @@
     "name": "tgeiu",
     "rt_code": 9,
     "args": [ "rs", "imm" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs >= immediate) trap"
   },
   {
@@ -56,8 +56,8 @@
     "name": "tlti",
     "rt_code": 10,
     "args": [ "rs", "imm" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs < immediate) trap"
   },
   {
@@ -65,8 +65,8 @@
     "name": "tltiu",
     "rt_code": 11,
     "args": [ "rs", "imm" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs < immediate) trap"
   },
   {
@@ -74,8 +74,8 @@
     "name": "teqi",
     "rt_code": 12,
     "args": [ "rs", "imm" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs == immediate) trap"
   },
   {
@@ -83,8 +83,8 @@
     "name": "tnei",
     "rt_code": 14,
     "args": [ "rs", "imm" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs != immediate) trap"
   },
   {
@@ -92,30 +92,30 @@
     "name": "bltzal",
     "rt_code": 16,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "added_in": "mips1",
+    "removed_in": "r6"
   },
   {
     "type": "reg_imm",
     "name": "bgezal",
     "rt_code": 17,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsI"
+    "added_in": "mips1"
   },
   {
     "type": "reg_imm",
     "name": "bltzall",
     "rt_code": 18,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "added_in": "mips2",
+    "removed_in": "r6"
   },
   {
     "type": "reg_imm",
     "name": "bgezall",
     "rt_code": 19,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "added_in": "mips2",
+    "removed_in": "r6"
   }
 ]

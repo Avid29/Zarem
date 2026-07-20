@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Mips.Assembler.Models.Meta;
-using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Mips.Assembler.Models.Tables;
 
@@ -39,7 +39,7 @@ public abstract class MipsInstructionTableBase<TKey> : InstructionTableBase<TKey
     /// <param name="is64bit">Whether or not the instruction requires 64-bit MIPS.</param>
     /// <param name="banned">Indicates if the instruction was found, but is banned according the config.</param>
     /// <returns>Whether or not an instruction exists by that name</returns>
-    public virtual bool TryGetInstruction(TKey key, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsVersion? requiredVersion, out bool is64bit, out bool banned)
+    public virtual bool TryGetInstruction(TKey key, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsBaseVersion? requiredVersion, out bool is64bit, out bool banned)
     {
         requiredVersion = null;
         is64bit = false;

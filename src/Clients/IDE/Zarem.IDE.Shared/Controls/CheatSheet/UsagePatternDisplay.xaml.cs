@@ -1,7 +1,6 @@
 // Avishai Dernis 2025
 
 using CommunityToolkit.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
@@ -9,7 +8,6 @@ using Zarem.Assembler;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Assembler.Models.Tables;
 using Zarem.IDE.Controls.CheatSheet.Palettes;
-using Zarem.IDE.Services;
 using Zarem.Mips.Assembler.Models.Meta;
 using Zarem.Mips.Models.Instructions.Enums;
 

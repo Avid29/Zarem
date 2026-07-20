@@ -4,7 +4,7 @@
     "name": "sll",
     "func_code": 0,
     "args": [ "rd", "rt", "sa" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rt << shift"
   },
   {
@@ -12,7 +12,7 @@
     "name": "srl",
     "func_code": 2,
     "args": [ "rd", "rt", "sa" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rt >> shift"
   },
   {
@@ -20,7 +20,7 @@
     "name": "sra",
     "func_code": 3,
     "args": [ "rd", "rt", "sa" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rt >> shift"
   },
   {
@@ -28,7 +28,7 @@
     "name": "sllv",
     "func_code": 4,
     "args": [ "rd", "rt", "rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rt << $rs"
   },
   {
@@ -36,7 +36,7 @@
     "name": "srlv",
     "func_code": 6,
     "args": [ "rd", "rt", "rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rt >> $rs"
   },
   {
@@ -44,7 +44,7 @@
     "name": "srav",
     "func_code": 7,
     "args": [ "rd", "rt", "rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rt >> $rs"
   },
   {
@@ -52,7 +52,7 @@
     "name": "jr",
     "func_code": 8,
     "args": [ "rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$pc = $rs"
   },
   {
@@ -61,7 +61,7 @@
     "func_code": 9,
     "args": [ "rs" ],
     "rd_fixed": 31,
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$ra = ret_addr; $pc = $rs"
   },
   {
@@ -69,7 +69,7 @@
     "name": "jalr",
     "func_code": 9,
     "args": [ "rd", "rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = ret_addr; $pc = $rs"
   },
   {
@@ -77,8 +77,8 @@
     "name": "movz",
     "func_code": 10,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsIV",
-    "removed_in": "Mips_R6",
+    "added_in": "mips4",
+    "removed_in": "r6",
     "behavior": "if ($rt == 0) $rd = $rs"
   },
   {
@@ -86,8 +86,8 @@
     "name": "movn",
     "func_code": 11,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsIV",
-    "removed_in": "Mips_R6",
+    "added_in": "mips4",
+    "removed_in": "r6",
     "behavior": "if ($rt != 0) $rd = $rs"
   },
   {
@@ -95,7 +95,7 @@
     "name": "syscall",
     "func_code": 12,
     "args": [],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "Make a syscall interrupt"
   },
   {
@@ -103,7 +103,7 @@
     "name": "break",
     "func_code": 13,
     "args": [],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "Make a breakpoint exception"
   },
   {
@@ -111,15 +111,15 @@
     "name": "sync",
     "func_code": 15,
     "args": [],
-    "added_in": "MipsII"
+    "added_in": "mips2"
   },
   {
     "type": "r-type",
     "name": "mfhi",
     "func_code": 16,
     "args": [ "rd" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips_R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "behavior": "$rd = $Hi"
   },
   {
@@ -127,8 +127,8 @@
     "name": "mthi",
     "func_code": 17,
     "args": [ "rs" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips_R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "behavior": "$Hi = $rs"
   },
   {
@@ -136,8 +136,8 @@
     "name": "mflo",
     "func_code": 18,
     "args": [ "rd" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips_R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "behavior": "$rd = $Lo"
   },
   {
@@ -145,8 +145,8 @@
     "name": "mtlo",
     "func_code": 19,
     "args": [ "rs" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips_R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "behavior": "$Lo = $rs"
   },
   {
@@ -154,8 +154,8 @@
     "name": "mult",
     "func_code": 24,
     "args": [ "rs", "rt" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips_R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "behavior": "($Hi,$Lo) = $rs * $rt"
   },
   {
@@ -163,8 +163,8 @@
     "name": "multu",
     "func_code": 25,
     "args": [ "rs", "rt" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips_R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "behavior": "($Hi,$Lo) = $rs * $rt"
   },
   {
@@ -172,8 +172,8 @@
     "name": "div",
     "func_code": 26,
     "args": [ "rs", "rt" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips_R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "behavior": "$Lo = $rs / $rt; $Hi = $rs % $rt"
   },
   {
@@ -181,8 +181,8 @@
     "name": "divu",
     "func_code": 27,
     "args": [ "rs", "rt" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips_R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "behavior": "$Lo = $rs / $rt; $Hi = $rs % $rt"
   },
   {
@@ -190,7 +190,7 @@
     "name": "add",
     "func_code": 32,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rs + $rt"
   },
   {
@@ -198,7 +198,7 @@
     "name": "addu",
     "func_code": 33,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rs + $rt"
   },
   {
@@ -206,7 +206,7 @@
     "name": "sub",
     "func_code": 34,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rs - $rt"
   },
   {
@@ -214,7 +214,7 @@
     "name": "subu",
     "func_code": 35,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rs - $rt"
   },
   {
@@ -222,7 +222,7 @@
     "name": "and",
     "func_code": 36,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rs & $rt"
   },
   {
@@ -230,7 +230,7 @@
     "name": "or",
     "func_code": 37,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rs | $rt"
   },
   {
@@ -238,7 +238,7 @@
     "name": "xor",
     "func_code": 38,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rs ^ $rt"
   },
   {
@@ -246,7 +246,7 @@
     "name": "nor",
     "func_code": 39,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = ~($rs | $rt)"
   },
   {
@@ -254,7 +254,7 @@
     "name": "slt",
     "func_code": 42,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rs < $rt ? 1 : 0"
   },
   {
@@ -262,7 +262,7 @@
     "name": "sltu",
     "func_code": 43,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rd = $rs < $rt ? 1 : 0"
   },
   {
@@ -270,8 +270,8 @@
     "name": "tge",
     "func_code": 48,
     "args": [ "rs", "rt" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs >= $rt) Invoke Trap"
   },
   {
@@ -279,8 +279,8 @@
     "name": "tgeu",
     "func_code": 49,
     "args": [ "rs", "rt" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs >= $rt) Invoke Trap"
   },
   {
@@ -288,8 +288,8 @@
     "name": "tlt",
     "func_code": 50,
     "args": [ "rs", "rt" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs < $rt) Invoke Trap"
   },
   {
@@ -297,8 +297,8 @@
     "name": "tltu",
     "func_code": 51,
     "args": [ "rs", "rt" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs < $rt) Invoke Trap"
   },
   {
@@ -306,8 +306,8 @@
     "name": "teq",
     "func_code": 52,
     "args": [ "rs", "rt" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs == $rt) Invoke Trap"
   },
   {
@@ -315,7 +315,7 @@
     "name": "seleqz",
     "func_code": 53,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "Mips_R6",
+    "added_in": "r6",
     "behavior": "$rd = $rt ? 0 : $rs"
   },
   {
@@ -323,8 +323,8 @@
     "name": "tne",
     "func_code": 54,
     "args": [ "rs", "rt" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips_R6",
+    "added_in": "mips2",
+    "removed_in": "r6",
     "behavior": "if ($rs != $rt) Invoke Trap"
   },
   {
@@ -332,7 +332,7 @@
     "name": "selnez",
     "func_code": 55,
     "args": [ "rd", "rs", "rt" ],
-    "added_in": "Mips_R6",
+    "added_in": "r6",
     "behavior": "$rd = $rt ? $rs : 0"
   }
 ]

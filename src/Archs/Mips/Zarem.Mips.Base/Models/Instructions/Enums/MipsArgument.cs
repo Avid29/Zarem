@@ -2,7 +2,6 @@
 
 using System.Text.Json.Serialization;
 using Zarem.Attributes.Arguments;
-using Zarem.Mips.Assembler.Models.Enums;
 using Zarem.Mips.Models.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 

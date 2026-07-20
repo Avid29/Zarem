@@ -4,7 +4,7 @@
     "name": "daddi",
     "op_code": 24,
     "args": [ "rt", "rs", "imm" ],
-    "added_in": "MipsIII",
+    "added_in": "mips3",
     "64bit": true,
     "behavior": "$rt = $rs + immediate"
   },
@@ -13,7 +13,7 @@
     "name": "daddiu",
     "op_code": 25,
     "args": [ "rt", "rs", "imm" ],
-    "added_in": "MipsIII",
+    "added_in": "mips3",
     "64bit": true,
     "behavior": "$rt = $rs + immediate"
   },
@@ -22,7 +22,7 @@
     "name": "ldl",
     "op_code": 26,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsIII",
+    "added_in": "mips3",
     "64bit": true
   },
   {
@@ -30,7 +30,7 @@
     "name": "ldr",
     "op_code": 27,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsIII",
+    "added_in": "mips3",
     "64bit": true
   },
   {
@@ -38,7 +38,7 @@
     "name": "lwu",
     "op_code": 39,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsIII",
+    "added_in": "mips3",
     "64bit": true,
     "behavior": "$rt = (uint)mem[rs + offset]"
   },
@@ -47,7 +47,7 @@
     "name": "ld",
     "op_code": 55,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsIII",
+    "added_in": "mips3",
     "64bit": true,
     "behavior": "$rt = (long)mem[rs + offset]"
   },
@@ -56,7 +56,7 @@
     "name": "sd",
     "op_code": 63,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsIII",
+    "added_in": "mips3",
     "64bit": true,
     "behavior": "mem[rs + offset] = (long)$rt"
   }

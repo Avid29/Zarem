@@ -6,7 +6,7 @@ using Zarem.Emulator.Config;
 using Zarem.Linker.Config;
 using Zarem.Mips.Assembler;
 using Zarem.Mips.Linker.Config;
-using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Versioning;
 
 namespace Zarem.Mips;
 
@@ -20,7 +20,7 @@ public sealed class MipsArchitectureConfig : ConfigBase, IArchitectureConfig
     /// </summary>
     public MipsArchitectureConfig()
     {
-        Version = MipsVersion.Mips32R2;
+        VersionInfo = new MipsVersionInfo();
         AssemblerConfig = new MipsAssemblerConfig();
         EmulatorConfig = new MipsEmulatorConfig();
         LinkerConfig = new MipsLinkerConfig();
@@ -29,15 +29,15 @@ public sealed class MipsArchitectureConfig : ConfigBase, IArchitectureConfig
     /// <summary>
     /// Gets the mips version.
     /// </summary>
-    public MipsVersion Version
+    public MipsVersionInfo VersionInfo
     {
         get => field;
         init
         {
             field = value;
-            AssemblerConfig?.Version = value;
-            EmulatorConfig?.Version = value;
-            LinkerConfig?.Version = value;
+            AssemblerConfig?.VersionInfo = value;
+            EmulatorConfig?.VersionInfo = value;
+            LinkerConfig?.VersionInfo = value;
         }
     }
 
@@ -48,7 +48,7 @@ public sealed class MipsArchitectureConfig : ConfigBase, IArchitectureConfig
         init
         {
             field = value;
-            value?.Version = Version;
+            value?.VersionInfo = VersionInfo;
         }
     }
 
@@ -59,7 +59,7 @@ public sealed class MipsArchitectureConfig : ConfigBase, IArchitectureConfig
         init
         {
             field = value;
-            value?.Version = Version;
+            value?.VersionInfo = VersionInfo;
         }
     }
 
@@ -70,7 +70,7 @@ public sealed class MipsArchitectureConfig : ConfigBase, IArchitectureConfig
         init
         {
             field = value;
-            value?.Version = Version;
+            value?.VersionInfo = VersionInfo;
         }
     }
 
@@ -85,7 +85,7 @@ public sealed class MipsArchitectureConfig : ConfigBase, IArchitectureConfig
     {
         return new MipsArchitectureConfig
         {
-            Version = Version,
+            VersionInfo = VersionInfo,
             AssemblerConfig = (MipsAssemblerConfig)AssemblerConfig.Clone(),
             EmulatorConfig = (MipsEmulatorConfig)EmulatorConfig.Clone(),
             LinkerConfig = (MipsLinkerConfig)LinkerConfig.Clone()

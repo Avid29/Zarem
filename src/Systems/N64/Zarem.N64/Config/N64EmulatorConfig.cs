@@ -2,7 +2,8 @@
 
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
-using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Versioning;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.N64.Config;
 
@@ -14,7 +15,7 @@ public class N64EmulatorConfig : MipsEmulatorConfig
     /// <summary>
     /// Initializes a new instance of the <see cref="N64EmulatorConfig"/> class.
     /// </summary>
-    public N64EmulatorConfig(ExecutionMode mode) : base(MipsVersion.MipsIII, mode)
+    public N64EmulatorConfig(ExecutionMode mode) : base(new MipsVersionInfo(MipsBaseVersion.MipsIII), mode)
     {
     }
 }

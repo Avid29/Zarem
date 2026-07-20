@@ -4,7 +4,7 @@
     "name": "mfc1",
     "rs_code": 0,
     "args": [ "rt", "fs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "GPR[$rt] = FPR[$fs]"
   },
   {
@@ -12,7 +12,7 @@
     "name": "cfc1",
     "rs_code": 2,
     "args": [ "rt", "fs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "GPR[$rt] = FCR[$fs]"
   },
   {
@@ -20,7 +20,7 @@
     "name": "mfhc1",
     "rs_code": 3,
     "args": [ "rt", "fs" ],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "GPR[$rt] = FPR[$fs][63:32]"
   },
   {
@@ -28,7 +28,7 @@
     "name": "mtc1",
     "rs_code": 4,
     "args": [ "rt", "fs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "FPR[$fs] = GPR[$rt]"
   },
   {
@@ -36,7 +36,7 @@
     "name": "ctc1",
     "rs_code": 6,
     "args": [ "rt", "fs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "FCR[$fs] = GPR[$rt]"
   },
   {
@@ -44,7 +44,7 @@
     "name": "mthc1",
     "rs_code": 7,
     "args": [ "rt", "fs" ],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "FPR[$fs][63:32] = GPR[$rt]"
   }
 ]

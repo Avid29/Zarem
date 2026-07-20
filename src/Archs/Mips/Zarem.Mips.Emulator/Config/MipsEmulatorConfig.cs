@@ -2,7 +2,7 @@
 
 using System.Xml.Serialization;
 using Zarem.Emulator.Config.Enums;
-using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Versioning;
 
 namespace Zarem.Emulator.Config;
 
@@ -14,16 +14,16 @@ public class MipsEmulatorConfig : EmulatorConfig
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsEmulatorConfig"/> class.
     /// </summary>
-    public MipsEmulatorConfig() : this(MipsVersion.Mips32R2)
+    public MipsEmulatorConfig() : this(new())
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsEmulatorConfig"/> class.
     /// </summary>
-    public MipsEmulatorConfig(MipsVersion mipsVersion = MipsVersion.Mips32R2, ExecutionMode mode = ExecutionMode.Interpret)
+    public MipsEmulatorConfig(MipsVersionInfo mipsVersion, ExecutionMode mode = ExecutionMode.Interpret)
     {
-        Version = mipsVersion;
+        VersionInfo = mipsVersion;
         ExecutionMode = mode;
     }
 
@@ -31,7 +31,7 @@ public class MipsEmulatorConfig : EmulatorConfig
     /// Gets or sets the mips ISA version to emulate.
     /// </summary>
     [XmlIgnore]
-    public MipsVersion Version { get; internal set; }
+    public MipsVersionInfo VersionInfo { get; internal set; }
 
     /// <summary>
     /// Gets or sets whether or not to disable branch delay slot emulation
