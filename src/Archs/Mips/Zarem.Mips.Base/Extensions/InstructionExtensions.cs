@@ -63,17 +63,4 @@ public static class InstructionExtensions
             _ => null,
         };
     }
-
-    /// <summary>
-    /// Gets whether or not the mips version uses 64-bit registers.
-    /// </summary>
-    public static bool Is64Bit(this MipsVersion version)
-        => version switch
-        {
-            MipsVersion.MipsIII or MipsVersion.MipsIV or MipsVersion.MipsV or
-            MipsVersion.Mips64R1 or MipsVersion.Mips64R2 or
-            MipsVersion.Mips64R3 or MipsVersion.Mips64R5 or
-            MipsVersion.Mips64R6 => true,
-            _ => false
-        };
 }

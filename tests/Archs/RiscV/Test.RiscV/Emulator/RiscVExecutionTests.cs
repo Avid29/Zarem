@@ -2,7 +2,6 @@
 
 using System;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using Zarem.Assembler;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config.Enums;

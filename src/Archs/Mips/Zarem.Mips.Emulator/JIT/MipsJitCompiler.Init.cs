@@ -5,14 +5,15 @@ using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Mips.Models.Instructions.Enums;
-using Zarem.Mips.Models.Instructions.Enums.Functions;
-using Zarem.Mips.Models.Instructions.Enums.Operations;
-using Zarem.Mips.Extensions;
-using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
-using Zarem.Mips.Models.Instructions.Enums.Registers;
 using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Functions;
+using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Versioning;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Models.JIT;
 
@@ -21,14 +22,14 @@ public partial class MipsJitCompiler<T>
 {
     private void InitTables(MipsEmulatorConfig config)
     {
-        var version = config.Version;
-        InitRoot(version);
-        InitSpecial(version);
-        InitRegImm(version);
-        InitFloat(version);
+        var versionInfo = config.VersionInfo;
+        InitRoot(versionInfo);
+        InitSpecial(versionInfo);
+        InitRegImm(versionInfo);
+        InitFloat(versionInfo);
     }
 
-    private void InitRoot(MipsVersion version)
+    private void InitRoot(MipsVersionInfo versionInfo)
     {
         _instructionTable.Register(MipsOpCode.Jump, (il, inst, pc) => Jump(il, inst, pc));
         _instructionTable.Register(MipsOpCode.JumpAndLink, (il, inst, pc) => Jump(il, inst, pc, link: true));
@@ -53,7 +54,7 @@ public partial class MipsJitCompiler<T>
         _instructionTable.Register(MipsOpCode.StoreHalfWord, Store<short>);
         _instructionTable.Register(MipsOpCode.StoreWord, Store<int>);
 
-        if (version is >= MipsVersion.MipsIII && version.Is64Bit())
+        if (versionInfo.Base is >= MipsBaseVersion.MipsIII && versionInfo.Is64Bit)
         {
             _instructionTable.Register(MipsOpCode.DoubleWordAddImmediate, (il, inst, pc) => CheckedAluI<long>(il, inst, pc, OpCodes.Add));
             _instructionTable.Register(MipsOpCode.DoubleWordAddImmediateUnsigned, (il, inst, pc) => AluI<long>(il, inst, OpCodes.Add, signExtend: true));
@@ -63,7 +64,7 @@ public partial class MipsJitCompiler<T>
             _instructionTable.Register(MipsOpCode.StoreDoubleWord, Store<long>);
         }
 
-        if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        if (versionInfo.Base is >= MipsBaseVersion.MipsII and < MipsBaseVersion.R6)
         {
             _instructionTable.Register(MipsOpCode.BranchOnEqualLikely, (il, inst, pc) => BranchCompareReg(il, inst, pc, OpCodes.Beq, true));
             _instructionTable.Register(MipsOpCode.BranchOnNotEqualLikely, (il, inst, pc) => BranchCompareReg(il, inst, pc, OpCodes.Bne_Un, true));
@@ -77,7 +78,7 @@ public partial class MipsJitCompiler<T>
         }
     }
 
-    private void InitSpecial(MipsVersion version)
+    private void InitSpecial(MipsVersionInfo versionInfo)
     {
         _instructionTable.Register(FunctionCode.ShiftLeftLogical, (il, inst, pc) => Shift<int>(il, inst, OpCodes.Shl));
         _instructionTable.Register(FunctionCode.ShiftRightLogical, (il, inst, pc) => Shift<int>(il, inst, OpCodes.Shr_Un));
@@ -99,7 +100,7 @@ public partial class MipsJitCompiler<T>
         _instructionTable.Register(FunctionCode.SetLessThan, (il, inst, pc) => AluR<T>(il, inst, OpCodes.Clt));
         _instructionTable.Register(FunctionCode.SetLessThanUnsigned, (il, inst, pc) => AluR<T>(il, inst, OpCodes.Clt_Un));
 
-        if (version is >= MipsVersion.MipsII)
+        if (versionInfo.Base is >= MipsBaseVersion.MipsII)
         {
             // NOTE: Traps use inverted branchs for opcodes
             _instructionTable.Register(FunctionCode.TrapOnGreaterOrEqual, (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Blt));
@@ -110,7 +111,7 @@ public partial class MipsJitCompiler<T>
             _instructionTable.Register(FunctionCode.TrapOnNotEquals, (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Beq));
         }
 
-        if (version is >= MipsVersion.MipsIII && version.Is64Bit())
+        if (versionInfo.Base is >= MipsBaseVersion.MipsIII && versionInfo.Is64Bit)
         {
             _instructionTable.Register(FunctionCode.DoubleWordShiftLeftLogicalVariable, (il, inst, pc) => ShiftVar<long>(il, inst, OpCodes.Shl));
             _instructionTable.Register(FunctionCode.DoubleWordShiftRightLogicalVariable, (il, inst, pc) => ShiftVar<long>(il, inst, OpCodes.Shr_Un));
@@ -131,18 +132,18 @@ public partial class MipsJitCompiler<T>
             _instructionTable.Register(FunctionCode.DoubleWordShiftRightArithmeticPlus32, (il, inst, pc) => ShiftPlus32<long>(il, inst, OpCodes.Shr));
         }
 
-        if (version is >= MipsVersion.MipsIV and < MipsVersion.Mips_R6)
+        if (versionInfo.Base is >= MipsBaseVersion.MipsIV and < MipsBaseVersion.R6)
         {
             _instructionTable.Register(FunctionCode.MoveOnZero, (il, inst, pc) => Move(il, inst, OpCodes.Brtrue));
             _instructionTable.Register(FunctionCode.MoveOnNotZero, (il, inst, pc) => Move(il, inst, OpCodes.Brfalse));
         }
 
-        if (version is >= MipsVersion.Mips_R1 and < MipsVersion.Mips_R6)
+        if (versionInfo.Base is >= MipsBaseVersion.R1 and < MipsBaseVersion.R6)
         {
             InitSpecial2();
         }
 
-        if (version is < MipsVersion.Mips_R6)
+        if (versionInfo.Base is < MipsBaseVersion.R6)
         {
             _instructionTable.Register(FunctionCode.JumpRegister, (il, inst, pc) => JumpR(il, inst, pc));
             _instructionTable.Register(FunctionCode.Multiply, (il, inst, pc) => MultR<int, long>(il, inst));
@@ -156,12 +157,12 @@ public partial class MipsJitCompiler<T>
         }
     }
 
-    private void InitRegImm(MipsVersion version)
+    private void InitRegImm(MipsVersionInfo versionInfo)
     {
         _instructionTable.Register(RegImmFuncCode.BranchOnLessThanZero, (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Blt));
         _instructionTable.Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZero, (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Bge));
 
-        if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        if (versionInfo.Base is >= MipsBaseVersion.MipsII and < MipsBaseVersion.R6)
         {
             // NOTE: Traps use inverted branchs for opcodes
             _instructionTable.Register(RegImmFuncCode.TrapOnGreaterOrEqualImmediate, (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Blt));
@@ -192,29 +193,29 @@ public partial class MipsJitCompiler<T>
         }));
     }
 
-    private void InitFloat(MipsVersion version)
+    private void InitFloat(MipsVersionInfo versionInfo)
     {
-        InitFloatRoot(version);
-        InitFloatFuncs<float>(version);
-        InitFloatFuncs<double>(version);
+        InitFloatRoot(versionInfo);
+        InitFloatFuncs<float>(versionInfo);
+        InitFloatFuncs<double>(versionInfo);
 
-        InitConvertFuncs<float>(version);
-        InitConvertFuncs<double>(version);
-        InitConvertFuncs<int>(version);
+        InitConvertFuncs<float>(versionInfo);
+        InitConvertFuncs<double>(versionInfo);
+        InitConvertFuncs<int>(versionInfo);
 
-        if (version.Is64Bit())
+        if (versionInfo.Is64Bit)
         {
-            InitConvertFuncs<long>(version);
+            InitConvertFuncs<long>(versionInfo);
         }
     }
 
-    private void InitFloatRoot(MipsVersion version)
+    private void InitFloatRoot(MipsVersionInfo versionInfo)
     {
         _instructionTable.Register(CoProc1RSCode.MFC1, (il, inst, pc) => MoveFromFloat(il, inst));
         _instructionTable.Register(CoProc1RSCode.MTC1, (il, inst, pc) => MoveToFloat(il, inst));
     }
 
-    private void InitFloatFuncs<TFormat>(MipsVersion version)
+    private void InitFloatFuncs<TFormat>(MipsVersionInfo versionInfo)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         var format = MipsInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
@@ -232,7 +233,7 @@ public partial class MipsJitCompiler<T>
         _instructionTable.Register(format, MipsFloatFuncCode.Ceiling_W, (il, inst, pc) => FloatRound<TFormat, int>(il, inst, nameof(Math.Ceiling)));
         _instructionTable.Register(format, MipsFloatFuncCode.Floor_W, (il, inst, pc) => FloatRound<TFormat, int>(il, inst, nameof(Math.Floor)));
 
-        if (version.Is64Bit())
+        if (versionInfo.Is64Bit)
         {
             _instructionTable.Register(format, MipsFloatFuncCode.Round_L, (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Round)));
             _instructionTable.Register(format, MipsFloatFuncCode.Truncate_L, (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Truncate)));
@@ -240,18 +241,18 @@ public partial class MipsJitCompiler<T>
             _instructionTable.Register(format, MipsFloatFuncCode.Floor_L, (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Floor)));
         }
 
-        if (version >= MipsVersion.MipsIV)
+        if (versionInfo.Base >= MipsBaseVersion.MipsIV)
         {
             _instructionTable.Register(format, MipsFloatFuncCode.Reciprical, (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.ReciprocalEstimate)));
         }
 
-        if (version >= MipsVersion.Mips_R2)
+        if (versionInfo.Base >= MipsBaseVersion.R2)
         {
             _instructionTable.Register(format, MipsFloatFuncCode.RecipricalSquareRoot, (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.ReciprocalSqrtEstimate)));
         }
     }
 
-    private void InitConvertFuncs<TFormat>(MipsVersion version)
+    private void InitConvertFuncs<TFormat>(MipsVersionInfo versionInfo)
         where TFormat : unmanaged, INumber<TFormat>
     {
         var format = MipsInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
@@ -259,7 +260,7 @@ public partial class MipsJitCompiler<T>
         InitConvertFunc<TFormat, double>(format, MipsFloatFuncCode.ConvertToDouble);
         InitConvertFunc<TFormat, int>(format, MipsFloatFuncCode.ConvertToWord);
 
-        if (version.Is64Bit() && typeof(TFormat) != typeof(long))
+        if (versionInfo.Is64Bit && typeof(TFormat) != typeof(long))
         {
             InitConvertFunc<TFormat, long>(format, MipsFloatFuncCode.ConvertToLong);
         }

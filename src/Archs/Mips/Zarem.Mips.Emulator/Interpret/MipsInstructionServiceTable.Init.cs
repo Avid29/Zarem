@@ -5,13 +5,14 @@ using System.Numerics;
 using Zarem.Emulator.Config;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.Enums;
-using Zarem.Mips.Extensions;
 using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Functions;
 using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
+using Zarem.Mips.Models.Versioning;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Models;
 
@@ -19,14 +20,14 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
 {
     private void InitTables(MipsEmulatorConfig config)
     {
-        var version = config.Version;
+        var version = config.VersionInfo;
         InitRoot(version);
         InitSpecial(version);
         InitRegImm(version);
         InitFloat(version);
     }
 
-    private void InitRoot(MipsVersion version)
+    private void InitRoot(MipsVersionInfo versionInfo)
     {
         Register(MipsOpCode.Jump, &Jump);
         Register(MipsOpCode.JumpAndLink, &JumpLink);
@@ -55,20 +56,20 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         Register(MipsOpCode.LoadWordCoprocessor1, &NotImplemented); // TODO
         Register(MipsOpCode.StoreWordCoprocessor1, &NotImplemented); // TODO
 
-        if (version is < MipsVersion.MipsIII)
+        if (versionInfo.Base is < MipsBaseVersion.MipsIII)
         {
             Register(MipsOpCode.Coprocessor3, &NotImplemented); // TODO
             Register(MipsOpCode.LoadWordCoprocessor3, &NotImplemented); // TODO
             Register(MipsOpCode.StoreWordCoprocessor3, &NotImplemented); // TODO
 
-            if (version is >= MipsVersion.MipsII)
+            if (versionInfo.Base is >= MipsBaseVersion.MipsII)
             {
                 Register(MipsOpCode.LoadDoubleWordCoprocessor3, &NotImplemented); // TODO
                 Register(MipsOpCode.StoreDoubleWordCoprocessor3, &NotImplemented); // TODO
             }
         }
         
-        if (version is >= MipsVersion.MipsIII && version.Is64Bit())
+        if (versionInfo.Base is >= MipsBaseVersion.MipsIII && versionInfo.Is64Bit)
         {
             Register(MipsOpCode.DoubleWordAddImmediate, &CheckedAluI<CheckedAddLogic<long>, long>);
             Register(MipsOpCode.DoubleWordAddImmediateUnsigned, &AluI<AddLogic<ulong>, ulong>);
@@ -78,7 +79,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
             Register(MipsOpCode.StoreDoubleWord, &Store<long>);
         }
 
-        if (version is < MipsVersion.Mips_R6)
+        if (versionInfo.Base is < MipsBaseVersion.R6)
         {
             Register(MipsOpCode.LoadWordLeft, &NotImplemented); // TODO
             Register(MipsOpCode.LoadWordRight, &NotImplemented);
@@ -88,13 +89,13 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
             Register(MipsOpCode.StoreWordCoprocessor2, &NotImplemented); // TODO
         }
 
-        if (version is >= MipsVersion.MipsII)
+        if (versionInfo.Base is >= MipsBaseVersion.MipsII)
         {
             Register(MipsOpCode.LoadLinkedWord, &NotImplemented); // TODO
             Register(MipsOpCode.StoreConditionalWord, &NotImplemented); // TODO
         }
 
-        if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        if (versionInfo.Base is >= MipsBaseVersion.MipsII and < MipsBaseVersion.R6)
         {
             Register(MipsOpCode.BranchOnEqualLikely, &BranchOnLikely<XeqLogic<T>>);
             Register(MipsOpCode.BranchOnNotEqualLikely, &BranchOnLikely<XneLogic<T>>);
@@ -107,19 +108,19 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
             Register(MipsOpCode.StoreDoubleWordCoprocessor2, &NotImplemented); // TODO
         }
 
-        if (version is >= MipsVersion.Mips_R1 and < MipsVersion.Mips_R6)
+        if (versionInfo.Base is >= MipsBaseVersion.R1 and < MipsBaseVersion.R6)
         {
             InitSpecial2();
         }
 
-        if (version is >= MipsVersion.Mips_R6)
+        if (versionInfo.Base is >= MipsBaseVersion.R6)
         {
             Register(MipsOpCode.BranchCompact, &NotImplemented); // TODO
             Register(MipsOpCode.BranchAndLinkCompact, &NotImplemented); // TODO
         }
     }
 
-    private void InitSpecial(MipsVersion version)
+    private void InitSpecial(MipsVersionInfo versionInfo)
     {
         Register(FunctionCode.ShiftLeftLogical, &Shift<SllLogic<uint>, uint>);
         Register(FunctionCode.ShiftRightLogical, &Shift<SrlLogic<uint>, uint>);
@@ -141,7 +142,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         Register(FunctionCode.SetLessThan, &AluR<SltLogic<TS>, TS>);
         Register(FunctionCode.SetLessThanUnsigned, &AluR<SltLogic<T>, T>);
 
-        if (version is >= MipsVersion.MipsII)
+        if (versionInfo.Base is >= MipsBaseVersion.MipsII)
         {
             Register(FunctionCode.Sync, &NotImplemented); // TODO
             Register(FunctionCode.TrapOnGreaterOrEqual, &TrapOn<XgeLogic<T, TS>>);
@@ -152,7 +153,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
             Register(FunctionCode.TrapOnNotEquals, &TrapOn<XneLogic<T>>);
         }
 
-        if (version is >= MipsVersion.MipsIII && version.Is64Bit())
+        if (versionInfo.Base is >= MipsBaseVersion.MipsIII && versionInfo.Is64Bit)
         {
             Register(FunctionCode.DoubleWordShiftLeftLogicalVariable, &ShiftVar<SllLogic<ulong>, ulong>);
             Register(FunctionCode.DoubleWordShiftRightLogicalVariable, &ShiftVar<SrlLogic<ulong>, ulong>);
@@ -173,13 +174,13 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
             Register(FunctionCode.DoubleWordShiftRightArithmeticPlus32, &ShiftPlus32<SraLogic<long>, long>);
         }
 
-        if (version is >= MipsVersion.MipsIV and < MipsVersion.Mips_R6)
+        if (versionInfo.Base is >= MipsBaseVersion.MipsIV and < MipsBaseVersion.R6)
         {
             Register(FunctionCode.MoveOnZero, &Move<XeqzLogic<T>>);
             Register(FunctionCode.MoveOnNotZero, &Move<XnezLogic<T>>);
         }
 
-        if (version is < MipsVersion.Mips_R6)
+        if (versionInfo.Base is < MipsBaseVersion.R6)
         {
             Register(FunctionCode.JumpRegister, &JumpR);
             Register(FunctionCode.Multiply, &SignedMultR<MultLogic<int, long>, int, long>);
@@ -192,19 +193,19 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
             Register(FunctionCode.MoveToLow, &Mtlo);
         }
 
-        if (version is >= MipsVersion.Mips_R6)
+        if (versionInfo.Base is >= MipsBaseVersion.R6)
         {
             Register(FunctionCode.SelectOnEquals, &NotImplemented);
             Register(FunctionCode.SelectOnNotEquals, &NotImplemented);
         }
     }
 
-    private void InitRegImm(MipsVersion version)
+    private void InitRegImm(MipsVersionInfo versionInfo)
     {
         Register(RegImmFuncCode.BranchOnLessThanZero, &BranchOn<XltzLogic<T, TS>>);
         Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZero, &BranchOn<XgezLogic<T, TS>>);
 
-        if (version is >= MipsVersion.MipsII and < MipsVersion.Mips_R6)
+        if (versionInfo.Base is >= MipsBaseVersion.MipsII and < MipsBaseVersion.R6)
         {
             Register(RegImmFuncCode.TrapOnGreaterOrEqualImmediate, &TrapOnI<XgeLogic<T, TS>>);
             Register(RegImmFuncCode.TrapOnGreaterOrEqualImmediateUnsigned, &TrapOnI<XgeuLogic<T>>);
@@ -219,13 +220,13 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
             Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink, &BranchLinkOnLikely<XgezLogic<T, TS>>);
         }
 
-        if (version is < MipsVersion.Mips_R6)
+        if (versionInfo.Base is < MipsBaseVersion.R6)
         {
             Register(RegImmFuncCode.BranchOnLessThanZeroAndLink, &BranchLinkOn<XltzLogic<T, TS>>);
             Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroAndLink, &BranchLinkOn<XgezLogic<T, TS>>);
         }
 
-        if (version >= MipsVersion.Mips_R6)
+        if (versionInfo.Base >= MipsBaseVersion.R6)
         {
             Register(RegImmFuncCode.NoOpAndLink, &NotImplemented); // TODO
             Register(RegImmFuncCode.BranchAndLink, &NotImplemented); // TODO
@@ -243,29 +244,29 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         Register(Func2Code.CountLeadingOnes, &AluR<CloLogic<uint>, uint>);
     }
 
-    private void InitFloat(MipsVersion version)
+    private void InitFloat(MipsVersionInfo versionInfo)
     {
-        InitFloatRoot(version);
-        InitFloatFuncs<float>(version);
-        InitFloatFuncs<double>(version);
+        InitFloatRoot(versionInfo);
+        InitFloatFuncs<float>(versionInfo);
+        InitFloatFuncs<double>(versionInfo);
 
-        InitConvertFuncs<float>(version);
-        InitConvertFuncs<double>(version);
-        InitConvertFuncs<int>(version);
+        InitConvertFuncs<float>(versionInfo);
+        InitConvertFuncs<double>(versionInfo);
+        InitConvertFuncs<int>(versionInfo);
 
-        if (version.Is64Bit())
+        if (versionInfo.Is64Bit)
         {
-            InitConvertFuncs<long>(version);
+            InitConvertFuncs<long>(versionInfo);
         }
     }
 
-    private void InitFloatRoot(MipsVersion version)
+    private void InitFloatRoot(MipsVersionInfo versionInfo)
     {
         Register(CoProc1RSCode.MFC1, &MFC1);
         Register(CoProc1RSCode.MTC1, &MTC1);
     }
 
-    private void InitFloatFuncs<TFormat>(MipsVersion version)
+    private void InitFloatFuncs<TFormat>(MipsVersionInfo versionInfo)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         var format = MipsInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
@@ -283,7 +284,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         Register(format, MipsFloatFuncCode.Ceiling_W, &FloatRound<CeilingLogic<TFormat>, TFormat, int>);
         Register(format, MipsFloatFuncCode.Floor_W, &FloatRound<FloorLogic<TFormat>, TFormat, int>);
 
-        if (version.Is64Bit())
+        if (versionInfo.Is64Bit)
         {
             Register(format, MipsFloatFuncCode.Round_L, &FloatRound<RoundLogic<TFormat>, TFormat, long>);
             Register(format, MipsFloatFuncCode.Truncate_L, &FloatRound<TruncLogic<TFormat>, TFormat, long>);
@@ -291,18 +292,18 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
             Register(format, MipsFloatFuncCode.Floor_L, &FloatRound<FloorLogic<TFormat>, TFormat, long>);
         }
 
-        if (version >= MipsVersion.MipsIV)
+        if (versionInfo.Base >= MipsBaseVersion.MipsIV)
         {
             Register(format, MipsFloatFuncCode.Reciprical, &FloatFAlu<RecipLogic<TFormat>, TFormat>);
         }
 
-        if (version >= MipsVersion.Mips_R2)
+        if (versionInfo.Base >= MipsBaseVersion.R2)
         {
             Register(format, MipsFloatFuncCode.RecipricalSquareRoot, &FloatFAlu<RSqrtLogic<TFormat>, TFormat>);
         }
     }
 
-    private void InitConvertFuncs<TFormat>(MipsVersion version)
+    private void InitConvertFuncs<TFormat>(MipsVersionInfo versionInfo)
         where TFormat : unmanaged, INumber<TFormat>
     {
         var format = MipsInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
@@ -310,7 +311,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         InitConvertFunc<TFormat, double>(format, MipsFloatFuncCode.ConvertToDouble);
         InitConvertFunc<TFormat, int>(format, MipsFloatFuncCode.ConvertToWord);
 
-        if (version.Is64Bit() && typeof(TFormat) != typeof(long))
+        if (versionInfo.Is64Bit && typeof(TFormat) != typeof(long))
         {
             InitConvertFunc<TFormat, long>(format, MipsFloatFuncCode.ConvertToLong);
         }

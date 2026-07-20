@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -13,14 +14,23 @@ namespace Zarem.Mips.Models.Versioning;
 /// </summary>
 public readonly partial struct MipsVersionInfo : IParsable<MipsVersionInfo>
 {
-    [GeneratedRegex(@"^mips(?:(32|64))?(i{1,3}|iv|v|r[1-356])(?:_(32bit|64bit))?$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex(@"^mips(?:(32|64))?(i{1,3}|iv|v|[1-5]|r[1-356])(?:_(32bit|64bit))?$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex GetMipsVersionRegex();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsVersionInfo"/> struct.
     /// </summary>
-    public MipsVersionInfo() : this(MipsBaseVersion.MipsI, false)
+    public MipsVersionInfo() : this(MipsBaseVersion.R2, false)
     {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MipsVersionInfo"/> struct.
+    /// </summary>
+    public MipsVersionInfo(MipsBaseVersion @base)
+    {
+        Base = @base;
+        Is64Bit = Is64BitDefault(@base);
     }
 
     /// <summary>
@@ -30,6 +40,12 @@ public readonly partial struct MipsVersionInfo : IParsable<MipsVersionInfo>
     {
         Base = @base;
         Is64Bit = is64Bit;
+
+        if (Is64Bit && @base <= MipsBaseVersion.MipsII)
+        {
+            ThrowHelper.ThrowArgumentException(
+                $"Architecture baseline '{@base}' cannot be configured as 64-bit. MIPS I and MIPS II are strictly 32-bit architectures.");
+        }
     }
 
     /// <summary>
@@ -106,6 +122,10 @@ public readonly partial struct MipsVersionInfo : IParsable<MipsVersionInfo>
         {
             is64Bit = Is64BitDefault(baseVersion);
         }
+
+        // MipsI and MipsII cannot be 64bit
+        if (is64Bit && baseVersion <= MipsBaseVersion.MipsII)
+            return false;
 
         result = new MipsVersionInfo(baseVersion, is64Bit);
         return true;

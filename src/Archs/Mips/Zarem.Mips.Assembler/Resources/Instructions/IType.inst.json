@@ -4,7 +4,7 @@
     "name": "beq",
     "op_code": 4,
     "args": [ "rs", "rt", "offset" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "if ($rs == $rt) $pc = address"
   },
   {
@@ -12,7 +12,7 @@
     "name": "bne",
     "op_code": 5,
     "args": [ "rs", "rt", "offset" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "if ($rs != $rt) $pc = address"
   },
   {
@@ -20,7 +20,7 @@
     "name": "blez",
     "op_code": 6,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "if ($rs <= 0) $pc = address"
   },
   {
@@ -28,7 +28,7 @@
     "name": "bgtz",
     "op_code": 7,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "if ($rs > 0) $pc = address"
   },
   {
@@ -36,8 +36,8 @@
     "name": "addi",
     "op_code": 8,
     "args": [ "rt", "rs", "imm" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips32R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "behavior": "$rt = $rs + immediate"
   },
   {
@@ -45,7 +45,7 @@
     "name": "addiu",
     "op_code": 9,
     "args": [ "rt", "rs", "imm" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = $rs + immediate"
   },
   {
@@ -53,7 +53,7 @@
     "name": "slti",
     "op_code": 10,
     "args": [ "rt", "rs", "imm" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = $rs < immediate ? 1 : 0"
   },
   {
@@ -61,7 +61,7 @@
     "name": "sltiu",
     "op_code": 11,
     "args": [ "rt", "rs", "imm" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = $rs < immediate ? 1 : 0"
   },
   {
@@ -69,7 +69,7 @@
     "name": "andi",
     "op_code": 12,
     "args": [ "rt", "rs", "imm" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = $rs & immediate"
   },
   {
@@ -77,7 +77,7 @@
     "name": "ori",
     "op_code": 13,
     "args": [ "rt", "rs", "imm" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = $rs | immediate"
   },
   {
@@ -85,7 +85,7 @@
     "name": "xori",
     "op_code": 14,
     "args": [ "rt", "rs", "imm" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = $rs ^ immediate"
   },
   {
@@ -93,7 +93,7 @@
     "name": "lui",
     "op_code": 15,
     "args": [ "rt", "imm" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = immediate << 16"
   },
   {
@@ -101,39 +101,39 @@
     "name": "beql",
     "op_code": 20,
     "args": [ "rs", "rt", "offset" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "added_in": "mips2",
+    "removed_in": "r6"
   },
   {
     "type": "i-type",
     "name": "bnel",
     "op_code": 21,
     "args": [ "rs", "rt", "offset" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "added_in": "mips2",
+    "removed_in": "r6"
   },
   {
     "type": "i-type",
     "name": "blezl",
     "op_code": 22,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "added_in": "mips2",
+    "removed_in": "r6"
   },
   {
     "type": "i-type",
     "name": "bgtzl",
     "op_code": 23,
     "args": [ "rs", "offset" ],
-    "added_in": "MipsII",
-    "removed_in": "Mips32R6"
+    "added_in": "mips2",
+    "removed_in": "r6"
   },
   {
     "type": "i-type",
     "name": "lb",
     "op_code": 32,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = (sbyte)mem[$rs + offset]"
   },
   {
@@ -141,7 +141,7 @@
     "name": "lh",
     "op_code": 33,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = (short)mem[$rs + offset]"
   },
   {
@@ -149,15 +149,15 @@
     "name": "lwl",
     "op_code": 34,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "added_in": "mips1",
+    "removed_in": "r6"
   },
   {
     "type": "i-type",
     "name": "lw",
     "op_code": 35,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = (int)mem[$rs + offset]"
   },
   {
@@ -165,7 +165,7 @@
     "name": "lbu",
     "op_code": 36,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$rt = (byte)mem[$rs + offset]"
   },
   {
@@ -173,7 +173,7 @@
     "name": "lhu",
     "op_code": 37,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "mem[$rs + offset] = (ushort)$rt"
   },
   {
@@ -181,15 +181,15 @@
     "name": "lwr",
     "op_code": 38,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "added_in": "mips1",
+    "removed_in": "r6"
   },
   {
     "type": "i-type",
     "name": "sb",
     "op_code": 40,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "mem[$rs + offset] = (sbyte)$rt"
   },
   {
@@ -197,7 +197,7 @@
     "name": "sh",
     "op_code": 41,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "mem[$rs + offset] = (short)$rt"
   },
   {
@@ -205,15 +205,15 @@
     "name": "swl",
     "op_code": 42,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "added_in": "mips1",
+    "removed_in": "r6"
   },
   {
     "type": "i-type",
     "name": "sw",
     "op_code": 43,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "mem[$rs + offset] = (int)$rt "
   },
   {
@@ -221,15 +221,15 @@
     "name": "swr",
     "op_code": 46,
     "args": [ "rt", "offset_rs" ],
-    "added_in": "MipsI",
-    "removed_in": "Mips32R6"
+    "added_in": "mips1",
+    "removed_in": "r6"
   },
   {
     "type": "i-type",
     "name": "lwc1",
     "op_code": 49,
     "args": [ "ft", "offset_rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "$ft = (int)mem[$rs + offset]"
   },
   {
@@ -237,7 +237,7 @@
     "name": "ldc1",
     "op_code": 53,
     "args": [ "ft", "offset_rs" ],
-    "added_in": "MipsII",
+    "added_in": "mips2",
     "behavior": "$ft = (long)mem[$rs + offset]"
   },
   {
@@ -245,7 +245,7 @@
     "name": "swc1",
     "op_code": 57,
     "args": [ "ft", "offset_rs" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "mem[$rs + offset] = (int)$ft"
   },
   {
@@ -253,7 +253,7 @@
     "name": "sdc1",
     "op_code": 61,
     "args": [ "ft", "offset_rs" ],
-    "added_in": "MipsII",
+    "added_in": "mips2",
     "behavior": "$ft = (long)mem[$rs + offset]"
   }
 ]

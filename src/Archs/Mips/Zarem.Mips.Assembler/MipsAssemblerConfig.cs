@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Zarem.Assembler.Config;
 using Zarem.Mips.Assembler.Models.Enums;
-using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Versioning;
 
 namespace Zarem.Mips.Assembler;
 
@@ -16,23 +16,23 @@ public class MipsAssemblerConfig : AssemblerConfig
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsAssemblerConfig"/> class.
     /// </summary>
-    public MipsAssemblerConfig() : this(MipsVersion.Mips32R2)
+    public MipsAssemblerConfig() : this(new MipsVersionInfo())
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsAssemblerConfig"/> class.
     /// </summary>
-    public MipsAssemblerConfig(MipsVersion version = MipsVersion.Mips32R2)
+    public MipsAssemblerConfig(MipsVersionInfo versionInfo)
     {
-        Version = version;
+        VersionInfo = versionInfo;
     }
 
     /// <summary>
     /// Gets or sets the mips version to use for assembly.
     /// </summary>
     [XmlIgnore]
-    public MipsVersion Version { get; internal set; }
+    public MipsVersionInfo VersionInfo { get; internal set; }
 
     /// <summary>
     /// Gets whether the <see cref="PseudoInstructionSet"/> is a blacklist or whitelist.

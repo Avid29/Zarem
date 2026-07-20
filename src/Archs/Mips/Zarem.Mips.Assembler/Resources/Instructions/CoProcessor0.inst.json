@@ -4,7 +4,7 @@
     "name": "mfc0",
     "rs_code": 0,
     "args": [ "rt", "rd" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "GPR[$rt] = CPR[0, $rd, $sel]"
   },
   {
@@ -12,7 +12,7 @@
     "name": "mfhc0",
     "rs_code": 2,
     "args": [ "rt", "rd" ],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "GPR[$rt] = CPR[0, $rd, $sel][63:32]"
   },
   {
@@ -20,7 +20,7 @@
     "name": "mtc0",
     "rs_code": 4,
     "args": [ "rt", "rd" ],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "CPR[0, $rd, $sel] = GPR[$rt]"
   },
   {
@@ -28,7 +28,7 @@
     "name": "mthc0",
     "rs_code": 6,
     "args": [ "rt", "rd" ],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "CPR[0, $rd, $sel][63:32] = GPR[$rt]"
   },
   {
@@ -37,7 +37,7 @@
     "rs_code": 16,
     "func_code": 1,
     "args": [],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "Read Indexed TLB Entry"
   },
   {
@@ -46,7 +46,7 @@
     "rs_code": 16,
     "func_code": 2,
     "args": [],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "Write Indexed TLB Entry"
   },
   {
@@ -55,7 +55,7 @@
     "rs_code": 16,
     "func_code": 3,
     "args": [],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "TLB Invalidate"
   },
   {
@@ -64,7 +64,7 @@
     "rs_code": 16,
     "func_code": 4,
     "args": [],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "TLB Invalidate Flush"
   },
   {
@@ -73,8 +73,8 @@
     "rs_code": 16,
     "func_code": 6,
     "args": [],
-    "added_in": "MipsI",
-    "removed_in": "Mips_R6",
+    "added_in": "mips1",
+    "removed_in": "r6",
     "behavior": "Write Random TLB Entry"
   },
   {
@@ -83,7 +83,7 @@
     "rs_code": 16,
     "func_code": 8,
     "args": [],
-    "added_in": "MipsI",
+    "added_in": "mips1",
     "behavior": "Index = probe_tlb(EntryHi)"
   },
   {
@@ -93,7 +93,7 @@
     "func_code": 24,
     "rd_fixed": 0,
     "args": [],
-    "added_in": "MipsII",
+    "added_in": "mips2",
     "behavior": "Exception Return"
   },
   {
@@ -103,7 +103,7 @@
     "func_code": 24,
     "rd_fixed": 1,
     "args": [],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "Exception Return No Clear"
   },
   {
@@ -112,7 +112,7 @@
     "rs_code": 16,
     "func_code": 31,
     "args": [],
-    "added_in": "Mips_R1",
+    "added_in": "r1",
     "behavior": "Debug Exception Return"
   },
   {
@@ -121,7 +121,7 @@
     "rs_code": 16,
     "func_code": 32,
     "args": [],
-    "added_in": "Mips_R1",
+    "added_in": "r1",
     "behavior": "Enter Standby Mode"
   },
   {
@@ -131,7 +131,7 @@
     "mfmc0_code": 0,
     "rd_fixed": 12,
     "args": [],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "Disable Interrupts"
   },
   {
@@ -141,7 +141,7 @@
     "mfmc0_code": 0,
     "rd_fixed": 12,
     "args": [ "rt" ],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "Disable Interrupts"
   },
   {
@@ -151,7 +151,7 @@
     "mfmc0_code": 32,
     "rd_fixed": 12,
     "args": [],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "Enable Interrupts"
   },
   {
@@ -161,7 +161,7 @@
     "mfmc0_code": 32,
     "rd_fixed": 12,
     "args": [ "rt" ],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "Enable Interrupts"
   },
   {
@@ -169,7 +169,7 @@
     "name": "rdpgpr",
     "rs_code": 10,
     "args": [ "rd", "rt" ],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "Read Previous Shadow GPR"
   },
   {
@@ -177,7 +177,7 @@
     "name": "wrpgpr",
     "rs_code": 14,
     "args": [ "rd", "rt" ],
-    "added_in": "Mips_R2",
+    "added_in": "r2",
     "behavior": "Write Previous Shadow GPR"
   }
 ]

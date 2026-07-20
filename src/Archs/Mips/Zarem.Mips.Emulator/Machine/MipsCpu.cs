@@ -27,7 +27,7 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     public MipsCpu(MipsEmulatorConfig config, PhysicalBus bus)
     {
         Config = config;
-        RegisterFile = new(config.Version);
+        RegisterFile = new(config.VersionInfo);
         CoProcessor0 = new();
         FloatProcessor = new();
 

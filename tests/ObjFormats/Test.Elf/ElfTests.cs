@@ -5,7 +5,7 @@ using Test.Mips.Helpers;
 using Test.ObjFormats;
 using Zarem.Assembler.Logging.Enum;
 using Zarem.Mips.Assembler.Models.Enums;
-using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Test.Elf;
 
@@ -48,7 +48,7 @@ public class ElfTests : AssemblerTests
         await RunStringTest(DisabledPseudoInstructions, new() { PseudoInstructionPermissibility = PseudoInstructionPermissibility.Blacklist }, LogId.DisabledFeatureInUse);
 
     [TestMethod(nameof(NotInVersion))]
-    public async Task NotInVersionTest() => await RunStringTest(NotInVersion, new(MipsVersion.MipsI), LogId.NotInVersion);
+    public async Task NotInVersionTest() => await RunStringTest(NotInVersion, new(new(MipsBaseVersion.MipsI)), LogId.NotInVersion);
 
     [TestMethod(TestFilePathing.BranchLiteralFile)]
     public async Task BranchLiteralFileTest() => await RunFileTest(TestFilePathing.BranchLiteralFile);

@@ -8,12 +8,15 @@ using Zarem.Assembler.Parsers;
 using Zarem.Assembler.Tokenization.Models.Enums;
 using Zarem.Assembler.Tokenization;
 using Zarem.Mips.Services;
-using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Assembler.Models.Meta;
 using Zarem.Mips.Assembler;
 using Zarem.Mips.Assembler.Models.Tables;
 using Zarem.Mips.Disassembler;
+using Zarem.Mips.Models.Versioning;
+using Zarem.Mips.Models.Versioning.Enums;
+
+
 
 
 
@@ -163,10 +166,10 @@ public class Program()
                     return;
                 }
 
-                var version = MipsVersion.MipsII;
+                var version = new MipsVersionInfo(MipsBaseVersion.MipsII);
                 if (cmdArgs.Length is 3)
                 {
-                    version = (MipsVersion)int.Parse(cmdArgs[2]);
+                    version = MipsVersionInfo.Parse(cmdArgs[2]);
                 }
 
                 Dump(cmdArgs[1], version);
@@ -194,13 +197,13 @@ public class Program()
         Console.WriteLine($"Mode swapped to {_mode} mode");
     }
 
-    void Dump(string tableArg, MipsVersion version = MipsVersion.Mips32R2)
+    void Dump(string tableArg, MipsVersionInfo versionInfo)
     {
         tableArg = tableArg.Trim().ToLower();
         switch (tableArg)
         {
             case "instructions":
-                var instructions = new MipsInstructionTable(new(version)).GetInstructions().OrderBy(x => x.Name);
+                var instructions = new MipsInstructionTable(new(versionInfo)).GetInstructions().OrderBy(x => x.Name);
                 foreach (var instr in instructions)
                 {
                     if (instr is MipsPseudoInstructionMeta)

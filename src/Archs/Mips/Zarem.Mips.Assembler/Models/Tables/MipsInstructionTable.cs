@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Zarem.Mips.Assembler.Models.Enums;
 using Zarem.Mips.Assembler.Models.Meta;
-using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Mips.Assembler.Models.Tables;
 
@@ -14,7 +14,7 @@ namespace Zarem.Mips.Assembler.Models.Tables;
 /// </summary>
 public class MipsInstructionTable : MipsInstructionTableBase<string>
 {
-    private readonly Dictionary<string, (MipsVersion Min, MipsVersion? Max)> _versionRanges = [];
+    private readonly Dictionary<string, (MipsBaseVersion Min, MipsBaseVersion? Max)> _versionRanges = [];
     private readonly HashSet<string> _banned = [];
     private readonly HashSet<string> _is64bitLookup = [];
 
@@ -26,7 +26,7 @@ public class MipsInstructionTable : MipsInstructionTableBase<string>
     }
 
     /// <inheritdoc/>
-    public override bool TryGetInstruction(string name, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsVersion? requiredVersion, out bool is64bit, out bool banned)
+    public override bool TryGetInstruction(string name, [NotNullWhen(true)] out List<MipsInstructionMetaBase>? metadatas, out MipsBaseVersion? requiredVersion, out bool is64bit, out bool banned)
     {
         banned = _banned.Contains(name);
         is64bit = _is64bitLookup.Contains(name);
@@ -37,12 +37,12 @@ public class MipsInstructionTable : MipsInstructionTableBase<string>
 
         if (_versionRanges.TryGetValue(name, out var range))
         {
-            if (Config.Version < range.Min)
+            if (Config.VersionInfo.Base < range.Min)
             {
                 // Instruction exists in a future version
                 requiredVersion = range.Min;
             }
-            else if (range.Max.HasValue && Config.Version >= range.Max.Value)
+            else if (range.Max.HasValue && Config.VersionInfo.Base >= range.Max.Value)
             {
                 // Instruction was removed/obsolete in a past version
                 // We return the last valid version it was in
@@ -63,7 +63,7 @@ public class MipsInstructionTable : MipsInstructionTableBase<string>
     /// <param name="is64bit">Whether or not the instruction requires 64-bit MIPS.</param>
     /// <param name="banned">Indicates if the instruction was found, but is banned according the config.</param>
     /// <returns>Whether or not an instruction exists by that name</returns>
-    public bool TryGetInstruction(string name, int argCount, out MipsInstructionMetaBase? metadata, out MipsVersion? requiredVersion, out bool is64bit, out bool banned)
+    public bool TryGetInstruction(string name, int argCount, out MipsInstructionMetaBase? metadata, out MipsBaseVersion? requiredVersion, out bool is64bit, out bool banned)
     {
         metadata = null;
 
@@ -92,7 +92,7 @@ public class MipsInstructionTable : MipsInstructionTableBase<string>
             }
         }
 
-        if (metadata.IsValidFor(Config.Version))
+        if (metadata.IsValidFor(Config.VersionInfo))
         {
             // Add to the active lookup table in InstructionTableBase
             LoadInstruction(metadata.Name, metadata);

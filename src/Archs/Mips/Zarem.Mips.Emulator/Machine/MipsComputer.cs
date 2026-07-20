@@ -9,7 +9,6 @@ using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Memory;
-using Zarem.Mips.Extensions;
 using Zarem.Models.Enums;
 
 namespace Zarem.Emulator.Machine;
@@ -36,12 +35,12 @@ public class MipsComputer : ComputerBase
         Cpu = config.ExecutionMode switch
         {
             ExecutionMode.JustInTime =>
-                Cpu = config.Version.Is64Bit()
+                Cpu = config.VersionInfo.Is64Bit
                     ? new MipsJitCpu<ulong>(config, bus)
                     : new MipsJitCpu<uint>(config, bus),
 
             ExecutionMode.Interpret or _ =>
-                Cpu = config.Version.Is64Bit()
+                Cpu = config.VersionInfo.Is64Bit
                     ? new MipsInterpretCpu<ulong>(config, bus)
                     : new MipsInterpretCpu<uint>(config, bus),
         };

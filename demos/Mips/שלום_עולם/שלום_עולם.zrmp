@@ -2,7 +2,7 @@
 <Project>
   <Name>שלום_עולם</Name>
   <ArchitectureConfig Type="MIPS">
-    <Version>mips3</Version>
+    <VersionInfo>mips3</VersionInfo>
     <AssemblerConfig Type="MIPS" />
     <EmulatorConfig Type="MIPS">
       <DisableDelaySlots>false</DisableDelaySlots>

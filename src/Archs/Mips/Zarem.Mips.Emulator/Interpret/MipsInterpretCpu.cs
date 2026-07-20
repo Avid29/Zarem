@@ -11,7 +11,6 @@ using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models;
-using Zarem.Mips.Extensions;
 using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Emulator.Interpret;
@@ -29,7 +28,7 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
     /// </summary>
     public MipsInterpretCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
-        _instructionServiceTable = config.Version.Is64Bit()
+        _instructionServiceTable = config.VersionInfo.Is64Bit
             ? new MipsInstructionServiceTable<T, long>(this)
             : new MipsInstructionServiceTable<T, int>(this);
     }
