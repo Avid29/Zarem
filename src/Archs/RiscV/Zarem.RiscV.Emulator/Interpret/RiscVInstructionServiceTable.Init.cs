@@ -163,11 +163,8 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         Register(format, FloatFunc5Code.MinMax, &FloatMinMax<TFormat>);
         Register(format, FloatFunc5Code.SquareRoot, &FloatFAlu<SqrtLogic<TFormat>, TFormat>);
         Register(format, FloatFunc5Code.ConvertToInt, &FloatConvertFrom<TFormat>);
-        Register(format, FloatFunc5Code.ConvertToFloat, &FloatConvertTo<TFormat>);
-        Register(format, FloatFunc5Code.Classify, FloatFunct3Code.FloatClassify, &FloatClassifiy<TFormat>);
+        Register(format, FloatFunc5Code.Classify, &FloatMacGuffin<TFormat>);
         Register(format, FloatFunc5Code.MoveFToX, &FloatMoveFrom<TFormat>);
-        Register(format, FloatFunc5Code.MoveXToF, &FloatMoveTo<TFormat>);
-
         Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessOrEqual, &FloatCompare<TFormat>);
         Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessThan, &FloatCompare<TFormat>);
         Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatEqual, &FloatCompare<TFormat>);

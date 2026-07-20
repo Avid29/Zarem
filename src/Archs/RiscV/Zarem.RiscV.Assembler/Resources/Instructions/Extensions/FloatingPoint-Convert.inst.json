@@ -37,6 +37,7 @@
     "type": "float",
     "name": "fcvt.fmt.w",
     "funct5": 28,
+    "funct3": 7,
     "rs2_fixed": 0,
     "args": [ "frd", "rs1" ],
     "extension": "F"
@@ -45,6 +46,7 @@
     "type": "float",
     "name": "fcvt.fmt.wu",
     "funct5": 28,
+    "funct3": 7,
     "rs2_fixed": 1,
     "args": [ "frd", "rs1" ],
     "extension": "F"
@@ -53,6 +55,7 @@
     "type": "float",
     "name": "fcvt.fmt.l",
     "funct5": 28,
+    "funct3": 7,
     "rs2_fixed": 2,
     "min_base": "RV64",
     "args": [ "frd", "rs1" ],
@@ -62,6 +65,7 @@
     "type": "float",
     "name": "fcvt.fmt.lu",
     "funct5": 28,
+    "funct3": 7,
     "rs2_fixed": 3,
     "min_base": "RV64",
     "args": [ "frd", "rs1" ],
