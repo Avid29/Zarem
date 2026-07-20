@@ -21,7 +21,7 @@ public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
     private static readonly List<(string Name, RiscVExtensions Flag)> _standardExtensions;
     private static readonly List<(string Name, RiscVExtensions Flag)> _zExtensions;
 
-    [GeneratedRegex(@"^RV(32|64|128)(.*)$", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"^RV(32|64|128)(.*)$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex GetRiscVVersionRegex();
 
     [GeneratedRegex(@"[\d+p\d+]*$", RegexOptions.IgnoreCase)]
@@ -108,10 +108,12 @@ public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out RiscVVersionInfo result)
     {
         result = default;
-        if (string.IsNullOrWhiteSpace(s)) return false;
+        if (string.IsNullOrWhiteSpace(s))
+            return false;
 
-        var match = GetRiscVVersionRegex().Match(s);
-        if (!match.Success) return false;
+        var match = GetRiscVVersionRegex().Match(s.Trim());
+        if (!match.Success)
+            return false;
 
         // Parse Base
         RiscVBaseVersion baseVersion = match.Groups[1].Value switch
