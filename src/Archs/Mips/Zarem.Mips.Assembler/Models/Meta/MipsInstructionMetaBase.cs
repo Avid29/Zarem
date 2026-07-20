@@ -2,10 +2,14 @@
 
 using System.Text;
 using System.Text.Json.Serialization;
+using Zarem.Assembler;
 using Zarem.Assembler.Models.Meta;
-using Zarem.Mips.Assembler.Helpers.Tables;
+using Zarem.Assembler.Models.Tables;
+using Zarem.Attributes.Arguments;
 using Zarem.Mips.Extensions;
+using Zarem.Mips.Models.Enums;
 using Zarem.Mips.Models.Instructions.Enums;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Assembler.Models.Meta;
 
@@ -74,7 +78,8 @@ public abstract record MipsInstructionMetaBase : InstructionMetaBase<MipsArgumen
             StringBuilder pattern = new($"{Name} ");
             for (int i = 0; i < ArgumentPattern.Length; i++)
             {
-                pattern.Append(ArgumentTable.GetArgPatternString(ArgumentPattern[i]));
+                var profile = new MipsTokenizerProfile();
+                pattern.Append(ArgumentTable<MipsArgument>.GetDisplay(ArgumentPattern[i], profile));
 
                 if (i < ArgumentPattern.Length - 1)
                 {

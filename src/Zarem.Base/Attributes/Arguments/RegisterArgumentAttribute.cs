@@ -13,7 +13,7 @@ public class RegisterArgumentAttribute<TSet> : ArgumentAttribute
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterArgumentAttribute{TSet}"/> class.
     /// </summary>
-    public RegisterArgumentAttribute(TSet set)
+    public RegisterArgumentAttribute(string alias, TSet set) : base(alias)
     {
         RegisterSet = set;
     }

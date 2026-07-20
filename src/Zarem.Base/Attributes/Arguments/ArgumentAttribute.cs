@@ -10,4 +10,16 @@ namespace Zarem.Attributes.Arguments;
 [AttributeUsage(AttributeTargets.Field)]
 public abstract class ArgumentAttribute : Attribute
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArgumentAttribute"/> class.
+    /// </summary>
+    public ArgumentAttribute(string alias)
+    {
+        Alias = alias;
+    }
+
+    /// <summary>
+    /// Gets the alias for the argument attribute.
+    /// </summary>
+    public string Alias { get; }
 }

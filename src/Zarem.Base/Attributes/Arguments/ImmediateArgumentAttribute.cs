@@ -13,7 +13,7 @@ public class ImmediateArgumentAttribute<TRef> : ArgumentAttribute
     /// <summary>
     /// Initializes a new instance of the <see cref="ImmediateArgumentAttribute{TRef}"/> class.
     /// </summary>
-    public ImmediateArgumentAttribute(int bitCount, bool signed)
+    public ImmediateArgumentAttribute(string alias, int bitCount, bool signed) : base(alias)
     {
         BitCount = bitCount;
         Signed = signed;

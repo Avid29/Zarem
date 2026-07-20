@@ -17,75 +17,75 @@ public enum RiscVArgument : byte
 
     // Integer Registers
     [JsonStringEnumMemberName("rd")]
-    [RegisterArgument<RiscVRegisterSet>(RiscVRegisterSet.GeneralPurpose)]
+    [RegisterArgument<RiscVRegisterSet>("rd", RiscVRegisterSet.GeneralPurpose)]
     RD,
     
     [JsonStringEnumMemberName("rs1")]
-    [RegisterArgument<RiscVRegisterSet>(RiscVRegisterSet.GeneralPurpose)]
+    [RegisterArgument<RiscVRegisterSet>("rs1", RiscVRegisterSet.GeneralPurpose)]
     RS1,
     
     [JsonStringEnumMemberName("rs2")]
-    [RegisterArgument<RiscVRegisterSet>(RiscVRegisterSet.GeneralPurpose)]
+    [RegisterArgument<RiscVRegisterSet>("rs2", RiscVRegisterSet.GeneralPurpose)]
     RS2,
 
     // Floating-Point Registers
     [JsonStringEnumMemberName("frd")]
-    [RegisterArgument<RiscVRegisterSet>(RiscVRegisterSet.FloatingPoints)]
+    [RegisterArgument<RiscVRegisterSet>("frd", RiscVRegisterSet.FloatingPoints)]
     FRD,
 
     [JsonStringEnumMemberName("frs1")]
-    [RegisterArgument<RiscVRegisterSet>(RiscVRegisterSet.FloatingPoints)]
+    [RegisterArgument<RiscVRegisterSet>("frs1", RiscVRegisterSet.FloatingPoints)]
     FRS1,
 
     [JsonStringEnumMemberName("frs2")]
-    [RegisterArgument<RiscVRegisterSet>(RiscVRegisterSet.FloatingPoints)]
+    [RegisterArgument<RiscVRegisterSet>("frs2", RiscVRegisterSet.FloatingPoints)]
     FRS2,
 
     [JsonStringEnumMemberName("frs3")]
-    [RegisterArgument<RiscVRegisterSet>(RiscVRegisterSet.FloatingPoints)]
+    [RegisterArgument<RiscVRegisterSet>("frs3", RiscVRegisterSet.FloatingPoints)]
     FRS3,
 
     // Immediates
     [JsonStringEnumMemberName("imm")]
-    [ImmediateArgument<RiscVReferenceType>(12, true, DefaultRelocation = RiscVReferenceType.Low12)]
+    [ImmediateArgument<RiscVReferenceType>("immediate", 12, true, DefaultRelocation = RiscVReferenceType.Low12)]
     Immediate,
     
     [JsonStringEnumMemberName("store_offset")]
-    [ImmediateArgument<RiscVReferenceType>(12, true, DefaultRelocation = RiscVReferenceType.Low12)]
+    [ImmediateArgument<RiscVReferenceType>("offset", 12, true, DefaultRelocation = RiscVReferenceType.Low12)]
     StoreOffset,
     
     [JsonStringEnumMemberName("branch_offset")]
-    [ImmediateArgument<RiscVReferenceType>(12, true, ShiftAmount = 1, DefaultRelocation = RiscVReferenceType.Branch12)]
+    [ImmediateArgument<RiscVReferenceType>("offset", 12, true, ShiftAmount = 1, DefaultRelocation = RiscVReferenceType.Branch12)]
     BranchOffset,
     
     [JsonStringEnumMemberName("upper_imm")]
-    [ImmediateArgument<RiscVReferenceType>(20, false, DefaultRelocation = RiscVReferenceType.High20)]
+    [ImmediateArgument<RiscVReferenceType>("immediate", 20, false, DefaultRelocation = RiscVReferenceType.High20)]
     UpperImmediate,
     
     [JsonStringEnumMemberName("jump_offset")]
-    [ImmediateArgument<RiscVReferenceType>(20, true, ShiftAmount = 1, DefaultRelocation = RiscVReferenceType.Jump20)]
+    [ImmediateArgument<RiscVReferenceType>("offset", 20, true, ShiftAmount = 1, DefaultRelocation = RiscVReferenceType.Jump20)]
     JumpOffset,
     
     [JsonStringEnumMemberName("imm32")]
-    [ImmediateArgument<RiscVReferenceType>(32, true)]
+    [ImmediateArgument<RiscVReferenceType>("immediate", 32, true)]
     FullImmediate,
 
     // System
     [JsonStringEnumMemberName("csr")]
-    [ImmediateArgument<RiscVReferenceType>(12, false)]
+    [ImmediateArgument<RiscVReferenceType>("immediate", 12, false)]
     Csr,      // 12-bit CSR address
     
     [JsonStringEnumMemberName("csri")]
-    [ImmediateArgument<RiscVReferenceType>(5, false, ShiftAmount = 1)]
+    [ImmediateArgument<RiscVReferenceType>("immediate", 5, false, ShiftAmount = 1)]
     UImm5,    // 5-bit immediate for CSRI
 
     // Memory syntax (e.g., 8(sp))
     [JsonStringEnumMemberName("mem_load")]
-    [SplitArgument<RiscVArgument>(RS1, Immediate)]
+    [SplitArgument<RiscVArgument>("offset(rs1)", RS1, Immediate)]
     MemoryLoad,    // This would be a combination of Immediate + RS1
     
     [JsonStringEnumMemberName("mem_store")]
-    [SplitArgument<RiscVArgument>(RS1, StoreOffset)]
+    [SplitArgument<RiscVArgument>("offset(rs1)", RS1, StoreOffset)]
     MemoryStore    // This would be a combination of StoreOffset + RS1
 
 #pragma warning restore CS1591
