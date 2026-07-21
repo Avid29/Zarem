@@ -252,6 +252,12 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         var type = attr.DefaultRelocation;
         if (expResult.RelocationType is not null)
         {
+            if (Meta is IPseudoInstructionMeta)
+            {
+                _logger?.Log(Severity.Error, LogId.InvalidRelocatable, arg, "PseudoInstructionExplicitRelocation");
+                return false;
+            }
+
             if (!ReferenceTypeTable<TRef>.TryGetReferenceType(expResult.RelocationType, out type))
             {
                 ThrowHelper.ThrowArgumentOutOfRangeException($"Relocation type '{expResult.RelocationType}' is not a valid relocation type.");
@@ -265,7 +271,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             // Vaildate that the relocation type is valid for the argument
             if (attr.BitCount != refAttr.BitCount)
             {
-                _logger?.Log(Severity.Error, LogId.InvalidRelocationType, arg, "InvalidRelocationType", expResult.RelocationType, target);
+                _logger?.Log(Severity.Error, LogId.InvalidRelocatable, arg, "InvalidRelocationType", expResult.RelocationType, target);
                 return false;
             }
 

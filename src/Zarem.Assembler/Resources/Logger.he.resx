@@ -330,4 +330,7 @@
   <data name="CantSRLFloatingPoint" xml:space="preserve">
     <value>לא ניתן לבצע פעולת SRL עם ערך נקודה צפה.</value>
   </data>
+  <data name="PseudoInstructionExplicitRelocation" xml:space="preserve">
+    <value>פקודות פסאודו אינן יכולות להשתמש בהעברות מפורשות.</value>
+  </data>
 </root>
