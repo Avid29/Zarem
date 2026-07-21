@@ -121,5 +121,4 @@ public unsafe partial class MipsJitCompiler<T>
         pushAddress(il);
         il.Emit(OpCodes.Ret);
     }
-
 }
