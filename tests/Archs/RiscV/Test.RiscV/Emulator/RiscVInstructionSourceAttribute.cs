@@ -167,6 +167,7 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         // Jump
         yield return [new RiscVEmulatorTestCase<T>(config, "j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
         yield return [new RiscVEmulatorTestCase<T>(config, "jal 1000", RiscVGpRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(1000) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "jalr ra, 0(t3)", RiscVGpRegister.ReturnAddress, T.CreateTruncating(4)) { ExpectedPC = T.CreateTruncating(40) }];
 
         // Branch Equality
         yield return [new RiscVEmulatorTestCase<T>(config, "beq t1, t2, 80") { ExpectedPC = T.CreateTruncating(4) }];

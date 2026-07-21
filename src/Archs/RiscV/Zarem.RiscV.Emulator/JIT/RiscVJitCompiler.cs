@@ -168,33 +168,42 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
     }
 
     private void JumpAndLink(ILGenerator il, RiscVInstruction inst, T pc)
-    {
-        // Link if needed
-        if (inst.RD is not RiscVGpRegister.Zero)
+        => JumpAndLink(il, inst, pc, pushAddress: il =>
         {
-            EmitStoreRegister(il, inst.RD, il =>
-            {
-                il.EmitLoadConstant(pc + T.CreateTruncating(4));
-            });
-        }
-
-        // Return
-        EmitRet(il, T.CreateTruncating(inst.JumpOffset));
-    }
+            var target = pc + T.CreateTruncating(inst.JumpOffset);
+            il.EmitLoadConstant(target);
+        });
 
     private void JumpAndLinkRegister(ILGenerator il, RiscVInstruction inst, T pc)
+        => JumpAndLink(il, inst, pc, pushAddress: il =>
+        {
+            EmitLoadRegister(il, inst.RS1);
+
+            // Add offset if non-zero
+            if (inst.Immediate is not 0)
+            {
+                il.EmitLoadConstant(inst.Immediate);
+                il.Emit(OpCodes.Add);
+            }
+
+            // Clear the least significant bit
+            il.EmitLoadConstant(T.CreateTruncating(~1L));
+            il.Emit(OpCodes.And);
+        });
+
+    private void JumpAndLink(ILGenerator il, RiscVInstruction inst, T pc, Action<ILGenerator> pushAddress)
     {
         // Link if needed
         if (inst.RD is not RiscVGpRegister.Zero)
         {
             EmitStoreRegister(il, inst.RD, il =>
             {
-                EmitLoadRegister<T>(il, inst.RS1);
+                var returnAddress = pc + T.CreateTruncating(4);
+                il.EmitLoadConstant(returnAddress);
             });
         }
 
-        // Return
-        EmitRet(il, T.CreateTruncating(inst.JumpOffset));
+        EmitRet(il, pushAddress);
     }
 
     private void Load<TData>(ILGenerator il, RiscVInstruction inst, T pc)
