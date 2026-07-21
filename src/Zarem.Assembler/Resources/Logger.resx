@@ -330,4 +330,7 @@
   <data name="CantSRLFloatingPoint" xml:space="preserve">
     <value>Cannot perform SRL operation with a floating-point value.</value>
   </data>
+  <data name="PseudoInstructionExplicitRelocation" xml:space="preserve">
+    <value>Pseudo instructions cannot use explicit relocations.</value>
+  </data>
 </root>
