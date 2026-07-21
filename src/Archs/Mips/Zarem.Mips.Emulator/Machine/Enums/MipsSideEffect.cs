@@ -1,11 +1,8 @@
 ﻿// Avishai Dernis 2025
 
-
-// Avishai Dernis 2025
-
 using Zarem.Emulator.Interpret;
 
-namespace Zarem.Emulator.Machine.Enums;
+namespace Zarem.Mips.Emulator.Machine.Enums;
 
 /// <summary>
 /// An enum describing the secondary effect of an <see cref="MipsExecution{T}"/>.

@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-
-// Avishai Dernis 2026
-
 using Zarem.RiscV.Emulator.Interpret;
 
 namespace Zarem.RiscV.Emulator.Machine.Enums;

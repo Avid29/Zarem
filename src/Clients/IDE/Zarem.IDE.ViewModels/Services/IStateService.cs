@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-
-// Avishai Dernis 2026
-
 using Zarem.IDE.Models.Enums;
 
 namespace Zarem.IDE.Services;

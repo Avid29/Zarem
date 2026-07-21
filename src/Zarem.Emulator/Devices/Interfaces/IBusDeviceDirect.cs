@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-
-// Avishai Dernis 2026
-
 namespace Zarem.Emulator.Devices.Interfaces;
 
 /// <summary>

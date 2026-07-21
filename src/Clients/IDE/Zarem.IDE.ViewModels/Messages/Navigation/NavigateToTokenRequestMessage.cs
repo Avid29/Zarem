@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-
-// Avishai Dernis 2025
-
 using Zarem.Assembler.Tokenization.Models;
 
 namespace Zarem.IDE.Messages.Navigation;

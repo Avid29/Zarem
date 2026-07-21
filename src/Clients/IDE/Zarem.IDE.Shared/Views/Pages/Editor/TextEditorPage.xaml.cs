@@ -75,7 +75,7 @@ public sealed partial class TextEditorPage : UserControl, IFileEditorHandler
 
     private string? OriginalText
     {
-        get => field;
+        get;
         set
         {
             if (value == field)

@@ -32,7 +32,7 @@ public sealed class RiscVArchitectureConfig : ConfigBase, IArchitectureConfig
     /// </summary>
     public RiscVVersionInfo VersionInfo
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -45,7 +45,7 @@ public sealed class RiscVArchitectureConfig : ConfigBase, IArchitectureConfig
     /// <inheritdoc cref="IArchitectureConfig.AssemblerConfig"/>
     public RiscVAssemblerConfig AssemblerConfig
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -56,7 +56,7 @@ public sealed class RiscVArchitectureConfig : ConfigBase, IArchitectureConfig
     /// <inheritdoc cref="IArchitectureConfig.EmulatorConfig"/>
     public RiscVEmulatorConfig EmulatorConfig
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -67,7 +67,7 @@ public sealed class RiscVArchitectureConfig : ConfigBase, IArchitectureConfig
     /// <inheritdoc cref="IArchitectureConfig.LinkerConfig"/>
     public RiscVLinkerConfig LinkerConfig
     {
-        get => field;
+        get;
         set
         {
             field = value;
