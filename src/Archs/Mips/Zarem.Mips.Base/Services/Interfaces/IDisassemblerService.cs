@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-
-// Avishai Dernis 2025
-
 using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Mips.Services.Interfaces;

@@ -68,7 +68,7 @@ public class DebugService : IDebugService
     /// <inheritdoc/>
     public SourceRange? ExecutingLocation
     {
-        get => field;
+        get;
         set
         {
             field = value;

@@ -3,6 +3,7 @@
 using System;
 using Zarem.Emulator.Interpret;
 using Zarem.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Mips.Models.Instructions.Enums.Registers;

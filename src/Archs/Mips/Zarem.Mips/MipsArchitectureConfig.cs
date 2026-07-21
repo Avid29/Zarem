@@ -31,7 +31,7 @@ public sealed class MipsArchitectureConfig : ConfigBase, IArchitectureConfig
     /// </summary>
     public MipsVersionInfo VersionInfo
     {
-        get => field;
+        get;
         init
         {
             field = value;

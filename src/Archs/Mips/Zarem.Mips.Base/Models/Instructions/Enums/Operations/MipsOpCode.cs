@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2024
 
-
-// Avishai Dernis 2024
-
 using Zarem.Mips.Models.Instructions.Enums.Functions;
 
 namespace Zarem.Mips.Models.Instructions.Enums.Operations;

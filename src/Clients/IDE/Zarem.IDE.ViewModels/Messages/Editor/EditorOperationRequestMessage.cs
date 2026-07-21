@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-
-// Avishai Dernis 2025
-
 using Zarem.IDE.Messages.Editor.Enums;
 
 namespace Zarem.IDE.Messages.Editor;

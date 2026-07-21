@@ -1,8 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-
-// Avishai Dernis 2026
-
 using Zarem.Emulator.Machine.Memory;
 
 namespace Zarem.RiscV.Emulator.Machine;

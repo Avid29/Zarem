@@ -47,6 +47,6 @@ public class BreakpointIdentity
 
             return field;
         }
-        set => field = value;
+        set;
     }
 }

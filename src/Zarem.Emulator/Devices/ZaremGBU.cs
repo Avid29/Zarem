@@ -41,7 +41,7 @@ public class ZaremGBU : IBusDevice, IGraphicsDevice
     /// <inheritdoc/>
     public bool IsDirty
     {
-        get => field;
+        get;
         set
         {
             field = value;

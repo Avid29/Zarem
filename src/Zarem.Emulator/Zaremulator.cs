@@ -45,7 +45,7 @@ public class Zaremulator : IDisposable
     /// <inheritdoc/>
     public EmulatorState State
     {
-        get => field;
+        get;
         set
         {
             field = value;

@@ -11,6 +11,7 @@ using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models;
+using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Emulator.Interpret;
