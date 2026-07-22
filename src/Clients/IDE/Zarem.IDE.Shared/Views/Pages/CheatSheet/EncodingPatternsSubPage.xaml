@@ -77,7 +77,7 @@
         Margin="48,16"
         HorizontalAlignment="Stretch"
         ItemTemplate="{StaticResource EncodingPatternGroupTemplate}"
-        ItemsSource="{x:Bind ViewModel.CheatSheet.EncodingPatternsGroups}">
+        ItemsSource="{x:Bind ViewModel.CheatSheetPage.EncodingPatternsGroups, Mode=OneWay}">
         <ItemsRepeater.Layout>
             <StackLayout Spacing="4" />
         </ItemsRepeater.Layout>

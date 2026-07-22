@@ -26,7 +26,11 @@ public class CheatSheetViewModel : PageViewModel
     {
         _localizationService = localizationService;
         AvailableArchitectures = ZaremRegistry.Architectures.GetDescriptors().Where(x => x.CheatSheetAssembly is not null);
-        SubPages = [];
+        SubPages = [
+            new UsagePatternsViewModel(_localizationService),
+            new EncodingPatternsViewModel(_localizationService),
+            new EncodingTablesViewModel(_localizationService)
+            ];
 
         Architecture = AvailableArchitectures.FirstOrDefault();
     }
@@ -65,10 +69,9 @@ public class CheatSheetViewModel : PageViewModel
             return;
 
         var page = CheatSheetPage.LoadCheatSheet(arch.CheatSheetAssembly);
-
-        SubPages.Clear();
-        SubPages.Add(new UsagePatternsViewModel(page, _localizationService));
-        SubPages.Add(new EncodingPatternsViewModel(page, _localizationService));
-        SubPages.Add(new EncodingTablesViewModel(_localizationService));
+        foreach (var subPage in SubPages)
+        {
+            subPage.CheatSheetPage = page;
+        }
     }
 }
