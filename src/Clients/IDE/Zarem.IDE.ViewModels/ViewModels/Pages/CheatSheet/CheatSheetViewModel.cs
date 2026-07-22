@@ -32,7 +32,7 @@ public class CheatSheetViewModel : PageViewModel
     }
     
     /// <inheritdoc/>
-    public override string Title => _localizationService["/PageTitles/MIPSCheatSheet"];
+    public override string Title => _localizationService["/PageTitles/CheatSheet"];
 
     /// <summary>
     /// Gets the collection of settings sub-pages.

@@ -123,8 +123,8 @@
   <data name="CreateNewProject" xml:space="preserve">
     <value>Create New Project</value>
   </data>
-  <data name="MIPSCheatSheet" xml:space="preserve">
-    <value>MIPS Cheat Sheet</value>
+  <data name="CheatSheet" xml:space="preserve">
+    <value>Cheat Sheet</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
