@@ -182,7 +182,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
             // Add offset if non-zero
             if (inst.Immediate is not 0)
             {
-                il.EmitLoadConstant(inst.Immediate);
+                il.EmitLoadConstant(T.CreateTruncating(inst.Immediate));
                 il.Emit(OpCodes.Add);
             }
 
