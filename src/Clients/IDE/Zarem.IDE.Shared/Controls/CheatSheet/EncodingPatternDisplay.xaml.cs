@@ -2,6 +2,7 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Linq;
 using Zarem.CheatSheet.Models;
 using Zarem.IDE.Controls.CheatSheet.Palettes;
 
@@ -50,10 +51,10 @@ public sealed partial class EncodingPatternDisplay : UserControl
         if (EncodingPattern.Sections is null)
             return;
 
-        for (int i = 0; i < EncodingPattern.Sections.Length; i++)
+        var sortedSections = EncodingPattern.Sections.OrderByDescending(x => x.BitRangeStart);
+        int i = 0;
+        foreach (var section in sortedSections)
         {
-            var section = EncodingPattern.Sections[i];
-
             // Create a column definition for the section
             var column = new ColumnDefinition
             {
@@ -69,9 +70,10 @@ public sealed partial class EncodingPatternDisplay : UserControl
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
             };
+
             Grid.SetColumn(content, i);
             Container.Children.Add(content);
-
+            i++;
         }
     }
 }

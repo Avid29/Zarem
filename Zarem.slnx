@@ -74,6 +74,9 @@
     <Project Path="src/Archs/RiscV/Zarem.RiscV.Base/Zarem.RiscV.Base.csproj" Id="32597ba3-5177-4db4-8541-6e800567872d">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
+    <Project Path="src/Archs/RiscV/Zarem.RiscV.CheatSheet/Zarem.RiscV.CheatSheet.csproj" Id="79c46f0e-2041-42fa-9f4f-05859e95d991">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
     <Project Path="src/Archs/RiscV/Zarem.RiscV.Debugger/Zarem.RiscV.Debugger.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>

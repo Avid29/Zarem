@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System.Reflection;
 using Zarem.Descriptors.Base;
 
 namespace Zarem.Descriptors;
@@ -9,6 +10,11 @@ namespace Zarem.Descriptors;
 /// </summary>
 public interface IArchitectureDescriptor : IConfigDescriptor, IDisplayDescriptor
 {
+    /// <summary>
+    /// Gets the assembly containing the cheatsheet info for the architecture.
+    /// </summary>
+    Assembly? CheatSheetAssembly { get; }
+
     /// <summary>
     /// Gets the <see cref="IAssemblerDescriptor"/> for the architecture's assembler.
     /// </summary>

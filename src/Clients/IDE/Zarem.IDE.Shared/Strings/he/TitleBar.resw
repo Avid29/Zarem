@@ -135,7 +135,7 @@
   <data name="BuildProjectMFI.Text" xml:space="preserve">
     <value>בנה פרויקט</value>
   </data>
-  <data name="MIPSCheatSheetMFI.Text" xml:space="preserve">
+  <data name="ShowCheatSheetMFI.Text" xml:space="preserve">
     <value>הצג גיליון רמאות</value>
   </data>
   <data name="CleanFileMFI.Text" xml:space="preserve">

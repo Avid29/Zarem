@@ -81,7 +81,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <ItemsRepeater Margin="48,16" ItemsSource="{x:Bind ViewModel.Collections}">
+    <ItemsRepeater Margin="48,16" ItemsSource="{x:Bind ViewModel.Collections, Mode=OneWay}">
         <ItemsRepeater.Layout>
             <StackLayout Spacing="4" />
         </ItemsRepeater.Layout>

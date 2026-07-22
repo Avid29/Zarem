@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <RootNamespace>Zarem.Mips.CheatSheet</RootNamespace>
+	  <RootNamespace>Zarem.RiscV.CheatSheet</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="InstructionCollections.json" />
     <EmbeddedResource Include="EncodingPatterns.json" />
+    <EmbeddedResource Include="InstructionCollections.json" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Zarem.CheatSheet\Zarem.CheatSheet.csproj" />
-    <ProjectReference Include="..\Zarem.Mips.Base\Zarem.Mips.Base.csproj" />
+    <ProjectReference Include="..\Zarem.RiscV.Base\Zarem.RiscV.Base.csproj" />
   </ItemGroup>
 
 </Project>

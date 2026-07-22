@@ -15,18 +15,11 @@ public class EncodingPatternsViewModel : CheatSheetSubPageViewModel
     /// <summary>
     /// Initializes a new instance of the <see cref="EncodingPatternsViewModel"/> class.
     /// </summary>
-    public EncodingPatternsViewModel(CheatSheetPage cheatSheet, ILocalizationService localizationService)
+    public EncodingPatternsViewModel(ILocalizationService localizationService)
     {
         _localizationService = localizationService;
-
-        CheatSheet = cheatSheet;
     }
 
     /// <inheritdoc/>
     public override string Title => _localizationService["/CheatSheet/InstructionEncodingPatternsTitle"];
-
-    /// <summary>
-    /// Gets the <see cref="CheatSheetPage"/>.
-    /// </summary>
-    public CheatSheetPage CheatSheet { get; }
 }

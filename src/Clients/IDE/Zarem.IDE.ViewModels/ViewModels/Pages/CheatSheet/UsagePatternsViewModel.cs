@@ -18,36 +18,34 @@ public class UsagePatternsViewModel : CheatSheetSubPageViewModel
     /// <summary>
     /// Initializes a new instance of the <see cref="UsagePatternsViewModel"/> class.
     /// </summary>
-    public UsagePatternsViewModel(CheatSheetPage cheatSheet, ILocalizationService localizationService)
+    public UsagePatternsViewModel(ILocalizationService localizationService)
     {
         _localizationService = localizationService;
 
-        CheatSheet = cheatSheet;
         Collections = [];
-
-        // TODO: Load the instruction metadata from a service.
-        var table = new MipsInstructionTable(new());
-        var instructions = table.GetInstructions(false);
-
-        if (cheatSheet.InstructionCollections is null)
-            return;
-
-        foreach (var collection in cheatSheet.InstructionCollections)
-        {
-            Collections.Add(new BindableInstructionCollection(collection, instructions));
-        }
     }
 
     /// <inheritdoc/>
     public override string Title => _localizationService["/CheatSheet/InstructionUsagePatternsTitle"];
 
     /// <summary>
-    /// Gets the <see cref="CheatSheetPage"/>.
-    /// </summary>
-    public CheatSheetPage CheatSheet { get; }
-
-    /// <summary>
     /// Gets a collection of the <see cref="BindableInstructionCollection"/>.
     /// </summary>
     public ObservableCollection<BindableInstructionCollection> Collections { get; }
+
+    private protected override void Refresh()
+    {
+        // TODO: Load the instruction metadata from a service.
+        var table = new MipsInstructionTable(new());
+        var instructions = table.GetInstructions(false);
+
+        if (CheatSheetPage?.InstructionCollections is null)
+            return;
+
+        Collections.Clear();
+        foreach (var collection in CheatSheetPage.InstructionCollections)
+        {
+            Collections.Add(new BindableInstructionCollection(collection, instructions));
+        }
+    }
 }

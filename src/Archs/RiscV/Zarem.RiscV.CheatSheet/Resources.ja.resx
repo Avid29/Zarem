@@ -117,19 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="About" xml:space="preserve">
-    <value>About Zarem</value>
+  <data name="EncodingGroup/FloatingPoint" xml:space="preserve">
+    <value>Floating-Point Instruction Types Encoding Patterns</value>
   </data>
-  <data name="CreateNewProject" xml:space="preserve">
-    <value>Create New Project</value>
+  <data name="EncodingGroup/Primary" xml:space="preserve">
+    <value>Primary Instruction Types Encoding Patterns</value>
   </data>
-  <data name="CheatSheet" xml:space="preserve">
-    <value>Cheat Sheet</value>
+  <data name="EncodingPattern/ITypeInstructions" xml:space="preserve">
+    <value>Immediate (I) Type Instructions</value>
   </data>
-  <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+  <data name="EncodingPattern/JTypeInstructions" xml:space="preserve">
+    <value>Jump (J) Type Instructions</value>
   </data>
-  <data name="Welcome" xml:space="preserve">
-    <value>Welcome</value>
+  <data name="EncodingPattern/RTypeInstructions" xml:space="preserve">
+    <value>Register (R) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/STypeInstructions" xml:space="preserve">
+    <value>Store (S) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/UTypeInstructions" xml:space="preserve">
+    <value>Upper (U) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/FloatR4TypeInstructions" xml:space="preserve">
+    <value>Fused Multiply-Add Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/BTypeInstructions" xml:space="preserve">
+    <value>Branch (B) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/RTypeFpInstructions" xml:space="preserve">
+    <value>Floating-Point Register Type Instructions</value>
   </data>
 </root>

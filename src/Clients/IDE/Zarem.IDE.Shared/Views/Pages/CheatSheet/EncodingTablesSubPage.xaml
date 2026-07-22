@@ -8,7 +8,6 @@
     xmlns:local="using:Zarem.IDE.Views.Pages.CheatSheet"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mipsreg="using:Zarem.Mips.Models.Instructions.Enums.Registers"
-    xmlns:tables="using:Zarem.Assembler.Helpers.Tables"
     d:DesignHeight="300"
     d:DesignWidth="400"
     Loaded="UserControl_Loaded"

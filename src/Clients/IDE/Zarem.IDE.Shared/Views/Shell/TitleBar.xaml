@@ -586,9 +586,9 @@
                     <KeyboardAccelerator Key="H" Modifiers="Menu" />
                 </MenuBarItem.KeyboardAccelerators>
                 <MenuFlyoutItem
-                    x:Uid="/TitleBar/MIPSCheatSheetMFI"
+                    x:Uid="/TitleBar/ShowCheatSheetMFI"
                     Command="{x:Bind ViewModel.OpenMIPSCheatSheetCommand, Mode=OneWay}"
-                    Text="Show MIPS Cheatsheet">
+                    Text="Show Cheat Sheet">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xF7DB;" />
                     </MenuFlyoutItem.Icon>

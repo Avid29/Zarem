@@ -10,13 +10,11 @@
     xmlns:cvms="using:Zarem.IDE.ViewModels.Pages.CheatSheet"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:data="using:Zarem.Assembler.Models"
+    xmlns:descriptors="using:Zarem.Descriptors"
     xmlns:local="using:Zarem.IDE.Views.Pages.CheatSheet"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:Zarem.IDE.Models.CheatSheet"
     xmlns:palette="using:Zarem.IDE.Controls.CheatSheet.Palettes"
-    xmlns:reg="using:Zarem.Models.Instructions.Enums.Registers"
     xmlns:selectors="using:Zarem.IDE.Selectors"
-    xmlns:tables="using:Zarem.Assembler.Helpers.Tables"
     mc:Ignorable="d">
 
     <ScrollViewer>
@@ -34,10 +32,11 @@
 
             <ctc:Segmented
                 x:Name="SegmentedPageSelector"
-                Grid.ColumnSpan="3"
+                Grid.Column="1"
                 Margin="8,8,8,32"
                 HorizontalAlignment="Center"
                 ItemsSource="{x:Bind ViewModel.SubPages}"
+                Orientation="Horizontal"
                 SelectedIndex="0">
                 <ctc:Segmented.ItemTemplate>
                     <DataTemplate x:DataType="cvms:CheatSheetSubPageViewModel">
@@ -46,10 +45,24 @@
                 </ctc:Segmented.ItemTemplate>
             </ctc:Segmented>
 
+            <ComboBox
+                Grid.Column="2"
+                Margin="16,0"
+                HorizontalAlignment="Right"
+                ItemsSource="{x:Bind ViewModel.AvailableArchitectures, Mode=OneWay}"
+                SelectedItem="{x:Bind ViewModel.Architecture, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="descriptors:IArchitectureDescriptor">
+                        <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
             <ContentControl
                 x:Name="ContentDisplay"
                 Grid.Row="1"
                 Grid.Column="1"
+                Grid.ColumnSpan="2"
                 MaxWidth="1000"
                 HorizontalContentAlignment="Stretch"
                 Content="{x:Bind SegmentedPageSelector.SelectedItem, Mode=OneWay}">
@@ -79,12 +92,21 @@
             <VisualStateGroup>
                 <VisualState>
                     <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1500" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentDisplay.(Grid.ColumnSpan)" Value="1" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="1800" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="ContentDisplay.MaxWidth" Value="2000" />
                         <Setter Target="LeftGutter.Width" Value="0.25*" />
                         <Setter Target="RightGutter.Width" Value="0.25*" />
+                        <Setter Target="ContentDisplay.(Grid.ColumnSpan)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

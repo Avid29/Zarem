@@ -1,9 +1,11 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Reflection;
 using Zarem.Attributes;
 using Zarem.Descriptors;
 using Zarem.Descriptors.Base;
+using Zarem.Mips.CheatSheet;
 
 namespace Zarem.Mips;
 
@@ -36,4 +38,7 @@ public class MipsArchitectureDescriptor : LocalizedDescriptor<MipsArchitectureDe
 
     /// <inheritdoc/>
     public IDebuggerDescriptor Debugger => new MipsDebuggerDescriptor();
+
+    /// <inheritdoc/>
+    public Assembly? CheatSheetAssembly => typeof(MipsCheatSheet).Assembly;
 }
