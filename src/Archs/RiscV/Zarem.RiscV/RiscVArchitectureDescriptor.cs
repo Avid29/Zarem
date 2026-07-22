@@ -1,9 +1,11 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using System.Reflection;
 using Zarem.Attributes;
 using Zarem.Descriptors;
 using Zarem.Descriptors.Base;
+using Zarem.RiscV.CheatSheet;
 
 namespace Zarem.RiscV;
 
@@ -36,4 +38,7 @@ public class RiscVArchitectureDescriptor : LocalizedDescriptor<RiscVArchitecture
 
     /// <inheritdoc/>
     public IDebuggerDescriptor Debugger => new RiscVDebuggerDescriptor();
+
+    /// <inheritdoc/>
+    public Assembly? CheatSheetAssembly => typeof(RiscVCheatSheet).Assembly;
 }

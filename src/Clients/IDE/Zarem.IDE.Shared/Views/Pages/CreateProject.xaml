@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:descriptors="using:Zarem.Descriptors"
     xmlns:helpers="using:Zarem.IDE.Helpers"
-    xmlns:ienums="using:Zarem.Models.Instructions.Enums"
     xmlns:local="using:Zarem.IDE.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
