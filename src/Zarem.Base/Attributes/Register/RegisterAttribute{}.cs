@@ -14,7 +14,15 @@ public class RegisterAttribute<TCategory> : RegisterAttribute
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterAttribute{TCategory}"/> class.
     /// </summary>
-    public RegisterAttribute(string alias, TCategory category) : base(alias)
+    public RegisterAttribute(TCategory category) : this(null, category)
+    {
+        Category = category;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RegisterAttribute{TCategory}"/> class.
+    /// </summary>
+    public RegisterAttribute(string? alias, TCategory category) : base(alias)
     {
         Category = category;
     }
