@@ -15,22 +15,28 @@ public static class BitField
     /// </summary>
     /// <param name="value">The uint containing the bitfield.</param>
     /// <param name="size">The size of the bitfield to grab.</param>
-    /// <param name="offset">The offset of the bitfield</param>
-    /// <returns></returns>
+    /// <param name="offset">The offset of the bitfield.</param>
+    /// <param name="signExtend">Whether or not the sign extend.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe static T GetField<T>(T value, int size, int offset)
+    public unsafe static T GetField<T>(T value, int size, int offset, bool signExtend = false)
         where T : unmanaged, IBinaryInteger<T>
     {
+        T extracted;
+
         if (offset is 0)
         {
-            return value & ((T.One << size) - T.One);
+            extracted = value & ((T.One << size) - T.One);
         }
         else if (size + offset == sizeof(T) * 8)
         {
-            return value >> offset;
+            extracted = value >> offset;
+        }
+        else
+        {
+            extracted = (value >> offset) & ((T.One << size) - T.One);
         }
 
-        return (value >> offset) & ((T.One << size) - T.One);
+        return signExtend ? SignExtend(extracted, size) : extracted;
     }
 
     /// <summary>
@@ -46,6 +52,19 @@ public static class BitField
     {
         T mask = ((T.One << size) - T.One) << offset;
         target = (target & ~mask) | ((value << offset) & mask);
+    }
+
+    /// <summary>
+    /// Sign-extends a value from an arbitrary bit size to a standard signed integer.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T SignExtend<T>(T value, int size)
+        where T : unmanaged, IBinaryInteger<T>
+    {
+        var signMask = T.One << (size - 1);
+        var valueMask = (T.One << size) - T.One;
+        var isolatedValue = value & valueMask;
+        return isolatedValue - ((isolatedValue & signMask) << 1);
     }
 
     /// <summary>

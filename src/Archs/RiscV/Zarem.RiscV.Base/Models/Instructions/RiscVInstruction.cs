@@ -193,7 +193,7 @@ public struct RiscVInstruction
             uint low = BitField.GetField(_inst, 5, 7);
             uint high = BitField.GetField(_inst, 7, 25);
             int val = (int)((high << 5) | low);
-            return (short)((val << 20) >> 20); // Manual sign extension
+            return (short)BitField.SignExtend(val, 12);
         }
         set
         {
@@ -220,9 +220,8 @@ public struct RiscVInstruction
             uint raw = (b12 << 12) | (b11 << 11) | (b5_10 << 5) | (b1_4 << 1);
 
             // Sign extend from bit 12 to 32 bits
-            // Logic: Shift left to move bit 12 to bit 31, then arithmetic shift right 
-            // to propagate the sign bit across the top 19 bits.
-            return (int)(raw << 19) >> 19;
+
+            return (int)BitField.SignExtend(raw, 12);
         }
         set
         {
@@ -262,7 +261,7 @@ public struct RiscVInstruction
             uint raw = (j20 << 20) | (j12_19 << 12) | (j11 << 11) | (j1_10 << 1);
 
             // Sign extend from bit 20 to 32 bits
-            return (int)(raw << 11) >> 11;
+            return (int)BitField.SignExtend(raw, 21);
         }
         set
         {
