@@ -3,8 +3,9 @@
 using System;
 using Zarem.Attributes;
 using Zarem.Descriptors;
-using Zarem.Emulator.Config;
 using Zarem.Emulator.Machine;
+using Zarem.Mips.Emulator.Config;
+using Zarem.Mips.Emulator.Machine;
 
 namespace Zarem.Mips;
 

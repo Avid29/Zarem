@@ -3,6 +3,7 @@
 using Zarem.Emulator.Devices;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Memory;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.N64.Config;
 using Zarem.N64.Devices;
 using Zarem.N64.Devices.RCP;

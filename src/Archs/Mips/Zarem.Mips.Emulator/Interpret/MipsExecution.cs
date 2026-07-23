@@ -6,7 +6,7 @@ using Zarem.Helpers;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Interpret;
+namespace Zarem.Mips.Emulator.Interpret;
 
 /// <summary>
 /// A struct representing the results of an instruction's execution.

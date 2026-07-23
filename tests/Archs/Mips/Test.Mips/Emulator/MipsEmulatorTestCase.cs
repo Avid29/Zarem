@@ -3,10 +3,9 @@
 using System;
 using System.Numerics;
 using Test.Archs.Emulator;
-using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Machine.Registers;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Test.Mips.Emulator;

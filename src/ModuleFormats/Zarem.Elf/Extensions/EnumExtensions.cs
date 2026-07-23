@@ -3,7 +3,7 @@
 using LibObjectFile.Elf;
 using Zarem.Models.Tables.Enums;
 
-namespace ObjFormats.LibOF.Extensions;
+namespace Zarem.Elf.Extensions;
 
 /// <summary>
 /// A static class containing enum extensions

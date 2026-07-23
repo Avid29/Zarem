@@ -1,9 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using Zarem.Emulator.Machine.CPU;
 
-namespace Zarem.Emulator.Machine.Interfaces;
+namespace Zarem.Emulator.Machine.CPU;
 
 /// <summary>
 /// An interface for an interpret-emulation-based CPU.

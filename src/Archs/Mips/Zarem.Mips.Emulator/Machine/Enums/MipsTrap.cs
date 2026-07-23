@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Interpret;
+using Zarem.Mips.Emulator.Interpret;
 
-namespace Zarem.Emulator.Machine.Enums;
+namespace Zarem.Mips.Emulator.Machine.Enums;
 
 /// <summary>
 /// An enum describing the kind of trap that occurred during an <see cref="MipsExecution{T}"/>.

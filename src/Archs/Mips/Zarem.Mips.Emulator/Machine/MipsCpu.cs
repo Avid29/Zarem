@@ -1,19 +1,19 @@
 ﻿// Avishai Dernis 2025
 
 using System.Numerics;
-using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.CPU;
-using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Memory;
-using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.TrapHandlers;
+using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.TrapHandlers;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 using Zarem.Models.Enums;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.Mips.Emulator.Machine;
 
 /// <summary>
 /// A base class representing a processor unit.

@@ -4,17 +4,15 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.CPU;
-using Zarem.Emulator.Machine.Enums;
-using Zarem.Emulator.Machine.Interfaces;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models;
+using Zarem.Mips.Emulator.Config;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 
-namespace Zarem.Emulator.Interpret;
+namespace Zarem.Mips.Emulator.Interpret;
 
 /// <summary>
 /// A <see cref="MipsCpu{T}"/> that executes by interpreting each instruction.
