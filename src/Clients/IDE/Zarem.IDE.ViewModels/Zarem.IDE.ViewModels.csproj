@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Archs\Arm\AArch64\Zarem.AArch64\Zarem.AArch64.csproj" />
     <ProjectReference Include="..\..\..\Archs\MIPS\Zarem.MIPS\Zarem.Mips.csproj" />
     <ProjectReference Include="..\..\..\Archs\RiscV\Zarem.RiscV\Zarem.RiscV.csproj" />
     <ProjectReference Include="..\..\..\ModuleFormats\Zarem.ELF\Zarem.Elf.csproj" />
