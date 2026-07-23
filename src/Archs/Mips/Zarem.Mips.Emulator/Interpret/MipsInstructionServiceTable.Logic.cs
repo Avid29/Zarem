@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Machine.Enums;
 
 namespace Zarem.Emulator.Models;
 

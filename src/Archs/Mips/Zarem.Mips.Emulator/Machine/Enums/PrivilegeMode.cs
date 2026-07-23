@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.Emulator.Machine.Enums;
+namespace Zarem.Mips.Emulator.Machine.Enums;
 
 /// <summary>
 /// An enum describing the priviledge mode the processor is operating in.

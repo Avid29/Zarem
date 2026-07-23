@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Emulator.Interpret;
+using Zarem.Mips.Emulator.Interpret;
 
 namespace Zarem.Mips.Emulator.Machine.Enums;
 

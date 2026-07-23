@@ -5,6 +5,7 @@ using Zarem.Config;
 using Zarem.Emulator.Config;
 using Zarem.Linker.Config;
 using Zarem.Mips.Assembler;
+using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Linker.Config;
 using Zarem.Mips.Models.Versioning;
 

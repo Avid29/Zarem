@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using Zarem.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 
-namespace Zarem.Emulator.Interpret;
+namespace Zarem.Mips.Emulator.Interpret;
 
 /// <summary>
 /// A struct which handles converting decoded instructions into <see cref="MipsExecution{T}"/> models.

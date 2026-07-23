@@ -2,8 +2,8 @@
 
 using CommunityToolkit.Diagnostics;
 using LibObjectFile.Elf;
-using ObjFormats.LibOF.Extensions;
 using Zarem.Elf.Config;
+using Zarem.Elf.Extensions;
 using Zarem.Models;
 using Zarem.Models.Tables;
 using Zarem.Models.Tables.Enums;

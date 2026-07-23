@@ -1,11 +1,12 @@
 ﻿// Avishai Dernis 2024
 
 using System.Numerics;
-using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Machine.Registers;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Machine.CoProcessors;
+namespace Zarem.Mips.Emulator.Machine.CoProcessors;
 
 /// <summary>
 /// A class representing the status/control coprocessor unit.

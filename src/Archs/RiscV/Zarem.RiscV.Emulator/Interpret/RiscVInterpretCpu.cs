@@ -4,7 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Machine.Interfaces;
+using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models;
 using Zarem.RiscV.Emulator.Config;

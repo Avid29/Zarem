@@ -4,7 +4,7 @@ using System;
 using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
-using Zarem.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 

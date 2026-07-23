@@ -3,7 +3,7 @@
 using System;
 using Zarem.Attributes;
 using Zarem.Descriptors;
-using Zarem.Emulator.TrapHandlers;
+using Zarem.Mips.Emulator.TrapHandlers;
 
 namespace Zarem.Mips.TrapHandlers;
 

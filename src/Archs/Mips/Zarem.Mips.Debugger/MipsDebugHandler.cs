@@ -5,6 +5,7 @@ using Zarem.Debugger.Handlers;
 using Zarem.Debugger.Viewer;
 using Zarem.Emulator.Machine;
 using Zarem.Mips.Debugger.Viewer;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Functions;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
