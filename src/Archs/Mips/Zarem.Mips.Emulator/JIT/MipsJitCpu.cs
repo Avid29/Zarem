@@ -2,15 +2,15 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine;
-using Zarem.Emulator.Machine.Enums;
+using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.JIT;
-using Zarem.Mips.Emulator.JIT;
+using Zarem.Mips.Emulator.Config;
+using Zarem.Mips.Emulator.Machine;
+using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.Mips.Emulator.JIT;
 
 /// <summary>
 /// A <see cref="MipsCpu{T}"/> which uses JIT cross-compilation for execution.

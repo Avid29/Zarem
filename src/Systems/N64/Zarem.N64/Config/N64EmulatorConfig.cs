@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
+using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Models.Versioning;
 using Zarem.Mips.Models.Versioning.Enums;
 

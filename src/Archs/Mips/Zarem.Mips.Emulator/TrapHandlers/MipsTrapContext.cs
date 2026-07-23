@@ -1,12 +1,12 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.CPU;
-using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.TrapHandlers.Interfaces;
+using Zarem.Mips.Emulator.Machine;
+using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.TrapHandlers;
+namespace Zarem.Mips.Emulator.TrapHandlers;
 
 /// <summary>
 /// An <see cref="ITrapContext"/> for the mips architecture, which provides access to the relevant registers for trap handling. This is used to abstract the trap context from the architecture, so that the trap handlers can be implemented in a more generic way.

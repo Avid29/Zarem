@@ -3,10 +3,11 @@
 using CommunityToolkit.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Zarem.Emulator.Machine.Registers;
 using Zarem.Mips.Models.Versioning;
 using Zarem.Mips.Models.Versioning.Enums;
 
-namespace Zarem.Emulator.Machine.Registers;
+namespace Zarem.Mips.Emulator.Machine.Registers;
 
 /// <summary>
 /// A class representing a register file.

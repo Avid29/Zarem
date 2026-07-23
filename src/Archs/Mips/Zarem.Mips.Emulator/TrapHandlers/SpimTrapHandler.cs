@@ -3,10 +3,11 @@
 using System;
 using System.Text;
 using Zarem.Emulator.Exceptions;
-using Zarem.Emulator.Machine.Enums;
+using Zarem.Emulator.TrapHandlers;
 using Zarem.Emulator.TrapHandlers.Interfaces;
+using Zarem.Mips.Emulator.Machine.Enums;
 
-namespace Zarem.Emulator.TrapHandlers;
+namespace Zarem.Mips.Emulator.TrapHandlers;
 
 /// <summary>
 /// A <see cref="ITrapHandler"/> that implements the SPIM syscalls.

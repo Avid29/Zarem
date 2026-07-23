@@ -2,9 +2,9 @@
 
 using System;
 using System.Numerics;
-using Zarem.Emulator.Interpret;
-using Zarem.Emulator.Machine.Enums;
 using Zarem.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Interpret;
+using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Emulator.Models;

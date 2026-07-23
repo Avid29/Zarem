@@ -1,9 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Mips.Emulator.Machine.CoProcessors;
 
-namespace Zarem.Emulator.Machine.CoProcessors;
+namespace Zarem.Mips.Emulator.Machine.CoProcessors;
 
 /// <summary>
 /// An interface for a <see cref="FloatProcessor{T}"/> without a concrete type.

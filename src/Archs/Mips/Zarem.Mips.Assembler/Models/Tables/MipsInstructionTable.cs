@@ -3,8 +3,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Zarem.Mips.Assembler.Models.Enums;
 using Zarem.Mips.Assembler.Models.Meta;
+using Zarem.Mips.Models.Enums;
 using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Mips.Assembler.Models.Tables;

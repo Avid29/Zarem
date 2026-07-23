@@ -1,10 +1,11 @@
 ﻿// Avishai Dernis 2026
 
 using System.Xml.Serialization;
+using Zarem.Emulator.Config;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Mips.Models.Versioning;
 
-namespace Zarem.Emulator.Config;
+namespace Zarem.Mips.Emulator.Config;
 
 /// <summary>
 /// A class containing emulator configurations for the MIPS emulator.

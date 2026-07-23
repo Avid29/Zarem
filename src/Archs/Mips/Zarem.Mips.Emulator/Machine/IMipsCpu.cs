@@ -1,13 +1,13 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.Emulator.Config;
-using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.CPU;
-using Zarem.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Config;
+using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Machine;
+namespace Zarem.Mips.Emulator.Machine;
 
 /// <summary>
 /// A class representing a processor unit.
