@@ -18,9 +18,9 @@ This project is in pre-release stages of development. Changes to Project File fo
 | Architecture   | Assembling      | Emulation (Interpret) | Emulation (JIT) | Debugging      | Disassembly     | Static Analysis |
 | -------------- | --------------- | --------------------- | --------------- | -------------- | --------------- | --------------- |
 | MIPS*          | ✅ Supported    | ✅ Supported         | ⚠️ WIP          | ✅ Supported   | ⚠️ WIP         | ⌛ Planned      |
-| RISC-V         | ⚠️ WIP          | ⚠️ WIP               | ⚠️ WIP          | ⚠️ WIP         | ⌛ Planned     | ⌛ Planned      |
-| ARM            | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
-| ARM64          | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
+| RISC-V         | ✅ Supported    | ⚠️ WIP               | ⚠️ WIP          | ⚠️ WIP         | ⌛ Planned     | ⌛ Planned      |
+| ARM   (AArch32)| ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
+| ARM64 (AArch64)| ⚠️ WIP          | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
 | x86_64         | ❌ Not Planned  | ❌ Not Planned       | ❌ Not Planned  | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned  |
 
 \* *MIPS32/64 Release 6 is considerably different from every other version of mips and is not currently supported*.
