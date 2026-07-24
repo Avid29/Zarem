@@ -2,7 +2,7 @@
 
 using Zarem.Emulator.Machine.Memory;
 
-namespace Zarem.Mips.Emulator.Machine;
+namespace Zarem.Mips.Emulator.Machine.Tlb;
 
 /// <summary>
 /// A MIPS Translation Lookaside Buffer.
