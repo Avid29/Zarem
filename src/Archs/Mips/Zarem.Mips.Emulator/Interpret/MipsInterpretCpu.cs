@@ -188,7 +188,18 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
             case MipsSideEffect.WriteDouble:
                 FloatProcessor.Longs[(int)execution.FloatReg] = execution.FLongWriteBack;
                 break;
-                // TODO: Handle TLB side effects
+            case MipsSideEffect.TLBProbe:
+                CoProcessor0.WritebackTlbp();
+                break;
+            case MipsSideEffect.TLBRead:
+                CoProcessor0.WritebackTlbr();
+                break;
+            case MipsSideEffect.TLBWriteIndexed:
+                CoProcessor0.WritebackTlbwi();
+                break;
+            case MipsSideEffect.TLBWriteRandom:
+                CoProcessor0.WritebackTlbwr();
+                break;
         }
 
         // Apply the program counter update

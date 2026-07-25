@@ -31,7 +31,7 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         CoProcessor0 = new();
         FloatProcessor = new();
 
-        Tlb = new MipsTlb();
+        Tlb = new MipsTlb<T>();
         Memory = new MemorySystem(bus, Tlb);
 
         // HOTFIX: Initialize $sp
@@ -64,7 +64,7 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     /// <summary>
     /// Gets the translation look-aside buffer.
     /// </summary>
-    public MipsTlb Tlb { get; }
+    public MipsTlb<T> Tlb { get; }
 
     /// <summary>
     /// Gets the system memory.

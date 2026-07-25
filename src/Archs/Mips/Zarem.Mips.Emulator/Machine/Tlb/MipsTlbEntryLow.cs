@@ -88,4 +88,14 @@ public unsafe struct MipsTlbEntryLow<T>
     }
 
     private static bool Is64Bit => sizeof(T) == sizeof(long);
+
+    /// <summary>
+    /// Casts a <see cref="MipsTlbEntryLow{T}"/> to a <typeparamref name="T"/>.
+    /// </summary>
+    public static implicit operator T(MipsTlbEntryLow<T> value) => Unsafe.As<MipsTlbEntryLow<T>, T>(ref value);
+
+    /// <summary>
+    /// Casts a <typeparamref name="T"/> to a <see cref="MipsTlbEntryLow{T}"/>.
+    /// </summary>
+    public static explicit operator MipsTlbEntryLow<T>(T value) => Unsafe.As<T, MipsTlbEntryLow<T>>(ref value);
 }

@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Helpers;
+using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Mips.Emulator.Machine.Tlb;
 
@@ -78,4 +79,14 @@ public unsafe struct MipsTlbEntryHigh<T>
     }
 
     private static bool Is64Bit => sizeof(T) == sizeof(long);
+
+    /// <summary>
+    /// Casts a <see cref="MipsTlbEntryHigh{T}"/> to a <typeparamref name="T"/>.
+    /// </summary>
+    public static implicit operator T(MipsTlbEntryHigh<T> value) => Unsafe.As<MipsTlbEntryHigh<T>, T>(ref value);
+
+    /// <summary>
+    /// Casts a <typeparamref name="T"/> to a <see cref="MipsTlbEntryHigh{T}"/>.
+    /// </summary>
+    public static explicit operator MipsTlbEntryHigh<T>(T value) => Unsafe.As<T, MipsTlbEntryHigh<T>>(ref value);
 }

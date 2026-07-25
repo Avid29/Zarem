@@ -32,6 +32,11 @@ public unsafe class MipsTlb<T> : IAddressTranslator
     /// </summary>
     public Span<MipsTlbEntry<T>> Slots => _slots;
 
+    /// <summary>
+    /// Gets the number of TLB slots.
+    /// </summary>
+    public int SlotCount => _slots.Length;
+
     /// <inheritdoc/>
     public ulong Translate(ulong virtualAddress) => virtualAddress;
 
@@ -75,7 +80,7 @@ public unsafe class MipsTlb<T> : IAddressTranslator
     /// Reads an entry from the TLB array at the specified index.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ref MipsTlbEntry<T> Read(int index)
+    public ref readonly MipsTlbEntry<T> Read(int index)
     {
         int maskedIndex = index & (_slots.Length - 1);
         return ref _slots[maskedIndex];
@@ -98,10 +103,14 @@ public unsafe class MipsTlb<T> : IAddressTranslator
     /// </summary>
     /// <returns>The index of the matching slot, or -1 if no match is found.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int Probe(in MipsTlbEntry<T> entry)
+    public int Probe(in MipsTlbEntry<T> entry) => Probe(entry.Hi);
+
+    /// <inheritdoc cref="Probe(in MipsTlbEntryHigh{T})"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int Probe(in MipsTlbEntryHigh<T> entryHi)
     {
         // Probe solely cares about matching the Virtual Address tag from EntryHi
-        return FindMatchingSlotIndex(entry.Hi.RawValue);
+        return FindMatchingSlotIndex(entryHi.RawValue);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
