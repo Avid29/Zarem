@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.Enums;
@@ -104,45 +105,65 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
         read = default;
 
         ulong addr = ulong.CreateTruncating(execution.MemAddress);
-        ulong size = execution.MemSize;
+        int size = (int)execution.MemSize;
 
-        // NOTE: Alignment was already checked during the execution phase.
-        // No need to check it here too.
+        MemoryAccessResult accessResult = MemoryAccessResult.Success;
+        bool isWrite = false;
 
         if (execution.SideEffect is MipsSideEffect.ReadMemory or MipsSideEffect.ReadMemorySigned)
         {
             bool signed = execution.SideEffect is MipsSideEffect.ReadMemorySigned;
-            read = size switch
-            {
-                1 => signed ? T.CreateSaturating(Memory.Read<sbyte>(addr)) : T.CreateTruncating(Memory.Read<byte>(addr)),
-                2 => signed ? T.CreateSaturating(Memory.Read<short>(addr)) : T.CreateTruncating(Memory.Read<ushort>(addr)),
-                4 => signed ? T.CreateSaturating(Memory.Read<int>(addr)) : T.CreateTruncating(Memory.Read<uint>(addr)),
-                8 => signed ? T.CreateSaturating(Memory.Read<long>(addr)) : T.CreateTruncating(Memory.Read<ulong>(addr)),
-                _ => ThrowHelper.ThrowInvalidOperationException<T>($"Invalid memory read size: {size}"),
-            };
-        }
-        else if (execution.SideEffect is MipsSideEffect.WriteMemory)
-        {
+
             switch (size)
             {
                 case 1:
-                    Memory.Write(addr, byte.CreateTruncating(execution.Writeback));
+                    accessResult = Memory.TryRead(addr, out byte b);
+                    read = signed ? T.CreateSaturating((sbyte)b) : T.CreateTruncating(b);
                     break;
                 case 2:
-                    Memory.Write(addr, ushort.CreateTruncating(execution.Writeback));
+                    accessResult = Memory.TryRead(addr, out ushort s);
+                    read = signed ? T.CreateSaturating((short)s) : T.CreateTruncating(s);
                     break;
                 case 4:
-                    Memory.Write(addr, uint.CreateTruncating(execution.Writeback));
+                    accessResult = Memory.TryRead(addr, out uint i);
+                    read = signed ? T.CreateSaturating((int)i) : T.CreateTruncating(i);
                     break;
                 case 8:
-                    Memory.Write(addr, ulong.CreateTruncating(execution.Writeback));
+                    accessResult = Memory.TryRead(addr, out ulong l);
+                    read = signed ? T.CreateSaturating((long)l) : T.CreateTruncating(l);
                     break;
                 default:
-                    throw new InvalidOperationException($"Invalid memory write size: {size}");
+                    return ThrowHelper.ThrowInvalidOperationException<MipsTrap>($"Invalid memory read size: {size}");
             }
         }
+        else if (execution.SideEffect is MipsSideEffect.WriteMemory)
+        {
+            isWrite = true;
+            accessResult = size switch
+            {
+                1 => Memory.TryWrite(addr, byte.CreateTruncating(execution.Writeback)),
+                2 => Memory.TryWrite(addr, ushort.CreateTruncating(execution.Writeback)),
+                4 => Memory.TryWrite(addr, uint.CreateTruncating(execution.Writeback)),
+                8 => Memory.TryWrite(addr, ulong.CreateTruncating(execution.Writeback)),
+                _ => throw new InvalidOperationException($"Invalid memory write size: {size}"),
+            };
+        }
 
-        return MipsTrap.None;
+        return accessResult switch
+        {
+            MemoryAccessResult.Success => MipsTrap.None,
+
+            MemoryAccessResult.TranslationFault when isWrite => MipsTrap.TlbMissStore,
+            MemoryAccessResult.TranslationFault => MipsTrap.TlbMissLoad,
+
+            MemoryAccessResult.AddressError when isWrite => MipsTrap.AddressErrorStore,
+            MemoryAccessResult.AddressError => MipsTrap.AddressErrorLoad,
+
+            MemoryAccessResult.AccessViolation when isWrite => MipsTrap.AddressErrorStore,
+            MemoryAccessResult.AccessViolation => MipsTrap.AddressErrorLoad,
+
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsTrap>(),
+        };
     }
 
     private MipsTrap WriteBack(MipsExecution<T> execution, T memRead)

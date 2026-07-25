@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Helpers;
+using Zarem.Emulator.Models.Enums;
 using Zarem.Models.Enums;
 
 namespace Zarem.Emulator.Machine.Memory;
@@ -40,6 +41,14 @@ public unsafe class PhysicalBus : IMemoryAccessor
     public Endianness Endianness { get; }
 
     /// <inheritdoc/>
+    public MemoryAccessResult TryRead<T>(ulong address, out T value)
+        where T : unmanaged, IBinaryNumber<T>
+    {
+        value = Read<T>(address);
+        return MemoryAccessResult.Success;
+    }
+
+    /// <inheritdoc/>
     public T Read<T>(ulong address)
         where T : unmanaged, IBinaryNumber<T>
     {
@@ -60,6 +69,32 @@ public unsafe class PhysicalBus : IMemoryAccessor
 
         // Fallback: MMIO/Hardware registers
         return ReadSlow<T>(device, offset);
+    }
+
+    /// <inheritdoc/>
+    public MemoryAccessResult TryRead(ulong address, Span<byte> buffer)
+    {
+        Read(address, buffer);
+        return MemoryAccessResult.Success;
+    }
+
+    /// <inheritdoc/>
+    public void Read(ulong address, Span<byte> buffer)
+    {
+        var device = _mapper.Resolve(address, out var baseAddress);
+        ulong offset = address - baseAddress;
+
+        if (offset + (ulong)buffer.Length > device.BusRangeSize)
+            throw new Exception("Cross-device multi-byte read is not supported.");
+
+        device.Read(offset, buffer);
+    }
+
+    /// <inheritdoc/>
+    public MemoryAccessResult TryWrite<T>(ulong address, T value) where T : unmanaged, IBinaryNumber<T>
+    {
+        Write(address, value);
+        return MemoryAccessResult.Success;
     }
 
     /// <inheritdoc/>
@@ -94,7 +129,47 @@ public unsafe class PhysicalBus : IMemoryAccessor
     }
 
     /// <inheritdoc/>
+    public MemoryAccessResult TryWrite(ulong address, ReadOnlySpan<byte> buffer)
+    {
+        Write(address, buffer);
+        return MemoryAccessResult.Success;
+    }
+
+    /// <inheritdoc/>
+    public void Write(ulong address, ReadOnlySpan<byte> buffer)
+    {
+        var device = _mapper.Resolve(address, out var baseAddress);
+        ulong offset = address - baseAddress;
+
+        device.Write(offset, buffer);
+        AddressWritten?.Invoke(this, address);
+    }
+
+    /// <inheritdoc/>
     public Stream AsStream() => new BusStream(this);
+
+    private T ReadSlow<T>(IBusDevice device, ulong offset) where T : unmanaged, IBinaryNumber<T>
+    {
+        int size = sizeof(T);
+        // Use a fixed buffer on the stack to avoid span overhead in the slow path
+        byte* buffer = stackalloc byte[size];
+        var span = new Span<byte>(buffer, size);
+
+        device.Read(offset, span);
+        return ReadEndianness<T>(span);
+    }
+
+    private void WriteSlow<T>(IBusDevice device, ulong offset, T value)
+        where T : unmanaged, IBinaryNumber<T>
+    {
+        int size = sizeof(T);
+        byte* buffer = stackalloc byte[size];
+        var span = new Span<byte>(buffer, size);
+
+        WriteEndianness(span, value);
+
+        device.Write(offset, span);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void CheckAlignment<T>(ulong address)
@@ -194,50 +269,5 @@ public unsafe class PhysicalBus : IMemoryAccessor
         }
 
         throw new NotSupportedException($"Size {sizeof(T)} not supported for endianness swap.");
-    }
-
-    /// <inheritdoc/>
-    public void Read(ulong address, Span<byte> buffer)
-    {
-        var device = _mapper.Resolve(address, out var baseAddress);
-        ulong offset = address - baseAddress;
-
-        if (offset + (ulong)buffer.Length > device.BusRangeSize)
-            throw new Exception("Cross-device multi-byte read is not supported.");
-
-        device.Read(offset, buffer);
-    }
-
-    /// <inheritdoc/>
-    public void Write(ulong address, ReadOnlySpan<byte> buffer)
-    {
-        var device = _mapper.Resolve(address, out var baseAddress);
-        ulong offset = address - baseAddress;
-
-        device.Write(offset, buffer);
-        AddressWritten?.Invoke(this, address);
-    }
-
-    private T ReadSlow<T>(IBusDevice device, ulong offset) where T : unmanaged, IBinaryNumber<T>
-    {
-        int size = sizeof(T);
-        // Use a fixed buffer on the stack to avoid span overhead in the slow path
-        byte* buffer = stackalloc byte[size];
-        var span = new Span<byte>(buffer, size);
-
-        device.Read(offset, span);
-        return ReadEndianness<T>(span);
-    }
-
-    private void WriteSlow<T>(IBusDevice device, ulong offset, T value)
-        where T : unmanaged, IBinaryNumber<T>
-    {
-        int size = sizeof(T);
-        byte* buffer = stackalloc byte[size];
-        var span = new Span<byte>(buffer, size);
-
-        WriteEndianness(span, value);
-
-        device.Write(offset, span);
     }
 }

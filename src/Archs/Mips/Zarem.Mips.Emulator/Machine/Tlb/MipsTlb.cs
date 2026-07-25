@@ -1,10 +1,11 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
-using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Machine.Memory;
+using Zarem.Emulator.Models.Enums;
 
 namespace Zarem.Mips.Emulator.Machine.Tlb;
 
@@ -38,18 +39,31 @@ public unsafe class MipsTlb<T> : IAddressTranslator
     public int SlotCount => _slots.Length;
 
     /// <inheritdoc/>
-    public ulong Translate(ulong virtualAddress) => virtualAddress;
+    public ulong Translate(ulong virtualAddress)
+    {
+        if (TryTranslate(virtualAddress, out var pAddress) is MemoryAccessResult.Success)
+            return pAddress;
+
+        // TODO: Improve exception type/message
+        return ThrowHelper.ThrowArgumentOutOfRangeException<ulong>();
+    }
 
     /// <inheritdoc/>
-    public bool TryTranslate(ulong virtualAddress, out ulong address)
+    public MemoryAccessResult TryTranslate(ulong virtualAddress, out ulong pAddress)
     {
+        if (!IsMapped(virtualAddress))
+        {
+            pAddress = virtualAddress;
+            return MemoryAccessResult.Success;
+        }
+
         T vAddress = T.CreateTruncating(virtualAddress);
 
         int slotIndex = FindMatchingSlotIndex(vAddress);
         if (slotIndex < 0)
         {
-            address = 0;
-            return false;
+            pAddress = 0;
+            return MemoryAccessResult.TranslationFault;
         }
 
         ref readonly var slot = ref _slots[slotIndex];
@@ -60,10 +74,10 @@ public unsafe class MipsTlb<T> : IAddressTranslator
         var selectedLo = isOddPage ? slot.Low1 : slot.Low0;
 
         if (!selectedLo.Valid)
-        {
+        { 
             // Match found but page is invalid -> TLB Invalid Exception (TLBL/TLBS)
-            address = 0;
-            return false;
+            pAddress = 0;
+            return MemoryAccessResult.AccessViolation;
         }
 
         // Reconstruct physical destination address using the PFN and lower page offset bits
@@ -71,9 +85,12 @@ public unsafe class MipsTlb<T> : IAddressTranslator
         ulong offsetMask = (1UL << oddPageBitIndex) - 1;
         ulong pageOffset = virtualAddress & offsetMask;
 
-        // MIPS PFNs are shifted left by 12 to align into physical address spaces
-        address = (pfn << 12) | pageOffset;
-        return true;
+        // Mask out the lower offset bits from the PFN base allocation alignment, 
+        // then combine with the page offset to compute the true physical pointer.
+        ulong pfnBaseAddress = (pfn << 12) & ~offsetMask;
+
+        pAddress = pfnBaseAddress | pageOffset;
+        return MemoryAccessResult.Success;
     }
 
     /// <summary>
@@ -175,5 +192,11 @@ public unsafe class MipsTlb<T> : IAddressTranslator
     private static bool IsOddPageAddress(T vAddress, int oddPageBitIndex)
     {
         return ((vAddress >> oddPageBitIndex) & T.One) == T.One;
+    }
+
+    private static bool IsMapped(ulong vAddress)
+    {
+        // TODO: Handle checking memory segment
+        return false;
     }
 }

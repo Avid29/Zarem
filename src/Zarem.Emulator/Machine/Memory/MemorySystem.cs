@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Numerics;
+using Zarem.Emulator.Models.Enums;
 
 namespace Zarem.Emulator.Machine.Memory;
 
@@ -27,16 +28,36 @@ public sealed class MemorySystem : IMemorySystem
     public IVirtualMemoryAccessor Virtual { get; }
 
     /// <inheritdoc/>
-    public T Read<T>(ulong address) where T : unmanaged, IBinaryNumber<T>
+    public MemoryAccessResult TryRead<T>(ulong address, out T value)
+        where T : unmanaged, IBinaryNumber<T>
+        => Virtual.TryRead(address, out value);
+
+    /// <inheritdoc/>
+    public T Read<T>(ulong address)
+        where T : unmanaged, IBinaryNumber<T>
         => Virtual.Read<T>(address);
+
+    /// <inheritdoc/>
+    public MemoryAccessResult TryRead(ulong address, Span<byte> buffer)
+        => Virtual.TryRead(address, buffer);
 
     /// <inheritdoc/>
     public void Read(ulong address, Span<byte> buffer)
         => Virtual.Read(address, buffer);
 
     /// <inheritdoc/>
-    public void Write<T>(ulong address, T value) where T : unmanaged, IBinaryNumber<T>
+    public MemoryAccessResult TryWrite<T>(ulong address, T value)
+        where T : unmanaged, IBinaryNumber<T>
+        => Virtual.TryWrite(address, value);
+
+    /// <inheritdoc/>
+    public void Write<T>(ulong address, T value)
+        where T : unmanaged, IBinaryNumber<T>
         => Virtual.Write(address, value);
+
+    /// <inheritdoc/>
+    public MemoryAccessResult TryWrite(ulong address, ReadOnlySpan<byte> buffer)
+        => Virtual.TryWrite(address, buffer);
 
     /// <inheritdoc/>
     public void Write(ulong address, ReadOnlySpan<byte> buffer)
