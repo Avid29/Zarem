@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Helpers;
+using Zarem.Mips.Emulator.Machine.Enums;
 
 namespace Zarem.Mips.Emulator.Machine.Tlb;
 
@@ -47,13 +48,13 @@ public unsafe struct MipsTlbEntryLow<T>
     }
 
     /// <summary>
-    /// TODO: Document
+    /// Gets or sets the cache mode.
     /// </summary>
-    public byte Cache
+    public MipsCacheAttribute Cache
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly get => byte.CreateTruncating(BitField.GetField(_value, CACHE_BIT_SIZE, CACHE_BIT_OFFSET));
-        set => BitField.SetField(ref _value, CACHE_BIT_SIZE, CACHE_BIT_OFFSET, T.CreateTruncating(value));
+        readonly get => (MipsCacheAttribute)byte.CreateTruncating(BitField.GetField(_value, CACHE_BIT_SIZE, CACHE_BIT_OFFSET));
+        set => BitField.SetField(ref _value, CACHE_BIT_SIZE, CACHE_BIT_OFFSET, T.CreateTruncating((byte)value));
     }
 
     /// <summary>
