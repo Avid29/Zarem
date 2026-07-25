@@ -28,11 +28,11 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     {
         Config = config;
         RegisterFile = new(config.VersionInfo);
-        CoProcessor0 = new();
-        FloatProcessor = new();
 
         Tlb = new MipsTlb<T>();
         Memory = new MemorySystem(bus, Tlb);
+        CoProcessor0 = new(Tlb);
+        FloatProcessor = new();
 
         // HOTFIX: Initialize $sp
         this[MipsGpRegister.StackPointer] = T.CreateTruncating(0x7FFF_8000);

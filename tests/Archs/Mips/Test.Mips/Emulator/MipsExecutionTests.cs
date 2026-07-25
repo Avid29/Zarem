@@ -136,7 +136,7 @@ public partial class MipsExecutionTests
         var cpu = (MipsCpu<T>)computer.Cpu;
 
         // Initialize the status register
-        cpu.CoProcessor0.StatusRegister = @case.Status;
+        cpu.CoProcessor0.RegisterFile.StatusRegister = @case.Status;
 
         // Initialize the register file with the provided values
         foreach (var (reg, value) in @case.RegisterInitialization)
