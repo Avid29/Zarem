@@ -53,6 +53,16 @@ public unsafe class MipsTlb<T> : IAddressTranslator
     {
         if (!IsMapped(virtualAddress))
         {
+            // Apply the fixed physical mask for MIPS32 / MIPS64 compatibility windows
+            if ((virtualAddress >> 32) == 0 || virtualAddress >= 0xFFFF_FFFF_8000_0000UL)
+            {
+                pAddress = virtualAddress & 0x1FFF_FFFF;
+            }
+            else // XKPhys 64-bit segment
+            {
+                pAddress = virtualAddress & 0x07FF_FFFF_FFFF_FFFFUL;
+            }
+
             pAddress = virtualAddress;
             return MemoryAccessResult.Success;
         }
@@ -196,7 +206,30 @@ public unsafe class MipsTlb<T> : IAddressTranslator
 
     private static bool IsMapped(ulong vAddress)
     {
-        // TODO: Handle checking memory segment
-        return false;
+        // If any of the top 32 bits are set, evaluate 64-bit space rules first
+        if ((vAddress >> 32) != 0)
+        {
+            switch (vAddress >> 62)
+            {
+                case 0: return true;  // xkuseg
+                case 1: return true;  // xksseg
+                case 2: return false; // xkphys
+                case 3:
+                    // If it's the 32-bit sign-extended compatibility space, 
+                    // fall down to the switch statement below. Otherwise, xkseg is mapped.
+                    if (vAddress >= 0xFFFF_FFFF_8000_0000UL)
+                        break;
+                    return true;
+            }
+        }
+
+        return (uint)vAddress switch
+        {
+            < 0x8000_0000 => true, // kuseg
+            >= 0x8000_0000 and < 0xA000_0000 => false, // kseg0
+            >= 0xA000_0000 and < 0xC000_0000 => false, // kseg1
+            >= 0xC000_0000 and < 0xE000_0000 => true, // keg2
+            >= 0xE000_0000 => true, // keg3
+        };
     }
 }

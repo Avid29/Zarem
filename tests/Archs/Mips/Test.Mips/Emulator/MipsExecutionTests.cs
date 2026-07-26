@@ -231,7 +231,7 @@ public partial class MipsExecutionTests
             if (!cpu.Config.DisableDelaySlots && execution.SideEffect is MipsSideEffect.ProgramCounter)
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
-                Assert.AreEqual((uint)4, computer.Cpu.ProgramCounter);
+                Assert.AreEqual(MipsCpu<T>.BOOT_ADDRESS + 4, computer.Cpu.ProgramCounter);
                 computer.Cpu.Insert(MipsInstruction.NOP, out _);
             }
 

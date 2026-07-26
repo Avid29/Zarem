@@ -22,6 +22,11 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <summary>
+    /// The boot address for a MIPS CPU.
+    /// </summary>
+    public const ulong BOOT_ADDRESS = 0xBFC0_0000;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
     /// </summary>
     public MipsCpu(MipsEmulatorConfig config, PhysicalBus bus)
@@ -33,6 +38,9 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         Memory = new MemorySystem(bus, Tlb);
         CoProcessor0 = new(Tlb);
         FloatProcessor = new();
+
+        // Initialize the program counter as the boot address
+        ProgramCounter = T.CreateTruncating(BOOT_ADDRESS);
 
         // HOTFIX: Initialize $sp
         this[MipsGpRegister.StackPointer] = T.CreateTruncating(0x7FFF_8000);
