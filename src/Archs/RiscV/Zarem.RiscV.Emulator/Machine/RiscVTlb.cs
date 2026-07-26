@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Emulator.Machine.Memory;
+using Zarem.Emulator.Models.Enums;
 
 namespace Zarem.RiscV.Emulator.Machine;
 
@@ -16,9 +17,9 @@ public class RiscVTlb : IAddressTranslator
     public ulong Translate(ulong virtualAddress) => virtualAddress;
 
     /// <inheritdoc/>
-    public bool TryTranslate(ulong virtualAddress, out ulong address)
+    public MemoryAccessResult TryTranslate(ulong virtualAddress, out ulong address)
     {
         address = virtualAddress;
-        return true;
+        return MemoryAccessResult.Success;
     }
 }

@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.Emulator.Models.Enums;
+
 namespace Zarem.Emulator.Machine.Memory;
 
 /// <summary>
@@ -19,6 +21,6 @@ public interface IAddressTranslator
     /// </summary>
     /// <param name="virtualAddress">The virtual address to translate.</param>
     /// <param name="address">The physical address of the given virtual address, if mapped.</param>
-    /// <returns>Whether or not the virtual address was valid.</returns>
-    bool TryTranslate(ulong virtualAddress, out ulong address);
+    /// <returns>A <see cref="MemoryAccessResult"/> indicating the outcome of the operation.</returns>
+    MemoryAccessResult TryTranslate(ulong virtualAddress, out ulong address);
 }

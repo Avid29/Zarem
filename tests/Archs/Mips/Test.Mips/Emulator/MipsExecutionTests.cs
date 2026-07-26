@@ -136,7 +136,7 @@ public partial class MipsExecutionTests
         var cpu = (MipsCpu<T>)computer.Cpu;
 
         // Initialize the status register
-        cpu.CoProcessor0.StatusRegister = @case.Status;
+        cpu.CoProcessor0.RegisterFile.StatusRegister = @case.Status;
 
         // Initialize the register file with the provided values
         foreach (var (reg, value) in @case.RegisterInitialization)
@@ -231,7 +231,7 @@ public partial class MipsExecutionTests
             if (!cpu.Config.DisableDelaySlots && execution.SideEffect is MipsSideEffect.ProgramCounter)
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
-                Assert.AreEqual((uint)4, computer.Cpu.ProgramCounter);
+                Assert.AreEqual(MipsCpu<T>.BOOT_ADDRESS + 4, computer.Cpu.ProgramCounter);
                 computer.Cpu.Insert(MipsInstruction.NOP, out _);
             }
 
