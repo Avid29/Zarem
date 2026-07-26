@@ -39,11 +39,7 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         CoProcessor0 = new(Tlb);
         FloatProcessor = new();
 
-        // Initialize the program counter as the boot address
         ProgramCounter = T.CreateTruncating(BOOT_ADDRESS);
-
-        // HOTFIX: Initialize $sp
-        this[MipsGpRegister.StackPointer] = T.CreateTruncating(0x7FFF_8000);
     }
 
     /// <inheritdoc/>
@@ -58,10 +54,11 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     /// <inheritdoc/>
     public override MipsGPRegisterFile<T> RegisterFile { get; }
 
-    /// <summary>
-    /// Gets the coprocessor 0 unit of the computer system.
-    /// </summary>
+    /// <inheritdoc/>
     public CoProcessor0<T> CoProcessor0 { get; }
+
+    /// <inheritdoc/>
+    ICoProcessor0 IMipsCpu.CoProcessor0 => CoProcessor0;
 
     /// <inheritdoc/>
     public FloatProcessor<T> FloatProcessor { get; }
@@ -69,10 +66,11 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     /// <inheritdoc/>
     IFloatProcessor IMipsCpu.FloatProcessor => FloatProcessor;
 
-    /// <summary>
-    /// Gets the translation look-aside buffer.
-    /// </summary>
+    /// <inheritdoc/>
     public MipsTlb<T> Tlb { get; }
+
+    /// <inheritdoc/>
+    IMipsTlb IMipsCpu.Tlb => Tlb;
 
     /// <summary>
     /// Gets the system memory.

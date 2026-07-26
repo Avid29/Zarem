@@ -10,6 +10,8 @@ using Zarem.Emulator.Machine.Memory;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.JIT;
+using Zarem.Mips.Emulator.Machine.Enums;
+using Zarem.Models;
 using Zarem.Models.Enums;
 
 namespace Zarem.Mips.Emulator.Machine;
@@ -65,6 +67,29 @@ public class MipsComputer : ComputerBase
 
     /// <inheritdoc/>
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;
+
+    /// <inheritdoc/>
+    protected override void SetupUserSpaceMapping(Module module)
+    {
+        // Force the CPU status register into User Mode privileges instantly
+        Cpu.CoProcessor0.PrivilegeMode = PrivilegeMode.User;
+
+        // Iterate through the module's requirements or iterate a block allocations 
+        // pattern matching the exact sizes of text/data/stack sections into the CPU's TLB.
+        int i = 0;
+        foreach (var section in module.Sections.Values)
+        {
+            ulong startVAddr = section.VirtualAddress;
+            ulong size = (ulong)section.Stream.Length;
+
+            // Write the required Tlb entries matching 'startVAddr' to back 
+            // this specific segment with physical memory frames...
+            i += Cpu.Tlb.InitilizeSegment(i, startVAddr, size);
+        }
+
+        // Also inject mappings dedicated to the Stack segment framework (near 0x7FFF_8000)
+        Cpu.Tlb.InitilizeSegment(i, 0x7FFF_0000, 0x8000);
+    }
 
     /// <summary>
     /// Maps the devices to the memory mapper.

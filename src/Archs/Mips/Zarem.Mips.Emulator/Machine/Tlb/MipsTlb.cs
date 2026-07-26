@@ -4,8 +4,8 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Mips.Emulator.Machine.Enums;
 
 namespace Zarem.Mips.Emulator.Machine.Tlb;
 
@@ -14,7 +14,7 @@ namespace Zarem.Mips.Emulator.Machine.Tlb;
 /// and dynamic 32-bit or 64-bit address space translation.
 /// </summary>
 /// <typeparam name="T">The underlying register type constraint (<see cref="uint"/> or <see cref="ulong"/>).</typeparam>
-public unsafe class MipsTlb<T> : IAddressTranslator
+public unsafe class MipsTlb<T> : IMipsTlb
     where T : unmanaged, IBinaryInteger<T>
 {
     private readonly MipsTlbEntry<T>[] _slots;
@@ -33,9 +33,7 @@ public unsafe class MipsTlb<T> : IAddressTranslator
     /// </summary>
     public Span<MipsTlbEntry<T>> Slots => _slots;
 
-    /// <summary>
-    /// Gets the number of TLB slots.
-    /// </summary>
+    /// <inheritdoc/>
     public int SlotCount => _slots.Length;
 
     /// <inheritdoc/>
@@ -101,6 +99,66 @@ public unsafe class MipsTlb<T> : IAddressTranslator
 
         pAddress = pfnBaseAddress | pageOffset;
         return MemoryAccessResult.Success;
+    }
+
+
+    /// <inheritdoc/>
+    public int InitilizeSegment(int index, ulong virtualStartAddress, ulong size)
+    {
+        const ulong PageSize = 4096;
+        const ulong DualPageBlockSize = PageSize * 2;
+
+        // Align the starting address down to the nearest 8KB dual-page boundary
+        ulong currentVAddr = virtualStartAddress & ~(DualPageBlockSize - 1);
+        ulong endVAddr = virtualStartAddress + size;
+
+        int i = index;
+        while (currentVAddr < endVAddr)
+        {
+            if (i >= SlotCount)
+            {
+                ThrowHelper.ThrowInsufficientMemoryException();
+            }
+
+            // For this hosted environment, we can identity-map the virtual pages straight 
+            // to physical allocations on the bus, or integrate a physical page pool allocator.
+            ulong low0Paddr = currentVAddr;
+            ulong low1Paddr = currentVAddr + PageSize;
+
+            var slot = new MipsTlbEntry<T>
+            {
+                PageMask = T.Zero, // 0 standardizes to a 4KB sub-page size matching MIPS specifications
+
+                // The VPN2 field encapsulates bits 63:13 of the dual-page block pointer
+                Hi = new MipsTlbEntryHigh<T>
+                {
+                    VirtualPageNumber2 = T.CreateTruncating(currentVAddr >> 13),
+                },
+
+                Low0 = new MipsTlbEntryLow<T>
+                {
+                    Valid = true,
+                    Dirty = true,                                       // Allow read and write permissions
+                    Cache = MipsCacheAttribute.CacheableNoncoherent,    // Cacheable tracking
+                    PageFrameNumber = T.CreateTruncating(low0Paddr >> 12),
+                },
+                Low1 = new MipsTlbEntryLow<T>
+                {
+                    Valid = true,
+                    Dirty = true,
+                    Cache = MipsCacheAttribute.CacheableNoncoherent,
+                    PageFrameNumber = T.CreateTruncating(low1Paddr >> 12),
+                }
+            };
+
+            // Commit the configured translation entry straight into the CPU's TLB structure
+            Write(i, slot);
+
+            currentVAddr += DualPageBlockSize;
+            i++;
+        }
+
+        return i - index;
     }
 
     /// <summary>

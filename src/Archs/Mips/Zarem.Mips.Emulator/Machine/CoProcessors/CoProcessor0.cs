@@ -12,7 +12,7 @@ namespace Zarem.Mips.Emulator.Machine.CoProcessors;
 /// <summary>
 /// A class representing the status/control coprocessor unit.
 /// </summary>
-public class CoProcessor0<T>
+public class CoProcessor0<T> : ICoProcessor0
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private const uint NORMAL_EXCEPTION_VECTOR = 0x8000_0180;
@@ -34,17 +34,23 @@ public class CoProcessor0<T>
     /// </summary>
     public MipsCo0RegisterFile<T> RegisterFile { get; }
 
-    /// <summary>
-    /// Gets the processor's current privilege mode.
-    /// </summary>
-    /// <remarks>
-    /// This is not neccesarily the same as the <see cref="StatusRegister.PrivilegeMode"/>.
-    /// If the processor is in <see cref="StatusRegister.ErrorLevel"/> or <see cref="StatusRegister.ExceptionLevel"/>, the privilege mode is always kernel, regardless of the value of <see cref="StatusRegister.PrivilegeMode"/>.
-    /// </remarks>
-    public PrivilegeMode PrivilegeMode
+    /// <inheritdoc/>
+    public PrivilegeMode ActingPrivilegeMode
         => RegisterFile.StatusRegister.ErrorLevel || RegisterFile.StatusRegister.ExceptionLevel
         ? PrivilegeMode.Kernel
         : RegisterFile.StatusRegister.PrivilegeMode;
+
+    /// <inheritdoc/>
+    public PrivilegeMode PrivilegeMode
+    {
+        get => RegisterFile.StatusRegister.PrivilegeMode;
+        set
+        {
+            var status = RegisterFile.StatusRegister;
+            status.PrivilegeMode = value;
+            RegisterFile.StatusRegister = status;
+        }
+    }
 
     /// <summary>
     /// Gets the current exception vector.

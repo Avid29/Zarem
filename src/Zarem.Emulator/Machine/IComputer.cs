@@ -45,6 +45,6 @@ public interface IComputer : IDisposable
     /// <summary>
     /// Loads a module into the computer's memory.
     /// </summary>
-    /// <param name="module"></param>
+    /// <param name="module">The executable module to load.</param>
     void Load(Module module);
 }

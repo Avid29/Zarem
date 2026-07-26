@@ -15,7 +15,7 @@ public partial class MipsInstructionServiceTable<T, TS>
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?
-        if (cpu.CoProcessor0.PrivilegeMode is not PrivilegeMode.Kernel)
+        if (cpu.CoProcessor0.ActingPrivilegeMode is not PrivilegeMode.Kernel)
         {
             exec = default;
             return MipsTrap.ReservedInstruction;
