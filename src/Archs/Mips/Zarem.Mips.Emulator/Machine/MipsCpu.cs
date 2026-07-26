@@ -34,7 +34,7 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         Config = config;
         RegisterFile = new(config.VersionInfo);
 
-        Tlb = new MipsTlb<T>();
+        Tlb = new MipsTlb<T>(this);
         Memory = new MemorySystem(bus, Tlb);
         CoProcessor0 = new(Tlb);
         FloatProcessor = new();

@@ -5,6 +5,7 @@ using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 
 namespace Zarem.Mips.Emulator.Machine.Tlb;
@@ -15,16 +16,17 @@ namespace Zarem.Mips.Emulator.Machine.Tlb;
 /// </summary>
 /// <typeparam name="T">The underlying register type constraint (<see cref="uint"/> or <see cref="ulong"/>).</typeparam>
 public unsafe class MipsTlb<T> : IMipsTlb
-    where T : unmanaged, IBinaryInteger<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private readonly MipsTlbEntry<T>[] _slots;
+    private readonly MipsCpu<T> _cpu;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsTlb{T}"/> class.
     /// </summary>
-    /// <param name="slotCount"></param>
-    public MipsTlb(int slotCount = 64)
+    public MipsTlb(MipsCpu<T> cpu, int slotCount = 64)
     {
+        _cpu = cpu;
         _slots = new MipsTlbEntry<T>[slotCount];
     }
 
@@ -49,8 +51,13 @@ public unsafe class MipsTlb<T> : IMipsTlb
     /// <inheritdoc/>
     public MemoryAccessResult TryTranslate(ulong virtualAddress, out ulong pAddress)
     {
-        if (!IsMapped(virtualAddress))
+        pAddress = default;
+
+        if (!IsMapped(virtualAddress, out var isProtected))
         {
+            if (isProtected && _cpu.CoProcessor0.ActingPrivilegeMode is not PrivilegeMode.Kernel)
+                return MemoryAccessResult.AccessViolation;
+
             // Apply the fixed physical mask for MIPS32 / MIPS64 compatibility windows
             if ((virtualAddress >> 32) == 0 || virtualAddress >= 0xFFFF_FFFF_8000_0000UL)
             {
@@ -262,14 +269,19 @@ public unsafe class MipsTlb<T> : IMipsTlb
         return ((vAddress >> oddPageBitIndex) & T.One) == T.One;
     }
 
-    private static bool IsMapped(ulong vAddress)
+    private static bool IsMapped(ulong vAddress, out bool isProtected)
     {
+        isProtected = true;
+
         // If any of the top 32 bits are set, evaluate 64-bit space rules first
         if ((vAddress >> 32) != 0)
         {
             switch (vAddress >> 62)
             {
-                case 0: return true;  // xkuseg
+                // xkuseg
+                case 0:
+                    isProtected = false;
+                    return true;  
                 case 1: return true;  // xksseg
                 case 2: return false; // xkphys
                 case 3:
@@ -280,6 +292,9 @@ public unsafe class MipsTlb<T> : IMipsTlb
                     return true;
             }
         }
+
+        if ((uint)vAddress < 0x8000_0000)
+            isProtected = false;
 
         return (uint)vAddress switch
         {
