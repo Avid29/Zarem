@@ -49,6 +49,9 @@ public abstract class ComputerBase : IComputer
     /// <inheritdoc/>
     public void Load(Module module)
     {
+        // Setup user space memory
+        SetupUserSpaceMapping(module);
+
         using (Stream busStream = this.Memory.Virtual.AsStream())
         {
             foreach (var section in module.Sections.Values)
@@ -67,6 +70,15 @@ public abstract class ComputerBase : IComputer
         {
             Cpu.ProgramCounter = module.EntryAddress.Value;
         }
+    }
+
+    /// <summary>
+    /// Configures structural memory mapping constraints, segment boundaries, 
+    /// or TLB entries required by the binary module before its data is loaded.
+    /// </summary>
+    protected virtual void SetupUserSpaceMapping(Module module)
+    {
+        // Default implementation: Do nothing. Bare metal
     }
 
     /// <inheritdoc/>

@@ -10,7 +10,7 @@ using Zarem.Mips.Models.Versioning.Enums;
 namespace Zarem.Mips.Emulator.Machine.Registers;
 
 /// <summary>
-/// A class representing a register file.
+/// A class representing a MIPS register file.
 /// </summary>
 public unsafe class MipsGPRegisterFile<T> : RegisterFile<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>

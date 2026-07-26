@@ -8,6 +8,7 @@ using System.Reflection;
 using Test.Archs.Emulator;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Mips.Emulator.Config;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Registers;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
@@ -245,24 +246,25 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // Load
-        yield return [new MipsEmulatorTestCase<T>(config, "lb $v0, 0x1000($zero)", T.CreateTruncating(0x12))];
-        yield return [new MipsEmulatorTestCase<T>(config, "lh $v0, 0x1000($zero)", T.CreateTruncating(0x1234))];
-        yield return [new MipsEmulatorTestCase<T>(config, "lw $v0, 0x1000($zero)", T.CreateTruncating(0x1234_5678))];
+        yield return [new MipsEmulatorTestCase<T>(config, "lb $v0, 0x1000($gp)", T.CreateTruncating(0x12))];
+        yield return [new MipsEmulatorTestCase<T>(config, "lh $v0, 0x1000($gp)", T.CreateTruncating(0x1234))];
+        yield return [new MipsEmulatorTestCase<T>(config, "lw $v0, 0x1000($gp)", T.CreateTruncating(0x1234_5678))];
 
         // TODO: Load unsigned/signed with sign
 
         // Store
-        yield return [new MipsEmulatorTestCase<T>(config, "sb $at, 0x1000($zero)", (T.CreateTruncating(0x1000), [0xef, 0x34, 0x56, 0x78]))];
-        yield return [new MipsEmulatorTestCase<T>(config, "sh $at, 0x1000($zero)", (T.CreateTruncating(0x1000), [0xcd, 0xef, 0x56, 0x78]))];
-        yield return [new MipsEmulatorTestCase<T>(config, "sw $at, 0x1000($zero)", (T.CreateTruncating(0x1000), [0x89, 0xab, 0xcd, 0xef]))];
+        yield return [new MipsEmulatorTestCase<T>(config, "sb $at, 0x1000($gp)", (T.CreateTruncating(0x8000_1000), [0xef, 0x34, 0x56, 0x78]))];
+        yield return [new MipsEmulatorTestCase<T>(config, "sh $at, 0x1000($gp)", (T.CreateTruncating(0x8000_1000), [0xcd, 0xef, 0x56, 0x78]))];
+        yield return [new MipsEmulatorTestCase<T>(config, "sw $at, 0x1000($gp)", (T.CreateTruncating(0x8000_1000), [0x89, 0xab, 0xcd, 0xef]))];
     }
 
     private static IEnumerable<object[]> GetJumpBranchInstructionTests<T>(MipsEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
-        var linkAddress = T.CreateTruncating(config.DisableDelaySlots ? 4 : 8);
-        var noBranchAddress = T.CreateTruncating(config.ExecutionMode is ExecutionMode.JustInTime && !config.DisableDelaySlots ? 8 : 4);
-        var branchAddress = T.CreateTruncating(84);
+        var startAddress = T.CreateTruncating(MipsCpu<T>.BOOT_ADDRESS);
+        var linkAddress = T.CreateTruncating(config.DisableDelaySlots ? 4 : 8) + startAddress;
+        var noBranchAddress = T.CreateTruncating(config.ExecutionMode is ExecutionMode.JustInTime && !config.DisableDelaySlots ? 8 : 4) + startAddress;
+        var branchAddress = T.CreateTruncating(84) + startAddress;
 
         // Jump
         yield return [new MipsEmulatorTestCase<T>(config, "j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
@@ -300,7 +302,7 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         if (config.VersionInfo.Base is >= MipsBaseVersion.MipsII and < MipsBaseVersion.R6)
         {
             // If branch likely fails, it must skip the delay slot (PC + 8)
-            var likelyFailAddress = config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
+            var likelyFailAddress = T.CreateTruncating(config.DisableDelaySlots ? 4 : 8) + startAddress;
 
             // Branch Equality: True
             yield return [new MipsEmulatorTestCase<T>(config, "beql $t1, $t1, 80") { ExpectedPC = branchAddress }];

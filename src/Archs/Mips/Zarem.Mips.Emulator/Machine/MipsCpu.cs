@@ -3,11 +3,11 @@
 using System.Numerics;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
-using Zarem.Emulator.TrapHandlers;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Machine.Tlb;
 using Zarem.Mips.Emulator.TrapHandlers;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
@@ -22,20 +22,24 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <summary>
+    /// The boot address for a MIPS CPU.
+    /// </summary>
+    public const ulong BOOT_ADDRESS = 0xBFC0_0000;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
     /// </summary>
     public MipsCpu(MipsEmulatorConfig config, PhysicalBus bus)
     {
         Config = config;
         RegisterFile = new(config.VersionInfo);
-        CoProcessor0 = new();
+
+        Tlb = new MipsTlb<T>();
+        Memory = new MemorySystem(bus, Tlb);
+        CoProcessor0 = new(Tlb);
         FloatProcessor = new();
 
-        Tlb = new MipsTlb();
-        Memory = new MemorySystem(bus, Tlb);
-
-        // HOTFIX: Initialize $sp
-        this[MipsGpRegister.StackPointer] = T.CreateTruncating(0x7FFF_8000);
+        ProgramCounter = T.CreateTruncating(BOOT_ADDRESS);
     }
 
     /// <inheritdoc/>
@@ -50,10 +54,11 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     /// <inheritdoc/>
     public override MipsGPRegisterFile<T> RegisterFile { get; }
 
-    /// <summary>
-    /// Gets the coprocessor 0 unit of the computer system.
-    /// </summary>
+    /// <inheritdoc/>
     public CoProcessor0<T> CoProcessor0 { get; }
+
+    /// <inheritdoc/>
+    ICoProcessor0 IMipsCpu.CoProcessor0 => CoProcessor0;
 
     /// <inheritdoc/>
     public FloatProcessor<T> FloatProcessor { get; }
@@ -61,10 +66,11 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     /// <inheritdoc/>
     IFloatProcessor IMipsCpu.FloatProcessor => FloatProcessor;
 
-    /// <summary>
-    /// Gets the translation look-aside buffer.
-    /// </summary>
-    public MipsTlb Tlb { get; }
+    /// <inheritdoc/>
+    public MipsTlb<T> Tlb { get; }
+
+    /// <inheritdoc/>
+    IMipsTlb IMipsCpu.Tlb => Tlb;
 
     /// <summary>
     /// Gets the system memory.

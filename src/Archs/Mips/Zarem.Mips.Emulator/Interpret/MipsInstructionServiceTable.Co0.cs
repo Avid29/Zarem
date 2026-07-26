@@ -15,7 +15,7 @@ public partial class MipsInstructionServiceTable<T, TS>
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?
-        if (cpu.CoProcessor0.PrivilegeMode is not PrivilegeMode.Kernel)
+        if (cpu.CoProcessor0.ActingPrivilegeMode is not PrivilegeMode.Kernel)
         {
             exec = default;
             return MipsTrap.ReservedInstruction;
@@ -58,7 +58,7 @@ public partial class MipsInstructionServiceTable<T, TS>
     private static MipsExecution<T> Eret(MipsInterpretCpu<T> cpu)
     {
         // Retrieve the status register value
-        var status = cpu.CoProcessor0.StatusRegister;
+        var status = cpu.CoProcessor0.RegisterFile.StatusRegister;
 
         // Determine the target program counter based on the error level
         T targetPC = status.ErrorLevel
@@ -88,7 +88,7 @@ public partial class MipsInstructionServiceTable<T, TS>
     private static MipsExecution<T> SetInterrupts(MipsInterpretCpu<T> cpu, CoProc0Instruction inst, bool enabled)
     {
         // Retrieve the status register
-        var status = cpu.CoProcessor0.StatusRegister;
+        var status = cpu.CoProcessor0.RegisterFile.StatusRegister;
 
         // Apply the update function
         status.InteruptEnabled = enabled;

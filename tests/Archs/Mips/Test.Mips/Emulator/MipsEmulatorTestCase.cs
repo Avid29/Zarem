@@ -53,6 +53,8 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
                     (MipsGpRegister.Kernel0, T.CreateTruncating(MipsExecutionTests.K0)),
                     (MipsGpRegister.Kernel1, T.CreateTruncating(MipsExecutionTests.K1)),
 
+                    (MipsGpRegister.GlobalPointer, T.CreateTruncating(0x8000_0000)),
+
                     // Print integer
                     (MipsGpRegister.ReturnValue0, T.One),
                 ];
@@ -110,7 +112,7 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
             InitialHighLow = (T.CreateTruncating(0x1234), T.CreateTruncating(0x5678));
 
             MemoryInitialization =
-                [(T.CreateTruncating(0x1000), [0x12, 0x34, 0x56, 0x78])];
+                [(T.CreateTruncating(0x8000_1000), [0x12, 0x34, 0x56, 0x78])];
         }
     }
 
