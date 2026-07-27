@@ -257,9 +257,13 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         yield return [new MipsEmulatorTestCase<T>(config, "sh $at, 0x1000($zero)", (T.CreateTruncating(0x1000), [0xcd, 0xef, 0x56, 0x78]))];
         yield return [new MipsEmulatorTestCase<T>(config, "sw $at, 0x1000($zero)", (T.CreateTruncating(0x1000), [0x89, 0xab, 0xcd, 0xef]))];
 
-        // TODO: Test protected load/store
+        // Protected load/store
+        yield return [new MipsEmulatorTestCase<T>(config, "lw $v0, 0x1000($gp)", MipsTrap.AddressErrorLoad)];
+        yield return [new MipsEmulatorTestCase<T>(config, "sw $at, 0x1000($gp)", MipsTrap.AddressErrorStore)];
 
-        // TODO: Test TLB Miss load/store
+        // TLB Miss load/store
+        //yield return [new MipsEmulatorTestCase<T>(config, "lw $v0, 0x20_000($zero)", MipsTrap.TlbMissLoad)];
+        //yield return [new MipsEmulatorTestCase<T>(config, "sw $at, 0x20_000($zero)", MipsTrap.TlbMissStore)];
     }
 
     private static IEnumerable<object[]> GetJumpBranchInstructionTests<T>(MipsEmulatorConfig config)
