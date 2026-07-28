@@ -215,7 +215,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         EmitStoreRegister(il, inst.RD, il =>
         {
             // Call Memory.Read<TData>(ulong)
-            var readMethod = ReadMethods[typeof(TData)];
+            var readMethod = TryReadMethods[typeof(TData)];
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Callvirt, GetMemoryMethod);
             il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
@@ -234,7 +234,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, inst.StoreOffset, RiscVTrap.StoreAddressMisaligned);
 
         // Call Memory.Write<TData>(ulong, TData)
-        var writeMethod = WriteMethods[typeof(TData)];
+        var writeMethod = TryWriteMethods[typeof(TData)];
         il.Emit(OpCodes.Ldarg_0);
         il.Emit(OpCodes.Callvirt, GetMemoryMethod);
         il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
