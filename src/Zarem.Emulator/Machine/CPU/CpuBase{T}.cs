@@ -31,7 +31,7 @@ public abstract class CpuBase<T> : ICpu
     public abstract Endianness Endianness { get; }
 
     /// <inheritdoc/>
-    public T ProgramCounter { get; protected set; }
+    public T ProgramCounter { get; set; }
 
     /// <inheritdoc/>
     ulong ICpu.ProgramCounter

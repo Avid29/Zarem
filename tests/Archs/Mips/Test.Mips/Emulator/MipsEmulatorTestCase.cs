@@ -112,7 +112,7 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
             InitialHighLow = (T.CreateTruncating(0x1234), T.CreateTruncating(0x5678));
 
             MemoryInitialization =
-                [(T.CreateTruncating(0x8000_1000), [0x12, 0x34, 0x56, 0x78])];
+                [(T.CreateTruncating(0x1000), [0x12, 0x34, 0x56, 0x78])];
         }
     }
 
@@ -171,6 +171,8 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
     public (MipsFloatRegister Register, int Value)? ExpectedWordFloatWriteBack { get; init; } = null;
 
     public (MipsFloatRegister Register, long Value)? ExpectedLongFloatWriteBack { get; init; } = null;
+
+    public T InitialPC { get; init; } = T.Zero;
 
     public T? ExpectedPC { get; init; } = null;
 

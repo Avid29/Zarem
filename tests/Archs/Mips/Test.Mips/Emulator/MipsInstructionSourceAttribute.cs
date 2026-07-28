@@ -246,22 +246,28 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // Load
-        yield return [new MipsEmulatorTestCase<T>(config, "lb $v0, 0x1000($gp)", T.CreateTruncating(0x12))];
-        yield return [new MipsEmulatorTestCase<T>(config, "lh $v0, 0x1000($gp)", T.CreateTruncating(0x1234))];
-        yield return [new MipsEmulatorTestCase<T>(config, "lw $v0, 0x1000($gp)", T.CreateTruncating(0x1234_5678))];
+        yield return [new MipsEmulatorTestCase<T>(config, "lb $v0, 0x1000($zero)", T.CreateTruncating(0x12))];
+        yield return [new MipsEmulatorTestCase<T>(config, "lh $v0, 0x1000($zero)", T.CreateTruncating(0x1234))];
+        yield return [new MipsEmulatorTestCase<T>(config, "lw $v0, 0x1000($zero)", T.CreateTruncating(0x1234_5678))];
 
         // TODO: Load unsigned/signed with sign
 
         // Store
-        yield return [new MipsEmulatorTestCase<T>(config, "sb $at, 0x1000($gp)", (T.CreateTruncating(0x8000_1000), [0xef, 0x34, 0x56, 0x78]))];
-        yield return [new MipsEmulatorTestCase<T>(config, "sh $at, 0x1000($gp)", (T.CreateTruncating(0x8000_1000), [0xcd, 0xef, 0x56, 0x78]))];
-        yield return [new MipsEmulatorTestCase<T>(config, "sw $at, 0x1000($gp)", (T.CreateTruncating(0x8000_1000), [0x89, 0xab, 0xcd, 0xef]))];
+        yield return [new MipsEmulatorTestCase<T>(config, "sb $at, 0x1000($zero)", (T.CreateTruncating(0x1000), [0xef, 0x34, 0x56, 0x78]))];
+        yield return [new MipsEmulatorTestCase<T>(config, "sh $at, 0x1000($zero)", (T.CreateTruncating(0x1000), [0xcd, 0xef, 0x56, 0x78]))];
+        yield return [new MipsEmulatorTestCase<T>(config, "sw $at, 0x1000($zero)", (T.CreateTruncating(0x1000), [0x89, 0xab, 0xcd, 0xef]))];
+
+        // Protected load/store
+        yield return [new MipsEmulatorTestCase<T>(config, "lw $v0, 0x1000($gp)", MipsTrap.AddressErrorLoad)];
+        yield return [new MipsEmulatorTestCase<T>(config, "sw $at, 0x1000($gp)", MipsTrap.AddressErrorStore)];
+
+        // TODO: TLB Miss load/store
     }
 
     private static IEnumerable<object[]> GetJumpBranchInstructionTests<T>(MipsEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
-        var startAddress = T.CreateTruncating(MipsCpu<T>.BOOT_ADDRESS);
+        var startAddress = T.Zero;
         var linkAddress = T.CreateTruncating(config.DisableDelaySlots ? 4 : 8) + startAddress;
         var noBranchAddress = T.CreateTruncating(config.ExecutionMode is ExecutionMode.JustInTime && !config.DisableDelaySlots ? 8 : 4) + startAddress;
         var branchAddress = T.CreateTruncating(84) + startAddress;

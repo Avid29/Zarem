@@ -154,9 +154,15 @@ public partial class MipsExecutionTests
             cpu.RegisterFile.High = @case.InitialHighLow.Value.High;
         }
 
+        // Initialize TLB
+        cpu.Tlb.InitilizeSegment(0, 0, 0x1_0000);
+
         // Initialize the memory, if specified in the test case
         foreach (var (address, data) in @case.MemoryInitialization)
             computer.Memory.Write(ulong.CreateTruncating(address), data);
+
+        // Initialize the program counter
+        cpu.ProgramCounter = @case.InitialPC;
 
         if (cpu is MipsJitCpu<T>)
         {
@@ -231,7 +237,7 @@ public partial class MipsExecutionTests
             if (!cpu.Config.DisableDelaySlots && execution.SideEffect is MipsSideEffect.ProgramCounter)
             {
                 // Assert the branch has not occured, then execute a NOP to apply the delayed branch
-                Assert.AreEqual(MipsCpu<T>.BOOT_ADDRESS + 4, computer.Cpu.ProgramCounter);
+                Assert.AreEqual(ulong.CreateTruncating(@case.InitialPC) + 4, computer.Cpu.ProgramCounter);
                 computer.Cpu.Insert(MipsInstruction.NOP, out _);
             }
 

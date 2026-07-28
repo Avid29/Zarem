@@ -12,6 +12,7 @@ using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Emulator.Interpret;
 
@@ -89,7 +90,10 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
 
         // Handle trap, if any occurred
         if (trap is not MipsTrap.None)
+        {
+            execution = default;
             HandleTrap(trap);
+        }
 
         return trap;
     }

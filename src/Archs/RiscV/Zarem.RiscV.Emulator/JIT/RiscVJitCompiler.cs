@@ -211,16 +211,26 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
     {
         var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, inst.Immediate, RiscVTrap.LoadAddressMisaligned);
 
+        // Allocate a local variable to receive the 'out TData value'
+        var dataVar = il.DeclareLocal(typeof(TData));
+
+        // Call Memory.Read<TData>(ulong)
+        var readMethod = TryReadMethods[typeof(TData)];
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Callvirt, GetMemoryMethod);
+        il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
+        il.Emit(OpCodes.Conv_U8);
+        il.Emit(OpCodes.Ldloca, dataVar);               // Arg 2: out TData value
+        il.Emit(OpCodes.Callvirt, readMethod);
+
+        // TODO: Evaulate access result
+        il.Emit(OpCodes.Pop);
+
         // Write Back to RD
         EmitStoreRegister(il, inst.RD, il =>
         {
-            // Call Memory.Read<TData>(ulong)
-            var readMethod = ReadMethods[typeof(TData)];
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Callvirt, GetMemoryMethod);
-            il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
-            il.Emit(OpCodes.Conv_U8);
-            il.Emit(OpCodes.Callvirt, readMethod);
+            // Load the value filled by TryRead
+            il.Emit(OpCodes.Ldloc, dataVar);
 
             // Sign-Extension / Zero-Extension then convert to T
             il.EmitConv<TData>();
@@ -234,7 +244,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, inst.StoreOffset, RiscVTrap.StoreAddressMisaligned);
 
         // Call Memory.Write<TData>(ulong, TData)
-        var writeMethod = WriteMethods[typeof(TData)];
+        var writeMethod = TryWriteMethods[typeof(TData)];
         il.Emit(OpCodes.Ldarg_0);
         il.Emit(OpCodes.Callvirt, GetMemoryMethod);
         il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
@@ -242,6 +252,9 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         EmitLoadRegister(il, inst.RS2);                 // Arg 2: TData value (Truncate the RS2 register value)
         il.EmitConv<TData>();
         il.Emit(OpCodes.Callvirt, writeMethod);
+
+        // TODO: Evaulate access result
+        il.Emit(OpCodes.Pop);
     }
 
     private void Branch(ILGenerator il, RiscVInstruction inst, T pc, OpCode conditionCode)
