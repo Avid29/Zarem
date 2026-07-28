@@ -48,7 +48,7 @@ public class ElfTests : AssemblerTests
         await RunStringTest(DisabledPseudoInstructions, new() { PseudoInstructionPermissibility = PseudoInstructionPermissibility.Blacklist }, LogId.DisabledFeatureInUse);
 
     [TestMethod(nameof(NotInVersion))]
-    public async Task NotInVersionTest() => await RunStringTest(NotInVersion, new(new(MipsBaseVersion.MipsI)), LogId.NotInVersion);
+    public async Task NotInVersionTest() => await RunStringTest(NotInVersion, new(new(MipsGeneration.MipsI)), LogId.NotInVersion);
 
     [TestMethod(TestFilePathing.BranchLiteralFile)]
     public async Task BranchLiteralFileTest() => await RunFileTest(TestFilePathing.BranchLiteralFile);

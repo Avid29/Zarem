@@ -20,28 +20,28 @@ public readonly partial struct MipsVersionInfo : IParsable<MipsVersionInfo>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsVersionInfo"/> struct.
     /// </summary>
-    public MipsVersionInfo() : this(MipsBaseVersion.R2, false)
+    public MipsVersionInfo() : this(MipsGeneration.R2, false)
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsVersionInfo"/> struct.
     /// </summary>
-    public MipsVersionInfo(MipsBaseVersion @base)
+    public MipsVersionInfo(MipsGeneration @base)
     {
-        Base = @base;
+        Generation = @base;
         Is64Bit = Is64BitDefault(@base);
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsVersionInfo"/> struct.
     /// </summary>
-    public MipsVersionInfo(MipsBaseVersion @base, bool is64Bit)
+    public MipsVersionInfo(MipsGeneration @base, bool is64Bit)
     {
-        Base = @base;
+        Generation = @base;
         Is64Bit = is64Bit;
 
-        if (Is64Bit && @base <= MipsBaseVersion.MipsII)
+        if (Is64Bit && @base <= MipsGeneration.MipsII)
         {
             ThrowHelper.ThrowArgumentException(
                 $"Architecture baseline '{@base}' cannot be configured as 64-bit. MIPS I and MIPS II are strictly 32-bit architectures.");
@@ -49,9 +49,9 @@ public readonly partial struct MipsVersionInfo : IParsable<MipsVersionInfo>
     }
 
     /// <summary>
-    /// Gets the base MIPS ISA version.
+    /// Gets the base MIPS Generation.
     /// </summary>
-    public MipsBaseVersion Base { get; }
+    public MipsGeneration Generation { get; }
 
     /// <summary>
     /// Gets whether or not the 64-bit version is in use.
@@ -65,6 +65,7 @@ public readonly partial struct MipsVersionInfo : IParsable<MipsVersionInfo>
         {
             throw new FormatException($"The string '{s}' is not a valid MIPS target ISA string.");
         }
+
         return result;
     }
 
@@ -93,19 +94,19 @@ public readonly partial struct MipsVersionInfo : IParsable<MipsVersionInfo>
 
         // 2. Parse the Base Version string layout
         // Strings with 'R' map to modern releases. Raw digits and Roman numerals map to classic.
-        MipsBaseVersion baseVersion = architectureIdentifier switch
+        MipsGeneration baseVersion = architectureIdentifier switch
         {
-            "I" or "1" => MipsBaseVersion.MipsI,
-            "II" or "2" => MipsBaseVersion.MipsII,
-            "III" or "3" => MipsBaseVersion.MipsIII,
-            "IV" or "4" => MipsBaseVersion.MipsIV,
-            "V" or "5" => MipsBaseVersion.MipsV,
-            "R1" => MipsBaseVersion.R1,
-            "R2" => MipsBaseVersion.R2,
-            "R3" => MipsBaseVersion.R3,
-            "R5" => MipsBaseVersion.R5,
-            "R6" => MipsBaseVersion.R6,
-            _ => MipsBaseVersion.MipsI
+            "I" or "1" => MipsGeneration.MipsI,
+            "II" or "2" => MipsGeneration.MipsII,
+            "III" or "3" => MipsGeneration.MipsIII,
+            "IV" or "4" => MipsGeneration.MipsIV,
+            "V" or "5" => MipsGeneration.MipsV,
+            "R1" => MipsGeneration.R1,
+            "R2" => MipsGeneration.R2,
+            "R3" => MipsGeneration.R3,
+            "R5" => MipsGeneration.R5,
+            "R6" => MipsGeneration.R6,
+            _ => MipsGeneration.MipsI
         };
 
         // Determine Bitness
@@ -124,7 +125,7 @@ public readonly partial struct MipsVersionInfo : IParsable<MipsVersionInfo>
         }
 
         // MipsI and MipsII cannot be 64bit
-        if (is64Bit && baseVersion <= MipsBaseVersion.MipsII)
+        if (is64Bit && baseVersion <= MipsGeneration.MipsII)
             return false;
 
         result = new MipsVersionInfo(baseVersion, is64Bit);
@@ -137,17 +138,17 @@ public readonly partial struct MipsVersionInfo : IParsable<MipsVersionInfo>
         var sb = new StringBuilder();
         sb.Append("mips");
 
-        if (Base >= MipsBaseVersion.R1)
+        if (Generation >= MipsGeneration.R1)
         {
             // Outputs modern target strings like: "mips32r2" or "mips64r6"
             sb.Append(Is64Bit ? "64" : "32");
-            sb.Append(Base.ToString().ToLowerInvariant());
+            sb.Append(Generation.ToString().ToLowerInvariant());
         }
         else
         {
             // Outputs classic target strings like: "mips1", "mips3", or "mips3_32bit"
-            sb.Append((int)Base);
-            if (Is64BitDefault(Base) && !Is64Bit)
+            sb.Append((int)Generation);
+            if (Is64BitDefault(Generation) && !Is64Bit)
             {
                 sb.Append("_32bit");
             }
@@ -156,5 +157,5 @@ public readonly partial struct MipsVersionInfo : IParsable<MipsVersionInfo>
         return sb.ToString();
     }
 
-    private static bool Is64BitDefault(MipsBaseVersion version) => version >= MipsBaseVersion.MipsIII;
+    private static bool Is64BitDefault(MipsGeneration version) => version >= MipsGeneration.MipsIII;
 }
