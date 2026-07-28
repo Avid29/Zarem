@@ -18,8 +18,12 @@ namespace Zarem.Mips.Emulator.Machine.Tlb;
 public unsafe class MipsTlb<T> : IMipsTlb
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    private const int CacheSize = 128;
+    private const int CacheMask = CacheSize - 1;
+
     private readonly MipsTlbEntry<T>[] _slots;
     private readonly MipsCpu<T> _cpu;
+    private readonly int[] _cacheIndicies = new int[CacheSize];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsTlb{T}"/> class.
@@ -107,7 +111,6 @@ public unsafe class MipsTlb<T> : IMipsTlb
         pAddress = pfnBaseAddress | pageOffset;
         return MemoryAccessResult.Success;
     }
-
 
     /// <inheritdoc/>
     public int InitilizeSegment(int index, ulong virtualStartAddress, ulong size)
@@ -208,15 +211,32 @@ public unsafe class MipsTlb<T> : IMipsTlb
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int FindMatchingSlotIndex(T vAddress)
     {
+        // Calculate cache lookups
+        ulong vaddrRaw = ulong.CreateTruncating(vAddress);
+        int cacheBucket = (int)((vaddrRaw >> 13) & CacheMask);
+
         byte region = GetAddressRegion(vAddress);
         ReadOnlySpan<MipsTlbEntry<T>> localSlots = _slots;
 
+        // Check the cache
+        int cachedSlotIndex = _cacheIndicies[cacheBucket];
+        if (cachedSlotIndex >= 0 && cachedSlotIndex < localSlots.Length)
+        {
+            if (IsSlotMatch(in localSlots[cachedSlotIndex], vAddress, region))
+            {
+                return cachedSlotIndex;
+            }
+        }
+
+        // No cache hit. Take the slow path
         for (int i = 0; i < localSlots.Length; i++)
         {
-            // TODO: Introduce caching to improve lookup times
-
             if (IsSlotMatch(in localSlots[i], vAddress, region))
+            {
+                // Match found. Update the cache and return
+                _cacheIndicies[cacheBucket] = i;
                 return i;
+            }
         }
 
         return -1;
