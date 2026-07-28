@@ -26,17 +26,17 @@ namespace Zarem.Mips.Assembler.Models.Meta;
 public abstract record MipsInstructionMetaBase : InstructionMetaBase<MipsArgument>
 {
     /// <summary>
-    /// Gets the <see cref="MipsBaseVersion"/> where the instruction was added.
+    /// Gets the <see cref="MipsGeneration"/> where the instruction was added.
     /// </summary>
     [JsonPropertyName("added_in")]
-    public MipsBaseVersion AddedIn { get; init; }
+    public MipsGeneration AddedIn { get; init; }
 
     /// <summary>
-    /// Gets the <see cref="MipsBaseVersion"/> where the instruction was removed, if applicable.
+    /// Gets the <see cref="MipsGeneration"/> where the instruction was removed, if applicable.
     /// </summary>
     [JsonPropertyName("removed_in")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public MipsBaseVersion? RemovedIn { get; init; }
+    public MipsGeneration? RemovedIn { get; init; }
 
     /// <summary>
     /// Gets whether or not the instruction only exists in 64-bit MIPS.
@@ -100,7 +100,7 @@ public abstract record MipsInstructionMetaBase : InstructionMetaBase<MipsArgumen
     /// </summary>
     public bool IsValidFor(MipsVersionInfo versionInfo)
     {
-        bool inRange = versionInfo.Base >= AddedIn && !(RemovedIn.HasValue && versionInfo.Base >= RemovedIn);
+        bool inRange = versionInfo.Generation >= AddedIn && !(RemovedIn.HasValue && versionInfo.Generation >= RemovedIn);
         bool sufficientRegisterSize = !Is64Bit || versionInfo.Is64Bit;
         return inRange && sufficientRegisterSize;
     }
