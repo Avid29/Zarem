@@ -7,7 +7,7 @@ namespace Zarem.Z80.Models.Instructions.Registers;
 /// <summary>
 /// An enum representing a 16bit register in Zilog Z80.
 /// </summary>
-public enum Z80RegisterPair
+public enum Z80RegisterPair : byte
 {
 #pragma warning disable CS1591
 

@@ -7,7 +7,7 @@ namespace Zarem.Z80.Models.Instructions.Registers;
 /// <summary>
 /// An enum representing the general-purpose registers in Zilog Z80.
 /// </summary>
-public enum Z80Register
+public enum Z80Register : byte
 {
 #pragma warning disable CS1591
 
