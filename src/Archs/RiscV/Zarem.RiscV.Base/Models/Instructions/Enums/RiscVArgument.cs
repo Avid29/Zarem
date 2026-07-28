@@ -8,7 +8,7 @@ using Zarem.RiscV.Models.Instructions.Enums.Registers;
 namespace Zarem.RiscV.Models.Instructions.Enums;
 
 /// <summary>
-/// An enum for argument types.
+/// An enum for RISC-V argument types.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum RiscVArgument : byte

@@ -5,7 +5,7 @@ using Zarem.Attributes.Register;
 namespace Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 /// <summary>
-/// An enum for register sets.
+/// An enum for RISC-V register sets.
 /// </summary>
 public enum RiscVRegisterSet
 {
