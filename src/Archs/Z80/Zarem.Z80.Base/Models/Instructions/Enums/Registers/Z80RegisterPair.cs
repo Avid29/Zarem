@@ -2,7 +2,7 @@
 
 using Zarem.Attributes.Register;
 
-namespace Zarem.Z80.Models.Instructions.Registers;
+namespace Zarem.Z80.Models.Instructions.Enums.Registers;
 
 /// <summary>
 /// An enum representing a 16bit register in Zilog Z80.

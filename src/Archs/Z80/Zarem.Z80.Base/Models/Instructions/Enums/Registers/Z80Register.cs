@@ -2,7 +2,7 @@
 
 using Zarem.Attributes.Register;
 
-namespace Zarem.Z80.Models.Instructions.Registers;
+namespace Zarem.Z80.Models.Instructions.Enums.Registers;
 
 /// <summary>
 /// An enum representing the general-purpose registers in Zilog Z80.

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using Zarem.Attributes.Arguments;
 using Zarem.Z80.Models.Enums;
 
-namespace Zarem.Z80.Models.Instructions;
+namespace Zarem.Z80.Models.Instructions.Enums;
 
 /// <summary>
 /// An enum for Z80 argument types.
