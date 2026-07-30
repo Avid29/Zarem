@@ -27,5 +27,5 @@ public record RiscVFloatInstructionMeta : RiscVInstructionMetaBase
     /// Gets the instruction's funct3 code.
     /// </summary>
     [JsonPropertyName("funct3")]
-    public FloatFunct3Code Funct3 { get; init; } = FloatFunct3Code.RoundToNearest;
+    public FloatFunct3Code? Funct3 { get; init; } = null;
 }

@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2024
 
+using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Helpers;
@@ -38,7 +39,7 @@ public struct RiscVFloatInstruction
     /// <summary>
     /// Creates a new floating-point instruction.
     /// </summary>
-    public static RiscVFloatInstruction Create(RiscVOpCode opCode, RiscVFloatFormat format, FloatFunc5Code funct5, RiscVFloatRegister rd, RiscVFloatRegister rs1, RiscVFloatRegister rs2, FloatFunct3Code funct3 = FloatFunct3Code.RoundToNearest)
+    public static RiscVFloatInstruction Create(RiscVOpCode opCode, RiscVFloatFormat format, FloatFunc5Code funct5, RiscVFloatRegister rd, RiscVFloatRegister rs1, RiscVFloatRegister rs2, FloatFunct3Code funct3 = FloatFunct3Code.RoundToNearestEven)
     {
         return new()
         {
@@ -55,7 +56,13 @@ public struct RiscVFloatInstruction
     /// <summary>
     /// Creates a new floating-point instruction.
     /// </summary>
-    public static RiscVFloatInstruction Create(RiscVOpCode opCode, RiscVFloatFormat format, RiscVFloatRegister rd, RiscVFloatRegister rs1, RiscVFloatRegister rs2, RiscVFloatRegister rs3, FloatFunct3Code funct3 = FloatFunct3Code.RoundToNearest)
+    public static RiscVFloatInstruction Create(RiscVOpCode opCode, RiscVFloatFormat format, FloatFunc5Code funct5, RiscVFloatRegister rd, RiscVFloatRegister rs1, RiscVFloatRegister rs2, RiscVRoundingMode rm)
+        => Create(opCode, format, funct5, rd, rs1, rs2, (FloatFunct3Code)rm);
+
+    /// <summary>
+    /// Creates a new floating-point instruction.
+    /// </summary>
+    public static RiscVFloatInstruction Create(RiscVOpCode opCode, RiscVFloatFormat format, RiscVFloatRegister rd, RiscVFloatRegister rs1, RiscVFloatRegister rs2, RiscVFloatRegister rs3, FloatFunct3Code funct3 = FloatFunct3Code.RoundToNearestEven)
     {
         return new()
         {
@@ -68,6 +75,12 @@ public struct RiscVFloatInstruction
             FRS3 = rs3,
         };
     }
+
+    /// <summary>
+    /// Creates a new floating-point instruction.
+    /// </summary>
+    public static RiscVFloatInstruction Create(RiscVOpCode opCode, RiscVFloatFormat format, RiscVFloatRegister rd, RiscVFloatRegister rs1, RiscVFloatRegister rs2, RiscVFloatRegister rs3, RiscVRoundingMode rm)
+        => Create(opCode, format, rd, rs1, rs2, rs3, (FloatFunct3Code)rm);
 
     /// <summary>
     /// Gets or sets the instruction's operation code.
@@ -107,6 +120,16 @@ public struct RiscVFloatInstruction
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => (FloatFunct3Code)BitField.GetField(_inst, FUNCT3_BIT_SIZE, FUNCT3_OFFSET);
         set => BitField.SetField(ref _inst, FUNCT3_BIT_SIZE, FUNCT3_OFFSET, (byte)value);
+    }
+
+    /// <summary>
+    /// Gets or sets the instruction's rounding mode.
+    /// </summary>
+    public RiscVRoundingMode RoundingMode
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly get => (RiscVRoundingMode)Funct3;
+        set => Funct3 = (FloatFunct3Code)value;
     }
 
     /// <summary>

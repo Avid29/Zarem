@@ -10,7 +10,7 @@ public enum FloatFunct3Code : byte
 #pragma warning disable CS1591
 
     // --- Rounding Modes (Used by Arithmetic & Conversions) ---
-    RoundToNearest = RiscVRoundingMode.RoundToNearestEven,
+    RoundToNearestEven = RiscVRoundingMode.RoundToNearestEven,
     RoundTowardsZero = RiscVRoundingMode.RoundTowardsZero,
     RoundDown = RiscVRoundingMode.RoundDown,
     RoundUp = RiscVRoundingMode.RoundUp,
