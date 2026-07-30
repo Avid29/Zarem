@@ -202,10 +202,14 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         if (TFrom.IsNaN(source))
         {
             result = TTo.MaxValue;
+
+            // TODO: Accumulate Invalid Operation flag (NV) in CSR here if mimicking hardware exceptions
         }
         else
         {
-            result = TTo.CreateTruncating(source);
+            var mode = ResolveRoundingMode(inst.RoundingMode);
+            var rounded = TFrom.Round(source, mode);
+            result = TTo.CreateTruncating(rounded);
         }
 
         exec = RiscVExecution<T>.CreateWriteback(((RiscVInstruction)inst).RD, T.CreateTruncating(result));
@@ -226,5 +230,19 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         else if (typeof(TFormat) == typeof(float)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatRegisterFile.Singles;
         else if (typeof(TFormat) == typeof(double)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatRegisterFile.Doubles;
         else throw new InvalidOperationException();
+    }
+
+    private static MidpointRounding ResolveRoundingMode(RiscVRoundingMode rm)
+    {
+        return rm switch
+        {
+            RiscVRoundingMode.RoundToNearestEven => MidpointRounding.ToEven,
+            RiscVRoundingMode.RoundTowardsZero => MidpointRounding.ToZero,
+            RiscVRoundingMode.RoundDown => MidpointRounding.ToNegativeInfinity,
+            RiscVRoundingMode.RoundUp => MidpointRounding.ToPositiveInfinity,
+            RiscVRoundingMode.RoundToNearestMaxMagnitude => MidpointRounding.AwayFromZero,
+            RiscVRoundingMode.Dynamic => MidpointRounding.ToEven, // TODO: Handle CSR register default
+            _ => throw new InvalidOperationException()
+        };
     }
 }

@@ -37,7 +37,6 @@ public class RiscVInstructionTable : RiscVInstructionTableBase<string>
         if (base.TryGetInstruction(name, out metadatas))
             return true;
 
-
         if (_metadataLookup.TryGetValue(name, out var version))
         {
             if (Config.VersionInfo.Base < version.Base)
