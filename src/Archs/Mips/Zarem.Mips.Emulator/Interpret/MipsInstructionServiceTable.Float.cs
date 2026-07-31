@@ -6,6 +6,7 @@ using Zarem.Emulator.Machine.Registers;
 using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models;
 
@@ -87,6 +88,18 @@ public partial class MipsInstructionServiceTable<T, TS>
     private static MipsTrap MTC1(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateFloatWriteback(inst.FS, cpu[inst.RT]);
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap CFC1(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+    {
+        exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(cpu.FloatProcessor.ControlRegisterFile[(int)inst.FS]));
+        return MipsTrap.None;
+    }
+
+    private static MipsTrap CTC1(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+    {
+        exec = MipsExecution<T>.CreateWriteback((CP1CRegisters)inst.FS, cpu.FloatProcessor.ControlRegisterFile[(int)inst.RT]);
         return MipsTrap.None;
     }
 

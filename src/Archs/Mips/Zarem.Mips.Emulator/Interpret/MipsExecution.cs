@@ -48,6 +48,18 @@ public readonly struct MipsExecution<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
     /// </summary>
+    public static MipsExecution<T> CreateWriteback(CP1CRegisters dest, uint writeBack)
+    {
+        return new MipsExecution<T>
+        {
+            CoProc1ControlReg = dest,
+            CoProc1ControlWriteBack = writeBack,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
+    /// </summary>
     public unsafe static MipsExecution<T> CreateFloatWriteback<TFloat>(MipsFloatRegister dest, TFloat writeBack)
         where TFloat : unmanaged, INumber<TFloat>
     {
