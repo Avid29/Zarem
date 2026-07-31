@@ -14,6 +14,7 @@ using Zarem.Models.Versioning;
 using Zarem.RiscV.Assembler;
 using Zarem.RiscV.Assembler.Models.Meta;
 using Zarem.RiscV.Assembler.Models.Tables;
+using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;

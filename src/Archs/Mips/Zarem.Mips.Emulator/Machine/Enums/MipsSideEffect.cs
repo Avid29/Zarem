@@ -68,9 +68,14 @@ public enum MipsSideEffect
     WriteMemory,
 
     /// <summary>
-    /// Writes to co-processor.
+    /// Writes to CoProcessor0.
     /// </summary>
     WriteCoProc0,
+
+    /// <summary>
+    /// Writes to CoProcessor1 control block.
+    /// </summary>
+    WriteCoProcControl1,
 
     /// <summary>
     /// Writes a word to the floating-point processor.

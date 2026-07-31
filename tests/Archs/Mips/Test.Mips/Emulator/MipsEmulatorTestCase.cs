@@ -5,7 +5,7 @@ using System.Numerics;
 using Test.Archs.Emulator;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.Enums;
-using Zarem.Mips.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Test.Mips.Emulator;
