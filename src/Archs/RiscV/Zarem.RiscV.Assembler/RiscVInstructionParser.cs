@@ -169,16 +169,16 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             RiscVFloatInstructionMeta f => (f.Funct5.HasValue, f.Funct3.HasValue) switch
             {
                 // Triple Source reg with rounding mode
-                (true, true) => RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, _roundingMode),
+                (false, false) => RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, _roundingMode),
                 
                 // Triple source reg without rounding mode
-                (true, false) => RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, f.Funct3!.Value),
+                (false, true) => RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, f.Funct3!.Value),
                 
                 // Double source reg with rounding mode
-                (false, true) => RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5!.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, _roundingMode),
+                (true, false) => RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5!.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, _roundingMode),
                 
                 // Double source reg without rounding mode
-                (false, false) => RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5!.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, f.Funct3!.Value),
+                (true, true) => RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5!.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, f.Funct3!.Value),
             },
             _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
         };
@@ -186,5 +186,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
 
     /// <inheritdoc/>
     protected override RiscVInstructionParser CreateSubParser(Address address)
+        => new(Config, _instructionTable, address, Symbols, null);
         => new(Config, _instructionTable, address, Symbols, null);
 }
