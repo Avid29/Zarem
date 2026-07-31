@@ -40,6 +40,17 @@ public class MipsFloatControlRegisterFile : RegisterFile<uint>
         set => this[(int)CP1CRegisters.ControlStatus] = (uint)value;
     }
 
+    /// <summary>
+    /// Gets or sets the value in a register.
+    /// </summary>
+    public uint this[CP1CRegisters register]
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => this[(int)register];
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set => this[(int)register] = value;
+    }
+
     /// <inheritdoc/>
     public override uint this[int register]
     {

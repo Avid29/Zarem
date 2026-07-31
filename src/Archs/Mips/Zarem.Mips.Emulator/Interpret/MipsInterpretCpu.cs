@@ -205,7 +205,10 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
                 RegisterFile[(int)execution.WritebackGPRegister] = memRead;
                 break;
             case MipsSideEffect.WriteCoProc0:
-                CoProcessor0[execution.CoProc0Reg] = execution.CoProc0WriteBack;
+                CoProcessor0[execution.CoProc0Reg] = execution.CoProcWriteBack;
+                break;
+            case MipsSideEffect.WriteCoProc1Control:
+                FloatProcessor.ControlRegisterFile[execution.CoProc1ControlReg] = execution.CoProc1ControlWriteBack;
                 break;
             case MipsSideEffect.WriteSingle:
                 FloatProcessor.Words[(int)execution.FloatReg] = execution.FWordWriteBack;

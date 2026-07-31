@@ -80,7 +80,7 @@ public partial class MipsInstructionServiceTable<T, TS>
         return new MipsExecution<T>
         {
             CoProc0Reg = CP0Registers.Status,
-            CoProc0WriteBack = T.CreateTruncating((uint)status),
+            CoProcWriteBack = T.CreateTruncating((uint)status),
             ProgramCounter = targetPC,
         };
     }
@@ -99,7 +99,7 @@ public partial class MipsInstructionServiceTable<T, TS>
             return new MipsExecution<T>
             {
                 CoProc0Reg = CP0Registers.Status,
-                CoProc0WriteBack = T.CreateTruncating((uint)status),
+                CoProcWriteBack = T.CreateTruncating((uint)status),
                 Writeback = T.CreateTruncating((uint)status),
                 WritebackGPRegister = inst.RT,
             };
