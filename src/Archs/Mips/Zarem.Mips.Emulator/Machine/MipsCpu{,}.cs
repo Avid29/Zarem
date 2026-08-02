@@ -27,7 +27,7 @@ public abstract partial class MipsCpu<T, TFloat> : MipsCpu<T>
     /// </summary>
     public MipsCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
-        FloatProcessor = new();
+        FloatProcessor = new(CoProcessor0);
     }
 
     /// <inheritdoc/>

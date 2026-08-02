@@ -52,6 +52,18 @@ public class CoProcessor0<T> : ICoProcessor0
         }
     }
 
+    /// <inheritdoc/>
+    public bool FloatingPoint64BitMode
+    {
+        get => RegisterFile.StatusRegister.FloatingPoint64BitMode;
+        set
+        {
+            var status = RegisterFile.StatusRegister;
+            status.FloatingPoint64BitMode = value;
+            RegisterFile.StatusRegister = status;
+        }
+    }
+
     /// <summary>
     /// Gets the current exception vector.
     /// </summary>
