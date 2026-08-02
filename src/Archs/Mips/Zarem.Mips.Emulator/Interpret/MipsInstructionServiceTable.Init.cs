@@ -263,7 +263,9 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
     private void InitFloatRoot(MipsVersionInfo versionInfo)
     {
         Register(CoProc1RSCode.MFC1, &MFC1);
+        Register(CoProc1RSCode.CFC1, &CTC1);
         Register(CoProc1RSCode.MTC1, &MTC1);
+        Register(CoProc1RSCode.CTC1, &CTC1);
     }
 
     private void InitFloatFuncs<TFormat>(MipsVersionInfo versionInfo)

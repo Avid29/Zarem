@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Mips.Emulator.Machine.Enums;
-using Zarem.Mips.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
 
 namespace Zarem.Mips.Emulator.Machine.CoProcessors;
 

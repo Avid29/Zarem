@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using Zarem.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Machine.Registers.FloatProcessor;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Emulator.Machine.CoProcessors;
@@ -20,9 +21,15 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
     public FloatProcessor()
     {
         RegisterFile = new(32);
+        ControlRegisterFile = new();
     }
 
     internal FormattedRegisterFile<T> RegisterFile { get; }
+
+    /// <summary>
+    /// Gets the float-point processor control register file.
+    /// </summary>
+    public MipsFloatControlRegisterFile ControlRegisterFile { get; }
 
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="float"/>.

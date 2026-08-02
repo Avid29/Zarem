@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.RiscV.Models.Enums;
+
 namespace Zarem.RiscV.Models.Instructions.Enums.Functions;
 
 /// <summary>

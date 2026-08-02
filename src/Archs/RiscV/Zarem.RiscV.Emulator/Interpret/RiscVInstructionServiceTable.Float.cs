@@ -7,6 +7,7 @@ using Zarem.Emulator.Machine.Registers;
 using Zarem.RiscV.Emulator.Enums;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
