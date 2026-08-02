@@ -187,5 +187,4 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     /// <inheritdoc/>
     protected override RiscVInstructionParser CreateSubParser(Address address)
         => new(Config, _instructionTable, address, Symbols, null);
-        => new(Config, _instructionTable, address, Symbols, null);
 }

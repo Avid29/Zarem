@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using Zarem.Emulator.Config.Enums;
@@ -11,6 +12,7 @@ using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.JIT;
 using Zarem.Mips.Emulator.Machine.Enums;
+using Zarem.Mips.Models.Versioning.Enums;
 using Zarem.Models;
 using Zarem.Models.Enums;
 
@@ -34,19 +36,30 @@ public class MipsComputer : ComputerBase
         _memoryMapper = new MemoryMapper();
         var bus = new PhysicalBus(_memoryMapper, Endianness.Big);
 
-        // Initialize the components
-        Cpu = config.ExecutionMode switch
-        {
-            ExecutionMode.JustInTime =>
-                Cpu = config.VersionInfo.Is64Bit
-                    ? new MipsJitCpu<ulong>(config, bus)
-                    : new MipsJitCpu<uint>(config, bus),
+        // Determine gpr size
+        var gprType = config.VersionInfo.Is64Bit
+            ? typeof(ulong)
+            : typeof(uint);
 
-            ExecutionMode.Interpret or _ =>
-                Cpu = config.VersionInfo.Is64Bit
-                    ? new MipsInterpretCpu<ulong>(config, bus)
-                    : new MipsInterpretCpu<uint>(config, bus),
+        // Determine float reg size
+        // Regardless of the CPU's GPR size, the floating point registers are always 64-bit in MIPS III and above.
+        var floatType = config.VersionInfo.Generation is >= MipsGeneration.MipsIII
+            ? typeof(ulong)
+            : typeof(uint);
+
+        // Determine the CPU implementation type
+        var cpuType = config.ExecutionMode switch
+        {
+            ExecutionMode.Interpret => typeof(MipsInterpretCpu<,>),
+            ExecutionMode.JustInTime => typeof(MipsJitCpu<,>),
+            _ => throw new NotImplementedException(),
         };
+
+        // Construct the CPU
+        var closedCpuType = cpuType.MakeGenericType(gprType, floatType);
+        var cpu = (IMipsCpu?)Activator.CreateInstance(closedCpuType, config, bus);
+        Guard.IsNotNull(cpu);
+        Cpu = cpu;
 
         Cpu.ShutdownRequested += Processor_ShutdownRequested;
 

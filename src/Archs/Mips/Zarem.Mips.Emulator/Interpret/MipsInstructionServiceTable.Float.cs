@@ -10,9 +10,9 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models;
 
-public partial class MipsInstructionServiceTable<T, TS>
+public partial class MipsInstructionServiceTable<T, TFloat, TSigned>
 {
-    private static MipsTrap FloatAlu<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap FloatAlu<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
@@ -25,7 +25,7 @@ public partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static MipsTrap FloatFAlu<TLogic, TFormat>(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap FloatFAlu<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IFAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
@@ -37,7 +37,7 @@ public partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static MipsTrap FloatRound<TLogic, TFrom, TTo>(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap FloatRound<TLogic, TFrom, TTo>(MipsInterpretCpu<T, TFloat> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IRoundLogic<TFrom>
         where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
         where TTo : unmanaged, IBinaryInteger<TTo>, IMinMaxValue<TTo>
@@ -68,7 +68,7 @@ public partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static MipsTrap FloatConvert<TFrom, TTo>(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap FloatConvert<TFrom, TTo>(MipsInterpretCpu<T, TFloat> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
         where TFrom : unmanaged, INumber<TFrom>
         where TTo : unmanaged, INumber<TTo>
     {
@@ -79,31 +79,31 @@ public partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static MipsTrap MFC1(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap MFC1(MipsInterpretCpu<T, TFloat> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(cpu.FloatProcessor[inst.FS]));
         return MipsTrap.None;
     }
 
-    private static MipsTrap MTC1(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap MTC1(MipsInterpretCpu<T, TFloat> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateFloatWriteback(inst.FS, cpu[inst.RT]);
         return MipsTrap.None;
     }
 
-    private static MipsTrap CFC1(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CFC1(MipsInterpretCpu<T, TFloat> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(cpu.FloatProcessor.ControlRegisterFile[(int)inst.FS]));
         return MipsTrap.None;
     }
 
-    private static MipsTrap CTC1(MipsInterpretCpu<T> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CTC1(MipsInterpretCpu<T, TFloat> cpu, MipsFloatInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateWriteback((CP1CRegisters)inst.FS, cpu.FloatProcessor.ControlRegisterFile[(int)inst.RT]);
         return MipsTrap.None;
     }
 
-    private static IFormattedRegisterIndexer<TFormat> GetFloatRegisterIndexer<TFormat>(MipsInterpretCpu<T> cpu)
+    private static IFormattedRegisterIndexer<TFormat> GetFloatRegisterIndexer<TFormat>(MipsInterpretCpu<T, TFloat> cpu)
         where TFormat : unmanaged, INumber<TFormat>
     {
         if (typeof(TFormat) == typeof(float)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatProcessor.Singles;

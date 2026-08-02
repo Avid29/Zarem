@@ -13,14 +13,15 @@ using Zarem.Mips.Models.Instructions;
 namespace Zarem.Mips.Emulator.JIT;
 
 /// <summary>
-/// A <see cref="MipsCpu{T}"/> which uses JIT cross-compilation for execution.
+/// A <see cref="MipsCpu{T, TFloat}"/> which uses JIT cross-compilation for execution.
 /// </summary>
-public partial class MipsJitCpu<T> : MipsCpu<T>
+public partial class MipsJitCpu<T, TFloat> : MipsCpu<T, TFloat>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     // Cache mapping a PC to its compiled IL block.
-    private readonly JitBlockCache<T, MipsJitBlock<T>> _blockCache;
-    private readonly MipsJitCompiler<T> _jitCompiler;
+    private readonly JitBlockCache<T, MipsJitBlock<T, TFloat>> _blockCache;
+    private readonly MipsJitCompiler<T, TFloat> _jitCompiler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
@@ -28,7 +29,7 @@ public partial class MipsJitCpu<T> : MipsCpu<T>
     public MipsJitCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
         _blockCache = new();
-        _jitCompiler = new MipsJitCompiler<T>(this);
+        _jitCompiler = new MipsJitCompiler<T, TFloat>(this);
 
         bus.AddressWritten += OnAddressWritten;
     }

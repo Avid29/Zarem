@@ -10,8 +10,7 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models.JIT;
 
-public unsafe partial class MipsJitCompiler<T>
-    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+public unsafe partial class MipsJitCompiler<T, TFloat>
 {
     private void EmitDelaySlot(ILGenerator il, T delaySlotPc)
     {
@@ -43,12 +42,12 @@ public unsafe partial class MipsJitCompiler<T>
         base.EmitLoadRegister<TData>(il, register);
     }
 
-    private void EmitLoadRegister<TFloat>(ILGenerator il, MipsFloatRegister register)
-        where TFloat : unmanaged
+    private void EmitLoadRegister<TFloatData>(ILGenerator il, MipsFloatRegister register)
+        where TFloatData : unmanaged
     {
         // Load the register's address then retrieve the value at that address
         EmitLoadRegisterAddress(il, register);
-        il.EmitLdind<TFloat>();
+        il.EmitLdind<TFloatData>();
     }
 
     /// <inheritdoc/>
@@ -67,13 +66,13 @@ public unsafe partial class MipsJitCompiler<T>
         base.EmitStoreRegister(il, register, emitEvaluation);
     }
 
-    private void EmitStoreRegister<TFloat>(ILGenerator il, MipsFloatRegister register, Action emitEvaluation)
-        where TFloat : unmanaged
+    private void EmitStoreRegister<TFloatData>(ILGenerator il, MipsFloatRegister register, Action emitEvaluation)
+        where TFloatData : unmanaged
     {
         // Load the register's address, emit the evaluation instructions, and store the value
         EmitLoadRegisterAddress(il, register);
         emitEvaluation();
-        il.EmitStind<TFloat>();
+        il.EmitStind<TFloatData>();
     }
 
     private void EmitLoadRegisterAddress(ILGenerator il, MipsFloatRegister register) => EmitLoadRegisterAddress(il, (int)register, _cpu.FloatProcessor.RegisterFile.Regs);

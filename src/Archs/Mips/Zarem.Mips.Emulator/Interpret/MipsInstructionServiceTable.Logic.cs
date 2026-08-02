@@ -5,7 +5,7 @@ using Zarem.Mips.Emulator.Machine.Enums;
 
 namespace Zarem.Emulator.Models;
 
-public partial class MipsInstructionServiceTable<T, TS>
+public partial class MipsInstructionServiceTable<T, TFloat, TSigned>
 {
     private interface ITrapLogic
     {

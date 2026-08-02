@@ -12,7 +12,7 @@ namespace Zarem.Mips.Emulator.Machine.CoProcessors;
 /// <summary>
 /// a class representing the floating-point coprocessor unit.
 /// </summary>
-public unsafe class FloatProcessor<T> : IFloatProcessor
+public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <summary>
@@ -151,5 +151,12 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
                 _regs[reg + 1] = T.CreateTruncating(value >> 32);
             }
         }
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        RegisterFile.Dispose();
+        ControlRegisterFile.Dispose();
     }
 }

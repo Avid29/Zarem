@@ -12,15 +12,15 @@ using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
-using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Emulator.Interpret;
 
 /// <summary>
 /// A <see cref="MipsCpu{T}"/> that executes by interpreting each instruction.
 /// </summary>
-public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpretCpu<T>, MipsInstruction, MipsExecution<T>, MipsTrap>
+public sealed class MipsInterpretCpu<T, TFloat> : MipsCpu<T, TFloat>, IInterpretCpu<MipsInterpretCpu<T, TFloat>, MipsInstruction, MipsExecution<T>, MipsTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private readonly IMipsInstructionServiceTable<T> _instructionServiceTable;
 
@@ -30,8 +30,8 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
     public MipsInterpretCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
         _instructionServiceTable = config.VersionInfo.Is64Bit
-            ? new MipsInstructionServiceTable<T, long>(this)
-            : new MipsInstructionServiceTable<T, int>(this);
+            ? new MipsInstructionServiceTable<T, TFloat, long>(this)
+            : new MipsInstructionServiceTable<T, TFloat, int>(this);
     }
 
     /// <inheritdoc/>
