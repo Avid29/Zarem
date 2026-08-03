@@ -16,7 +16,7 @@ using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Models;
 
-public unsafe partial class MipsInstructionServiceTable<T, TS>
+public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned>
 {
     private void InitTables(MipsEmulatorConfig config)
     {
@@ -33,11 +33,11 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         Register(MipsOpCode.JumpAndLink, &JumpLink);
         Register(MipsOpCode.BranchOnEquals, &BranchOn<XeqLogic<T>>);
         Register(MipsOpCode.BranchOnNotEquals, &BranchOn<XneLogic<T>>);
-        Register(MipsOpCode.BranchOnLessThanOrEqualToZero, &BranchOn<XlezLogic<T, TS>>);
-        Register(MipsOpCode.BranchOnGreaterThanZero, &BranchOn<XgtzLogic<T, TS>>);
+        Register(MipsOpCode.BranchOnLessThanOrEqualToZero, &BranchOn<XlezLogic<T, TSigned>>);
+        Register(MipsOpCode.BranchOnGreaterThanZero, &BranchOn<XgtzLogic<T, TSigned>>);
         Register(MipsOpCode.AddImmediate, &CheckedAluI<CheckedAddLogic<int>, int>);
         Register(MipsOpCode.AddImmediateUnsigned, &AluI<AddLogic<uint>, uint>);
-        Register(MipsOpCode.SetLessThanImmediate, &AluISigned<SltLogic<TS>, TS>);
+        Register(MipsOpCode.SetLessThanImmediate, &AluISigned<SltLogic<TSigned>, TSigned>);
         Register(MipsOpCode.SetLessThanImmediateUnsigned, &AluI<SltLogic<T>, T>);
         Register(MipsOpCode.AndImmediate, &AluI<AndLogic<T>, T>);
         Register(MipsOpCode.OrImmediate, &AluI<OrLogic<T>, T>);
@@ -99,8 +99,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         {
             Register(MipsOpCode.BranchOnEqualLikely, &BranchOnLikely<XeqLogic<T>>);
             Register(MipsOpCode.BranchOnNotEqualLikely, &BranchOnLikely<XneLogic<T>>);
-            Register(MipsOpCode.BranchOnLessThanOrEqualToZeroLikely, &BranchOnLikely<XlezLogic<T, TS>>);
-            Register(MipsOpCode.BranchOnGreaterThanZeroLikely, &BranchOnLikely<XgtzLogic<T, TS>>);
+            Register(MipsOpCode.BranchOnLessThanOrEqualToZeroLikely, &BranchOnLikely<XlezLogic<T, TSigned>>);
+            Register(MipsOpCode.BranchOnGreaterThanZeroLikely, &BranchOnLikely<XgtzLogic<T, TSigned>>);
 
             Register(MipsOpCode.LoadDoubleWordCoprocessor1, &NotImplemented); // TODO
             Register(MipsOpCode.LoadDoubleWordCoprocessor2, &NotImplemented); // TODO
@@ -139,15 +139,15 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         Register(FunctionCode.Or, &AluR<OrLogic<T>, T>);
         Register(FunctionCode.ExclusiveOr, &AluR<XorLogic<T>, T>);
         Register(FunctionCode.Nor, &AluR<NorLogic<T>, T>);
-        Register(FunctionCode.SetLessThan, &AluR<SltLogic<TS>, TS>);
+        Register(FunctionCode.SetLessThan, &AluR<SltLogic<TSigned>, TSigned>);
         Register(FunctionCode.SetLessThanUnsigned, &AluR<SltLogic<T>, T>);
 
         if (versionInfo.Generation is >= MipsGeneration.MipsII)
         {
             Register(FunctionCode.Sync, &NotImplemented); // TODO
-            Register(FunctionCode.TrapOnGreaterOrEqual, &TrapOn<XgeLogic<T, TS>>);
+            Register(FunctionCode.TrapOnGreaterOrEqual, &TrapOn<XgeLogic<T, TSigned>>);
             Register(FunctionCode.TrapOnGreaterOrEqualUnsigned, &TrapOn<XgeuLogic<T>>);
-            Register(FunctionCode.TrapOnLessThan, &TrapOn<XltLogic<T, TS>>);
+            Register(FunctionCode.TrapOnLessThan, &TrapOn<XltLogic<T, TSigned>>);
             Register(FunctionCode.TrapOnLessThanUnsigned, &TrapOn<XltuLogic<T>>);
             Register(FunctionCode.TrapOnEquals, &TrapOn<XeqLogic<T>>);
             Register(FunctionCode.TrapOnNotEquals, &TrapOn<XneLogic<T>>);
@@ -202,28 +202,28 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
 
     private void InitRegImm(MipsVersionInfo versionInfo)
     {
-        Register(RegImmFuncCode.BranchOnLessThanZero, &BranchOn<XltzLogic<T, TS>>);
-        Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZero, &BranchOn<XgezLogic<T, TS>>);
+        Register(RegImmFuncCode.BranchOnLessThanZero, &BranchOn<XltzLogic<T, TSigned>>);
+        Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZero, &BranchOn<XgezLogic<T, TSigned>>);
 
         if (versionInfo.Generation is >= MipsGeneration.MipsII and < MipsGeneration.R6)
         {
-            Register(RegImmFuncCode.TrapOnGreaterOrEqualImmediate, &TrapOnI<XgeLogic<T, TS>>);
+            Register(RegImmFuncCode.TrapOnGreaterOrEqualImmediate, &TrapOnI<XgeLogic<T, TSigned>>);
             Register(RegImmFuncCode.TrapOnGreaterOrEqualImmediateUnsigned, &TrapOnI<XgeuLogic<T>>);
-            Register(RegImmFuncCode.TrapOnLessThanImmediate, &TrapOnI<XltLogic<T, TS>>);
+            Register(RegImmFuncCode.TrapOnLessThanImmediate, &TrapOnI<XltLogic<T, TSigned>>);
             Register(RegImmFuncCode.TrapOnLessThanImmediateUnsigned, &TrapOnI<XltuLogic<T>>);
             Register(RegImmFuncCode.TrapOnEqualsImmediate, &TrapOnI<XeqLogic<T>>);
             Register(RegImmFuncCode.TrapOnNotEqualsImmediate, &TrapOnI<XneLogic<T>>);
 
-            Register(RegImmFuncCode.BranchOnLessThanZeroLikely, &BranchOnLikely<XltzLogic<T, TS>>);
-            Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely, &BranchOnLikely<XgezLogic<T, TS>>);
-            Register(RegImmFuncCode.BranchOnLessThanZeroLikelyAndLink, &BranchLinkOnLikely<XltzLogic<T, TS>>);
-            Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink, &BranchLinkOnLikely<XgezLogic<T, TS>>);
+            Register(RegImmFuncCode.BranchOnLessThanZeroLikely, &BranchOnLikely<XltzLogic<T, TSigned>>);
+            Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikely, &BranchOnLikely<XgezLogic<T, TSigned>>);
+            Register(RegImmFuncCode.BranchOnLessThanZeroLikelyAndLink, &BranchLinkOnLikely<XltzLogic<T, TSigned>>);
+            Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroLikelyAndLink, &BranchLinkOnLikely<XgezLogic<T, TSigned>>);
         }
 
         if (versionInfo.Generation is < MipsGeneration.R6)
         {
-            Register(RegImmFuncCode.BranchOnLessThanZeroAndLink, &BranchLinkOn<XltzLogic<T, TS>>);
-            Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroAndLink, &BranchLinkOn<XgezLogic<T, TS>>);
+            Register(RegImmFuncCode.BranchOnLessThanZeroAndLink, &BranchLinkOn<XltzLogic<T, TSigned>>);
+            Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZeroAndLink, &BranchLinkOn<XgezLogic<T, TSigned>>);
         }
 
         if (versionInfo.Generation >= MipsGeneration.R6)
@@ -329,24 +329,24 @@ public unsafe partial class MipsInstructionServiceTable<T, TS>
         Register(format, code, &FloatConvert<TFrom, TTo>);
     }
 
-    private void Register(MipsOpCode opCode, delegate*<MipsInterpretCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private void Register(MipsOpCode opCode, delegate*<MipsInterpretCpu<T, TFloat>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => _instructionTable.Register(opCode, (IntPtr)func);
 
-    private void Register(FunctionCode funcCode, delegate*<MipsInterpretCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private void Register(FunctionCode funcCode, delegate*<MipsInterpretCpu<T, TFloat>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => _instructionTable.Register(funcCode, (IntPtr)func);
 
-    private void Register(Func2Code funcCode, delegate*<MipsInterpretCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private void Register(Func2Code funcCode, delegate*<MipsInterpretCpu<T, TFloat>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => _instructionTable.Register(funcCode, (IntPtr)func);
 
-    private void Register(RegImmFuncCode funcCode, delegate*<MipsInterpretCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private void Register(RegImmFuncCode funcCode, delegate*<MipsInterpretCpu<T, TFloat>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => _instructionTable.Register(funcCode, (IntPtr)func);
 
-    private void Register(CoProc1RSCode funcCode, delegate*<MipsInterpretCpu<T>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap> func)
+    private void Register(CoProc1RSCode funcCode, delegate*<MipsInterpretCpu<T, TFloat>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap> func)
         => _instructionTable.Register(funcCode, (IntPtr)func);
 
-    private void Register(MipsFloatFormat format, MipsFloatFuncCode funcCode, delegate*<MipsInterpretCpu<T>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap> func)
+    private void Register(MipsFloatFormat format, MipsFloatFuncCode funcCode, delegate*<MipsInterpretCpu<T, TFloat>, MipsFloatInstruction, out MipsExecution<T>, MipsTrap> func)
         => _instructionTable.Register(format, funcCode, (IntPtr)func);
 
-    private static IntPtr GetFunctionPtrValue(delegate*<MipsInterpretCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private static IntPtr GetFunctionPtrValue(delegate*<MipsInterpretCpu<T, TFloat>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => (IntPtr)func;
 }

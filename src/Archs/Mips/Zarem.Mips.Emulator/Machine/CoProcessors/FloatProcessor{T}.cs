@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using Zarem.Emulator.Machine.Registers;
@@ -12,14 +11,17 @@ namespace Zarem.Mips.Emulator.Machine.CoProcessors;
 /// <summary>
 /// a class representing the floating-point coprocessor unit.
 /// </summary>
-public unsafe class FloatProcessor<T> : IFloatProcessor
+public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
+    private readonly ICoProcessor0 _co0;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="FloatProcessor{T}"/> class.
     /// </summary>
-    public FloatProcessor()
+    public FloatProcessor(ICoProcessor0 co0)
     {
+        _co0 = co0;
         RegisterFile = new(32);
         ControlRegisterFile = new();
     }
@@ -48,11 +50,10 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
     {
         get
         {
-            return sizeof(T) switch
-            {
-                sizeof(uint) => new PairedDoubleIndexer(RegisterFile.Regs),
-                _ => RegisterFile.Doubles,
-            };
+            bool use64BitMode = sizeof(T) is sizeof(ulong) && _co0.FloatingPoint64BitMode;
+            return use64BitMode
+                ? RegisterFile.Doubles
+                : new PairedDoubleIndexer(RegisterFile.Regs);
         }
     }
 
@@ -63,12 +64,10 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
     {
         get
         {
-            return sizeof(T) switch
-            {
-                sizeof(uint) => new PairedLongIndexer(RegisterFile.Regs),
-                sizeof(ulong) => RegisterFile.Longs,
-                _ => ThrowHelper.ThrowNotSupportedException<IFormattedRegisterIndexer<long>>(),
-            };
+            bool use64BitMode = sizeof(T) is sizeof(ulong) && _co0.FloatingPoint64BitMode;
+            return use64BitMode
+                ? RegisterFile.Longs
+                : new PairedLongIndexer(RegisterFile.Regs);
         }
     }
 
@@ -151,5 +150,12 @@ public unsafe class FloatProcessor<T> : IFloatProcessor
                 _regs[reg + 1] = T.CreateTruncating(value >> 32);
             }
         }
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        RegisterFile.Dispose();
+        ControlRegisterFile.Dispose();
     }
 }

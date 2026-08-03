@@ -9,9 +9,9 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models;
 
-public partial class MipsInstructionServiceTable<T, TS>
+public partial class MipsInstructionServiceTable<T, TFloat, TSigned>
 {
-    private static MipsTrap CreateCoProc0Execution(MipsInterpretCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CreateCoProc0Execution(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?
@@ -55,7 +55,7 @@ public partial class MipsInstructionServiceTable<T, TS>
         return MipsTrap.None;
     }
 
-    private static MipsExecution<T> Eret(MipsInterpretCpu<T> cpu)
+    private static MipsExecution<T> Eret(MipsInterpretCpu<T, TFloat> cpu)
     {
         // Retrieve the status register value
         var status = cpu.CoProcessor0.RegisterFile.StatusRegister;
@@ -85,7 +85,7 @@ public partial class MipsInstructionServiceTable<T, TS>
         };
     }
 
-    private static MipsExecution<T> SetInterrupts(MipsInterpretCpu<T> cpu, CoProc0Instruction inst, bool enabled)
+    private static MipsExecution<T> SetInterrupts(MipsInterpretCpu<T, TFloat> cpu, CoProc0Instruction inst, bool enabled)
     {
         // Retrieve the status register
         var status = cpu.CoProcessor0.RegisterFile.StatusRegister;

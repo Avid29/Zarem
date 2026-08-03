@@ -17,8 +17,7 @@ using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Models.JIT;
 
-public partial class MipsJitCompiler<T>
-    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+public partial class MipsJitCompiler<T, TFloat>
 {
     private void InitTables(MipsEmulatorConfig config)
     {

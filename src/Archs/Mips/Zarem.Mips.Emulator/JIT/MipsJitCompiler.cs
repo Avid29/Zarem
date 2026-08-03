@@ -21,8 +21,9 @@ namespace Zarem.Emulator.Models.JIT;
 /// <summary>
 /// A class which compiles blocks of MIPS code into JIT IL code.
 /// </summary>
-public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, MipsTrap>
+public unsafe partial class MipsJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRegister, MipsTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private delegate void MipsEmitter(ILGenerator il, MipsInstruction inst, T pc);
 
@@ -33,15 +34,15 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private readonly Dictionary<Type, MethodInfo> _castDownMethods = [];
     private readonly Dictionary<Type, MethodInfo> _rightShiftMethods = [];
     private readonly MethodInfo _handleAccessResultMethod;
-    private readonly MipsJitCpu<T> _cpu;
+    private readonly MipsJitCpu<T, TFloat> _cpu;
 
     private readonly HashSet<MipsGpRegister> _loadRegs = [];
     private readonly HashSet<MipsGpRegister> _storeRegs = [];
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MipsJitCompiler{T}"/> class.
+    /// Initializes a new instance of the <see cref="MipsJitCompiler{T, TFloat}"/> class.
     /// </summary>
-    public MipsJitCompiler(MipsJitCpu<T> cpu) : base(cpu)
+    public MipsJitCompiler(MipsJitCpu<T, TFloat> cpu) : base(cpu)
     {
         _cpu = cpu;
 
@@ -51,7 +52,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         Guard.IsNotNull(clzMethod);
         _clzMethod = clzMethod;
 
-        var handleAccessResultMethod = typeof(MipsJitCompiler<T>).GetMethod(nameof(HandleMemoryAccessResult), BindingFlags.Static | BindingFlags.NonPublic);
+        var handleAccessResultMethod = typeof(MipsJitCompiler<T, TFloat>).GetMethod(nameof(HandleMemoryAccessResult), BindingFlags.Static | BindingFlags.NonPublic);
         Guard.IsNotNull(handleAccessResultMethod);
         _handleAccessResultMethod = handleAccessResultMethod;
 
@@ -83,9 +84,9 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     /// </summary>
     /// <param name="startPc">The entry point of the JIT block.</param>
     /// <returns>The method block.</returns>
-    public MipsJitBlock<T> CompileBlock(T startPc)
+    public MipsJitBlock<T, TFloat> CompileBlock(T startPc)
     {
-        Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
+        Type[] parameterTypes = [typeof(MipsJitCpu<T, TFloat>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
@@ -101,16 +102,16 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             currentPc += T.CreateTruncating(4);
         }
 
-        var @delegate = (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
+        var @delegate = (MipsBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(MipsBlockDelegate<T, TFloat>));
         return new(@delegate, endPc - startPc);
     }
 
     /// <summary>
     /// Compiles a single instruction as a cli dynamic method.
     /// </summary>
-    public MipsBlockDelegate<T> CompileLoneInstruction(MipsInstruction inst, T pc)
+    public MipsBlockDelegate<T, TFloat> CompileLoneInstruction(MipsInstruction inst, T pc)
     {
-        Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
+        Type[] parameterTypes = [typeof(MipsJitCpu<T, TFloat>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
@@ -124,7 +125,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             EmitRet(il, pc + T.CreateTruncating(4));
         }
 
-        return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
+        return (MipsBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(MipsBlockDelegate<T, TFloat>));
     }
 
     private void CompileInstruction(ILGenerator il, MipsInstruction instruction, T pc)

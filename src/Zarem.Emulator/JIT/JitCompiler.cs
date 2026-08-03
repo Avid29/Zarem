@@ -164,10 +164,11 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Emits the CIL to load the address of a register from a register file in memory.
     /// </summary>
-    protected void EmitLoadRegisterAddress(ILGenerator il, int index , T* regs)
+    protected void EmitLoadRegisterAddress<TData>(ILGenerator il, int index , TData* regs)
+        where TData : unmanaged
     {
         // Calculate the address of the register in memory
-        nint regAddress = (nint)regs + (index * sizeof(T));
+        nint regAddress = (nint)regs + (index * sizeof(TData));
 
         // Emit the address 
         if (nint.Size == 8) il.Emit(OpCodes.Ldc_I8, regAddress);

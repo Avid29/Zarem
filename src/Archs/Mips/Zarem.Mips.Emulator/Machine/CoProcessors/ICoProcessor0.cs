@@ -23,4 +23,9 @@ public interface ICoProcessor0
     /// Gets or sets the processor's privilege mode.
     /// </summary>
     public PrivilegeMode PrivilegeMode { get; set; }
+
+    /// <summary>
+    /// Gets or sets if the processor is in 64-bit floating-point mode.
+    /// </summary>
+    public bool FloatingPoint64BitMode { get; set; }
 }
