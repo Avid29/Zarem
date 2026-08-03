@@ -9,7 +9,6 @@ using Zarem.Mips.Assembler.Models.Tables;
 using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.JIT;
 using Zarem.Mips.Emulator.Machine;
-using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;

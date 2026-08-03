@@ -58,6 +58,10 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         {
             str += " (Delay Slots Disabled)";
         }
+        if (run?.Status.FloatingPoint64BitMode is false)
+        {
+            str += " (Legacy Paired Floating-Points)";
+        }
 
         return str;
     }
@@ -84,10 +88,8 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
             .Concat(GetUncategorizedInstructionTests<T>(config))
             .Concat(GetSystemInstructionTests<T>(config))
             .Concat(GetCoProcMoveInstructionTest<T>(config))
-            .Concat(GetFloatArithmeticInstructionTests<T>(config))
-            .Concat(GetFloatConvertInstructionTests<T>(config))
-            .Concat(GetFloatRoundInstructionTests<T>(config))
-            .Concat(GetFloatMoveInstructionTests<T>(config));
+            .Concat(GetFloatInstructionTests<T>(config))
+            .Concat(GetFloatInstructionTests<T>(config, true));
     }
 
     private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TSigned, TLong>(MipsEmulatorConfig config)
@@ -519,45 +521,65 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         yield return [new MipsEmulatorTestCase<T>(config, "mfc1 $v0, $f0", MipsGpRegister.ReturnValue0, T.CreateTruncating(2))];
     }
 
-    private static IEnumerable<object[]> GetFloatArithmeticInstructionTests<T>(MipsEmulatorConfig config)
+    private static IEnumerable<object[]> GetFloatInstructionTests<T>(MipsEmulatorConfig config, bool legacy = false)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        // Legacy floating point instructions are only available on MIPS III and later,
+        // so skip these tests if the configuration is legacy and the generation is less than MIPS III.
+        if (config.VersionInfo.Generation is < MipsGeneration.MipsIII && legacy)
+            return [];
+
+        // Set the floating point mode based on the legacy flag
+        var status = new StatusRegister
+        {
+            FloatingPoint64BitMode = !legacy,
+        };
+
+        return GetFloatArithmeticInstructionTests<T>(config, status)
+            .Concat(GetFloatConvertInstructionTests<T>(config, status))
+            .Concat(GetFloatMoveInstructionTests<T>(config, status))
+            .Concat(GetFloatRoundInstructionTests<T>(config, status));
+    }
+
+    private static IEnumerable<object[]> GetFloatArithmeticInstructionTests<T>(MipsEmulatorConfig config, StatusRegister status)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // Single
-        yield return [new MipsEmulatorTestCase<T>(config, "add.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f + 2.5f)];
-        yield return [new MipsEmulatorTestCase<T>(config, "sub.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f - 2.5f)];
-        yield return [new MipsEmulatorTestCase<T>(config, "mul.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f * 2.5f)];
-        yield return [new MipsEmulatorTestCase<T>(config, "div.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f / 2.5f)];
-        yield return [new MipsEmulatorTestCase<T>(config, "abs.S $f16, $f7", MipsFloatRegister.F16, 2f)];
-        yield return [new MipsEmulatorTestCase<T>(config, "neg.S $f16, $f5", MipsFloatRegister.F16, -2f)];
+        yield return [new MipsEmulatorTestCase<T>(config, "add.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f + 2.5f) { Status = status }];
+        yield return [new MipsEmulatorTestCase<T>(config, "sub.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f - 2.5f) { Status = status }];
+        yield return [new MipsEmulatorTestCase<T>(config, "mul.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f * 2.5f) { Status = status }];
+        yield return [new MipsEmulatorTestCase<T>(config, "div.S $f16, $f8, $f9", MipsFloatRegister.F16, 10.5f / 2.5f) { Status = status }];
+        yield return [new MipsEmulatorTestCase<T>(config, "abs.S $f16, $f7", MipsFloatRegister.F16, 2f) { Status = status }];
+        yield return [new MipsEmulatorTestCase<T>(config, "neg.S $f16, $f5", MipsFloatRegister.F16, -2f) { Status = status }];
 
         // Double
-        yield return [new MipsEmulatorTestCase<T>(config, "add.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d + 0.5d)];
-        yield return [new MipsEmulatorTestCase<T>(config, "sub.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d - 0.5d)];
-        yield return [new MipsEmulatorTestCase<T>(config, "mul.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d * 0.5d)];
-        yield return [new MipsEmulatorTestCase<T>(config, "div.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d / 0.5d)];
-        yield return [new MipsEmulatorTestCase<T>(config, "abs.D $f16, $f16", MipsFloatRegister.F16, 2d)];
-        yield return [new MipsEmulatorTestCase<T>(config, "neg.D $f16, $f12", MipsFloatRegister.F16, -2d)];
+        yield return [new MipsEmulatorTestCase<T>(config, "add.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d + 0.5d) { Status = status }];
+        yield return [new MipsEmulatorTestCase<T>(config, "sub.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d - 0.5d) { Status = status }];
+        yield return [new MipsEmulatorTestCase<T>(config, "mul.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d * 0.5d) { Status = status }];
+        yield return [new MipsEmulatorTestCase<T>(config, "div.D $f16, $f12, $f14", MipsFloatRegister.F16, 2d / 0.5d) { Status = status }];
+        yield return [new MipsEmulatorTestCase<T>(config, "abs.D $f16, $f16", MipsFloatRegister.F16, 2d) { Status = status }];
+        yield return [new MipsEmulatorTestCase<T>(config, "neg.D $f16, $f12", MipsFloatRegister.F16, -2d) { Status = status }];
 
         if (config.VersionInfo.Generation is >= MipsGeneration.MipsII)
         {
-            yield return [new MipsEmulatorTestCase<T>(config, "sqrt.S $f16, $f8", MipsFloatRegister.F16, MathF.Sqrt(10.5f))];
-            yield return [new MipsEmulatorTestCase<T>(config, "sqrt.D $f16, $f12", MipsFloatRegister.F16, Math.Sqrt(2d))];
+            yield return [new MipsEmulatorTestCase<T>(config, "sqrt.S $f16, $f8", MipsFloatRegister.F16, MathF.Sqrt(10.5f)) { Status = status }];
+            yield return [new MipsEmulatorTestCase<T>(config, "sqrt.D $f16, $f12", MipsFloatRegister.F16, Math.Sqrt(2d)) { Status = status }];
         }
 
         if (config.VersionInfo.Generation is >= MipsGeneration.MipsIV)
         {
-            yield return [new MipsEmulatorTestCase<T>(config, "recip.S $f16, $f9", MipsFloatRegister.F16, float.ReciprocalEstimate(2.5f))];
-            yield return [new MipsEmulatorTestCase<T>(config, "recip.D $f16, $f12", MipsFloatRegister.F16, double.ReciprocalEstimate(2d))];
+            yield return [new MipsEmulatorTestCase<T>(config, "recip.S $f16, $f9", MipsFloatRegister.F16, float.ReciprocalEstimate(2.5f)) { Status = status }];
+            yield return [new MipsEmulatorTestCase<T>(config, "recip.D $f16, $f12", MipsFloatRegister.F16, double.ReciprocalEstimate(2d)) { Status = status }];
         }
 
         if (config.VersionInfo.Generation is >= MipsGeneration.R2)
         {
-            yield return [new MipsEmulatorTestCase<T>(config, "rsqrt.S $f16, $f9", MipsFloatRegister.F16, float.ReciprocalSqrtEstimate(2.5f))];
-            yield return [new MipsEmulatorTestCase<T>(config, "rsqrt.D $f16, $f12", MipsFloatRegister.F16, double.ReciprocalSqrtEstimate(2d))];
+            yield return [new MipsEmulatorTestCase<T>(config, "rsqrt.S $f16, $f9", MipsFloatRegister.F16, float.ReciprocalSqrtEstimate(2.5f)) { Status = status }];
+            yield return [new MipsEmulatorTestCase<T>(config, "rsqrt.D $f16, $f12", MipsFloatRegister.F16, double.ReciprocalSqrtEstimate(2d)) { Status = status }];
         }
     }
 
-    private static IEnumerable<object[]> GetFloatConvertInstructionTests<T>(MipsEmulatorConfig config)
+    private static IEnumerable<object[]> GetFloatConvertInstructionTests<T>(MipsEmulatorConfig config, StatusRegister status)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // From Single
@@ -584,14 +606,14 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         }
     }
 
-    private static IEnumerable<object[]> GetFloatMoveInstructionTests<T>(MipsEmulatorConfig config)
+    private static IEnumerable<object[]> GetFloatMoveInstructionTests<T>(MipsEmulatorConfig config, StatusRegister status)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         yield return [new MipsEmulatorTestCase<T>(config, "mov.S $f16, $f10", MipsFloatRegister.F16, 1.25f)];
         yield return [new MipsEmulatorTestCase<T>(config, "mov.D $f16, $f18", MipsFloatRegister.F16, Math.PI)];
     }
 
-    private static IEnumerable<object[]> GetFloatRoundInstructionTests<T>(MipsEmulatorConfig config)
+    private static IEnumerable<object[]> GetFloatRoundInstructionTests<T>(MipsEmulatorConfig config, StatusRegister status)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         if (config.VersionInfo.Generation is >= MipsGeneration.MipsII)
