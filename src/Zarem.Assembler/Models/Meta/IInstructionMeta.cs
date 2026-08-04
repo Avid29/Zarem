@@ -24,4 +24,9 @@ public interface IInstructionMeta
     /// Introduces a variable argument count. Currently this appears to be an adequate approach.
     /// </remarks>
     string Identifier { get; }
+
+    /// <summary>
+    /// Gets a string showing the usage pattern for the instruction.
+    /// </summary>
+    string UsagePattern { get; }
 }
