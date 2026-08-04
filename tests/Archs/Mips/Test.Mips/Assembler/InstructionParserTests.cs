@@ -25,9 +25,6 @@ using Zarem.Mips.Assembler;
 using Zarem.Mips.Models.Versioning;
 using Zarem.Mips.Models.Versioning.Enums;
 
-
-
-
 #if DEBUG
 using Zarem.Mips.Disassembler.Services;
 #endif
@@ -87,9 +84,9 @@ public class InstructionParserTests
             yield return [new InstructionParsingTestCase("add $t0, $s0, $s1, $s1", LogId.InvalidInstructionArgCount)];
 
             // Invalid registers
-            //yield return [new InstructionParsingTestCase("jr $s", LogId.InvalidRegisterArgument)];
-            //yield return [new InstructionParsingTestCase("jr $s80", LogId.InvalidRegisterArgument)];
-            //yield return [new InstructionParsingTestCase("jr $80", LogId.InvalidRegisterArgument)];
+            yield return [new InstructionParsingTestCase("jr $s", LogId.InvalidRegisterArgument)];
+            yield return [new InstructionParsingTestCase("jr $s80", LogId.InvalidRegisterArgument)];
+            yield return [new InstructionParsingTestCase("jr $80", LogId.InvalidRegisterArgument)];
         }
     }
 
