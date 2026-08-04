@@ -69,25 +69,7 @@ public abstract record MipsInstructionMetaBase : InstructionMetaBase<MipsArgumen
     /// <summary>
     /// Gets a string showing the usage pattern for the instruction.
     /// </summary>
-    public string UsagePattern
-    {
-        get
-        {
-            StringBuilder pattern = new($"{Name} ");
-            for (int i = 0; i < ArgumentPattern.Length; i++)
-            {
-                var profile = new MipsTokenizerProfile();
-                pattern.Append(ArgumentTable<MipsArgument>.GetDisplay(ArgumentPattern[i], profile));
-
-                if (i < ArgumentPattern.Length - 1)
-                {
-                    pattern.Append(", ");
-                }
-            }
-
-            return $"{pattern}";
-        }
-    }
+    public override string UsagePattern => GetUsagePattern(MipsTokenizerProfile.Default);
 
     /// <summary>
     /// Gets the function's type.
