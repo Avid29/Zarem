@@ -8,8 +8,7 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models.JIT;
 
-public partial class MipsJitCompiler<T>
-    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+public partial class MipsJitCompiler<T, TFloat>
 {
     private const int MaxBlockSize = 1024;
 

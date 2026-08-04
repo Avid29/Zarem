@@ -31,6 +31,7 @@ public enum MipsRegisterSet
     [RegisterSet("f{0}", typeof(MipsFloatRegister), @"^\$?f([0-9]+)$")] FloatingPoints,
     
     CoProc0,
+    FCSR,
 
 #pragma warning restore CS1591
 }

@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using Zarem.Helpers;
 using Zarem.Mips.Emulator.Machine.Enums;
 
-namespace Zarem.Mips.Emulator.Machine.Registers;
+namespace Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
 
 /// <summary>
 /// CoProcessor0 Status register.
@@ -25,6 +25,7 @@ public struct StatusRegister
     private const int INTERUPT_MASK_OFFSET = 8;
 
     private const int BOOTSTRAPPING_BIT = 22;
+    private const int FLOATINGPOINT64_MODE_BIT = 26;
 
     private uint _status;
 
@@ -95,6 +96,15 @@ public struct StatusRegister
     {
         readonly get => BitField.GetBit(_status, BOOTSTRAPPING_BIT);
         set => BitField.SetBit(ref _status, BOOTSTRAPPING_BIT, value);
+    }
+
+    /// <summary>
+    /// Gets or sets if the floating-point registers are in 32bit pair or 64bit mode.
+    /// </summary>
+    public bool FloatingPoint64BitMode
+    {
+        readonly get => BitField.GetBit(_status, FLOATINGPOINT64_MODE_BIT);
+        set => BitField.SetBit(ref _status, FLOATINGPOINT64_MODE_BIT, value);
     }
 
     /// <summary>

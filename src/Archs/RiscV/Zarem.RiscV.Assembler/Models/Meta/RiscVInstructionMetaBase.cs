@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Text.Json.Serialization;
+using Zarem.Assembler;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Models.Versioning;
 using Zarem.RiscV.Models.Instructions.Enums;
@@ -74,6 +75,10 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
     [JsonPropertyName("imm_fixed")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public int? FixedImm { get; init; }
+
+    /// <inheritdoc/>
+    [JsonIgnore]
+    public override string UsagePattern => GetUsagePattern(RiscVTokenizerProfile.Default);
 
     /// <summary>
     /// Checks if an instruction is valid for the provided processor configuration.

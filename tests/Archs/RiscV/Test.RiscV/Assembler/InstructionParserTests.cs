@@ -14,6 +14,7 @@ using Zarem.Models.Versioning;
 using Zarem.RiscV.Assembler;
 using Zarem.RiscV.Assembler.Models.Meta;
 using Zarem.RiscV.Assembler.Models.Tables;
+using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
@@ -131,6 +132,7 @@ public class InstructionParserTests
     private static IEnumerable<object[]> GenerateTestList(RiscVVersionInfo version)
     {
         var formatTable = new FormatTable<RiscVFloatFormat>();
+        var roundingModeTable = new FormatTable<RiscVRoundingMode>("rm");
         var table = new RiscVInstructionTable(new(version));
         var instructions = table.GetInstructions()
             .Where(i => i.IsValidFor(version));
@@ -146,6 +148,7 @@ public class InstructionParserTests
             if (instruction is RiscVFloatInstructionMeta fMeta)
             {
                 name = formatTable.ApplyFormat(name, RiscVFloatFormat.Single);
+                name = roundingModeTable.ApplyFormat(name, RiscVRoundingMode.Dynamic);
             }
 
             // Generate instruction
