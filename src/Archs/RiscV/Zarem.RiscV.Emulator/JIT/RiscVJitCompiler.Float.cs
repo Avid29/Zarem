@@ -20,7 +20,30 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         EmitStoreRegister<TFormat>(il, inst.FRD, () =>
         {
             EmitLoadRegister<TFormat>(il, inst.FRS1);
+            EmitLoadRegister<TFormat>(il, inst.FRS2);
+            il.Emit(ilOpCode);
+        });
+    }
+
+    private void FloatUnary<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc, string methodName)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        EmitStoreRegister<TFormat>(il, inst.FRD, () =>
+        {
             EmitLoadRegister<TFormat>(il, inst.FRS1);
+            var method = typeof(TFormat).GetMethod(methodName, BindingFlags.Public | BindingFlags.Static);
+            Guard.IsNotNull(method);
+            il.Emit(OpCodes.Call, method);
+        });
+    }
+
+    private void FloatCompare<TFormat>(ILGenerator il, RiscVFloatInstruction inst, OpCode ilOpCode)
+        where TFormat : unmanaged
+    {
+        EmitStoreRegister(il, ((RiscVInstruction)inst).RD, _ =>
+        {
+            EmitLoadRegister<TFormat>(il, inst.FRS1);
+            EmitLoadRegister<TFormat>(il, inst.FRS2);
             il.Emit(ilOpCode);
         });
     }
