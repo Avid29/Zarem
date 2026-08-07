@@ -3,9 +3,11 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
+using System.Reflection;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
 using Zarem.RiscV.Models.Instructions;
+using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Zarem.RiscV.Emulator.JIT;
@@ -20,6 +22,29 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             EmitLoadRegister<TFormat>(il, inst.FRS1);
             EmitLoadRegister<TFormat>(il, inst.FRS1);
             il.Emit(ilOpCode);
+        });
+    }
+
+    private void FloatMinMax<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        // If the instruction is not a float min or max, make an illegal instruction trap
+        if (inst.Funct3 is not (FloatFunct3Code.FloatMin or FloatFunct3Code.FloatMax))
+            IllegalInstruction(il, inst, pc);
+
+        EmitStoreRegister<TFormat>(il, inst.FRD, () =>
+        {
+            EmitLoadRegister<TFormat>(il, inst.FRS1);
+            EmitLoadRegister<TFormat>(il, inst.FRS2);
+            var method = inst.Funct3 switch
+            {
+                FloatFunct3Code.FloatMin => typeof(TFormat).GetMethod(nameof(TFormat.Min), BindingFlags.Public | BindingFlags.Static),
+                FloatFunct3Code.FloatMax => typeof(TFormat).GetMethod(nameof(TFormat.Max), BindingFlags.Public | BindingFlags.Static),
+                _ => throw new NotSupportedException($"Unsupported float function: {inst.Funct3}"),
+            };
+
+            Guard.IsNotNull(method);
+            il.Emit(OpCodes.Call, method);
         });
     }
 
