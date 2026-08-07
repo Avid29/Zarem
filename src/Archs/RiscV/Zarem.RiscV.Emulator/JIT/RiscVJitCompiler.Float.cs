@@ -48,6 +48,25 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         });
     }
 
+    private void FloatFle<TFormat>(ILGenerator il, RiscVFloatInstruction inst)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        // No direct IL opcode for floating-point less than or equal,
+        // so we use a combination of comparison and logical operations
+
+        EmitStoreRegister(il, ((RiscVInstruction)inst).RD, _ =>
+        {
+            EmitLoadRegister<TFormat>(il, inst.FRS1);
+            EmitLoadRegister<TFormat>(il, inst.FRS2);
+
+            // Compare great than unsigned,
+            // then negate the result to get less than or equal
+            il.Emit(OpCodes.Cgt_Un);
+            il.EmitLoadConstant(0);
+            il.Emit(OpCodes.Ceq);
+        });
+    }
+
     private void FloatMinMax<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {

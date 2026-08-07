@@ -172,7 +172,7 @@ public partial class RiscVJitCompiler<T, TFloat>
         // TODO: ConvertToInt
         // TODO: Classify
         // TODO: MoveFToX
-        // TODO: Compare less than or equal
+        _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessOrEqual, (il, inst, pc) => FloatFle<TFormat>(il, inst));
         _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessThan, (il, inst, pc) => FloatCompare<TFormat>(il, inst, OpCodes.Clt));
         _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatEqual, (il, inst, pc) => FloatCompare<TFormat>(il, inst, OpCodes.Ceq));
     }
