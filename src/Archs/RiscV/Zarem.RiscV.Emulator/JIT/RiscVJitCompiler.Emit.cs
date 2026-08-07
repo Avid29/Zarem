@@ -7,7 +7,7 @@ using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.RiscV.Emulator.JIT;
 
 public unsafe partial class RiscVJitCompiler<T, TFloat>
 {

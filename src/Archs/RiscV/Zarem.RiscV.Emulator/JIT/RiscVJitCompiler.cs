@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
-using Zarem.RiscV.Emulator.JIT;
+using Zarem.Emulator.JIT;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.RiscV.Emulator.JIT;
 
 /// <summary>
 /// A class which compiles blocks of RISC-V code into JIT IL code.

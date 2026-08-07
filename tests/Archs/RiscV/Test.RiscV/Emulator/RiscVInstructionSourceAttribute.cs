@@ -203,9 +203,6 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
     private static IEnumerable<object[]> GetFloatArithmeticInstructionTests<T>(RiscVEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
-        if (config.ExecutionMode is not ExecutionMode.Interpret)
-            yield break;
-
         unchecked
         {
             if (config.VersionInfo.Extensions.HasFlag(RiscVExtensions.SingleFloatingPoint))
