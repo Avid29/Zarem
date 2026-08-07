@@ -169,7 +169,7 @@ public partial class RiscVJitCompiler<T, TFloat>
         _instructionTable.Register(format, FloatFunc5Code.Divide, (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Div));
         _instructionTable.Register(format, FloatFunc5Code.MinMax, (il, inst, pc) => FloatMinMax<TFormat>(il, inst, pc));
         _instructionTable.Register(format, FloatFunc5Code.SquareRoot, (il, inst, pc) => FloatUnary<TFormat>(il, inst, pc, nameof(TFormat.Sqrt)));
-        // TODO: ConvertToInt
+        _instructionTable.Register(format, FloatFunc5Code.ConvertToInt, (il, inst, pc) => FloatConvertFrom<TFormat>(il, inst, pc));
         // TODO: Classify
         // TODO: MoveFToX
         _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessOrEqual, (il, inst, pc) => FloatFle<TFormat>(il, inst));
