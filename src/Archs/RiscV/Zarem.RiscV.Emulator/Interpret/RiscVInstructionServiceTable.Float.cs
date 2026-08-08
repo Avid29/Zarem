@@ -87,14 +87,14 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap FloatMacGuffin<TTo>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
-        where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
+    private static RiscVTrap FloatMacGuffin<TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         return (byte)inst.FRS2 switch
         {
-            0 when inst.Funct3 is FloatFunct3Code.FloatMoveFrom => FloatMoveTo<TTo>(cpu, inst, out exec),
-            0 when inst.Funct3 is FloatFunct3Code.FloatClassify => FloatClassifiy<TTo>(cpu, inst, out exec),
-            _ =>  FloatConvertTo<TTo>(cpu, inst, out exec),
+            0 when inst.Funct3 is FloatFunct3Code.FloatMoveFrom => FloatMoveTo<TFormat>(cpu, inst, out exec),
+            0 when inst.Funct3 is FloatFunct3Code.FloatClassify => FloatClassifiy<TFormat>(cpu, inst, out exec),
+            _ =>  FloatConvertTo<TFormat>(cpu, inst, out exec),
         };
     }
 

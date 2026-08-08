@@ -42,6 +42,30 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         });
     }
 
+    private void FloatMinMax<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        // If the instruction is not a float min or max, make an illegal instruction trap
+        if (inst.Funct3 is not (FloatFunct3Code.FloatMin or FloatFunct3Code.FloatMax))
+            IllegalInstruction(il, inst, pc);
+
+        // Resolve the method to call based on the instruction's funct3
+        var method = inst.Funct3 switch
+        {
+            FloatFunct3Code.FloatMin => typeof(TFormat).GetMethod(nameof(TFormat.Min), BindingFlags.Public | BindingFlags.Static),
+            FloatFunct3Code.FloatMax => typeof(TFormat).GetMethod(nameof(TFormat.Max), BindingFlags.Public | BindingFlags.Static),
+            _ => throw new NotSupportedException($"Unsupported float function: {inst.Funct3}"),
+        };
+        Guard.IsNotNull(method);
+
+        EmitStoreRegister<TFormat>(il, inst.FRD, () =>
+        {
+            EmitLoadRegister<TFormat>(il, inst.FRS1);
+            EmitLoadRegister<TFormat>(il, inst.FRS2);
+            il.Emit(OpCodes.Call, method);
+        });
+    }
+
     private void FloatCompare<TFormat>(ILGenerator il, RiscVFloatInstruction inst, OpCode ilOpCode)
         where TFormat : unmanaged
     {
@@ -72,28 +96,17 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         });
     }
 
-    private void FloatMinMax<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc)
+    private void FloatMacGuffin<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
-        // If the instruction is not a float min or max, make an illegal instruction trap
-        if (inst.Funct3 is not (FloatFunct3Code.FloatMin or FloatFunct3Code.FloatMax))
-            IllegalInstruction(il, inst, pc);
-
-        // Resolve the method to call based on the instruction's funct3
-        var method = inst.Funct3 switch
+        Action<ILGenerator, RiscVInstruction, T> func = inst.FRS2 switch
         {
-            FloatFunct3Code.FloatMin => typeof(TFormat).GetMethod(nameof(TFormat.Min), BindingFlags.Public | BindingFlags.Static),
-            FloatFunct3Code.FloatMax => typeof(TFormat).GetMethod(nameof(TFormat.Max), BindingFlags.Public | BindingFlags.Static),
-            _ => throw new NotSupportedException($"Unsupported float function: {inst.Funct3}"),
+            0 when inst.Funct3 is FloatFunct3Code.FloatMoveFrom => IllegalInstruction,
+            0 when inst.Funct3 is FloatFunct3Code.FloatClassify => IllegalInstruction,
+            _ => FloatConvertTo<TFormat>
         };
-        Guard.IsNotNull(method);
 
-        EmitStoreRegister<TFormat>(il, inst.FRD, () =>
-        {
-            EmitLoadRegister<TFormat>(il, inst.FRS1);
-            EmitLoadRegister<TFormat>(il, inst.FRS2);
-            il.Emit(OpCodes.Call, method);
-        });
+        func(il, inst, pc);
     }
 
     private void FloatConvertFrom<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc)
@@ -105,6 +118,23 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             RiscVIntFormat.WordUnsigned => FloatConvertFrom<TFormat, uint>,
             RiscVIntFormat.Long => FloatConvertFrom<TFormat, long>,
             RiscVIntFormat.LongUnsigned => FloatConvertFrom<TFormat, ulong>,
+            _ => IllegalInstruction,
+        };
+
+        func(il, inst, pc);
+    }
+
+    private void FloatConvertTo<TTo>(ILGenerator il, RiscVInstruction inst, T pc)
+        where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
+    {
+        var fInst = (RiscVFloatInstruction)inst;
+
+        Action<ILGenerator, RiscVInstruction, T> func = fInst.IntFormat switch
+        {
+            RiscVIntFormat.Word => FloatConvertTo<int, TTo>,
+            RiscVIntFormat.WordUnsigned => FloatConvertTo<uint, TTo>,
+            RiscVIntFormat.Long => FloatConvertTo<long, TTo>,
+            RiscVIntFormat.LongUnsigned => FloatConvertTo<ulong, TTo>,
             _ => IllegalInstruction,
         };
 
@@ -140,6 +170,24 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             il.Emit(OpCodes.Call, round);
             
             // Convert
+            il.Emit(OpCodes.Call, convert);
+        });
+    }
+
+    private void FloatConvertTo<TFrom, TTo>(ILGenerator il, RiscVInstruction inst, T pc)
+        where TFrom : unmanaged, INumber<TFrom>, IMinMaxValue<TFrom>
+        where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
+    {
+        // Resolve the method to call for conversion
+        var createTruncatingDef = typeof(TTo)
+            .GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .First(m => m.Name == nameof(TTo.CreateTruncating) && m.IsGenericMethod);
+        var convert = createTruncatingDef.MakeGenericMethod(typeof(TFrom));
+        Guard.IsNotNull(convert);
+
+        EmitStoreRegister<TTo>(il, ((RiscVFloatInstruction)inst).FRD, () =>
+        {
+            EmitLoadRegister<TFrom>(il, inst.RS1);
             il.Emit(OpCodes.Call, convert);
         });
     }

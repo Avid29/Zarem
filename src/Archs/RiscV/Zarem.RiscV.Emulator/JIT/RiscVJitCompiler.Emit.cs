@@ -22,7 +22,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
     {
         if (register is 0)
         {
-            // MIPS $zero is always 0. 
+            // RISC-V $zero is always 0. 
             // We push a constant 0 instead of looking at memory.
             il.EmitLoadConstant(TData.Zero);
             return;
