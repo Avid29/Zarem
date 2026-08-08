@@ -23,8 +23,6 @@ This project is in pre-release stages of development. Changes to Project File fo
 | ARM64                                                         | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
 | x86_64                                                        | ❌ Not Planned  | ❌ Not Planned       | ❌ Not Planned  | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned  |
 
-\* *MIPS32/64 Release 6 is considerably different from every other version of mips and is not currently supported*.
-
 # Cross-Platform Support
 
 The Zarem IDE is a WinUI 3 project, and therefore only available on Windows. **However**, the Assembler and Emulator are made in .NET 10 with no windows-only dependendencies, and therefore available on any machine with the .NET runtime.
