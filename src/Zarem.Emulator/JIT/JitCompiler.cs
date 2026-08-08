@@ -38,13 +38,13 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
         Type[] readWritetypes = [typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint)];
         foreach (var type in readWritetypes)
         {
-            ReadMethods[type] = typeof(MemorySystem)
+            TryReadMethods[type] = typeof(MemorySystem)
                 .GetMethods()
-                .First(m => m.Name == nameof(MemorySystem.Read) && m.IsGenericMethod && m.GetParameters().Length == 1)
+                .First(m => m.Name == nameof(MemorySystem.TryRead) && m.IsGenericMethod && m.GetParameters().Length is 2)
                 .MakeGenericMethod(type);
-            WriteMethods[type] = typeof(MemorySystem)
+            TryWriteMethods[type] = typeof(MemorySystem)
                 .GetMethods()
-                .First(m => m.Name == nameof(MemorySystem.Write) && m.IsGenericMethod && m.GetParameters().Length == 2)
+                .First(m => m.Name == nameof(MemorySystem.TryWrite) && m.IsGenericMethod && m.GetParameters().Length is 2)
                 .MakeGenericMethod(type);
         }
     }
@@ -57,12 +57,12 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Gets a <see cref="Dictionary{Type, MethodInfo}"/> for looking up memory read methods by type.
     /// </summary>
-    protected Dictionary<Type, MethodInfo> ReadMethods { get; } = [];
+    protected Dictionary<Type, MethodInfo> TryReadMethods { get; } = [];
 
     /// <summary>
     /// Gets a <see cref="Dictionary{Type, MethodInfo}"/> for looking up memory write methods by type.
     /// </summary>
-    protected Dictionary<Type, MethodInfo> WriteMethods { get; } = [];
+    protected Dictionary<Type, MethodInfo> TryWriteMethods { get; } = [];
 
     /// <inheritdoc cref="EmitSetupLocalRegisters(ILGenerator, RegisterFile{T}, HashSet{TRegister})"/>
     protected abstract void EmitSetupLocalRegisters(ILGenerator il);
@@ -164,10 +164,11 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Emits the CIL to load the address of a register from a register file in memory.
     /// </summary>
-    protected void EmitLoadRegisterAddress(ILGenerator il, int index , T* regs)
+    protected void EmitLoadRegisterAddress<TData>(ILGenerator il, int index , TData* regs)
+        where TData : unmanaged
     {
         // Calculate the address of the register in memory
-        nint regAddress = (nint)regs + (index * sizeof(T));
+        nint regAddress = (nint)regs + (index * sizeof(TData));
 
         // Emit the address 
         if (nint.Size == 8) il.Emit(OpCodes.Ldc_I8, regAddress);
@@ -235,12 +236,33 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     }
 
     /// <summary>
+    /// Emits the CIL update the trap out argument.
+    /// </summary>
+    protected static void EmitTrapArg(ILGenerator il, LocalBuilder trapVar)
+    {
+        il.Emit(OpCodes.Ldarg_1);
+        il.Emit(OpCodes.Ldloc, trapVar);
+        il.Emit(OpCodes.Stind_I4);
+    }
+
+    /// <summary>
     /// Emits the CIL to return a trap.
     /// </summary>
     protected void EmitTrapRet(ILGenerator il, TTrap trap, T pc)
     {
         EmitFlushLocalRegisters(il);
         EmitTrapArg(il, trap);
+        il.EmitLoadConstant(pc);
+        il.Emit(OpCodes.Ret);
+    }
+
+    /// <summary>
+    /// Emits the CIL to return a trap.
+    /// </summary>
+    protected void EmitTrapRet(ILGenerator il, LocalBuilder trapVar, T pc)
+    {
+        EmitFlushLocalRegisters(il);
+        EmitTrapArg(il, trapVar);
         il.EmitLoadConstant(pc);
         il.Emit(OpCodes.Ret);
     }

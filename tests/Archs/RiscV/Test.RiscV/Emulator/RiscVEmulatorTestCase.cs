@@ -53,10 +53,10 @@ public sealed record RiscVEmulatorTestCase<T> : EmulatorTestCase<RiscVEmulatorCo
             FPRInitialization =
                 [
                     // F0 - F3: Simple Integers (for CVT.S.W or CVT.D.L tests)
-                    (RiscVFloatRegister.Temporary0, float.CreateTruncating(2)),
-                    (RiscVFloatRegister.Temporary1, float.CreateTruncating(0)),
-                    (RiscVFloatRegister.Temporary2, float.CreateTruncating(10)),
-                    (RiscVFloatRegister.Temporary3, float.CreateTruncating(-10)),
+                    (RiscVFloatRegister.Temporary0, 2f),
+                    (RiscVFloatRegister.Temporary1, 0f),
+                    (RiscVFloatRegister.Temporary2, 10f),
+                    (RiscVFloatRegister.Temporary3, -10f),
 
                     // F4 - F11: Small "Clean" Floats (Single Precision)
                     // Using values that have exact representations in binary

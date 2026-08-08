@@ -34,10 +34,9 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         Config = config;
         RegisterFile = new(config.VersionInfo);
 
-        Tlb = new MipsTlb<T>();
+        Tlb = new MipsTlb<T>(this);
         Memory = new MemorySystem(bus, Tlb);
         CoProcessor0 = new(Tlb);
-        FloatProcessor = new();
 
         ProgramCounter = T.CreateTruncating(BOOT_ADDRESS);
     }
@@ -61,10 +60,7 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     ICoProcessor0 IMipsCpu.CoProcessor0 => CoProcessor0;
 
     /// <inheritdoc/>
-    public FloatProcessor<T> FloatProcessor { get; }
-
-    /// <inheritdoc/>
-    IFloatProcessor IMipsCpu.FloatProcessor => FloatProcessor;
+    public abstract IFloatProcessor FloatProcessor { get; }
 
     /// <inheritdoc/>
     public MipsTlb<T> Tlb { get; }
@@ -138,6 +134,5 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     {
         base.Dispose();
         CoProcessor0.RegisterFile.Dispose();
-        FloatProcessor.RegisterFile.Dispose();
     }
 }

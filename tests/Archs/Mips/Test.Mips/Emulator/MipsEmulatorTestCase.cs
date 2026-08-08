@@ -5,17 +5,20 @@ using System.Numerics;
 using Test.Archs.Emulator;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.Enums;
-using Zarem.Mips.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Test.Mips.Emulator;
 
-public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConfig>
+public sealed record MipsEmulatorTestCase<T, TFloat> : EmulatorTestCase<MipsEmulatorConfig>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
 {
     public MipsEmulatorTestCase(MipsEmulatorConfig config, string input) : base(config, input)
     {
         PrivilegeMode = PrivilegeMode.User;
+        UseLegacyPairedFloatRegisters = config.VersionInfo.Generation is < MipsGeneration.MipsIII;
 
         unchecked
         {
@@ -62,57 +65,57 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
             FPRInitialization =
                 [
                     // F0 - F3: Simple Integers (for CVT.S.W or CVT.D.L tests)
-                    (MipsFloatRegister.F0, T.CreateTruncating(2)),
-                    (MipsFloatRegister.F1, T.CreateTruncating(0)),
-                    (MipsFloatRegister.F2, T.CreateTruncating(10)),
-                    (MipsFloatRegister.F3, T.CreateTruncating((uint)-10)),
+                    (MipsFloatRegister.F0, TFloat.CreateTruncating(2)),
+                    (MipsFloatRegister.F1, TFloat.CreateTruncating(0)),
+                    (MipsFloatRegister.F2, TFloat.CreateTruncating(10)),
+                    (MipsFloatRegister.F3, TFloat.CreateTruncating((uint)-10)),
 
                     // F4 - F11: Small "Clean" Floats (Single Precision)
                     // Using values that have exact representations in binary
-                    (MipsFloatRegister.F4, T.CreateTruncating(BitConverter.SingleToUInt32Bits(1.0f))),
-                    (MipsFloatRegister.F5, T.CreateTruncating(BitConverter.SingleToUInt32Bits(2.0f))),
-                    (MipsFloatRegister.F6, T.CreateTruncating(BitConverter.SingleToUInt32Bits(0.5f))),
-                    (MipsFloatRegister.F7, T.CreateTruncating(BitConverter.SingleToUInt32Bits(-2.0f))),
-                    (MipsFloatRegister.F8, T.CreateTruncating(BitConverter.SingleToUInt32Bits(10.5f))),
-                    (MipsFloatRegister.F9, T.CreateTruncating(BitConverter.SingleToUInt32Bits(2.5f))),
-                    (MipsFloatRegister.F10, T.CreateTruncating(BitConverter.SingleToUInt32Bits(1.25f))),
-                    (MipsFloatRegister.F11, T.CreateTruncating(BitConverter.SingleToUInt32Bits(-0.75f))),
+                    (MipsFloatRegister.F4, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(1.0f))),
+                    (MipsFloatRegister.F5, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(2.0f))),
+                    (MipsFloatRegister.F6, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(0.5f))),
+                    (MipsFloatRegister.F7, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(-2.0f))),
+                    (MipsFloatRegister.F8, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(10.5f))),
+                    (MipsFloatRegister.F9, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(2.5f))),
+                    (MipsFloatRegister.F10, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(1.25f))),
+                    (MipsFloatRegister.F11, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(-0.75f))),
 
                     // F12 - F19: Double Precision Pairs (f12/13, f14/15, etc.)
                     // f12/f13 = 1.0, f14/f15 = 0.5, f16/f17 = -2.0, f18/f19 = PI (approx)
-                    (MipsFloatRegister.F12, T.CreateTruncating(BitConverter.DoubleToUInt64Bits(2.0))),
-                    (MipsFloatRegister.F13, T.CreateTruncating((uint)(BitConverter.DoubleToUInt64Bits(2.0) >> 32))),
+                    (MipsFloatRegister.F12, TFloat.CreateTruncating(BitConverter.DoubleToUInt64Bits(2.0))),
+                    (MipsFloatRegister.F13, TFloat.CreateTruncating((uint)(BitConverter.DoubleToUInt64Bits(2.0) >> 32))),
 
-                    (MipsFloatRegister.F14, T.CreateTruncating(BitConverter.DoubleToUInt64Bits(0.5))),
-                    (MipsFloatRegister.F15, T.CreateTruncating((uint)(BitConverter.DoubleToUInt64Bits(0.5) >> 32))),
+                    (MipsFloatRegister.F14, TFloat.CreateTruncating(BitConverter.DoubleToUInt64Bits(0.5))),
+                    (MipsFloatRegister.F15, TFloat.CreateTruncating((uint)(BitConverter.DoubleToUInt64Bits(0.5) >> 32))),
 
-                    (MipsFloatRegister.F16, T.CreateTruncating(BitConverter.DoubleToUInt64Bits(-2.0))),
-                    (MipsFloatRegister.F17, T.CreateTruncating((uint)(BitConverter.DoubleToUInt64Bits(-2.0) >> 32))),
+                    (MipsFloatRegister.F16, TFloat.CreateTruncating(BitConverter.DoubleToUInt64Bits(-2.0))),
+                    (MipsFloatRegister.F17, TFloat.CreateTruncating((uint)(BitConverter.DoubleToUInt64Bits(-2.0) >> 32))),
 
-                    (MipsFloatRegister.F18, T.CreateTruncating(BitConverter.DoubleToUInt64Bits(Math.PI))),
-                    (MipsFloatRegister.F19, T.CreateTruncating((uint)(BitConverter.DoubleToUInt64Bits(Math.PI) >> 32))),
+                    (MipsFloatRegister.F18, TFloat.CreateTruncating(BitConverter.DoubleToUInt64Bits(Math.PI))),
+                    (MipsFloatRegister.F19, TFloat.CreateTruncating((uint)(BitConverter.DoubleToUInt64Bits(Math.PI) >> 32))),
 
                     // F20 - F27: IEEE 754 Edge Cases (Single Precision)
-                    (MipsFloatRegister.F20, T.CreateTruncating(BitConverter.SingleToUInt32Bits(float.PositiveInfinity))),
-                    (MipsFloatRegister.F21, T.CreateTruncating(BitConverter.SingleToUInt32Bits(float.NegativeInfinity))),
-                    (MipsFloatRegister.F22, T.CreateTruncating(BitConverter.SingleToUInt32Bits(float.NaN))),
-                    (MipsFloatRegister.F23, T.CreateTruncating(BitConverter.SingleToUInt32Bits(0.0f))),
-                    (MipsFloatRegister.F24, T.CreateTruncating(BitConverter.SingleToUInt32Bits(-0.0f))),
-                    (MipsFloatRegister.F25, T.CreateTruncating(BitConverter.SingleToUInt32Bits(float.Epsilon))),
-                    (MipsFloatRegister.F26, T.CreateTruncating(BitConverter.SingleToUInt32Bits(float.MaxValue))),
-                    (MipsFloatRegister.F27, T.CreateTruncating(BitConverter.SingleToUInt32Bits(float.MinValue))),
+                    (MipsFloatRegister.F20, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(float.PositiveInfinity))),
+                    (MipsFloatRegister.F21, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(float.NegativeInfinity))),
+                    (MipsFloatRegister.F22, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(float.NaN))),
+                    (MipsFloatRegister.F23, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(0.0f))),
+                    (MipsFloatRegister.F24, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(-0.0f))),
+                    (MipsFloatRegister.F25, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(float.Epsilon))),
+                    (MipsFloatRegister.F26, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(float.MaxValue))),
+                    (MipsFloatRegister.F27, TFloat.CreateTruncating(BitConverter.SingleToUInt32Bits(float.MinValue))),
 
                     // F28 - F31: Large Integers (to test Rounding/Overflow traps)
-                    (MipsFloatRegister.F28, T.CreateTruncating((uint)int.MaxValue)),
-                    (MipsFloatRegister.F29, T.CreateTruncating(0)), // Upper bits for F28 if treated as Long
-                    (MipsFloatRegister.F30, T.CreateTruncating((uint)int.MinValue)),
-                    (MipsFloatRegister.F31, T.CreateTruncating(0xFFFFFFFF)) // All bits set
+                    (MipsFloatRegister.F28, TFloat.CreateTruncating((uint)int.MaxValue)),
+                    (MipsFloatRegister.F29, TFloat.CreateTruncating(0)), // Upper bits for F28 if treated as Long
+                    (MipsFloatRegister.F30, TFloat.CreateTruncating((uint)int.MinValue)),
+                    (MipsFloatRegister.F31, TFloat.CreateTruncating(0xFFFFFFFF)) // All bits set
                 ];
 
             InitialHighLow = (T.CreateTruncating(0x1234), T.CreateTruncating(0x5678));
 
             MemoryInitialization =
-                [(T.CreateTruncating(0x8000_1000), [0x12, 0x34, 0x56, 0x78])];
+                [(T.CreateTruncating(0x1000), [0x12, 0x34, 0x56, 0x78])];
         }
     }
 
@@ -172,6 +175,8 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
 
     public (MipsFloatRegister Register, long Value)? ExpectedLongFloatWriteBack { get; init; } = null;
 
+    public T InitialPC { get; init; } = T.Zero;
+
     public T? ExpectedPC { get; init; } = null;
 
     public MipsSideEffect? ExpectedSideEffect { get; init; }
@@ -182,7 +187,7 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
 
     public (MipsGpRegister Register, T Value)[] RegisterInitialization { get; init; } = [];
 
-    public (MipsFloatRegister Register, T Value)[] FPRInitialization { get; init; } = [];
+    public (MipsFloatRegister Register, TFloat Value)[] FPRInitialization { get; init; } = [];
 
     public (T Address, byte[] Data)[] MemoryInitialization { get; init; } = [];
 
@@ -192,6 +197,12 @@ public sealed record MipsEmulatorTestCase<T> : EmulatorTestCase<MipsEmulatorConf
     {
         get => Status.PrivilegeMode;
         init => Status = Status with { PrivilegeMode = value };
+    }
+
+    public bool UseLegacyPairedFloatRegisters
+    {
+        get => !Status.FloatingPoint64BitMode;
+        init => Status = Status with { FloatingPoint64BitMode = !value };
     }
 
     public StatusRegister Status { get; init; }

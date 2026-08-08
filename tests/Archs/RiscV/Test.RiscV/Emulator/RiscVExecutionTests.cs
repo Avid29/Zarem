@@ -42,12 +42,24 @@ public partial class RiscVExecutionTests
     public void InstructionTests_RV64_I(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, byte>(@case);
 
     [DataTestMethod]
+    [RiscVInstructionSource("RV64I", ExecutionMode.JustInTime)]
+    public void InstructionTests_RV64_I_JIT(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, byte>(@case);
+
+    [DataTestMethod]
     [RiscVInstructionSource("RV64G", ExecutionMode.Interpret)]
     public void InstructionTests_RV64_G(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
 
     [DataTestMethod]
+    [RiscVInstructionSource("RV64G", ExecutionMode.JustInTime)]
+    public void InstructionTests_RV64_G_JIT(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
+
+    [DataTestMethod]
     [RiscVInstructionSource("RV128I", ExecutionMode.Interpret)]
     public void InstructionTests_RV128_I(RiscVEmulatorTestCase<UInt128> @case) => RunTest<UInt128, byte>(@case);
+
+    [DataTestMethod]
+    [RiscVInstructionSource("RV128G", ExecutionMode.Interpret)]
+    public void InstructionTests_RV128_G(RiscVEmulatorTestCase<UInt128> @case) => RunTest<UInt128, byte>(@case);
 
     private static void RunTest<T, TFloat>(RiscVEmulatorTestCase<T> @case)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>

@@ -107,7 +107,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         if (!TryDetermineInstruction(line, out _))
             return null;
 
-
         // Parse arguments
         Guard.IsNotNull(Meta);
         TArg[] pattern = Meta.ArgumentPattern;
@@ -137,6 +136,12 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             return ParseMetaExpansion(pMeta, out references);
         }
 
+        // If the logger has failed, return null to indicate that parsing failed
+        if (_logger?.CurrentFailed is true)
+        {
+            references = null;
+            return null;
+        }
 
         references = _references;
         return [BuildInstruction()];

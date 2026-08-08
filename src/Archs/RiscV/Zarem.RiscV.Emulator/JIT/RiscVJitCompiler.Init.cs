@@ -7,11 +7,12 @@ using System.Reflection.Emit;
 using Zarem.Models.Versioning;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
 using Zarem.RiscV.Models.Versioning.Enums;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.RiscV.Emulator.JIT;
 
 public partial class RiscVJitCompiler<T, TFloat>
 {
@@ -21,6 +22,7 @@ public partial class RiscVJitCompiler<T, TFloat>
 
         // Populate base table
         InitBaseTable(versionInfo);
+        InitFloatTable(versionInfo);
 
         // Init
         if (versionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
@@ -145,5 +147,33 @@ public partial class RiscVJitCompiler<T, TFloat>
         _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.DivideUnsigned, (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Div_Un));
         _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.Remainder, (il, inst, pc) => AluR<T2Signed>(il, inst, OpCodes.Rem));
         _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.RemainderUnsigned, (il, inst, pc) => AluR<T2>(il, inst, OpCodes.Rem_Un));
+    }
+
+    private void InitFloatTable(RiscVVersionInfo versionInfo)
+    {
+        InitFloatOperations<Half>(versionInfo, RiscVExtensions.HalfPrecisionFloatingPoint);
+        InitFloatOperations<float>(versionInfo, RiscVExtensions.SingleFloatingPoint);
+        InitFloatOperations<double>(versionInfo, RiscVExtensions.DoubleFloatingPoint);
+    }
+
+    private void InitFloatOperations<TFormat>(RiscVVersionInfo versionInfo, RiscVExtensions flag)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
+    {
+        if (!versionInfo.Extensions.HasFlag(flag))
+            return;
+
+        var format = RiscVInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
+        _instructionTable.Register(format, FloatFunc5Code.Add, (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Add));
+        _instructionTable.Register(format, FloatFunc5Code.Subtract, (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Sub));
+        _instructionTable.Register(format, FloatFunc5Code.Multiply, (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Mul));
+        _instructionTable.Register(format, FloatFunc5Code.Divide, (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Div));
+        _instructionTable.Register(format, FloatFunc5Code.MinMax, (il, inst, pc) => FloatMinMax<TFormat>(il, inst, pc));
+        _instructionTable.Register(format, FloatFunc5Code.SquareRoot, (il, inst, pc) => FloatUnary<TFormat>(il, inst, pc, nameof(TFormat.Sqrt)));
+        _instructionTable.Register(format, FloatFunc5Code.ConvertToInt, (il, inst, pc) => FloatConvertFrom<TFormat>(il, inst, pc));
+        _instructionTable.Register(format, FloatFunc5Code.Classify, (il, inst, pc) => FloatMacGuffin<TFormat>(il, inst, pc));
+        // TODO: MoveFToX
+        _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessOrEqual, (il, inst, pc) => FloatFle<TFormat>(il, inst));
+        _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessThan, (il, inst, pc) => FloatCompare<TFormat>(il, inst, OpCodes.Clt));
+        _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatEqual, (il, inst, pc) => FloatCompare<TFormat>(il, inst, OpCodes.Ceq));
     }
 }

@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using Zarem.Helpers;
 using Zarem.Mips.Emulator.Machine.Enums;
 
-namespace Zarem.Mips.Emulator.Machine.Registers;
+namespace Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
 
 /// <summary>
 /// CoProcessor0 Cause register.
@@ -66,10 +66,10 @@ public struct CauseRegister
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="CauseRegister"/>.
     /// </summary>
-    public static unsafe explicit operator CauseRegister(uint value) => Unsafe.As<uint, CauseRegister>(ref value);
+    public static explicit operator CauseRegister(uint value) => Unsafe.As<uint, CauseRegister>(ref value);
 
     /// <summary>
     /// Casts a <see cref="CauseRegister"/> to a <see cref="uint"/>.
     /// </summary>
-    public static unsafe explicit operator uint(CauseRegister value) => Unsafe.As<CauseRegister, uint>(ref value);
+    public static explicit operator uint(CauseRegister value) => Unsafe.As<CauseRegister, uint>(ref value);
 }

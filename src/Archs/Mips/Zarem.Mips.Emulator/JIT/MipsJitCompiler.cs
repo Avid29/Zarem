@@ -21,8 +21,9 @@ namespace Zarem.Emulator.Models.JIT;
 /// <summary>
 /// A class which compiles blocks of MIPS code into JIT IL code.
 /// </summary>
-public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, MipsTrap>
+public unsafe partial class MipsJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRegister, MipsTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private delegate void MipsEmitter(ILGenerator il, MipsInstruction inst, T pc);
 
@@ -32,15 +33,16 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private readonly Dictionary<Type, MethodInfo> _multiplyMethod = [];
     private readonly Dictionary<Type, MethodInfo> _castDownMethods = [];
     private readonly Dictionary<Type, MethodInfo> _rightShiftMethods = [];
-    private readonly MipsJitCpu<T> _cpu;
+    private readonly MethodInfo _handleAccessResultMethod;
+    private readonly MipsJitCpu<T, TFloat> _cpu;
 
     private readonly HashSet<MipsGpRegister> _loadRegs = [];
     private readonly HashSet<MipsGpRegister> _storeRegs = [];
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MipsJitCompiler{T}"/> class.
+    /// Initializes a new instance of the <see cref="MipsJitCompiler{T, TFloat}"/> class.
     /// </summary>
-    public MipsJitCompiler(MipsJitCpu<T> cpu) : base(cpu)
+    public MipsJitCompiler(MipsJitCpu<T, TFloat> cpu) : base(cpu)
     {
         _cpu = cpu;
 
@@ -49,6 +51,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         var clzMethod = typeof(BitOperations).GetMethod(nameof(BitOperations.LeadingZeroCount), [typeof(uint)]);
         Guard.IsNotNull(clzMethod);
         _clzMethod = clzMethod;
+
+        var handleAccessResultMethod = typeof(MipsJitCompiler<T, TFloat>).GetMethod(nameof(HandleMemoryAccessResult), BindingFlags.Static | BindingFlags.NonPublic);
+        Guard.IsNotNull(handleAccessResultMethod);
+        _handleAccessResultMethod = handleAccessResultMethod;
 
         Type[] multiplyTypes = [typeof(int), typeof(uint), typeof(long), typeof(ulong)];
         foreach (var type in multiplyTypes)
@@ -78,9 +84,9 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     /// </summary>
     /// <param name="startPc">The entry point of the JIT block.</param>
     /// <returns>The method block.</returns>
-    public MipsJitBlock<T> CompileBlock(T startPc)
+    public MipsJitBlock<T, TFloat> CompileBlock(T startPc)
     {
-        Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
+        Type[] parameterTypes = [typeof(MipsJitCpu<T, TFloat>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
@@ -96,16 +102,16 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             currentPc += T.CreateTruncating(4);
         }
 
-        var @delegate = (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
+        var @delegate = (MipsBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(MipsBlockDelegate<T, TFloat>));
         return new(@delegate, endPc - startPc);
     }
 
     /// <summary>
     /// Compiles a single instruction as a cli dynamic method.
     /// </summary>
-    public MipsBlockDelegate<T> CompileLoneInstruction(MipsInstruction inst, T pc)
+    public MipsBlockDelegate<T, TFloat> CompileLoneInstruction(MipsInstruction inst, T pc)
     {
-        Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
+        Type[] parameterTypes = [typeof(MipsJitCpu<T, TFloat>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
@@ -119,7 +125,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             EmitRet(il, pc + T.CreateTruncating(4));
         }
 
-        return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
+        return (MipsBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(MipsBlockDelegate<T, TFloat>));
     }
 
     private void CompileInstruction(ILGenerator il, MipsInstruction instruction, T pc)
@@ -392,17 +398,39 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         where TData : unmanaged
     {
         var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, MipsTrap.AddressErrorLoad);
+        var trapVar = il.DeclareLocal(typeof(MipsTrap));
 
-        // Write Back to RT
+        // Allocate a local variable to receive the 'out TData value'
+        var dataVar = il.DeclareLocal(typeof(TData));
+
+        // Call Memory.TryRead<TData>(ulong, out TData)
+        var tryReadMethod = TryReadMethods[typeof(TData)];
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Callvirt, GetMemoryMethod);
+        il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
+        il.Emit(OpCodes.Conv_U8);
+        il.Emit(OpCodes.Ldloca, dataVar);               // Arg 2: out TData value
+        il.Emit(OpCodes.Callvirt, tryReadMethod);       // Call TryRead, returns MemoryAccessResult
+
+        // Evaluate access result
+        il.EmitLoadBool(false);                             // isWrite = false
+        il.Emit(OpCodes.Call, _handleAccessResultMethod);   // Convert to MIPS Trap
+        il.Emit(OpCodes.Stloc, trapVar);
+
+        // Branch to success path if no trap occured
+        var successLabel = il.DefineLabel();
+        il.Emit(OpCodes.Ldloc, trapVar);
+        il.Emit(OpCodes.Brfalse, successLabel);
+
+        // Trap path. Return trap
+        EmitTrapRet(il, trapVar, pc);
+
+        // Success path! Write back to RT
+        il.MarkLabel(successLabel);
         EmitStoreRegister(il, inst.RT, il =>
         {
-            // Call Memory.Read<TData>(ulong)
-            var readMethod = ReadMethods[typeof(TData)];
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Callvirt, GetMemoryMethod);
-            il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
-            il.Emit(OpCodes.Conv_U8);
-            il.Emit(OpCodes.Callvirt, readMethod);
+            // Load the value filled by TryRead
+            il.Emit(OpCodes.Ldloc, dataVar);
 
             // Sign-Extension / Zero-Extension then convert to T
             il.EmitConv<TData>();
@@ -414,16 +442,33 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         where TData : unmanaged
     {
         var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, MipsTrap.AddressErrorStore);
+        var trapVar = il.DeclareLocal(typeof(MipsTrap));
 
-        // Call Memory.Write<TData>(ulong, TData)
-        var writeMethod = WriteMethods[typeof(TData)];
+        // Call Memory.TryWrite<TData>(ulong, TData)
+        var tryWriteMethod = TryWriteMethods[typeof(TData)];
         il.Emit(OpCodes.Ldarg_0);
         il.Emit(OpCodes.Callvirt, GetMemoryMethod);
         il.Emit(OpCodes.Ldloc, addrVar);            // Arg 1: ulong addr
         il.Emit(OpCodes.Conv_U8);
         EmitLoadRegister(il, inst.RT);              // Arg 2: TData value (Truncate the RT register value)
         il.EmitConv<TData>();
-        il.Emit(OpCodes.Callvirt, writeMethod);
+        il.Emit(OpCodes.Callvirt, tryWriteMethod);  // Call TryRead, returns MemoryAccessResult
+
+        // Evaluate access result
+        il.EmitLoadBool(true);                              // isWrite = true
+        il.Emit(OpCodes.Call, _handleAccessResultMethod);   // Convert to MIPS Trap
+        il.Emit(OpCodes.Stloc, trapVar);
+
+        // Branch to success path if no trap occured
+        var successLabel = il.DefineLabel();
+        il.Emit(OpCodes.Ldloc, trapVar);
+        il.Emit(OpCodes.Brfalse, successLabel);
+
+        // Trap path. Return trap
+        EmitTrapRet(il, trapVar, pc);
+
+        // Success
+        il.MarkLabel(successLabel);
     }
 
     private void Jump(ILGenerator il, MipsInstruction inst, T pc, bool link = false)
@@ -580,5 +625,24 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             if (sizeof(TData) != sizeof(T))
                 il.EmitConv<T>();
         });
+    }
+
+    private static MipsTrap HandleMemoryAccessResult(MemoryAccessResult result, bool isWrite)
+    {
+        return result switch
+        {
+            MemoryAccessResult.Success => MipsTrap.None,
+
+            MemoryAccessResult.TranslationFault when isWrite => MipsTrap.TlbMissStore,
+            MemoryAccessResult.TranslationFault => MipsTrap.TlbMissLoad,
+
+            MemoryAccessResult.AddressError when isWrite => MipsTrap.AddressErrorStore,
+            MemoryAccessResult.AddressError => MipsTrap.AddressErrorLoad,
+
+            MemoryAccessResult.AccessViolation when isWrite => MipsTrap.AddressErrorStore,
+            MemoryAccessResult.AccessViolation => MipsTrap.AddressErrorLoad,
+
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsTrap>(),
+        };
     }
 }

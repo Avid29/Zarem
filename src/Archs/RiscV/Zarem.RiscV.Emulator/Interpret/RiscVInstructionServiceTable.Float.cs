@@ -7,6 +7,7 @@ using Zarem.Emulator.Machine.Registers;
 using Zarem.RiscV.Emulator.Enums;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
+using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
@@ -86,14 +87,14 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap FloatMacGuffin<TTo>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
-        where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
+    private static RiscVTrap FloatMacGuffin<TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVFloatInstruction inst, out RiscVExecution<T> exec)
+        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         return (byte)inst.FRS2 switch
         {
-            0 when inst.Funct3 is FloatFunct3Code.FloatMoveFrom => FloatMoveTo<TTo>(cpu, inst, out exec),
-            0 when inst.Funct3 is FloatFunct3Code.FloatClassify => FloatClassifiy<TTo>(cpu, inst, out exec),
-            _ =>  FloatConvertTo<TTo>(cpu, inst, out exec),
+            0 when inst.Funct3 is FloatFunct3Code.FloatMoveFrom => FloatMoveTo<TFormat>(cpu, inst, out exec),
+            0 when inst.Funct3 is FloatFunct3Code.FloatClassify => FloatClassifiy<TFormat>(cpu, inst, out exec),
+            _ =>  FloatConvertTo<TFormat>(cpu, inst, out exec),
         };
     }
 
@@ -202,10 +203,14 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         if (TFrom.IsNaN(source))
         {
             result = TTo.MaxValue;
+
+            // TODO: Accumulate Invalid Operation flag (NV) in CSR here if mimicking hardware exceptions
         }
         else
         {
-            result = TTo.CreateTruncating(source);
+            var mode = ResolveRoundingMode(inst.RoundingMode);
+            var rounded = TFrom.Round(source, mode);
+            result = TTo.CreateTruncating(rounded);
         }
 
         exec = RiscVExecution<T>.CreateWriteback(((RiscVInstruction)inst).RD, T.CreateTruncating(result));
@@ -226,5 +231,19 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         else if (typeof(TFormat) == typeof(float)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatRegisterFile.Singles;
         else if (typeof(TFormat) == typeof(double)) return (IFormattedRegisterIndexer<TFormat>)cpu.FloatRegisterFile.Doubles;
         else throw new InvalidOperationException();
+    }
+
+    private static MidpointRounding ResolveRoundingMode(RiscVRoundingMode rm)
+    {
+        return rm switch
+        {
+            RiscVRoundingMode.RoundToNearestEven => MidpointRounding.ToEven,
+            RiscVRoundingMode.RoundTowardsZero => MidpointRounding.ToZero,
+            RiscVRoundingMode.RoundDown => MidpointRounding.ToNegativeInfinity,
+            RiscVRoundingMode.RoundUp => MidpointRounding.ToPositiveInfinity,
+            RiscVRoundingMode.RoundToNearestMaxMagnitude => MidpointRounding.AwayFromZero,
+            RiscVRoundingMode.Dynamic => MidpointRounding.ToEven, // TODO: Handle CSR register default
+            _ => throw new InvalidOperationException()
+        };
     }
 }

@@ -33,8 +33,11 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     private readonly RiscVInstructionTable _instructionTable;
     private readonly AssemblerLogger? _logger;
     private readonly FormatTable<RiscVFloatFormat> _formatTable = new();
+    private readonly FormatTable<RiscVRoundingMode> _roundingModeTable = new("rm");
 
     private RiscVFloatFormat _format;
+    private RiscVRoundingMode _roundingMode;
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVInstructionParser"/> struct.
@@ -70,7 +73,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         Guard.IsNotNull(line.Instruction);
         Guard.IsNotNull(name);
 
-        // Parse out format from instruction name if present
+        // Parse out format/rounding_mode from instruction name if present
         var parts = name.Split('.');
         for (int i = 1; i < parts.Length; i++)
         {
@@ -78,6 +81,11 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             {
                 _format = format;
                 parts[i] = _formatTable.Placeholder;
+            }
+            else if (_roundingModeTable.TryGetFormat(parts[i], out var roundingMode))
+            {
+                _roundingMode = roundingMode;
+                parts[i] = _roundingModeTable.Placeholder;
             }
         }
 
@@ -158,10 +166,20 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, rs1, rs2, Immediate),
             STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, rs1, rs2, (short)Immediate),
             JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, rd, Immediate),
-            RiscVFloatInstructionMeta f => f.Funct5 is null
-                ? RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, f.Funct3)
-                : RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, f.Funct3),
-
+            RiscVFloatInstructionMeta f => (f.Funct5.HasValue, f.Funct3.HasValue) switch
+            {
+                // Triple Source reg with rounding mode
+                (false, false) => RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, _roundingMode),
+                
+                // Triple source reg without rounding mode
+                (false, true) => RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, f.Funct3!.Value),
+                
+                // Double source reg with rounding mode
+                (true, false) => RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5!.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, _roundingMode),
+                
+                // Double source reg without rounding mode
+                (true, true) => RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5!.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, f.Funct3!.Value),
+            },
             _ => throw new NotSupportedException($"Metadata type {Meta.GetType().Name} is not supported for encoding.")
         };
     }

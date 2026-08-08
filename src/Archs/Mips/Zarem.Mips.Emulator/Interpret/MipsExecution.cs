@@ -41,7 +41,19 @@ public readonly struct MipsExecution<T>
         return new MipsExecution<T>
         {
             CoProc0Reg = dest,
-            CoProc0WriteBack = writeBack,
+            CoProcWriteBack = writeBack,
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
+    /// </summary>
+    public static MipsExecution<T> CreateWriteback(CP1CRegisters dest, uint writeBack)
+    {
+        return new MipsExecution<T>
+        {
+            CoProc1ControlReg = dest,
+            CoProc1ControlWriteBack = writeBack,
         };
     }
 
@@ -279,6 +291,19 @@ public readonly struct MipsExecution<T>
     }
 
     /// <summary>
+    /// Gets the coproc1 control register for a co-process writeback.
+    /// </summary>
+    public CP1CRegisters CoProc1ControlReg
+    {
+        get => (CP1CRegisters)CoProcReg;
+        init
+        {
+            CoProcReg = (MipsGpRegister)value;
+            SideEffect = MipsSideEffect.WriteCoProc1Control;
+        }
+    }
+
+    /// <summary>
     /// Gets the coproc1 register for a co-process writeback.
     /// </summary>
     public MipsFloatRegister FloatReg
@@ -288,9 +313,9 @@ public readonly struct MipsExecution<T>
     }
 
     /// <summary>
-    /// Gets the value writing back to co-processor0.
+    /// Gets the value writing back to a co-processor.
     /// </summary>
-    public T CoProc0WriteBack
+    public T CoProcWriteBack
     {
         get => T.CreateTruncating(_secondary2);
         init
@@ -298,6 +323,15 @@ public readonly struct MipsExecution<T>
             _secondary2 = ulong.CreateTruncating(value);
             SideEffect = MipsSideEffect.WriteCoProc0;
         }
+    }
+
+    /// <summary>
+    /// Gets the value writing back to coprocessor1 control.
+    /// </summary>
+    public uint CoProc1ControlWriteBack
+    {
+        get => uint.CreateTruncating(CoProcWriteBack);
+        init => CoProcWriteBack = T.CreateTruncating(value);
     }
 
     /// <summary>

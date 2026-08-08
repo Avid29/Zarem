@@ -15,15 +15,13 @@ This project is in pre-release stages of development. Changes to Project File fo
 
 # Assembly/Emulation Architectures
 
-| Architecture   | Assembling      | Emulation (Interpret) | Emulation (JIT) | Debugging      | Disassembly     | Static Analysis |
-| -------------- | --------------- | --------------------- | --------------- | -------------- | --------------- | --------------- |
-| MIPS*          | ✅ Supported    | ✅ Supported         | ⚠️ WIP          | ✅ Supported   | ⚠️ WIP         | ⌛ Planned      |
-| RISC-V         | ✅ Supported    | ⚠️ WIP               | ⚠️ WIP          | ⚠️ WIP         | ⌛ Planned     | ⌛ Planned      |
-| ARM   (AArch32)| ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
-| ARM64 (AArch64)| ⚠️ WIP          | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
-| x86_64         | ❌ Not Planned  | ❌ Not Planned       | ❌ Not Planned  | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned  |
-
-\* *MIPS32/64 Release 6 is considerably different from every other version of mips and is not currently supported*.
+| Architecture                                                  | Assembling      | Emulation (Interpret) | Emulation (JIT) | Debugging      | Disassembly     | Static Analysis |
+| ------------------------------------------------------------- | --------------- | --------------------- | --------------- | -------------- | --------------- | --------------- |
+| [MIPS](https://github.com/Avid29/Zarem/wiki/MIPS)             | ✅ Supported    | ✅ Supported         | ⚠️ WIP          | ✅ Supported   | ⚠️ WIP         | ⌛ Planned      |
+| [RISC-V](https://github.com/Avid29/Zarem/wiki/RISC%E2%80%90V) | ✅ Supported    | ✅ Supported         | ⚠️ WIP          | ✅ Supported   | ⌛ Planned     | ⌛ Planned      |
+| ARM                                                           | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
+| ARM64                                                         | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
+| x86_64                                                        | ❌ Not Planned  | ❌ Not Planned       | ❌ Not Planned  | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned  |
 
 # Cross-Platform Support
 

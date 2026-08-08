@@ -19,7 +19,7 @@ public unsafe class MipsGPRegisterFile<T> : RegisterFile<T>
     /// Initializes a new instance of the <see cref="MipsGPRegisterFile{T}"/> class.
     /// </summary>
     public MipsGPRegisterFile(MipsVersionInfo versionInfo) :
-        base(versionInfo.Base is < MipsBaseVersion.R6 ? 34 : 32)
+        base(versionInfo.Generation is < MipsGeneration.R6 ? 34 : 32)
     {
     }
 

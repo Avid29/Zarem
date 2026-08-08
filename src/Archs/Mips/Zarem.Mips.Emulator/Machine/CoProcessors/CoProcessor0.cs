@@ -3,7 +3,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Mips.Emulator.Machine.Enums;
-using Zarem.Mips.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
 using Zarem.Mips.Emulator.Machine.Tlb;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
@@ -48,6 +48,18 @@ public class CoProcessor0<T> : ICoProcessor0
         {
             var status = RegisterFile.StatusRegister;
             status.PrivilegeMode = value;
+            RegisterFile.StatusRegister = status;
+        }
+    }
+
+    /// <inheritdoc/>
+    public bool FloatingPoint64BitMode
+    {
+        get => RegisterFile.StatusRegister.FloatingPoint64BitMode;
+        set
+        {
+            var status = RegisterFile.StatusRegister;
+            status.FloatingPoint64BitMode = value;
             RegisterFile.StatusRegister = status;
         }
     }

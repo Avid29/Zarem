@@ -3,6 +3,15 @@
     "type": "float",
     "name": "fcvt.w.fmt",
     "funct5": 24,
+    "funct3": 7,
+    "rs2_fixed": 0,
+    "args": [ "rd", "frs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fcvt.w.fmt.rm",
+    "funct5": 24,
     "rs2_fixed": 0,
     "args": [ "rd", "frs1" ],
     "extension": "F"
@@ -10,6 +19,15 @@
   {
     "type": "float",
     "name": "fcvt.wu.fmt",
+    "funct5": 24,
+    "funct3": 7,
+    "rs2_fixed": 1,
+    "args": [ "rd", "frs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fcvt.wu.fmt.rm",
     "funct5": 24,
     "rs2_fixed": 1,
     "args": [ "rd", "frs1" ],
@@ -19,6 +37,16 @@
     "type": "float",
     "name": "fcvt.l.fmt",
     "funct5": 24,
+    "funct3": 7,
+    "rs2_fixed": 2,
+    "min_base": "RV64",
+    "args": [ "rd", "frs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fcvt.l.fmt.rm",
+    "funct5": 24,
     "rs2_fixed": 2,
     "min_base": "RV64",
     "args": [ "rd", "frs1" ],
@@ -27,6 +55,16 @@
   {
     "type": "float",
     "name": "fcvt.lu.fmt",
+    "funct5": 24,
+    "funct3": 7,
+    "rs2_fixed": 3,
+    "min_base": "RV64",
+    "args": [ "rd", "frs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fcvt.lu.fmt.rm",
     "funct5": 24,
     "rs2_fixed": 3,
     "min_base": "RV64",
@@ -44,9 +82,25 @@
   },
   {
     "type": "float",
+    "name": "fcvt.fmt.w.rm",
+    "funct5": 28,
+    "rs2_fixed": 0,
+    "args": [ "frd", "rs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
     "name": "fcvt.fmt.wu",
     "funct5": 28,
     "funct3": 7,
+    "rs2_fixed": 1,
+    "args": [ "frd", "rs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fcvt.fmt.wu.rm",
+    "funct5": 28,
     "rs2_fixed": 1,
     "args": [ "frd", "rs1" ],
     "extension": "F"
@@ -63,9 +117,27 @@
   },
   {
     "type": "float",
+    "name": "fcvt.fmt.l.rm",
+    "funct5": 28,
+    "rs2_fixed": 2,
+    "min_base": "RV64",
+    "args": [ "frd", "rs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
     "name": "fcvt.fmt.lu",
     "funct5": 28,
     "funct3": 7,
+    "rs2_fixed": 3,
+    "min_base": "RV64",
+    "args": [ "frd", "rs1" ],
+    "extension": "F"
+  },
+  {
+    "type": "float",
+    "name": "fcvt.fmt.lu.rm",
+    "funct5": 28,
     "rs2_fixed": 3,
     "min_base": "RV64",
     "args": [ "frd", "rs1" ],

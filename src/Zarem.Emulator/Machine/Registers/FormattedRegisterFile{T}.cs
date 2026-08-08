@@ -27,5 +27,4 @@ public unsafe class FormattedRegisterFile<T>(int count) : RegisterFile<T>(count)
 
     /// <inheritdoc/>
     public IFormattedRegisterIndexer<long> Longs => new LongIndexer<T>(Regs);
-
 }

@@ -15,7 +15,7 @@ public class N64EmulatorConfig : MipsEmulatorConfig
     /// <summary>
     /// Initializes a new instance of the <see cref="N64EmulatorConfig"/> class.
     /// </summary>
-    public N64EmulatorConfig(ExecutionMode mode) : base(new MipsVersionInfo(MipsBaseVersion.MipsIII), mode)
+    public N64EmulatorConfig(ExecutionMode mode) : base(new MipsVersionInfo(MipsGeneration.MipsIII), mode)
     {
     }
 }

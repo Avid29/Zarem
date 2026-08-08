@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
 using Zarem.Mips.Emulator.Machine.Enums;
@@ -10,8 +9,7 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models.JIT;
 
-public unsafe partial class MipsJitCompiler<T>
-    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+public unsafe partial class MipsJitCompiler<T, TFloat>
 {
     private void EmitDelaySlot(ILGenerator il, T delaySlotPc)
     {
@@ -43,14 +41,6 @@ public unsafe partial class MipsJitCompiler<T>
         base.EmitLoadRegister<TData>(il, register);
     }
 
-    private void EmitLoadRegister<TFloat>(ILGenerator il, MipsFloatRegister register)
-        where TFloat : unmanaged
-    {
-        // Load the register's address then retrieve the value at that address
-        EmitLoadRegisterAddress(il, register);
-        il.EmitLdind<TFloat>();
-    }
-
     /// <inheritdoc/>
     protected override void EmitStoreRegister(ILGenerator il, MipsGpRegister register, Action<ILGenerator> emitEvaluation)
     {
@@ -66,17 +56,6 @@ public unsafe partial class MipsJitCompiler<T>
 
         base.EmitStoreRegister(il, register, emitEvaluation);
     }
-
-    private void EmitStoreRegister<TFloat>(ILGenerator il, MipsFloatRegister register, Action emitEvaluation)
-        where TFloat : unmanaged
-    {
-        // Load the register's address, emit the evaluation instructions, and store the value
-        EmitLoadRegisterAddress(il, register);
-        emitEvaluation();
-        il.EmitStind<TFloat>();
-    }
-
-    private void EmitLoadRegisterAddress(ILGenerator il, MipsFloatRegister register) => EmitLoadRegisterAddress(il, (int)register, _cpu.FloatProcessor.RegisterFile.Regs);
 
     /// <remarks>
     /// Set <paramref name="accessFailureTrap"/> to <see cref="MipsTrap.None"/> to skip alignment check.

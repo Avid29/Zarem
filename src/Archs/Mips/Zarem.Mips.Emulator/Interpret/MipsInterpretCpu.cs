@@ -18,8 +18,9 @@ namespace Zarem.Mips.Emulator.Interpret;
 /// <summary>
 /// A <see cref="MipsCpu{T}"/> that executes by interpreting each instruction.
 /// </summary>
-public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpretCpu<T>, MipsInstruction, MipsExecution<T>, MipsTrap>
+public sealed class MipsInterpretCpu<T, TFloat> : MipsCpu<T, TFloat>, IInterpretCpu<MipsInterpretCpu<T, TFloat>, MipsInstruction, MipsExecution<T>, MipsTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private readonly IMipsInstructionServiceTable<T> _instructionServiceTable;
 
@@ -29,8 +30,8 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
     public MipsInterpretCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
         _instructionServiceTable = config.VersionInfo.Is64Bit
-            ? new MipsInstructionServiceTable<T, long>(this)
-            : new MipsInstructionServiceTable<T, int>(this);
+            ? new MipsInstructionServiceTable<T, TFloat, long>(this)
+            : new MipsInstructionServiceTable<T, TFloat, int>(this);
     }
 
     /// <inheritdoc/>
@@ -89,7 +90,10 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
 
         // Handle trap, if any occurred
         if (trap is not MipsTrap.None)
+        {
+            execution = default;
             HandleTrap(trap);
+        }
 
         return trap;
     }
@@ -201,7 +205,10 @@ public sealed class MipsInterpretCpu<T> : MipsCpu<T>, IInterpretCpu<MipsInterpre
                 RegisterFile[(int)execution.WritebackGPRegister] = memRead;
                 break;
             case MipsSideEffect.WriteCoProc0:
-                CoProcessor0[execution.CoProc0Reg] = execution.CoProc0WriteBack;
+                CoProcessor0[execution.CoProc0Reg] = execution.CoProcWriteBack;
+                break;
+            case MipsSideEffect.WriteCoProc1Control:
+                FloatProcessor.ControlRegisterFile[execution.CoProc1ControlReg] = execution.CoProc1ControlWriteBack;
                 break;
             case MipsSideEffect.WriteSingle:
                 FloatProcessor.Words[(int)execution.FloatReg] = execution.FWordWriteBack;

@@ -45,6 +45,19 @@ public unsafe static class ILGeneratorExtensions
         }
 
         /// <summary>
+        /// Emits a convert op-code for converting from <typeparamref name="TFrom"/> to <typeparamref name="TTo"/>.
+        /// </summary>
+        public void EmitConv<TFrom, TTo>(Sign sign = Sign.Unspecified)
+            where TFrom : unmanaged
+            where TTo : unmanaged
+        {
+            if (sizeof(TFrom) == sizeof(TTo))
+                return;
+
+            EmitConv<TTo>(il, sign);
+        }
+
+        /// <summary>
         /// Emits a convert op-code for converting to <typeparamref name="TData"/>.
         /// </summary>
         public void EmitConv<TData>(Sign sign = Sign.Unspecified)
@@ -122,5 +135,10 @@ public unsafe static class ILGeneratorExtensions
                 throw new NotSupportedException("Unsupported register width.");
             }
         }
+
+        /// <summary>
+        /// Emits a CIL instruction to load a <see cref="bool"/>.
+        /// </summary>
+        public void EmitLoadBool(bool value) => EmitLoadConstant(il, value ? 1 : 0);
     }
 }

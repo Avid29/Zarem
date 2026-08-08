@@ -6,7 +6,7 @@ using Zarem.Emulator.Machine.Registers;
 using Zarem.Mips.Emulator.Machine.Tlb;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Mips.Emulator.Machine.Registers;
+namespace Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
 
 /// <summary>
 /// A class representing a MIPS register file.

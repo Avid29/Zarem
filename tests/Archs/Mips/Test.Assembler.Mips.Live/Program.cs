@@ -166,7 +166,7 @@ public class Program()
                     return;
                 }
 
-                var version = new MipsVersionInfo(MipsBaseVersion.MipsII);
+                var version = new MipsVersionInfo(MipsGeneration.MipsII);
                 if (cmdArgs.Length is 3)
                 {
                     version = MipsVersionInfo.Parse(cmdArgs[2]);

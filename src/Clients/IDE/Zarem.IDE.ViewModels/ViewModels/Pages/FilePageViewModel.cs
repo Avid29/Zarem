@@ -10,6 +10,7 @@ using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Messages;
 using Zarem.IDE.Messages.DebugSessions;
 using Zarem.IDE.Messages.Editor.Enums;
+using Zarem.IDE.Messages.Project;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
@@ -142,6 +143,12 @@ public partial class FilePageViewModel : PageViewModel
                 return;
 
             OnPropertyChanged(nameof(RealTimeAssembly));
+        });
+
+        // Update the assembler when the project changes
+        _messenger.Register<FilePageViewModel, ProjectOpenedMessage>(this, (r, m) =>
+        {
+            OnPropertyChanged(nameof(Assembler));
         });
     }
 

@@ -84,7 +84,7 @@ public class MipsInstructionParser : InstructionParserBase<MipsInstruction, Mips
             (LogId id, string message) = version switch
             {
                 not null when banned => (LogId.DisabledFeatureInUse, "InstructionDisabled"),
-                not null when Config is null || version > Config.VersionInfo.Base => (LogId.NotInVersion, "RequiresVersion"),
+                not null when Config is null || version > Config.VersionInfo.Generation => (LogId.NotInVersion, "RequiresVersion"),
                 not null => (LogId.NotInVersion, "RemovedInVersion"),
                 null when Config is not null && is64bit && !Config.VersionInfo.Is64Bit => (LogId.NotInVersion, "Needs64BitVersion"),
                 null => (LogId.InvalidInstructionName, "NoInstructionNamed")

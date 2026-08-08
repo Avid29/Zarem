@@ -17,8 +17,7 @@ using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Models.JIT;
 
-public partial class MipsJitCompiler<T>
-    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+public partial class MipsJitCompiler<T, TFloat>
 {
     private void InitTables(MipsEmulatorConfig config)
     {
@@ -54,7 +53,7 @@ public partial class MipsJitCompiler<T>
         _instructionTable.Register(MipsOpCode.StoreHalfWord, Store<short>);
         _instructionTable.Register(MipsOpCode.StoreWord, Store<int>);
 
-        if (versionInfo.Base is >= MipsBaseVersion.MipsIII && versionInfo.Is64Bit)
+        if (versionInfo.Generation is >= MipsGeneration.MipsIII && versionInfo.Is64Bit)
         {
             _instructionTable.Register(MipsOpCode.DoubleWordAddImmediate, (il, inst, pc) => CheckedAluI<long>(il, inst, pc, OpCodes.Add));
             _instructionTable.Register(MipsOpCode.DoubleWordAddImmediateUnsigned, (il, inst, pc) => AluI<long>(il, inst, OpCodes.Add, signExtend: true));
@@ -64,7 +63,7 @@ public partial class MipsJitCompiler<T>
             _instructionTable.Register(MipsOpCode.StoreDoubleWord, Store<long>);
         }
 
-        if (versionInfo.Base is >= MipsBaseVersion.MipsII and < MipsBaseVersion.R6)
+        if (versionInfo.Generation is >= MipsGeneration.MipsII and < MipsGeneration.R6)
         {
             _instructionTable.Register(MipsOpCode.BranchOnEqualLikely, (il, inst, pc) => BranchCompareReg(il, inst, pc, OpCodes.Beq, true));
             _instructionTable.Register(MipsOpCode.BranchOnNotEqualLikely, (il, inst, pc) => BranchCompareReg(il, inst, pc, OpCodes.Bne_Un, true));
@@ -100,7 +99,7 @@ public partial class MipsJitCompiler<T>
         _instructionTable.Register(FunctionCode.SetLessThan, (il, inst, pc) => AluR<T>(il, inst, OpCodes.Clt));
         _instructionTable.Register(FunctionCode.SetLessThanUnsigned, (il, inst, pc) => AluR<T>(il, inst, OpCodes.Clt_Un));
 
-        if (versionInfo.Base is >= MipsBaseVersion.MipsII)
+        if (versionInfo.Generation is >= MipsGeneration.MipsII)
         {
             // NOTE: Traps use inverted branchs for opcodes
             _instructionTable.Register(FunctionCode.TrapOnGreaterOrEqual, (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Blt));
@@ -111,7 +110,7 @@ public partial class MipsJitCompiler<T>
             _instructionTable.Register(FunctionCode.TrapOnNotEquals, (il, inst, pc) => TrapCompareReg(il, inst, pc, OpCodes.Beq));
         }
 
-        if (versionInfo.Base is >= MipsBaseVersion.MipsIII && versionInfo.Is64Bit)
+        if (versionInfo.Generation is >= MipsGeneration.MipsIII && versionInfo.Is64Bit)
         {
             _instructionTable.Register(FunctionCode.DoubleWordShiftLeftLogicalVariable, (il, inst, pc) => ShiftVar<long>(il, inst, OpCodes.Shl));
             _instructionTable.Register(FunctionCode.DoubleWordShiftRightLogicalVariable, (il, inst, pc) => ShiftVar<long>(il, inst, OpCodes.Shr_Un));
@@ -132,18 +131,18 @@ public partial class MipsJitCompiler<T>
             _instructionTable.Register(FunctionCode.DoubleWordShiftRightArithmeticPlus32, (il, inst, pc) => ShiftPlus32<long>(il, inst, OpCodes.Shr));
         }
 
-        if (versionInfo.Base is >= MipsBaseVersion.MipsIV and < MipsBaseVersion.R6)
+        if (versionInfo.Generation is >= MipsGeneration.MipsIV and < MipsGeneration.R6)
         {
             _instructionTable.Register(FunctionCode.MoveOnZero, (il, inst, pc) => Move(il, inst, OpCodes.Brtrue));
             _instructionTable.Register(FunctionCode.MoveOnNotZero, (il, inst, pc) => Move(il, inst, OpCodes.Brfalse));
         }
 
-        if (versionInfo.Base is >= MipsBaseVersion.R1 and < MipsBaseVersion.R6)
+        if (versionInfo.Generation is >= MipsGeneration.R1 and < MipsGeneration.R6)
         {
             InitSpecial2();
         }
 
-        if (versionInfo.Base is < MipsBaseVersion.R6)
+        if (versionInfo.Generation is < MipsGeneration.R6)
         {
             _instructionTable.Register(FunctionCode.JumpRegister, (il, inst, pc) => JumpR(il, inst, pc));
             _instructionTable.Register(FunctionCode.Multiply, (il, inst, pc) => MultR<int, long>(il, inst));
@@ -162,7 +161,7 @@ public partial class MipsJitCompiler<T>
         _instructionTable.Register(RegImmFuncCode.BranchOnLessThanZero, (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Blt));
         _instructionTable.Register(RegImmFuncCode.BranchOnGreaterThanOrEqualToZero, (il, inst, pc) => BranchCompareZero(il, inst, pc, OpCodes.Bge));
 
-        if (versionInfo.Base is >= MipsBaseVersion.MipsII and < MipsBaseVersion.R6)
+        if (versionInfo.Generation is >= MipsGeneration.MipsII and < MipsGeneration.R6)
         {
             // NOTE: Traps use inverted branchs for opcodes
             _instructionTable.Register(RegImmFuncCode.TrapOnGreaterOrEqualImmediate, (il, inst, pc) => TrapCompareImmediate(il, inst, pc, OpCodes.Blt));
@@ -241,12 +240,12 @@ public partial class MipsJitCompiler<T>
             _instructionTable.Register(format, MipsFloatFuncCode.Floor_L, (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Floor)));
         }
 
-        if (versionInfo.Base >= MipsBaseVersion.MipsIV)
+        if (versionInfo.Generation >= MipsGeneration.MipsIV)
         {
             _instructionTable.Register(format, MipsFloatFuncCode.Reciprical, (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.ReciprocalEstimate)));
         }
 
-        if (versionInfo.Base >= MipsBaseVersion.R2)
+        if (versionInfo.Generation >= MipsGeneration.R2)
         {
             _instructionTable.Register(format, MipsFloatFuncCode.RecipricalSquareRoot, (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.ReciprocalSqrtEstimate)));
         }
