@@ -8,6 +8,7 @@ namespace Zarem.RiscV.Models.Instructions.Enums.Operations;
 public enum RiscVOpCode : byte
 {
 #pragma warning disable CS1591
+
     Load = 0x03,
     FloatLoad = 0x07,
     MiscMem = 0x0f,
