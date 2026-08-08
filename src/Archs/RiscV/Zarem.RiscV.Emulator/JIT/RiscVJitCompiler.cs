@@ -1,17 +1,20 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
-using Zarem.RiscV.Emulator.JIT;
+using Zarem.Emulator.JIT;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.RiscV.Emulator.JIT;
 
 /// <summary>
 /// A class which compiles blocks of RISC-V code into JIT IL code.
@@ -136,17 +139,59 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         where TData : unmanaged, INumber<TData>
         where TLong : unmanaged, INumber<TLong>
     {
-        EmitStoreRegister(il, inst.RD, il =>
-        {
-            EmitLoadRegister<TLong>(il, inst.RS1);
-            EmitLoadRegister<TLong>(il, inst.RS2);
-            il.Emit(OpCodes.Mul);
+        Type longType = typeof(TLong);
+        int shiftAmount = sizeof(TData) * 8;
 
-            int shiftAmount = sizeof(TData) * 8;
-            il.EmitLoadConstant(shiftAmount);
-            il.Emit(OpCodes.Shr_Un);
-            il.EmitConv<TData>();
-        });
+        // Primitive types can use native CIL hardware opcodes
+        if (longType.IsPrimitive)
+        {
+            EmitStoreRegister(il, inst.RD, il =>
+            {
+                EmitLoadRegister<TLong>(il, inst.RS1);
+                EmitLoadRegister<TLong>(il, inst.RS2);
+                il.Emit(OpCodes.Mul);
+                il.EmitLoadConstant(shiftAmount);
+                il.Emit(OpCodes.Shr_Un);
+                il.EmitConv<TData>();
+            });
+        }
+        else
+        {
+            // For non-primitive types, we need to call methods to perform the multiplication and shifting
+            // Resolve those methods
+            var mulMethod = longType.GetMethod("op_Multiply", [longType, longType]);
+            var shrMethod = longType.GetMethod("op_UnsignedRightShift", [longType, typeof(int)]);
+            var convUpDef = typeof(TLong)
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .First(m => m.Name == nameof(TLong.CreateTruncating) && m.IsGenericMethod);
+            var convUpMethod = convUpDef.MakeGenericMethod(typeof(TData));
+            var convDownDef = typeof(TData)
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .First(m => m.Name == nameof(TData.CreateTruncating) && m.IsGenericMethod);
+            var convDownMethod = convDownDef.MakeGenericMethod(typeof(TLong));
+            Guard.IsNotNull(mulMethod);
+            Guard.IsNotNull(shrMethod);
+            Guard.IsNotNull(convUpMethod);
+            Guard.IsNotNull(convDownMethod);
+
+            EmitStoreRegister(il, inst.RD, il =>
+            {
+                // Load and widen both operands to TLong
+                EmitLoadRegister<TData>(il, inst.RS1);
+                il.Emit(OpCodes.Call, convUpMethod);
+                EmitLoadRegister<TData>(il, inst.RS2);
+                il.Emit(OpCodes.Call, convUpMethod);
+
+                // TLong multiplication and shift
+                il.Emit(OpCodes.Call, mulMethod);
+                il.EmitLoadConstant(shiftAmount);
+                il.Emit(OpCodes.Call, shrMethod);
+
+                // Narrow back down to TData
+                il.Emit(OpCodes.Call, convDownMethod);
+            });
+
+        }
     }
 
     private void MulSH<TData, TLong, TLongSigned>(ILGenerator il, RiscVInstruction inst)
