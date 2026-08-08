@@ -300,5 +300,272 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Compressed",
+    "patterns": [
+      {
+        "name": "CRTypeInstructions",
+        "sections": [
+          {
+            "name": "OP Code",
+            "size": 2,
+            "offset": 0,
+            "type": 0
+          },
+          {
+            "name": "RS2",
+            "size": 5,
+            "offset": 2,
+            "type": 3
+          },
+          {
+            "name": "RD/RS1",
+            "size": 5,
+            "offset": 7,
+            "type": 3
+          },
+          {
+            "name": "Funct 4",
+            "size": 4,
+            "offset": 12,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "CITypeInstructions",
+        "sections": [
+          {
+            "name": "OP Code",
+            "size": 2,
+            "offset": 0,
+            "type": 0
+          },
+          {
+            "name": "Imm[0-4]",
+            "size": 5,
+            "offset": 2,
+            "type": 4
+          },
+          {
+            "name": "RD/RS1",
+            "size": 5,
+            "offset": 7,
+            "type": 3
+          },
+          {
+            "name": "Imm[5]",
+            "size": 1,
+            "offset": 12,
+            "type": 4
+          },
+          {
+            "name": "Funct 3",
+            "size": 3,
+            "offset": 13,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "CSSTypeInstructions",
+        "sections": [
+          {
+            "name": "OP Code",
+            "size": 2,
+            "offset": 0,
+            "type": 0
+          },
+          {
+            "name": "RS2",
+            "size": 5,
+            "offset": 2,
+            "type": 3
+          },
+          {
+            "name": "Immediate",
+            "size": 6,
+            "offset": 7,
+            "type": 4
+          },
+          {
+            "name": "Funct 3",
+            "size": 3,
+            "offset": 13,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "CIWTypeInstructions",
+        "sections": [
+          {
+            "name": "OP Code",
+            "size": 2,
+            "offset": 0,
+            "type": 0
+          },
+          {
+            "name": "RD'",
+            "size": 3,
+            "offset": 2,
+            "type": 3
+          },
+          {
+            "name": "Immediate",
+            "size": 8,
+            "offset": 5,
+            "type": 4
+          },
+          {
+            "name": "Funct 3",
+            "size": 3,
+            "offset": 13,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "CLTypeInstructions",
+        "sections": [
+          {
+            "name": "OP Code",
+            "size": 2,
+            "offset": 0,
+            "type": 0
+          },
+          {
+            "name": "RD'",
+            "size": 3,
+            "offset": 2,
+            "type": 3
+          },
+          {
+            "name": "Imm[0-1]",
+            "size": 2,
+            "offset": 5,
+            "type": 4
+          },
+          {
+            "name": "RS1'",
+            "size": 3,
+            "offset": 7,
+            "type": 3
+          },
+          {
+            "name": "Imm[2-4]",
+            "size": 3,
+            "offset": 10,
+            "type": 4
+          },
+          {
+            "name": "Funct 3",
+            "size": 3,
+            "offset": 13,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "CSTypeInstructions",
+        "sections": [
+          {
+            "name": "OP Code",
+            "size": 2,
+            "offset": 0,
+            "type": 0
+          },
+          {
+            "name": "RS2'",
+            "size": 3,
+            "offset": 2,
+            "type": 3
+          },
+          {
+            "name": "Imm[0-1]",
+            "size": 2,
+            "offset": 5,
+            "type": 4
+          },
+          {
+            "name": "RS1'",
+            "size": 3,
+            "offset": 7,
+            "type": 3
+          },
+          {
+            "name": "Imm[2-4]",
+            "size": 3,
+            "offset": 10,
+            "type": 4
+          },
+          {
+            "name": "Funct 3",
+            "size": 3,
+            "offset": 13,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "CBTypeInstructions",
+        "sections": [
+          {
+            "name": "OP Code",
+            "size": 2,
+            "offset": 0,
+            "type": 0
+          },
+          {
+            "name": "Imm[0-4]",
+            "size": 5,
+            "offset": 2,
+            "type": 4
+          },
+          {
+            "name": "RS1'",
+            "size": 3,
+            "offset": 7,
+            "type": 3
+          },
+          {
+            "name": "Imm[5-7]",
+            "size": 3,
+            "offset": 10,
+            "type": 4
+          },
+          {
+            "name": "Funct 3",
+            "size": 3,
+            "offset": 13,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "CJTypeInstructions",
+        "sections": [
+          {
+            "name": "OP Code",
+            "size": 2,
+            "offset": 0,
+            "type": 0
+          },
+          {
+            "name": "Immediate",
+            "size": 11,
+            "offset": 2,
+            "type": 4
+          },
+          {
+            "name": "Funct 3",
+            "size": 3,
+            "offset": 13,
+            "type": 1
+          }
+        ]
+      }
+    ]
   }
 ]
