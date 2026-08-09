@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Zarem.Assembler;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Models.Versioning;
+using Zarem.RiscV.Assembler.Models.Meta.Extensions;
 using Zarem.RiscV.Models.Instructions.Enums;
 using Zarem.RiscV.Models.Versioning.Enums;
 
@@ -20,6 +21,7 @@ namespace Zarem.RiscV.Assembler.Models.Meta;
 [JsonDerivedType(typeof(UTypeInstructionMeta), "u-type")]
 [JsonDerivedType(typeof(JTypeInstructionMeta), "j-type")]
 [JsonDerivedType(typeof(RiscVFloatInstructionMeta), "float")]
+[JsonDerivedType(typeof(CITypeInstructionMeta), "ci-type")]
 [JsonDerivedType(typeof(RiscVPseudoInstructionMeta), "pseudo")]
 public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgument>
 {

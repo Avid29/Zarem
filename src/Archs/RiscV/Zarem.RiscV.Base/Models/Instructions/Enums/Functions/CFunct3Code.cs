@@ -10,7 +10,7 @@ public enum CFunct3Code : byte
 #pragma warning disable CS1591
 
     // Quadrant 0
-    AddImmediate4spn = 0b000,
+    AddImmediate4StackPointerNonDestructive = 0b000,
     LoadDouble = 0b001,
     LoadWord = 0b010,
     LoadDoubleWord = 0b011,                 // RV64/128C
@@ -26,7 +26,7 @@ public enum CFunct3Code : byte
     JumpAndLink = 0b001,                    // RV32C
     AddImmediateWide = 0b001,               // RV64/128C
     LoadImmediate = 0b010,
-    AddImmediate16SP = 0b011,
+    AddImmediate16StackPointer = 0b011,
     LoadUpperImmediate = 0b011,
     MiscAlu = 0b100,
     Jump = 0b101,

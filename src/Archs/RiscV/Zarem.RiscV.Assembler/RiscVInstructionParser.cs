@@ -16,6 +16,7 @@ using Zarem.Models;
 using Zarem.Models.Tables;
 using Zarem.RiscV.Assembler.Logger;
 using Zarem.RiscV.Assembler.Models.Meta;
+using Zarem.RiscV.Assembler.Models.Meta.Extensions;
 using Zarem.RiscV.Assembler.Models.Tables;
 using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions;
@@ -153,7 +154,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     {
         Guard.IsNotNull(Meta);
 
-        var rd = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RD, RiscVArgument.FRD);
+        var rd = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RD, RiscVArgument.FRD, RiscVArgument.RDRS1);
         var rs1 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS1, RiscVArgument.FRS1);
         var rs2 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS2, RiscVArgument.FRS2);
         var rs3 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.FRS3);

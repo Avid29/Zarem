@@ -1,0 +1,77 @@
+[
+  {
+    "type": "ci-type",
+    "name": "c.nop",
+    "comp_code": 1,
+    "cfunct3": 0,
+    "args": [],
+    "extension": "C"
+  },
+  {
+    "type": "ci-type",
+    "name": "c.addi",
+    "comp_code": 1,
+    "cfunct3": 0,
+    "args": [ "rdrs1", "comp_imm" ],
+    "extension": "C"
+  },
+  {
+    "type": "ci-type",
+    "name": "c.addiw",
+    "comp_code": 1,
+    "cfunct3": 1,
+    "args": [ "rdrs1", "comp_imm" ],
+    "extension": "C",
+    "min_base": "RV64"
+  },
+  {
+    "type": "ci-type",
+    "name": "c.li",
+    "comp_code": 1,
+    "cfunct3": 2,
+    "args": [ "rdrs1", "comp_imm" ],
+    "extension": "C"
+  },
+  {
+    "type": "ci-type",
+    "name": "c.addi16sp",
+    "comp_code": 1,
+    "cfunct3": 3,
+    "args": [ "comp_imm" ],
+    "rd_fixed": 2,
+    "extension": "C"
+  },
+  {
+    "type": "ci-type",
+    "name": "c.lui",
+    "comp_code": 1,
+    "cfunct3": 3,
+    "args": [ "rd", "comp_imm" ],
+    "extension": "C"
+  },
+  {
+    "type": "ci-type",
+    "name": "c.slli",
+    "comp_code": 2,
+    "cfunct3": 0,
+    "args": [ "rdrs1", "comp_imm" ],
+    "extension": "C"
+  },
+  {
+    "type": "ci-type",
+    "name": "c.lwsp",
+    "comp_code": 2,
+    "cfunct3": 2,
+    "args": [ "rd", "comp_imm" ],
+    "extension": "C"
+  },
+  {
+    "type": "ci-type",
+    "name": "c.ldsp",
+    "comp_code": 2,
+    "cfunct3": 3,
+    "args": [ "rd", "comp_imm" ],
+    "extension": "C",
+    "min_base": "RV64"
+  }
+]

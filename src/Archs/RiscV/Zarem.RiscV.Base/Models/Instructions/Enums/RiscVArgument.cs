@@ -45,6 +45,11 @@ public enum RiscVArgument : byte
     [RegisterArgument<RiscVRegisterSet>("frs3", RiscVRegisterSet.FloatingPoints)]
     FRS3,
 
+    // Combined Registers
+    [JsonStringEnumMemberName("rdrs1")]
+    [RegisterArgument<RiscVRegisterSet>("rd/rs1", RiscVRegisterSet.GeneralPurpose)]
+    RDRS1,
+
     // Immediates
     [JsonStringEnumMemberName("imm")]
     [ImmediateArgument<RiscVReferenceType>("immediate", 12, true, DefaultRelocation = RiscVReferenceType.Low12)]
@@ -69,6 +74,11 @@ public enum RiscVArgument : byte
     [JsonStringEnumMemberName("imm32")]
     [ImmediateArgument<RiscVReferenceType>("immediate", 32, true)]
     FullImmediate,
+
+    // Compressed Immediates
+    [JsonStringEnumMemberName("comp_imm")]
+    [ImmediateArgument<RiscVReferenceType>("immediate", 6, true)]
+    CompressedImmediate,
 
     // System
     [JsonStringEnumMemberName("csr")]
