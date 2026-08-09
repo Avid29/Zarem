@@ -250,4 +250,24 @@ public struct RiscVCompressedInstruction
     /// Casts a <see cref="RiscVCompressedInstruction"/> to a <see cref="ushort"/>.
     /// </summary>
     public static explicit operator ushort(RiscVCompressedInstruction value) => Unsafe.As<RiscVCompressedInstruction, ushort>(ref value);
+
+    /// <summary>
+    /// Casts a <see cref="uint"/> to a <see cref="RiscVCompressedInstruction"/>.
+    /// </summary>
+    public static explicit operator RiscVCompressedInstruction(uint value) => (RiscVCompressedInstruction)(ushort)value;
+
+    /// <summary>
+    /// Casts a <see cref="RiscVCompressedInstruction"/> to a <see cref="uint"/>.
+    /// </summary>
+    public static explicit operator uint(RiscVCompressedInstruction value) => (ushort)value;
+
+    /// <summary>
+    /// Casts a <see cref="RiscVCompressedInstruction"/> to a <see cref="RiscVInstruction"/>.
+    /// </summary>
+    public static explicit operator RiscVInstruction(RiscVCompressedInstruction value) => (RiscVInstruction)(uint)value;
+
+    /// <summary>
+    /// Casts a <see cref="RiscVCompressedInstruction"/> to a <see cref="RiscVInstruction"/>.
+    /// </summary>
+    public static explicit operator RiscVCompressedInstruction(RiscVInstruction value) => (RiscVCompressedInstruction)(uint)value;
 }
