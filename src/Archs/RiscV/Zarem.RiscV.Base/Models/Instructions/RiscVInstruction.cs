@@ -16,11 +16,13 @@ namespace Zarem.RiscV.Models.Instructions;
 public struct RiscVInstruction
 {
     // Opcodes are 7 bits, Registers are 5 bits.
+    private const int COMPCODE_BIT_SIZE = 2;
     private const int OPCODE_BIT_SIZE = 7;
     private const int REG_BIT_SIZE = 5;
     private const int FUNCT3_BIT_SIZE = 3;
     private const int FUNCT7_BIT_SIZE = 7;
 
+    private const int COMPCODE_OFFSET = 0;
     private const int OPCODE_OFFSET = 0;
     private const int RD_OFFSET = 7;
     private const int FUNCT3_OFFSET = 12;
@@ -116,6 +118,15 @@ public struct RiscVInstruction
             RD = rd,
             JumpOffset = offset
         };
+    }
+
+    /// <summary>
+    /// Gets or sets the instruction's compression code.
+    /// </summary>
+    public RiscVCompressionCode CompressionCode
+    {
+        readonly get => (RiscVCompressionCode)BitField.GetField(_inst, COMPCODE_BIT_SIZE, COMPCODE_OFFSET);
+        set => BitField.SetField(ref _inst, COMPCODE_BIT_SIZE, COMPCODE_OFFSET, (byte)value);
     }
 
     /// <summary>
