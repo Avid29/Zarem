@@ -7,6 +7,7 @@ using Zarem.Mips.Models.Instructions.Enums.Functions;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
 using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Models.Interface;
 
 namespace Zarem.Mips.Models.Instructions;
 
@@ -77,7 +78,7 @@ namespace Zarem.Mips.Models.Instructions;
 /// A struct representing an instruction utilizing the floating-point coprocessor.
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 4)]
-public struct MipsFloatInstruction
+public unsafe struct MipsFloatInstruction : IInstruction
 {
     [FieldOffset(0)]
     private MipsInstruction _inst;
@@ -183,6 +184,9 @@ public struct MipsFloatInstruction
         readonly get => (MipsFloatRegister)_inst.ShiftAmount;
         private set => _inst.ShiftAmount = (byte)value;
     }
+
+    /// <inheritdoc/>
+    public readonly int Length => ((MipsInstruction)this).Length;
 
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="MipsFloatInstruction"/>.

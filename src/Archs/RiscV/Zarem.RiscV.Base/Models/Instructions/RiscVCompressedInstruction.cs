@@ -3,6 +3,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Helpers;
+using Zarem.Models.Interface;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
@@ -13,7 +14,7 @@ namespace Zarem.RiscV.Models.Instructions;
 /// A struct representing a compressed RISC-V instruction.
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 2)]
-public struct RiscVCompressedInstruction
+public struct RiscVCompressedInstruction : IInstruction
 {
     private const byte COMPCODE_BIT_SIZE = 2;
     private const byte REG_BIT_SIZE = 5;
@@ -240,6 +241,9 @@ public struct RiscVCompressedInstruction
             BitField.SetField(ref _inst, 1, 2, (ushort)((val >> 5) & 0x1));
         }
     }
+
+    /// <inheritdoc/>
+    public readonly int Length => ((RiscVInstruction)this).Length;
 
     /// <summary>
     /// Casts a <see cref="ushort"/> to a <see cref="RiscVCompressedInstruction"/>.

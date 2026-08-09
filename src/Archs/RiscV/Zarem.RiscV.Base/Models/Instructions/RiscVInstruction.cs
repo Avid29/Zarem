@@ -3,6 +3,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Helpers;
+using Zarem.Models.Interface;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
@@ -13,7 +14,7 @@ namespace Zarem.RiscV.Models.Instructions;
 /// A struct representing a RISC-V instruction.
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 4)]
-public struct RiscVInstruction
+public unsafe struct RiscVInstruction : IInstruction
 {
     // Opcodes are 7 bits, Registers are 5 bits.
     private const int COMPCODE_BIT_SIZE = 2;
@@ -285,6 +286,14 @@ public struct RiscVInstruction
             BitField.SetField(ref _inst, 1, 31, (val >> 20) & 0x1);    // bit 20
         }
     }
+
+    /// <summary>
+    /// Gets whether or not the instruction is a compressed instruction.
+    /// </summary>
+    public readonly bool IsCompressed => CompressionCode is not RiscVCompressionCode.Uncompressed;
+
+    /// <inheritdoc/>
+    public readonly int Length => IsCompressed ? sizeof(RiscVCompressedInstruction) : sizeof(RiscVInstruction);
 
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="RiscVInstruction"/>.
