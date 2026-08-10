@@ -37,6 +37,20 @@ public struct RiscVCompressedInstruction : IInstruction
     private ushort _inst;
 
     /// <summary>
+    /// Creates a CI-Type instruction.
+    /// </summary>
+    public static RiscVCompressedInstruction CreateCI(RiscVCompressionCode comp, CFunct3Code cf3, RiscVGpRegister rdrs1, sbyte imm)
+    {
+        return new()
+        {
+            CompressionCode = comp,
+            Funct3 = cf3,
+            RDRS1 = rdrs1,
+            Immediate = imm,
+        };
+    }
+
+    /// <summary>
     /// Gets or sets the instruction's compression code.
     /// </summary>
     public RiscVCompressionCode CompressionCode
@@ -268,7 +282,7 @@ public struct RiscVCompressedInstruction : IInstruction
     /// <summary>
     /// Casts a <see cref="RiscVCompressedInstruction"/> to a <see cref="RiscVInstruction"/>.
     /// </summary>
-    public static explicit operator RiscVInstruction(RiscVCompressedInstruction value) => (RiscVInstruction)(uint)value;
+    public static implicit operator RiscVInstruction(RiscVCompressedInstruction value) => (RiscVInstruction)(uint)value;
 
     /// <summary>
     /// Casts a <see cref="RiscVCompressedInstruction"/> to a <see cref="RiscVInstruction"/>.

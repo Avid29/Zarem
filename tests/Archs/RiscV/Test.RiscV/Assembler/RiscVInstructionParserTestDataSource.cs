@@ -10,6 +10,7 @@ using Test.RiscV.Helpers;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Models.Versioning;
 using Zarem.RiscV.Assembler.Models.Meta;
+using Zarem.RiscV.Assembler.Models.Meta.Extensions;
 using Zarem.RiscV.Assembler.Models.Tables;
 using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions.Enums;
@@ -56,13 +57,14 @@ public class RiscVInstructionParserTestDataSource : InstructionParserTestDataSou
             {
                 line.Append(arg switch
                 {
-                    RiscVArgument.RD or RiscVArgument.RS1 or RiscVArgument.RS2 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose),
+                    RiscVArgument.RD or RiscVArgument.RS1 or RiscVArgument.RS2 or RiscVArgument.RDRS1 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose),
                     RiscVArgument.FRD or RiscVArgument.FRS1 or RiscVArgument.FRS2 or RiscVArgument.FRS3 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.FloatingPoints),
                     RiscVArgument.Immediate or RiscVArgument.StoreOffset or RiscVArgument.Csr => $"{ArgGenerator.RandomImm12()}",
                     RiscVArgument.UpperImmediate => $"{ArgGenerator.RandomImm20()}",
                     RiscVArgument.BranchOffset => $"{ArgGenerator.RandomBranchOffset()}",
                     RiscVArgument.JumpOffset => $"{ArgGenerator.RandomJumpOffset()}",
                     RiscVArgument.FullImmediate => $"{ArgGenerator.RandomFullImm()}",
+                    RiscVArgument.CompressedImmediate => $"{ArgGenerator.RandomCompressedImm()}",
                     RiscVArgument.UImm5 => $"{ArgGenerator.RandomShamt()}",
                     RiscVArgument.MemoryLoad or RiscVArgument.MemoryStore => $"{ArgGenerator.RandomImm12()}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
                     _ => throw new NotImplementedException(),

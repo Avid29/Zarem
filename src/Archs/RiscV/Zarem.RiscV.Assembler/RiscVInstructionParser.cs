@@ -167,17 +167,18 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, rs1, rs2, Immediate),
             STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, rs1, rs2, (short)Immediate),
             JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, rd, Immediate),
+            CITypeInstructionMeta ci => RiscVCompressedInstruction.CreateCI(ci.CompressionCode, ci.CFunct3, rd, (sbyte)Immediate),
             RiscVFloatInstructionMeta f => (f.Funct5.HasValue, f.Funct3.HasValue) switch
             {
                 // Triple Source reg with rounding mode
                 (false, false) => RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, _roundingMode),
-                
+
                 // Triple source reg without rounding mode
                 (false, true) => RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, f.Funct3!.Value),
-                
+
                 // Double source reg with rounding mode
                 (true, false) => RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5!.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, _roundingMode),
-                
+
                 // Double source reg without rounding mode
                 (true, true) => RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5!.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, f.Funct3!.Value),
             },

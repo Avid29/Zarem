@@ -10,10 +10,13 @@ public class ArgGenerator
     private static Random Rnd => Random.Shared;
 
     public static int RandomImm12(bool safe = true)
-        => safe ? Rnd.Next(-2048, 2048) : Rnd.Next(int.MinValue, int.MaxValue);
+        => safe ? Rnd.Next(-2048, 2047) : Rnd.Next(int.MinValue, int.MaxValue);
 
     public static int RandomImm20(bool safe = true)
         => safe ? Rnd.Next(-(1 << 19), 1 << 19) : Rnd.Next(int.MinValue, int.MaxValue);
+
+    public static int RandomCompressedImm(bool safe = true)
+        => safe ? Rnd.Next(-32, 31) : Rnd.Next(int.MinValue, int.MaxValue);
 
     public static int RandomFullImm()
         => Rnd.Next(int.MinValue, int.MaxValue);
