@@ -6,10 +6,11 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Instructions\BType.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\Extensions\CIType.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint-Convert.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint-LoadStore.inst.json" />
-    <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CRType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CIType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint\FloatingPoint-Convert.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint\FloatingPoint-LoadStore.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\FloatingPoint\FloatingPoint.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\IType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\JType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Pseudo.inst.json" />

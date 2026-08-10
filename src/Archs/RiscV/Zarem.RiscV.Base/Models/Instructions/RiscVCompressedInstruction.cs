@@ -37,6 +37,20 @@ public struct RiscVCompressedInstruction : IInstruction
     private ushort _inst;
 
     /// <summary>
+    /// Creates a CR-Type instruction.
+    /// </summary>
+    public static RiscVCompressedInstruction CreateCR(RiscVCompressionCode comp, CFunct4Code cf4, RiscVGpRegister rdrs1, RiscVGpRegister rs2)
+    {
+        return new()
+        {
+            CompressionCode = comp,
+            Funct4 = cf4,
+            RDRS1 = rdrs1,
+            RS2 = rs2,
+        };
+    }
+
+    /// <summary>
     /// Creates a CI-Type instruction.
     /// </summary>
     public static RiscVCompressedInstruction CreateCI(RiscVCompressionCode comp, CFunct3Code cf3, RiscVGpRegister rdrs1, sbyte imm)

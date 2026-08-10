@@ -17,6 +17,7 @@ using Zarem.Models.Tables;
 using Zarem.RiscV.Assembler.Logger;
 using Zarem.RiscV.Assembler.Models.Meta;
 using Zarem.RiscV.Assembler.Models.Meta.Extensions;
+using Zarem.RiscV.Assembler.Models.Meta.Extensions.Compressed;
 using Zarem.RiscV.Assembler.Models.Tables;
 using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions;
@@ -155,7 +156,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         Guard.IsNotNull(Meta);
 
         var rd = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RD, RiscVArgument.FRD, RiscVArgument.RDRS1);
-        var rs1 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS1, RiscVArgument.FRS1);
+        var rs1 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS1, RiscVArgument.FRS1, RiscVArgument.RDRS1);
         var rs2 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS2, RiscVArgument.FRS2);
         var rs3 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.FRS3);
 
@@ -168,6 +169,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, rs1, rs2, (short)Immediate),
             JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, rd, Immediate),
             CITypeInstructionMeta ci => RiscVCompressedInstruction.CreateCI(ci.CompressionCode, ci.CFunct3, rd, (sbyte)Immediate),
+            CRTypeInstructionMeta cr => RiscVCompressedInstruction.CreateCR(cr.CompressionCode, cr.CFunct4, rd, rs2),
             RiscVFloatInstructionMeta f => (f.Funct5.HasValue, f.Funct3.HasValue) switch
             {
                 // Triple Source reg with rounding mode

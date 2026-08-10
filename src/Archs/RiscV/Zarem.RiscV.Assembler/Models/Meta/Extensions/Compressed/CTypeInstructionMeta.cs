@@ -3,7 +3,7 @@
 using System.Text.Json.Serialization;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
 
-namespace Zarem.RiscV.Assembler.Models.Meta.Extensions;
+namespace Zarem.RiscV.Assembler.Models.Meta.Extensions.Compressed;
 
 /// <summary>
 /// Instruction metadata for parsing RISC-V C-Type instructions.
