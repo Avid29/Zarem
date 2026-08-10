@@ -16,7 +16,7 @@ using Zarem.RiscV.Models.Instructions.Enums.Registers;
 namespace Test.RiscV.Emulator;
 
 [TestClass]
-public partial class RiscVExecutionTests
+public partial class RiscVEmulatorTests
 {
     public const uint K0 = 0xbd0;
     public const uint K1 = 0x516;

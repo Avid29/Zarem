@@ -23,18 +23,18 @@ using Zarem.RiscV.Models.Versioning.Enums;
 namespace Test.RiscV.Assembler;
 
 [TestClass]
-public class InstructionParserTests
+public class RiscVInstructionParserTests
 {
-    public sealed record InstructionParsingTestCase(
+    public sealed record RiscVInstructionParsingTestCase(
         string Input,
         RiscVInstruction? Expected,
         LogId? Code)
     {
-        public InstructionParsingTestCase(string input, RiscVInstruction expected) : this(input, expected, null)
+        public RiscVInstructionParsingTestCase(string input, RiscVInstruction expected) : this(input, expected, null)
         {
         }
 
-        public InstructionParsingTestCase(string input, LogId code) : this(input, null, code)
+        public RiscVInstructionParsingTestCase(string input, LogId code) : this(input, null, code)
         {
         }
 
@@ -42,7 +42,7 @@ public class InstructionParserTests
     }
 
     public static string InstructionParsingTestCaseDisplayName(MethodInfo _, object[] data)
-        => $"{(InstructionParsingTestCase)data[0]}";
+        => $"{(RiscVInstructionParsingTestCase)data[0]}";
 
     public static IEnumerable<object[]> Generated_RV32_I_List => GenerateTestList(new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
 

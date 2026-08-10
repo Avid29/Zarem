@@ -32,18 +32,18 @@ using Zarem.Mips.Disassembler.Services;
 namespace Test.Mips.Assembler;
 
 [TestClass]
-public class InstructionParserTests
+public class MipsInstructionParserTests
 {
-    public sealed record InstructionParsingTestCase(
+    public sealed record MipsInstructionParsingTestCase(
         string Input,
         MipsInstruction? Expected,
         LogId? Code)
     {
-        public InstructionParsingTestCase(string input, MipsInstruction expected) : this(input, expected, null)
+        public MipsInstructionParsingTestCase(string input, MipsInstruction expected) : this(input, expected, null)
         {
         }
 
-        public InstructionParsingTestCase(string input, LogId code) : this(input, null, code)
+        public MipsInstructionParsingTestCase(string input, LogId code) : this(input, null, code)
         {
         }
 
@@ -51,24 +51,24 @@ public class InstructionParserTests
     }
 
     public static string InstructionParsingTestCaseDisplayName(MethodInfo _, object[] data)
-        => $"{(InstructionParsingTestCase)data[0]}";
+        => $"{(MipsInstructionParsingTestCase)data[0]}";
 
     public static IEnumerable<object[]> RawInstructionSuccessTestsList
     {
         get
         {
-            yield return [new InstructionParsingTestCase("nop", MipsInstruction.NOP)];
-            yield return [new InstructionParsingTestCase("add $t0, $s0, $s1", MipsInstruction.CreateR(FunctionCode.Add, MipsGpRegister.Saved0, MipsGpRegister.Saved1, MipsGpRegister.Temporary0))];
-            yield return [new InstructionParsingTestCase("addi $t0, $s0, 100", MipsInstruction.CreateI(MipsOpCode.AddImmediate, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, (short)100))];
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, 3", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, 3))];
-            yield return [new InstructionParsingTestCase("lw $t0, 100($s0)", MipsInstruction.CreateI(MipsOpCode.LoadWord, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, (short)100))];
-            yield return [new InstructionParsingTestCase("sb $t0, -100($s0)", MipsInstruction.CreateI(MipsOpCode.StoreByte, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, (short)-100))];
-            yield return [new InstructionParsingTestCase("j 1000", MipsInstruction.CreateJ(MipsOpCode.Jump, 1000))];
-            yield return [new InstructionParsingTestCase("j 10*10", MipsInstruction.CreateJ(MipsOpCode.Jump, 10 * 10))];
-            yield return [new InstructionParsingTestCase("di", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, MipsGpRegister.Zero, 12))];
-            yield return [new InstructionParsingTestCase("di $t1", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, MipsGpRegister.Temporary1, 12))];
-            yield return [new InstructionParsingTestCase("ei", CoProc0Instruction.Create(MFMC0FuncCode.EnableInterrupts, MipsGpRegister.Zero, 12))];
-            yield return [new InstructionParsingTestCase("cvt.S.D $f4, $f8", MipsFloatInstruction.Create(MipsFloatFuncCode.ConvertToSingle, MipsFloatFormat.Double, MipsFloatRegister.F8, MipsFloatRegister.F4))];
+            yield return [new MipsInstructionParsingTestCase("nop", MipsInstruction.NOP)];
+            yield return [new MipsInstructionParsingTestCase("add $t0, $s0, $s1", MipsInstruction.CreateR(FunctionCode.Add, MipsGpRegister.Saved0, MipsGpRegister.Saved1, MipsGpRegister.Temporary0))];
+            yield return [new MipsInstructionParsingTestCase("addi $t0, $s0, 100", MipsInstruction.CreateI(MipsOpCode.AddImmediate, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, (short)100))];
+            yield return [new MipsInstructionParsingTestCase("sll $t0, $s0, 3", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, 3))];
+            yield return [new MipsInstructionParsingTestCase("lw $t0, 100($s0)", MipsInstruction.CreateI(MipsOpCode.LoadWord, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, (short)100))];
+            yield return [new MipsInstructionParsingTestCase("sb $t0, -100($s0)", MipsInstruction.CreateI(MipsOpCode.StoreByte, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, (short)-100))];
+            yield return [new MipsInstructionParsingTestCase("j 1000", MipsInstruction.CreateJ(MipsOpCode.Jump, 1000))];
+            yield return [new MipsInstructionParsingTestCase("j 10*10", MipsInstruction.CreateJ(MipsOpCode.Jump, 10 * 10))];
+            yield return [new MipsInstructionParsingTestCase("di", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, MipsGpRegister.Zero, 12))];
+            yield return [new MipsInstructionParsingTestCase("di $t1", CoProc0Instruction.Create(MFMC0FuncCode.DisableInterrupts, MipsGpRegister.Temporary1, 12))];
+            yield return [new MipsInstructionParsingTestCase("ei", CoProc0Instruction.Create(MFMC0FuncCode.EnableInterrupts, MipsGpRegister.Zero, 12))];
+            yield return [new MipsInstructionParsingTestCase("cvt.S.D $f4, $f8", MipsFloatInstruction.Create(MipsFloatFuncCode.ConvertToSingle, MipsFloatFormat.Double, MipsFloatRegister.F8, MipsFloatRegister.F4))];
         }
     }
 
@@ -77,16 +77,16 @@ public class InstructionParserTests
         get
         {
             // Invalid instruction name
-            yield return [new InstructionParsingTestCase("xkcd $t0, $s0, $s1", LogId.InvalidInstructionName)];
+            yield return [new MipsInstructionParsingTestCase("xkcd $t0, $s0, $s1", LogId.InvalidInstructionName)];
 
             // Invalid argument counts
-            yield return [new InstructionParsingTestCase("add $t0, $s0", LogId.InvalidInstructionArgCount)];
-            yield return [new InstructionParsingTestCase("add $t0, $s0, $s1, $s1", LogId.InvalidInstructionArgCount)];
+            yield return [new MipsInstructionParsingTestCase("add $t0, $s0", LogId.InvalidInstructionArgCount)];
+            yield return [new MipsInstructionParsingTestCase("add $t0, $s0, $s1, $s1", LogId.InvalidInstructionArgCount)];
 
             // Invalid registers
-            yield return [new InstructionParsingTestCase("jr $s", LogId.InvalidRegisterArgument)];
-            yield return [new InstructionParsingTestCase("jr $s80", LogId.InvalidRegisterArgument)];
-            yield return [new InstructionParsingTestCase("jr $80", LogId.InvalidRegisterArgument)];
+            yield return [new MipsInstructionParsingTestCase("jr $s", LogId.InvalidRegisterArgument)];
+            yield return [new MipsInstructionParsingTestCase("jr $s80", LogId.InvalidRegisterArgument)];
+            yield return [new MipsInstructionParsingTestCase("jr $80", LogId.InvalidRegisterArgument)];
         }
     }
 
@@ -94,9 +94,9 @@ public class InstructionParserTests
     {
         get
         {
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, 33", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, 1), LogId.IntegerTruncated)];
-            yield return [new InstructionParsingTestCase("sll $t0, $s0, -1", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, 31), LogId.IntegerTruncated)];
-            yield return [new InstructionParsingTestCase("j 0x1", MipsInstruction.CreateJ(MipsOpCode.Jump, 0x1), LogId.IntegerTruncated)];
+            yield return [new MipsInstructionParsingTestCase("sll $t0, $s0, 33", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, 1), LogId.IntegerTruncated)];
+            yield return [new MipsInstructionParsingTestCase("sll $t0, $s0, -1", MipsInstruction.CreateR(FunctionCode.ShiftLeftLogical, MipsGpRegister.Zero, MipsGpRegister.Saved0, MipsGpRegister.Temporary0, 31), LogId.IntegerTruncated)];
+            yield return [new MipsInstructionParsingTestCase("j 0x1", MipsInstruction.CreateJ(MipsOpCode.Jump, 0x1), LogId.IntegerTruncated)];
         }
     }
 
@@ -116,22 +116,22 @@ public class InstructionParserTests
     [DataTestMethod]
     [DynamicData(nameof(RawInstructionSuccessTestsList),
         DynamicDataDisplayName = nameof(InstructionParsingTestCaseDisplayName),
-        DynamicDataDisplayNameDeclaringType = typeof(InstructionParserTests))]
-    public void RawInstructionSuccessTests(InstructionParsingTestCase @case)
+        DynamicDataDisplayNameDeclaringType = typeof(MipsInstructionParserTests))]
+    public void RawInstructionSuccessTests(MipsInstructionParsingTestCase @case)
         => RunTest(@case.Input, [@case.Expected!.Value]);
 
     [DataTestMethod]
     [DynamicData(nameof(RawInstructionFailureTestsList),
         DynamicDataDisplayName = nameof(InstructionParsingTestCaseDisplayName),
-        DynamicDataDisplayNameDeclaringType = typeof(InstructionParserTests))]
-    public void RawInstructionFailureTests(InstructionParsingTestCase @case)
+        DynamicDataDisplayNameDeclaringType = typeof(MipsInstructionParserTests))]
+    public void RawInstructionFailureTests(MipsInstructionParsingTestCase @case)
         => RunTest(@case.Input, logCode: @case.Code);
 
     [DataTestMethod]
     [DynamicData(nameof(RawInstructionWarningTestsList),
         DynamicDataDisplayName = nameof(InstructionParsingTestCaseDisplayName),
-        DynamicDataDisplayNameDeclaringType = typeof(InstructionParserTests))]
-    public void RawInstructionWarningTests(InstructionParsingTestCase @case)
+        DynamicDataDisplayNameDeclaringType = typeof(MipsInstructionParserTests))]
+    public void RawInstructionWarningTests(MipsInstructionParsingTestCase @case)
         => RunTest(@case.Input, [@case.Expected!.Value], @case.Code);
 
     private const string LoadImmediate = "li $t0, 0x10001";

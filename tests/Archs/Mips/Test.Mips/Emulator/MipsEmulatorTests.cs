@@ -16,7 +16,7 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 namespace Test.Mips.Emulator;
 
 [TestClass]
-public partial class MipsExecutionTests
+public partial class MipsEmulatorTests
 {
     public const uint K0 = 0xbd0;
     public const uint K1 = 0xd16;

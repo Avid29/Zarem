@@ -16,10 +16,10 @@ using Zarem.RiscV.Models.Versioning.Enums;
 namespace Test.RiscV.Emulator;
 
 [AttributeUsage(AttributeTargets.Method)]
-public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVEmulatorConfig>
+public class RiscVInstructionSourceAttribute : EmulatorTestDataSourceAttribute<RiscVEmulatorTestCase, RiscVEmulatorConfig>
 {
-    public const uint K0 = RiscVExecutionTests.K0;
-    public const uint K1 = RiscVExecutionTests.K1;
+    public const uint K0 = RiscVEmulatorTests.K0;
+    public const uint K1 = RiscVEmulatorTests.K1;
 
     private readonly RiscVVersionInfo _versionInfo;
     private readonly ExecutionMode _mode;
@@ -44,20 +44,6 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
             RiscVBaseVersion.RV128 => GetVersionTests<UInt128, Int128, UInt128>(config),
             _ => throw new NotImplementedException()
         };
-    }
-
-    public override string? GetDisplayName(MethodInfo methodInfo, object?[]? data)
-    {
-        var obj = data?[0];
-        if (obj is null)
-        {
-            return string.Empty;
-        }
-
-        dynamic run = obj;
-        var str = $"{run?.Input}"; // Short name since the method name handles the context
-
-        return str;
     }
 
     private static IEnumerable<object[]> GetVersionTests<T, TSigned, TLong>(RiscVEmulatorConfig config)
