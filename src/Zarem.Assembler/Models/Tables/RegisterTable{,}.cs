@@ -31,47 +31,70 @@ public static class RegisterTable<TRegister, TSet>
     }
 
     /// <summary>
+    /// Attempts to get a register by name and set.
+    /// </summary>
+    /// <param name="name">The name of the register.</param>
+    /// <param name="set">The register set to lookup.</param>
+    /// <param name="register">The register's index.</param>
+    /// <param name="indexed">Whether or not the register was named by index.</param>
+    /// <returns>Whether or not an register exists by that name.</returns>
+    public static bool TryGetRegister(string name, TSet set, out TRegister register, out bool indexed)
+    {
+        register = default;
+        indexed = false;
+
+        // Attempt to lookup by name
+        if (_nameTables.TryGetValue(set, out var nameTable) &&
+            nameTable.TryGetValue(name, out register))
+            return true;
+
+        // Attempt to lookup by regex
+        if (_regexTable.TryGetValue(set, out var regex))
+        {
+            var match = regex.Match(name);
+            if (!match.Success)
+                return false;
+
+            // Use Group[1] to get just the digits, bypassing the prefix (x, f, etc.)
+            var numStr = match.Groups.Count > 1 ? match.Groups[1].Value : match.Value;
+            if (byte.TryParse(numStr, out var num))
+            {
+                register = Unsafe.As<byte, TRegister>(ref num);
+                indexed = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Attempts to get a register by name.
     /// </summary>
     /// <param name="name">The name of the register.</param>
     /// <param name="register">The register's index.</param>
-    /// <param name="registerSet">Which register set the discovered register belongs to.</param>
+    /// <param name="set">Which register set the discovered register belongs to.</param>
     /// <param name="indexed">Whether or not the register was named by index.</param>
     /// <returns>Whether or not an register exists by that name.</returns>
-    public static bool TryGetRegister(string name, out TRegister register, out TSet registerSet, out bool indexed)
+    public static bool TryGetRegister(string name, out TRegister register, out TSet set, out bool indexed)
     {
         register = default;
-        registerSet = default;
+        set = default;
         indexed = false;
 
         // Check for empty register
         if (name.Length == 0)
             return false;
 
-        foreach (var (set, table) in _nameTables)
+        foreach (var s in _nameTables.Keys)
         {
-            if (table.TryGetValue(name, out var value))
+            if (TryGetRegister(name, s, out var value, out indexed))
             {
                 register = value;
-                registerSet = set;
+                set = s;
                 return true;
-            }
-        }
-
-        foreach (var (set, regex) in _regexTable)
-        {
-            var match = regex.Match(name);
-            if (match.Success)
-            {
-                // Use Group[1] to get just the digits, bypassing the prefix (x, f, etc.)
-                var numStr = match.Groups.Count > 1 ? match.Groups[1].Value : match.Value;
-                if (byte.TryParse(numStr, out var num))
-                {
-                    register = Unsafe.As<byte, TRegister>(ref num);
-                    registerSet = set;
-                    indexed = true;
-                    return true;
-                }
             }
         }
 

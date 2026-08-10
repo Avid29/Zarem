@@ -1,0 +1,42 @@
+[
+  {
+    "type": "cb-type",
+    "name": "c.srli",
+    "comp_code": 1,
+    "cfunct3": 4,
+    "args": [ "c_rdrs1", "comp_imm" ],
+    "extension": "C"
+  },
+  {
+    "type": "cb-type",
+    "name": "c.srai",
+    "comp_code": 1,
+    "cfunct3": 4,
+    "args": [ "c_rdrs1", "comp_imm" ],
+    "extension": "C"
+  },
+  {
+    "type": "cb-type",
+    "name": "c.andi",
+    "comp_code": 1,
+    "cfunct3": 4,
+    "args": [ "c_rdrs1", "comp_imm" ],
+    "extension": "C"
+  },
+  {
+    "type": "cb-type",
+    "name": "c.beqz",
+    "comp_code": 1,
+    "cfunct3": 6,
+    "args": [ "c_rs1", "comp_branch_offset" ],
+    "extension": "C"
+  },
+  {
+    "type": "cb-type",
+    "name": "c.bnez",
+    "comp_code": 1,
+    "cfunct3": 7,
+    "args": [ "c_rs1", "comp_branch_offset" ],
+    "extension": "C"
+  }
+]

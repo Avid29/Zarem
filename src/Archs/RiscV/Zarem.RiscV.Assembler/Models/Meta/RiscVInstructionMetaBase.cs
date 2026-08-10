@@ -22,6 +22,7 @@ namespace Zarem.RiscV.Assembler.Models.Meta;
 [JsonDerivedType(typeof(UTypeInstructionMeta), "u-type")]
 [JsonDerivedType(typeof(JTypeInstructionMeta), "j-type")]
 [JsonDerivedType(typeof(RiscVFloatInstructionMeta), "float")]
+[JsonDerivedType(typeof(CBTypeInstructionMeta), "cb-type")]
 [JsonDerivedType(typeof(CITypeInstructionMeta), "ci-type")]
 [JsonDerivedType(typeof(CRTypeInstructionMeta), "cr-type")]
 [JsonDerivedType(typeof(RiscVPseudoInstructionMeta), "pseudo")]

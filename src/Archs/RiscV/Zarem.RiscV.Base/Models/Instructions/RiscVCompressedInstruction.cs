@@ -37,16 +37,16 @@ public struct RiscVCompressedInstruction : IInstruction
     private ushort _inst;
 
     /// <summary>
-    /// Creates a CR-Type instruction.
+    /// Creates a CB-Type instruction.
     /// </summary>
-    public static RiscVCompressedInstruction CreateCR(RiscVCompressionCode comp, CFunct4Code cf4, RiscVGpRegister rdrs1, RiscVGpRegister rs2)
+    public static RiscVCompressedInstruction CreateCB(RiscVCompressionCode comp, CFunct3Code cf3, RiscVGpRegister rs1, short offset)
     {
         return new()
         {
             CompressionCode = comp,
-            Funct4 = cf4,
-            RDRS1 = rdrs1,
-            RS2 = rs2,
+            Funct3 = cf3,
+            RS1_Compressed = rs1,
+            BranchOffset = offset,
         };
     }
 
@@ -61,6 +61,20 @@ public struct RiscVCompressedInstruction : IInstruction
             Funct3 = cf3,
             RDRS1 = rdrs1,
             Immediate = imm,
+        };
+    }
+
+    /// <summary>
+    /// Creates a CR-Type instruction.
+    /// </summary>
+    public static RiscVCompressedInstruction CreateCR(RiscVCompressionCode comp, CFunct4Code cf4, RiscVGpRegister rdrs1, RiscVGpRegister rs2)
+    {
+        return new()
+        {
+            CompressionCode = comp,
+            Funct4 = cf4,
+            RDRS1 = rdrs1,
+            RS2 = rs2,
         };
     }
 
@@ -97,7 +111,7 @@ public struct RiscVCompressedInstruction : IInstruction
     public RiscVGpRegister RD_Compressed
     {
         readonly get => (RiscVGpRegister)(BitField.GetField(_inst, COMPRESSED_REG_BIT_SIZE, RD_COMPRESSED_OFFSET) | COMPRESSION_APPEND);
-        set => BitField.SetField(ref _inst, COMPRESSED_REG_BIT_SIZE, RD_COMPRESSED_OFFSET, (ushort)value);
+        set => BitField.SetField(ref _inst, COMPRESSED_REG_BIT_SIZE, RD_COMPRESSED_OFFSET, (ushort)((byte)value & COMPRESSION_MASK));
     }
 
     /// <summary>
@@ -106,7 +120,7 @@ public struct RiscVCompressedInstruction : IInstruction
     public RiscVGpRegister RS1_Compressed
     {
         readonly get => (RiscVGpRegister)(BitField.GetField(_inst, COMPRESSED_REG_BIT_SIZE, RS1_COMPRESSED_OFFSET) | COMPRESSION_APPEND);
-        set => BitField.SetField(ref _inst, COMPRESSED_REG_BIT_SIZE, RS1_COMPRESSED_OFFSET, (ushort)value);
+        set => BitField.SetField(ref _inst, COMPRESSED_REG_BIT_SIZE, RS1_COMPRESSED_OFFSET, (ushort)((byte)value & COMPRESSION_MASK));
     }
 
     /// <summary>
@@ -137,7 +151,7 @@ public struct RiscVCompressedInstruction : IInstruction
             byte imm0_4 = (byte)BitField.GetField(_inst, 5, 2);
             byte imm5 = (byte)BitField.GetField(_inst, 1, 12);
             byte raw = (byte)((imm5 << 5) | imm0_4);
-            return (sbyte)((raw << 2) >> 2);
+            return (sbyte)((raw << 26) >> 26);  // 26 because the shifts upcast to int
         }
         set
         {
@@ -222,7 +236,7 @@ public struct RiscVCompressedInstruction : IInstruction
             byte b5 = (byte)BitField.GetField(_inst, 1, 2);
 
             ushort raw = (ushort)((b8 << 8) | (b7_6 << 6) | (b5 << 5) | (b4_3 << 3) | (b2_1 << 1));
-            return (short)((int)(raw << 23) >> 23);
+            return (short)((raw << 23) >> 23);  // 23 because the shifts upcast to int
         }
         set
         {

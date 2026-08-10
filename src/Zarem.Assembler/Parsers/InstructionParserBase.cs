@@ -213,11 +213,20 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         }
 
         // Get named register from table
-        if (!RegisterTable<TRegister, TSet>.TryGetRegister(token.Source, out var register, out TSet parsedSet, out bool indexed))
+        if (!RegisterTable<TRegister, TSet>.TryGetRegister(token.Source, attr.RegisterSet, out var register, out bool indexed))
         {
-            // Register does not exist in table
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, token, "RegisterNotFound", token);
-            return false;
+            if (RegisterTable<TRegister, TSet>.TryGetRegister(token.Source, out _, out _, out _))
+            {
+                // The register exists, but is not valid for the argument
+                _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, $"RegisterWrongSet", token);
+                return false;
+            }
+            else
+            {
+                // Register does not exist in table
+                _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, token, "RegisterNotFound", token);
+                return false;
+            }
         }
 
         var index = Unsafe.As<TRegister, int>(ref register);
@@ -230,13 +239,6 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             };
 
             _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, message, msgArg);
-            return false;
-        }
-
-        // Match register set
-        if (!EqualityComparer<TSet>.Default.Equals(parsedSet, default) && !EqualityComparer<TSet>.Default.Equals(parsedSet, attr.RegisterSet))
-        {
-            _logger?.Log(Severity.Error, LogId.InvalidRegisterArgument, arg, $"RegisterWrongSet", token);
             return false;
         }
 
