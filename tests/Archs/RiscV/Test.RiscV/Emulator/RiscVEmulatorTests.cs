@@ -16,50 +16,50 @@ using Zarem.RiscV.Models.Instructions.Enums.Registers;
 namespace Test.RiscV.Emulator;
 
 [TestClass]
-public partial class RiscVExecutionTests
+public partial class RiscVEmulatorTests
 {
     public const uint K0 = 0xbd0;
     public const uint K1 = 0x516;
 
     [DataTestMethod]
-    [RiscVInstructionSource("RV32I", ExecutionMode.Interpret)]
-    public void InstructionTests_RV32_I(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
+    [RiscVEmulatorTestDataSource("RV32I", ExecutionMode.Interpret)]
+    public void InstructionTests_RV32I(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
 
     [DataTestMethod]
-    [RiscVInstructionSource("RV32I", ExecutionMode.JustInTime)]
-    public void InstructionTests_RV32_I_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
+    [RiscVEmulatorTestDataSource("RV32I", ExecutionMode.JustInTime)]
+    public void InstructionTests_RV32I_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
 
     [DataTestMethod]
-    [RiscVInstructionSource("RV32G", ExecutionMode.Interpret)]
-    public void InstructionTests_RV32_G(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
+    [RiscVEmulatorTestDataSource("RV32G", ExecutionMode.Interpret)]
+    public void InstructionTests_RV32G(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
 
     [DataTestMethod]
-    [RiscVInstructionSource("RV32G", ExecutionMode.JustInTime)]
-    public void InstructionTests_RV32_G_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
+    [RiscVEmulatorTestDataSource("RV32G", ExecutionMode.JustInTime)]
+    public void InstructionTests_RV32G_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
 
     [DataTestMethod]
-    [RiscVInstructionSource("RV64I", ExecutionMode.Interpret)]
-    public void InstructionTests_RV64_I(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, byte>(@case);
+    [RiscVEmulatorTestDataSource("RV64I", ExecutionMode.Interpret)]
+    public void InstructionTests_RV64I(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, byte>(@case);
 
     [DataTestMethod]
-    [RiscVInstructionSource("RV64I", ExecutionMode.JustInTime)]
-    public void InstructionTests_RV64_I_JIT(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, byte>(@case);
+    [RiscVEmulatorTestDataSource("RV64I", ExecutionMode.JustInTime)]
+    public void InstructionTests_RV64I_JIT(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, byte>(@case);
 
     [DataTestMethod]
-    [RiscVInstructionSource("RV64G", ExecutionMode.Interpret)]
-    public void InstructionTests_RV64_G(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
+    [RiscVEmulatorTestDataSource("RV64G", ExecutionMode.Interpret)]
+    public void InstructionTests_RV64G(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
 
     [DataTestMethod]
-    [RiscVInstructionSource("RV64G", ExecutionMode.JustInTime)]
-    public void InstructionTests_RV64_G_JIT(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
+    [RiscVEmulatorTestDataSource("RV64G", ExecutionMode.JustInTime)]
+    public void InstructionTests_RV64G_JIT(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
 
     [DataTestMethod]
-    [RiscVInstructionSource("RV128I", ExecutionMode.Interpret)]
-    public void InstructionTests_RV128_I(RiscVEmulatorTestCase<UInt128> @case) => RunTest<UInt128, byte>(@case);
+    [RiscVEmulatorTestDataSource("RV128I", ExecutionMode.Interpret)]
+    public void InstructionTests_RV128I(RiscVEmulatorTestCase<UInt128> @case) => RunTest<UInt128, byte>(@case);
 
     [DataTestMethod]
-    [RiscVInstructionSource("RV128G", ExecutionMode.Interpret)]
-    public void InstructionTests_RV128_G(RiscVEmulatorTestCase<UInt128> @case) => RunTest<UInt128, byte>(@case);
+    [RiscVEmulatorTestDataSource("RV128G", ExecutionMode.Interpret)]
+    public void InstructionTests_RV128G(RiscVEmulatorTestCase<UInt128> @case) => RunTest<UInt128, byte>(@case);
 
     private static void RunTest<T, TFloat>(RiscVEmulatorTestCase<T> @case)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
