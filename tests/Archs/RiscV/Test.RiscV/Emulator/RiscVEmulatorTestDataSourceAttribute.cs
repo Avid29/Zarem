@@ -16,7 +16,7 @@ using Zarem.RiscV.Models.Versioning.Enums;
 namespace Test.RiscV.Emulator;
 
 [AttributeUsage(AttributeTargets.Method)]
-public class RiscVInstructionSourceAttribute : EmulatorTestDataSourceAttribute<RiscVEmulatorTestCase, RiscVEmulatorConfig>
+public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttribute<RiscVEmulatorTestCase, RiscVEmulatorConfig>
 {
     public const uint K0 = RiscVEmulatorTests.K0;
     public const uint K1 = RiscVEmulatorTests.K1;
@@ -24,7 +24,7 @@ public class RiscVInstructionSourceAttribute : EmulatorTestDataSourceAttribute<R
     private readonly RiscVVersionInfo _versionInfo;
     private readonly ExecutionMode _mode;
 
-    public RiscVInstructionSourceAttribute(string versionStr, ExecutionMode mode)
+    public RiscVEmulatorTestDataSourceAttribute(string versionStr, ExecutionMode mode)
     {
         _versionInfo = RiscVVersionInfo.Parse(versionStr);
         _mode = mode;

@@ -1,24 +1,13 @@
 // Avishai Dernis 2024
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using Test.RiscV.Helpers;
 using Zarem.Assembler;
 using Zarem.Assembler.Logging.Enum;
-using Zarem.Assembler.Models.Tables;
 using Zarem.Assembler.Tokenization;
 using Zarem.Models.Versioning;
 using Zarem.RiscV.Assembler;
-using Zarem.RiscV.Assembler.Models.Meta;
 using Zarem.RiscV.Assembler.Models.Tables;
-using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions;
-using Zarem.RiscV.Models.Instructions.Enums;
-using Zarem.RiscV.Models.Instructions.Enums.Registers;
-using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Test.RiscV.Assembler;
 
@@ -44,37 +33,31 @@ public class RiscVInstructionParserTests
     public static string InstructionParsingTestCaseDisplayName(MethodInfo _, object[] data)
         => $"{(RiscVInstructionParsingTestCase)data[0]}";
 
-    public static IEnumerable<object[]> Generated_RV32_I_List => GenerateTestList(new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
+    [DataTestMethod]
+    [RiscVInstructionParserTestDataSource("RV32I")]
+    public void InstructionTests_RV32I(string input)
+        => AssembleDisassembleTest(input, "RV32I");
 
-    public static IEnumerable<object[]> Generated_RV64_I_List => GenerateTestList(new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
+    [DataTestMethod]
+    [RiscVInstructionParserTestDataSource("RV32G")]
+    public void InstructionTests_RV32G(string input)
+        => AssembleDisassembleTest(input, "RV32G");
 
-    public static IEnumerable<object[]> Generated_RV32_G_List => GenerateTestList(new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.General));
+    [DataTestMethod]
+    [RiscVInstructionParserTestDataSource("RV64I")]
+    public void InstructionTests_RV64I(string input)
+        => AssembleDisassembleTest(input, "RV64I");
 
-    public static IEnumerable<object[]> Generated_RV64_G_List => GenerateTestList(new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.General));
+    [DataTestMethod]
+    [RiscVInstructionParserTestDataSource("RV64G")]
+    public void InstructionTests_RV64G(string input)
+        => AssembleDisassembleTest(input, "RV64G");
 
-    [TestMethod("RV32-I")]
-    [DynamicData(nameof(Generated_RV32_I_List))]
-    public void Generated_RV32_I(string input)
-        => AssembleDisassembleTest(input, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.Integers));
-
-    [TestMethod("RV64-I")]
-    [DynamicData(nameof(Generated_RV64_I_List))]
-    public void Generated_RV64_I(string input)
-        => AssembleDisassembleTest(input, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.Integers));
-
-    [TestMethod("RV32-G")]
-    [DynamicData(nameof(Generated_RV32_G_List))]
-    public void Generated_RV32_G(string input)
-        => AssembleDisassembleTest(input, new RiscVVersionInfo(RiscVBaseVersion.RV32, RiscVExtensions.General));
-
-    [TestMethod("RV64-G")]
-    [DynamicData(nameof(Generated_RV64_G_List))]
-    public void Generated_RV64_G(string input)
-        => AssembleDisassembleTest(input, new RiscVVersionInfo(RiscVBaseVersion.RV64, RiscVExtensions.General));
-
-    private void AssembleDisassembleTest(string input, RiscVVersionInfo version)
+    private void AssembleDisassembleTest(string input, string versionString)
     {
-        var config = new RiscVAssemblerConfig(version);
+        var versionInfo = RiscVVersionInfo.Parse(versionString);
+        var config = new RiscVAssemblerConfig(versionInfo);
+
         //#if DEBUG
         //        ServiceCollection.DisassemblerService = new MipsDisassemblerService(config);
         //#endif
@@ -94,94 +77,4 @@ public class RiscVInstructionParserTests
         //        Assert.AreEqual(input, result.Value.Disassembled);
         //#endif
     }
-
-    //private static void RunTest(string input, MipsParsedInstruction? expected = null, LogId? logCode = null)
-    //{
-    //    bool succeeds = expected is not null;
-
-    //    // Initialize parser
-    //    var logger = new Logger();
-    //    var parser = new RiscVInstructionParser(new RiscVAssemblerConfig(), null, default, null, logger);
-
-    //    // Parse instruction
-    //    var line = Tokenizer.TokenizeLine(input, RiscVTokenizerProfile.Default, nameof(RunTest))[0];
-    //    //var actual = parser.Parse(line);
-
-    //    // Validate results
-    //    Assert.AreEqual(succeeds, actual is not null);
-    //    if (succeeds)
-    //    {
-    //        Assert.IsNotNull(expected);
-    //        Assert.IsNotNull(actual);
-
-    //        var expectedReal = expected.Realize();
-    //        var actualReal = actual.Realize();
-
-    //        for (int i = 0 ; i < expectedReal.Length; i++)
-    //        {
-    //            Assert.AreEqual(expectedReal[i], actualReal[i]);
-    //        }
-    //    }
-
-    //    if (logCode.HasValue)
-    //    {
-    //        Assert.IsTrue(logger.CurrentLog[0].Code.Id == (uint)logCode.Value);
-    //    }
-    //}
-
-    private static IEnumerable<object[]> GenerateTestList(RiscVVersionInfo version)
-    {
-        var formatTable = new FormatTable<RiscVFloatFormat>();
-        var roundingModeTable = new FormatTable<RiscVRoundingMode>("rm");
-        var table = new RiscVInstructionTable(new(version));
-        var instructions = table.GetInstructions()
-            .Where(i => i.IsValidFor(version));
-
-        foreach (var instruction in instructions)
-        {
-            // TODO: Disassembling pseudo instructions
-            if (instruction is RiscVPseudoInstructionMeta)
-                continue;
-
-            // Apply format to instruction name, if applicable
-            var name = instruction.Name;
-            if (instruction is RiscVFloatInstructionMeta fMeta)
-            {
-                name = formatTable.ApplyFormat(name, RiscVFloatFormat.Single);
-                name = roundingModeTable.ApplyFormat(name, RiscVRoundingMode.Dynamic);
-            }
-
-            // Generate instruction
-            StringBuilder line = new(name);
-            line.Append(' ');
-
-            foreach (var arg in instruction.ArgumentPattern)
-            {
-                line.Append(arg switch
-                {
-                    RiscVArgument.RD or RiscVArgument.RS1 or RiscVArgument.RS2 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose),
-                    RiscVArgument.FRD or RiscVArgument.FRS1 or RiscVArgument.FRS2 or RiscVArgument.FRS3 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.FloatingPoints),
-                    RiscVArgument.Immediate or RiscVArgument.StoreOffset or RiscVArgument.Csr=> $"{ArgGenerator.RandomImm12()}",
-                    RiscVArgument.UpperImmediate => $"{ArgGenerator.RandomImm20()}",
-                    RiscVArgument.BranchOffset => $"{ArgGenerator.RandomBranchOffset()}",
-                    RiscVArgument.JumpOffset => $"{ArgGenerator.RandomJumpOffset()}",
-                    RiscVArgument.FullImmediate => $"{ArgGenerator.RandomFullImm()}",
-                    RiscVArgument.UImm5 => $"{ArgGenerator.RandomShamt()}",
-                    RiscVArgument.MemoryLoad or RiscVArgument.MemoryStore => $"{ArgGenerator.RandomImm12()}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
-                    _ => throw new NotImplementedException(),
-                });
-
-                line.Append(", ");
-            }
-
-            // Remove final ", "
-            if (instruction.ArgumentPattern.Length > 0)
-                line.Remove(line.Length - 2, 2);
-
-            // Return test case
-            yield return [$"{line}"];
-        }
-    }
-
-    private static string GetRegisterString(RiscVGpRegister register, RiscVRegisterSet set) => $"{RegisterTable<RiscVGpRegister, RiscVRegisterSet>.GetRegisterString(register, set)}";
 }

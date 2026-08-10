@@ -17,7 +17,7 @@ using Zarem.Mips.Models.Versioning.Enums;
 namespace Test.Mips.Emulator;
 
 [AttributeUsage(AttributeTargets.Method)]
-public class MipsInstructionSourceAttribute : EmulatorTestDataSourceAttribute<MipsEmulatorTestCase, MipsEmulatorConfig>
+public class MipsEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttribute<MipsEmulatorTestCase, MipsEmulatorConfig>
 {
     public const uint K0 = MipsEmulatorTests.K0;
     public const uint K1 = MipsEmulatorTests.K1;
@@ -25,7 +25,7 @@ public class MipsInstructionSourceAttribute : EmulatorTestDataSourceAttribute<Mi
     private readonly MipsVersionInfo _versionInfo;
     private readonly ExecutionMode _mode;
 
-    public MipsInstructionSourceAttribute(string versionStr, ExecutionMode mode)
+    public MipsEmulatorTestDataSourceAttribute(string versionStr, ExecutionMode mode)
     {
         _versionInfo = MipsVersionInfo.Parse(versionStr);
         _mode = mode;

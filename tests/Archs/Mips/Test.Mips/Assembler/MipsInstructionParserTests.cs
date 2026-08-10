@@ -100,18 +100,6 @@ public class MipsInstructionParserTests
         }
     }
 
-    public static IEnumerable<object[]> Generated_MIPS_I_List => GenerateTestList(new(MipsGeneration.MipsI));
-    public static IEnumerable<object[]> Generated_MIPS_II_List => GenerateTestList(new(MipsGeneration.MipsII));
-    public static IEnumerable<object[]> Generated_MIPS_III_List => GenerateTestList(new(MipsGeneration.MipsIII));
-    public static IEnumerable<object[]> Generated_MIPS_III_32Bit_List => GenerateTestList(new(MipsGeneration.MipsIII, is64Bit: false));
-    public static IEnumerable<object[]> Generated_MIPS_IV_List => GenerateTestList(new(MipsGeneration.MipsIV));
-    public static IEnumerable<object[]> Generated_MIPS_IV_32Bit_List => GenerateTestList(new(MipsGeneration.MipsI, is64Bit: false));
-    public static IEnumerable<object[]> Generated_MIPS_V_List => GenerateTestList(new(MipsGeneration.MipsV));
-    public static IEnumerable<object[]> Generated_MIPS_V_32Bit_List => GenerateTestList(new(MipsGeneration.MipsV, is64Bit: false));
-    public static IEnumerable<object[]> Generated_MIPS32_R1_List => GenerateTestList(new(MipsGeneration.R1, false));
-    public static IEnumerable<object[]> Generated_MIPS64_R1_List => GenerateTestList(new(MipsGeneration.R1, true));
-    public static IEnumerable<object[]> Generated_MIPS32_R2_List => GenerateTestList(new(MipsGeneration.R2, false));
-    public static IEnumerable<object[]> Generated_MIPS64_R2_List => GenerateTestList(new(MipsGeneration.R2, true));
 
     [DataTestMethod]
     [DynamicData(nameof(RawInstructionSuccessTestsList),
@@ -147,74 +135,70 @@ public class MipsInstructionParserTests
         RunTest(LoadImmediate, expected);
     }
 
-    [TestMethod("MIPS I")]
-    [DynamicData(nameof(Generated_MIPS_I_List))]
-    public void Generated_MIPS_I(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.MipsI));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips1")]
+    public void InstructionTests_Mips1(string input)
+        => AssembleDisassembleTest(input, "mips1");
 
-    [TestMethod("MIPS II")]
-    [DynamicData(nameof(Generated_MIPS_II_List))]
-    public void Generated_MIPS_II(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.MipsII));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips2")]
+    public void InstructionTests_Mips2(string input)
+        => AssembleDisassembleTest(input, "mips2");
 
-    [TestMethod("MIPS III")]
-    [DynamicData(nameof(Generated_MIPS_III_List))]
-    public void Generated_MIPS_III(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.MipsIII));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips3")]
+    public void InstructionTests_Mips3(string input)
+        => AssembleDisassembleTest(input, "mips3");
 
-    [TestMethod("MIPS III (32 Bit)")]
-    [DynamicData(nameof(Generated_MIPS_III_32Bit_List))]
-    public void Generated_MIPS_III_32Bit(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.MipsIII, is64Bit: false));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips3_32bit")]
+    public void InstructionTests_Mips3_32Bit(string input)
+        => AssembleDisassembleTest(input, "mips3_32bit");
 
-    [TestMethod("MIPS IV")]
-    [DynamicData(nameof(Generated_MIPS_IV_List))]
-    public void Generated_MIPS_IV(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.MipsIV));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips4")]
+    public void InstructionTests_Mips4(string input)
+        => AssembleDisassembleTest(input, "mips4");
 
-    [TestMethod("MIPS IV (32 Bit)")]
-    [DynamicData(nameof(Generated_MIPS_IV_32Bit_List))]
-    public void Generated_MIPS_IV_32Bit(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.MipsIV, is64Bit: false));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips4_32bit")]
+    public void InstructionTests_Mips4_32Bit(string input)
+        => AssembleDisassembleTest(input, "mips4_32bit");
 
-    [TestMethod("MIPS V")]
-    [DynamicData(nameof(Generated_MIPS_V_List))]
-    public void Generated_MIPS_V(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.MipsV));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips5")]
+    public void InstructionTests_Mips5(string input)
+        => AssembleDisassembleTest(input, "mips5");
 
-    [TestMethod("MIPS V (32 Bit)")]
-    [DynamicData(nameof(Generated_MIPS_V_32Bit_List))]
-    public void Generated_MIPS_V_32Bit(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.MipsV, is64Bit: false));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips5_32bit")]
+    public void InstructionTests_Mips5_32Bit(string input)
+        => AssembleDisassembleTest(input, "mips5_32bit");
 
-    [TestMethod("MIPS32 Release 1")]
-    [DynamicData(nameof(Generated_MIPS32_R1_List))]
-    public void Generated_MIPS32_R1(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.R2, is64Bit: false));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips32r1")]
+    public void InstructionTests_Mips32R1(string input)
+        => AssembleDisassembleTest(input, "mips32r1");
 
-    [TestMethod("MIPS64 Release 1")]
-    [DynamicData(nameof(Generated_MIPS64_R1_List))]
-    public void Generated_MIPS64_R1(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.R1, is64Bit: true));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips64r1")]
+    public void InstructionTests_Mips64R1(string input)
+        => AssembleDisassembleTest(input, "mips64r1");
 
-    [TestMethod("MIPS32 Release 2")]
-    [DynamicData(nameof(Generated_MIPS32_R2_List))]
-    public void Generated_MIPS32_R2(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.R2, is64Bit: false));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips32r2")]
+    public void InstructionTests_Mips32R2(string input)
+        => AssembleDisassembleTest(input, "mips32r2");
 
-    [TestMethod("MIPS32 Release 2")]
-    [DynamicData(nameof(Generated_MIPS64_R2_List))]
-    public void Generated_MIPS64_R2(string input)
-        => AssembleDisassembleTest(input, new(MipsGeneration.R2, is64Bit: true));
+    [DataTestMethod]
+    [MipsInstructionParserTestDataSource("mips64r2")]
+    public void InstructionTests_Mips64R2(string input)
+        => AssembleDisassembleTest(input, "mips64r2");
 
-    //[TestMethod("MIPS32 R6")]
-    //[DynamicData(nameof(Generated_MIPS32_R6_List))]
-    //public void Generated_MIPS32_R6(string input)
-    //    => AssembleDisassembleTest(input, MipsVersion.Mips32R6);
-
-    private void AssembleDisassembleTest(string input, MipsVersionInfo version)
+    private void AssembleDisassembleTest(string input, string versionString)
     {
-        var config = new MipsAssemblerConfig(version);
+        var versionInfo = MipsVersionInfo.Parse(versionString);
+        var config = new MipsAssemblerConfig(versionInfo);
 #if DEBUG
         ServiceCollection.DisassemblerService = new MipsDisassemblerService(config);
 #endif
@@ -264,58 +248,4 @@ public class MipsInstructionParserTests
             Assert.IsTrue(logger.CurrentLog[0].Code.Id == (uint)logCode.Value);
         }
     }
-
-    private static IEnumerable<object[]> GenerateTestList(MipsVersionInfo versionInfo)
-    {
-        var formatTable = new FormatTable<MipsFloatFormat>();
-        var table = new MipsInstructionTable(new(versionInfo));
-        var instructions = table.GetInstructions()
-            .Where(i => i.IsValidFor(versionInfo));
-
-        foreach (var instruction in instructions)
-        {
-            // TODO: Disassembling pseudo instructions
-            if (instruction is MipsPseudoInstructionMeta)
-                continue;
-
-            // Apply format to instruction name, if applicable
-            var name = instruction.Name;
-            if (instruction is MipsFloatInstructionMeta fMeta)
-            {
-                name = formatTable.ApplyFormat(name, ArgGenerator.RandomFormat(fMeta.SupportedFormats));
-            }
-
-            // Generate instruction
-            StringBuilder line = new(name);
-            line.Append(' ');
-
-            foreach (var arg in instruction.ArgumentPattern)
-            {
-                line.Append(arg switch
-                {
-                    MipsArgument.RS or MipsArgument.RT or MipsArgument.RD => GetRegisterString(ArgGenerator.RandomRegister(), MipsRegisterSet.GeneralPurpose),
-                    MipsArgument.FS or MipsArgument.FT or MipsArgument.FD => GetRegisterString(ArgGenerator.RandomRegister(), MipsRegisterSet.FloatingPoints),
-                    MipsArgument.Immediate => $"{ArgGenerator.RandomImmediate()}",
-                    MipsArgument.Offset => $"{ArgGenerator.RandomOffset()}",
-                    MipsArgument.LargeOffset => $"{ArgGenerator.RandomOffset()}",
-                    MipsArgument.Address => $"{ArgGenerator.RandomAddress()}",
-                    MipsArgument.AddressBase => $"{ArgGenerator.RandomImmediate()}({GetRegisterString(ArgGenerator.RandomRegister(), MipsRegisterSet.GeneralPurpose)})",
-                    MipsArgument.ShiftAmount => $"{ArgGenerator.RandomShift()}",
-                    MipsArgument.FullImmediate => Random.Shared.Next(),
-                    _ => throw new NotImplementedException(),
-                });
-
-                line.Append(", ");
-            }
-
-            // Remove final ", "
-            if (instruction.ArgumentPattern.Length > 0)
-                line.Remove(line.Length - 2, 2);
-
-            // Return test case
-            yield return [$"{line}"];
-        }
-    }
-
-    private static string GetRegisterString(MipsGpRegister register, MipsRegisterSet set) => $"${RegisterTable<MipsGpRegister, MipsRegisterSet>.GetRegisterString(register, set)}";
 }
