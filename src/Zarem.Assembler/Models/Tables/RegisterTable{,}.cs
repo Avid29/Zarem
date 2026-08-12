@@ -18,13 +18,13 @@ public static class RegisterTable<TRegister, TSet>
     where TSet : unmanaged, Enum
 {
     private static readonly Dictionary<TSet, Dictionary<string, TRegister>> _nameTables;
-    private static readonly Dictionary<TSet, string> _formatTable;
+    private static readonly Dictionary<TSet, RegisterSetAttribute> _setTable;
     private static readonly Dictionary<TSet, Regex> _regexTable;
 
     static RegisterTable()
     {
         _nameTables = [];
-        _formatTable = [];
+        _setTable = [];
         _regexTable = [];
 
         BuildTables();
@@ -121,13 +121,24 @@ public static class RegisterTable<TRegister, TSet>
         }
 
         // Fallback to Numerical name (x10, f10)
-        if (_formatTable.TryGetValue(set, out var format))
+        if (_setTable.TryGetValue(set, out var attr) && attr.Format is not null)
         {
-            return $"{string.Format(format, Convert.ToInt32(register))}";
+            return $"{string.Format(attr.Format, Convert.ToInt32(register))}";
         }
 
         // Absolute fallback
         return $"{Convert.ToInt32(register)}";
+    }
+
+    /// <summary>
+    /// Attempts to get the number of registers in a set.
+    /// </summary>
+    public static int GetRegisterCount(TSet set)
+    {
+        if (!_setTable.TryGetValue(set, out var attr))
+            return -1;
+
+        return attr.RegisterCount;
     }
 
     private static void BuildTables()
@@ -138,11 +149,8 @@ public static class RegisterTable<TRegister, TSet>
             if (attr is null || field.GetValue(null) is not TSet value)
                 continue;
 
-            // Populate format table
-            if (!string.IsNullOrEmpty(attr.Format))
-            {
-                _formatTable[value] = attr.Format;
-            }
+            // Populate attr table
+            _setTable[value] = attr;
 
             // Populate regex table
             if (!string.IsNullOrEmpty(attr.Regex))
