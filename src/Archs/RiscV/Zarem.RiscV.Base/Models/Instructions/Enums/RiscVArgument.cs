@@ -45,27 +45,6 @@ public enum RiscVArgument : byte
     [RegisterArgument<RiscVRegisterSet>("frs3", RiscVRegisterSet.FloatingPoints)]
     FRS3,
 
-    // Compressed/Combined  Registers
-    [JsonStringEnumMemberName("c_rd")]
-    [RegisterArgument<RiscVRegisterSet>("rd`", RiscVRegisterSet.CompressedGeneralPurpose)]
-    CompressedRD,
-
-    [JsonStringEnumMemberName("c_rs1")]
-    [RegisterArgument<RiscVRegisterSet>("rs1`", RiscVRegisterSet.CompressedGeneralPurpose)]
-    CompressedRS1,
-
-    [JsonStringEnumMemberName("c_rs2")]
-    [RegisterArgument<RiscVRegisterSet>("rs2`", RiscVRegisterSet.CompressedGeneralPurpose)]
-    CompressedRS2,
-
-    [JsonStringEnumMemberName("rdrs1")]
-    [RegisterArgument<RiscVRegisterSet>("rd/rs1", RiscVRegisterSet.GeneralPurpose)]
-    RDRS1,
-
-    [JsonStringEnumMemberName("c_rdrs1")]
-    [RegisterArgument<RiscVRegisterSet>("rd`/rs1`", RiscVRegisterSet.CompressedGeneralPurpose)]
-    CompressedRDRS1,
-
     // Immediates
     [JsonStringEnumMemberName("imm")]
     [ImmediateArgument<RiscVReferenceType>("immediate", 12, true, DefaultRelocation = RiscVReferenceType.Low12)]
@@ -91,19 +70,6 @@ public enum RiscVArgument : byte
     [ImmediateArgument<RiscVReferenceType>("immediate", 32, true)]
     FullImmediate,
 
-    // Compressed Immediates
-    [JsonStringEnumMemberName("comp_imm")]
-    [ImmediateArgument<RiscVReferenceType>("immediate", 6, true)]
-    CompressedImmediate,
-
-    [JsonStringEnumMemberName("comp_branch_offset")]
-    [ImmediateArgument<RiscVReferenceType>("offset", 8, true, ShiftAmount = 1)]
-    CompressedBranchOffset,
-
-    [JsonStringEnumMemberName("comp_jump_offset")]
-    [ImmediateArgument<RiscVReferenceType>("offset", 11, true, ShiftAmount = 1)]
-    CompressedJumpOffset,
-
     // System
     [JsonStringEnumMemberName("csr")]
     [ImmediateArgument<RiscVReferenceType>("immediate", 12, false)]
@@ -120,7 +86,45 @@ public enum RiscVArgument : byte
     
     [JsonStringEnumMemberName("mem_store")]
     [SplitArgument<RiscVArgument>("offset(rs1)", RS1, StoreOffset)]
-    MemoryStore    // This would be a combination of StoreOffset + RS1
+    MemoryStore,   // This would be a combination of StoreOffset + RS1
+
+    #region Compressed Instruction Arguments
+
+    // Compressed/Combined Registers
+    [JsonStringEnumMemberName("rdrs1")]
+    [RegisterArgument<RiscVRegisterSet>("rd/rs1", RiscVRegisterSet.GeneralPurpose)]
+    RDRS1,
+
+    [JsonStringEnumMemberName("c_rd")]
+    [RegisterArgument<RiscVRegisterSet>("rd`", RiscVRegisterSet.CompressedGeneralPurpose)]
+    CompressedRD,
+
+    [JsonStringEnumMemberName("c_rs1")]
+    [RegisterArgument<RiscVRegisterSet>("rs1`", RiscVRegisterSet.CompressedGeneralPurpose)]
+    CompressedRS1,
+
+    [JsonStringEnumMemberName("c_rs2")]
+    [RegisterArgument<RiscVRegisterSet>("rs2`", RiscVRegisterSet.CompressedGeneralPurpose)]
+    CompressedRS2,
+
+    [JsonStringEnumMemberName("c_rdrs1")]
+    [RegisterArgument<RiscVRegisterSet>("rd`/rs1`", RiscVRegisterSet.CompressedGeneralPurpose)]
+    CompressedRDRS1,
+
+    // Compressed Immediates
+    [JsonStringEnumMemberName("comp_imm")]
+    [ImmediateArgument<RiscVReferenceType>("immediate", 6, true)]
+    CompressedImmediate,
+
+    [JsonStringEnumMemberName("comp_branch_offset")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 8, true, ShiftAmount = 1)]
+    CompressedBranchOffset,
+
+    [JsonStringEnumMemberName("comp_jump_offset")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 11, true, ShiftAmount = 1)]
+    CompressedJumpOffset,
+
+    #endregion
 
 #pragma warning restore CS1591
 }

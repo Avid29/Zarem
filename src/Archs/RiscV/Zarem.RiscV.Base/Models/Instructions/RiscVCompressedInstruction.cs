@@ -65,6 +65,19 @@ public struct RiscVCompressedInstruction : IInstruction
     }
 
     /// <summary>
+    /// Creates a CJ-Type instruction.
+    /// </summary>
+    public static RiscVCompressedInstruction CreateCJ(RiscVCompressionCode comp, CFunct3Code cf3, short offset)
+    {
+        return new()
+        {
+            CompressionCode = comp,
+            Funct3 = cf3,
+            JumpOffset = offset,
+        };
+    }
+
+    /// <summary>
     /// Creates a CR-Type instruction.
     /// </summary>
     public static RiscVCompressedInstruction CreateCR(RiscVCompressionCode comp, CFunct4Code cf4, RiscVGpRegister rdrs1, RiscVGpRegister rs2)

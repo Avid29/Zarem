@@ -161,14 +161,15 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
 
         return Meta switch
         {
-            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, rd, rs1, rs2),
-            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, rd, rs1, (short)Immediate),
-            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, rd, Immediate),
             BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, rs1, rs2, Immediate),
-            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, rs1, rs2, (short)Immediate),
+            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, rd, rs1, (short)Immediate),
             JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, rd, Immediate),
+            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, rd, rs1, rs2),
+            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, rs1, rs2, (short)Immediate),
+            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, rd, Immediate),
             CBTypeInstructionMeta cb => RiscVCompressedInstruction.CreateCB(cb.CompressionCode, cb.CFunct3, rs1, (short)Immediate),
             CITypeInstructionMeta ci => RiscVCompressedInstruction.CreateCI(ci.CompressionCode, ci.CFunct3, rd, (sbyte)Immediate),
+            CJTypeInstructionMeta cj => RiscVCompressedInstruction.CreateCJ(cj.CompressionCode, cj.CFunct3, (short)Immediate),
             CRTypeInstructionMeta cr => RiscVCompressedInstruction.CreateCR(cr.CompressionCode, cr.CFunct4, rd, rs2),
             RiscVFloatInstructionMeta f => (f.Funct5.HasValue, f.Funct3.HasValue) switch
             {
