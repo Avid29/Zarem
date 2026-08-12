@@ -1,12 +1,11 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using Test.Archs.Assembler;
-using Test.RiscV.Helpers;
+using Zarem.Assembler;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Models.Versioning;
 using Zarem.RiscV.Assembler.Models.Meta;
@@ -55,28 +54,8 @@ public class RiscVInstructionParserTestDataSource : InstructionParserTestDataSou
 
             foreach (var arg in instruction.ArgumentPattern)
             {
-                line.Append(arg switch
-                {
-                    RiscVArgument.RD or RiscVArgument.RS1 or RiscVArgument.RS2 or RiscVArgument.RDRS1 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose),
-                    RiscVArgument.FRD or RiscVArgument.FRS1 or RiscVArgument.FRS2 or RiscVArgument.FRS3 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.FloatingPoints),
-                    RiscVArgument.Immediate or RiscVArgument.StoreOffset or RiscVArgument.Csr => $"{ArgGenerator.RandomImm12()}",
-                    RiscVArgument.UpperImmediate => $"{ArgGenerator.RandomImm20()}",
-                    RiscVArgument.BranchOffset => $"{ArgGenerator.RandomBranchOffset()}",
-                    RiscVArgument.JumpOffset => $"{ArgGenerator.RandomJumpOffset()}",
-                    RiscVArgument.FullImmediate => $"{ArgGenerator.RandomFullImm()}",
-                    RiscVArgument.UImm5 => $"{ArgGenerator.RandomShamt()}",
-                    RiscVArgument.MemoryLoadPair or RiscVArgument.MemoryStorePair => $"{ArgGenerator.RandomImm12()}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
-
-                    RiscVArgument.CompressedRD or RiscVArgument.CompressedRS1 or RiscVArgument.CompressedRS2 or RiscVArgument.CompressedRDRS1 => GetRegisterString(ArgGenerator.RandomCompressedRegister(), RiscVRegisterSet.CompressedGeneralPurpose),
-                    RiscVArgument.CompressedImmediate => $"{ArgGenerator.RandomCompressedImm()}",
-                    RiscVArgument.CompressedBranchOffset => $"{ArgGenerator.RandomCompressedBranchOffset()}",
-                    RiscVArgument.CompressedJumpOffset => $"{ArgGenerator.RandomCompressedJumpOffset()}",
-                    RiscVArgument.CompressedStackStoreOffset => $"{ArgGenerator.RandomCompressedStackStoreOffset()}",
-                    RiscVArgument.CompressedMemoryWordPair => $"{ArgGenerator.RandomCompressedMemoryOffset(false)}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
-                    RiscVArgument.CompressedMemoryDoubleWordPair => $"{ArgGenerator.RandomCompressedMemoryOffset(true)}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
-                    _ => throw new NotImplementedException(),
-                });
-
+                var argString = GenerateArgumentString<RiscVArgument, RiscVGpRegister, RiscVRegisterSet, RiscVReferenceType>(arg, RiscVTokenizerProfile.Default);
+                line.Append(argString);
                 line.Append(", ");
             }
 
@@ -88,7 +67,6 @@ public class RiscVInstructionParserTestDataSource : InstructionParserTestDataSou
             yield return [$"{line}"];
         }
     }
-
 
     private static string GetRegisterString(RiscVGpRegister register, RiscVRegisterSet set) => $"{RegisterTable<RiscVGpRegister, RiscVRegisterSet>.GetRegisterString(register, set)}";
 }
