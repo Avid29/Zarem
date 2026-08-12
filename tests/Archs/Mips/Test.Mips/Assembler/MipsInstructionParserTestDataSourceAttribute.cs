@@ -1,15 +1,16 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using Test.Archs.Assembler;
 using Test.Mips.Helpers;
+using Zarem.Assembler;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Mips.Assembler.Models.Meta;
 using Zarem.Mips.Assembler.Models.Tables;
+using Zarem.Mips.Models.Enums;
 using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 using Zarem.Mips.Models.Versioning;
@@ -51,20 +52,8 @@ public class MipsInstructionParserTestDataSourceAttribute : InstructionParserTes
 
             foreach (var arg in instruction.ArgumentPattern)
             {
-                line.Append(arg switch
-                {
-                    MipsArgument.RS or MipsArgument.RT or MipsArgument.RD => GetRegisterString(ArgGenerator.RandomRegister(), MipsRegisterSet.GeneralPurpose),
-                    MipsArgument.FS or MipsArgument.FT or MipsArgument.FD => GetRegisterString(ArgGenerator.RandomRegister(), MipsRegisterSet.FloatingPoints),
-                    MipsArgument.Immediate => $"{ArgGenerator.RandomImmediate()}",
-                    MipsArgument.Offset => $"{ArgGenerator.RandomOffset()}",
-                    MipsArgument.LargeOffset => $"{ArgGenerator.RandomOffset()}",
-                    MipsArgument.Address => $"{ArgGenerator.RandomAddress()}",
-                    MipsArgument.AddressBase => $"{ArgGenerator.RandomImmediate()}({GetRegisterString(ArgGenerator.RandomRegister(), MipsRegisterSet.GeneralPurpose)})",
-                    MipsArgument.ShiftAmount => $"{ArgGenerator.RandomShift()}",
-                    MipsArgument.FullImmediate => Random.Shared.Next(),
-                    _ => throw new NotImplementedException(),
-                });
-
+                var argString = GenerateArgumentString<MipsArgument, MipsGpRegister, MipsRegisterSet, MipsReferenceType>(arg, MipsTokenizerProfile.Default);
+                line.Append(argString);
                 line.Append(", ");
             }
 
@@ -76,6 +65,4 @@ public class MipsInstructionParserTestDataSourceAttribute : InstructionParserTes
             yield return [$"{line}"];
         }
     }
-
-    private static string GetRegisterString(MipsGpRegister register, MipsRegisterSet set) => $"${RegisterTable<MipsGpRegister, MipsRegisterSet>.GetRegisterString(register, set)}";
 }
