@@ -27,6 +27,7 @@ public struct RiscVCompressedInstruction : IInstruction
     private const byte RD_COMPRESSED_OFFSET = 2;
     private const byte RDRS1_OFFSET = 7;
     private const byte RS1_COMPRESSED_OFFSET = 7;
+    private const byte RS2_COMPRESSED_OFFSET = 2;
     private const byte FUNCT4_OFFSET = 12;
     private const byte FUNCT3_OFFSET = 13;
 
@@ -74,6 +75,36 @@ public struct RiscVCompressedInstruction : IInstruction
             CompressionCode = comp,
             Funct3 = cf3,
             JumpOffset = offset,
+        };
+    }
+
+    /// <summary>
+    /// Creates a CL-Type instruction.
+    /// </summary>
+    public static RiscVCompressedInstruction CreateCL(RiscVCompressionCode comp, CFunct3Code cf3, RiscVGpRegister rd, RiscVGpRegister rs1, byte offset)
+    {
+        return new()
+        {
+            CompressionCode = comp,
+            Funct3 = cf3,
+            RD_Compressed = rd,
+            RS1_Compressed = rs1,
+            LoadStoreOffset = offset,
+        };
+    }
+
+    /// <summary>
+    /// Creates a CS-Type instruction.
+    /// </summary>
+    public static RiscVCompressedInstruction CreateCS(RiscVCompressionCode comp, CFunct3Code cf3, RiscVGpRegister rs1, RiscVGpRegister rs2, byte offset)
+    {
+        return new()
+        {
+            CompressionCode = comp,
+            Funct3 = cf3,
+            RS1_Compressed = rs1,
+            RS2_Compressed = rs2,
+            LoadStoreOffset = offset,
         };
     }
 
@@ -134,6 +165,15 @@ public struct RiscVCompressedInstruction : IInstruction
     {
         readonly get => (RiscVGpRegister)(BitField.GetField(_inst, COMPRESSED_REG_BIT_SIZE, RS1_COMPRESSED_OFFSET) | COMPRESSION_APPEND);
         set => BitField.SetField(ref _inst, COMPRESSED_REG_BIT_SIZE, RS1_COMPRESSED_OFFSET, (ushort)((byte)value & COMPRESSION_MASK));
+    }
+
+    /// <summary>
+    /// Gets or sets the instruction's compressed RS2 register.
+    /// </summary>
+    public RiscVGpRegister RS2_Compressed
+    {
+        readonly get => (RiscVGpRegister)(BitField.GetField(_inst, COMPRESSED_REG_BIT_SIZE, RS2_COMPRESSED_OFFSET) | COMPRESSION_APPEND);
+        set => BitField.SetField(ref _inst, COMPRESSED_REG_BIT_SIZE, RS2_COMPRESSED_OFFSET, (ushort)((byte)value & COMPRESSION_MASK));
     }
 
     /// <summary>

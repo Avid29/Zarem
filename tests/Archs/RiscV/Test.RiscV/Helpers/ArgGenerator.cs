@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
@@ -72,6 +73,18 @@ public class ArgGenerator
 
         // Range: [-2^11, 2^11] aligned to 2
         return Rnd.Next(-(1 << 11), 1 << 11) & ~0b1;
+    }
+
+    public static int RandomCompressedMemoryOffset(bool wide, bool safe = true)
+    {
+        if (!safe)
+        {
+            return Rnd.Next(int.MinValue, int.MaxValue);
+        }
+
+        // Range: [-2^11, 2^11] aligned to 2
+        var x = Rnd.Next(-(1 << 5), 1 << 5) & ~0b1;
+        return x << (wide ? 8 : 4);
     }
 
     public static byte RandomOpCode(bool safe = true)

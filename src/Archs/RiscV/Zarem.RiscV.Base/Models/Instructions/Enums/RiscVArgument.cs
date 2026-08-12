@@ -82,11 +82,11 @@ public enum RiscVArgument : byte
     // Memory syntax (e.g., 8(sp))
     [JsonStringEnumMemberName("mem_load")]
     [SplitArgument<RiscVArgument>("offset(rs1)", RS1, Immediate)]
-    MemoryLoad,    // This would be a combination of Immediate + RS1
+    MemoryLoadPair,    // This would be a combination of Immediate + RS1
     
     [JsonStringEnumMemberName("mem_store")]
     [SplitArgument<RiscVArgument>("offset(rs1)", RS1, StoreOffset)]
-    MemoryStore,   // This would be a combination of StoreOffset + RS1
+    MemoryStorePair,   // This would be a combination of StoreOffset + RS1
 
     #region Compressed Instruction Arguments
 
@@ -123,6 +123,21 @@ public enum RiscVArgument : byte
     [JsonStringEnumMemberName("comp_jump_offset")]
     [ImmediateArgument<RiscVReferenceType>("offset", 11, true, ShiftAmount = 1)]
     CompressedJumpOffset,
+
+    [ImmediateArgument<RiscVReferenceType>("offset", 5, true, ShiftAmount = 4)]
+    CompressedMemoryOffsetWord,
+
+    [ImmediateArgument<RiscVReferenceType>("offset", 5, true, ShiftAmount = 8)]
+    CompressedMemoryOffsetDoubleWord,
+
+    // Memory syntax (e.g., 8(sp))
+    [JsonStringEnumMemberName("comp_mem_word")]
+    [SplitArgument<RiscVArgument>("offset(rs1)", CompressedRS1, CompressedMemoryOffsetWord)]
+    CompressedMemoryWordPair,
+    
+    [JsonStringEnumMemberName("comp_mem_dword")]
+    [SplitArgument<RiscVArgument>("offset(rs1)", CompressedRS1, CompressedMemoryOffsetDoubleWord)]
+    CompressedMemoryDoubleWordPair,
 
     #endregion
 

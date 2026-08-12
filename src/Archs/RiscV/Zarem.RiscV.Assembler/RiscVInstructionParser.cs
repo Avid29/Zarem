@@ -170,7 +170,9 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             CBTypeInstructionMeta cb => RiscVCompressedInstruction.CreateCB(cb.CompressionCode, cb.CFunct3, rs1, (short)Immediate),
             CITypeInstructionMeta ci => RiscVCompressedInstruction.CreateCI(ci.CompressionCode, ci.CFunct3, rd, (sbyte)Immediate),
             CJTypeInstructionMeta cj => RiscVCompressedInstruction.CreateCJ(cj.CompressionCode, cj.CFunct3, (short)Immediate),
+            CLTypeInstructionMeta cl => RiscVCompressedInstruction.CreateCL(cl.CompressionCode, cl.CFunct3, rd, rs1, (byte)Immediate),
             CRTypeInstructionMeta cr => RiscVCompressedInstruction.CreateCR(cr.CompressionCode, cr.CFunct4, rd, rs2),
+            CSTypeInstructionMeta cs => RiscVCompressedInstruction.CreateCS(cs.CompressionCode, cs.CFunct3, rs1, rs2, (byte)Immediate),
             RiscVFloatInstructionMeta f => (f.Funct5.HasValue, f.Funct3.HasValue) switch
             {
                 // Triple Source reg with rounding mode

@@ -1,0 +1,34 @@
+[
+  {
+    "type": "cl-type",
+    "name": "c.fld",
+    "comp_code": 0,
+    "cfunct3": 1,
+    "args": [ "c_rd", "comp_mem_dword" ],
+    "extension": "C"
+  },
+  {
+    "type": "cl-type",
+    "name": "c.lw",
+    "comp_code": 0,
+    "cfunct3": 2,
+    "args": [ "c_rd", "comp_mem_word" ],
+    "extension": "C"
+  },
+  {
+    "type": "cl-type",
+    "name": "c.flw",
+    "comp_code": 0,
+    "cfunct3": 3,
+    "args": [ "c_rd", "comp_mem_word" ],
+    "extension": "C"
+  },
+  {
+    "type": "cl-type",
+    "name": "c.ld",
+    "comp_code": 0,
+    "cfunct3": 3,
+    "args": [ "c_rd", "comp_mem_dword" ],
+    "extension": "C"
+  }
+]

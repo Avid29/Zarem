@@ -59,17 +59,20 @@ public class RiscVInstructionParserTestDataSource : InstructionParserTestDataSou
                 {
                     RiscVArgument.RD or RiscVArgument.RS1 or RiscVArgument.RS2 or RiscVArgument.RDRS1 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose),
                     RiscVArgument.FRD or RiscVArgument.FRS1 or RiscVArgument.FRS2 or RiscVArgument.FRS3 => GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.FloatingPoints),
-                    RiscVArgument.CompressedRD or RiscVArgument.CompressedRS1 or RiscVArgument.CompressedRS2 or RiscVArgument.CompressedRDRS1 => GetRegisterString(ArgGenerator.RandomCompressedRegister(), RiscVRegisterSet.CompressedGeneralPurpose),
                     RiscVArgument.Immediate or RiscVArgument.StoreOffset or RiscVArgument.Csr => $"{ArgGenerator.RandomImm12()}",
                     RiscVArgument.UpperImmediate => $"{ArgGenerator.RandomImm20()}",
                     RiscVArgument.BranchOffset => $"{ArgGenerator.RandomBranchOffset()}",
                     RiscVArgument.JumpOffset => $"{ArgGenerator.RandomJumpOffset()}",
                     RiscVArgument.FullImmediate => $"{ArgGenerator.RandomFullImm()}",
+                    RiscVArgument.UImm5 => $"{ArgGenerator.RandomShamt()}",
+                    RiscVArgument.MemoryLoadPair or RiscVArgument.MemoryStorePair => $"{ArgGenerator.RandomImm12()}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
+
+                    RiscVArgument.CompressedRD or RiscVArgument.CompressedRS1 or RiscVArgument.CompressedRS2 or RiscVArgument.CompressedRDRS1 => GetRegisterString(ArgGenerator.RandomCompressedRegister(), RiscVRegisterSet.CompressedGeneralPurpose),
                     RiscVArgument.CompressedImmediate => $"{ArgGenerator.RandomCompressedImm()}",
                     RiscVArgument.CompressedBranchOffset => $"{ArgGenerator.RandomCompressedBranchOffset()}",
                     RiscVArgument.CompressedJumpOffset => $"{ArgGenerator.RandomCompressedJumpOffset()}",
-                    RiscVArgument.UImm5 => $"{ArgGenerator.RandomShamt()}",
-                    RiscVArgument.MemoryLoad or RiscVArgument.MemoryStore => $"{ArgGenerator.RandomImm12()}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
+                    RiscVArgument.CompressedMemoryWordPair => $"{ArgGenerator.RandomCompressedMemoryOffset(false)}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
+                    RiscVArgument.CompressedMemoryDoubleWordPair => $"{ArgGenerator.RandomCompressedMemoryOffset(true)}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
                     _ => throw new NotImplementedException(),
                 });
 
