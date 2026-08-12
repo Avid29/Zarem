@@ -71,6 +71,7 @@ public class RiscVInstructionParserTestDataSource : InstructionParserTestDataSou
                     RiscVArgument.CompressedImmediate => $"{ArgGenerator.RandomCompressedImm()}",
                     RiscVArgument.CompressedBranchOffset => $"{ArgGenerator.RandomCompressedBranchOffset()}",
                     RiscVArgument.CompressedJumpOffset => $"{ArgGenerator.RandomCompressedJumpOffset()}",
+                    RiscVArgument.CompressedStackStoreOffset => $"{ArgGenerator.RandomCompressedStackStoreOffset()}",
                     RiscVArgument.CompressedMemoryWordPair => $"{ArgGenerator.RandomCompressedMemoryOffset(false)}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
                     RiscVArgument.CompressedMemoryDoubleWordPair => $"{ArgGenerator.RandomCompressedMemoryOffset(true)}({GetRegisterString(ArgGenerator.RandomRegister(), RiscVRegisterSet.GeneralPurpose)})",
                     _ => throw new NotImplementedException(),
@@ -87,6 +88,7 @@ public class RiscVInstructionParserTestDataSource : InstructionParserTestDataSou
             yield return [$"{line}"];
         }
     }
+
 
     private static string GetRegisterString(RiscVGpRegister register, RiscVRegisterSet set) => $"{RegisterTable<RiscVGpRegister, RiscVRegisterSet>.GetRegisterString(register, set)}";
 }

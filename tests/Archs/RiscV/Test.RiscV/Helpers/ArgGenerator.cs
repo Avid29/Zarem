@@ -75,6 +75,17 @@ public class ArgGenerator
         return Rnd.Next(-(1 << 11), 1 << 11) & ~0b1;
     }
 
+    public static int RandomCompressedStackStoreOffset(bool safe = true)
+    {
+        if (!safe)
+        {
+            return Rnd.Next(int.MinValue, int.MaxValue);
+        }
+
+        // Range: [0, 256] aligned to 
+        return Rnd.Next(0, 256) & ~0b11;
+    }
+
     public static int RandomCompressedMemoryOffset(bool wide, bool safe = true)
     {
         if (!safe)

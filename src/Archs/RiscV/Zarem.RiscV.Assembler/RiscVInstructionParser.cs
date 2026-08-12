@@ -172,6 +172,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             CJTypeInstructionMeta cj => RiscVCompressedInstruction.CreateCJ(cj.CompressionCode, cj.CFunct3, (short)Immediate),
             CLTypeInstructionMeta cl => RiscVCompressedInstruction.CreateCL(cl.CompressionCode, cl.CFunct3, rd, rs1, (byte)Immediate),
             CRTypeInstructionMeta cr => RiscVCompressedInstruction.CreateCR(cr.CompressionCode, cr.CFunct4, rd, rs2),
+            CSSTypeInstructionMeta css => RiscVCompressedInstruction.CreateCSS(css.CompressionCode, css.CFunct3, rs2, (byte)Immediate),
             CSTypeInstructionMeta cs => RiscVCompressedInstruction.CreateCS(cs.CompressionCode, cs.CFunct3, rs1, rs2, (byte)Immediate),
             RiscVFloatInstructionMeta f => (f.Funct5.HasValue, f.Funct3.HasValue) switch
             {

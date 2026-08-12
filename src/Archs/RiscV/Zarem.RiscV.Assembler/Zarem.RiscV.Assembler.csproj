@@ -8,6 +8,7 @@
     <EmbeddedResource Include="Resources\Instructions\BType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CJType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CBType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CSSType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CSType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CLType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CRType.inst.json" />

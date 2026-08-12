@@ -1,0 +1,34 @@
+[
+  {
+    "type": "css-type",
+    "name": "c.fsdsp",
+    "comp_code": 2,
+    "cfunct3": 5,
+    "args": [ "rs2", "comp_stack_store_offset" ],
+    "extension": "C"
+  },
+  {
+    "type": "css-type",
+    "name": "c.swsp",
+    "comp_code": 2,
+    "cfunct3": 6,
+    "args": [ "rs2", "comp_stack_store_offset" ],
+    "extension": "C"
+  },
+  {
+    "type": "css-type",
+    "name": "c.fswsp",
+    "comp_code": 2,
+    "cfunct3": 7,
+    "args": [ "rs2", "comp_stack_store_offset" ],
+    "extension": "C"
+  },
+  {
+    "type": "css-type",
+    "name": "c.sdsp",
+    "comp_code": 2,
+    "cfunct3": 7,
+    "args": [ "rs2", "comp_stack_store_offset" ],
+    "extension": "C"
+  }
+]

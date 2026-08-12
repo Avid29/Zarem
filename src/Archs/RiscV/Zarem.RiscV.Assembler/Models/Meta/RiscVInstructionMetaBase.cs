@@ -27,6 +27,7 @@ namespace Zarem.RiscV.Assembler.Models.Meta;
 [JsonDerivedType(typeof(CJTypeInstructionMeta), "cj-type")]
 [JsonDerivedType(typeof(CLTypeInstructionMeta), "cl-type")]
 [JsonDerivedType(typeof(CRTypeInstructionMeta), "cr-type")]
+[JsonDerivedType(typeof(CSSTypeInstructionMeta), "css-type")]
 [JsonDerivedType(typeof(CSTypeInstructionMeta), "cs-type")]
 [JsonDerivedType(typeof(RiscVPseudoInstructionMeta), "pseudo")]
 public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgument>

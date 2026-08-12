@@ -120,14 +120,24 @@ public enum RiscVArgument : byte
     [ImmediateArgument<RiscVReferenceType>("offset", 8, true, ShiftAmount = 1)]
     CompressedBranchOffset,
 
+    [JsonStringEnumMemberName("comp_stack_store_offset")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 6, false, ShiftAmount = 2)]
+    CompressedStackStoreOffset,
+
+    [JsonStringEnumMemberName("comp_stack_offset")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 8, false, ShiftAmount = 2)]
+    CompressedStackOffset,
+
     [JsonStringEnumMemberName("comp_jump_offset")]
     [ImmediateArgument<RiscVReferenceType>("offset", 11, true, ShiftAmount = 1)]
     CompressedJumpOffset,
 
-    [ImmediateArgument<RiscVReferenceType>("offset", 5, true, ShiftAmount = 4)]
+    [JsonStringEnumMemberName("comp_load_store_offset")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 5, false, ShiftAmount = 2)]
     CompressedMemoryOffsetWord,
 
-    [ImmediateArgument<RiscVReferenceType>("offset", 5, true, ShiftAmount = 8)]
+    [JsonStringEnumMemberName("comp_load_store_offset_d")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 5, false, ShiftAmount = 3)]
     CompressedMemoryOffsetDoubleWord,
 
     // Memory syntax (e.g., 8(sp))

@@ -94,6 +94,20 @@ public struct RiscVCompressedInstruction : IInstruction
     }
 
     /// <summary>
+    /// Creates a CSS-Type instruction.
+    /// </summary>
+    public static RiscVCompressedInstruction CreateCSS(RiscVCompressionCode comp, CFunct3Code cf3, RiscVGpRegister rs2, byte offset)
+    {
+        return new()
+        {
+            CompressionCode = comp,
+            Funct3 = cf3,
+            RS2 = rs2,
+            StackStoreOffset = offset,
+        };
+    }
+
+    /// <summary>
     /// Creates a CS-Type instruction.
     /// </summary>
     public static RiscVCompressedInstruction CreateCS(RiscVCompressionCode comp, CFunct3Code cf3, RiscVGpRegister rs1, RiscVGpRegister rs2, byte offset)
