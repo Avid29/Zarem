@@ -196,7 +196,8 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
 
     private bool TryParseRegister(ReadOnlySpan<Token> arg, TArg target, RegisterArgumentAttribute<TSet> attr)
     {
-        var bounds = 32; // TODO: Handle ISAs with non-32 reg counts
+        // TODO: Introduce lower bound, for cases like RISC-V compressed registers
+        var max = RegisterTable<TRegister, TSet>.GetRegisterCount(attr.RegisterSet);
 
         if (arg.Length is not 1)
         {
@@ -230,7 +231,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         }
 
         var index = Unsafe.As<TRegister, int>(ref register);
-        if (index >= bounds)
+        if (index >= max)
         {
             var (message, msgArg) = indexed switch
             {

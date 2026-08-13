@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Instructions\BType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CAType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CJType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CBType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CSSType.inst.json" />

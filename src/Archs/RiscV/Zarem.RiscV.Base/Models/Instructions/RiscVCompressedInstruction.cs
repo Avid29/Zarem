@@ -19,8 +19,10 @@ public struct RiscVCompressedInstruction : IInstruction
     private const byte COMPCODE_BIT_SIZE = 2;
     private const byte REG_BIT_SIZE = 5;
     private const byte COMPRESSED_REG_BIT_SIZE = 3;
+    private const byte FUNCT2_BIT_SIZE = 2;
     private const byte FUNCT3_BIT_SIZE = 3;
     private const byte FUNCT4_BIT_SIZE = 4;
+    private const byte FUNCT6_BIT_SIZE = 6;
 
     private const byte COMPCODE_OFFSET = 0;
     private const byte RS2_OFFSET = 2;
@@ -28,8 +30,11 @@ public struct RiscVCompressedInstruction : IInstruction
     private const byte RDRS1_OFFSET = 7;
     private const byte RS1_COMPRESSED_OFFSET = 7;
     private const byte RS2_COMPRESSED_OFFSET = 2;
-    private const byte FUNCT4_OFFSET = 12;
+    private const byte FUNCT2_OFFSET = 5;
+    private const byte CBA_FUNCT2_OFFSET = 10;
     private const byte FUNCT3_OFFSET = 13;
+    private const byte FUNCT4_OFFSET = 12;
+    private const byte FUNCT6_OFFSET = 10;
 
     private const ushort COMPRESSION_MASK = 0b0111;
     private const ushort COMPRESSION_APPEND = 0b1000;
@@ -48,6 +53,21 @@ public struct RiscVCompressedInstruction : IInstruction
             Funct3 = cf3,
             RS1_Compressed = rs1,
             BranchOffset = offset,
+        };
+    }
+
+    /// <summary>
+    /// Creates a CB-Type instruction.
+    /// </summary>
+    public static RiscVCompressedInstruction CreateCBA(RiscVCompressionCode comp, CFunct3Code cf3, CFunct2Code cf2, RiscVGpRegister rs1, short offset)
+    {
+        return new()
+        {
+            CompressionCode = comp,
+            Funct3 = cf3,
+            CBAFunct2 = cf2,
+            RS1_Compressed = rs1,
+            CBAImmediate = offset,
         };
     }
 
@@ -191,6 +211,24 @@ public struct RiscVCompressedInstruction : IInstruction
     }
 
     /// <summary>
+    /// Gets or sets the value of the funct2 field.
+    /// </summary>
+    public CFunct2Code Funct2
+    {
+        readonly get => (CFunct2Code)BitField.GetField(_inst, FUNCT2_BIT_SIZE, FUNCT2_OFFSET);
+        set => BitField.SetField(ref _inst, FUNCT2_BIT_SIZE, FUNCT2_OFFSET, (ushort)value);
+    }
+
+    /// <summary>
+    /// Gets or sets the value of the CBA funct2 field.
+    /// </summary>
+    public CFunct2Code CBAFunct2
+    {
+        readonly get => (CFunct2Code)BitField.GetField(_inst, FUNCT2_BIT_SIZE, CBA_FUNCT2_OFFSET);
+        set => BitField.SetField(ref _inst, FUNCT2_BIT_SIZE, CBA_FUNCT2_OFFSET, (ushort)value);
+    }
+
+    /// <summary>
     /// Gets or sets the value of the funct3 field.
     /// </summary>
     public CFunct3Code Funct3
@@ -206,6 +244,15 @@ public struct RiscVCompressedInstruction : IInstruction
     {
         readonly get => (CFunct4Code)BitField.GetField(_inst, FUNCT4_BIT_SIZE, FUNCT4_OFFSET);
         set => BitField.SetField(ref _inst, FUNCT4_BIT_SIZE, FUNCT4_OFFSET, (ushort)value);
+    }
+
+    /// <summary>
+    /// Gets or sets the value of the funct6 field.
+    /// </summary>
+    public CFunct6Code Funct6
+    {
+        readonly get => (CFunct6Code)BitField.GetField(_inst, FUNCT6_BIT_SIZE, FUNCT6_OFFSET);
+        set => BitField.SetField(ref _inst, FUNCT6_BIT_SIZE, FUNCT6_OFFSET, (ushort)value);
     }
 
     /// <summary>
@@ -313,6 +360,26 @@ public struct RiscVCompressedInstruction : IInstruction
             BitField.SetField(ref _inst, 2, 5, (ushort)((val >> 6) & 0x3));
             BitField.SetField(ref _inst, 2, 3, (ushort)((val >> 1) & 0x3));
             BitField.SetField(ref _inst, 1, 2, (ushort)((val >> 5) & 0x1));
+        }
+    }
+
+    /// <summary>
+    /// CBA-Format Immediate (Imm[5] at bit 12, Imm[4:0] at bits [6:2], 6-bit signed).
+    /// </summary>
+    public short CBAImmediate
+    {
+        readonly get
+        {
+            byte imm0_4 = (byte)BitField.GetField(_inst, 5, 2);
+            byte imm5 = (byte)BitField.GetField(_inst, 1, 12);
+            byte raw = (byte)((imm5 << 5) | imm0_4);
+            return (short)((raw << 26) >> 26);  // 26 because the shifts upcast to int
+        }
+        set
+        {
+            ushort val = (ushort)value;
+            BitField.SetField(ref _inst, 5, 2, (ushort)(val & 0x1F));
+            BitField.SetField(ref _inst, 1, 12, (ushort)((val >> 5) & 0x1));
         }
     }
 

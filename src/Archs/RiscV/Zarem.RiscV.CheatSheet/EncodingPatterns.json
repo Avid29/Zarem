@@ -33,7 +33,7 @@
             "name": "RS2",
             "size": 5,
             "offset": 20,
-            "type": 4
+            "type": 3
           },
           {
             "name": "Funct 7",

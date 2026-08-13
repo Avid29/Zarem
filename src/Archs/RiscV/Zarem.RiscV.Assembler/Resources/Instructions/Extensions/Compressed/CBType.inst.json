@@ -1,25 +1,28 @@
 [
   {
-    "type": "cb-type",
+    "type": "cba-type",
     "name": "c.srli",
     "comp_code": 1,
     "cfunct3": 4,
+    "cfunct2": 0,
     "args": [ "c_rdrs1", "comp_imm" ],
     "extension": "C"
   },
   {
-    "type": "cb-type",
+    "type": "cba-type",
     "name": "c.srai",
     "comp_code": 1,
     "cfunct3": 4,
+    "cfunct2": 1,
     "args": [ "c_rdrs1", "comp_imm" ],
     "extension": "C"
   },
   {
-    "type": "cb-type",
+    "type": "cba-type",
     "name": "c.andi",
     "comp_code": 1,
     "cfunct3": 4,
+    "cfunct2": 2,
     "args": [ "c_rdrs1", "comp_imm" ],
     "extension": "C"
   },
