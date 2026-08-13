@@ -25,7 +25,7 @@ public partial class RiscVJitCompiler<T, TFloat>
         InitFloatTable(versionInfo);
 
         // Init
-        if (versionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
+        if (versionInfo.Extensions.Flags.HasFlag(RiscVExtensions.Multiplication))
         {
             switch (versionInfo.Base)
             {
@@ -159,7 +159,7 @@ public partial class RiscVJitCompiler<T, TFloat>
     private void InitFloatOperations<TFormat>(RiscVVersionInfo versionInfo, RiscVExtensions flag)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
-        if (!versionInfo.Extensions.HasFlag(flag))
+        if (!versionInfo.Extensions.Flags.HasFlag(flag))
             return;
 
         var format = RiscVInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();

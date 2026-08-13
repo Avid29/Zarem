@@ -42,7 +42,7 @@ public class RiscVInstructionTable : RiscVInstructionTableBase<string>
             if (Config.VersionInfo.Base < version.Base)
                 requiredBase = version.Base;
 
-            if (!Config.VersionInfo.Extensions.HasFlag(version.Extension))
+            if (!Config.VersionInfo.Extensions.Flags.HasFlag(version.Extension))
                 requiredExtension = version.Extension;
         }
 

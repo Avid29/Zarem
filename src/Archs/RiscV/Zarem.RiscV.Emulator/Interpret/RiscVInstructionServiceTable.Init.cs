@@ -24,7 +24,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         InitBaseTable(versionInfo);
         InitFloatTable(versionInfo);
 
-        if (versionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
+        if (versionInfo.Extensions.Flags.HasFlag(RiscVExtensions.Multiplication))
         {
             switch (versionInfo.Base)
             {
@@ -152,7 +152,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
     private void InitFloatOperations<TFormat>(RiscVVersionInfo versionInfo, RiscVExtensions flag)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
-        if (!versionInfo.Extensions.HasFlag(flag))
+        if (!versionInfo.Extensions.Flags.HasFlag(flag))
             return;
 
         var format = RiscVInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();

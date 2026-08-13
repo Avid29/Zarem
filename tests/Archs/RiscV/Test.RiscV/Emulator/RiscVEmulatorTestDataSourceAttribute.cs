@@ -109,7 +109,7 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
         where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>, IMinMaxValue<TLong>
     {
-        if (!config.VersionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
+        if (!config.VersionInfo.Extensions.Flags.HasFlag(RiscVExtensions.Multiplication))
             yield break;
 
         // Without signs
@@ -191,7 +191,7 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
     {
         unchecked
         {
-            if (config.VersionInfo.Extensions.HasFlag(RiscVExtensions.SingleFloatingPoint))
+            if (config.VersionInfo.Extensions.Flags.HasFlag(RiscVExtensions.SingleFloatingPoint))
             {
                 // Arithmetic
                 yield return [new RiscVEmulatorTestCase<T>(config, "fadd.S fa0, fs0, fs1", 10.5f + 2.5f)];

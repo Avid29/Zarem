@@ -104,7 +104,7 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
     public bool IsValidFor(RiscVVersionInfo config)
     {
         // Check if the required extension is enabled in the flags
-        if (!config.Extensions.HasFlag(Extension))
+        if (!config.Extensions.Flags.HasFlag(Extension))
             return false;
 
         // Check if the current CPU base width meets the minimum requirement

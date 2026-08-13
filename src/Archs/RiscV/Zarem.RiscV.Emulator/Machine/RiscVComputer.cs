@@ -45,7 +45,7 @@ public sealed class RiscVComputer : ComputerBase
         };
 
         // Determine float reg size
-        var extensions = Config.VersionInfo.Extensions;
+        var extensions = Config.VersionInfo.Extensions.Flags;
         var floatType = typeof(byte); // Sentinel type meaning no float extension
 
         if (extensions.HasFlag(RiscVExtensions.QuadrupleFloatingPoint)) floatType = typeof(UInt128);

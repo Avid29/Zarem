@@ -127,7 +127,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             };
 
             // Cross-reference with the Configured extensions
-            if (!Config.VersionInfo.Extensions.HasFlag(formatRequirement))
+            if (!Config.VersionInfo.Extensions.Flags.HasFlag(formatRequirement))
             {
                 _logger?.Log(Severity.Error,
                     LogId.NotInVersion,
