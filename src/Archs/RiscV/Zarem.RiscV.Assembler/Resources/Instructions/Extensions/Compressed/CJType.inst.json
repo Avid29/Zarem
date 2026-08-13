@@ -13,6 +13,7 @@
     "comp_code": 1,
     "cfunct3": 1,
     "args": [ "comp_jump_offset" ],
-    "extension": "C"
+    "extension": "C",
+    "max_base": "RV32"
   }
 ]

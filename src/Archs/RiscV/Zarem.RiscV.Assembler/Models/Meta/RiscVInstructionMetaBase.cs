@@ -48,6 +48,12 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
     public RiscVBaseVersion MinBase { get; init; } = RiscVBaseVersion.RV32;
 
     /// <summary>
+    /// Gets the maximum base architecture width (32, 64, or 128).
+    /// </summary>
+    [JsonPropertyName("max_base")]
+    public RiscVBaseVersion? MaxBase { get; init; } = null;
+
+    /// <summary>
     /// Gets the specific version of the extension this instruction was introduced in.
     /// </summary>
     [JsonPropertyName("version")]
@@ -103,6 +109,11 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
 
         // Check if the current CPU base width meets the minimum requirement
         if ((int)config.Base < (int)MinBase)
+            return false;
+
+        // Check if the current CPU base width is greater than the maximum allowed
+        // (This is often to prevent conflicting op codes in the compressed extension)
+        if (MaxBase.HasValue && (int)config.Base > (int)MaxBase)
             return false;
 
         // Check spec version

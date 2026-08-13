@@ -59,11 +59,28 @@
   },
   {
     "type": "ci-type",
+    "name": "c.fldsp",
+    "comp_code": 2,
+    "cfunct3": 1,
+    "args": [ "frd", "comp_imm" ],
+    "extension": "C"
+  },
+  {
+    "type": "ci-type",
     "name": "c.lwsp",
     "comp_code": 2,
     "cfunct3": 2,
     "args": [ "rd", "comp_imm" ],
     "extension": "C"
+  },
+  {
+    "type": "ci-type",
+    "name": "c.flwsp",
+    "comp_code": 2,
+    "cfunct3": 3,
+    "args": [ "frd", "comp_imm" ],
+    "extension": "C",
+    "max_base": "RV32"
   },
   {
     "type": "ci-type",
