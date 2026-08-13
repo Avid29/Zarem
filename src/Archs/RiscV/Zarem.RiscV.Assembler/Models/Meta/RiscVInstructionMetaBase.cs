@@ -26,6 +26,7 @@ namespace Zarem.RiscV.Assembler.Models.Meta;
 [JsonDerivedType(typeof(CBATypeInstructionMeta), "cba-type")]
 [JsonDerivedType(typeof(CBTypeInstructionMeta), "cb-type")]
 [JsonDerivedType(typeof(CITypeInstructionMeta), "ci-type")]
+[JsonDerivedType(typeof(CIWTypeInstructionMeta), "ciw-type")]
 [JsonDerivedType(typeof(CJTypeInstructionMeta), "cj-type")]
 [JsonDerivedType(typeof(CLTypeInstructionMeta), "cl-type")]
 [JsonDerivedType(typeof(CRTypeInstructionMeta), "cr-type")]

@@ -45,6 +45,21 @@ public struct RiscVCompressedInstruction : IInstruction
     /// <summary>
     /// Creates a CB-Type instruction.
     /// </summary>
+    public static RiscVCompressedInstruction CreateCA(RiscVCompressionCode comp, CFunct6Code cf6, CFunct2Code cf2, RiscVGpRegister rdrs1, RiscVGpRegister rs2)
+    {
+        return new()
+        {
+            CompressionCode = comp,
+            Funct6 = cf6,
+            Funct2 = cf2,
+            RS1_Compressed = rdrs1,
+            RS2_Compressed = rs2,
+        };
+    }
+
+    /// <summary>
+    /// Creates a CB-Type instruction.
+    /// </summary>
     public static RiscVCompressedInstruction CreateCB(RiscVCompressionCode comp, CFunct3Code cf3, RiscVGpRegister rs1, short offset)
     {
         return new()
@@ -82,6 +97,20 @@ public struct RiscVCompressedInstruction : IInstruction
             Funct3 = cf3,
             RDRS1 = rdrs1,
             Immediate = imm,
+        };
+    }
+
+    /// <summary>
+    /// Creates a CIW-Type instruction.
+    /// </summary>
+    public static RiscVCompressedInstruction CreateCIW(RiscVCompressionCode comp, CFunct3Code cf3, RiscVGpRegister rd, ushort imm)
+    {
+        return new()
+        {
+            CompressionCode = comp,
+            Funct3 = cf3,
+            RD_Compressed = rd,
+            StackOffset = imm,
         };
     }
 
@@ -304,7 +333,7 @@ public struct RiscVCompressedInstruction : IInstruction
             byte b9_6 = (byte)BitField.GetField(_inst, 4, 7);
             byte b2 = (byte)BitField.GetField(_inst, 1, 6);
             byte b3 = (byte)BitField.GetField(_inst, 1, 5);
-            return (ushort)((b9_6 << 6) | (b5_4 << 4) | (b3 << 3) | (b2 << 2));
+            return (byte)((b9_6 << 6) | (b5_4 << 4) | (b3 << 3) | (b2 << 2));
         }
         set
         {

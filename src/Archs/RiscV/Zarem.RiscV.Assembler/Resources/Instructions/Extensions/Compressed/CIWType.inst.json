@@ -1,0 +1,10 @@
+[
+  {
+    "type": "ciw-type",
+    "name": "c.addi4spn",
+    "comp_code": 0,
+    "cfunct3": 0,
+    "args": [ "c_rd", "comp_stack_offset" ],
+    "extension": "C"
+  }
+]
