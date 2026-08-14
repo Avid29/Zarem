@@ -35,7 +35,6 @@ public partial class RiscVJitCompiler<T, TFloat>
         _loadRegs.Clear();
         _storeRegs.Clear();
 
-        // TODO: Explicitly handle delay slot
         for (T pc = start; pc <= end; pc += T.CreateTruncating(4))
             LogRegisterUsage(Fetch(pc));
 

@@ -138,7 +138,7 @@ public struct RiscVCompressedInstruction : IInstruction
             Funct3 = cf3,
             RD_Compressed = rd,
             RS1_Compressed = rs1,
-            LoadStoreOffset = offset,
+            WordLoadStoreOffset = offset,
         };
     }
 
@@ -167,7 +167,7 @@ public struct RiscVCompressedInstruction : IInstruction
             Funct3 = cf3,
             RS1_Compressed = rs1,
             RS2_Compressed = rs2,
-            LoadStoreOffset = offset,
+            WordLoadStoreOffset = offset,
         };
     }
 
@@ -347,7 +347,27 @@ public struct RiscVCompressedInstruction : IInstruction
     /// <summary>
     /// CL/CS-Format Word Load/Store Offset for c.lw/c.sw (Imm[5:3|2|6] across [12:10|6|5], scaled by 4).
     /// </summary>
-    public byte LoadStoreOffset
+    public byte WordLoadStoreOffset
+    {
+        readonly get
+        {
+            byte b5_3 = (byte)BitField.GetField(_inst, 3, 10);
+            byte b2 = (byte)BitField.GetField(_inst, 1, 6);
+            byte b6 = (byte)BitField.GetField(_inst, 1, 5);
+            return (byte)((b6 << 6) | (b5_3 << 3) | (b2 << 2));
+        }
+        set
+        {
+            BitField.SetField(ref _inst, 3, 10, (ushort)((value >> 3) & 0x7));
+            BitField.SetField(ref _inst, 1, 6, (ushort)((value >> 2) & 0x1));
+            BitField.SetField(ref _inst, 1, 5, (ushort)((value >> 6) & 0x1));
+        }
+    }
+
+    /// <summary>
+    /// CL/CS-Format DoubleWord Load/Store Offset for c.lw/c.sw (Imm[5:3|2|6] across [12:10|6|5], scaled by 4).
+    /// </summary>
+    public ushort DoubleWordLoadStoreOffset
     {
         readonly get
         {

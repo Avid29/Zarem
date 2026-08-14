@@ -7,8 +7,8 @@ using System.Runtime.CompilerServices;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models;
-using Zarem.Emulator.Models.Enums;
 using Zarem.RiscV.Emulator.Config;
+using Zarem.RiscV.Emulator.Helper;
 using Zarem.RiscV.Emulator.Machine;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions;
@@ -25,6 +25,7 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private readonly IRiscVInstructionServiceTable<T> _instructionServiceTable;
+    private readonly InstructionDecompressor? _decompressor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVCpu{T}"/> class.
@@ -38,6 +39,10 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
             RiscVBaseVersion.RV128 => new RiscVInstructionServiceTable<T, TFloat, Int128>(this),
             _ => throw new NotImplementedException()
         };
+
+        // Initialize the decompressor if the compression extension is in use
+        if (config.VersionInfo.HasExtensions(RiscVExtensions.Compressed))
+            _decompressor = new InstructionDecompressor(config);
     }
 
     /// <inheritdoc/>
@@ -128,7 +133,7 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
 
         trap = trap is RiscVTrap.None ? Execute(instruction, out execution) : trap;
         trap = trap is RiscVTrap.None ? MemAccess(execution, out memRead) : trap;
-        trap = trap is RiscVTrap.None ? WriteBack(execution, memRead) : trap;
+        trap = trap is RiscVTrap.None ? WriteBack(execution, memRead, instruction.IsCompressed) : trap;
 
         // Handle trap, if any occurred
         if (trap is not RiscVTrap.None)
@@ -138,7 +143,23 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
     }
 
     private RiscVTrap Execute(RiscVInstruction instruction, out RiscVExecution<T> execution)
-        => _instructionServiceTable.Execute(instruction, out execution);
+    {
+        if (instruction.IsCompressed)
+        {
+            if (_decompressor is null)
+            {
+                // If the decompressor is null, the compressed extension is not present and
+                // therefore this opcode is invalid to the current CPU
+                execution = default;
+                return RiscVTrap.IllegalInstruction;
+            }
+
+            // Decompress the instruction
+            instruction = _decompressor.Decompress((RiscVCompressedInstruction)instruction);
+        }
+
+        return _instructionServiceTable.Execute(instruction, out execution);
+    }
 
     private RiscVTrap MemAccess(RiscVExecution<T> execution, out T read)
     {
@@ -186,9 +207,9 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
         return RiscVTrap.None;
     }
 
-    private RiscVTrap WriteBack(RiscVExecution<T> execution, T memRead)
+    private RiscVTrap WriteBack(RiscVExecution<T> execution, T memRead, bool compressed)
     {
-        T nextPc = ProgramCounter + T.CreateTruncating(4);
+        T nextPc = ProgramCounter + T.CreateTruncating(compressed ? 2 : 4);
 
         // Handle gpr writeback
         RegisterFile[(int)execution.WritebackGPRegister] = execution.Writeback;
