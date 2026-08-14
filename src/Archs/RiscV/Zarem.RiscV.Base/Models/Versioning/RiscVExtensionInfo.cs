@@ -1,15 +1,15 @@
 ﻿// Avishai Dernis 2026
 
+using ModelingEvolution.JsonParsableConverter;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using Zarem.RiscV.Attributes;
 using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.Models.Versioning;
@@ -17,11 +17,14 @@ namespace Zarem.Models.Versioning;
 /// <summary>
 /// A struct representing a set of RISC-V extensions parsed from specification strings or JSON models.
 /// </summary>
+[JsonConverter(typeof(JsonParsableConverter<RiscVExtensionInfo>))]
 public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo>
 {
     private static readonly Dictionary<string, RiscVExtensions> _extensionMap;
-    private static readonly List<(string Name, RiscVExtensions Flag)> _standardExtensions;
-    private static readonly List<(string Name, RiscVExtensions Flag)> _zExtensions;
+    private static readonly Dictionary<string, RiscVZExtensions> _zExtensionMap;
+    private static readonly List<(string Name, RiscVExtensions Flag)> _sortedExtensions;
+    private static readonly List<(string Name, RiscVZExtensions Flag)> _sortedZExtensions;
+    private static readonly Dictionary<string, RiscVExtensionInfo> _dependencyMap;
 
     [GeneratedRegex(@"[\d+p\d+]*$", RegexOptions.IgnoreCase)]
     private static partial Regex GetExtensionVersionSuffixRegex();
@@ -29,52 +32,58 @@ public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVVersionInfo"/> struct.
     /// </summary>
-    public RiscVExtensionInfo() : this(RiscVExtensions.Integers)
+    public RiscVExtensionInfo(RiscVExtensions extensions, RiscVZExtensions zExtensions = RiscVZExtensions.None)
     {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RiscVVersionInfo"/> struct.
-    /// </summary>
-    public RiscVExtensionInfo(RiscVExtensions extensions)
-    {
-        Flags = extensions | RiscVExtensions.Integers; // 'I' is always required
+        this.MisaFlags = extensions | RiscVExtensions.Integers; // 'I' is always required
+        ZFlags = zExtensions;
     }
 
     static RiscVExtensionInfo()
     {
         _extensionMap = [];
+        _zExtensionMap = [];
+        _dependencyMap = [];
 
-        var enumType = typeof(RiscVExtensions);
-        foreach (var field in enumType.GetFields(BindingFlags.Public | BindingFlags.Static))
+        foreach (var field in typeof(RiscVExtensions).GetFields(BindingFlags.Public | BindingFlags.Static))
         {
-            var attr = field.GetCustomAttribute<JsonStringEnumMemberNameAttribute>();
+            var attr = field.GetCustomAttribute<RiscVExtensionAttribute>();
             if (attr != null && field.GetValue(null) is RiscVExtensions value)
             {
-                // Skip 'General' for the map to avoid overlap during parsing, 
-                // handle it as a special case or bit-mask if preferred.
-                if (value == RiscVExtensions.General) continue;
+                _extensionMap[attr.Alias] = value;
 
-                _extensionMap[attr.Name] = value;
+                if (attr.Dependencies.MisaFlags is not RiscVExtensions.Integers
+                    || attr.Dependencies.ZFlags is not RiscVZExtensions.None)
+                    _dependencyMap[attr.Alias] = attr.Dependencies;
             }
+        }
+        foreach (var field in typeof(RiscVZExtensions).GetFields(BindingFlags.Public | BindingFlags.Static))
+        {
+            var attr = field.GetCustomAttribute<RiscVExtensionAttribute>();
+            if (attr != null && field.GetValue(null) is RiscVZExtensions value)
+                _zExtensionMap[attr.Alias] = value;
         }
 
         // Pre-sort for ToString() canonical order
-        _standardExtensions = [.. _extensionMap
+        _sortedExtensions = [.. _extensionMap
             .Where(kvp => kvp.Key.Length == 1)
             .OrderBy(kvp => "IMAFDQLCBJTPN".IndexOf(kvp.Key[0])) // Standard RISC-V order
             .Select(kvp => (kvp.Key, kvp.Value))];
 
-        _zExtensions = [.. _extensionMap
+        _sortedZExtensions = [.. _zExtensionMap
             .Where(kvp => kvp.Key.Length > 1)
             .OrderBy(kvp => kvp.Key)
             .Select(kvp => (kvp.Key, kvp.Value))];
     }
 
     /// <summary>
-    /// Gets the group of extensions in use.
+    /// Gets the flagged collection of MISA extensions present.
     /// </summary>
-    public RiscVExtensions Flags { get; }
+    public RiscVExtensions MisaFlags { get; }
+
+    /// <summary>
+    /// Gets the flagged collection of Z extensions present.
+    /// </summary>
+    public RiscVZExtensions ZFlags { get; }
 
     /// <inheritdoc/>
     public static RiscVExtensionInfo Parse(string s, IFormatProvider? provider = null)
@@ -96,20 +105,24 @@ public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo
 
         string remainder = s.Trim();
         var extensions = RiscVExtensions.Integers;
+        var zExtensions = RiscVZExtensions.None;
 
         // Parse Standard Single-Letter Extensions (e.g. "IMAFDC" or "G")
         int i = 0;
         while (i < remainder.Length && !char.IsDigit(remainder[i]) && remainder[i] != '_' && remainder[i] != '+')
         {
             string single = remainder[i].ToString();
-            if (single == "G")
-            {
-                extensions |= RiscVExtensions.General;
-            }
-            else if (_extensionMap.TryGetValue(single, out var flag))
+            if (_extensionMap.TryGetValue(single, out var flag))
             {
                 extensions |= flag;
             }
+
+            if (_dependencyMap.TryGetValue(single, out var dependencies))
+            {
+                extensions |= dependencies.MisaFlags;
+                zExtensions |= dependencies.ZFlags;
+            }
+
             i++;
         }
 
@@ -120,39 +133,54 @@ public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo
             foreach (var part in parts)
             {
                 string cleanPart = GetExtensionVersionSuffixRegex().Replace(part, "");
-                if (_extensionMap.TryGetValue(cleanPart, out var flag))
+                if (_zExtensionMap.TryGetValue(cleanPart, out var flag))
                 {
-                    extensions |= flag;
+                    zExtensions |= flag;
                 }
             }
         }
 
-        result = new RiscVExtensionInfo(extensions);
+        result = new RiscVExtensionInfo(extensions, zExtensions);
         return true;
     }
+
+    /// <summary>
+    /// Determines whether this instance contains all flags specified in <paramref name="extensions"/>.
+    /// </summary>
+    public bool Contains(RiscVExtensionInfo extensions) =>
+        MisaFlags.HasFlag(extensions.MisaFlags)
+        && ZFlags.HasFlag(extensions.ZFlags);
 
     /// <inheritdoc/>
     public override string ToString()
     {
         var sb = new StringBuilder();
-        var currentExts = Flags;
+        var impliedMisa = RiscVExtensions.None;
+        var impliedZ = RiscVZExtensions.None;
 
         // If G is present, it replaces IMAFD
-        if (currentExts.HasFlag(RiscVExtensions.General))
+        var gDependencies = _dependencyMap["G"];
+        bool isG = Contains(gDependencies);
+        if (isG)
         {
             sb.Append('G');
 
             // Remove flags covered by G to avoid double printing
-            currentExts &= ~RiscVExtensions.General;
+            impliedMisa |= gDependencies.MisaFlags;
+            impliedZ |= gDependencies.ZFlags;
         }
 
+        var printMisa = (MisaFlags & ~impliedMisa) | RiscVExtensions.Integers;
+        var printZ = ZFlags & ~impliedZ;
+
         // Append remaining Standard Extensions
-        foreach (var (name, flag) in _standardExtensions)
+        foreach (var (name, flag) in _sortedExtensions)
         {
-            if (name == "I" && sb.ToString().Contains('G'))
+            if (name == "I" && isG)
                 continue;
 
-            if (currentExts.HasFlag(flag))
+            if (flag is not 0 &&
+                printMisa.HasFlag(flag))
             {
                 sb.Append(name);
             }
@@ -160,9 +188,9 @@ public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo
 
         // Append Multi-letter extensions with '+'
         bool firstZ = true;
-        foreach (var (name, flag) in _zExtensions)
+        foreach (var (name, flag) in _sortedZExtensions)
         {
-            if (currentExts.HasFlag(flag))
+            if (printZ.HasFlag(flag))
             {
                 sb.Append(firstZ ? "_" : "_"); // Use '_' or '+' per preference
                 sb.Append(name);
@@ -174,12 +202,12 @@ public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo
     }
 
     /// <summary>
-    /// Casts a <see cref="RiscVExtensionInfo"/> to a <see cref="RiscVExtensions"/>.
-    /// </summary>
-    public static implicit operator RiscVExtensions(RiscVExtensionInfo info) => info.Flags;
-
-    /// <summary>
     /// Casts a <see cref="RiscVExtensions"/> to a <see cref="RiscVExtensionInfo"/>.
     /// </summary>
     public static implicit operator RiscVExtensionInfo(RiscVExtensions flags) => new(flags);
+
+    /// <summary>
+    /// Casts a <see cref="RiscVZExtensions"/> to a <see cref="RiscVExtensionInfo"/>.
+    /// </summary>
+    public static implicit operator RiscVExtensionInfo(RiscVZExtensions flags) => new(RiscVExtensions.None, flags);
 }

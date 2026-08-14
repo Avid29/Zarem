@@ -14,6 +14,7 @@ using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
 using Zarem.Models.Tables;
+using Zarem.Models.Versioning;
 using Zarem.RiscV.Assembler.Logger;
 using Zarem.RiscV.Assembler.Models.Meta;
 using Zarem.RiscV.Assembler.Models.Meta.Extensions;
@@ -117,17 +118,17 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         if (Meta is RiscVFloatInstructionMeta fMeta)
         {
             // Determine required extension based on the parsed format (.s, .d, .h, .q)
-            RiscVExtensions formatRequirement = _format switch
+            RiscVExtensionInfo formatRequirement = _format switch
             {
                 RiscVFloatFormat.Single => RiscVExtensions.SingleFloatingPoint,
                 RiscVFloatFormat.Double => RiscVExtensions.DoubleFloatingPoint,
-                RiscVFloatFormat.Half => RiscVExtensions.HalfPrecisionFloatingPoint,
+                RiscVFloatFormat.Half => RiscVZExtensions.HalfPrecisionFloatingPoint,
                 RiscVFloatFormat.Quad => RiscVExtensions.QuadrupleFloatingPoint,
                 _ => ThrowHelper.ThrowArgumentException<RiscVExtensions>(),
             };
 
             // Cross-reference with the Configured extensions
-            if (!Config.VersionInfo.Extensions.Flags.HasFlag(formatRequirement))
+            if (!Config.VersionInfo.HasExtensions(formatRequirement))
             {
                 _logger?.Log(Severity.Error,
                     LogId.NotInVersion,

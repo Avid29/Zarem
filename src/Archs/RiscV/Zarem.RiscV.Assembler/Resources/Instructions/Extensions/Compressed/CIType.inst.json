@@ -63,7 +63,7 @@
     "comp_code": 2,
     "cfunct3": 1,
     "args": [ "frd", "comp_imm" ],
-    "extension": "C"
+    "extension": "CD"
   },
   {
     "type": "ci-type",
@@ -79,7 +79,7 @@
     "comp_code": 2,
     "cfunct3": 3,
     "args": [ "frd", "comp_imm" ],
-    "extension": "C",
+    "extension": "CF",
     "max_base": "RV32"
   },
   {

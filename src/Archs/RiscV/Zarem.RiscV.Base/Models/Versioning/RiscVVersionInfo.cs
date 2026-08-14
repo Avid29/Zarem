@@ -30,10 +30,19 @@ public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVVersionInfo"/> struct.
     /// </summary>
-    public RiscVVersionInfo(RiscVBaseVersion @base, RiscVExtensions extensions)
+    public RiscVVersionInfo(RiscVBaseVersion @base, RiscVExtensions extensions = RiscVExtensions.None, RiscVZExtensions zExtensions = RiscVZExtensions.None)
     {
         Base = @base;
-        Extensions = extensions | RiscVExtensions.Integers; // 'I' is always required
+        Extensions = new(extensions | RiscVExtensions.Integers, zExtensions); // 'I' is always required
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RiscVVersionInfo"/> struct.
+    /// </summary>
+    public RiscVVersionInfo(RiscVBaseVersion @base, RiscVExtensionInfo extensionInfo)
+    {
+        Base = @base;
+        Extensions = extensionInfo;
     }
 
     /// <summary>
@@ -55,6 +64,12 @@ public readonly partial struct RiscVVersionInfo : IParsable<RiscVVersionInfo>
     /// Gets the minor version number of the RISC-V specification.
     /// </summary>
     public byte SpecMinor { get; } = 0;
+
+    /// <summary>
+    /// Gets whether or not the desired extensions are a subset of the extensions present.
+    /// </summary>
+    public bool HasExtensions(RiscVExtensionInfo extensions) =>
+        Extensions.Contains(extensions);
 
     /// <inheritdoc/>
     public static RiscVVersionInfo Parse(string s, IFormatProvider? provider = null)

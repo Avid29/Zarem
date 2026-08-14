@@ -5,7 +5,7 @@
     "comp_code": 2,
     "cfunct3": 5,
     "args": [ "rs2", "comp_stack_store_offset" ],
-    "extension": "C"
+    "extension": "CD"
   },
   {
     "type": "css-type",
@@ -21,7 +21,7 @@
     "comp_code": 2,
     "cfunct3": 7,
     "args": [ "rs2", "comp_stack_store_offset" ],
-    "extension": "C",
+    "extension": "CF",
     "max_base": "RV32"
   },
   {

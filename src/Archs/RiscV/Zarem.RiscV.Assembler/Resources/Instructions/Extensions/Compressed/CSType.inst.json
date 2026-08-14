@@ -5,7 +5,7 @@
     "comp_code": 0,
     "cfunct3": 5,
     "args": [ "c_rs2", "comp_mem_dword" ],
-    "extension": "C"
+    "extension": "CD"
   },
   {
     "type": "cs-type",
@@ -21,7 +21,7 @@
     "comp_code": 0,
     "cfunct3": 7,
     "args": [ "c_rs2", "comp_mem_word" ],
-    "extension": "C",
+    "extension": "CF",
     "max_base": "RV32"
   },
   {

@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ModelingEvolution.JsonParsableConverter" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Zarem.Base\Zarem.Base.csproj" />
   </ItemGroup>
 

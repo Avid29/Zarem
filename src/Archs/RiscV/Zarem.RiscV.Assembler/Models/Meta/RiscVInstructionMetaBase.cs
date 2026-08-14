@@ -39,7 +39,7 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
     /// Gets the extension required to execute this instruction (e.g., M, A, F).
     /// </summary>
     [JsonPropertyName("extension")]
-    public RiscVExtensions Extension { get; init; } = RiscVExtensions.Integers;
+    public RiscVExtensionInfo Extension { get; init; } = RiscVExtensions.Integers;
 
     /// <summary>
     /// Gets the minimum base architecture width (32, 64, or 128).
@@ -104,7 +104,7 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
     public bool IsValidFor(RiscVVersionInfo config)
     {
         // Check if the required extension is enabled in the flags
-        if (!config.Extensions.Flags.HasFlag(Extension))
+        if (!config.HasExtensions(Extension))
             return false;
 
         // Check if the current CPU base width meets the minimum requirement
