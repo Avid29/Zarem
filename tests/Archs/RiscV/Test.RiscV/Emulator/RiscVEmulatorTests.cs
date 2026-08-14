@@ -70,7 +70,7 @@ public partial class RiscVEmulatorTests
         // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
         var tokenized = Tokenizer.TokenizeLine(@case.Input, RiscVTokenizerProfile.Default)[0];
         var table = new RiscVInstructionTable(new(config.VersionInfo));
-        var parser = new RiscVInstructionParser(new(), table, default, null, null);
+        var parser = new RiscVInstructionParser(new(config.VersionInfo), table, default, null, null);
         var parsed = parser.Parse(tokenized, out _);
         if (parsed is null)
             Assert.Fail();

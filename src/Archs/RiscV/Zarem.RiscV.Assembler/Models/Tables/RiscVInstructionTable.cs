@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Zarem.Models.Versioning;
 using Zarem.RiscV.Assembler.Models.Meta;
 using Zarem.RiscV.Models.Versioning.Enums;
 
@@ -13,7 +14,7 @@ namespace Zarem.RiscV.Assembler.Models.Tables;
 /// </summary>
 public class RiscVInstructionTable : RiscVInstructionTableBase<string>
 {
-    private readonly Dictionary<string, (RiscVBaseVersion Base, RiscVExtensions Extension)> _metadataLookup = [];
+    private readonly Dictionary<string, RiscVVersionInfo> _metadataLookup = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVInstructionTable"/> class.
@@ -29,7 +30,7 @@ public class RiscVInstructionTable : RiscVInstructionTableBase<string>
         string name,
         [NotNullWhen(true)] out List<RiscVInstructionMetaBase>? metadatas,
         out RiscVBaseVersion? requiredBase,
-        out RiscVExtensions? requiredExtension)
+        out RiscVExtensionInfo? requiredExtension)
     {
         requiredBase = null;
         requiredExtension = null;
@@ -42,8 +43,8 @@ public class RiscVInstructionTable : RiscVInstructionTableBase<string>
             if (Config.VersionInfo.Base < version.Base)
                 requiredBase = version.Base;
 
-            if (!Config.VersionInfo.Extensions.HasFlag(version.Extension))
-                requiredExtension = version.Extension;
+            if (!Config.VersionInfo.HasExtensions(version.Extensions))
+                requiredExtension = version.Extensions;
         }
 
         return false;
@@ -57,7 +58,7 @@ public class RiscVInstructionTable : RiscVInstructionTableBase<string>
         int argCount,
         [NotNullWhen(true)] out RiscVInstructionMetaBase? metadata,
         out RiscVBaseVersion? requiredBase,
-        out RiscVExtensions? requiredExtension)
+        out RiscVExtensionInfo? requiredExtension)
     {
         metadata = null;
         if (TryGetInstruction(name, out var metadatas, out requiredBase, out requiredExtension))
@@ -77,6 +78,6 @@ public class RiscVInstructionTable : RiscVInstructionTableBase<string>
             LoadInstruction(metadata.Name, metadata);
 
         // Track metadata for diagnostics even if currently disabled
-        _metadataLookup[metadata.Name] = (metadata.MinBase, metadata.Extension);
+        _metadataLookup[metadata.Name] = new(metadata.MinBase, metadata.Extension);
     }
 }

@@ -9,6 +9,7 @@ using Zarem.Assembler;
 using Zarem.Assembler.Models.Tables;
 using Zarem.Models.Versioning;
 using Zarem.RiscV.Assembler.Models.Meta;
+using Zarem.RiscV.Assembler.Models.Meta.Extensions;
 using Zarem.RiscV.Assembler.Models.Tables;
 using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions.Enums;
@@ -66,4 +67,6 @@ public class RiscVInstructionParserTestDataSource : InstructionParserTestDataSou
             yield return [$"{line}"];
         }
     }
+
+    private static string GetRegisterString(RiscVGpRegister register, RiscVRegisterSet set) => $"{RegisterTable<RiscVGpRegister, RiscVRegisterSet>.GetRegisterString(register, set)}";
 }

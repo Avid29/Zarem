@@ -4,7 +4,9 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Zarem.Extensions.System;
 using Zarem.Models.Enums;
+using Zarem.Models.Interface;
 using Zarem.Models.Tables;
 
 namespace Zarem.Assembler.Models;
@@ -14,7 +16,7 @@ namespace Zarem.Assembler.Models;
 /// </summary>
 /// <typeparam name="TRaw"></typeparam>
 public class ParsedInstructionBase<TRaw> : IParsedInstruction
-    where TRaw : struct
+    where TRaw : unmanaged, IInstruction
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ParsedInstructionBase{TRaw}"/> class.
@@ -51,21 +53,26 @@ public class ParsedInstructionBase<TRaw> : IParsedInstruction
     /// <inheritdoc/>
     public byte[] RealizeBytes()
     {
-        byte[] bytes = new byte[Instructions.Length * sizeof(uint)];
+        // Scan to find realized size
+        int size = 0;
+        foreach (var inst in Instructions)
+            size += inst.Length;
+
+        // Allocate buffer
+        byte[] bytes = new byte[size];
         Span<byte> destination = bytes;
 
+        // Write instructions to the buffer
+        int offset = 0;
         for (int i = 0; i < Instructions.Length; i++)
         {
-            // TODO: Handle instructions of different sizes (e.g. 16-bit compressed instructions in RISC-V).
-            var raw = Unsafe.As<TRaw, uint>(ref Instructions[i]);
-            if (Endianness is Endianness.Little)
-            {
-                BinaryPrimitives.WriteUInt32LittleEndian(destination[(i * 4)..], raw);
-            }
-            else
-            {
-                BinaryPrimitives.WriteUInt32BigEndian(destination[(i * 4)..], raw);
-            }
+            // Get the instruction and its length
+            var instruction = Instructions[i];
+            int length = instruction.Length;
+
+            // Append the instruction and increment the offset
+            destination[offset..].WriteEndianness(length, instruction, Endianness is Endianness.Little);
+            offset += length;
         }
 
         return bytes;

@@ -1,0 +1,58 @@
+[
+  {
+    "type": "ca-type",
+    "name": "c.sub",
+    "comp_code": 1,
+    "cfunct6": 35,
+    "cfunct2": 0,
+    "args": [ "c_rdrs1", "c_rs2" ],
+    "extension": "C"
+  },
+  {
+    "type": "ca-type",
+    "name": "c.xor",
+    "comp_code": 1,
+    "cfunct6": 35,
+    "cfunct2": 1,
+    "args": [ "c_rdrs1", "c_rs2" ],
+    "extension": "C"
+  },
+  {
+    "type": "ca-type",
+    "name": "c.or",
+    "comp_code": 1,
+    "cfunct6": 35,
+    "cfunct2": 2,
+    "args": [ "c_rdrs1", "c_rs2" ],
+    "extension": "C"
+  },
+  {
+    "type": "ca-type",
+    "name": "c.and",
+    "comp_code": 1,
+    "cfunct6": 35,
+    "cfunct2": 3,
+    "args": [ "c_rdrs1", "c_rs2" ],
+    "extension": "C"
+  },
+  {
+    "type": "ca-type",
+    "name": "c.subw",
+    "comp_code": 1,
+    "cfunct6": 39,
+    "cfunct2": 0,
+    "args": [ "c_rdrs1", "c_rs2" ],
+    "extension": "C",
+    "min_base": "RV64"
+  },
+  {
+    "type": "ca-type",
+    "name": "c.addw",
+    "comp_code": 1,
+    "cfunct6": 39,
+    "cfunct2": 1,
+    "args": [ "c_rdrs1", "c_rs2" ],
+    "extension": "C",
+    "min_base": "RV64"
+  }
+]

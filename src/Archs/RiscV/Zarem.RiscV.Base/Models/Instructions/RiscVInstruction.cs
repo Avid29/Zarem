@@ -3,6 +3,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Helpers;
+using Zarem.Models.Interface;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
@@ -13,14 +14,16 @@ namespace Zarem.RiscV.Models.Instructions;
 /// A struct representing a RISC-V instruction.
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 4)]
-public struct RiscVInstruction
+public unsafe struct RiscVInstruction : IInstruction
 {
     // Opcodes are 7 bits, Registers are 5 bits.
+    private const int COMPCODE_BIT_SIZE = 2;
     private const int OPCODE_BIT_SIZE = 7;
     private const int REG_BIT_SIZE = 5;
     private const int FUNCT3_BIT_SIZE = 3;
     private const int FUNCT7_BIT_SIZE = 7;
 
+    private const int COMPCODE_OFFSET = 0;
     private const int OPCODE_OFFSET = 0;
     private const int RD_OFFSET = 7;
     private const int FUNCT3_OFFSET = 12;
@@ -116,6 +119,15 @@ public struct RiscVInstruction
             RD = rd,
             JumpOffset = offset
         };
+    }
+
+    /// <summary>
+    /// Gets or sets the instruction's compression code.
+    /// </summary>
+    public RiscVCompressionCode CompressionCode
+    {
+        readonly get => (RiscVCompressionCode)BitField.GetField(_inst, COMPCODE_BIT_SIZE, COMPCODE_OFFSET);
+        set => BitField.SetField(ref _inst, COMPCODE_BIT_SIZE, COMPCODE_OFFSET, (byte)value);
     }
 
     /// <summary>
@@ -274,6 +286,14 @@ public struct RiscVInstruction
             BitField.SetField(ref _inst, 1, 31, (val >> 20) & 0x1);    // bit 20
         }
     }
+
+    /// <summary>
+    /// Gets whether or not the instruction is a compressed instruction.
+    /// </summary>
+    public readonly bool IsCompressed => CompressionCode is not RiscVCompressionCode.Uncompressed;
+
+    /// <inheritdoc/>
+    public readonly int Length => IsCompressed ? sizeof(RiscVCompressedInstruction) : sizeof(RiscVInstruction);
 
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="RiscVInstruction"/>.

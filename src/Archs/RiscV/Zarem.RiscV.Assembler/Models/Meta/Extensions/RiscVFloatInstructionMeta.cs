@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
 
-namespace Zarem.RiscV.Assembler.Models.Meta;
+namespace Zarem.RiscV.Assembler.Models.Meta.Extensions;
 
 /// <summary>
 /// Instruction metadata for parsing RISC-V floating-Point instructions.

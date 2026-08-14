@@ -147,4 +147,28 @@
   <data name="EncodingPattern/RTypeFpInstructions" xml:space="preserve">
     <value>פקודות מסוג אוגר נקודה צפה</value>
   </data>
+  <data name="EncodingPattern/CRTypeInstructions" xml:space="preserve">
+    <value>Compressed Register (CR) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/CITypeInstructions" xml:space="preserve">
+    <value>Compressed Immediate (CI) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/CSSTypeInstructions" xml:space="preserve">
+    <value>Compressed Stack Relative Store (CSS) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/CIWTypeInstructions" xml:space="preserve">
+    <value>Compressed Wide Immediate (CWI) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/CLTypeInstructions" xml:space="preserve">
+    <value>Compressed Load (CL) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/CSTypeInstructions" xml:space="preserve">
+    <value>Compressed Store (CS) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/CBTypeInstructions" xml:space="preserve">
+    <value>Compressed Branch (CB) Type Instructions</value>
+  </data>
+  <data name="EncodingPattern/CJTypeInstructions" xml:space="preserve">
+    <value>Compressed Jump (CJ) Type Instructions</value>
+  </data>
 </root>

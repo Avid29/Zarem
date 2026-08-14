@@ -11,6 +11,7 @@ using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
 using Zarem.Mips.Helpers.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Models.Interface;
 
 namespace Zarem.Mips.Models.Instructions;
 
@@ -203,7 +204,7 @@ namespace Zarem.Mips.Models.Instructions;
 /// </summary>
 [DebuggerDisplay("{Disassembled}")]
 [StructLayout(LayoutKind.Explicit, Size = 4)]
-public struct MipsInstruction
+public unsafe struct MipsInstruction : IInstruction
 {
     // Universal
     private const int OPCODE_BIT_SIZE = 6;
@@ -351,7 +352,7 @@ public struct MipsInstruction
         readonly get => (MipsGpRegister)BitField.GetField(_inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET);
         set => BitField.SetField(ref _inst, REGISTER_BIT_SIZE, RS_BIT_OFFSET, (uint)value);
     }
-    
+
     /// <summary>
     /// Gets the instruction's RT Register 
     /// </summary>
@@ -464,15 +465,18 @@ public struct MipsInstruction
         readonly get => BitField.GetField(_inst, ADDRESS_BIT_SIZE, ADDRESS_BIT_OFFSET) << 2;
         set => BitField.SetField(ref _inst, ADDRESS_BIT_SIZE, ADDRESS_BIT_OFFSET, value >> 2);
     }
-    
-    #if DEBUG
+
+    /// <inheritdoc/>
+    public readonly int Length => sizeof(MipsInstruction);
+
+#if DEBUG
 
     /// <summary>
     /// Gets the instruction disassembled as assembly code.
     /// </summary>
     public readonly string Disassembled => ServiceCollection.DisassemblerService?.Disassemble(this) ?? "No disassembler provided";
 
-    #endif
+#endif
 
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="MipsInstruction"/>.
