@@ -186,7 +186,7 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         yield return [new RiscVEmulatorTestCase<T>(config, "ecall", RiscVTrap.EnvironmentCallFromUMode)];
         yield return [new RiscVEmulatorTestCase<T>(config, "ebreak", RiscVTrap.Breakpoint)];
     }
-    
+
     private static IEnumerable<object[]> GetFloatArithmeticInstructionTests<T>(RiscVEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
@@ -226,9 +226,22 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         if (!config.VersionInfo.HasExtensions(RiscVExtensions.Compressed))
             yield break;
 
-        // Q0
+        // Q0 RVC
         yield return [new RiscVEmulatorTestCase<T>(config, "c.addi4spn a0, 12", T.CreateTruncating(12))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.lw a0, 8(a5)", T.CreateTruncating(0x7856_3412))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.sw a4, 8(a5)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0xab, 0x89]))];
+
+        // Q1 RVC
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.addi s0, 1", RiscVGpRegister.Saved0, T.CreateTruncating(2))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.li a0, 17", T.CreateTruncating(17))];
+        // TODO: c.addi16sp, c.lui
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.beqz a3, 80") { ExpectedPC = T.CreateTruncating(80) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.bnez a2, 80") { ExpectedPC = T.CreateTruncating(80) }];
+        // TODO: srli, srai, andi
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.sub s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 - 1))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.xor s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 ^ 1))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.or s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 | 1))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.and s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 & 1))];
     }
 }

@@ -144,18 +144,20 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
 
     private RiscVTrap Execute(RiscVInstruction instruction, out RiscVExecution<T> execution)
     {
+        execution = default;
+
         if (instruction.IsCompressed)
         {
             if (_decompressor is null)
             {
                 // If the decompressor is null, the compressed extension is not present and
                 // therefore this opcode is invalid to the current CPU
-                execution = default;
                 return RiscVTrap.IllegalInstruction;
             }
 
-            // Decompress the instruction
-            instruction = _decompressor.Decompress((RiscVCompressedInstruction)instruction);
+            // Attempt to decompress the instruction, if the decompressor failed, it's an illegal instruction
+            if (!_decompressor.Decompress((RiscVCompressedInstruction)instruction, out instruction))
+                return RiscVTrap.IllegalInstruction;
         }
 
         return _instructionServiceTable.Execute(instruction, out execution);
