@@ -16,15 +16,15 @@ using Zarem.RiscV.Models.Versioning.Enums;
 namespace Test.RiscV.Emulator;
 
 [AttributeUsage(AttributeTargets.Method)]
-public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVEmulatorConfig>
+public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttribute<RiscVEmulatorTestCase, RiscVEmulatorConfig>
 {
-    public const uint K0 = RiscVExecutionTests.K0;
-    public const uint K1 = RiscVExecutionTests.K1;
+    public const uint S8 = RiscVEmulatorTests.S8;
+    public const uint S9 = RiscVEmulatorTests.S9;
 
     private readonly RiscVVersionInfo _versionInfo;
     private readonly ExecutionMode _mode;
 
-    public RiscVInstructionSourceAttribute(string versionStr, ExecutionMode mode)
+    public RiscVEmulatorTestDataSourceAttribute(string versionStr, ExecutionMode mode)
     {
         _versionInfo = RiscVVersionInfo.Parse(versionStr);
         _mode = mode;
@@ -46,20 +46,6 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         };
     }
 
-    public override string? GetDisplayName(MethodInfo methodInfo, object?[]? data)
-    {
-        var obj = data?[0];
-        if (obj is null)
-        {
-            return string.Empty;
-        }
-
-        dynamic run = obj;
-        var str = $"{run?.Input}"; // Short name since the method name handles the context
-
-        return str;
-    }
-
     private static IEnumerable<object[]> GetVersionTests<T, TSigned, TLong>(RiscVEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
         where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
@@ -71,7 +57,8 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
             .Concat(GetJumpBranchInstructionTests<T>(config))
             .Concat(GetMemoryInstructionTests<T>(config))
             .Concat(GetSystemInstructionTests<T>(config))
-            .Concat(GetFloatArithmeticInstructionTests<T>(config));
+            .Concat(GetFloatArithmeticInstructionTests<T>(config))
+            .Concat(GetCompressedInstructionTests<T>(config));
     }
 
     private static IEnumerable<object[]> GetArithmeticInstructionTests<T, TSigned>(RiscVEmulatorConfig config)
@@ -123,7 +110,7 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
         where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>, IMinMaxValue<TLong>
     {
-        if (!config.VersionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
+        if (!config.VersionInfo.HasExtensions(RiscVExtensions.Multiplication))
             yield break;
 
         // Without signs
@@ -149,12 +136,12 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
     private static IEnumerable<object[]> GetLogicalInstructionTests<T>(RiscVEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
-        yield return [new RiscVEmulatorTestCase<T>(config, "and a0, s8, s9", T.CreateTruncating(K0 & K1))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "andi a0, s8, 0x516", T.CreateTruncating(K0 & K1))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "or a0, s8, s9", T.CreateTruncating(K0 | K1))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "ori a0, s8, 0x516", T.CreateTruncating(K0 | K1))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "xor a0, s8, s9", T.CreateTruncating(K0 ^ K1))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "xori a0, s8, 0x516", T.CreateTruncating(K0 ^ K1))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "and a0, s8, s9", T.CreateTruncating(S8 & S9))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "andi a0, s8, 0x516", T.CreateTruncating(S8 & S9))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "or a0, s8, s9", T.CreateTruncating(S8 | S9))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "ori a0, s8, 0x516", T.CreateTruncating(S8 | S9))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "xor a0, s8, s9", T.CreateTruncating(S8 ^ S9))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "xori a0, s8, 0x516", T.CreateTruncating(S8 ^ S9))];
         yield return [new RiscVEmulatorTestCase<T>(config, "sll a0, s6, s3", T.CreateTruncating(101 << 4))];
         yield return [new RiscVEmulatorTestCase<T>(config, "slli a0, s6, 4", T.CreateTruncating(101 << 4))];
         yield return [new RiscVEmulatorTestCase<T>(config, "srl a0, s6, s3", T.CreateTruncating(101 >> 4))];
@@ -180,16 +167,16 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // Load
-        yield return [new RiscVEmulatorTestCase<T>(config, "lb a0, 0x100(zero)", T.CreateTruncating(0x12))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "lh a0, 0x100(zero)", T.CreateTruncating(0x3412))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "lw a0, 0x100(zero)", T.CreateTruncating(0x7856_3412))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "lb a0, 8(a5)", T.CreateTruncating(0x12))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "lh a0, 8(a5)", T.CreateTruncating(0x3412))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "lw a0, 8(a5)", T.CreateTruncating(0x7856_3412))];
 
         // TODO: Load unsigned/signed with sign
 
         // Store
-        yield return [new RiscVEmulatorTestCase<T>(config, "sb s7, 0x100(zero)", (T.CreateTruncating(0x100), [0xef, 0x34, 0x56, 0x78]))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "sh s7, 0x100(zero)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0x56, 0x78]))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "sw s7, 0x100(zero)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0xab, 0x89]))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "sb a4, 8(a5)", (T.CreateTruncating(0x100), [0xef, 0x34, 0x56, 0x78]))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "sh a4, 8(a5)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0x56, 0x78]))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "sw a4, 8(a5)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0xab, 0x89]))];
     }
 
     private static IEnumerable<object[]> GetSystemInstructionTests<T>(RiscVEmulatorConfig config)
@@ -199,37 +186,71 @@ public class RiscVInstructionSourceAttribute : InstructionSourceAttribute<RiscVE
         yield return [new RiscVEmulatorTestCase<T>(config, "ecall", RiscVTrap.EnvironmentCallFromUMode)];
         yield return [new RiscVEmulatorTestCase<T>(config, "ebreak", RiscVTrap.Breakpoint)];
     }
-    
+
     private static IEnumerable<object[]> GetFloatArithmeticInstructionTests<T>(RiscVEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         unchecked
         {
-            if (config.VersionInfo.Extensions.HasFlag(RiscVExtensions.SingleFloatingPoint))
-            {
-                // Arithmetic
-                yield return [new RiscVEmulatorTestCase<T>(config, "fadd.S fa0, fs0, fs1", 10.5f + 2.5f)];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fsub.S fa0, fs0, fs1", 10.5f - 2.5f)];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fmul.S fa0, fs0, fs1", 10.5f * 2.5f)];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fdiv.S fa0, fs0, fs1", 10.5f / 2.5f)];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fmin.S fa0, fs0, fs1", 2.5f)];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fmax.S fa0, fs0, fs1", 10.5f)];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fsqrt.S fa0, fs0", MathF.Sqrt(10.5f))];
+            if (!config.VersionInfo.HasExtensions(RiscVExtensions.SingleFloatingPoint))
+                yield break;
 
-                // Compare
-                yield return [new RiscVEmulatorTestCase<T>(config, "flt.S a0, fs0, fs1", T.CreateTruncating(0))];
-                yield return [new RiscVEmulatorTestCase<T>(config, "flt.S a0, fs0, fs0", T.CreateTruncating(0))];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fle.S a0, fs0, fs1", T.CreateTruncating(0))];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fle.S a0, fs0, fs0", T.CreateTruncating(1))];
-                yield return [new RiscVEmulatorTestCase<T>(config, "feq.S a0, fs0, fs1", T.CreateTruncating(0))];
-                yield return [new RiscVEmulatorTestCase<T>(config, "feq.S a0, fs0, fs0", T.CreateTruncating(1))];
-                
-                // Convert
-                yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.S.W fa0, t1", 20f)];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.S.WU fa0, t5", (uint)-20)];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.W.S a0, ft3", T.CreateTruncating(-10))];
-                yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.WU.S a0, ft2", T.CreateTruncating(10))];
-            }
+            // Arithmetic
+            yield return [new RiscVEmulatorTestCase<T>(config, "fadd.S fa0, fs0, fs1", 10.5f + 2.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fsub.S fa0, fs0, fs1", 10.5f - 2.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fmul.S fa0, fs0, fs1", 10.5f * 2.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fdiv.S fa0, fs0, fs1", 10.5f / 2.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fmin.S fa0, fs0, fs1", 2.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fmax.S fa0, fs0, fs1", 10.5f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fsqrt.S fa0, fs0", MathF.Sqrt(10.5f))];
+
+            // Compare
+            yield return [new RiscVEmulatorTestCase<T>(config, "flt.S a0, fs0, fs1", T.CreateTruncating(0))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "flt.S a0, fs0, fs0", T.CreateTruncating(0))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fle.S a0, fs0, fs1", T.CreateTruncating(0))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fle.S a0, fs0, fs0", T.CreateTruncating(1))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "feq.S a0, fs0, fs1", T.CreateTruncating(0))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "feq.S a0, fs0, fs0", T.CreateTruncating(1))];
+
+            // Convert
+            yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.S.W fa0, t1", 20f)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.S.WU fa0, t5", (uint)-20)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.W.S a0, ft3", T.CreateTruncating(-10))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.WU.S a0, ft2", T.CreateTruncating(10))];
+        }
+    }
+
+    private static IEnumerable<object[]> GetCompressedInstructionTests<T>(RiscVEmulatorConfig config)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        if (!config.VersionInfo.HasExtensions(RiscVExtensions.Compressed))
+            yield break;
+
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.addi4spn a0, 12", T.CreateTruncating(12))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.lw a0, 8(a5)", T.CreateTruncating(0x7856_3412))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.sw a4, 8(a5)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0xab, 0x89]))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.addi s0, 1", RiscVGpRegister.Saved0, T.CreateTruncating(2))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.li a0, 17", T.CreateTruncating(17))];
+        // TODO: c.addi16sp, c.lui
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.beqz a3, 80") { ExpectedPC = T.CreateTruncating(80) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.bnez a2, 80") { ExpectedPC = T.CreateTruncating(80) }];
+        // TODO: c. srli, c.srai, c.andi
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.sub s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 - 1))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.xor s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 ^ 1))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.or s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 | 1))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.and s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 & 1))];
+        // TODO: c.slli, c.lwsp, c.swsp
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.jr t3") { ExpectedPC = T.CreateTruncating(40) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.mv a0, s8", T.CreateTruncating(S8))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.ebreak", RiscVTrap.Breakpoint)];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.jalr t3", RiscVGpRegister.ReturnAddress, T.CreateTruncating(2)) { ExpectedPC = T.CreateTruncating(40) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.add t1, t0", RiscVGpRegister.Temporary1, T.CreateTruncating(20 + 10))];
+
+        // RV32C
+        if (config.VersionInfo.Base is RiscVBaseVersion.RV32)
+        {
+            yield return [new RiscVEmulatorTestCase<T>(config, "c.jal 1000", RiscVGpRegister.ReturnAddress, T.CreateTruncating(2)) { ExpectedPC = T.CreateTruncating(1000) }];
         }
     }
 }

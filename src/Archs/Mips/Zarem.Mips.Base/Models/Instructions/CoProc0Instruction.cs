@@ -6,6 +6,7 @@ using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
 using Zarem.Mips.Models.Instructions.Enums.Functions;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Models.Interface;
 
 namespace Zarem.Mips.Models.Instructions;
 
@@ -139,7 +140,7 @@ namespace Zarem.Mips.Models.Instructions;
 /// A struct representing an instruction utilizing coprocessor0.
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 4)]
-public partial struct CoProc0Instruction
+public unsafe partial struct CoProc0Instruction : IInstruction
 {
     [FieldOffset(0)]
     private MipsInstruction _inst;
@@ -248,6 +249,9 @@ public partial struct CoProc0Instruction
         readonly get => (MFMC0FuncCode)_inst.FuncCode;
         internal set => _inst.FuncCode = (FunctionCode)value;
     }
+
+    /// <inheritdoc/>
+    public readonly int Length => ((MipsInstruction)this).Length;
 
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="CoProc0Instruction"/>.

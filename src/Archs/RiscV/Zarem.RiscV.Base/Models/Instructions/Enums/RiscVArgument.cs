@@ -76,17 +76,80 @@ public enum RiscVArgument : byte
     Csr,      // 12-bit CSR address
     
     [JsonStringEnumMemberName("csri")]
-    [ImmediateArgument<RiscVReferenceType>("immediate", 5, false, ShiftAmount = 1)]
+    [ImmediateArgument<RiscVReferenceType>("immediate", 5, false)]
     UImm5,    // 5-bit immediate for CSRI
 
     // Memory syntax (e.g., 8(sp))
     [JsonStringEnumMemberName("mem_load")]
     [SplitArgument<RiscVArgument>("offset(rs1)", RS1, Immediate)]
-    MemoryLoad,    // This would be a combination of Immediate + RS1
+    MemoryLoadPair,    // This would be a combination of Immediate + RS1
     
     [JsonStringEnumMemberName("mem_store")]
     [SplitArgument<RiscVArgument>("offset(rs1)", RS1, StoreOffset)]
-    MemoryStore    // This would be a combination of StoreOffset + RS1
+    MemoryStorePair,   // This would be a combination of StoreOffset + RS1
+
+    #region Compressed Instruction Arguments
+
+    // Compressed/Combined Registers
+    [JsonStringEnumMemberName("rdrs1")]
+    [RegisterArgument<RiscVRegisterSet>("rd/rs1", RiscVRegisterSet.GeneralPurpose)]
+    RDRS1,
+
+    [JsonStringEnumMemberName("c_rd")]
+    [RegisterArgument<RiscVRegisterSet>("rd`", RiscVRegisterSet.CompressedGeneralPurpose)]
+    CompressedRD,
+
+    [JsonStringEnumMemberName("c_rs1")]
+    [RegisterArgument<RiscVRegisterSet>("rs1`", RiscVRegisterSet.CompressedGeneralPurpose)]
+    CompressedRS1,
+
+    [JsonStringEnumMemberName("c_rs2")]
+    [RegisterArgument<RiscVRegisterSet>("rs2`", RiscVRegisterSet.CompressedGeneralPurpose)]
+    CompressedRS2,
+
+    [JsonStringEnumMemberName("c_rdrs1")]
+    [RegisterArgument<RiscVRegisterSet>("rd`/rs1`", RiscVRegisterSet.CompressedGeneralPurpose)]
+    CompressedRDRS1,
+
+    // Compressed Immediates
+    [JsonStringEnumMemberName("comp_imm")]
+    [ImmediateArgument<RiscVReferenceType>("immediate", 6, true)]
+    CompressedImmediate,
+
+    [JsonStringEnumMemberName("comp_branch_offset")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 8, true, ShiftAmount = 1)]
+    CompressedBranchOffset,
+
+    [JsonStringEnumMemberName("comp_stack_store_offset")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 6, false, ShiftAmount = 2)]
+    CompressedStackStoreOffset,
+
+    [JsonStringEnumMemberName("comp_stack_offset")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 8, false, ShiftAmount = 2)]
+    CompressedStackOffset,
+
+    [JsonStringEnumMemberName("comp_jump_offset")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 11, true, ShiftAmount = 1)]
+    CompressedJumpOffset,
+
+    [JsonStringEnumMemberName("comp_load_store_offset")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 5, false, ShiftAmount = 2)]
+    CompressedMemoryOffsetWord,
+
+    [JsonStringEnumMemberName("comp_load_store_offset_d")]
+    [ImmediateArgument<RiscVReferenceType>("offset", 5, false, ShiftAmount = 3)]
+    CompressedMemoryOffsetDoubleWord,
+
+    // Memory syntax (e.g., 8(sp))
+    [JsonStringEnumMemberName("comp_mem_word")]
+    [SplitArgument<RiscVArgument>("offset(rs1)", CompressedRS1, CompressedMemoryOffsetWord)]
+    CompressedMemoryWordPair,
+    
+    [JsonStringEnumMemberName("comp_mem_dword")]
+    [SplitArgument<RiscVArgument>("offset(rs1)", CompressedRS1, CompressedMemoryOffsetDoubleWord)]
+    CompressedMemoryDoubleWordPair,
+
+    #endregion
 
 #pragma warning restore CS1591
 }

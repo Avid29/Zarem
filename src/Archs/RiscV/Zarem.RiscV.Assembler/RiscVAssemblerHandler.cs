@@ -59,7 +59,7 @@ public class RiscVAssemblerHandler : IAssemblerHandler<RiscVAssemblerConfig>
         }
 
         // Instruction not found.
-        // Add a nop and less the second pass handle the error
+        // Add a nop and let the second pass handle the error
         return 4;
     }
 

@@ -27,8 +27,9 @@ public enum RiscVRegisterSet
 
 #pragma warning disable CS1591
 
-    [RegisterSet("x{0}", typeof(RiscVGpRegister), @"^x([0-9]+)$")] GeneralPurpose,
-    [RegisterSet("f{0}", typeof(RiscVFloatRegister), @"^f([0-9]+)$")] FloatingPoints,
+    [RegisterSet("x{0}", 32, typeof(RiscVGpRegister), @"^x([0-9]+)$")] GeneralPurpose,
+    [RegisterSet("x{0}", 8, typeof(RiscVCompressedGpRegister), @"^x([0-9]+)$")] CompressedGeneralPurpose,
+    [RegisterSet("f{0}", 32, typeof(RiscVFloatRegister), @"^f([0-9]+)$")] FloatingPoints,
 
 #pragma warning restore CS1591
 }

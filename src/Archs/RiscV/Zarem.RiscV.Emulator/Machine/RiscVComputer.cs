@@ -48,11 +48,11 @@ public sealed class RiscVComputer : ComputerBase
         var extensions = Config.VersionInfo.Extensions;
         var floatType = typeof(byte); // Sentinel type meaning no float extension
 
-        if (extensions.HasFlag(RiscVExtensions.QuadrupleFloatingPoint)) floatType = typeof(UInt128);
-        else if (extensions.HasFlag(RiscVExtensions.DoubleFloatingPoint)) floatType = typeof(ulong);
-        else if (extensions.HasFlag(RiscVExtensions.SingleFloatingPoint)) floatType = typeof(uint);
+        if (extensions.Contains(RiscVExtensions.QuadrupleFloatingPoint)) floatType = typeof(UInt128);
+        else if (extensions.Contains(RiscVExtensions.DoubleFloatingPoint)) floatType = typeof(ulong);
+        else if (extensions.Contains(RiscVExtensions.SingleFloatingPoint)) floatType = typeof(uint);
         // Half should not be possible, since it should always require single. Best to be careful though
-        else if (extensions.HasFlag(RiscVExtensions.HalfPrecisionFloatingPoint)) floatType = typeof(ushort);
+        else if (extensions.Contains(RiscVZExtensions.HalfPrecisionFloatingPoint)) floatType = typeof(ushort);
 
         // Determine the CPU implementation type
         var cpuType = config.ExecutionMode switch

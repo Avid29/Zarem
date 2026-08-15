@@ -14,8 +14,11 @@ using Zarem.Assembler.Tokenization.Models;
 using Zarem.Assembler.Tokenization.Profiles;
 using Zarem.Models;
 using Zarem.Models.Tables;
+using Zarem.Models.Versioning;
 using Zarem.RiscV.Assembler.Logger;
 using Zarem.RiscV.Assembler.Models.Meta;
+using Zarem.RiscV.Assembler.Models.Meta.Extensions;
+using Zarem.RiscV.Assembler.Models.Meta.Extensions.Compressed;
 using Zarem.RiscV.Assembler.Models.Tables;
 using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions;
@@ -37,7 +40,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
 
     private RiscVFloatFormat _format;
     private RiscVRoundingMode _roundingMode;
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVInstructionParser"/> struct.
@@ -116,17 +118,17 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
         if (Meta is RiscVFloatInstructionMeta fMeta)
         {
             // Determine required extension based on the parsed format (.s, .d, .h, .q)
-            RiscVExtensions formatRequirement = _format switch
+            RiscVExtensionInfo formatRequirement = _format switch
             {
                 RiscVFloatFormat.Single => RiscVExtensions.SingleFloatingPoint,
                 RiscVFloatFormat.Double => RiscVExtensions.DoubleFloatingPoint,
-                RiscVFloatFormat.Half => RiscVExtensions.HalfPrecisionFloatingPoint,
+                RiscVFloatFormat.Half => RiscVZExtensions.HalfPrecisionFloatingPoint,
                 RiscVFloatFormat.Quad => RiscVExtensions.QuadrupleFloatingPoint,
                 _ => ThrowHelper.ThrowArgumentException<RiscVExtensions>(),
             };
 
             // Cross-reference with the Configured extensions
-            if (!Config.VersionInfo.Extensions.HasFlag(formatRequirement))
+            if (!Config.VersionInfo.HasExtensions(formatRequirement))
             {
                 _logger?.Log(Severity.Error,
                     LogId.NotInVersion,
@@ -153,30 +155,40 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     {
         Guard.IsNotNull(Meta);
 
-        var rd = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RD, RiscVArgument.FRD);
-        var rs1 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS1, RiscVArgument.FRS1);
-        var rs2 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS2, RiscVArgument.FRS2);
+        var rd = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RD, RiscVArgument.FRD, RiscVArgument.RDRS1, RiscVArgument.CompressedRD, RiscVArgument.CompressedRDRS1);
+        var rs1 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS1, RiscVArgument.FRS1, RiscVArgument.RDRS1, RiscVArgument.CompressedRS1, RiscVArgument.CompressedRDRS1);
+        var rs2 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS2, RiscVArgument.FRS2, RiscVArgument.CompressedRS2);
         var rs3 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.FRS3);
 
         return Meta switch
         {
-            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, rd, rs1, rs2),
-            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, rd, rs1, (short)Immediate),
-            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, rd, Immediate),
             BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, rs1, rs2, Immediate),
-            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, rs1, rs2, (short)Immediate),
+            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, rd, rs1, (short)Immediate),
             JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, rd, Immediate),
+            RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, rd, rs1, rs2),
+            STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, rs1, rs2, (short)Immediate),
+            UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, rd, Immediate),
+            CATypeInstructionMeta ca => RiscVCompressedInstruction.CreateCA(ca.CompressionCode, ca.CFunct6, ca.CFunct2, rs1, rs2),
+            CBATypeInstructionMeta cba => RiscVCompressedInstruction.CreateCBA(cba.CompressionCode, cba.CFunct3, cba.CFunct2, rs1, (short)Immediate),
+            CBTypeInstructionMeta cb => RiscVCompressedInstruction.CreateCB(cb.CompressionCode, cb.CFunct3, rs1, (short)Immediate),
+            CITypeInstructionMeta ci => RiscVCompressedInstruction.CreateCI(ci.CompressionCode, ci.CFunct3, rd, (sbyte)Immediate),
+            CIWTypeInstructionMeta ciw => RiscVCompressedInstruction.CreateCIW(ciw.CompressionCode, ciw.CFunct3, rd, (ushort)Immediate),
+            CJTypeInstructionMeta cj => RiscVCompressedInstruction.CreateCJ(cj.CompressionCode, cj.CFunct3, (short)Immediate),
+            CLTypeInstructionMeta cl => RiscVCompressedInstruction.CreateCL(cl.CompressionCode, cl.CFunct3, rd, rs1, (byte)Immediate),
+            CRTypeInstructionMeta cr => RiscVCompressedInstruction.CreateCR(cr.CompressionCode, cr.CFunct4, rd, rs2),
+            CSSTypeInstructionMeta css => RiscVCompressedInstruction.CreateCSS(css.CompressionCode, css.CFunct3, rs2, (byte)Immediate),
+            CSTypeInstructionMeta cs => RiscVCompressedInstruction.CreateCS(cs.CompressionCode, cs.CFunct3, rs1, rs2, (byte)Immediate),
             RiscVFloatInstructionMeta f => (f.Funct5.HasValue, f.Funct3.HasValue) switch
             {
                 // Triple Source reg with rounding mode
                 (false, false) => RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, _roundingMode),
-                
+
                 // Triple source reg without rounding mode
                 (false, true) => RiscVFloatInstruction.Create(f.OpCode, _format, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, (RiscVFloatRegister)rs3, f.Funct3!.Value),
-                
+
                 // Double source reg with rounding mode
                 (true, false) => RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5!.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, _roundingMode),
-                
+
                 // Double source reg without rounding mode
                 (true, true) => RiscVFloatInstruction.Create(f.OpCode, _format, f.Funct5!.Value, (RiscVFloatRegister)rd, (RiscVFloatRegister)rs1, (RiscVFloatRegister)rs2, f.Funct3!.Value),
             },

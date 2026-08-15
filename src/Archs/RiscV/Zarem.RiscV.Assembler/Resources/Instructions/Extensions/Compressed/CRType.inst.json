@@ -1,0 +1,42 @@
+[
+  {
+    "type": "cr-type",
+    "name": "c.jr",
+    "comp_code": 2,
+    "cfunct4": 8,
+    "args": [ "rdrs1" ],
+    "extension": "C"
+  },
+  {
+    "type": "cr-type",
+    "name": "c.mv",
+    "comp_code": 2,
+    "cfunct4": 8,
+    "args": [ "rdrs1", "rs2" ],
+    "extension": "C"
+  },
+  {
+    "type": "cr-type",
+    "name": "c.ebreak",
+    "comp_code": 2,
+    "cfunct4": 9,
+    "args": [],
+    "extension": "C"
+  },
+  {
+    "type": "cr-type",
+    "name": "c.jalr",
+    "comp_code": 2,
+    "cfunct4": 9,
+    "args": [ "rdrs1" ],
+    "extension": "C"
+  },
+  {
+    "type": "cr-type",
+    "name": "c.add",
+    "comp_code": 2,
+    "cfunct4": 9,
+    "args": [ "rdrs1", "rs2" ],
+    "extension": "C"
+  }
+]

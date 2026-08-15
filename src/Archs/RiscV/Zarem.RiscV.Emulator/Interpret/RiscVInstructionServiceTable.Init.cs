@@ -24,7 +24,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         InitBaseTable(versionInfo);
         InitFloatTable(versionInfo);
 
-        if (versionInfo.Extensions.HasFlag(RiscVExtensions.Multiplication))
+        if (versionInfo.HasExtensions(RiscVExtensions.Multiplication))
         {
             switch (versionInfo.Base)
             {
@@ -144,15 +144,15 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
 
     private void InitFloatTable(RiscVVersionInfo versionInfo)
     {
-        InitFloatOperations<Half>(versionInfo, RiscVExtensions.HalfPrecisionFloatingPoint);
+        InitFloatOperations<Half>(versionInfo, RiscVZExtensions.HalfPrecisionFloatingPoint);
         InitFloatOperations<float>(versionInfo, RiscVExtensions.SingleFloatingPoint);
         InitFloatOperations<double>(versionInfo, RiscVExtensions.DoubleFloatingPoint);
     }
 
-    private void InitFloatOperations<TFormat>(RiscVVersionInfo versionInfo, RiscVExtensions flag)
+    private void InitFloatOperations<TFormat>(RiscVVersionInfo versionInfo, RiscVExtensionInfo extension)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
-        if (!versionInfo.Extensions.HasFlag(flag))
+        if (!versionInfo.HasExtensions(extension))
             return;
 
         var format = RiscVInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
@@ -170,21 +170,21 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatEqual, &FloatCompare<TFormat>);
     }
 
-    private void Register(RiscVOpCode opCode, delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
+    private void Register(RiscVOpCode opCode, delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, bool, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(opCode, (IntPtr)func);
 
-    private void Register(RiscVOpCode opCode, Funct3Code funct3, delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
+    private void Register(RiscVOpCode opCode, Funct3Code funct3, delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, bool, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(opCode, funct3, (IntPtr)func);
 
-    private void Register(Funct7Code funct7, RiscVOpCode opCode, Funct3Code funct3, delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
+    private void Register(Funct7Code funct7, RiscVOpCode opCode, Funct3Code funct3, delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, bool, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(funct7, opCode, funct3, (IntPtr)func);
 
-    private void Register(RiscVFloatFormat format, FloatFunc5Code funct5, FloatFunct3Code funct3, delegate*<RiscVInterpretCpu<T, TFloat>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func)
+    private void Register(RiscVFloatFormat format, FloatFunc5Code funct5, FloatFunct3Code funct3, delegate*<RiscVInterpretCpu<T, TFloat>, RiscVFloatInstruction, bool, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(format, funct5, funct3, (IntPtr)func);
 
-    private void Register(RiscVFloatFormat format, FloatFunc5Code funct5, delegate*<RiscVInterpretCpu<T, TFloat>, RiscVFloatInstruction, out RiscVExecution<T>, RiscVTrap> func)
+    private void Register(RiscVFloatFormat format, FloatFunc5Code funct5, delegate*<RiscVInterpretCpu<T, TFloat>, RiscVFloatInstruction, bool, out RiscVExecution<T>, RiscVTrap> func)
         => _instructionTable.Register(format, funct5, (IntPtr)func);
 
-    private static IntPtr GetFunctionPtrValue(delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap> func)
+    private static IntPtr GetFunctionPtrValue(delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, bool, out RiscVExecution<T>, RiscVTrap> func)
         => (IntPtr)func;
 }

@@ -1,0 +1,19 @@
+[
+  {
+    "type": "cj-type",
+    "name": "c.j",
+    "comp_code": 1,
+    "cfunct3": 5,
+    "args": [ "comp_jump_offset" ],
+    "extension": "C"
+  },
+  {
+    "type": "cj-type",
+    "name": "c.jal",
+    "comp_code": 1,
+    "cfunct3": 1,
+    "args": [ "comp_jump_offset" ],
+    "extension": "C",
+    "max_base": "RV32"
+  }
+]

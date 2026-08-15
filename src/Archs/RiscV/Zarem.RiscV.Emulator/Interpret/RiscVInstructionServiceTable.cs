@@ -3,11 +3,14 @@
 using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
+using Zarem.Models.Interface;
+using Zarem.RiscV.Emulator.Helper;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
+using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Models;
 
@@ -21,6 +24,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
 {
     private readonly RiscVInstructionDecodeTable<IntPtr> _instructionTable;
     private readonly RiscVInterpretCpu<T, TFloat> _cpu;
+    private readonly InstructionDecompressor? _decompressor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVInstructionServiceTable{T, TFloat, TSigned}"/> struct.
@@ -30,18 +34,38 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         _cpu = cpu;
 
         _instructionTable = new RiscVInstructionDecodeTable<nint>(GetFunctionPtrValue(&IllegalInstruction));
-
         InitTables(cpu.Config);
+
+        // Initialize the decompressor if the compression extension is in use
+        if (_cpu.Config.VersionInfo.HasExtensions(RiscVExtensions.Compressed))
+            _decompressor = new InstructionDecompressor(_cpu.Config);
     }
 
     /// <inheritdoc/>
     public RiscVTrap Execute(RiscVInstruction inst, out RiscVExecution<T> exec)
     {
-        var func = (delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>)_instructionTable.Lookup(inst);
-        return func(_cpu, inst, out exec);
+        exec = default;
+
+        var decompressed = inst;
+        if (inst.IsCompressed)
+        {
+            if (_decompressor is null)
+            {
+                // If the decompressor is null, the compressed extension is not present and
+                // therefore this opcode is invalid to the current CPU
+                return RiscVTrap.IllegalInstruction;
+            }
+
+            // Attempt to decompress the instruction, if the decompressor failed, it's an illegal instruction
+            if (!_decompressor.Decompress((RiscVCompressedInstruction)inst, out decompressed))
+                return RiscVTrap.IllegalInstruction;
+        }
+
+        var func = (delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, bool, out RiscVExecution<T>, RiscVTrap>)_instructionTable.Lookup(decompressed);
+        return func(_cpu, decompressed, inst.IsCompressed, out exec);
     }
 
-    private static RiscVTrap AluR<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap AluR<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
@@ -51,13 +75,13 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap ModifyableAluR<TBase, TMod, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap ModifyableAluR<TBase, TMod, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TBase : struct, IAluLogic<TFormat>
         where TMod : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
-        => inst.Funct7 is Funct7Code.Modified ? AluR<TMod, TFormat>(cpu, inst, out exec) : AluR<TBase, TFormat>(cpu, inst, out exec);
+        => inst.Funct7 is Funct7Code.Modified ? AluR<TMod, TFormat>(cpu, inst, compressed, out exec) : AluR<TBase, TFormat>(cpu, inst, compressed, out exec);
 
-    private static RiscVTrap AluI<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap AluI<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
     {
@@ -67,7 +91,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap AluISigned<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap AluISigned<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
     {
@@ -77,7 +101,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap ShiftR<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap ShiftR<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TLogic : struct, IShiftLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
@@ -87,14 +111,14 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap ModifyableShiftR<TBase, TMod, TBaseFormat, TModFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap ModifyableShiftR<TBase, TMod, TBaseFormat, TModFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TBase : struct, IShiftLogic<TBaseFormat>
         where TMod : struct, IShiftLogic<TModFormat>
         where TBaseFormat : unmanaged, IBinaryInteger<TBaseFormat>
         where TModFormat : unmanaged, IBinaryInteger<TModFormat>
-        => inst.Funct7 is Funct7Code.Modified ? ShiftR<TMod, TModFormat>(cpu, inst, out exec) : ShiftR<TBase, TBaseFormat>(cpu, inst, out exec);
+        => inst.Funct7 is Funct7Code.Modified ? ShiftR<TMod, TModFormat>(cpu, inst, compressed, out exec) : ShiftR<TBase, TBaseFormat>(cpu, inst, compressed, out exec);
 
-    private static RiscVTrap ShiftI<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap ShiftI<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TLogic : struct, IShiftLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
@@ -104,35 +128,35 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap ModifyableShiftI<TBase, TMod, TBaseFormat, TModFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap ModifyableShiftI<TBase, TMod, TBaseFormat, TModFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TBase : struct, IShiftLogic<TBaseFormat>
         where TMod : struct, IShiftLogic<TModFormat>
         where TBaseFormat : unmanaged, IBinaryInteger<TBaseFormat>
         where TModFormat : unmanaged, IBinaryInteger<TModFormat>
-        => inst.Funct7 is Funct7Code.Modified ? ShiftI<TMod, TModFormat>(cpu, inst, out exec) : ShiftI<TBase, TBaseFormat>(cpu, inst, out exec);
+        => inst.Funct7 is Funct7Code.Modified ? ShiftI<TMod, TModFormat>(cpu, inst, compressed, out exec) : ShiftI<TBase, TBaseFormat>(cpu, inst, compressed, out exec);
 
-    private static RiscVTrap JumpAndLink(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap JumpAndLink(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
     {
         var offset = T.CreateTruncating(inst.JumpOffset);
         var target = (cpu.ProgramCounter + offset) & ~T.One;
-        var link = cpu.ProgramCounter + T.CreateTruncating(4);
+        var link = cpu.ProgramCounter + T.CreateTruncating(compressed ? 2 : 4);
 
         exec = RiscVExecution<T>.CreateJumpAndLink(target, link, inst.RD);
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap JumpAndLinkRegister(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap JumpAndLinkRegister(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
     {
         var @base = T.CreateTruncating(cpu[inst.RS1]);
         var offset = T.CreateTruncating(inst.Immediate);
         var target = @base + offset;
-        var link = cpu.ProgramCounter + T.CreateTruncating(4);
+        var link = cpu.ProgramCounter + T.CreateTruncating(compressed ? 2 : 4);
 
         exec = RiscVExecution<T>.CreateJumpAndLink(target, link, inst.RD);
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap BranchOn<TLogic>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap BranchOn<TLogic>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TLogic : struct, ICondLogic<T>
     {
         var rs1 = T.CreateTruncating(cpu[inst.RS1]);
@@ -142,7 +166,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap Load<TData>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap Load<TData>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TData : unmanaged, IBinaryInteger<TData>
     {
         T offset = T.CreateTruncating(inst.Immediate);
@@ -162,7 +186,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap Store<TData>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap Store<TData>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TData : unmanaged
     {
         T offset = T.CreateTruncating(inst.StoreOffset);
@@ -181,24 +205,24 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap EcallBreak(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap EcallBreak(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
     {
         exec = default;
         return inst.Immediate is 1 ? RiscVTrap.Breakpoint : RiscVTrap.EnvironmentCallFromUMode;
     }
 
-    private static RiscVTrap Lui(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap Lui(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
     {
         exec = RiscVExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(inst.Immediate << 12));
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap IllegalInstruction(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap IllegalInstruction(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
     {
         exec = default;
         return RiscVTrap.IllegalInstruction;
     }
 
-    private static RiscVTrap NotImplemented(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, out RiscVExecution<T> exec)
+    private static RiscVTrap NotImplemented(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         => throw new UnimplementedInstructionException(ulong.CreateTruncating(cpu.ProgramCounter));
 }

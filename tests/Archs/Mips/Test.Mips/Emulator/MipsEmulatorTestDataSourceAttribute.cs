@@ -17,15 +17,15 @@ using Zarem.Mips.Models.Versioning.Enums;
 namespace Test.Mips.Emulator;
 
 [AttributeUsage(AttributeTargets.Method)]
-public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmulatorConfig>
+public class MipsEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttribute<MipsEmulatorTestCase, MipsEmulatorConfig>
 {
-    public const uint K0 = MipsExecutionTests.K0;
-    public const uint K1 = MipsExecutionTests.K1;
+    public const uint K0 = MipsEmulatorTests.K0;
+    public const uint K1 = MipsEmulatorTests.K1;
 
     private readonly MipsVersionInfo _versionInfo;
     private readonly ExecutionMode _mode;
 
-    public MipsInstructionSourceAttribute(string versionStr, ExecutionMode mode)
+    public MipsEmulatorTestDataSourceAttribute(string versionStr, ExecutionMode mode)
     {
         _versionInfo = MipsVersionInfo.Parse(versionStr);
         _mode = mode;
@@ -50,25 +50,17 @@ public class MipsInstructionSourceAttribute : InstructionSourceAttribute<MipsEmu
         };
     }
 
-    public override string? GetDisplayName(MethodInfo methodInfo, object?[]? data)
+    public override string? GetDisplayName(MethodInfo methodInfo, MipsEmulatorTestCase[] data)
     {
-        var obj = data?[0];
-        if (obj is null)
-        {
-            return string.Empty;
-        }
+        var str = base.GetDisplayName(methodInfo, data);
 
-        dynamic run = obj;
-        var str = $"{run?.Input}"; // Short name since the method name handles the context
-
-
-        var config = run?.Config as MipsEmulatorConfig;
-
+        var test = data[0];
+        var config = test.Config;
         if (config?.DisableDelaySlots is true)
         {
             str += " (Delay Slots Disabled)";
         }
-        if (config?.VersionInfo.Generation >= MipsGeneration.MipsIII && run?.Status.FloatingPoint64BitMode is false)
+        if (config?.VersionInfo.Generation >= MipsGeneration.MipsIII && test.Status.FloatingPoint64BitMode is false)
         {
             str += " (Legacy Paired Floating-Points)";
         }

@@ -18,16 +18,56 @@ public static class RegisterTable<TRegister, TSet>
     where TSet : unmanaged, Enum
 {
     private static readonly Dictionary<TSet, Dictionary<string, TRegister>> _nameTables;
-    private static readonly Dictionary<TSet, string> _formatTable;
+    private static readonly Dictionary<TSet, RegisterSetAttribute> _setTable;
     private static readonly Dictionary<TSet, Regex> _regexTable;
 
     static RegisterTable()
     {
         _nameTables = [];
-        _formatTable = [];
+        _setTable = [];
         _regexTable = [];
 
         BuildTables();
+    }
+
+    /// <summary>
+    /// Attempts to get a register by name and set.
+    /// </summary>
+    /// <param name="name">The name of the register.</param>
+    /// <param name="set">The register set to lookup.</param>
+    /// <param name="register">The register's index.</param>
+    /// <param name="indexed">Whether or not the register was named by index.</param>
+    /// <returns>Whether or not an register exists by that name.</returns>
+    public static bool TryGetRegister(string name, TSet set, out TRegister register, out bool indexed)
+    {
+        register = default;
+        indexed = false;
+
+        // Attempt to lookup by name
+        if (_nameTables.TryGetValue(set, out var nameTable) &&
+            nameTable.TryGetValue(name, out register))
+            return true;
+
+        // Attempt to lookup by regex
+        if (_regexTable.TryGetValue(set, out var regex))
+        {
+            var match = regex.Match(name);
+            if (!match.Success)
+                return false;
+
+            // Use Group[1] to get just the digits, bypassing the prefix (x, f, etc.)
+            var numStr = match.Groups.Count > 1 ? match.Groups[1].Value : match.Value;
+            if (byte.TryParse(numStr, out var num))
+            {
+                register = Unsafe.As<byte, TRegister>(ref num);
+                indexed = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -35,43 +75,26 @@ public static class RegisterTable<TRegister, TSet>
     /// </summary>
     /// <param name="name">The name of the register.</param>
     /// <param name="register">The register's index.</param>
-    /// <param name="registerSet">Which register set the discovered register belongs to.</param>
+    /// <param name="set">Which register set the discovered register belongs to.</param>
     /// <param name="indexed">Whether or not the register was named by index.</param>
     /// <returns>Whether or not an register exists by that name.</returns>
-    public static bool TryGetRegister(string name, out TRegister register, out TSet registerSet, out bool indexed)
+    public static bool TryGetRegister(string name, out TRegister register, out TSet set, out bool indexed)
     {
         register = default;
-        registerSet = default;
+        set = default;
         indexed = false;
 
         // Check for empty register
         if (name.Length == 0)
             return false;
 
-        foreach (var (set, table) in _nameTables)
+        foreach (var s in _nameTables.Keys)
         {
-            if (table.TryGetValue(name, out var value))
+            if (TryGetRegister(name, s, out var value, out indexed))
             {
                 register = value;
-                registerSet = set;
+                set = s;
                 return true;
-            }
-        }
-
-        foreach (var (set, regex) in _regexTable)
-        {
-            var match = regex.Match(name);
-            if (match.Success)
-            {
-                // Use Group[1] to get just the digits, bypassing the prefix (x, f, etc.)
-                var numStr = match.Groups.Count > 1 ? match.Groups[1].Value : match.Value;
-                if (byte.TryParse(numStr, out var num))
-                {
-                    register = Unsafe.As<byte, TRegister>(ref num);
-                    registerSet = set;
-                    indexed = true;
-                    return true;
-                }
             }
         }
 
@@ -98,13 +121,24 @@ public static class RegisterTable<TRegister, TSet>
         }
 
         // Fallback to Numerical name (x10, f10)
-        if (_formatTable.TryGetValue(set, out var format))
+        if (_setTable.TryGetValue(set, out var attr) && attr.Format is not null)
         {
-            return $"{string.Format(format, Convert.ToInt32(register))}";
+            return $"{string.Format(attr.Format, Convert.ToInt32(register))}";
         }
 
         // Absolute fallback
         return $"{Convert.ToInt32(register)}";
+    }
+
+    /// <summary>
+    /// Attempts to get the number of registers in a set.
+    /// </summary>
+    public static int GetRegisterCount(TSet set)
+    {
+        if (!_setTable.TryGetValue(set, out var attr))
+            return -1;
+
+        return attr.RegisterCount;
     }
 
     private static void BuildTables()
@@ -115,11 +149,8 @@ public static class RegisterTable<TRegister, TSet>
             if (attr is null || field.GetValue(null) is not TSet value)
                 continue;
 
-            // Populate format table
-            if (!string.IsNullOrEmpty(attr.Format))
-            {
-                _formatTable[value] = attr.Format;
-            }
+            // Populate attr table
+            _setTable[value] = attr;
 
             // Populate regex table
             if (!string.IsNullOrEmpty(attr.Regex))
