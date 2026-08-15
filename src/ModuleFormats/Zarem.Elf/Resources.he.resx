@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ModuleFormatName" xml:space="preserve">
-    <value>ELF (Executable and Linkable File)</value>
+    <value>ELF (קובץ ניתן להרצה ולקישור)</value>
   </data>
   <data name="ModuleFormatShortName" xml:space="preserve">
     <value>ELF</value>
