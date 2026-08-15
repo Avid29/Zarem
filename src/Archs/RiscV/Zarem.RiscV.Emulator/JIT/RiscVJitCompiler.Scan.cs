@@ -16,15 +16,16 @@ public partial class RiscVJitCompiler<T, TFloat>
 
         while (true)
         {
-            var inst = Fetch(currentPc);
+            var inst = Fetch(currentPc, out var decompressed);
+            var increment = T.CreateTruncating(inst.IsCompressed ? 2 : 4);
 
-            if (IsControlFlow(inst) || currentPc - startPc > T.CreateTruncating(MaxBlockSize))
+            if (IsControlFlow(decompressed) || currentPc - startPc > T.CreateTruncating(MaxBlockSize))
             {
-                currentPc += T.CreateTruncating(4);
+                currentPc += increment;
                 break;
             }
 
-            currentPc += T.CreateTruncating(4);
+            currentPc += increment;
         }
 
         return currentPc;
@@ -35,8 +36,13 @@ public partial class RiscVJitCompiler<T, TFloat>
         _loadRegs.Clear();
         _storeRegs.Clear();
 
-        for (T pc = start; pc <= end; pc += T.CreateTruncating(4))
-            LogRegisterUsage(Fetch(pc));
+        T increment;
+        for (T pc = start; pc <= end; pc += increment)
+        {
+            var inst = Fetch(pc, out var decompressed);
+            LogRegisterUsage(decompressed);
+            increment = T.CreateTruncating(inst.IsCompressed ? 2 : 4);
+        }
 
         _loadRegs.Remove(RiscVGpRegister.Zero);
         _storeRegs.Remove(RiscVGpRegister.Zero);
@@ -53,7 +59,18 @@ public partial class RiscVJitCompiler<T, TFloat>
         _storeRegs.Add(rd);
     }
 
-    private RiscVInstruction Fetch(T pc) => (RiscVInstruction)_cpu.Memory.Read<uint>(ulong.CreateTruncating(pc));
+    private RiscVInstruction Fetch(T pc, out RiscVInstruction decompressed)
+    {
+        var inst = (RiscVInstruction)_cpu.Memory.Read<uint>(ulong.CreateTruncating(pc));
+        decompressed = inst;
+
+        if (inst.IsCompressed)
+        {
+            _decompressor?.Decompress((RiscVCompressedInstruction)inst, out decompressed);
+        }
+
+        return inst;
+    }
 
     private static bool IsControlFlow(RiscVInstruction inst)
     {

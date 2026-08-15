@@ -9,10 +9,12 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
+using Zarem.RiscV.Emulator.Helper;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.RiscV.Emulator.JIT;
 
@@ -30,6 +32,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
 
     private readonly HashSet<RiscVGpRegister> _loadRegs = [];
     private readonly HashSet<RiscVGpRegister> _storeRegs = [];
+    private readonly InstructionDecompressor? _decompressor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVJitCompiler{T, TFloat}"/> class.
@@ -39,8 +42,11 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         _cpu = cpu;
 
         _instructionTable = new RiscVInstructionDecodeTable<RiscVEmitter>(IllegalInstruction);
-
         InitTables(cpu.Config);
+
+        // Initialize the decompressor if the compression extension is in use
+        if (cpu.Config.VersionInfo.HasExtensions(RiscVExtensions.Compressed))
+            _decompressor = new InstructionDecompressor(cpu.Config);
     }
 
     /// <summary>
@@ -62,8 +68,9 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
 
         while (currentPc < endPc)
         {
-            CompileInstruction(il, Fetch(currentPc), currentPc);
-            currentPc += T.CreateTruncating(4);
+            var inst = Fetch(currentPc, out var decompressed);
+            CompileInstruction(il, decompressed, currentPc);
+            currentPc += T.CreateTruncating(inst.IsCompressed ? 2 : 4);
         }
 
         var @delegate = (RiscVBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(RiscVBlockDelegate<T, TFloat>));
@@ -79,14 +86,20 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
-        ScanRegisterUsage(pc, pc);
-        LogRegisterUsage(inst);
-        EmitSetupLocalRegisters(il);
-        CompileInstruction(il, inst, pc);
-
-        if (!IsControlFlow(inst))
+        RiscVInstruction decompressed = inst;
+        if (inst.IsCompressed)
         {
-            EmitRet(il, pc + T.CreateTruncating(4));
+            _decompressor?.Decompress((RiscVCompressedInstruction)inst, out decompressed);
+        }
+
+        ScanRegisterUsage(pc, pc);
+        LogRegisterUsage(decompressed);
+        EmitSetupLocalRegisters(il);
+        CompileInstruction(il, decompressed, pc);
+
+        if (!IsControlFlow(decompressed))
+        {
+            EmitRet(il, pc + T.CreateTruncating(inst.IsCompressed ? 2 : 4));
         }
 
         return (RiscVBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(RiscVBlockDelegate<T, TFloat>));

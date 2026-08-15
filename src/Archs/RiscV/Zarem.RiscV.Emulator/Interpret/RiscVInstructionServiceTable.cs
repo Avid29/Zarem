@@ -3,11 +3,14 @@
 using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
+using Zarem.Models.Interface;
+using Zarem.RiscV.Emulator.Helper;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
+using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Models;
 
@@ -21,6 +24,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
 {
     private readonly RiscVInstructionDecodeTable<IntPtr> _instructionTable;
     private readonly RiscVInterpretCpu<T, TFloat> _cpu;
+    private readonly InstructionDecompressor? _decompressor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVInstructionServiceTable{T, TFloat, TSigned}"/> struct.
@@ -30,13 +34,32 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         _cpu = cpu;
 
         _instructionTable = new RiscVInstructionDecodeTable<nint>(GetFunctionPtrValue(&IllegalInstruction));
-
         InitTables(cpu.Config);
+
+        // Initialize the decompressor if the compression extension is in use
+        if (_cpu.Config.VersionInfo.HasExtensions(RiscVExtensions.Compressed))
+            _decompressor = new InstructionDecompressor(_cpu.Config);
     }
 
     /// <inheritdoc/>
     public RiscVTrap Execute(RiscVInstruction inst, out RiscVExecution<T> exec)
     {
+        exec = default;
+
+        if (inst.IsCompressed)
+        {
+            if (_decompressor is null)
+            {
+                // If the decompressor is null, the compressed extension is not present and
+                // therefore this opcode is invalid to the current CPU
+                return RiscVTrap.IllegalInstruction;
+            }
+
+            // Attempt to decompress the instruction, if the decompressor failed, it's an illegal instruction
+            if (!_decompressor.Decompress((RiscVCompressedInstruction)inst, out inst))
+                return RiscVTrap.IllegalInstruction;
+        }
+
         var func = (delegate*<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, out RiscVExecution<T>, RiscVTrap>)_instructionTable.Lookup(inst);
         return func(_cpu, inst, out exec);
     }

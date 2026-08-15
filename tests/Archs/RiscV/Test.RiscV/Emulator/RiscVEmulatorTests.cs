@@ -42,6 +42,10 @@ public partial class RiscVEmulatorTests
     public void InstructionTests_RV32C(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
 
     [DataTestMethod]
+    [RiscVEmulatorTestDataSource("RV32C", ExecutionMode.JustInTime)]
+    public void InstructionTests_RV32C_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
+
+    [DataTestMethod]
     [RiscVEmulatorTestDataSource("RV64I", ExecutionMode.Interpret)]
     public void InstructionTests_RV64I(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, byte>(@case);
 

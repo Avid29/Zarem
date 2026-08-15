@@ -25,7 +25,6 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private readonly IRiscVInstructionServiceTable<T> _instructionServiceTable;
-    private readonly InstructionDecompressor? _decompressor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RiscVCpu{T}"/> class.
@@ -39,10 +38,6 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
             RiscVBaseVersion.RV128 => new RiscVInstructionServiceTable<T, TFloat, Int128>(this),
             _ => throw new NotImplementedException()
         };
-
-        // Initialize the decompressor if the compression extension is in use
-        if (config.VersionInfo.HasExtensions(RiscVExtensions.Compressed))
-            _decompressor = new InstructionDecompressor(config);
     }
 
     /// <inheritdoc/>
@@ -145,21 +140,6 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
     private RiscVTrap Execute(RiscVInstruction instruction, out RiscVExecution<T> execution)
     {
         execution = default;
-
-        if (instruction.IsCompressed)
-        {
-            if (_decompressor is null)
-            {
-                // If the decompressor is null, the compressed extension is not present and
-                // therefore this opcode is invalid to the current CPU
-                return RiscVTrap.IllegalInstruction;
-            }
-
-            // Attempt to decompress the instruction, if the decompressor failed, it's an illegal instruction
-            if (!_decompressor.Decompress((RiscVCompressedInstruction)instruction, out instruction))
-                return RiscVTrap.IllegalInstruction;
-        }
-
         return _instructionServiceTable.Execute(instruction, out execution);
     }
 
