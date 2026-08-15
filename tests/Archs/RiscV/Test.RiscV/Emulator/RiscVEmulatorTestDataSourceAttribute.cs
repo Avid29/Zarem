@@ -167,16 +167,16 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
         // Load
-        yield return [new RiscVEmulatorTestCase<T>(config, "lb a0, 0x100(zero)", T.CreateTruncating(0x12))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "lh a0, 0x100(zero)", T.CreateTruncating(0x3412))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "lw a0, 0x100(zero)", T.CreateTruncating(0x7856_3412))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "lb a0, 8(a5)", T.CreateTruncating(0x12))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "lh a0, 8(a5)", T.CreateTruncating(0x3412))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "lw a0, 8(a5)", T.CreateTruncating(0x7856_3412))];
 
         // TODO: Load unsigned/signed with sign
 
         // Store
-        yield return [new RiscVEmulatorTestCase<T>(config, "sb s7, 0x100(zero)", (T.CreateTruncating(0x100), [0xef, 0x34, 0x56, 0x78]))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "sh s7, 0x100(zero)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0x56, 0x78]))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "sw s7, 0x100(zero)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0xab, 0x89]))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "sb a4, 8(a5)", (T.CreateTruncating(0x100), [0xef, 0x34, 0x56, 0x78]))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "sh a4, 8(a5)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0x56, 0x78]))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "sw a4, 8(a5)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0xab, 0x89]))];
     }
 
     private static IEnumerable<object[]> GetSystemInstructionTests<T>(RiscVEmulatorConfig config)
@@ -228,5 +228,7 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
 
         // Q0
         yield return [new RiscVEmulatorTestCase<T>(config, "c.addi4spn a0, 12", T.CreateTruncating(12))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.lw a0, 8(a5)", T.CreateTruncating(0x7856_3412))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.sw a4, 8(a5)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0xab, 0x89]))];
     }
 }
