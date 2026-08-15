@@ -235,7 +235,7 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         yield return [new RiscVEmulatorTestCase<T>(config, "c.j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.beqz a3, 80") { ExpectedPC = T.CreateTruncating(80) }];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.bnez a2, 80") { ExpectedPC = T.CreateTruncating(80) }];
-        // TODO: srli, srai, andi
+        // TODO: c. srli, c.srai, c.andi
         yield return [new RiscVEmulatorTestCase<T>(config, "c.sub s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 - 1))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.xor s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 ^ 1))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.or s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 | 1))];
@@ -246,5 +246,11 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         yield return [new RiscVEmulatorTestCase<T>(config, "c.ebreak", RiscVTrap.Breakpoint)];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.jalr t3", RiscVGpRegister.ReturnAddress, T.CreateTruncating(2)) { ExpectedPC = T.CreateTruncating(40) }];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.add t1, t0", RiscVGpRegister.Temporary1, T.CreateTruncating(20 + 10))];
+
+        // RV32C
+        if (config.VersionInfo.Base is RiscVBaseVersion.RV32)
+        {
+            yield return [new RiscVEmulatorTestCase<T>(config, "c.jal 1000", RiscVGpRegister.ReturnAddress, T.CreateTruncating(2)) { ExpectedPC = T.CreateTruncating(1000) }];
+        }
     }
 }
