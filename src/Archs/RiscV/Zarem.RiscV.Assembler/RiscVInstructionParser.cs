@@ -155,7 +155,7 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
     {
         Guard.IsNotNull(Meta);
 
-        var rd = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RD, RiscVArgument.FRD, RiscVArgument.RDRS1, RiscVArgument.CompressedRDRS1);
+        var rd = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RD, RiscVArgument.FRD, RiscVArgument.RDRS1, RiscVArgument.CompressedRD, RiscVArgument.CompressedRDRS1);
         var rs1 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS1, RiscVArgument.FRS1, RiscVArgument.RDRS1, RiscVArgument.CompressedRS1, RiscVArgument.CompressedRDRS1);
         var rs2 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS2, RiscVArgument.FRS2, RiscVArgument.CompressedRS2);
         var rs3 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.FRS3);

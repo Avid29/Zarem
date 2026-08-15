@@ -94,7 +94,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
         {
             get
             {
-                // Register much be even
+                // Register must be even
                 if (reg % 2 is not 0)
                     return double.NaN;
 
@@ -106,7 +106,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
             }
             set
             {
-                // Register much be even
+                // Register must be even
                 if (reg % 2 is not 0)
                     return;
 

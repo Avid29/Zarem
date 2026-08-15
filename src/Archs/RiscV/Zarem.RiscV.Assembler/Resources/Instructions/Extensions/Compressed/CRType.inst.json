@@ -19,7 +19,7 @@
     "type": "cr-type",
     "name": "c.ebreak",
     "comp_code": 2,
-    "cfunct4": 8,
+    "cfunct4": 9,
     "args": [],
     "extension": "C"
   },

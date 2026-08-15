@@ -31,13 +31,16 @@ public enum Funct3Code : byte
     LoadByte = 0b000,
     LoadHalfWord = 0b001,
     LoadWord = 0b010,
+    LoadDoubleWord = 0b011,
     LoadByteUnsigned = 0b100,
     LoadHalfWordUnsigned = 0b101,
+    LoadWordUnsigned = 0b110,
 
     // --- Store Operations (STORE) ---
     StoreByte = 0b000,
     StoreHalfWord = 0b001,
     StoreWord = 0b010,
+    StoreDoubleWord = 0b11,
 
     // --- System / CSR Operations (SYSTEM) ---
     EcallBreak = 0b000,     // ECALL, EBREAK
@@ -57,6 +60,9 @@ public enum Funct3Code : byte
     DivideUnsigned = 0b101,
     Remainder = 0b110,
     RemainderUnsigned = 0b111,
+
+    // --- Other ---
+    JumpAndLinkRegister = 0b000
 
 #pragma warning restore CS1591
 }

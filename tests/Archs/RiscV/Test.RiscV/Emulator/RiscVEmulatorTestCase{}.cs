@@ -43,11 +43,15 @@ public sealed record RiscVEmulatorTestCase<T> : RiscVEmulatorTestCase
                     (RiscVGpRegister.Temporary5, T.CreateTruncating(-20)),
                     (RiscVGpRegister.Temporary6, T.CreateTruncating(-30)),
 
-                    // Assign some arbitrary values to the rest of the registers as well, just in case
+                    // Assign some arbitrary values to some other registers as well, just in case
                     (RiscVGpRegister.Saved6, T.CreateTruncating(101)),
-                    (RiscVGpRegister.Saved7, T.CreateTruncating(0x89ab_cdef)),
-                    (RiscVGpRegister.Saved8, T.CreateTruncating(RiscVEmulatorTests.K0)),
-                    (RiscVGpRegister.Saved9, T.CreateTruncating(RiscVEmulatorTests.K1)),
+                    (RiscVGpRegister.Argument4, T.CreateTruncating(0x89ab_cdef)),
+                    (RiscVGpRegister.Saved8, T.CreateTruncating(RiscVEmulatorTests.S8)),
+                    (RiscVGpRegister.Saved9, T.CreateTruncating(RiscVEmulatorTests.S9)),
+
+
+                    // a6 is 8 off from the memory address. a6 so it's indexable by compressed instructions
+                    (RiscVGpRegister.Argument5, T.CreateTruncating(0xF8)),
                 ];
 
             FPRInitialization =

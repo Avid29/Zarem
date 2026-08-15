@@ -18,8 +18,8 @@ namespace Test.RiscV.Emulator;
 [TestClass]
 public partial class RiscVEmulatorTests
 {
-    public const uint K0 = 0xbd0;
-    public const uint K1 = 0x516;
+    public const uint S8 = 0xbd0;
+    public const uint S9 = 0x516;
 
     [DataTestMethod]
     [RiscVEmulatorTestDataSource("RV32I", ExecutionMode.Interpret)]
@@ -36,6 +36,14 @@ public partial class RiscVEmulatorTests
     [DataTestMethod]
     [RiscVEmulatorTestDataSource("RV32G", ExecutionMode.JustInTime)]
     public void InstructionTests_RV32G_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
+
+    [DataTestMethod]
+    [RiscVEmulatorTestDataSource("RV32C", ExecutionMode.Interpret)]
+    public void InstructionTests_RV32C(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
+
+    [DataTestMethod]
+    [RiscVEmulatorTestDataSource("RV32C", ExecutionMode.JustInTime)]
+    public void InstructionTests_RV32C_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
 
     [DataTestMethod]
     [RiscVEmulatorTestDataSource("RV64I", ExecutionMode.Interpret)]
