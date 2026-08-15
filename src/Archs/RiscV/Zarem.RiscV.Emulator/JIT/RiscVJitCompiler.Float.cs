@@ -42,12 +42,12 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         });
     }
 
-    private void FloatMinMax<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc)
+    private void FloatMinMax<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc, bool compressed)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         // If the instruction is not a float min or max, make an illegal instruction trap
         if (inst.Funct3 is not (FloatFunct3Code.FloatMin or FloatFunct3Code.FloatMax))
-            IllegalInstruction(il, inst, pc);
+            IllegalInstruction(il, inst, pc, compressed);
 
         // Resolve the method to call based on the instruction's funct3
         var method = inst.Funct3 switch
@@ -96,23 +96,23 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         });
     }
 
-    private void FloatMacGuffin<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc)
+    private void FloatMacGuffin<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc, bool compressed)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
-        Action<ILGenerator, RiscVInstruction, T> func = inst.FRS2 switch
+        Action<ILGenerator, RiscVInstruction, T, bool> func = inst.FRS2 switch
         {
             0 when inst.Funct3 is FloatFunct3Code.FloatMoveFrom => IllegalInstruction,
             0 when inst.Funct3 is FloatFunct3Code.FloatClassify => IllegalInstruction,
             _ => FloatConvertTo<TFormat>
         };
 
-        func(il, inst, pc);
+        func(il, inst, pc, compressed);
     }
 
-    private void FloatConvertFrom<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc)
+    private void FloatConvertFrom<TFormat>(ILGenerator il, RiscVFloatInstruction inst, T pc, bool compressed)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
-        Action<ILGenerator, RiscVInstruction, T> func = inst.IntFormat switch
+        Action<ILGenerator, RiscVInstruction, T, bool> func = inst.IntFormat switch
         {
             RiscVIntFormat.Word => FloatConvertFrom<TFormat, int>,
             RiscVIntFormat.WordUnsigned => FloatConvertFrom<TFormat, uint>,
@@ -121,15 +121,15 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             _ => IllegalInstruction,
         };
 
-        func(il, inst, pc);
+        func(il, inst, pc, compressed);
     }
 
-    private void FloatConvertTo<TTo>(ILGenerator il, RiscVInstruction inst, T pc)
+    private void FloatConvertTo<TTo>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
         where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
     {
         var fInst = (RiscVFloatInstruction)inst;
 
-        Action<ILGenerator, RiscVInstruction, T> func = fInst.IntFormat switch
+        Action<ILGenerator, RiscVInstruction, T, bool> func = fInst.IntFormat switch
         {
             RiscVIntFormat.Word => FloatConvertTo<int, TTo>,
             RiscVIntFormat.WordUnsigned => FloatConvertTo<uint, TTo>,
@@ -138,10 +138,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             _ => IllegalInstruction,
         };
 
-        func(il, inst, pc);
+        func(il, inst, pc, compressed);
     }
 
-    private void FloatConvertFrom<TFrom, TTo>(ILGenerator il, RiscVInstruction inst, T pc)
+    private void FloatConvertFrom<TFrom, TTo>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
         where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
         where TTo : unmanaged, INumber<TTo>, IMinMaxValue<TTo>
     {
@@ -174,7 +174,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         });
     }
 
-    private void FloatConvertTo<TFrom, TTo>(ILGenerator il, RiscVInstruction inst, T pc)
+    private void FloatConvertTo<TFrom, TTo>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
         where TFrom : unmanaged, INumber<TFrom>, IMinMaxValue<TFrom>
         where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
     {

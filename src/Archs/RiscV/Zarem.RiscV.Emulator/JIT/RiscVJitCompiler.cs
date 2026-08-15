@@ -25,7 +25,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
-    private delegate void RiscVEmitter(ILGenerator il, RiscVInstruction inst, T pc);
+    private delegate void RiscVEmitter(ILGenerator il, RiscVInstruction inst, T pc, bool compressed);
 
     private readonly RiscVInstructionDecodeTable<RiscVEmitter> _instructionTable;
     private readonly RiscVJitCpu<T, TFloat> _cpu;
@@ -69,7 +69,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         while (currentPc < endPc)
         {
             var inst = Fetch(currentPc, out var decompressed);
-            CompileInstruction(il, decompressed, currentPc);
+            CompileInstruction(il, decompressed, currentPc, inst.IsCompressed);
             currentPc += T.CreateTruncating(inst.IsCompressed ? 2 : 4);
         }
 
@@ -95,7 +95,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         ScanRegisterUsage(pc, pc);
         LogRegisterUsage(decompressed);
         EmitSetupLocalRegisters(il);
-        CompileInstruction(il, decompressed, pc);
+        CompileInstruction(il, decompressed, pc, inst.IsCompressed);
 
         if (!IsControlFlow(decompressed))
         {
@@ -105,10 +105,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         return (RiscVBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(RiscVBlockDelegate<T, TFloat>));
     }
 
-    private void CompileInstruction(ILGenerator il, RiscVInstruction inst, T pc)
+    private void CompileInstruction(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
     {
         var func = _instructionTable.Lookup(inst);
-        func(il, inst, pc);
+        func(il, inst, pc, compressed);
     }
 
     private void AluR<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
@@ -225,15 +225,15 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         });
     }
 
-    private void JumpAndLink(ILGenerator il, RiscVInstruction inst, T pc)
-        => JumpAndLink(il, inst, pc, pushAddress: il =>
+    private void JumpAndLink(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
+        => JumpAndLink(il, inst, pc, compressed, pushAddress: il =>
         {
             var target = pc + T.CreateTruncating(inst.JumpOffset);
             il.EmitLoadConstant(target);
         });
 
-    private void JumpAndLinkRegister(ILGenerator il, RiscVInstruction inst, T pc)
-        => JumpAndLink(il, inst, pc, pushAddress: il =>
+    private void JumpAndLinkRegister(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
+        => JumpAndLink(il, inst, pc, compressed, pushAddress: il =>
         {
             EmitLoadRegister(il, inst.RS1);
 
@@ -249,14 +249,14 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
             il.Emit(OpCodes.And);
         });
 
-    private void JumpAndLink(ILGenerator il, RiscVInstruction inst, T pc, Action<ILGenerator> pushAddress)
+    private void JumpAndLink(ILGenerator il, RiscVInstruction inst, T pc, bool compressed, Action<ILGenerator> pushAddress)
     {
         // Link if needed
         if (inst.RD is not RiscVGpRegister.Zero)
         {
             EmitStoreRegister(il, inst.RD, il =>
             {
-                var returnAddress = pc + T.CreateTruncating(4);
+                var returnAddress = pc + T.CreateTruncating(compressed ? 2 : 4);
                 il.EmitLoadConstant(returnAddress);
             });
         }
@@ -264,7 +264,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         EmitRet(il, pushAddress);
     }
 
-    private void Load<TData>(ILGenerator il, RiscVInstruction inst, T pc)
+    private void Load<TData>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
         where TData : unmanaged
     {
         var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, inst.Immediate, RiscVTrap.LoadAddressMisaligned);
@@ -296,7 +296,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         });
     }
 
-    private void Store<TData>(ILGenerator il, RiscVInstruction inst, T pc)
+    private void Store<TData>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
         where TData : unmanaged
     {
         var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, inst.StoreOffset, RiscVTrap.StoreAddressMisaligned);
@@ -315,7 +315,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         il.Emit(OpCodes.Pop);
     }
 
-    private void Branch(ILGenerator il, RiscVInstruction inst, T pc, OpCode conditionCode)
+    private void Branch(ILGenerator il, RiscVInstruction inst, T pc, bool compressed, OpCode conditionCode)
     {
         Label takeBranch = il.DefineLabel();
 
@@ -324,7 +324,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         il.Emit(conditionCode, takeBranch);
 
         // Branch NOT taken
-        var nextPc = pc + T.CreateTruncating(4);
+        var nextPc = pc + T.CreateTruncating(compressed ? 2 : 4);
         EmitRet(il, nextPc);
 
         // Branch taken
@@ -334,12 +334,12 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         EmitRet(il, targetPc);
     }
 
-    private void Lui(ILGenerator il, RiscVInstruction inst, T pc)
+    private void Lui(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
     {
         uint value = (uint)inst.Immediate << 12;
 
         EmitStoreRegister(il, inst.RD, il => il.EmitLoadConstant(T.CreateTruncating(value)));
     }
 
-    private void IllegalInstruction(ILGenerator il, RiscVInstruction inst, T pc) => EmitTrapRet(il, RiscVTrap.IllegalInstruction, pc);
+    private void IllegalInstruction(ILGenerator il, RiscVInstruction inst, T pc, bool compressed) => EmitTrapRet(il, RiscVTrap.IllegalInstruction, pc);
 }
