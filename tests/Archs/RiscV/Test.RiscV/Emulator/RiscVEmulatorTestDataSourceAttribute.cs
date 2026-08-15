@@ -243,5 +243,8 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         yield return [new RiscVEmulatorTestCase<T>(config, "c.xor s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 ^ 1))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.or s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 | 1))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.and s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 & 1))];
+
+        // Q2 RVC
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.ebreak", RiscVTrap.Breakpoint)];
     }
 }

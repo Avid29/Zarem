@@ -36,6 +36,7 @@ public class InstructionDecompressor
         {
             RiscVCompressionCode.C0 => DecompressQ0(compressed),
             RiscVCompressionCode.C1 => DecompressQ1(compressed),
+            RiscVCompressionCode.C2 => DecompressQ2(compressed),
             _ => compressed
         };
 
@@ -124,7 +125,7 @@ public class InstructionDecompressor
                 RiscVOpCode.OpImmediate, Funct3Code.Arithmetic, RiscVGpRegister.StackPointer, RiscVGpRegister.StackPointer, compressed.StackStoreOffset),
 
             // c.lui -> lui (rd != x0, rd != x2, imm != 0)
-            CFunct3Code.LoadUpperImmediate when rdrs1 is not (RiscVGpRegister.Zero or RiscVGpRegister.StackPointer) && compressed.StackStoreOffset is not 0 => RiscVInstruction.CreateU(
+            CFunct3Code.LoadUpperImmediate when rdrs1 is not (RiscVGpRegister.Zero or RiscVGpRegister.StackPointer) && compressed.Immediate is not 0 => RiscVInstruction.CreateU(
                 RiscVOpCode.LoadUpperImmediate, rdrs1, compressed.Immediate),
 
             // c.j -> jal
@@ -137,7 +138,7 @@ public class InstructionDecompressor
 
             // c.bnez -> bne
             CFunct3Code.BranchOnNotEqualToZero => RiscVInstruction.CreateB(
-                RiscVOpCode.Branch, Funct3Code.BranchNotEqual, rd, RiscVGpRegister.Zero, compressed.BranchOffset),
+                RiscVOpCode.Branch, Funct3Code.BranchNotEqual, rs1, RiscVGpRegister.Zero, compressed.BranchOffset),
 
             CFunct3Code.MiscAlu => DecompressQ1Arith(compressed, rs1, rs2),
 
@@ -185,11 +186,90 @@ public class InstructionDecompressor
                     RiscVOpCode.Op32, Funct3Code.Arithmetic, Funct7Code.Modified, rdrs1, rdrs1, rs2),
 
                 // c.addw -> add [RV64C]
-                (CFunct6Code.ArithmeticLogicW, CFunct2Code.Subtract) when Config.VersionInfo.Base >= RiscVBaseVersion.RV64 => RiscVInstruction.CreateR(
+                (CFunct6Code.ArithmeticLogicW, CFunct2Code.Add) when Config.VersionInfo.Base >= RiscVBaseVersion.RV64 => RiscVInstruction.CreateR(
                     RiscVOpCode.Op32, Funct3Code.Arithmetic, Funct7Code.Base, rdrs1, rdrs1, rs2),
 
                 _ => compressed,
             },
+        };
+    }
+
+    private RiscVInstruction DecompressQ2(RiscVCompressedInstruction compressed)
+    {
+        var rdrs1 = compressed.RDRS1;
+        var rs2 = compressed.RS2;
+        return compressed.Funct3 switch
+        {
+            // c.slli -> slli (rd != x0)
+            CFunct3Code.ShiftLeftLogicalImmediate when rdrs1 is not RiscVGpRegister.Zero => RiscVInstruction.CreateI(
+                RiscVOpCode.OpImmediate, Funct3Code.ShiftLeft, rdrs1, rdrs1, compressed.Immediate),
+
+            // c.fldsp -> fld [RVCD]
+            CFunct3Code.LoadDoubleStackPointer when Config.VersionInfo.HasExtensions(RiscVExtensions.DoubleFloatingPoint) => RiscVInstruction.CreateI(
+                RiscVOpCode.FloatLoad, Funct3Code.LoadDoubleWord, rdrs1, RiscVGpRegister.StackPointer, (short)compressed.DoubleWordLoadStoreOffset),
+
+            // c.lwsp -> lw (rd != x0)
+            CFunct3Code.LoadWordStackPointer when rdrs1 is not RiscVGpRegister.Zero => RiscVInstruction.CreateI(
+                RiscVOpCode.Load, Funct3Code.LoadWord, rdrs1, RiscVGpRegister.StackPointer, compressed.WordLoadStoreOffset),
+
+            // c.ldsp -> ld [RV64C] (rd != x0)
+            CFunct3Code.LoadDoubleWordStackPointer when Config.VersionInfo.Base is >= RiscVBaseVersion.RV64 && rdrs1 is not RiscVGpRegister.Zero => RiscVInstruction.CreateI(
+                RiscVOpCode.Load, Funct3Code.LoadDoubleWord, rdrs1, RiscVGpRegister.StackPointer, (short)compressed.DoubleWordLoadStoreOffset),
+
+            // c.flwsp -> flw [RVC32F]
+            CFunct3Code.LoadSingleStackPointer when Config.VersionInfo.Base is RiscVBaseVersion.RV32
+                && Config.VersionInfo.HasExtensions(RiscVExtensions.SingleFloatingPoint) =>
+                    RiscVInstruction.CreateI(RiscVOpCode.FloatLoad, Funct3Code.LoadWord, rdrs1, RiscVGpRegister.StackPointer, compressed.WordLoadStoreOffset),
+
+            // c.jr, c.mv, c.ebreak, c.jalr, c.add
+            CFunct3Code.RegisterOp => DecompressQ2R(compressed, rdrs1, rs2),
+
+            // c.fsdsp -> fsd [RVCD]
+            CFunct3Code.StoreDoubleStackPointer when Config.VersionInfo.HasExtensions(RiscVExtensions.DoubleFloatingPoint) => RiscVInstruction.CreateS(
+                RiscVOpCode.FloatStore, Funct3Code.StoreDoubleWord, RiscVGpRegister.StackPointer, rs2, (short)compressed.DoubleWordLoadStoreOffset),
+
+            // c.swsp -> sw
+            CFunct3Code.StoreWordStackPointer => RiscVInstruction.CreateS(
+                RiscVOpCode.Store, Funct3Code.StoreWord, RiscVGpRegister.StackPointer, rs2, compressed.WordLoadStoreOffset),
+
+            // c.sdsp -> sd [RV64C]
+            CFunct3Code.StoreDoubleWordStackPointer when Config.VersionInfo.Base is >= RiscVBaseVersion.RV64 => RiscVInstruction.CreateS(
+                RiscVOpCode.Store, Funct3Code.StoreDoubleWord, RiscVGpRegister.StackPointer, rs2, (short)compressed.DoubleWordLoadStoreOffset),
+
+            // c.fswsp -> fsw [RVC32F]
+            CFunct3Code.StoreSingleStackPointer when Config.VersionInfo.Base is RiscVBaseVersion.RV32
+                && Config.VersionInfo.HasExtensions(RiscVExtensions.SingleFloatingPoint) =>
+                    RiscVInstruction.CreateS(RiscVOpCode.FloatStore, Funct3Code.StoreWord, RiscVGpRegister.StackPointer, rs2, compressed.WordLoadStoreOffset),
+
+            _ => compressed,
+        };
+    }
+
+    private static RiscVInstruction DecompressQ2R(RiscVCompressedInstruction compressed, RiscVGpRegister rdrs1, RiscVGpRegister rs2)
+    {
+        return (compressed.Funct4, rdrs1 is not RiscVGpRegister.Zero, rs2 is not RiscVGpRegister.Zero) switch
+        {
+            // c.jr -> jalr x0, rs1, 0 (rs1 != x0)
+            (CFunct4Code.JumpRegister, true, false) => RiscVInstruction.CreateI(
+                RiscVOpCode.JumpAndLinkRegister, Funct3Code.JumpAndLinkRegister, RiscVGpRegister.Zero, rdrs1, 0),
+
+            // c.mv -> add rd, x0, rs2 (rd != x0, rs2 != x0)
+            (CFunct4Code.Move, true, true) => RiscVInstruction.CreateR(
+                RiscVOpCode.Op, Funct3Code.Arithmetic, Funct7Code.Base, rdrs1, RiscVGpRegister.Zero, rs2),
+
+            // c.ebreak -> ebreak
+            (CFunct4Code.EnvironmentBreak, false, false) => RiscVInstruction.CreateI(
+                RiscVOpCode.System, Funct3Code.Arithmetic, RiscVGpRegister.Zero, RiscVGpRegister.Zero, 0x001),
+
+            // c.jalr -> jalr x1, rs1, 0 (rs1 != x0)
+            (CFunct4Code.JumpAndLinkRegister, true, false) => RiscVInstruction.CreateI(
+                RiscVOpCode.JumpAndLinkRegister, Funct3Code.JumpAndLinkRegister, RiscVGpRegister.ReturnAddress, rdrs1, 0),
+
+            // c.add -> add rd, rd, rs2 (rd != x0, rs2 != x0)
+            (CFunct4Code.Add, true, true) => RiscVInstruction.CreateR(
+                RiscVOpCode.Op, Funct3Code.Arithmetic, Funct7Code.Base, rdrs1, rdrs1, rs2),
+
+            _ => compressed,
         };
     }
 }

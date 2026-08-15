@@ -13,6 +13,7 @@ public enum CFunct2Code : byte
     Subtract = 0b00,
     Xor = 0b01,
     Or = 0b10,
+    Add = 0b10, 
     And = 0b11,
 
     // CB

@@ -61,5 +61,8 @@ public enum Funct3Code : byte
     Remainder = 0b110,
     RemainderUnsigned = 0b111,
 
+    // --- Other ---
+    JumpAndLinkRegister = 0b000
+
 #pragma warning restore CS1591
 }
