@@ -18,8 +18,8 @@ namespace Test.RiscV.Emulator;
 [AttributeUsage(AttributeTargets.Method)]
 public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttribute<RiscVEmulatorTestCase, RiscVEmulatorConfig>
 {
-    public const uint K0 = RiscVEmulatorTests.K0;
-    public const uint K1 = RiscVEmulatorTests.K1;
+    public const uint S8 = RiscVEmulatorTests.S8;
+    public const uint S9 = RiscVEmulatorTests.S9;
 
     private readonly RiscVVersionInfo _versionInfo;
     private readonly ExecutionMode _mode;
@@ -136,12 +136,12 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
     private static IEnumerable<object[]> GetLogicalInstructionTests<T>(RiscVEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
-        yield return [new RiscVEmulatorTestCase<T>(config, "and a0, s8, s9", T.CreateTruncating(K0 & K1))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "andi a0, s8, 0x516", T.CreateTruncating(K0 & K1))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "or a0, s8, s9", T.CreateTruncating(K0 | K1))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "ori a0, s8, 0x516", T.CreateTruncating(K0 | K1))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "xor a0, s8, s9", T.CreateTruncating(K0 ^ K1))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "xori a0, s8, 0x516", T.CreateTruncating(K0 ^ K1))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "and a0, s8, s9", T.CreateTruncating(S8 & S9))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "andi a0, s8, 0x516", T.CreateTruncating(S8 & S9))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "or a0, s8, s9", T.CreateTruncating(S8 | S9))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "ori a0, s8, 0x516", T.CreateTruncating(S8 | S9))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "xor a0, s8, s9", T.CreateTruncating(S8 ^ S9))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "xori a0, s8, 0x516", T.CreateTruncating(S8 ^ S9))];
         yield return [new RiscVEmulatorTestCase<T>(config, "sll a0, s6, s3", T.CreateTruncating(101 << 4))];
         yield return [new RiscVEmulatorTestCase<T>(config, "slli a0, s6, 4", T.CreateTruncating(101 << 4))];
         yield return [new RiscVEmulatorTestCase<T>(config, "srl a0, s6, s3", T.CreateTruncating(101 >> 4))];
@@ -226,12 +226,9 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         if (!config.VersionInfo.HasExtensions(RiscVExtensions.Compressed))
             yield break;
 
-        // Q0 RVC
         yield return [new RiscVEmulatorTestCase<T>(config, "c.addi4spn a0, 12", T.CreateTruncating(12))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.lw a0, 8(a5)", T.CreateTruncating(0x7856_3412))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.sw a4, 8(a5)", (T.CreateTruncating(0x100), [0xef, 0xcd, 0xab, 0x89]))];
-
-        // Q1 RVC
         yield return [new RiscVEmulatorTestCase<T>(config, "c.addi s0, 1", RiscVGpRegister.Saved0, T.CreateTruncating(2))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.li a0, 17", T.CreateTruncating(17))];
         // TODO: c.addi16sp, c.lui
@@ -243,8 +240,11 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         yield return [new RiscVEmulatorTestCase<T>(config, "c.xor s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 ^ 1))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.or s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 | 1))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.and s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 & 1))];
-
-        // Q2 RVC
+        // TODO: c.slli, c.lwsp, c.swsp
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.jr t3") { ExpectedPC = T.CreateTruncating(40) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.mv a0, s8", T.CreateTruncating(S8))];
         yield return [new RiscVEmulatorTestCase<T>(config, "c.ebreak", RiscVTrap.Breakpoint)];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.jalr t3", RiscVGpRegister.ReturnAddress, T.CreateTruncating(2)) { ExpectedPC = T.CreateTruncating(40) }];
+        yield return [new RiscVEmulatorTestCase<T>(config, "c.add t1, t0", RiscVGpRegister.Temporary1, T.CreateTruncating(20 + 10))];
     }
 }

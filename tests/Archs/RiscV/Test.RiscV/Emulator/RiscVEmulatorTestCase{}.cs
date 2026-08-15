@@ -46,8 +46,8 @@ public sealed record RiscVEmulatorTestCase<T> : RiscVEmulatorTestCase
                     // Assign some arbitrary values to some other registers as well, just in case
                     (RiscVGpRegister.Saved6, T.CreateTruncating(101)),
                     (RiscVGpRegister.Argument4, T.CreateTruncating(0x89ab_cdef)),
-                    (RiscVGpRegister.Saved8, T.CreateTruncating(RiscVEmulatorTests.K0)),
-                    (RiscVGpRegister.Saved9, T.CreateTruncating(RiscVEmulatorTests.K1)),
+                    (RiscVGpRegister.Saved8, T.CreateTruncating(RiscVEmulatorTests.S8)),
+                    (RiscVGpRegister.Saved9, T.CreateTruncating(RiscVEmulatorTests.S9)),
 
 
                     // a6 is 8 off from the memory address. a6 so it's indexable by compressed instructions

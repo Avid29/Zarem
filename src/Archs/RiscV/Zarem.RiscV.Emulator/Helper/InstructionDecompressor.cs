@@ -221,9 +221,6 @@ public class InstructionDecompressor
                 && Config.VersionInfo.HasExtensions(RiscVExtensions.SingleFloatingPoint) =>
                     RiscVInstruction.CreateI(RiscVOpCode.FloatLoad, Funct3Code.LoadWord, rdrs1, RiscVGpRegister.StackPointer, compressed.WordLoadStoreOffset),
 
-            // c.jr, c.mv, c.ebreak, c.jalr, c.add
-            CFunct3Code.RegisterOp => DecompressQ2R(compressed, rdrs1, rs2),
-
             // c.fsdsp -> fsd [RVCD]
             CFunct3Code.StoreDoubleStackPointer when Config.VersionInfo.HasExtensions(RiscVExtensions.DoubleFloatingPoint) => RiscVInstruction.CreateS(
                 RiscVOpCode.FloatStore, Funct3Code.StoreDoubleWord, RiscVGpRegister.StackPointer, rs2, (short)compressed.DoubleWordLoadStoreOffset),
@@ -241,6 +238,8 @@ public class InstructionDecompressor
                 && Config.VersionInfo.HasExtensions(RiscVExtensions.SingleFloatingPoint) =>
                     RiscVInstruction.CreateS(RiscVOpCode.FloatStore, Funct3Code.StoreWord, RiscVGpRegister.StackPointer, rs2, compressed.WordLoadStoreOffset),
 
+            CFunct3Code.RegisterOp => DecompressQ2R(compressed, rdrs1, rs2),
+
             _ => compressed,
         };
     }
@@ -249,11 +248,11 @@ public class InstructionDecompressor
     {
         return (compressed.Funct4, rdrs1 is not RiscVGpRegister.Zero, rs2 is not RiscVGpRegister.Zero) switch
         {
-            // c.jr -> jalr x0, rs1, 0 (rs1 != x0)
+            // c.jr -> jalr (rs1 != x0)
             (CFunct4Code.JumpRegister, true, false) => RiscVInstruction.CreateI(
                 RiscVOpCode.JumpAndLinkRegister, Funct3Code.JumpAndLinkRegister, RiscVGpRegister.Zero, rdrs1, 0),
 
-            // c.mv -> add rd, x0, rs2 (rd != x0, rs2 != x0)
+            // c.mv -> add (rd != x0, rs2 != x0)
             (CFunct4Code.Move, true, true) => RiscVInstruction.CreateR(
                 RiscVOpCode.Op, Funct3Code.Arithmetic, Funct7Code.Base, rdrs1, RiscVGpRegister.Zero, rs2),
 
@@ -261,11 +260,11 @@ public class InstructionDecompressor
             (CFunct4Code.EnvironmentBreak, false, false) => RiscVInstruction.CreateI(
                 RiscVOpCode.System, Funct3Code.Arithmetic, RiscVGpRegister.Zero, RiscVGpRegister.Zero, 0x001),
 
-            // c.jalr -> jalr x1, rs1, 0 (rs1 != x0)
+            // c.jalr -> jalr (rs1 != x0)
             (CFunct4Code.JumpAndLinkRegister, true, false) => RiscVInstruction.CreateI(
                 RiscVOpCode.JumpAndLinkRegister, Funct3Code.JumpAndLinkRegister, RiscVGpRegister.ReturnAddress, rdrs1, 0),
 
-            // c.add -> add rd, rd, rs2 (rd != x0, rs2 != x0)
+            // c.add -> add (rd != x0, rs2 != x0)
             (CFunct4Code.Add, true, true) => RiscVInstruction.CreateR(
                 RiscVOpCode.Op, Funct3Code.Arithmetic, Funct7Code.Base, rdrs1, rdrs1, rs2),
 
