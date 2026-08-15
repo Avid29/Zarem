@@ -44,9 +44,9 @@ public class RiscVInstructionParserTests
         => AssembleDisassembleTest(input, "RV32G");
 
     [DataTestMethod]
-    [RiscVInstructionParserTestDataSource("RV32CF")]
-    public void InstructionTests_RV32C(string input)
-        => AssembleDisassembleTest(input, "RV32CF");
+    [RiscVInstructionParserTestDataSource("RV32GCB")]
+    public void InstructionTests_RV32GCB(string input)
+        => AssembleDisassembleTest(input, "RV32GCB");
 
     [DataTestMethod]
     [RiscVInstructionParserTestDataSource("RV64I")]
@@ -59,9 +59,9 @@ public class RiscVInstructionParserTests
         => AssembleDisassembleTest(input, "RV64G");
 
     [DataTestMethod]
-    [RiscVInstructionParserTestDataSource("RV64CD")]
-    public void InstructionTests_RV64C(string input)
-        => AssembleDisassembleTest(input, "RV64CD");
+    [RiscVInstructionParserTestDataSource("RV64GCB")]
+    public void InstructionTests_RV64GCB(string input)
+        => AssembleDisassembleTest(input, "RV64GCB");
 
     [DataTestMethod]
     [RiscVInstructionParserTestDataSource("RV128I")]

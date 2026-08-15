@@ -17,7 +17,6 @@ public enum RiscVExtensions : uint
     None = 0,
 
     [RiscVExtension("A")] Atomic = 1U << ('A'-'A'),
-    [RiscVExtension("B", z: RiscVZExtensions.AddressGeneration | RiscVZExtensions.BasicBitManipulation | RiscVZExtensions.SingleBitManipulation)] BitManipulation = 1U << ('B' - 'A'),
     [RiscVExtension("C")] Compressed = 1U << ('C' - 'A'),
     [RiscVExtension("D", misa: SingleFloatingPoint)] DoubleFloatingPoint = 1U << ('D' - 'A'),
     [RiscVExtension("E")] Embedded = 1U << ('E' - 'A'),
@@ -35,10 +34,16 @@ public enum RiscVExtensions : uint
     [RiscVExtension("T")] TransactionalMemory = 1 << ('T' - 'A'),
     [RiscVExtension("V")] Vectors = 1 << ('V' - 'A'),
 
-    // Shorthand Alias
+    // Shorthand Aliases
     [RiscVExtension("G",
         misa: Integers | Multiplication | Atomic | SingleFloatingPoint | DoubleFloatingPoint,
         z: RiscVZExtensions.ControlAndStatusRegisters | RiscVZExtensions.InstructionFetchFence)]
     General = 0,
+
+    [RiscVExtension("B",
+        z: RiscVZExtensions.AddressGeneration | RiscVZExtensions.BasicBitManipulation
+        | RiscVZExtensions.CarrylessMultiplication | RiscVZExtensions.SingleBitManipulation)]
+    BitManipulation = 0,
+
 #pragma warning restore CS1591
 }
