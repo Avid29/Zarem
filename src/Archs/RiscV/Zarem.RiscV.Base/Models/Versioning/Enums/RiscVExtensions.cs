@@ -17,7 +17,7 @@ public enum RiscVExtensions : uint
     None = 0,
 
     [RiscVExtension("A")] Atomic = 1U << ('A'-'A'),
-    [RiscVExtension("B")] BitManipulation = 1U << ('B' - 'A'),
+    [RiscVExtension("B", z: RiscVZExtensions.AddressGeneration | RiscVZExtensions.BasicBitManipulation | RiscVZExtensions.SingleBitManipulation)] BitManipulation = 1U << ('B' - 'A'),
     [RiscVExtension("C")] Compressed = 1U << ('C' - 'A'),
     [RiscVExtension("D", misa: SingleFloatingPoint)] DoubleFloatingPoint = 1U << ('D' - 'A'),
     [RiscVExtension("E")] Embedded = 1U << ('E' - 'A'),
