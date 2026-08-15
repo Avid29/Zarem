@@ -4,6 +4,8 @@ using System.Text.Json.Serialization;
 using Zarem.Assembler;
 using Zarem.Assembler.Models.Meta;
 using Zarem.Models.Versioning;
+using Zarem.RiscV.Assembler.Models.Meta.Extensions;
+using Zarem.RiscV.Assembler.Models.Meta.Extensions.Compressed;
 using Zarem.RiscV.Models.Instructions.Enums;
 using Zarem.RiscV.Models.Versioning.Enums;
 
@@ -20,6 +22,16 @@ namespace Zarem.RiscV.Assembler.Models.Meta;
 [JsonDerivedType(typeof(UTypeInstructionMeta), "u-type")]
 [JsonDerivedType(typeof(JTypeInstructionMeta), "j-type")]
 [JsonDerivedType(typeof(RiscVFloatInstructionMeta), "float")]
+[JsonDerivedType(typeof(CATypeInstructionMeta), "ca-type")]
+[JsonDerivedType(typeof(CBATypeInstructionMeta), "cba-type")]
+[JsonDerivedType(typeof(CBTypeInstructionMeta), "cb-type")]
+[JsonDerivedType(typeof(CITypeInstructionMeta), "ci-type")]
+[JsonDerivedType(typeof(CIWTypeInstructionMeta), "ciw-type")]
+[JsonDerivedType(typeof(CJTypeInstructionMeta), "cj-type")]
+[JsonDerivedType(typeof(CLTypeInstructionMeta), "cl-type")]
+[JsonDerivedType(typeof(CRTypeInstructionMeta), "cr-type")]
+[JsonDerivedType(typeof(CSSTypeInstructionMeta), "css-type")]
+[JsonDerivedType(typeof(CSTypeInstructionMeta), "cs-type")]
 [JsonDerivedType(typeof(RiscVPseudoInstructionMeta), "pseudo")]
 public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgument>
 {
@@ -27,13 +39,19 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
     /// Gets the extension required to execute this instruction (e.g., M, A, F).
     /// </summary>
     [JsonPropertyName("extension")]
-    public RiscVExtensions Extension { get; init; } = RiscVExtensions.Integers;
+    public RiscVExtensionInfo Extension { get; init; } = RiscVExtensions.Integers;
 
     /// <summary>
     /// Gets the minimum base architecture width (32, 64, or 128).
     /// </summary>
     [JsonPropertyName("min_base")]
     public RiscVBaseVersion MinBase { get; init; } = RiscVBaseVersion.RV32;
+
+    /// <summary>
+    /// Gets the maximum base architecture width (32, 64, or 128).
+    /// </summary>
+    [JsonPropertyName("max_base")]
+    public RiscVBaseVersion? MaxBase { get; init; } = null;
 
     /// <summary>
     /// Gets the specific version of the extension this instruction was introduced in.
@@ -86,11 +104,16 @@ public abstract record RiscVInstructionMetaBase : InstructionMetaBase<RiscVArgum
     public bool IsValidFor(RiscVVersionInfo config)
     {
         // Check if the required extension is enabled in the flags
-        if (!config.Extensions.HasFlag(Extension))
+        if (!config.HasExtensions(Extension))
             return false;
 
         // Check if the current CPU base width meets the minimum requirement
         if ((int)config.Base < (int)MinBase)
+            return false;
+
+        // Check if the current CPU base width is greater than the maximum allowed
+        // (This is often to prevent conflicting op codes in the compressed extension)
+        if (MaxBase.HasValue && (int)config.Base > (int)MaxBase)
             return false;
 
         // Check spec version

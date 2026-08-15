@@ -2,40 +2,43 @@
 
 using System;
 using System.Text.Json.Serialization;
+using Zarem.RiscV.Attributes;
 
 namespace Zarem.RiscV.Models.Versioning.Enums;
 
 /// <summary>
-/// An enum for RISC-V extensions groups.
+/// An enum for RISC-V lettered extensions.
 /// </summary>
 [Flags]
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum RiscVExtensions : uint
 {
 #pragma warning disable CS1591
+    None = 0,
 
-    [JsonStringEnumMemberName("I")] Integers = 0x0,
-    [JsonStringEnumMemberName("A")] Atomic = 0x1,
-    [JsonStringEnumMemberName("B")] BitManipulation = 0x2,
-    [JsonStringEnumMemberName("C")] Compressed = 0x4,
-    [JsonStringEnumMemberName("D")] DoubleFloatingPoint = 0x8,
-    [JsonStringEnumMemberName("F")] SingleFloatingPoint = 0x10,
-    [JsonStringEnumMemberName("H")] Hypervisor = 0x20,
-    [JsonStringEnumMemberName("J")] DynamicTranslatedLanguages = 0x40,
-    [JsonStringEnumMemberName("K")] ScalarCryptography = 0x80,
-    [JsonStringEnumMemberName("L")] DecimalFloatingPoint = 0x100,
-    [JsonStringEnumMemberName("M")] Multiplication = 0x200,
-    [JsonStringEnumMemberName("N")] UserLevelInterrupts = 0x400,
-    [JsonStringEnumMemberName("P")] PackedSIMD = 0x800,
-    [JsonStringEnumMemberName("Q")] QuadrupleFloatingPoint = 0x1000,
-    [JsonStringEnumMemberName("S")] SuperVisorMode = 0x2000,
-    [JsonStringEnumMemberName("T")] TransactionalMemory = 0x4000,
-    [JsonStringEnumMemberName("V")] Vectors = 0x8000,
+    [RiscVExtension("A")] Atomic = 1U << ('A'-'A'),
+    [RiscVExtension("B")] BitManipulation = 1U << ('B' - 'A'),
+    [RiscVExtension("C")] Compressed = 1U << ('C' - 'A'),
+    [RiscVExtension("D", misa: SingleFloatingPoint)] DoubleFloatingPoint = 1U << ('D' - 'A'),
+    [RiscVExtension("E")] Embedded = 1U << ('E' - 'A'),
+    [RiscVExtension("F")] SingleFloatingPoint = 1U << ('F' - 'A'),
+    [RiscVExtension("H")] Hypervisor = 1 << ('H' - 'A'),
+    [RiscVExtension("I")] Integers = 1 << ('I' - 'A'),
+    [RiscVExtension("J")] DynamicTranslatedLanguages = 1 << ('J' - 'A'),
+    [RiscVExtension("K")] ScalarCryptography = 1 << ('K' - 'A'),
+    [RiscVExtension("L", misa: SingleFloatingPoint)] DecimalFloatingPoint = 1 << ('L' - 'A'),
+    [RiscVExtension("M")] Multiplication = 1 << ('M' - 'A'),
+    [RiscVExtension("N")] UserLevelInterrupts = 1 << ('N' - 'A'),
+    [RiscVExtension("P")] PackedSIMD = 1 << ('P' - 'A'),
+    [RiscVExtension("Q", misa: SingleFloatingPoint | DoubleFloatingPoint)] QuadrupleFloatingPoint = ('Q' - 'A'),
+    [RiscVExtension("S")] SuperVisorMode = 1 << ('S' - 'A'),
+    [RiscVExtension("T")] TransactionalMemory = 1 << ('T' - 'A'),
+    [RiscVExtension("V")] Vectors = 1 << ('V' - 'A'),
 
-    [JsonStringEnumMemberName("Zifencei")] InstructionFetchFence = 0x1_0000,
-    [JsonStringEnumMemberName("Zicsr")] ControlAndStatusRegisters = 0x2_0000,
-    [JsonStringEnumMemberName("Zfh")] HalfPrecisionFloatingPoint = 0x4_0000,
-
-    [JsonStringEnumMemberName("G")] General = Integers | Multiplication | Atomic | SingleFloatingPoint | DoubleFloatingPoint | InstructionFetchFence | ControlAndStatusRegisters,
+    // Shorthand Alias
+    [RiscVExtension("G",
+        misa: Integers | Multiplication | Atomic | SingleFloatingPoint | DoubleFloatingPoint,
+        z: RiscVZExtensions.ControlAndStatusRegisters | RiscVZExtensions.InstructionFetchFence)]
+    General = 0,
 #pragma warning restore CS1591
 }

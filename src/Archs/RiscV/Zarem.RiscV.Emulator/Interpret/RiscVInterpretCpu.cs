@@ -8,9 +8,11 @@ using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models;
 using Zarem.RiscV.Emulator.Config;
+using Zarem.RiscV.Emulator.Helper;
 using Zarem.RiscV.Emulator.Machine;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions;
+using Zarem.RiscV.Models.Instructions.Enums.Operations;
 using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.RiscV.Emulator.Interpret;
@@ -66,11 +68,56 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
     {
         instruction = default;
 
-        if (ProgramCounter % T.CreateTruncating(4) != T.Zero)
+        var isCompressedEnabled = Config.VersionInfo.HasExtensions(RiscVExtensions.Compressed);
+        var alignmentMask = T.CreateTruncating(isCompressedEnabled ? 0b01 : 0b11);
+        if ((ProgramCounter & alignmentMask) != T.Zero)
             return RiscVTrap.InstructionAddressMisaligned;
 
-        instruction = (RiscVInstruction)Memory.Read<uint>(ulong.CreateTruncating(ProgramCounter));
-        return RiscVTrap.None;
+        var pc = ulong.CreateTruncating(ProgramCounter);
+
+        // TODO: Handle memory exceptions in fetch
+
+        // If compressed isn't present we can just fetch the 32-bit instruction ez-pz
+        if (!isCompressedEnabled)
+        {
+            instruction = (RiscVInstruction)Memory.Read<uint>(pc);
+            return RiscVTrap.None;
+        }
+
+        if ((pc & 0b11) is 0)
+        {
+            // RVC Fast Path: We're 4-byte aligned, so no need to worry about crossing a page boundary
+            instruction = (RiscVInstruction)Memory.Read<uint>(pc);
+            if (instruction.IsCompressed)
+            {
+                // Trim the instruction to the compressed instruction if compressed
+                instruction = (RiscVCompressedInstruction)instruction;
+            }
+
+            return RiscVTrap.None;
+        }
+        else
+        {
+            // RVC Slow Path: Read the instruction 2-bytes at a time in case reading a compressed instruction
+            // at the end of a page boundary
+
+            var parcel0 = Memory.Read<ushort>(pc);
+            var compressedInstruction = (RiscVCompressedInstruction)parcel0;
+            if (compressedInstruction.CompressionCode is not RiscVCompressionCode.Uncompressed)
+            {
+                // The instruction is a compressed instruction
+                // Cast to full instruction and return
+                instruction = compressedInstruction;
+                return RiscVTrap.None;
+            }
+            else
+            {
+                // Fetch second half and return
+                var parcel1 = Memory.Read<ushort>(pc + 2);
+                instruction = (RiscVInstruction)(((uint)parcel1 << 16) | parcel0);
+                return RiscVTrap.None;
+            }
+        }
     }
 
     private RiscVTrap ExecuteAndApply(RiscVInstruction instruction, out RiscVExecution<T> execution, RiscVTrap proceedingTrap = RiscVTrap.None)
@@ -81,7 +128,7 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
 
         trap = trap is RiscVTrap.None ? Execute(instruction, out execution) : trap;
         trap = trap is RiscVTrap.None ? MemAccess(execution, out memRead) : trap;
-        trap = trap is RiscVTrap.None ? WriteBack(execution, memRead) : trap;
+        trap = trap is RiscVTrap.None ? WriteBack(execution, memRead, instruction.IsCompressed) : trap;
 
         // Handle trap, if any occurred
         if (trap is not RiscVTrap.None)
@@ -91,7 +138,10 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
     }
 
     private RiscVTrap Execute(RiscVInstruction instruction, out RiscVExecution<T> execution)
-        => _instructionServiceTable.Execute(instruction, out execution);
+    {
+        execution = default;
+        return _instructionServiceTable.Execute(instruction, out execution);
+    }
 
     private RiscVTrap MemAccess(RiscVExecution<T> execution, out T read)
     {
@@ -139,9 +189,9 @@ public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<R
         return RiscVTrap.None;
     }
 
-    private RiscVTrap WriteBack(RiscVExecution<T> execution, T memRead)
+    private RiscVTrap WriteBack(RiscVExecution<T> execution, T memRead, bool compressed)
     {
-        T nextPc = ProgramCounter + T.CreateTruncating(4);
+        T nextPc = ProgramCounter + T.CreateTruncating(compressed ? 2 : 4);
 
         // Handle gpr writeback
         RegisterFile[(int)execution.WritebackGPRegister] = execution.Writeback;

@@ -65,7 +65,7 @@ public sealed class MipsInterpretCpu<T, TFloat> : MipsCpu<T, TFloat>, IInterpret
     {
         instruction = default;
 
-        if (ProgramCounter % T.CreateTruncating(4) != T.Zero)
+        if ((ProgramCounter & T.CreateTruncating(0b11)) != T.Zero)
             return MipsTrap.AddressErrorLoad;
 
         instruction = (MipsInstruction)Memory.Read<uint>(ulong.CreateTruncating(ProgramCounter));

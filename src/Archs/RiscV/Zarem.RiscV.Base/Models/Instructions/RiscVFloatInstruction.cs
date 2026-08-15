@@ -4,6 +4,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Helpers;
+using Zarem.Models.Interface;
 using Zarem.RiscV.Models.Enums;
 using Zarem.RiscV.Models.Instructions.Enums;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
@@ -16,7 +17,7 @@ namespace Zarem.RiscV.Models.Instructions;
 /// A struct representing an instruction utilizing the floating-point coprocessor.
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 4)]
-public struct RiscVFloatInstruction
+public struct RiscVFloatInstruction : IInstruction
 {
     // Opcodes are 7 bits, Registers are 5 bits.
     private const int OPCODE_BIT_SIZE = 7;
@@ -182,6 +183,9 @@ public struct RiscVFloatInstruction
         readonly get => (RiscVIntFormat)FRS2;
         set => FRS2 = (RiscVFloatRegister)value;
     }
+
+    /// <inheritdoc/>
+    public readonly int Length => ((RiscVInstruction)this).Length;
 
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="RiscVFloatInstruction"/>.
