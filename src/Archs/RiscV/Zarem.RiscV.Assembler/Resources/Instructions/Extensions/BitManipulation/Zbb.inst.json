@@ -1,0 +1,204 @@
+[
+  {
+    "type": "r-type",
+    "name": "andn",
+    "funct3": 7,
+    "funct7": 32,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "orn",
+    "funct3": 6,
+    "funct7": 32,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "xnor",
+    "funct3": 4,
+    "funct7": 32,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "min",
+    "funct3": 4,
+    "funct7": 5,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "minu",
+    "funct3": 5,
+    "funct7": 5,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "max",
+    "funct3": 6,
+    "funct7": 5,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "maxu",
+    "funct3": 7,
+    "funct7": 5,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "clz",
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 0,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "clzw",
+    "op_code": 59,
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 0,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb",
+    "min_base": "RV64"
+  },
+  {
+    "type": "r-type",
+    "name": "ctz",
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 1,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "ctzw",
+    "op_code": 59,
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 1,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb",
+    "min_base": "RV64"
+  },
+  {
+    "type": "r-type",
+    "name": "cpop",
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 2,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "cpopw",
+    "op_code": 59,
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 2,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb",
+    "min_base": "RV64"
+  },
+  {
+    "type": "r-type",
+    "name": "sext.b",
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 4,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "sext.h",
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 5,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "rol",
+    "funct3": 1,
+    "funct7": 48,
+    "args": [ "rd", "rs1", "rol_rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "rolw",
+    "op_code": 59,
+    "funct3": 1,
+    "funct7": 48,
+    "args": [ "rd", "rs1", "rol_rs2" ],
+    "extension": "Zbb",
+    "min_base": "RV64"
+  },
+  {
+    "type": "r-type",
+    "name": "ror",
+    "funct3": 5,
+    "funct7": 48,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "rorw",
+    "op_code": 59,
+    "funct3": 5,
+    "funct7": 48,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb",
+    "min_base": "RV64"
+  },
+  {
+    "type": "i-type",
+    "name": "rori",
+    "op_code": 19,
+    "funct3": 5,
+    "is_shift": true,
+    "special": 48,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "i-type",
+    "name": "orc.b",
+    "op_code": 19,
+    "funct3": 5,
+    "is_shift": true,
+    "special": 20,
+    "imm_fixed": 7,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "i-type",
+    "name": "rev8",
+    "op_code": 19,
+    "funct3": 5,
+    "is_shift": true,
+    "special": 52,
+    "imm_fixed": 31,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb"
+  }
+]

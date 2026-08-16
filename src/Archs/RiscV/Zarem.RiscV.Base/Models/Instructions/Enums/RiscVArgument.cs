@@ -151,5 +151,9 @@ public enum RiscVArgument : byte
 
     #endregion
 
+    [JsonStringEnumMemberName("rol_rs2")]
+    [RegisterArgument<RiscVRegisterSet>("rs2", RiscVRegisterSet.RotateLeftRegister)]
+    RotateLeftRS2,
+
 #pragma warning restore CS1591
 }

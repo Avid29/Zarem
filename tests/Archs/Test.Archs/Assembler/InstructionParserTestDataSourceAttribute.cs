@@ -65,7 +65,8 @@ public abstract class InstructionParserTestDataSourceAttribute : Attribute, ITes
         where TReg : unmanaged, Enum
         where TSet : unmanaged, Enum
     {
-        var regIndex = Random.Shared.Next(0, RegisterTable<TReg, TSet>.GetRegisterCount(regAttr.RegisterSet));
+        var bound = RegisterTable<TReg, TSet>.GetRegisterCount(regAttr.RegisterSet, out var offset) + offset;
+        var regIndex = Random.Shared.Next(offset, bound);
         var reg = Unsafe.As<int, TReg>(ref regIndex);
         var regString = $"{RegisterTable<TReg, TSet>.GetRegisterString(reg, regAttr.RegisterSet)}";
         return profile.RegisterPrefix is '\0' ? regString : $"{profile.RegisterPrefix}{regString}";

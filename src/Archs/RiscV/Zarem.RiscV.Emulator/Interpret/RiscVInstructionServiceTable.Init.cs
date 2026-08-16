@@ -2,6 +2,7 @@
 
 using System;
 using System.Numerics;
+using Zarem.Emulator.Models.Logic;
 using Zarem.Models.Versioning;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Interpret;
@@ -23,21 +24,19 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
 
         InitBaseTable(versionInfo);
         InitFloatTable(versionInfo);
+        InitBitManipulationTable(versionInfo);
 
-        if (versionInfo.HasExtensions(RiscVExtensions.Multiplication))
+        switch (versionInfo.Base)
         {
-            switch (versionInfo.Base)
-            {
-                case RiscVBaseVersion.RV32:
-                    InitMultTable<ulong, long>(versionInfo);
-                    break;
-                case RiscVBaseVersion.RV64:
-                    InitMultTable<UInt128, Int128>(versionInfo);
-                    break;
-                case RiscVBaseVersion.RV128:
-                    InitMultTable<BigInteger, BigInteger>(versionInfo);
-                    break;
-            }
+            case RiscVBaseVersion.RV32:
+                InitMultTable<ulong, long>(versionInfo);
+                break;
+            case RiscVBaseVersion.RV64:
+                InitMultTable<UInt128, Int128>(versionInfo);
+                break;
+            case RiscVBaseVersion.RV128:
+                InitMultTable<BigInteger, BigInteger>(versionInfo);
+                break;
         }
     }
 
@@ -52,7 +51,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         // Add Jump operations
         Register(RiscVOpCode.JumpAndLink, &JumpAndLink);
         Register(RiscVOpCode.JumpAndLinkRegister, 0, &JumpAndLinkRegister);
-         
+
         // Add Branch operations
         Register(RiscVOpCode.Branch, Funct3Code.BranchEqual, &BranchOn<XeqLogic<T>>);
         Register(RiscVOpCode.Branch, Funct3Code.BranchNotEqual, &BranchOn<XneLogic<T>>);
@@ -90,17 +89,33 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         where TLong : struct, IBinaryInteger<TLong>
         where TSignedLong : struct, IBinaryInteger<TSignedLong>
     {
-        InitMultiplyAluOperations<T, TSigned, TLong, TSignedLong>(RiscVOpCode.Op);
+        InitMultiplyAluOperations<T, TSigned, TLong, TSignedLong>(versionInfo, RiscVOpCode.Op);
 
         if (versionInfo.Base is >= RiscVBaseVersion.RV64)
         {
             // Add explicitly 32-bit operations
-            InitMultiplyAluOperations<uint, int, ulong, long>(RiscVOpCode.Op32);
+            InitMultiplyAluOperations<uint, int, ulong, long>(versionInfo, RiscVOpCode.Op32);
         }
         if (versionInfo.Base is >= RiscVBaseVersion.RV128)
         {
             // Add explicitly 64-bit operations
-            InitMultiplyAluOperations<ulong, long, UInt128, Int128>(RiscVOpCode.Op64);
+            InitMultiplyAluOperations<ulong, long, UInt128, Int128>(versionInfo, RiscVOpCode.Op64);
+        }
+    }
+
+    private void InitBitManipulationTable(RiscVVersionInfo versionInfo)
+    {
+        InitBitManipulationOperations<T, TSigned>(versionInfo, RiscVOpCode.Op);
+
+        if (versionInfo.Base is >= RiscVBaseVersion.RV64)
+        {
+            // Add explicitly 32-bit operations
+            InitBitManipulationOperations<uint, int>(versionInfo, RiscVOpCode.Op32);
+        }
+        if (versionInfo.Base is >= RiscVBaseVersion.RV128)
+        {
+            // Add explicitly 64-bit operations
+            InitBitManipulationOperations<ulong, long>(versionInfo, RiscVOpCode.Op64);
         }
     }
 
@@ -126,12 +141,15 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         Register(iOpCode, Funct3Code.And, &AluI<AndLogic<T2>, T2>);
     }
 
-    private void InitMultiplyAluOperations<T2, T2Signed, T2Long, T2SignedLong>(RiscVOpCode opCode)
+    private void InitMultiplyAluOperations<T2, T2Signed, T2Long, T2SignedLong>(RiscVVersionInfo versionInfo, RiscVOpCode opCode)
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
         where T2Signed : unmanaged, IBinaryInteger<T2Signed>, ISignedNumber<T2Signed>
         where T2Long : struct, IBinaryInteger<T2Long>
         where T2SignedLong : struct, IBinaryInteger<T2SignedLong>
     {
+        if (!versionInfo.HasExtensions(RiscVExtensions.Multiplication))
+            return;
+
         Register(Funct7Code.MExtension, opCode, Funct3Code.Multiply, &AluR<MulLogic<T2Signed>, T2Signed>);
         Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHigh, &AluR<MulhLogic<T2Signed, T2SignedLong>, T2Signed>);
         Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHighSignedUnsigned, &AluR<MulhsuLogic<T2Signed, T2SignedLong>, T2Signed>);
@@ -140,6 +158,27 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         Register(Funct7Code.MExtension, opCode, Funct3Code.DivideUnsigned, &AluR<DivLogic<T2>, T2>);
         Register(Funct7Code.MExtension, opCode, Funct3Code.Remainder, &AluR<RemLogic<T2Signed>, T2Signed>);
         Register(Funct7Code.MExtension, opCode, Funct3Code.RemainderUnsigned, &AluR<RemLogic<T2>, T2>);
+    }
+
+    private void InitBitManipulationOperations<T2, T2Signed>(RiscVVersionInfo versionInfo, RiscVOpCode opCode)
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
+        where T2Signed : unmanaged, IBinaryInteger<T2Signed>, ISignedNumber<T2Signed>
+    {
+        // Zbb
+        if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
+        {
+            Register(Funct7Code.BitManipulationCountRotate, opCode, Funct3Code.BitCountSignExtendRotateLeft, &BitCountSignExtendRotate<T2, T2Signed>);
+            Register(Funct7Code.BitManipulationCountRotate, opCode, Funct3Code.RotateRight, &AluR<RorLogic<T2>, T2>);
+            Register(Funct7Code.MinMaxClmul, opCode, Funct3Code.Min, &AluR<MinLogic<T2Signed>, T2Signed>);
+            Register(Funct7Code.MinMaxClmul, opCode, Funct3Code.MinUnsigned, &AluR<MinLogic<T2>, T2>);
+            Register(Funct7Code.MinMaxClmul, opCode, Funct3Code.Max, &AluR<MaxLogic<T2Signed>, T2Signed>);
+            Register(Funct7Code.MinMaxClmul, opCode, Funct3Code.MaxUnsigned, &AluR<MaxLogic<T2>, T2>);
+
+            // Overwrite bitwise as modifyable
+            Register(opCode, Funct3Code.Xor, &ModifyableAluR<XorLogic<T2>, XnorLogic<T2>, T2>);
+            Register(opCode, Funct3Code.Or, &ModifyableAluR<OrLogic<T2>, OrnLogic<T2>, T2>);
+            Register(opCode, Funct3Code.And, &ModifyableAluR<AndLogic<T2>, AndnLogic<T2>, T2>);
+        }
     }
 
     private void InitFloatTable(RiscVVersionInfo versionInfo)
