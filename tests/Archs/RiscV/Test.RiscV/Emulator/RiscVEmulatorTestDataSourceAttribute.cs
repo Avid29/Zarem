@@ -227,6 +227,15 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
     {
         unchecked
         {
+            // Zba
+            if (config.VersionInfo.HasExtensions(RiscVZExtensions.AddressGeneration))
+            {
+                yield return [new RiscVEmulatorTestCase<T>(config, "sh1add a0, t1, t0", T.CreateTruncating((20 << 1) + 10))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "sh2add a0, t1, t0", T.CreateTruncating((20 << 2) + 10))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "sh3add a0, t1, t0", T.CreateTruncating((20 << 3) + 10))];
+            }
+
+            // Zbb
             if (config.VersionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
             {
                 yield return [new RiscVEmulatorTestCase<T>(config, "clz a0, s8", T.LeadingZeroCount(T.CreateTruncating(S8)))];

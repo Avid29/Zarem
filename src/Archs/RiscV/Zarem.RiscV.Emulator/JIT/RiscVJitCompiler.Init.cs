@@ -178,6 +178,14 @@ public partial class RiscVJitCompiler<T, TFloat>
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
         where T2Signed : unmanaged, IBinaryInteger<T2Signed>, ISignedNumber<T2Signed>
     {
+        // Zba
+        if (versionInfo.HasExtensions(RiscVZExtensions.AddressGeneration))
+        {
+            _instructionTable.Register(Funct7Code.ShiftAdd, opCode, Funct3Code.Shift1Add, (il, inst, _, _) => ShiftAdd<T2>(il, inst, 1));
+            _instructionTable.Register(Funct7Code.ShiftAdd, opCode, Funct3Code.Shift2Add, (il, inst, _, _) => ShiftAdd<T2>(il, inst, 2));
+            _instructionTable.Register(Funct7Code.ShiftAdd, opCode, Funct3Code.Shift3Add, (il, inst, _, _) => ShiftAdd<T2>(il, inst, 3));
+        }
+
         // Zbb
         if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
         {

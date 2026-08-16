@@ -46,7 +46,7 @@ public unsafe struct MulhLogic<T, TLong> : IAluLogic<T>
 }
 
 /// <summary>
-/// An <see cref="IAluLogic{T}"/> for a signed multiplication operation on 32-bit values.
+/// An <see cref="IAluLogic{T}"/> for a signed/unsigned multiplication operation.
 /// </summary>
 public unsafe struct MulhsuLogic<T, TLong> : IAluLogic<T>
     where T : unmanaged, INumber<T>
@@ -60,4 +60,38 @@ public unsafe struct MulhsuLogic<T, TLong> : IAluLogic<T>
         var result = TLong.CreateTruncating(rs) * TLong.CreateTruncating(rt);
         return T.CreateTruncating(result >> shift);
     }
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for a shift1 then add operation.
+/// </summary>
+public struct Sh1AddLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => (rs << 1) + rt; 
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for a shift2 then add operation.
+/// </summary>
+public struct Sh2AddLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => (rs << 2) + rt; 
+}
+
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for a shift3 then add operation.
+/// </summary>
+public struct Sh3AddLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => (rs << 3) + rt; 
 }

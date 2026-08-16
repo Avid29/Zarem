@@ -61,6 +61,11 @@ public enum Funct3Code : byte
     Remainder = 0b110,
     RemainderUnsigned = 0b111,
 
+    // --- Shift Add ---
+    Shift1Add = 0b010,
+    Shift2Add = 0b100,
+    Shift3Add = 0b110,
+
     // --- Bit Manipulation ---
     BitCountSignExtendRotateLeft = 0b001,
     RotateRight = 0b101,

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Instructions\BType.inst.json" />
+    <EmbeddedResource Include="Resources\Instructions\Extensions\BitManipulation\Zba.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\BitManipulation\Zbb.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CAType.inst.json" />
     <EmbeddedResource Include="Resources\Instructions\Extensions\Compressed\CIWType.inst.json" />

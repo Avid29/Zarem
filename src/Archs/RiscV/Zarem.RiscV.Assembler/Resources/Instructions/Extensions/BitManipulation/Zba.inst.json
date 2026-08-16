@@ -1,0 +1,77 @@
+[
+  {
+    "type": "r-type",
+    "name": "sh1add",
+    "funct3": 2,
+    "funct7": 16,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zba"
+  },
+  {
+    "type": "r-type",
+    "name": "sh2add",
+    "funct3": 4,
+    "funct7": 16,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zba"
+  },
+  {
+    "type": "r-type",
+    "name": "sh3add",
+    "funct3": 6,
+    "funct7": 16,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zba"
+  },
+  {
+    "type": "r-type",
+    "name": "add.uw",
+    "op_code": 59,
+    "funct3": 0,
+    "funct7": 4,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zba",
+    "min_base": "RV64"
+  },
+  {
+    "type": "r-type",
+    "name": "sh1add.uw",
+    "op_code": 59,
+    "funct3": 2,
+    "funct7": 16,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zba",
+    "min_base": "RV64"
+  },
+  {
+    "type": "r-type",
+    "name": "sh2add.uw",
+    "op_code": 59,
+    "funct3": 4,
+    "funct7": 16,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zba",
+    "min_base": "RV64"
+  },
+  {
+    "type": "r-type",
+    "name": "sh3add.uw",
+    "op_code": 59,
+    "funct3": 6,
+    "funct7": 16,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zba",
+    "min_base": "RV64"
+  },
+  {
+    "type": "i-type",
+    "name": "slli.uw",
+    "op_code": 19,
+    "funct3": 1,
+    "is_shift": true,
+    "special": 4,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "Zba",
+    "min_base": "RV64"
+  }
+]
