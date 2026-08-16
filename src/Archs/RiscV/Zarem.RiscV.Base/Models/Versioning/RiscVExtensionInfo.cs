@@ -158,16 +158,27 @@ public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo
         var impliedMisa = RiscVExtensions.None;
         var impliedZ = RiscVZExtensions.None;
 
-        // If G is present, it replaces IMAFD
+        // Handle determining I vs G
         var gDependencies = _dependencyMap["G"];
         bool isG = Contains(gDependencies);
-        if (isG)
-        {
-            sb.Append('G');
+        sb.Append(isG ? 'G' : 'I');
 
-            // Remove flags covered by G to avoid double printing
-            impliedMisa |= gDependencies.MisaFlags;
-            impliedZ |= gDependencies.ZFlags;
+        foreach (var (alias, dependencies) in _dependencyMap)
+        {
+            _extensionMap.TryGetValue(alias, out var flag);
+            _zExtensionMap.TryGetValue(alias, out var zFlag);
+            var extension = new RiscVExtensionInfo(flag, zFlag);
+
+            if (Contains(extension) && Contains(dependencies))
+            {
+                // Append the extension only if it's a pure alias
+                if (extension.MisaFlags is 0 && extension.ZFlags is 0)
+                    sb.Append(alias);
+
+                // Track implied dependencies
+                impliedMisa |= dependencies.MisaFlags;
+                impliedZ |= dependencies.ZFlags;
+            }
         }
 
         var printMisa = (MisaFlags & ~impliedMisa) | RiscVExtensions.Integers;
@@ -176,7 +187,8 @@ public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo
         // Append remaining Standard Extensions
         foreach (var (name, flag) in _sortedExtensions)
         {
-            if (name == "I" && isG)
+            // I/G is already handled
+            if (name is "I" or "G")
                 continue;
 
             if (flag is not 0 &&
@@ -186,7 +198,7 @@ public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo
             }
         }
 
-        // Append Multi-letter extensions with '+'
+        // Append Multi-letter extensions with '_'
         bool firstZ = true;
         foreach (var (name, flag) in _sortedZExtensions)
         {
