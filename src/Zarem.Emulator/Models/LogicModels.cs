@@ -639,7 +639,6 @@ public struct MinLogic<T> : IAluLogic<T>
     public static T Compute(T rs, T rt) => T.Min(rs, rt);
 }
 
-
 /// <summary>
 /// An <see cref="IAluLogic{T}"/> implementation for a max logic operation.
 /// </summary>

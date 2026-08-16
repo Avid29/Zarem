@@ -238,8 +238,10 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
                 yield return [new RiscVEmulatorTestCase<T>(config, "orn a0, s8, s9", T.CreateTruncating(S8) | ~T.CreateTruncating(S9))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "xnor a0, s8, s9", ~T.CreateTruncating(S8 ^ S9))];
 
-                yield return [new RiscVEmulatorTestCase<T>(config, "minu a0, s8, s9", T.Min(T.CreateTruncating(S8), T.CreateTruncating(S9)))];
-                yield return [new RiscVEmulatorTestCase<T>(config, "maxu a0, s8, s9", T.Max(T.CreateTruncating(S8), T.CreateTruncating(S9)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "min a0, t0, t4", T.CreateTruncating(TSigned.Min(TSigned.CreateTruncating(10), TSigned.CreateTruncating(-10))))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "minu a0, t0, t4", T.Min(T.CreateTruncating(10), T.CreateTruncating(-10)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "max a0, t0, t4", T.CreateTruncating(TSigned.Max(TSigned.CreateTruncating(10), TSigned.CreateTruncating(-10))))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "maxu a0, t0, t4", T.Max(T.CreateTruncating(10), T.CreateTruncating(-10)))];
             }
         }
     }
