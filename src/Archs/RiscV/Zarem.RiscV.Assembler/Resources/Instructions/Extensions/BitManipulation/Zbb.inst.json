@@ -25,22 +25,6 @@
   },
   {
     "type": "r-type",
-    "name": "max",
-    "funct3": 5,
-    "funct7": 5,
-    "args": [ "rd", "rs1", "rs2" ],
-    "extension": "Zbb"
-  },
-  {
-    "type": "r-type",
-    "name": "maxu",
-    "funct3": 7,
-    "funct7": 5,
-    "args": [ "rd", "rs1", "rs2" ],
-    "extension": "Zbb"
-  },
-  {
-    "type": "r-type",
     "name": "min",
     "funct3": 4,
     "funct7": 5,
@@ -50,7 +34,23 @@
   {
     "type": "r-type",
     "name": "minu",
+    "funct3": 5,
+    "funct7": 5,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "max",
     "funct3": 6,
+    "funct7": 5,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "maxu",
+    "funct3": 7,
     "funct7": 5,
     "args": [ "rd", "rs1", "rs2" ],
     "extension": "Zbb"

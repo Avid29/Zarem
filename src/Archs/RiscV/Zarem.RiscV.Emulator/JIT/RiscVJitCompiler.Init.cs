@@ -155,7 +155,9 @@ public partial class RiscVJitCompiler<T, TFloat>
         // Zbb
         if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
         {
-            _instructionTable.Register(Funct7Code.BitManipCountRotate, RiscVOpCode.Op, (Funct3Code)1, BitCountSignExtend);
+            _instructionTable.Register(Funct7Code.BitManipulationCountRotate, RiscVOpCode.Op, Funct3Code.BitCountSignExtendRol, BitCountSignExtend);
+            _instructionTable.Register(Funct7Code.MinMaxClmul, RiscVOpCode.Op, Funct3Code.MinUnsigned, (il, inst, _, _) => MethodBinary<T>(il, inst, nameof(T.Min)));
+            _instructionTable.Register(Funct7Code.MinMaxClmul, RiscVOpCode.Op, Funct3Code.MaxUnsigned, (il, inst, _, _) => MethodBinary<T>(il, inst, nameof(T.Max)));
 
             // Overwrite bitwise as modifyable
             _instructionTable.Register(RiscVOpCode.Op, Funct3Code.Xor, (il, inst, _, _) => BitModifiedAluR<T>(il, inst, OpCodes.Xor));

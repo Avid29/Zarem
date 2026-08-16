@@ -38,8 +38,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             _ => throw new InvalidOperationException($"Unsupported bit count operation: {inst.RSCode}"),
         };
 
-        MethodInfo method = typeof(T).GetMethod(methodName, BindingFlags.Public | BindingFlags.Static, [typeof(T)])!;
-        MethodUnary<T>(il, inst, il => il.Emit(OpCodes.Call, method));
+        MethodUnary<T>(il, inst, methodName);
     }
 
     private void SignExtend<TFormat>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)

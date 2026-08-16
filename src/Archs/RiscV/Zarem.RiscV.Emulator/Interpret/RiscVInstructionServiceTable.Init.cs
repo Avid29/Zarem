@@ -148,7 +148,9 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         // Zbb
         if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
         {
-            Register(Funct7Code.BitManipCountRotate, RiscVOpCode.Op, (Funct3Code)1, &BitCountSignExtend);
+            Register(Funct7Code.BitManipulationCountRotate, RiscVOpCode.Op, Funct3Code.BitCountSignExtendRol, &BitCountSignExtend);
+            Register(Funct7Code.MinMaxClmul, RiscVOpCode.Op, Funct3Code.MinUnsigned, &AluR<MinLogic<T>, T>);
+            Register(Funct7Code.MinMaxClmul, RiscVOpCode.Op, Funct3Code.MaxUnsigned, &AluR<MaxLogic<T>, T>);
 
             // Overwrite bitwise as modifyable
             Register(RiscVOpCode.Op, Funct3Code.Xor, &ModifyableAluR<XorLogic<T>, XnorLogic<T>, T>);

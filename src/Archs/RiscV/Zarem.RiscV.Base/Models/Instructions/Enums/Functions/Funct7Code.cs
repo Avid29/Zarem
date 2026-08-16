@@ -59,7 +59,7 @@ public enum Funct7Code : byte
     /// <summary>
     /// Zbb bit count/rotate operations (CLZ, CTZ, CPOP, ROL, ROR, SEXT.B, SEXT.H).
     /// </summary>
-    BitManipCountRotate = 0x30,
+    BitManipulationCountRotate = 0x30,
 
     /// <summary>
     /// Zbs single-bit invert operation (BINV).
