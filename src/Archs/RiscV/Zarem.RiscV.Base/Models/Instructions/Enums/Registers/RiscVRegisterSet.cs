@@ -30,6 +30,7 @@ public enum RiscVRegisterSet
     [RegisterSet("x{0}", typeof(RiscVGpRegister), @"^x([0-9]+)$", 32)] GeneralPurpose,
     [RegisterSet("x{0}", typeof(RiscVCompressedGpRegister), @"^x([0-9]+)$", 8, 8)] CompressedGeneralPurpose,
     [RegisterSet("f{0}", typeof(RiscVFloatRegister), @"^f([0-9]+)$", 32)] FloatingPoints,
+    [RegisterSet("x{0}", typeof(RiscVGpRegister), @"^x([0-9]+)$", 26, 6)] RotateLeftRegister,
 
 #pragma warning restore CS1591
 }

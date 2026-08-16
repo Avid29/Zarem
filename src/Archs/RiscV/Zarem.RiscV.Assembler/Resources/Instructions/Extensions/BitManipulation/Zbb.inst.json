@@ -138,7 +138,7 @@
     "name": "rol",
     "funct3": 1,
     "funct7": 48,
-    "args": [ "rd", "rs1", "rs2" ],
+    "args": [ "rd", "rs1", "rol_rs2" ],
     "extension": "Zbb"
   },
   {
@@ -147,7 +147,7 @@
     "op_code": 59,
     "funct3": 1,
     "funct7": 48,
-    "args": [ "rd", "rs1", "rs2" ],
+    "args": [ "rd", "rs1", "rol_rs2" ],
     "extension": "Zbb",
     "min_base": "RV64"
   },

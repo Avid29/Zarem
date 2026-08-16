@@ -345,10 +345,15 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
 
     private void MethodBinary<TData>(ILGenerator il, RiscVInstruction inst, string methodName)
         where TData : unmanaged, INumber<TData>
+        => MethodBinary<TData, TData>(il, inst, methodName);
+
+    private void MethodBinary<TData, TData2>(ILGenerator il, RiscVInstruction inst, string methodName)
+        where TData : unmanaged, INumber<TData>
+        where TData2 : unmanaged, INumber<TData2>
     {
-        MethodInfo? method = typeof(TData).GetMethod(methodName, BindingFlags.Public | BindingFlags.Static, [typeof(TData), typeof(TData)]);
+        MethodInfo? method = typeof(TData).GetMethod(methodName, BindingFlags.Public | BindingFlags.Static, [typeof(TData), typeof(TData2)]);
         Guard.IsNotNull(method);
-        MethodBinary<T>(il, inst, il => il.Emit(OpCodes.Call, method));
+        MethodBinary<T, TData2>(il, inst, il => il.Emit(OpCodes.Call, method));
     }
 
     private void MethodUnary<TData>(ILGenerator il, RiscVInstruction inst, string methodName)
@@ -359,13 +364,14 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         MethodUnary<T>(il, inst, il => il.Emit(OpCodes.Call, method));
     }
 
-    private void MethodBinary<TData>(ILGenerator il, RiscVInstruction inst, Action<ILGenerator> method)
+    private void MethodBinary<TData, TData2>(ILGenerator il, RiscVInstruction inst, Action<ILGenerator> method)
         where TData : unmanaged, INumber<TData>
+        where TData2 : unmanaged, INumber<TData2>
     {
         EmitStoreRegister(il, inst.RD, il =>
         {
             EmitLoadRegister<TData>(il, inst.RS1);
-            EmitLoadRegister<TData>(il, inst.RS2);
+            EmitLoadRegister<TData2>(il, inst.RS2);
             method(il);
 
             // Convert to T if neccesary

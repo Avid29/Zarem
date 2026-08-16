@@ -2,6 +2,7 @@
 
 using System;
 using System.Numerics;
+using Zarem.Emulator.Models.Logic;
 using Zarem.Models.Versioning;
 using Zarem.RiscV.Emulator.Config;
 using Zarem.RiscV.Emulator.Interpret;
@@ -166,7 +167,8 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         // Zbb
         if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
         {
-            Register(Funct7Code.BitManipulationCountRotate, opCode, Funct3Code.BitCountSignExtendRol, &BitCountSignExtend<T2, T2Signed>);
+            Register(Funct7Code.BitManipulationCountRotate, opCode, Funct3Code.BitCountSignExtendRotateLeft, &BitCountSignExtendRotate<T2, T2Signed>);
+            Register(Funct7Code.BitManipulationCountRotate, opCode, Funct3Code.RotateRight, &AluR<RorLogic<T2>, T2>);
             Register(Funct7Code.MinMaxClmul, opCode, Funct3Code.Min, &AluR<MinLogic<T2Signed>, T2Signed>);
             Register(Funct7Code.MinMaxClmul, opCode, Funct3Code.MinUnsigned, &AluR<MinLogic<T2>, T2>);
             Register(Funct7Code.MinMaxClmul, opCode, Funct3Code.Max, &AluR<MaxLogic<T2Signed>, T2Signed>);
