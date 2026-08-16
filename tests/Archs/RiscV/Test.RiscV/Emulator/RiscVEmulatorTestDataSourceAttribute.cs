@@ -233,6 +233,10 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
                 yield return [new RiscVEmulatorTestCase<T>(config, "ctz a0, s8", T.TrailingZeroCount(T.CreateTruncating(S8)))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "cpop a0, s8", T.PopCount(T.CreateTruncating(S8)))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "sext.b a0, a5", T.CreateTruncating(TSigned.CreateTruncating((sbyte)0xF8)))];
+
+                yield return [new RiscVEmulatorTestCase<T>(config, "andn a0, s8, s9", T.CreateTruncating(S8) & ~T.CreateTruncating(S9))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "orn a0, s8, s9", T.CreateTruncating(S8) | ~T.CreateTruncating(S9))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "xnor a0, s8, s9", ~T.CreateTruncating(S8 ^ S9))];
             }
         }
     }

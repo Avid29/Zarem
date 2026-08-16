@@ -125,6 +125,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         if (sizeof(TData) != sizeof(T))
             il.EmitConv<T>(IsSigned<TData>());
     }
+
     private void AluI<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {

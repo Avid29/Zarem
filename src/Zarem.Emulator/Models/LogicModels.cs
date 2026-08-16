@@ -349,6 +349,17 @@ public struct XorLogic<T> : IAluLogic<T>
 }
 
 /// <summary>
+/// An <see cref="IAluLogic{T}"/> implementation for a NAND logic operation.
+/// </summary>
+public struct NandLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => ~(rs & rt);
+}
+
+/// <summary>
 /// An <see cref="IAluLogic{T}"/> implementation for a NOR logic operation.
 /// </summary>
 public struct NorLogic<T> : IAluLogic<T>
@@ -357,6 +368,39 @@ public struct NorLogic<T> : IAluLogic<T>
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T Compute(T rs, T rt) => ~(rs | rt);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> implementation for a XNOR logic operation.
+/// </summary>
+public struct XnorLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => ~(rs ^ rt);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> implementation for a ANDN logic operation.
+/// </summary>
+public struct AndnLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => rs & (~rt);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> implementation for a ORN logic operation.
+/// </summary>
+public struct OrnLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => rs | (~rt);
 }
 
 /// <summary>

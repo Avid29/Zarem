@@ -11,7 +11,7 @@ using Zarem.RiscV.Models.Instructions.Enums.Functions;
 
 namespace Zarem.RiscV.Emulator.JIT;
 
-public partial class RiscVJitCompiler<T, TFloat>
+public unsafe partial class RiscVJitCompiler<T, TFloat>
 {
     private void BitCountSignExtend(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
     {
@@ -45,4 +45,24 @@ public partial class RiscVJitCompiler<T, TFloat>
     private void SignExtend<TFormat>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
         where TFormat : unmanaged, IBinaryInteger<TFormat>
         => MethodUnary<T>(il, inst, il => il.EmitConv<TFormat>(Sign.Signed));
+
+    private void BitModifiedAluR<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
+        where TData : unmanaged, INumber<TData>
+    {
+        EmitStoreRegister(il, inst.RD, il =>
+        {
+            EmitLoadRegister<TData>(il, inst.RS1);
+            EmitLoadRegister<TData>(il, inst.RS2);
+            if (inst.Funct7 is Funct7Code.Modified)
+            {
+                il.Emit(OpCodes.Not);
+            }
+
+            il.Emit(ilOpCode);
+        });
+
+        // Convert to T if neccesary
+        if (sizeof(TData) != sizeof(T))
+            il.EmitConv<T>(IsSigned<TData>());
+    }
 }

@@ -92,7 +92,7 @@ public partial class RiscVJitCompiler<T, TFloat>
             InitAluOperations<ulong, long>(RiscVOpCode.Op64, RiscVOpCode.OpImmediate64);
         }
     }
-     
+
     private void InitMultTable<TSigned, TLong, TSignedLong>(RiscVVersionInfo versionInfo)
         where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
         where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>
@@ -120,18 +120,18 @@ public partial class RiscVJitCompiler<T, TFloat>
         _instructionTable.Register(rOpCode, Funct3Code.ShiftLeft, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Shl));
         _instructionTable.Register(rOpCode, Funct3Code.SetLessThan, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Clt));
         _instructionTable.Register(rOpCode, Funct3Code.SetLessThanUnsigned, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Clt_Un));
-        _instructionTable.Register(rOpCode, Funct3Code.Xor, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Xor));
+        _instructionTable.Register(rOpCode, Funct3Code.Xor, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.Xor));
         _instructionTable.Register(rOpCode, Funct3Code.ShiftRight, (il, inst, _, _) => AluR<T2Signed>(il, inst, inst.Funct7 is Funct7Code.Modified ? OpCodes.Shr : OpCodes.Shr_Un));
-        _instructionTable.Register(rOpCode, Funct3Code.Or, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Or));
-        _instructionTable.Register(rOpCode, Funct3Code.And, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.And));
+        _instructionTable.Register(rOpCode, Funct3Code.Or, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.Or));
+        _instructionTable.Register(rOpCode, Funct3Code.And, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.And));
         _instructionTable.Register(iOpCode, Funct3Code.Arithmetic, (il, inst, _, _) => AluI<T2Signed>(il, inst, OpCodes.Add));
         _instructionTable.Register(iOpCode, Funct3Code.ShiftLeft, (il, inst, _, _) => ShiftI<T2Signed>(il, inst, OpCodes.Shl));
         _instructionTable.Register(iOpCode, Funct3Code.SetLessThan, (il, inst, _, _) => AluI<T2Signed>(il, inst, OpCodes.Clt));
         _instructionTable.Register(iOpCode, Funct3Code.SetLessThanUnsigned, (il, inst, _, _) => AluI<T2Signed>(il, inst, OpCodes.Clt_Un));
-        _instructionTable.Register(iOpCode, Funct3Code.Xor, (il, inst, _, _) => AluI<T2Signed>(il, inst, OpCodes.Xor));
+        _instructionTable.Register(iOpCode, Funct3Code.Xor, (il, inst, _, _) => AluI<T2>(il, inst, OpCodes.Xor));
         _instructionTable.Register(iOpCode, Funct3Code.ShiftRight, (il, inst, _, _) => ShiftI<T2Signed>(il, inst, inst.Funct7 is Funct7Code.Modified ? OpCodes.Shr : OpCodes.Shr_Un));
-        _instructionTable.Register(iOpCode, Funct3Code.Or, (il, inst, _, _) => AluI<T2Signed>(il, inst, OpCodes.Or));
-        _instructionTable.Register(iOpCode, Funct3Code.And, (il, inst, _, _) => AluI<T2Signed>(il, inst, OpCodes.And));
+        _instructionTable.Register(iOpCode, Funct3Code.Or, (il, inst, _, _) => AluI<T2>(il, inst, OpCodes.Or));
+        _instructionTable.Register(iOpCode, Funct3Code.And, (il, inst, _, _) => AluI<T2>(il, inst, OpCodes.And));
     }
 
     private void InitMultiplyAluOperations<T2, T2Signed, T2Long, T2SignedLong>(RiscVOpCode opCode)
@@ -156,6 +156,11 @@ public partial class RiscVJitCompiler<T, TFloat>
         if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
         {
             _instructionTable.Register(Funct7Code.BitManipCountRotate, RiscVOpCode.Op, (Funct3Code)1, BitCountSignExtend);
+
+            // Overwrite bitwise as modifyable
+            _instructionTable.Register(RiscVOpCode.Op, Funct3Code.Xor, (il, inst, _, _) => BitModifiedAluR<T>(il, inst, OpCodes.Xor));
+            _instructionTable.Register(RiscVOpCode.Op, Funct3Code.Or, (il, inst, _, _) => BitModifiedAluR<T>(il, inst, OpCodes.Or));
+            _instructionTable.Register(RiscVOpCode.Op, Funct3Code.And, (il, inst, _, _) => BitModifiedAluR<T>(il, inst, OpCodes.And));
         }
     }
 

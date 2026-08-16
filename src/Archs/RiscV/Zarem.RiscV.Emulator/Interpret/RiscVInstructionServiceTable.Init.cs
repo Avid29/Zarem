@@ -149,6 +149,11 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
         {
             Register(Funct7Code.BitManipCountRotate, RiscVOpCode.Op, (Funct3Code)1, &BitCountSignExtend);
+
+            // Overwrite bitwise as modifyable
+            Register(RiscVOpCode.Op, Funct3Code.Xor, &ModifyableAluR<XorLogic<T>, XnorLogic<T>, T>);
+            Register(RiscVOpCode.Op, Funct3Code.Or, &ModifyableAluR<OrLogic<T>, OrnLogic<T>, T>);
+            Register(RiscVOpCode.Op, Funct3Code.And, &ModifyableAluR<AndLogic<T>, AndnLogic<T>, T>);
         }
     }
 
