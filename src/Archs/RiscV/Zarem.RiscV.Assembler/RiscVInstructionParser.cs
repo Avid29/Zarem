@@ -91,9 +91,11 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             }
         }
 
-        name = string.Join('.', parts).ToLowerInvariant();
+        var formattedName = string.Join('.', parts).ToLowerInvariant();
+        bool isNotFormatted = _instructionTable.TryGetInstruction(name, out var metas, out var requiredBase, out var requiredExtension);
+        bool notFound = !isNotFormatted && !_instructionTable.TryGetInstruction(formattedName, out metas, out requiredBase, out requiredExtension);
 
-        if (!_instructionTable.TryGetInstruction(name, out var metas, out var requiredBase, out var requiredExtension))
+        if (notFound || metas is null)
         {
             (LogId id, string message) = requiredExtension switch
             {
@@ -105,6 +107,10 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             _logger?.Log(Severity.Error, id, line.Instruction, message, name, $"{requiredBase:d}", $"{requiredExtension:d}");
             return false;
         }
+        else if (!isNotFormatted)
+        {
+            name = formattedName;
+        }
 
         Meta = metas.FirstOrDefault(x => x.ArgumentPattern.Length == line.Args.Count);
 
@@ -113,7 +119,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             _logger?.Log(Severity.Error, LogId.InvalidInstructionArgCount, line.Instruction, "WrongArgumentCount", name, line.Args.Count);
             return false;
         }
-
 
         if (Meta is RiscVFloatInstructionMeta fMeta)
         {

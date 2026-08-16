@@ -58,6 +58,7 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
             .Concat(GetMemoryInstructionTests<T>(config))
             .Concat(GetSystemInstructionTests<T>(config))
             .Concat(GetFloatArithmeticInstructionTests<T>(config))
+            .Concat(GetBitManipulationInstructionTests<T, TSigned>(config))
             .Concat(GetCompressedInstructionTests<T>(config));
     }
 
@@ -217,6 +218,31 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
             yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.S.WU fa0, t5", (uint)-20)];
             yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.W.S a0, ft3", T.CreateTruncating(-10))];
             yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.WU.S a0, ft2", T.CreateTruncating(10))];
+        }
+    }
+
+    private static IEnumerable<object[]> GetBitManipulationInstructionTests<T, TSigned>(RiscVEmulatorConfig config)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>, IMinMaxValue<TSigned>
+    {
+        unchecked
+        {
+            if (config.VersionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
+            {
+                yield return [new RiscVEmulatorTestCase<T>(config, "clz a0, s8", T.LeadingZeroCount(T.CreateTruncating(S8)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "ctz a0, s8", T.TrailingZeroCount(T.CreateTruncating(S8)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "cpop a0, s8", T.PopCount(T.CreateTruncating(S8)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "sext.b a0, a5", T.CreateTruncating(TSigned.CreateTruncating((sbyte)0xF8)))];
+
+                yield return [new RiscVEmulatorTestCase<T>(config, "andn a0, s8, s9", T.CreateTruncating(S8) & ~T.CreateTruncating(S9))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "orn a0, s8, s9", T.CreateTruncating(S8) | ~T.CreateTruncating(S9))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "xnor a0, s8, s9", ~T.CreateTruncating(S8 ^ S9))];
+
+                yield return [new RiscVEmulatorTestCase<T>(config, "min a0, t0, t4", T.CreateTruncating(TSigned.Min(TSigned.CreateTruncating(10), TSigned.CreateTruncating(-10))))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "minu a0, t0, t4", T.Min(T.CreateTruncating(10), T.CreateTruncating(-10)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "max a0, t0, t4", T.CreateTruncating(TSigned.Max(TSigned.CreateTruncating(10), TSigned.CreateTruncating(-10))))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "maxu a0, t0, t4", T.Max(T.CreateTruncating(10), T.CreateTruncating(-10)))];
+            }
         }
     }
 

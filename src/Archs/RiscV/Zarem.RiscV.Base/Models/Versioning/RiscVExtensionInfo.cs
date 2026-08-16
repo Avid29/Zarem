@@ -109,12 +109,16 @@ public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo
 
         // Parse Standard Single-Letter Extensions (e.g. "IMAFDC" or "G")
         int i = 0;
-        while (i < remainder.Length && !char.IsDigit(remainder[i]) && remainder[i] != '_' && remainder[i] != '+')
+        while (i < remainder.Length && !char.IsDigit(remainder[i]) && remainder[i] is not ('_' or '+' or 'Z'))
         {
             string single = remainder[i].ToString();
             if (_extensionMap.TryGetValue(single, out var flag))
             {
                 extensions |= flag;
+            }
+            else
+            {
+                return false;
             }
 
             if (_dependencyMap.TryGetValue(single, out var dependencies))

@@ -185,6 +185,15 @@ public unsafe struct RiscVInstruction : IInstruction
     }
 
     /// <summary>
+    /// Gets or sets the funct code value stored in the rs2 field.
+    /// </summary>
+    public FunctRS2Code RSCode
+    {
+        readonly get => (FunctRS2Code)RS2;
+        set => RS2 = (RiscVGpRegister)value;
+    }
+
+    /// <summary>
     /// I-Type Immediates (12-bit, simple contiguous)
     /// Used for: addi, lw, jalr
     /// </summary>

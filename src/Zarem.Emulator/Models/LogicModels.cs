@@ -349,6 +349,17 @@ public struct XorLogic<T> : IAluLogic<T>
 }
 
 /// <summary>
+/// An <see cref="IAluLogic{T}"/> implementation for a NAND logic operation.
+/// </summary>
+public struct NandLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => ~(rs & rt);
+}
+
+/// <summary>
 /// An <see cref="IAluLogic{T}"/> implementation for a NOR logic operation.
 /// </summary>
 public struct NorLogic<T> : IAluLogic<T>
@@ -360,6 +371,39 @@ public struct NorLogic<T> : IAluLogic<T>
 }
 
 /// <summary>
+/// An <see cref="IAluLogic{T}"/> implementation for a XNOR logic operation.
+/// </summary>
+public struct XnorLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => ~(rs ^ rt);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> implementation for a ANDN logic operation.
+/// </summary>
+public struct AndnLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => rs & (~rt);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> implementation for a ORN logic operation.
+/// </summary>
+public struct OrnLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => rs | (~rt);
+}
+
+/// <summary>
 /// An <see cref="IAluLogic{T}"/> for a counting leading zeros operation.
 /// </summary>
 public struct ClzLogic<T> : IAluLogic<T>
@@ -367,7 +411,7 @@ public struct ClzLogic<T> : IAluLogic<T>
 {
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T Compute(T rs, T rt) => T.CreateTruncating(BitOperations.LeadingZeroCount(uint.CreateTruncating(rs)));
+    public static T Compute(T rs, T rt) => T.LeadingZeroCount(rs);
 }
 
 /// <summary>
@@ -378,7 +422,53 @@ public struct CloLogic<T> : IAluLogic<T>
 {
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T Compute(T rs, T rt) => T.CreateTruncating(BitOperations.LeadingZeroCount(uint.CreateTruncating(~rs)));
+    public static T Compute(T rs, T rt) => T.LeadingZeroCount(~rs);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for a counting trailing zeros operation.
+/// </summary>
+public struct CtzLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => T.TrailingZeroCount(rs);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for a counting trailing ones operation.
+/// </summary>
+public struct CtoLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => T.TrailingZeroCount(~rs);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for a population (set bit) counting operation.
+/// </summary>
+public struct CpopLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => T.PopCount(rs);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for sign extending.
+/// </summary>
+public struct Sext<T, TSigned, TExtend> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
+    where TExtend : unmanaged, IBinaryInteger<TExtend>, ISignedNumber<TExtend>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => T.CreateTruncating(TSigned.CreateTruncating(TExtend.CreateTruncating(rs)));
 }
 
 #endregion
@@ -525,10 +615,10 @@ public struct XnezLogic<T> : ICondLogic<T>
 
 #endregion
 
-#region Set Less Than
+#region Compare
 
 /// <summary>
-/// An <see cref="IAluLogic{T}"/> implementation for a signed set less than logic operation.
+/// An <see cref="IAluLogic{T}"/> implementation for a set less than logic operation.
 /// </summary>
 public struct SltLogic<T> : IAluLogic<T>
     where T : unmanaged, INumber<T>
@@ -538,6 +628,27 @@ public struct SltLogic<T> : IAluLogic<T>
     public static T Compute(T rs, T rt) => rs < rt ? T.One : T.Zero;
 }
 
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> implementation for a min logic operation.
+/// </summary>
+public struct MinLogic<T> : IAluLogic<T>
+    where T : unmanaged, INumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => T.Min(rs, rt);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> implementation for a max logic operation.
+/// </summary>
+public struct MaxLogic<T> : IAluLogic<T>
+    where T : unmanaged, INumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => T.Max(rs, rt);
+}
 
 #endregion
 
