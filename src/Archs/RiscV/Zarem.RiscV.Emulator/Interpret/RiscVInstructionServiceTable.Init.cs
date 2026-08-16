@@ -164,6 +164,14 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
         where T2Signed : unmanaged, IBinaryInteger<T2Signed>, ISignedNumber<T2Signed>
     {
+        // Zba
+        if (versionInfo.HasExtensions(RiscVZExtensions.AddressGeneration))
+        {
+            Register(Funct7Code.ShiftAdd, opCode, Funct3Code.Shift1Add, &AluR<Sh1AddLogic<T2>, T2>);
+            Register(Funct7Code.ShiftAdd, opCode, Funct3Code.Shift2Add, &AluR<Sh2AddLogic<T2>, T2>);
+            Register(Funct7Code.ShiftAdd, opCode, Funct3Code.Shift3Add, &AluR<Sh3AddLogic<T2>, T2>);
+        }
+
         // Zbb
         if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
         {
