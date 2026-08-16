@@ -58,6 +58,7 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
             .Concat(GetMemoryInstructionTests<T>(config))
             .Concat(GetSystemInstructionTests<T>(config))
             .Concat(GetFloatArithmeticInstructionTests<T>(config))
+            .Concat(GetBitManipulationInstructionTests<T>(config))
             .Concat(GetCompressedInstructionTests<T>(config));
     }
 
@@ -217,6 +218,17 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
             yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.S.WU fa0, t5", (uint)-20)];
             yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.W.S a0, ft3", T.CreateTruncating(-10))];
             yield return [new RiscVEmulatorTestCase<T>(config, "fcvt.WU.S a0, ft2", T.CreateTruncating(10))];
+        }
+    }
+
+    private static IEnumerable<object[]> GetBitManipulationInstructionTests<T>(RiscVEmulatorConfig config)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    {
+        if (config.VersionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
+        {
+            yield return [new RiscVEmulatorTestCase<T>(config, "clz a0, s8", T.LeadingZeroCount(T.CreateTruncating(S8)))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "ctz a0, s8", T.TrailingZeroCount(T.CreateTruncating(S8)))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "cpop a0, s8", T.PopCount(T.CreateTruncating(S8)))];
         }
     }
 

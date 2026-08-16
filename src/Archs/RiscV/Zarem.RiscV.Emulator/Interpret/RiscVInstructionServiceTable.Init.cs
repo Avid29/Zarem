@@ -23,6 +23,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
 
         InitBaseTable(versionInfo);
         InitFloatTable(versionInfo);
+        InitBitManipulationOperations(versionInfo);
 
         if (versionInfo.HasExtensions(RiscVExtensions.Multiplication))
         {
@@ -140,6 +141,15 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
         Register(Funct7Code.MExtension, opCode, Funct3Code.DivideUnsigned, &AluR<DivLogic<T2>, T2>);
         Register(Funct7Code.MExtension, opCode, Funct3Code.Remainder, &AluR<RemLogic<T2Signed>, T2Signed>);
         Register(Funct7Code.MExtension, opCode, Funct3Code.RemainderUnsigned, &AluR<RemLogic<T2>, T2>);
+    }
+
+    private void InitBitManipulationOperations(RiscVVersionInfo versionInfo)
+    {
+        // Zbb
+        if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
+        {
+            Register(Funct7Code.BitManipCountRotate, RiscVOpCode.Op, (Funct3Code)1, &BitCountSignExtend);
+        }
     }
 
     private void InitFloatTable(RiscVVersionInfo versionInfo)

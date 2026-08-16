@@ -367,7 +367,7 @@ public struct ClzLogic<T> : IAluLogic<T>
 {
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T Compute(T rs, T rt) => T.CreateTruncating(BitOperations.LeadingZeroCount(uint.CreateTruncating(rs)));
+    public static T Compute(T rs, T rt) => T.LeadingZeroCount(rs);
 }
 
 /// <summary>
@@ -378,7 +378,40 @@ public struct CloLogic<T> : IAluLogic<T>
 {
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T Compute(T rs, T rt) => T.CreateTruncating(BitOperations.LeadingZeroCount(uint.CreateTruncating(~rs)));
+    public static T Compute(T rs, T rt) => T.LeadingZeroCount(~rs);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for a counting trailing zeros operation.
+/// </summary>
+public struct CtzLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => T.TrailingZeroCount(rs);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for a counting trailing ones operation.
+/// </summary>
+public struct CtoLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => T.TrailingZeroCount(~rs);
+}
+
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for a population (set bit) counting operation.
+/// </summary>
+public struct CpopLogic<T> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => T.PopCount(rs);
 }
 
 #endregion
