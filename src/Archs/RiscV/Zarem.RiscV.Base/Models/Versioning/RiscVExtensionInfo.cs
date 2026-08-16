@@ -175,11 +175,13 @@ public readonly partial struct RiscVExtensionInfo : IParsable<RiscVExtensionInfo
 
             if (Contains(extension) && Contains(dependencies))
             {
-                sb.Append(alias);
+                // Append the extension only if it's a pure alias
+                if (extension.MisaFlags is 0 && extension.ZFlags is 0)
+                    sb.Append(alias);
 
-                // flags Covered by G to avoid double printing
-                impliedMisa |= dependencies.MisaFlags | flag;
-                impliedZ |= dependencies.ZFlags | zFlag;
+                // Track implied dependencies
+                impliedMisa |= dependencies.MisaFlags;
+                impliedZ |= dependencies.ZFlags;
             }
         }
 
