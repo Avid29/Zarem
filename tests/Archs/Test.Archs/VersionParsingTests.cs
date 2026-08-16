@@ -6,7 +6,7 @@ namespace Test.Archs;
 
 public abstract class VersionParsingTests
 {
-    protected static void ParsePrintTest<T>(string input)
+    protected static void ParsePrintTest<T>(string input, bool reparse)
         where T : IParsable<T>
     {
         // Parse and reparse
@@ -14,7 +14,13 @@ public abstract class VersionParsingTests
         var compare = $"{info}";
 
         // Reparse
-        info = T.Parse(compare, null);
-        Assert.AreEqual(compare, $"{info}");
+        if (reparse)
+        {
+            input = compare;
+            info = T.Parse(input, null);
+            compare = $"{info}";
+        }
+
+        Assert.AreEqual(input, compare);
     }
 }
