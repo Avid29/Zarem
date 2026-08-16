@@ -21,59 +21,59 @@ public partial class RiscVEmulatorTests
     public const uint S8 = 0xbd0;
     public const uint S9 = 0x516;
 
-    [DataTestMethod]
+    [DataTestMethod("RV32I")]
     [RiscVEmulatorTestDataSource("RV32I", ExecutionMode.Interpret)]
     public void InstructionTests_RV32I(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV32I (JIT)")]
     [RiscVEmulatorTestDataSource("RV32I", ExecutionMode.JustInTime)]
     public void InstructionTests_RV32I_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, byte>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV32G")]
     [RiscVEmulatorTestDataSource("RV32G", ExecutionMode.Interpret)]
     public void InstructionTests_RV32G(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV32G (JIT)")]
     [RiscVEmulatorTestDataSource("RV32G", ExecutionMode.JustInTime)]
     public void InstructionTests_RV32G_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV32GCB")]
     [RiscVEmulatorTestDataSource("RV32GCB", ExecutionMode.Interpret)]
     public void InstructionTests_RV32GCB(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV32GCB (JIT)")]
     [RiscVEmulatorTestDataSource("RV32GCB", ExecutionMode.JustInTime)]
     public void InstructionTests_RV32GCB_JIT(RiscVEmulatorTestCase<uint> @case) => RunTest<uint, ulong>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV64I")]
     [RiscVEmulatorTestDataSource("RV64I", ExecutionMode.Interpret)]
     public void InstructionTests_RV64I(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, byte>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV64I (JIT)")]
     [RiscVEmulatorTestDataSource("RV64I", ExecutionMode.JustInTime)]
     public void InstructionTests_RV64I_JIT(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, byte>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV64G")]
     [RiscVEmulatorTestDataSource("RV64G", ExecutionMode.Interpret)]
     public void InstructionTests_RV64G(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV64G (JIT)")]
     [RiscVEmulatorTestDataSource("RV64G", ExecutionMode.JustInTime)]
     public void InstructionTests_RV64G_JIT(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV64GCB")]
     [RiscVEmulatorTestDataSource("RV64GCB", ExecutionMode.Interpret)]
     public void InstructionTests_RV64GCB(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV64GCB (JIT)")]
     [RiscVEmulatorTestDataSource("RV64GCB", ExecutionMode.JustInTime)]
     public void InstructionTests_RV64GCB_JIT(RiscVEmulatorTestCase<ulong> @case) => RunTest<ulong, ulong>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV128I")]
     [RiscVEmulatorTestDataSource("RV128I", ExecutionMode.Interpret)]
     public void InstructionTests_RV128I(RiscVEmulatorTestCase<UInt128> @case) => RunTest<UInt128, byte>(@case);
 
-    [DataTestMethod]
+    [DataTestMethod("RV128G")]
     [RiscVEmulatorTestDataSource("RV128G", ExecutionMode.Interpret)]
     public void InstructionTests_RV128G(RiscVEmulatorTestCase<UInt128> @case) => RunTest<UInt128, byte>(@case);
 

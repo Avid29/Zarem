@@ -33,27 +33,27 @@ public class RiscVInstructionParserTests
     public static string InstructionParsingTestCaseDisplayName(MethodInfo _, object[] data)
         => $"{(RiscVInstructionParsingTestCase)data[0]}";
 
-    [DataTestMethod]
+    [DataTestMethod("RV32I")]
     [RiscVInstructionParserTestDataSource("RV32I")]
     public void InstructionTests_RV32I(string input)
         => AssembleDisassembleTest(input, "RV32I");
 
-    [DataTestMethod]
+    [DataTestMethod("RV32G")]
     [RiscVInstructionParserTestDataSource("RV32G")]
     public void InstructionTests_RV32G(string input)
         => AssembleDisassembleTest(input, "RV32G");
 
-    [DataTestMethod]
+    [DataTestMethod("RV32GCB")]
     [RiscVInstructionParserTestDataSource("RV32GCB")]
     public void InstructionTests_RV32GCB(string input)
         => AssembleDisassembleTest(input, "RV32GCB");
 
-    [DataTestMethod]
+    [DataTestMethod("RV32I")]
     [RiscVInstructionParserTestDataSource("RV64I")]
     public void InstructionTests_RV64I(string input)
         => AssembleDisassembleTest(input, "RV64I");
 
-    [DataTestMethod]
+    [DataTestMethod("RV64G")]
     [RiscVInstructionParserTestDataSource("RV64G")]
     public void InstructionTests_RV64G(string input)
         => AssembleDisassembleTest(input, "RV64G");
@@ -63,17 +63,17 @@ public class RiscVInstructionParserTests
     public void InstructionTests_RV64GCB(string input)
         => AssembleDisassembleTest(input, "RV64GCB");
 
-    [DataTestMethod]
+    [DataTestMethod("RV128I")]
     [RiscVInstructionParserTestDataSource("RV128I")]
     public void InstructionTests_RV128I(string input)
         => AssembleDisassembleTest(input, "RV128I");
 
-    [DataTestMethod]
+    [DataTestMethod("RV128G")]
     [RiscVInstructionParserTestDataSource("RV128G")]
     public void InstructionTests_RV128G(string input)
         => AssembleDisassembleTest(input, "RV128G");
 
-    private void AssembleDisassembleTest(string input, string versionString)
+    private static void AssembleDisassembleTest(string input, string versionString)
     {
         var versionInfo = RiscVVersionInfo.Parse(versionString);
         var config = new RiscVAssemblerConfig(versionInfo);
