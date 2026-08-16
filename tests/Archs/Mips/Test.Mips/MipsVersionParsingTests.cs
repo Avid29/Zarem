@@ -17,14 +17,14 @@ public class MipsVersionParsingTests : VersionParsingTests
     [DataRow("mips4_32bit")]
     [DataRow("mips5")]
     [DataRow("mips5_32bit")]
-    [DataRow("MipsI")]
-    [DataRow("MipsII")]
-    [DataRow("MipsIII")]
-    [DataRow("MipsIV")]
-    [DataRow("MipsV")]
+    [DataRow("MipsI", true)]
+    [DataRow("MipsII", true)]
+    [DataRow("MipsIII", true)]
+    [DataRow("MipsIV", true)]
+    [DataRow("MipsV", true)]
     [DataRow("mips32r1")]
     [DataRow("mips64r1")]
     [DataRow("mips32r2")]
     [DataRow("mips64r2")]
-    public void TestMipsVersion(string version) => ParsePrintTest<MipsVersionInfo>(version);
+    public void TestMipsVersion(string version, bool reparse = false) => ParsePrintTest<MipsVersionInfo>(version, reparse);
 }
