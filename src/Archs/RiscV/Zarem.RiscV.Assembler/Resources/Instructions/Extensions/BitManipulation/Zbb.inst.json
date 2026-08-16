@@ -57,28 +57,23 @@
   },
   {
     "type": "r-type",
-    "name": "rol",
-    "funct3": 1,
-    "funct7": 48,
-    "args": [ "rd", "rs1", "rs2" ],
-    "extension": "Zbb"
-  },
-  {
-    "type": "r-type",
-    "name": "ror",
-    "funct3": 5,
-    "funct7": 48,
-    "args": [ "rd", "rs1", "rs2" ],
-    "extension": "Zbb"
-  },
-  {
-    "type": "r-type",
     "name": "clz",
     "funct3": 1,
     "funct7": 48,
     "rs2_fixed": 0,
     "args": [ "rd", "rs1" ],
     "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "clzw",
+    "op_code": 59,
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 0,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb",
+    "min_base": "RV64"
   },
   {
     "type": "r-type",
@@ -91,12 +86,34 @@
   },
   {
     "type": "r-type",
+    "name": "ctzw",
+    "op_code": 59,
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 1,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb",
+    "min_base": "RV64"
+  },
+  {
+    "type": "r-type",
     "name": "cpop",
     "funct3": 1,
     "funct7": 48,
     "rs2_fixed": 2,
     "args": [ "rd", "rs1" ],
     "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "cpopw",
+    "op_code": 59,
+    "funct3": 1,
+    "funct7": 48,
+    "rs2_fixed": 2,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb",
+    "min_base": "RV64"
   },
   {
     "type": "r-type",
@@ -115,5 +132,41 @@
     "rs2_fixed": 5,
     "args": [ "rd", "rs1" ],
     "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "rol",
+    "funct3": 1,
+    "funct7": 48,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "rolw",
+    "op_code": 59,
+    "funct3": 1,
+    "funct7": 48,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb",
+    "min_base": "RV64"
+  },
+  {
+    "type": "r-type",
+    "name": "ror",
+    "funct3": 5,
+    "funct7": 48,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "r-type",
+    "name": "rorw",
+    "op_code": 59,
+    "funct3": 5,
+    "funct7": 48,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbb",
+    "min_base": "RV64"
   }
 ]
