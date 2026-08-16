@@ -414,6 +414,19 @@ public struct CpopLogic<T> : IAluLogic<T>
     public static T Compute(T rs, T rt) => T.PopCount(rs);
 }
 
+/// <summary>
+/// An <see cref="IAluLogic{T}"/> for sign extending.
+/// </summary>
+public struct Sext<T, TSigned, TExtend> : IAluLogic<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
+    where TExtend : unmanaged, IBinaryInteger<TExtend>, ISignedNumber<TExtend>
+{
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Compute(T rs, T rt) => T.CreateTruncating(TSigned.CreateTruncating(TExtend.CreateTruncating(rs)));
+}
+
 #endregion
 
 #region Conditional

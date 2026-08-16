@@ -16,6 +16,8 @@ public partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
             FunctRS2Code.CountLeadingZeros => AluR<ClzLogic<T>, T>(cpu, inst, compressed, out exec),
             FunctRS2Code.CountTrailingZeros => AluR<CtzLogic<T>, T>(cpu, inst, compressed, out exec),
             FunctRS2Code.PopulationCount => AluR<CpopLogic<T>, T>(cpu, inst, compressed, out exec),
+            FunctRS2Code.SignExtendByte => AluR<Sext<T, TSigned, sbyte>, T>(cpu, inst, compressed, out exec),
+            FunctRS2Code.SignExtendHalfword => AluR<Sext<T, TSigned, short>, T>(cpu, inst, compressed, out exec),
             _ => IllegalInstruction(cpu, inst, compressed, out exec),
         };
     }
