@@ -23,6 +23,7 @@ public partial class RiscVJitCompiler<T, TFloat>
         // Populate base table
         InitBaseTable(versionInfo);
         InitFloatTable(versionInfo);
+        InitBitManipulationOperations(versionInfo);
 
         // Init
         if (versionInfo.HasExtensions(RiscVExtensions.Multiplication))
@@ -147,6 +148,15 @@ public partial class RiscVJitCompiler<T, TFloat>
         _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.DivideUnsigned, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Div_Un));
         _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.Remainder, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Rem));
         _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.RemainderUnsigned, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.Rem_Un));
+    }
+
+    private void InitBitManipulationOperations(RiscVVersionInfo versionInfo)
+    {
+        // Zbb
+        if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
+        {
+            _instructionTable.Register(Funct7Code.BitManipCountRotate, RiscVOpCode.Op, (Funct3Code)1, BitCountSignExtend);
+        }
     }
 
     private void InitFloatTable(RiscVVersionInfo versionInfo)

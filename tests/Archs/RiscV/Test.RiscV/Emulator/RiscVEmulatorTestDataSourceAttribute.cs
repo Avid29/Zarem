@@ -224,11 +224,15 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
     private static IEnumerable<object[]> GetBitManipulationInstructionTests<T>(RiscVEmulatorConfig config)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
     {
-        if (config.VersionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
+        unchecked
         {
-            yield return [new RiscVEmulatorTestCase<T>(config, "clz a0, s8", T.LeadingZeroCount(T.CreateTruncating(S8)))];
-            yield return [new RiscVEmulatorTestCase<T>(config, "ctz a0, s8", T.TrailingZeroCount(T.CreateTruncating(S8)))];
-            yield return [new RiscVEmulatorTestCase<T>(config, "cpop a0, s8", T.PopCount(T.CreateTruncating(S8)))];
+            if (config.VersionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
+            {
+                yield return [new RiscVEmulatorTestCase<T>(config, "clz a0, s8", T.LeadingZeroCount(T.CreateTruncating(S8)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "ctz a0, s8", T.TrailingZeroCount(T.CreateTruncating(S8)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "cpop a0, s8", T.PopCount(T.CreateTruncating(S8)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "sext.b a0, a5", T.CreateTruncating((sbyte)0xF8))];
+            }
         }
     }
 

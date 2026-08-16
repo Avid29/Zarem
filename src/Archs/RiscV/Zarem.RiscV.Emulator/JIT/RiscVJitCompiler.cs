@@ -125,7 +125,6 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         if (sizeof(TData) != sizeof(T))
             il.EmitConv<T>(IsSigned<TData>());
     }
-
     private void AluI<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
@@ -342,4 +341,19 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
     }
 
     private void IllegalInstruction(ILGenerator il, RiscVInstruction inst, T pc, bool compressed) => EmitTrapRet(il, RiscVTrap.IllegalInstruction, pc);
+
+    private void MethodUnary<TData>(ILGenerator il, RiscVInstruction inst, Action<ILGenerator> method)
+        where TData : unmanaged, INumber<TData>
+    {
+        EmitStoreRegister(il, inst.RD, il =>
+        {
+            EmitLoadRegister<TData>(il, inst.RS1);
+            method(il);
+
+            // Convert to T if neccesary
+            if (sizeof(TData) != sizeof(T))
+                il.EmitConv<T>(IsSigned<TData>());
+        });
+    }
+
 }
