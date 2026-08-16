@@ -168,5 +168,37 @@
     "args": [ "rd", "rs1", "rs2" ],
     "extension": "Zbb",
     "min_base": "RV64"
+  },
+  {
+    "type": "i-type",
+    "name": "rori",
+    "op_code": 19,
+    "funct3": 5,
+    "is_shift": true,
+    "special": 48,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "i-type",
+    "name": "orc.b",
+    "op_code": 19,
+    "funct3": 5,
+    "is_shift": true,
+    "special": 20,
+    "imm_fixed": 7,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb"
+  },
+  {
+    "type": "i-type",
+    "name": "rev8",
+    "op_code": 19,
+    "funct3": 5,
+    "is_shift": true,
+    "special": 52,
+    "imm_fixed": 31,
+    "args": [ "rd", "rs1" ],
+    "extension": "Zbb"
   }
 ]
