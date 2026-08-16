@@ -3,6 +3,7 @@
 using System;
 using System.Numerics;
 using Zarem.Emulator.Machine.Registers;
+using Zarem.Emulator.Models.Logic;
 using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;

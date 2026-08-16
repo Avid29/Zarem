@@ -2,7 +2,7 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Models;
+using Zarem.Emulator.Models.Logic;
 using Zarem.RiscV.Emulator.Machine.Enums;
 
 namespace Zarem.RiscV.Emulator.Interpret;

@@ -13,22 +13,23 @@ namespace Zarem.RiscV.Emulator.JIT;
 
 public unsafe partial class RiscVJitCompiler<T, TFloat>
 {
-    private void BitCountSignExtend(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
+    private void BitCountSignExtend<T2>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
+        where T2 : unmanaged, IBinaryInteger<T2>, IUnsignedNumber<T2>
     {
         Action<ILGenerator, RiscVInstruction, T, bool> func = inst.RSCode switch
         {
-            FunctRS2Code.CountLeadingZeros => BitCount,
-            FunctRS2Code.CountTrailingZeros => BitCount,
-            FunctRS2Code.PopulationCount => BitCount,
+            FunctRS2Code.CountLeadingZeros => BitCount<T2>,
+            FunctRS2Code.CountTrailingZeros => BitCount<T2>,
+            FunctRS2Code.PopulationCount => BitCount<T2>,
             FunctRS2Code.SignExtendByte => SignExtend<sbyte>,
             FunctRS2Code.SignExtendHalfword => SignExtend<short>,
-            _ => IllegalInstruction,
+            _ => (il, inst, _, _) => MethodBinary<T2, int>(il, inst, nameof(T.RotateLeft)),
         };
 
         func(il, inst, pc, compressed);
     }
 
-    private void BitCount(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
+    private void BitCount<T2>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
     {
         string methodName = inst.RSCode switch
         {

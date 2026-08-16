@@ -62,7 +62,8 @@ public enum Funct3Code : byte
     RemainderUnsigned = 0b111,
 
     // --- Bit Manipulation ---
-    BitCountSignExtendRol = 0b001,
+    BitCountSignExtendRotateLeft = 0b001,
+    RotateRight = 0b101,
     Min = 0b100,
     MinUnsigned = 0b101,
     Max = 0b110,

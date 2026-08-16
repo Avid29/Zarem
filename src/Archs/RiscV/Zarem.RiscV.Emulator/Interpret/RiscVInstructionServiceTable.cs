@@ -3,6 +3,7 @@
 using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
+using Zarem.Emulator.Models.Logic;
 using Zarem.Models.Interface;
 using Zarem.RiscV.Emulator.Helper;
 using Zarem.RiscV.Emulator.Interpret;

@@ -181,7 +181,8 @@ public partial class RiscVJitCompiler<T, TFloat>
         // Zbb
         if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
         {
-            _instructionTable.Register(Funct7Code.BitManipulationCountRotate, opCode, Funct3Code.BitCountSignExtendRol, BitCountSignExtend);
+            _instructionTable.Register(Funct7Code.BitManipulationCountRotate, opCode, Funct3Code.BitCountSignExtendRotateLeft, BitCountSignExtend<T2>);
+            _instructionTable.Register(Funct7Code.BitManipulationCountRotate, opCode, Funct3Code.RotateRight, (il, inst, _, _) => MethodBinary<T2, int>(il, inst, nameof(T.RotateRight)));
             _instructionTable.Register(Funct7Code.MinMaxClmul, opCode, Funct3Code.Min, (il, inst, _, _) => MethodBinary<T2Signed>(il, inst, nameof(T.Min)));
             _instructionTable.Register(Funct7Code.MinMaxClmul, opCode, Funct3Code.MinUnsigned, (il, inst, _, _) => MethodBinary<T2>(il, inst, nameof(T.Min)));
             _instructionTable.Register(Funct7Code.MinMaxClmul, opCode, Funct3Code.Max, (il, inst, _, _) => MethodBinary<T2Signed>(il, inst, nameof(T.Max)));
