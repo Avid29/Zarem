@@ -87,4 +87,67 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         if (sizeof(TData) != sizeof(T))
             il.EmitConv<T>(IsSigned<TData>());
     }
+
+    private void BitSetClearR<TData>(ILGenerator il, RiscVInstruction inst, bool set)
+        where TData : unmanaged, INumber<TData>
+    {
+        BitManipulateR<TData>(il, inst, (il) =>
+        {
+            if (set)
+            {
+                // Set
+                il.Emit(OpCodes.Or);
+            }
+            else
+            {
+                // Clear
+                il.Emit(OpCodes.Not);
+                il.Emit(OpCodes.And);
+            }
+        });
+    }
+
+    private void BitInvertR<TData>(ILGenerator il, RiscVInstruction inst)
+        where TData : unmanaged, INumber<TData> => BitManipulateR<TData>(il, inst, (il) => il.Emit(OpCodes.Xor));
+
+    private void BitManipulateR<TData>(ILGenerator il, RiscVInstruction inst, Action<ILGenerator> action)
+        where TData : unmanaged, INumber<TData>
+    {
+        EmitStoreRegister(il, inst.RD, il =>
+        {
+            // Load rs1
+            EmitLoadRegister<TData>(il, inst.RS1);
+
+            // Load rs2 and create mask
+            il.EmitLoadConstant(TData.One);
+            EmitLoadRegister<int>(il, inst.RS2);
+            il.Emit(OpCodes.Shl);
+
+            action(il);
+        });
+
+        // Convert to T if neccesary
+        if (sizeof(TData) != sizeof(T))
+            il.EmitConv<T>(IsSigned<TData>());
+    }
+
+    private void BitExtractR<TData>(ILGenerator il, RiscVInstruction inst)
+        where TData : unmanaged, INumber<TData>
+    {
+        EmitStoreRegister(il, inst.RD, il =>
+        {
+            // Load rs1 as TData and rs2 as int
+            EmitLoadRegister<TData>(il, inst.RS1);
+            EmitLoadRegister<int>(il, inst.RS2);
+
+            // Shift rs1 by rs2 and mask bit 1
+            il.Emit(OpCodes.Shr);
+            il.EmitLoadConstant(TData.One);
+            il.Emit(OpCodes.And);
+        });
+
+        // Convert to T if neccesary
+        if (sizeof(TData) != sizeof(T))
+            il.EmitConv<T>(IsSigned<TData>());
+    }
 }

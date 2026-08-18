@@ -254,6 +254,15 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
                 yield return [new RiscVEmulatorTestCase<T>(config, "max a0, t0, t4", T.CreateTruncating(TSigned.Max(TSigned.CreateTruncating(10), TSigned.CreateTruncating(-10))))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "maxu a0, t0, t4", T.Max(T.CreateTruncating(10), T.CreateTruncating(-10)))];
             }
+
+            // Zbs
+            if (config.VersionInfo.HasExtensions(RiscVZExtensions.SingleBitManipulation))
+            {
+                yield return [new RiscVEmulatorTestCase<T>(config, "bclr a0, t2, s2", T.CreateTruncating(30 & ~(1 << 3)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "bset a0, t3, s0", T.CreateTruncating(40 | (1 << 1)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "binv a0, t0, s1", T.CreateTruncating(10 ^ (1 << 2)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "bext a0, t1, s1", T.CreateTruncating((20 >> 2) & 1))];
+            }
         }
     }
 

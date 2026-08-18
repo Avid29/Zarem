@@ -68,9 +68,13 @@ public enum Funct3Code : byte
 
     // --- Bit Manipulation ---
     BitCountSignExtendRotateLeft = 0b001,
+    BitClear = 0b001,
+    BitSet = 0b001,
+    BitInvert = 0b001,
     RotateRight = 0b101,
     Min = 0b100,
     MinUnsigned = 0b101,
+    BitExtract = 0b101,
     Max = 0b110,
     MaxUnsigned = 0b111,
 

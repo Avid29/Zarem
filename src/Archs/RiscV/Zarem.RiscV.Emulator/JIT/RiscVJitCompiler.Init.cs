@@ -201,6 +201,15 @@ public partial class RiscVJitCompiler<T, TFloat>
             _instructionTable.Register(opCode, Funct3Code.Or, (il, inst, _, _) => BitModifiedAluR<T2>(il, inst, OpCodes.Or));
             _instructionTable.Register(opCode, Funct3Code.And, (il, inst, _, _) => BitModifiedAluR<T2>(il, inst, OpCodes.And));
         }
+
+        // Zbs
+        if (versionInfo.HasExtensions(RiscVZExtensions.SingleBitManipulation))
+        {
+            _instructionTable.Register(Funct7Code.ZbsBClr, opCode, Funct3Code.BitClear, (il, inst, _, _) => BitSetClearR<T2>(il, inst, false));
+            _instructionTable.Register(Funct7Code.ZbsBSet, opCode, Funct3Code.BitSet, (il, inst, _, _) => BitSetClearR<T2>(il, inst, true));
+            _instructionTable.Register(Funct7Code.ZbsBInv, opCode, Funct3Code.BitInvert, (il, inst, _, _) => BitInvertR<T2>(il, inst));
+            _instructionTable.Register(Funct7Code.ZbsBExt, opCode, Funct3Code.BitExtract, (il, inst, _, _) => BitExtractR<T2>(il, inst));
+        }
     }
 
     private void InitFloatTable(RiscVVersionInfo versionInfo)
