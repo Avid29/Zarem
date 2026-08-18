@@ -1,0 +1,74 @@
+[
+  {
+    "type": "r-type",
+    "name": "bclr",
+    "funct3": 1,
+    "funct7": 36,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbs"
+  },
+  {
+    "type": "i-type",
+    "name": "bclri",
+    "op_code": 19,
+    "funct3": 1,
+    "is_shift": true,
+    "special": 36,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "Zbs"
+  },
+  {
+    "type": "r-type",
+    "name": "bset",
+    "funct3": 1,
+    "funct7": 40,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbs"
+  },
+  {
+    "type": "i-type",
+    "name": "bseti",
+    "op_code": 19,
+    "funct3": 1,
+    "is_shift": true,
+    "special": 40,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "Zbs"
+  },
+  {
+    "type": "r-type",
+    "name": "binv",
+    "funct3": 1,
+    "funct7": 104,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbs"
+  },
+  {
+    "type": "i-type",
+    "name": "binvi",
+    "op_code": 19,
+    "funct3": 1,
+    "is_shift": true,
+    "special": 104,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "Zbs"
+  },
+  {
+    "type": "r-type",
+    "name": "bext",
+    "funct3": 5,
+    "funct7": 72,
+    "args": [ "rd", "rs1", "rs2" ],
+    "extension": "Zbs"
+  },
+  {
+    "type": "i-type",
+    "name": "bexti",
+    "op_code": 19,
+    "funct3": 5,
+    "is_shift": true,
+    "special": 72,
+    "args": [ "rd", "rs1", "imm" ],
+    "extension": "Zbs"
+  }
+]

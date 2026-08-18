@@ -187,6 +187,15 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned>
             Register(opCode, Funct3Code.Or, &ModifyableAluR<OrLogic<T2>, OrnLogic<T2>, T2>);
             Register(opCode, Funct3Code.And, &ModifyableAluR<AndLogic<T2>, AndnLogic<T2>, T2>);
         }
+
+        // Zbs
+        if (versionInfo.HasExtensions(RiscVZExtensions.SingleBitManipulation))
+        {
+            Register(Funct7Code.ZbsBClr, opCode, Funct3Code.BitClear, &AluR<BClr<T2>, T2>);
+            Register(Funct7Code.ZbsBSet, opCode, Funct3Code.BitSet, &AluR<BSet<T2>, T2>);
+            Register(Funct7Code.ZbsBInv, opCode, Funct3Code.BitInvert, &AluR<BInv<T2>, T2>);
+            Register(Funct7Code.ZbsBExt, opCode, Funct3Code.BitExtract, &AluR<BExt<T2>, T2>);
+        }
     }
 
     private void InitFloatTable(RiscVVersionInfo versionInfo)
