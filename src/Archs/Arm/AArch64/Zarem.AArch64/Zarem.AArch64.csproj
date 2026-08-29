@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <RootNamespace>Zarem.AArch64</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Zarem\Zarem.csproj" />
+    <ProjectReference Include="..\Zarem.AArch64.CheatSheet\Zarem.AArch64.CheatSheet.csproj" />
+  </ItemGroup>
+
+</Project>

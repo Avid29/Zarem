@@ -186,8 +186,11 @@ public static class RegisterTable<TRegister, TSet>
             if (rawValue is null)
                 continue;
 
-            byte x = Convert.ToByte(rawValue);
-            table[attr.Alias] = Unsafe.As<byte, TRegister>(ref x);
+            if (attr.Alias is not null)
+            {
+                byte x = Convert.ToByte(rawValue);
+                table[attr.Alias] = Unsafe.As<byte, TRegister>(ref x);
+            }
         }
 
         return table;

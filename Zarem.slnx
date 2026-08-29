@@ -41,6 +41,18 @@
   </Folder>
   <Folder Name="/Plugins/" />
   <Folder Name="/Plugins/Archs/" />
+  <Folder Name="/Plugins/Archs/Arm/" />
+  <Folder Name="/Plugins/Archs/Arm/AArch64/">
+    <Project Path="src/Archs/Arm/AArch64/Zarem.AArch64.Base/Zarem.AArch64.Base.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Archs/Arm/AArch64/Zarem.AArch64.CheatSheet/Zarem.AArch64.CheatSheet.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Archs/Arm/AArch64/Zarem.AArch64/Zarem.AArch64.csproj" Id="65527996-5933-4fe4-826b-73ccae8c47b9">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Plugins/Archs/Mips/">
     <Project Path="src/Archs/Mips/Zarem.Mips.Assembler/Zarem.Mips.Assembler.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
