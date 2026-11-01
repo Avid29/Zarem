@@ -204,6 +204,26 @@ public unsafe struct RiscVInstruction : IInstruction
     }
 
     /// <summary>
+    /// Gets or sets the shift amount or bit index for I-Type shift and bit-manipulation instructions.
+    /// Uses bits 20..25 (6 bits) to support both RV32 (5-bit) and RV64 (6-bit) shift ranges.
+    /// </summary>
+    public byte ShiftImmediate
+    {
+        readonly get => (byte)BitField.GetField(_inst, 6, 20);
+        set => BitField.SetField(ref _inst, 6, 20, (uint)value & 0x3F);
+    }
+
+    /// <summary>
+    /// Gets or sets the special discriminator opcode field for I-Type shift and bit-manipulation instructions.
+    /// Uses bits 26..31 (6 bits) to distinguish shift types (e.g., SRLI vs. SRAI vs. BEXTI).
+    /// </summary>
+    public byte Special
+    {
+        readonly get => (byte)BitField.GetField(_inst, 6, 26);
+        set => BitField.SetField(ref _inst, 6, 26, (uint)value & 0x3F);
+    }
+
+    /// <summary>
     /// S-Type Immediates (12-bit, split across two fields)
     /// Used for: sw, sb, sh
     /// </summary>
