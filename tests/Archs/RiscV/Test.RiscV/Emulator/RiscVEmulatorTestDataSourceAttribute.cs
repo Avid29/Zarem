@@ -244,6 +244,10 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
                 yield return [new RiscVEmulatorTestCase<T>(config, "rol a0, t3, s3", T.RotateLeft(T.CreateTruncating(40), 4))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "ror a0, t3, s3", T.RotateRight(T.CreateTruncating(40), 4))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "sext.b a0, a5", T.CreateTruncating(TSigned.CreateTruncating((sbyte)0xF8)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "sext.h a0, a5", T.CreateTruncating(TSigned.CreateTruncating((short)0xFFF8)))
+                {
+                    RegisterInitialization = [(RiscVGpRegister.Argument5, T.CreateTruncating(0xFFF8))]
+                }];
 
                 yield return [new RiscVEmulatorTestCase<T>(config, "andn a0, s8, s9", T.CreateTruncating(S8) & ~T.CreateTruncating(S9))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "orn a0, s8, s9", T.CreateTruncating(S8) | ~T.CreateTruncating(S9))];
