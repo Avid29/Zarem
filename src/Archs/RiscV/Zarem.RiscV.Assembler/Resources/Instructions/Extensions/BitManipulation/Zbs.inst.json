@@ -8,11 +8,10 @@
     "extension": "Zbs"
   },
   {
-    "type": "i-type",
+    "type": "i-shift-type",
     "name": "bclri",
     "op_code": 19,
     "funct3": 1,
-    "is_shift": true,
     "special": 36,
     "args": [ "rd", "rs1", "imm" ],
     "extension": "Zbs"
@@ -26,11 +25,10 @@
     "extension": "Zbs"
   },
   {
-    "type": "i-type",
+    "type": "i-shift-type",
     "name": "bseti",
     "op_code": 19,
     "funct3": 1,
-    "is_shift": true,
     "special": 40,
     "args": [ "rd", "rs1", "imm" ],
     "extension": "Zbs"
@@ -44,11 +42,10 @@
     "extension": "Zbs"
   },
   {
-    "type": "i-type",
+    "type": "i-shift-type",
     "name": "binvi",
     "op_code": 19,
     "funct3": 1,
-    "is_shift": true,
     "special": 104,
     "args": [ "rd", "rs1", "imm" ],
     "extension": "Zbs"
@@ -62,11 +59,10 @@
     "extension": "Zbs"
   },
   {
-    "type": "i-type",
+    "type": "i-shift-type",
     "name": "bexti",
     "op_code": 19,
     "funct3": 5,
-    "is_shift": true,
     "special": 72,
     "args": [ "rd", "rs1", "imm" ],
     "extension": "Zbs"

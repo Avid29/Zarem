@@ -259,9 +259,13 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
             if (config.VersionInfo.HasExtensions(RiscVZExtensions.SingleBitManipulation))
             {
                 yield return [new RiscVEmulatorTestCase<T>(config, "bclr a0, t2, s2", T.CreateTruncating(30 & ~(1 << 3)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "bclri a0, t2, 3", T.CreateTruncating(30 & ~(1 << 3)))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "bset a0, t3, s0", T.CreateTruncating(40 | (1 << 1)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "bseti a0, t3, 1", T.CreateTruncating(40 | (1 << 1)))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "binv a0, t0, s1", T.CreateTruncating(10 ^ (1 << 2)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "binvi a0, t0, 2", T.CreateTruncating(10 ^ (1 << 2)))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "bext a0, t1, s1", T.CreateTruncating((20 >> 2) & 1))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "bexti a0, t1, 2", T.CreateTruncating((20 >> 2) & 1))];
             }
         }
     }

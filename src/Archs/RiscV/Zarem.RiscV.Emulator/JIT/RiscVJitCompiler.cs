@@ -41,7 +41,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
     {
         _cpu = cpu;
 
-        _instructionTable = new RiscVInstructionDecodeTable<RiscVEmitter>(IllegalInstruction);
+        _instructionTable = new RiscVInstructionDecodeTable<RiscVEmitter>(_cpu.Config.VersionInfo.Base, IllegalInstruction);
         InitTables(cpu.Config);
 
         // Initialize the decompressor if the compression extension is in use
@@ -111,13 +111,18 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         func(il, inst, pc, compressed);
     }
 
-    private void AluR<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
+    private void AluR<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode, bool not = false)
         where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(il, inst.RD, il =>
         {
             EmitLoadRegister<TData>(il, inst.RS1);
             EmitLoadRegister<TData>(il, inst.RS2);
+            if (not)
+            {
+                il.Emit(OpCodes.Not);
+            }
+
             il.Emit(ilOpCode);
         });
 
