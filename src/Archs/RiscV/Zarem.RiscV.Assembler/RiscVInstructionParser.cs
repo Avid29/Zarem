@@ -167,15 +167,18 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
 
         return Meta switch
         {
+            // I Type Instructions
+            IShiftTypeInstructionMeta i => RiscVInstruction.CreateIShift(i.OpCode, i.Funct3, rd, rs1, (byte)Immediate, i.Special),
+            ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, rd, rs1, (short)Immediate),
+
+            // Standard RISC-V instruction types
             BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, rs1, rs2, Immediate),
-            ITypeInstructionMeta i => i.IsShift switch
-            {
-                false => RiscVInstruction.CreateI(i.OpCode, i.Funct3, rd, rs1, (short)Immediate),
-            }
             JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, rd, Immediate),
             RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, rd, rs1, rs2),
             STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, rs1, rs2, (short)Immediate),
             UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, rd, Immediate),
+
+            // Compressed RISC-V instruction types
             CATypeInstructionMeta ca => RiscVCompressedInstruction.CreateCA(ca.CompressionCode, ca.CFunct6, ca.CFunct2, rs1, rs2),
             CBATypeInstructionMeta cba => RiscVCompressedInstruction.CreateCBA(cba.CompressionCode, cba.CFunct3, cba.CFunct2, rs1, (short)Immediate),
             CBTypeInstructionMeta cb => RiscVCompressedInstruction.CreateCB(cb.CompressionCode, cb.CFunct3, rs1, (short)Immediate),
@@ -186,6 +189,8 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             CRTypeInstructionMeta cr => RiscVCompressedInstruction.CreateCR(cr.CompressionCode, cr.CFunct4, rd, rs2),
             CSSTypeInstructionMeta css => RiscVCompressedInstruction.CreateCSS(css.CompressionCode, css.CFunct3, rs2, (byte)Immediate),
             CSTypeInstructionMeta cs => RiscVCompressedInstruction.CreateCS(cs.CompressionCode, cs.CFunct3, rs1, rs2, (byte)Immediate),
+
+            // Floating Point Instructions
             RiscVFloatInstructionMeta f => (f.Funct5.HasValue, f.Funct3.HasValue) switch
             {
                 // Triple Source reg with rounding mode

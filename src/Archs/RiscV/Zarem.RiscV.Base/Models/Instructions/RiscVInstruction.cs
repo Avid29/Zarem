@@ -66,6 +66,22 @@ public unsafe struct RiscVInstruction : IInstruction
     }
 
     /// <summary>
+    /// Creates an I-Type shift instruction.
+    /// </summary>
+    public static RiscVInstruction CreateIShift(RiscVOpCode op, Funct3Code f3, RiscVGpRegister rd, RiscVGpRegister rs1, byte shift, byte special)
+    {
+        return new()
+        {
+            OpCode = op,
+            Funct3 = f3,
+            RD = rd,
+            RS1 = rs1,
+            ShiftImmediate = shift,
+            Special = special,
+        };
+    }
+
+    /// <summary>
     /// Creates an S-Type instruction (Store).
     /// </summary>
     public static RiscVInstruction CreateS(RiscVOpCode op, Funct3Code f3, RiscVGpRegister rs1, RiscVGpRegister rs2, short offset)

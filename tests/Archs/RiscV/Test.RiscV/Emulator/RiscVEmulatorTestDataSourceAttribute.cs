@@ -147,6 +147,8 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         yield return [new RiscVEmulatorTestCase<T>(config, "slli a0, s6, 4", T.CreateTruncating(101 << 4))];
         yield return [new RiscVEmulatorTestCase<T>(config, "srl a0, s6, s3", T.CreateTruncating(101 >> 4))];
         yield return [new RiscVEmulatorTestCase<T>(config, "srli a0, s6, 4", T.CreateTruncating(101 >> 4))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "sra a0, s6, s3", T.CreateTruncating(101 >> 4))];
+        yield return [new RiscVEmulatorTestCase<T>(config, "srai a0, s6, 4", T.CreateTruncating(101 >> 4))];
     }
 
     private static IEnumerable<object[]> GetJumpBranchInstructionTests<T>(RiscVEmulatorConfig config)
