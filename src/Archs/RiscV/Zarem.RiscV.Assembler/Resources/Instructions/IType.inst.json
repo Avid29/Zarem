@@ -71,7 +71,7 @@
     "name": "srai",
     "op_code": 19,
     "funct3": 5,
-    "special": 16,
+    "special": 32,
     "args": [ "rd", "rs1", "imm" ],
     "extension": "I"
   },

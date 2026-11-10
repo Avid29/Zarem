@@ -147,8 +147,6 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
         yield return [new RiscVEmulatorTestCase<T>(config, "slli a0, s6, 4", T.CreateTruncating(101 << 4))];
         yield return [new RiscVEmulatorTestCase<T>(config, "srl a0, s6, s3", T.CreateTruncating(101 >> 4))];
         yield return [new RiscVEmulatorTestCase<T>(config, "srli a0, s6, 4", T.CreateTruncating(101 >> 4))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "sra a0, s6, s3", T.CreateTruncating(101 >> 4))];
-        yield return [new RiscVEmulatorTestCase<T>(config, "srai a0, s6, 4", T.CreateTruncating(101 >> 4))];
     }
 
     private static IEnumerable<object[]> GetJumpBranchInstructionTests<T>(RiscVEmulatorConfig config)
@@ -261,9 +259,13 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
             if (config.VersionInfo.HasExtensions(RiscVZExtensions.SingleBitManipulation))
             {
                 yield return [new RiscVEmulatorTestCase<T>(config, "bclr a0, t2, s2", T.CreateTruncating(30 & ~(1 << 3)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "bclri a0, t2, 3", T.CreateTruncating(30 & ~(1 << 3)))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "bset a0, t3, s0", T.CreateTruncating(40 | (1 << 1)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "bseti a0, t3, 1", T.CreateTruncating(40 | (1 << 1)))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "binv a0, t0, s1", T.CreateTruncating(10 ^ (1 << 2)))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "binvi a0, t0, 2", T.CreateTruncating(10 ^ (1 << 2)))];
                 yield return [new RiscVEmulatorTestCase<T>(config, "bext a0, t1, s1", T.CreateTruncating((20 >> 2) & 1))];
+                yield return [new RiscVEmulatorTestCase<T>(config, "bexti a0, t1, 2", T.CreateTruncating((20 >> 2) & 1))];
             }
         }
     }

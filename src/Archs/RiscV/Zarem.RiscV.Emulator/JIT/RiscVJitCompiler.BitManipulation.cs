@@ -68,28 +68,8 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         where TData : unmanaged, IBinaryInteger<TData>
         => MethodUnary<T>(il, inst, il => il.EmitConv<TData>(Sign.Signed));
 
-    private void BitModifiedAluR<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
-        where TData : unmanaged, INumber<TData>
-    {
-        EmitStoreRegister(il, inst.RD, il =>
-        {
-            EmitLoadRegister<TData>(il, inst.RS1);
-            EmitLoadRegister<TData>(il, inst.RS2);
-            if (inst.Funct7 is Funct7Code.Modified)
-            {
-                il.Emit(OpCodes.Not);
-            }
-
-            il.Emit(ilOpCode);
-        });
-
-        // Convert to T if neccesary
-        if (sizeof(TData) != sizeof(T))
-            il.EmitConv<T>(IsSigned<TData>());
-    }
-
     private void BitSetClearR<TData>(ILGenerator il, RiscVInstruction inst, bool set)
-        where TData : unmanaged, INumber<TData>
+        where TData : unmanaged, IBinaryInteger<TData>
     {
         BitManipulateR<TData>(il, inst, (il) =>
         {
@@ -107,11 +87,33 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         });
     }
 
+    private void BitSetClearI<TData>(ILGenerator il, RiscVInstruction inst, bool set)
+        where TData : unmanaged, IBinaryInteger<TData>
+    {
+        BitManipulateI<TData>(il, inst, (il) =>
+        {
+            if (set)
+            {
+                // Set
+                il.Emit(OpCodes.Or);
+            }
+            else
+            {
+                // Clear
+                il.Emit(OpCodes.Not);
+                il.Emit(OpCodes.And);
+            }
+        });
+    }
+
     private void BitInvertR<TData>(ILGenerator il, RiscVInstruction inst)
-        where TData : unmanaged, INumber<TData> => BitManipulateR<TData>(il, inst, (il) => il.Emit(OpCodes.Xor));
+        where TData : unmanaged, IBinaryInteger<TData> => BitManipulateR<TData>(il, inst, (il) => il.Emit(OpCodes.Xor));
+
+    private void BitInvertI<TData>(ILGenerator il, RiscVInstruction inst)
+        where TData : unmanaged, IBinaryInteger<TData> => BitManipulateI<TData>(il, inst, (il) => il.Emit(OpCodes.Xor));
 
     private void BitManipulateR<TData>(ILGenerator il, RiscVInstruction inst, Action<ILGenerator> action)
-        where TData : unmanaged, INumber<TData>
+        where TData : unmanaged, IBinaryInteger<TData>
     {
         EmitStoreRegister(il, inst.RD, il =>
         {
@@ -131,6 +133,25 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             il.EmitConv<T>(IsSigned<TData>());
     }
 
+    private void BitManipulateI<TData>(ILGenerator il, RiscVInstruction inst, Action<ILGenerator> action)
+        where TData : unmanaged, IBinaryInteger<TData>
+    {
+        EmitStoreRegister(il, inst.RD, il =>
+        {
+            // Load rs1
+            EmitLoadRegister<TData>(il, inst.RS1);
+
+            // Load mask
+            il.EmitLoadConstant(TData.One << inst.ShiftImmediate);
+
+            action(il);
+        });
+
+        // Convert to T if neccesary
+        if (sizeof(TData) != sizeof(T))
+            il.EmitConv<T>(IsSigned<TData>());
+    }
+
     private void BitExtractR<TData>(ILGenerator il, RiscVInstruction inst)
         where TData : unmanaged, INumber<TData>
     {
@@ -139,6 +160,26 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             // Load rs1 as TData and rs2 as int
             EmitLoadRegister<TData>(il, inst.RS1);
             EmitLoadRegister<int>(il, inst.RS2);
+
+            // Shift rs1 by rs2 and mask bit 1
+            il.Emit(OpCodes.Shr);
+            il.EmitLoadConstant(TData.One);
+            il.Emit(OpCodes.And);
+        });
+
+        // Convert to T if neccesary
+        if (sizeof(TData) != sizeof(T))
+            il.EmitConv<T>(IsSigned<TData>());
+    }
+
+    private void BitExtractI<TData>(ILGenerator il, RiscVInstruction inst)
+        where TData : unmanaged, INumber<TData>
+    {
+        EmitStoreRegister(il, inst.RD, il =>
+        {
+            // Load rs1 as TData and rs2 as int
+            EmitLoadRegister<TData>(il, inst.RS1);
+            il.EmitLoadConstant<int>(inst.ShiftImmediate);
 
             // Shift rs1 by rs2 and mask bit 1
             il.Emit(OpCodes.Shr);
