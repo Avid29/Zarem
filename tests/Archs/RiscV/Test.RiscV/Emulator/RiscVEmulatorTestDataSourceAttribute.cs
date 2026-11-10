@@ -293,9 +293,9 @@ public class RiscVEmulatorTestDataSourceAttribute : EmulatorTestDataSourceAttrib
             yield return [new RiscVEmulatorTestCase<T>(config, "c.j 1000") { ExpectedPC = T.CreateTruncating(1000) }];
             yield return [new RiscVEmulatorTestCase<T>(config, "c.beqz a3, 80") { ExpectedPC = T.CreateTruncating(80) }];
             yield return [new RiscVEmulatorTestCase<T>(config, "c.bnez a2, 80") { ExpectedPC = T.CreateTruncating(80) }];
-            yield return [new RiscVEmulatorTestCase<T>(config, "c.srli a4, 2", T.CreateTruncating(0x89ab_cdef) >> 2, RiscVGpRegister.Argument4)];
-            yield return [new RiscVEmulatorTestCase<T>(config, "c.srai a4, 2", T.CreateTruncating(TSigned.CreateTruncating(0x89ab_cdef) >> 2), RiscVGpRegister.Argument4)];
-            // TODO: c.andi
+            yield return [new RiscVEmulatorTestCase<T>(config, "c.srli a4, 2", RiscVGpRegister.Argument4, T.CreateTruncating(0x89ab_cdef) >> 2)];
+            yield return [new RiscVEmulatorTestCase<T>(config, "c.srai a4, 2", RiscVGpRegister.Argument4, T.CreateTruncating(TSigned.CreateTruncating(0x89ab_cdef) >> 2))];
+            yield return [new RiscVEmulatorTestCase<T>(config, "c.andi s1, 1", RiscVGpRegister.Saved1, T.CreateTruncating(2 & 1))];
 
             yield return [new RiscVEmulatorTestCase<T>(config, "c.sub s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 - 1))];
             yield return [new RiscVEmulatorTestCase<T>(config, "c.xor s1, s0", RiscVGpRegister.Saved1, T.CreateTruncating(2 ^ 1))];
