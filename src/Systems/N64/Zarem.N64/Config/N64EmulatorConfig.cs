@@ -18,4 +18,9 @@ public class N64EmulatorConfig : MipsEmulatorConfig
     public N64EmulatorConfig(ExecutionMode mode) : base(new MipsVersionInfo(MipsGeneration.MipsIII), mode)
     {
     }
+
+    /// <summary>
+    /// Gets or sets whether or not the N64 emulator should simulate the presence of an Expansion Pak.
+    /// </summary>
+    public bool HasExpansionPak { get; set; } = true;
 }

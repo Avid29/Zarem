@@ -1,12 +1,12 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Devices;
+using System;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Mips.Emulator.Machine;
 using Zarem.N64.Config;
 using Zarem.N64.Devices;
-using Zarem.N64.Devices.RCP;
+using Zarem.N64.Devices.RealityCoProcessor;
 
 namespace Zarem.N64;
 
@@ -15,19 +15,6 @@ namespace Zarem.N64;
 /// </summary>
 public class Nintendo64 : MipsComputer
 {
-#pragma warning disable CS1591
-    public const ulong MemoryBase = 0x0000_0000;
-    public const ulong MemorySize = 0x0040_0000;
-    public const ulong RcpBase = 0x0400_0000;
-    public const ulong RcpSize = 0x0100_0000;
-    public const ulong DmaInterfaceBase = 0x0460_0000;
-    public const ulong DmaInterfaceSize = 0x0000_0020;
-    public const ulong CartridgeBase = 0x1000_0000;
-    public const ulong CartridgeSize = 0x1FC0_0000;
-    public const ulong RomChipBase = 0x1FC0_0000;
-    public const ulong RomChipSize = 0x0000_0800;
-#pragma warning restore CS1591
-
     private readonly N64CartridgeSlot _cartridgeSlot;
 
     /// <summary>
@@ -35,7 +22,7 @@ public class Nintendo64 : MipsComputer
     /// </summary>
     public Nintendo64(N64EmulatorConfig config) : base(config, false)
     {
-        _cartridgeSlot = new N64CartridgeSlot(CartridgeSize);
+        _cartridgeSlot = new N64CartridgeSlot();
         RealityCoProcessor = new RealityCoProcessor(Memory.Physical);
 
         RemapDevices();
@@ -65,8 +52,13 @@ public class Nintendo64 : MipsComputer
     /// <inheritdoc/>
     protected override void MapDevices(MemoryMapper mapper)
     {
-        mapper.MapDevice(MemoryBase, new RamDevice(MemorySize));
-        mapper.MapDevice(RcpBase, RealityCoProcessor);
-        mapper.MapDevice(CartridgeBase, _cartridgeSlot);
+        if (Config is not N64EmulatorConfig n64Config)
+        {
+            throw new InvalidOperationException("Invalid config type for Nintendo64.");
+        }
+
+        mapper.MapDevice(0x0000_0000, new RdramDevice(n64Config.HasExpansionPak));
+        mapper.MapDevice(RealityCoProcessor.BusRangeBase, RealityCoProcessor);
+        mapper.MapDevice(N64CartridgeSlot.BusRangeBase, _cartridgeSlot);
     }
 }

@@ -3,7 +3,7 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace Zarem.N64.Devices.RCP.Models;
+namespace Zarem.N64.Devices.RealityCoProcessor.Models;
 
 #pragma warning disable CS1591
 
