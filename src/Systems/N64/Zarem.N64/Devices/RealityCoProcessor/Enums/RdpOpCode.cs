@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.N64.Devices.RCP.Enums;
+namespace Zarem.N64.Devices.RealityCoProcessor.Enums;
 
 /// <summary>
 /// An enum representing the various RDP command opcodes. These opcodes are used to identify the type of command being issued to the RDP and determine how to process it.

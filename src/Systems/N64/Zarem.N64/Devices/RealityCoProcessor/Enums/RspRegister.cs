@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.N64.Devices.RCP.Enums;
+namespace Zarem.N64.Devices.RealityCoProcessor.Enums;
 
 /// <summary>
 /// An enum for the fixed registers in the reality signal processor.

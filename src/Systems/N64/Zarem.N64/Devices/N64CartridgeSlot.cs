@@ -14,13 +14,18 @@ namespace Zarem.N64.Devices;
 /// </summary>
 public unsafe class N64CartridgeSlot : IBusDeviceDirect
 {
+#pragma warning disable CS1591
+    public const ulong MappingBase = 0x1000_0000;
+    public const ulong MappingSize = 0x0100_0000;
+#pragma warning restore CS1591
+
     private byte* _ptr;
     private ulong _size;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="N64CartridgeSlot"/> class.
     /// </summary>
-    public N64CartridgeSlot(ulong maxSize)
+    public N64CartridgeSlot(ulong maxSize = MappingSize)
     {
         UnloadCartridge();
 
