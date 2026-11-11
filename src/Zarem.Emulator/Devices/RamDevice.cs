@@ -31,10 +31,10 @@ public unsafe class RamDevice : IBusDeviceDirect
     }
 
     /// <inheritdoc/>
-    public string Name => "RAM";
+    public virtual string Name => "RAM";
 
     /// <inheritdoc/>
-    public ulong BusRangeSize { get; }
+    public virtual ulong BusRangeSize { get; }
 
     /// <summary>
     /// Gets a pointer to an address within the ram device.
@@ -42,7 +42,7 @@ public unsafe class RamDevice : IBusDeviceDirect
     /// <param name="offset">The offset within the device address range.</param>
     /// <returns>A pointer to the requested address.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public byte* GetPointer(ulong offset)
+    public virtual byte* GetPointer(ulong offset)
     {
         ulong pageIdx = offset >> (int)_pageShift;
         uint pageOffset = (uint)(offset & (_pageSize - 1));
@@ -59,7 +59,7 @@ public unsafe class RamDevice : IBusDeviceDirect
     }
 
     /// <inheritdoc/>
-    public void Read(ulong offset, Span<byte> destination)
+    public virtual void Read(ulong offset, Span<byte> destination)
     {
         int remaining = destination.Length;
         int destOffset = 0;
@@ -92,7 +92,7 @@ public unsafe class RamDevice : IBusDeviceDirect
     }
 
     /// <inheritdoc/>
-    public void Write(ulong offset, ReadOnlySpan<byte> source)
+    public virtual void Write(ulong offset, ReadOnlySpan<byte> source)
     {
         int remaining = source.Length;
         int srcOffset = 0;

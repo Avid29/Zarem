@@ -110,14 +110,13 @@ public unsafe class PhysicalBus : IMemoryAccessor
 
         if (device is IBusDeviceDirect memDevice)
         {
-            byte* ptr = memDevice.GetPointer(offset);
-
             // Handle endianness swap before writing to raw memory
             if (_endianMismatch)
             {
                 value = ReverseEndianness(value);
             }
 
+            byte* ptr = memDevice.GetPointer(offset);
             Unsafe.Write(ptr, value);
         }
         else

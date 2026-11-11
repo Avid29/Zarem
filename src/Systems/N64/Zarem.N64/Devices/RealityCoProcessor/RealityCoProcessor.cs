@@ -67,6 +67,8 @@ public class RealityCoProcessor : IBusDevice, IDXGraphicsDevice
 
     private IBusDevice GetChildDevice(ulong offset, out ulong deviceOffset)
     {
+        // TODO: It's only iterating through 8 devices, but it wouldn't be hard to optimize this if needed.
+
         deviceOffset = 0;
         foreach (var device in _childDevices)
         {

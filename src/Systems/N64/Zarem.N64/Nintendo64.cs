@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.Emulator.Devices;
+using System;
 using Zarem.Emulator.Machine;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Mips.Emulator.Machine;
@@ -15,11 +15,6 @@ namespace Zarem.N64;
 /// </summary>
 public class Nintendo64 : MipsComputer
 {
-#pragma warning disable CS1591
-    public const ulong MemoryBase = 0x0000_0000;
-    public const ulong MemorySize = 0x0040_0000;
-#pragma warning restore CS1591
-
     private readonly N64CartridgeSlot _cartridgeSlot;
 
     /// <summary>
@@ -57,8 +52,13 @@ public class Nintendo64 : MipsComputer
     /// <inheritdoc/>
     protected override void MapDevices(MemoryMapper mapper)
     {
-        mapper.MapDevice(MemoryBase, new RamDevice(MemorySize));
+        if (Config is not N64EmulatorConfig n64Config)
+        {
+            throw new InvalidOperationException("Invalid config type for Nintendo64.");
+        }
+
+        mapper.MapDevice(0x0000_0000, new RdramDevice(n64Config.HasExpansionPak));
         mapper.MapDevice(RealityCoProcessor.BusRangeBase, RealityCoProcessor);
-        mapper.MapDevice(N64CartridgeSlot.MappingBase, _cartridgeSlot);
+        mapper.MapDevice(N64CartridgeSlot.BusRangeBase, _cartridgeSlot);
     }
 }
