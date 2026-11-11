@@ -2,7 +2,7 @@
 
 using Zarem.Emulator.Machine.Memory;
 
-namespace Zarem.Mips.Emulator.Machine.Tlb;
+namespace Zarem.Mips.Emulator.Machine.Memory.Tlb;
 
 /// <summary>
 /// An interface for the MIPS Tlb.

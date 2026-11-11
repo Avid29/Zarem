@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Helpers;
 
-namespace Zarem.Mips.Emulator.Machine.Tlb;
+namespace Zarem.Mips.Emulator.Machine.Memory.Tlb;
 
 /// <summary>
 /// Represents a hardware-accurate MIPS Translation Lookaside Buffer (TLB) entry 

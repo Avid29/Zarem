@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using Zarem.Helpers;
 using Zarem.Mips.Models.Instructions;
 
-namespace Zarem.Mips.Emulator.Machine.Tlb;
+namespace Zarem.Mips.Emulator.Machine.Memory.Tlb;
 
 /// <summary>
 /// Represents the upper mapping properties (virtual match tags and address filters)

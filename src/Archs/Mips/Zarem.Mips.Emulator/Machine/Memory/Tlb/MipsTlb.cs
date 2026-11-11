@@ -5,10 +5,9 @@ using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 
-namespace Zarem.Mips.Emulator.Machine.Tlb;
+namespace Zarem.Mips.Emulator.Machine.Memory.Tlb;
 
 /// <summary>
 /// A hardware-accurate MIPS Translation Lookaside Buffer supporting variable page sizes
@@ -22,15 +21,13 @@ public unsafe class MipsTlb<T> : IMipsTlb
     private const int CacheMask = CacheSize - 1;
 
     private readonly MipsTlbEntry<T>[] _slots;
-    private readonly MipsCpu<T> _cpu;
     private readonly int[] _cacheIndicies = new int[CacheSize];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsTlb{T}"/> class.
     /// </summary>
-    public MipsTlb(MipsCpu<T> cpu, int slotCount = 64)
+    public MipsTlb(int slotCount = 64)
     {
-        _cpu = cpu;
         _slots = new MipsTlbEntry<T>[slotCount];
     }
 
@@ -53,28 +50,10 @@ public unsafe class MipsTlb<T> : IMipsTlb
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public MemoryAccessResult TryTranslate(ulong virtualAddress, out ulong pAddress)
     {
         pAddress = default;
-
-        if (!IsMapped(virtualAddress, out var isProtected))
-        {
-            if (isProtected && _cpu.CoProcessor0.ActingPrivilegeMode is not PrivilegeMode.Kernel)
-                return MemoryAccessResult.AccessViolation;
-
-            // Apply the fixed physical mask for MIPS32 / MIPS64 compatibility windows
-            if ((virtualAddress >> 32) == 0 || virtualAddress >= 0xFFFF_FFFF_8000_0000UL)
-            {
-                pAddress = virtualAddress & 0x1FFF_FFFF;
-            }
-            else // XKPhys 64-bit segment
-            {
-                pAddress = virtualAddress & 0x07FF_FFFF_FFFF_FFFFUL;
-            }
-
-            pAddress = virtualAddress;
-            return MemoryAccessResult.Success;
-        }
 
         T vAddress = T.CreateTruncating(virtualAddress);
 
@@ -93,7 +72,7 @@ public unsafe class MipsTlb<T> : IMipsTlb
         var selectedLo = isOddPage ? slot.Low1 : slot.Low0;
 
         if (!selectedLo.Valid)
-        { 
+        {
             // Match found but page is invalid -> TLB Invalid Exception (TLBL/TLBS)
             pAddress = 0;
             return MemoryAccessResult.AccessViolation;
@@ -287,42 +266,5 @@ public unsafe class MipsTlb<T> : IMipsTlb
     private static bool IsOddPageAddress(T vAddress, int oddPageBitIndex)
     {
         return ((vAddress >> oddPageBitIndex) & T.One) == T.One;
-    }
-
-    private static bool IsMapped(ulong vAddress, out bool isProtected)
-    {
-        isProtected = true;
-
-        // If any of the top 32 bits are set, evaluate 64-bit space rules first
-        if ((vAddress >> 32) != 0)
-        {
-            switch (vAddress >> 62)
-            {
-                // xkuseg
-                case 0:
-                    isProtected = false;
-                    return true;  
-                case 1: return true;  // xksseg
-                case 2: return false; // xkphys
-                case 3:
-                    // If it's the 32-bit sign-extended compatibility space, 
-                    // fall down to the switch statement below. Otherwise, xkseg is mapped.
-                    if (vAddress >= 0xFFFF_FFFF_8000_0000UL)
-                        break;
-                    return true;
-            }
-        }
-
-        if ((uint)vAddress < 0x8000_0000)
-            isProtected = false;
-
-        return (uint)vAddress switch
-        {
-            < 0x8000_0000 => true, // kuseg
-            >= 0x8000_0000 and < 0xA000_0000 => false, // kseg0
-            >= 0xA000_0000 and < 0xC000_0000 => false, // kseg1
-            >= 0xC000_0000 and < 0xE000_0000 => true, // keg2
-            >= 0xE000_0000 => true, // keg3
-        };
     }
 }

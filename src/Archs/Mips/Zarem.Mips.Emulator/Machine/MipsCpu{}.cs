@@ -6,8 +6,9 @@ using Zarem.Emulator.Machine.Memory;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Machine.Memory;
+using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Emulator.Machine.Registers;
-using Zarem.Mips.Emulator.Machine.Tlb;
 using Zarem.Mips.Emulator.TrapHandlers;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
@@ -34,8 +35,8 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         Config = config;
         RegisterFile = new(config.VersionInfo);
 
-        Tlb = new MipsTlb<T>(this);
-        Memory = new MemorySystem(bus, Tlb);
+        Tlb = new MipsTlb<T>();
+        Memory = new MemorySystem(bus, new MipsAddressTranslator<T>(this));
         CoProcessor0 = new(Tlb);
 
         ProgramCounter = T.CreateTruncating(BOOT_ADDRESS);

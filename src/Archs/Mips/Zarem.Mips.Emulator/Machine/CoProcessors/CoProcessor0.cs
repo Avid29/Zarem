@@ -3,8 +3,8 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Mips.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
-using Zarem.Mips.Emulator.Machine.Tlb;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Emulator.Machine.CoProcessors;
@@ -124,7 +124,7 @@ public class CoProcessor0<T> : ICoProcessor0
             index = T.One << ((sizeof(T) * 8) - 1);
         }
 
-        this[CP0Registers.Index] = T.CreateTruncating(index);
+        this[CP0Registers.Index] = index;
     }
 
     /// <summary>

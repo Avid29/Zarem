@@ -4,7 +4,7 @@ using Zarem.Emulator.Machine.CPU;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
-using Zarem.Mips.Emulator.Machine.Tlb;
+using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
