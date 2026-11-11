@@ -3,7 +3,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Machine.Registers;
-using Zarem.Mips.Emulator.Machine.Tlb;
+using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;

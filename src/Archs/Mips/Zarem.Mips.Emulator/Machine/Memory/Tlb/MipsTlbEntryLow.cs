@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using Zarem.Helpers;
 using Zarem.Mips.Emulator.Machine.Enums;
 
-namespace Zarem.Mips.Emulator.Machine.Tlb;
+namespace Zarem.Mips.Emulator.Machine.Memory.Tlb;
 
 /// <summary>
 /// Represents the lower mapping properties (physical translation details and permissions) 
