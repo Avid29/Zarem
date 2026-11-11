@@ -1,0 +1,297 @@
+[
+  {
+    "name": "DataProcessing",
+    "patterns": [
+      {
+        "name": "DataProcessingImmediate",
+        "sections": [
+          {
+            "name": "RD",
+            "size": 5,
+            "offset": 0,
+            "type": 3
+          },
+          {
+            "name": "RN",
+            "size": 5,
+            "offset": 5,
+            "type": 3
+          },
+          {
+            "name": "Imm12",
+            "size": 12,
+            "offset": 10,
+            "type": 4
+          },
+          {
+            "name": "Shift",
+            "size": 2,
+            "offset": 22,
+            "type": 1
+          },
+          {
+            "name": "Func Code",
+            "size": 4,
+            "offset": 25,
+            "type": 1
+          },
+          {
+            "name": "SF",
+            "size": 1,
+            "offset": 31,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "DataProcessingRegister",
+        "sections": [
+          {
+            "name": "RD",
+            "size": 5,
+            "offset": 0,
+            "type": 3
+          },
+          {
+            "name": "RN",
+            "size": 5,
+            "offset": 5,
+            "type": 3
+          },
+          {
+            "name": "Imm6",
+            "size": 6,
+            "offset": 10,
+            "type": 4
+          },
+          {
+            "name": "RM",
+            "size": 5,
+            "offset": 16,
+            "type": 3
+          },
+          {
+            "name": "Func Code",
+            "size": 4,
+            "offset": 25,
+            "type": 1
+          },
+          {
+            "name": "SF",
+            "size": 1,
+            "offset": 31,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "MoveWideImmediate",
+        "sections": [
+          {
+            "name": "RD",
+            "size": 5,
+            "offset": 0,
+            "type": 3
+          },
+          {
+            "name": "Imm16",
+            "size": 16,
+            "offset": 5,
+            "type": 4
+          },
+          {
+            "name": "HW Shift",
+            "size": 2,
+            "offset": 21,
+            "type": 1
+          },
+          {
+            "name": "Func Code",
+            "size": 4,
+            "offset": 25,
+            "type": 1
+          },
+          {
+            "name": "SF",
+            "size": 1,
+            "offset": 31,
+            "type": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "BranchesAndSystem",
+    "patterns": [
+      {
+        "name": "UnconditionalBranchImmediate",
+        "sections": [
+          {
+            "name": "BranchOffset26",
+            "size": 26,
+            "offset": 0,
+            "type": 4
+          },
+          {
+            "name": "Func Code",
+            "size": 4,
+            "offset": 25,
+            "type": 1
+          },
+          {
+            "name": "Op",
+            "size": 1,
+            "offset": 31,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "ConditionalBranchImmediate",
+        "sections": [
+          {
+            "name": "Cond",
+            "size": 4,
+            "offset": 0,
+            "type": 1
+          },
+          {
+            "name": "V Bit",
+            "size": 1,
+            "offset": 4,
+            "type": 1
+          },
+          {
+            "name": "BranchOffset19",
+            "size": 19,
+            "offset": 5,
+            "type": 4
+          },
+          {
+            "name": "Func Code",
+            "size": 4,
+            "offset": 25,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "CompareAndBranch",
+        "sections": [
+          {
+            "name": "RT",
+            "size": 5,
+            "offset": 0,
+            "type": 3
+          },
+          {
+            "name": "BranchOffset19",
+            "size": 19,
+            "offset": 5,
+            "type": 4
+          },
+          {
+            "name": "Func Code",
+            "size": 4,
+            "offset": 25,
+            "type": 1
+          },
+          {
+            "name": "SF",
+            "size": 1,
+            "offset": 31,
+            "type": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "LoadsAndStores",
+    "patterns": [
+      {
+        "name": "LoadStoreRegisterOffset",
+        "sections": [
+          {
+            "name": "RT",
+            "size": 5,
+            "offset": 0,
+            "type": 3
+          },
+          {
+            "name": "RN",
+            "size": 5,
+            "offset": 5,
+            "type": 3
+          },
+          {
+            "name": "Imm12 Scale",
+            "size": 12,
+            "offset": 10,
+            "type": 4
+          },
+          {
+            "name": "Func Code",
+            "size": 4,
+            "offset": 25,
+            "type": 1
+          },
+          {
+            "name": "Size Flags",
+            "size": 2,
+            "offset": 30,
+            "type": 1
+          }
+        ]
+      },
+      {
+        "name": "LoadStoreRegisterPair",
+        "sections": [
+          {
+            "name": "RT1",
+            "size": 5,
+            "offset": 0,
+            "type": 3
+          },
+          {
+            "name": "RN",
+            "size": 5,
+            "offset": 5,
+            "type": 3
+          },
+          {
+            "name": "RT2",
+            "size": 5,
+            "offset": 10,
+            "type": 3
+          },
+          {
+            "name": "Imm7",
+            "size": 7,
+            "offset": 15,
+            "type": 4
+          },
+          {
+            "name": "Func Code",
+            "size": 4,
+            "offset": 25,
+            "type": 1
+          },
+          {
+            "name": "L Bit",
+            "size": 1,
+            "offset": 22,
+            "type": 1
+          },
+          {
+            "name": "Size Flags",
+            "size": 2,
+            "offset": 30,
+            "type": 1
+          }
+        ]
+      }
+    ]
+  }
+]

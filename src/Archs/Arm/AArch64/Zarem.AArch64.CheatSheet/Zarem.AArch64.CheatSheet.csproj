@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Class1.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="EncodingPatterns.json" />
+    <EmbeddedResource Include="InstructionCollections.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Zarem.CheatSheet\Zarem.CheatSheet.csproj" />
+    <ProjectReference Include="..\Zarem.AArch64.Base\Zarem.AArch64.Base.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -13,7 +13,7 @@ public class RegisterAttribute : Attribute
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterAttribute"/> class.
     /// </summary>
-    public RegisterAttribute(string alias)
+    public RegisterAttribute(string? alias)
     {
         Alias = alias;
     }
@@ -21,5 +21,5 @@ public class RegisterAttribute : Attribute
     /// <summary>
     /// Gets or sets the register's alias.
     /// </summary>
-    public string Alias { get; }
+    public string? Alias { get; }
 }

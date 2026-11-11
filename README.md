@@ -19,8 +19,8 @@ This project is in pre-release stages of development. Changes to Project File fo
 | ------------------------------------------------------------- | --------------- | --------------------- | --------------- | -------------- | --------------- | --------------- |
 | [MIPS](https://github.com/Avid29/Zarem/wiki/MIPS)             | ✅ Supported    | ✅ Supported         | ⚠️ WIP          | ✅ Supported   | ⚠️ WIP         | ⌛ Planned      |
 | [RISC-V](https://github.com/Avid29/Zarem/wiki/RISC%E2%80%90V) | ✅ Supported    | ✅ Supported         | ⚠️ WIP          | ✅ Supported   | ⌛ Planned     | ⌛ Planned      |
-| ARM                                                           | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
-| ARM64                                                         | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
+| ARM (AArch32)                                                 | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
+| ARM64 (AArch64)                                               | ⌛ Planned      | ⌛ Planned           | ⌛ Planned      | ⌛ Planned     | ⌛ Planned     | ⌛ Planned      |
 | x86_64                                                        | ❌ Not Planned  | ❌ Not Planned       | ❌ Not Planned  | ❌ Not Planned | ❌ Not Planned | ❌ Not Planned  |
 
 # Cross-Platform Support
