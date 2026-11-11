@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using System.Threading;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Logging;
@@ -197,7 +198,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
     private bool TryParseRegister(ReadOnlySpan<Token> arg, TArg target, RegisterArgumentAttribute<TSet> attr)
     {
         // TODO: Introduce lower bound, for cases like RISC-V compressed registers
-        var max = RegisterTable<TRegister, TSet>.GetRegisterCount(attr.RegisterSet);
+        var bound = RegisterTable<TRegister, TSet>.GetRegisterCount(attr.RegisterSet, out var offset) + offset;
 
         if (arg.Length is not 1)
         {
@@ -231,7 +232,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
         }
 
         var index = Unsafe.As<TRegister, int>(ref register);
-        if (index >= max)
+        if (index < offset || index >= bound)
         {
             var (message, msgArg) = indexed switch
             {

@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using Zarem.Emulator.Machine.Registers;
+using Zarem.Emulator.Models.Logic;
 using Zarem.RiscV.Emulator.Enums;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;

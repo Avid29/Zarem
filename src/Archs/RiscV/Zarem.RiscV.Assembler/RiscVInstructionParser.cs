@@ -91,9 +91,11 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             }
         }
 
-        name = string.Join('.', parts).ToLowerInvariant();
+        var formattedName = string.Join('.', parts).ToLowerInvariant();
+        bool isNotFormatted = _instructionTable.TryGetInstruction(name, out var metas, out var requiredBase, out var requiredExtension);
+        bool notFound = !isNotFormatted && !_instructionTable.TryGetInstruction(formattedName, out metas, out requiredBase, out requiredExtension);
 
-        if (!_instructionTable.TryGetInstruction(name, out var metas, out var requiredBase, out var requiredExtension))
+        if (notFound || metas is null)
         {
             (LogId id, string message) = requiredExtension switch
             {
@@ -105,6 +107,10 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             _logger?.Log(Severity.Error, id, line.Instruction, message, name, $"{requiredBase:d}", $"{requiredExtension:d}");
             return false;
         }
+        else if (!isNotFormatted)
+        {
+            name = formattedName;
+        }
 
         Meta = metas.FirstOrDefault(x => x.ArgumentPattern.Length == line.Args.Count);
 
@@ -113,7 +119,6 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             _logger?.Log(Severity.Error, LogId.InvalidInstructionArgCount, line.Instruction, "WrongArgumentCount", name, line.Args.Count);
             return false;
         }
-
 
         if (Meta is RiscVFloatInstructionMeta fMeta)
         {
@@ -157,17 +162,23 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
 
         var rd = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RD, RiscVArgument.FRD, RiscVArgument.RDRS1, RiscVArgument.CompressedRD, RiscVArgument.CompressedRDRS1);
         var rs1 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS1, RiscVArgument.FRS1, RiscVArgument.RDRS1, RiscVArgument.CompressedRS1, RiscVArgument.CompressedRDRS1);
-        var rs2 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS2, RiscVArgument.FRS2, RiscVArgument.CompressedRS2);
+        var rs2 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.RS2, RiscVArgument.FRS2, RiscVArgument.CompressedRS2, RiscVArgument.RotateLeftRS2);
         var rs3 = GetParsedArgument<RiscVGpRegister>(RiscVArgument.FRS3);
 
         return Meta switch
         {
-            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, rs1, rs2, Immediate),
+            // I Type Instructions
+            IShiftTypeInstructionMeta i => RiscVInstruction.CreateIShift(i.OpCode, i.Funct3, rd, rs1, (byte)Immediate, i.Special),
             ITypeInstructionMeta i => RiscVInstruction.CreateI(i.OpCode, i.Funct3, rd, rs1, (short)Immediate),
+
+            // Standard RISC-V instruction types
+            BTypeInstructionMeta b => RiscVInstruction.CreateB(b.OpCode, b.Funct3, rs1, rs2, Immediate),
             JTypeInstructionMeta j => RiscVInstruction.CreateJ(j.OpCode, rd, Immediate),
             RTypeInstructionMeta r => RiscVInstruction.CreateR(r.OpCode, r.Funct3, r.Funct7, rd, rs1, rs2),
             STypeInstructionMeta s => RiscVInstruction.CreateS(s.OpCode, s.Funct3, rs1, rs2, (short)Immediate),
             UTypeInstructionMeta u => RiscVInstruction.CreateU(u.OpCode, rd, Immediate),
+
+            // Compressed RISC-V instruction types
             CATypeInstructionMeta ca => RiscVCompressedInstruction.CreateCA(ca.CompressionCode, ca.CFunct6, ca.CFunct2, rs1, rs2),
             CBATypeInstructionMeta cba => RiscVCompressedInstruction.CreateCBA(cba.CompressionCode, cba.CFunct3, cba.CFunct2, rs1, (short)Immediate),
             CBTypeInstructionMeta cb => RiscVCompressedInstruction.CreateCB(cb.CompressionCode, cb.CFunct3, rs1, (short)Immediate),
@@ -178,6 +189,8 @@ public class RiscVInstructionParser : InstructionParserBase<RiscVInstruction, Ri
             CRTypeInstructionMeta cr => RiscVCompressedInstruction.CreateCR(cr.CompressionCode, cr.CFunct4, rd, rs2),
             CSSTypeInstructionMeta css => RiscVCompressedInstruction.CreateCSS(css.CompressionCode, css.CFunct3, rs2, (byte)Immediate),
             CSTypeInstructionMeta cs => RiscVCompressedInstruction.CreateCS(cs.CompressionCode, cs.CFunct3, rs1, rs2, (byte)Immediate),
+
+            // Floating Point Instructions
             RiscVFloatInstructionMeta f => (f.Funct5.HasValue, f.Funct3.HasValue) switch
             {
                 // Triple Source reg with rounding mode

@@ -3,6 +3,7 @@
 using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
+using Zarem.Emulator.Models.Logic;
 using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models;

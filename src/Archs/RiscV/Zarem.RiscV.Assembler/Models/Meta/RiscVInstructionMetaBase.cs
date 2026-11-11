@@ -17,6 +17,7 @@ namespace Zarem.RiscV.Assembler.Models.Meta;
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(RTypeInstructionMeta), "r-type")]
 [JsonDerivedType(typeof(ITypeInstructionMeta), "i-type")]
+[JsonDerivedType(typeof(IShiftTypeInstructionMeta), "i-shift-type")]
 [JsonDerivedType(typeof(STypeInstructionMeta), "s-type")]
 [JsonDerivedType(typeof(BTypeInstructionMeta), "b-type")]
 [JsonDerivedType(typeof(UTypeInstructionMeta), "u-type")]

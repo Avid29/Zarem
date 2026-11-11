@@ -133,11 +133,13 @@ public static class RegisterTable<TRegister, TSet>
     /// <summary>
     /// Attempts to get the number of registers in a set.
     /// </summary>
-    public static int GetRegisterCount(TSet set)
+    public static int GetRegisterCount(TSet set, out int offset)
     {
+        offset = 0;
         if (!_setTable.TryGetValue(set, out var attr))
             return -1;
 
+        offset = attr.RegisterOffset;
         return attr.RegisterCount;
     }
 

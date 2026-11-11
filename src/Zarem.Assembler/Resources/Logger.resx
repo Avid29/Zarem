@@ -295,7 +295,7 @@
     <value>'{0}' requires two arguments.</value>
   </data>
   <data name="DirectiveTakesTwoArguments" xml:space="preserve">
-    <value>'{0]' only takes two arguments.</value>
+    <value>'{0}' only takes two arguments.</value>
   </data>
   <data name="ImmediateOverflow" xml:space="preserve">
     <value>Constant '{0}' is too large.</value>

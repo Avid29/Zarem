@@ -27,8 +27,8 @@ public enum MipsRegisterSet
 
 #pragma warning disable CS1591
 
-    [RegisterSet("{0}", 32, typeof(MipsGpRegister), @"^\$?([0-9]+)$")] GeneralPurpose,
-    [RegisterSet("f{0}", 32, typeof(MipsFloatRegister), @"^\$?f([0-9]+)$")] FloatingPoints,
+    [RegisterSet("{0}", typeof(MipsGpRegister), @"^\$?([0-9]+)$", 32)] GeneralPurpose,
+    [RegisterSet("f{0}", typeof(MipsFloatRegister), @"^\$?f([0-9]+)$", 32)] FloatingPoints,
     
     CoProc0,
     FCSR,

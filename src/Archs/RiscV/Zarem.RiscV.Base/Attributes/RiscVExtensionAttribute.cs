@@ -9,7 +9,7 @@ namespace Zarem.RiscV.Attributes;
 /// <summary>
 /// An attribute for declaring a RISC-V extension.
 /// </summary>
-[AttributeUsage(AttributeTargets.Field)]
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
 public class RiscVExtensionAttribute : Attribute
 {
     /// <summary>

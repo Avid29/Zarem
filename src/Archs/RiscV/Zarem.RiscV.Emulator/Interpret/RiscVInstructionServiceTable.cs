@@ -3,6 +3,7 @@
 using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
+using Zarem.Emulator.Models.Logic;
 using Zarem.Models.Interface;
 using Zarem.RiscV.Emulator.Helper;
 using Zarem.RiscV.Emulator.Interpret;
@@ -33,7 +34,7 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
     {
         _cpu = cpu;
 
-        _instructionTable = new RiscVInstructionDecodeTable<nint>(GetFunctionPtrValue(&IllegalInstruction));
+        _instructionTable = new RiscVInstructionDecodeTable<nint>(_cpu.Config.VersionInfo.Base, GetFunctionPtrValue(&IllegalInstruction));
         InitTables(cpu.Config);
 
         // Initialize the decompressor if the compression extension is in use
@@ -75,12 +76,6 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap ModifyableAluR<TBase, TMod, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
-        where TBase : struct, IAluLogic<TFormat>
-        where TMod : struct, IAluLogic<TFormat>
-        where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
-        => inst.Funct7 is Funct7Code.Modified ? AluR<TMod, TFormat>(cpu, inst, compressed, out exec) : AluR<TBase, TFormat>(cpu, inst, compressed, out exec);
-
     private static RiscVTrap AluI<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
@@ -111,13 +106,6 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         return RiscVTrap.None;
     }
 
-    private static RiscVTrap ModifyableShiftR<TBase, TMod, TBaseFormat, TModFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
-        where TBase : struct, IShiftLogic<TBaseFormat>
-        where TMod : struct, IShiftLogic<TModFormat>
-        where TBaseFormat : unmanaged, IBinaryInteger<TBaseFormat>
-        where TModFormat : unmanaged, IBinaryInteger<TModFormat>
-        => inst.Funct7 is Funct7Code.Modified ? ShiftR<TMod, TModFormat>(cpu, inst, compressed, out exec) : ShiftR<TBase, TBaseFormat>(cpu, inst, compressed, out exec);
-
     private static RiscVTrap ShiftI<TLogic, TFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
         where TLogic : struct, IShiftLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
@@ -127,13 +115,6 @@ public unsafe partial class RiscVInstructionServiceTable<T, TFloat, TSigned> : I
         exec = RiscVExecution<T>.CreateWriteback(inst.RD, T.CreateTruncating(TLogic.Execute(rs1, imm)));
         return RiscVTrap.None;
     }
-
-    private static RiscVTrap ModifyableShiftI<TBase, TMod, TBaseFormat, TModFormat>(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
-        where TBase : struct, IShiftLogic<TBaseFormat>
-        where TMod : struct, IShiftLogic<TModFormat>
-        where TBaseFormat : unmanaged, IBinaryInteger<TBaseFormat>
-        where TModFormat : unmanaged, IBinaryInteger<TModFormat>
-        => inst.Funct7 is Funct7Code.Modified ? ShiftI<TMod, TModFormat>(cpu, inst, compressed, out exec) : ShiftI<TBase, TBaseFormat>(cpu, inst, compressed, out exec);
 
     private static RiscVTrap JumpAndLink(RiscVInterpretCpu<T, TFloat> cpu, RiscVInstruction inst, bool compressed, out RiscVExecution<T> exec)
     {
