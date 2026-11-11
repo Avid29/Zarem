@@ -58,7 +58,7 @@ public class Nintendo64 : MipsComputer
     protected override void MapDevices(MemoryMapper mapper)
     {
         mapper.MapDevice(MemoryBase, new RamDevice(MemorySize));
-        mapper.MapDevice(RealityCoProcessor.MappingBase, RealityCoProcessor);
+        mapper.MapDevice(RealityCoProcessor.BusRangeBase, RealityCoProcessor);
         mapper.MapDevice(N64CartridgeSlot.MappingBase, _cartridgeSlot);
     }
 }

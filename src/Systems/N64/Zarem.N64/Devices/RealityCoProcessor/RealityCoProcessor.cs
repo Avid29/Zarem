@@ -14,8 +14,9 @@ namespace Zarem.N64.Devices.RealityCoProcessor;
 public class RealityCoProcessor : IBusDevice, IDXGraphicsDevice
 {
 #pragma warning disable CS1591
-    public const ulong MappingBase = 0x0440_0000;
-    public const ulong MappingSize = 0x39;
+
+    public const ulong BusRangeBase = 0x0400_0000;
+
 #pragma warning restore CS1591
 
     private readonly IRealityCoProcessorDevice[] _childDevices;
@@ -42,7 +43,7 @@ public class RealityCoProcessor : IBusDevice, IDXGraphicsDevice
     public string Name => "Reality CoProcessor (RCP)";
 
     /// <inheritdoc/>
-    public ulong BusRangeSize => MappingSize;
+    public ulong BusRangeSize => 0x0100_0000;
 
     /// <inheritdoc/>
     public void Read(ulong offset, Span<byte> destination)
