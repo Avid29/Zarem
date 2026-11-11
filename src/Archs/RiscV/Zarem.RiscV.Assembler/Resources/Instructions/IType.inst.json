@@ -49,31 +49,28 @@
     "behavior": "$rd = $rs1 & imm"
   },
   {
-    "type": "i-type",
+    "type": "i-shift-type",
     "name": "slli",
     "op_code": 19,
     "funct3": 1,
-    "is_shift": true,
     "special": 0,
     "args": [ "rd", "rs1", "imm" ],
     "extension": "I"
   },
   {
-    "type": "i-type",
+    "type": "i-shift-type",
     "name": "srli",
     "op_code": 19,
     "funct3": 5,
-    "is_shift": true,
     "special": 0,
     "args": [ "rd", "rs1", "imm" ],
     "extension": "I"
   },
   {
-    "type": "i-type",
+    "type": "i-shift-type",
     "name": "srai",
     "op_code": 19,
     "funct3": 5,
-    "is_shift": true,
     "special": 32,
     "args": [ "rd", "rs1", "imm" ],
     "extension": "I"

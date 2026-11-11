@@ -7,6 +7,7 @@ using Zarem.Models.Interface;
 using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
+using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.RiscV.Models.Instructions;
 
@@ -62,6 +63,22 @@ public unsafe struct RiscVInstruction : IInstruction
             RD = rd,
             RS1 = rs1,
             Immediate = imm
+        };
+    }
+
+    /// <summary>
+    /// Creates an I-Type shift instruction.
+    /// </summary>
+    public static RiscVInstruction CreateIShift(RiscVOpCode op, Funct3Code f3, RiscVGpRegister rd, RiscVGpRegister rs1, byte shift, byte special)
+    {
+        return new()
+        {
+            OpCode = op,
+            Funct3 = f3,
+            RD = rd,
+            RS1 = rs1,
+            ShiftImmediate = shift,
+            Funct7 = (Funct7Code)special,
         };
     }
 
@@ -204,6 +221,16 @@ public unsafe struct RiscVInstruction : IInstruction
     }
 
     /// <summary>
+    /// Gets or sets the shift amount for I-Type shift instructions.
+    /// Uses bits 20..26 (7 bits) to support RV128 shift ranges (0-127).
+    /// </summary>
+    public byte ShiftImmediate
+    {
+        readonly get => (byte)BitField.GetField(_inst, 7, 20);
+        set => BitField.SetField(ref _inst, 7, 20, (uint)value & 0x7F);
+    }
+
+    /// <summary>
     /// S-Type Immediates (12-bit, split across two fields)
     /// Used for: sw, sb, sh
     /// </summary>
@@ -302,6 +329,22 @@ public unsafe struct RiscVInstruction : IInstruction
 
     /// <inheritdoc/>
     public readonly int Length => IsCompressed ? sizeof(RiscVCompressedInstruction) : sizeof(RiscVInstruction);
+
+    /// <summary>
+    /// Gets the special sub-opcode value normalized to the RV32 baseline table index.
+    /// </summary>
+    /// <param name="version">The RISC-V base version (RV32, RV64, RV128).</param>
+    /// <returns>The unshifted RV32-compatible table index.</returns>
+    public readonly byte GetSpecial32(RiscVBaseVersion version)
+    {
+        // As XLEN scales up, shamt steals lower bits from the Funct7 field:
+        // - RV32 (0): 0 bits stolen -> mask keeps all 7 bits (0x7F)
+        // - RV64 (1): 1 bit stolen  -> mask clears bit 0 (0x7E)
+        // - RV128(2): 2 bits stolen -> mask clears bits 1..0 (0x7C)
+        int stolenBits = (int)version;
+        int mask = ~((1 << stolenBits) - 1) & 0x7F;
+        return (byte)((int)Funct7 & mask);
+    }
 
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="RiscVInstruction"/>.

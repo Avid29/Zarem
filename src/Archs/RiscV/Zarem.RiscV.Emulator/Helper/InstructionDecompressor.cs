@@ -151,12 +151,12 @@ public class InstructionDecompressor
         return compressed.CBAFunct2 switch
         {
             // c.srli -> srli
-            CFunct2Code.ShiftRightLogicalImmediate => RiscVInstruction.CreateI(
-                RiscVOpCode.OpImmediate, Funct3Code.ShiftRight, rdrs1, rdrs1, compressed.CBAImmediate),
+            CFunct2Code.ShiftRightLogicalImmediate => RiscVInstruction.CreateIShift(
+                RiscVOpCode.OpImmediate, Funct3Code.ShiftRight, rdrs1, rdrs1, (byte)compressed.CBAImmediate, 0),
 
             // c.srai -> srai
-            CFunct2Code.ShiftRightArithmeticImmediate => RiscVInstruction.CreateI(
-                RiscVOpCode.OpImmediate, Funct3Code.ShiftRight, rdrs1, rdrs1, compressed.CBAImmediate),
+            CFunct2Code.ShiftRightArithmeticImmediate => RiscVInstruction.CreateIShift(
+                RiscVOpCode.OpImmediate, Funct3Code.ShiftRight, rdrs1, rdrs1, (byte)compressed.CBAImmediate, 32),
 
             // c.andi -> andi
             CFunct2Code.AndImmediate => RiscVInstruction.CreateI(

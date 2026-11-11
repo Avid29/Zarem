@@ -25,7 +25,7 @@ This project is in pre-release stages of development. Changes to Project File fo
 
 # Cross-Platform Support
 
-The Zarem IDE is a WinUI 3 project, and therefore only available on Windows. **However**, the Assembler and Emulator are made in .NET 10 with no windows-only dependendencies, and therefore available on any machine with the .NET runtime.
+The Zarem IDE is a WinUI 3 project, and therefore only available on Windows. **However**, the Assembler and Emulator are made in .NET with no windows only dependendencies, and therefore available on any machine with the .NET runtime.
 
 |         | Assembler      | Emulator        | CLI            | IDE                  | Cross Assembling |
 | ------- | -------------- | --------------- | -------------- | -------------------- | ---------------- |

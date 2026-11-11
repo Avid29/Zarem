@@ -37,6 +37,11 @@ public enum Funct7Code : byte
     #region Bit Manipulation Extensions (B, Zba, Zbb, Zbc, Zbs)
 
     /// <summary>
+    /// Zba word unsigned add and shift operations (ADD.UW, SLLI.UW).
+    /// </summary>
+    ZbaAddUw = 0x4,
+
+    /// <summary>
     /// Zbb/Zbc min/max and carryless multiply operations (MIN, MAX, MINU, MAXU, CLMUL, CLMULH, CLMULR).
     /// </summary>
     MinMaxClmul = 0x5,
@@ -47,24 +52,44 @@ public enum Funct7Code : byte
     ShiftAdd = 0x10,
 
     /// <summary>
-    /// Zbb byte-reverse/or-combine (ORC.B, REV8) and Zbs single-bit set (BSET).
+    /// Zbb OR-combine operation (ORC.B).
     /// </summary>
-    BitManipulationMisc = 0x14,
+    ZbbOrcB = 0x14,
 
     /// <summary>
-    /// Zbs single-bit clear and extract operations (BCLR, BEXT).
+    /// Zbb inverted bitwise logic operations (ANDN, ORN, XNOR).
     /// </summary>
-    ZbsBClrBExt = 0x24,
+    BitwiseLogicInverted = 0x20,
 
     /// <summary>
-    /// Zbb bit count/rotate operations (CLZ, CTZ, CPOP, ROL, ROR, SEXT.B, SEXT.H).
+    /// Zbs single-bit clear operation (BCLR, BCLRI).
+    /// </summary>
+    ZbsBClr = 0x24,
+
+    /// <summary>
+    /// Zbs single-bit set operation (BSET, BSETI).
+    /// </summary>
+    ZbsBSet = 0x28,
+
+    /// <summary>
+    /// Zbb bit count/rotate and sign-extension operations (CLZ, CTZ, CPOP, ROL, ROR, RORI, SEXT.B, SEXT.H).
     /// </summary>
     BitManipulationCountRotate = 0x30,
 
     /// <summary>
-    /// Zbs single-bit invert operation (BINV).
+    /// Zbb byte-reverse operation (REV8).
     /// </summary>
-    ZbsBInv = 0x34,
+    ZbbRev8 = 0x34,
+
+    /// <summary>
+    /// Zbs single-bit extract operation (BEXT, BEXTI).
+    /// </summary>
+    ZbsBExt = 0x48,
+
+    /// <summary>
+    /// Zbs single-bit invert operation (BINV, BINVI).
+    /// </summary>
+    ZbsBInv = 0x68,
 
     #endregion
 }

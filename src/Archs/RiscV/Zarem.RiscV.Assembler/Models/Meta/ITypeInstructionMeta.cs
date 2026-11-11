@@ -22,20 +22,4 @@ public record ITypeInstructionMeta : RiscVInstructionMetaBase
     /// </summary>
     [JsonPropertyName("funct3")]
     public Funct3Code Funct3 { get; init; }
-
-    /// <summary>
-    /// If true, the immediate is treated as a 5-bit SHAMT, 
-    /// and the upper bits are set based on the specific shift type (Logical vs Arithmetic).
-    /// </summary>
-    [JsonPropertyName("is_shift")]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public bool IsShift { get; init; }
-
-    /// <summary>
-    /// The specialized bits (0x00 or 0x20) to be ORed into the upper immediate 
-    /// for shift instructions.
-    /// </summary>
-    [JsonPropertyName("special")]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public byte Special { get; init; } = 0;
 }
