@@ -90,6 +90,11 @@
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
   </Folder>
+  <Folder Name="/Plugins/Archs/Z80/">
+    <Project Path="src/Archs/Z80/Zarem.Z80.Base/Zarem.Z80.Base.csproj" Id="80411916-cae8-41ac-a804-4b133311ad37">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Plugins/ModuleFormats/">
     <Project Path="src/ModuleFormats/Zarem.ELF/Zarem.ELF.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
