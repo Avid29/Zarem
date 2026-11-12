@@ -20,6 +20,11 @@ public class N64EmulatorConfig : MipsEmulatorConfig
     }
 
     /// <summary>
+    /// Gets or sets the path to the N64 boot ROM file.
+    /// </summary>
+    public string BootRomPath { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gets or sets whether or not the N64 emulator should simulate the presence of an Expansion Pak.
     /// </summary>
     public bool HasExpansionPak { get; set; } = true;
