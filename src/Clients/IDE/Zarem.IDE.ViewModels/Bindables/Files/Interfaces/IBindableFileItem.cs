@@ -3,7 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using Zarem.IDE.Services.Files.Models;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.IDE.Bindables.Files.Interfaces;
 

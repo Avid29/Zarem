@@ -7,10 +7,11 @@ using System.Globalization;
 using Zarem.Assembler.Logging;
 using Zarem.IDE.Messages.Build;
 using Zarem.IDE.Messages.Navigation;
-using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.Models.Tables;
+using Zarem.Services;
+using Zarem.Services.Settings;
 
 namespace Zarem.IDE.Views.Pages;
 

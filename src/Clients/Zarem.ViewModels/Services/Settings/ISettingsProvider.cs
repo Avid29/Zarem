@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.IDE.Services.Settings;
+namespace Zarem.Services.Settings;
 
 /// <summary>
 /// An interface for a settings collection.

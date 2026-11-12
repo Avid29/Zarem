@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Zarem.IDE.Services.Versioning.Models;
+namespace Zarem.Services.Versioning.Models;
 
 /// <summary>
 /// A struct containing git version info.

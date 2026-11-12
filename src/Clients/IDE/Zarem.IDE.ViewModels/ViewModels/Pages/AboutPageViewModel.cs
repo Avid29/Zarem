@@ -3,9 +3,9 @@
 using System.Collections.Generic;
 using Zarem.IDE.Models;
 using Zarem.IDE.Models.Enums;
-using Zarem.IDE.Services;
-using Zarem.IDE.Services.Versioning;
-using Zarem.IDE.Services.Versioning.Models;
+using Zarem.Services;
+using Zarem.Services.Versioning;
+using Zarem.Services.Versioning.Models;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels.Pages;

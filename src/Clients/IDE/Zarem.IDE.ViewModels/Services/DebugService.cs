@@ -20,6 +20,7 @@ using Zarem.IDE.ViewModels.Pages;
 using Zarem.Mips.Emulator.Machine;
 using Zarem.Models.Files;
 using Zarem.Models.Tables;
+using Zarem.Services;
 
 namespace Zarem.IDE.Services;
 

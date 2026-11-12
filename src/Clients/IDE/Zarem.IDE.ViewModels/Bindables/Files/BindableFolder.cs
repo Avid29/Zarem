@@ -5,7 +5,7 @@ using System.Diagnostics;
 using Zarem.Bindables.Files.Abstract;
 using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Services.Files;
-using Zarem.IDE.Services.Files.Models;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.Bindables.Files;
 

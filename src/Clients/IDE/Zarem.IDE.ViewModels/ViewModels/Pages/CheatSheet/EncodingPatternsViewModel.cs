@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.CheatSheet;
-using Zarem.IDE.Services;
+using Zarem.Services;
 
 namespace Zarem.IDE.ViewModels.Pages.CheatSheet;
 

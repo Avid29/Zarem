@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Zarem.IDE.Services.Files.Models;
+using Zarem.Services;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.IDE.Services;
 

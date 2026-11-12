@@ -4,8 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
 using System.Runtime.InteropServices;
-using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels;
+using Zarem.Services;
 
 namespace Zarem.IDE.Windows;
 

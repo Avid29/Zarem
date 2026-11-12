@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Zarem.Services;
 
 namespace Zarem.IDE.Services;
 

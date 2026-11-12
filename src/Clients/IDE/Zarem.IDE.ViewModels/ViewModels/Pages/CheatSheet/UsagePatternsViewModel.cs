@@ -3,8 +3,8 @@
 using System.Collections.ObjectModel;
 using Zarem.CheatSheet;
 using Zarem.IDE.Bindables.CheatSheet;
-using Zarem.IDE.Services;
 using Zarem.Mips.Assembler.Models.Tables;
+using Zarem.Services;
 
 namespace Zarem.IDE.ViewModels.Pages.CheatSheet;
 

@@ -6,10 +6,10 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Text;
 using Zarem.IDE.Helpers;
 using Zarem.IDE.Messages.Navigation;
-using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.IDE.Windows;
+using Zarem.Services;
 
 namespace Zarem.IDE.Views.Shell;
 

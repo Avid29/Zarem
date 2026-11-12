@@ -2,9 +2,9 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Zarem.IDE.Services.Files.Models;
+using Zarem.Services.Files.Models;
 
-namespace Zarem.IDE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// An interface for a service to manage the clipboard.

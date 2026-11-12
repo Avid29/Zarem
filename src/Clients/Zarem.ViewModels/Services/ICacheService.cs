@@ -2,7 +2,7 @@
 
 using System.Threading.Tasks;
 
-namespace Zarem.IDE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// An interface for a service that caches values.

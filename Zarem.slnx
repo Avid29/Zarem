@@ -10,6 +10,9 @@
     <Project Path="src/Clients/Zarem.Console/Zarem.Console.csproj">
       <BuildType Solution="Alpha|*" Project="Release" />
     </Project>
+    <Project Path="src/Clients/Zarem.ViewModels/Zarem.ViewModels.csproj" Id="1b36aca4-a289-475e-b7f5-9fedb293d254">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/Clients/IDE/">
     <Project Path="src/Clients/IDE/Zarem.IDE.Shared/Zarem.IDE.Shared.shproj" Id="d6e0cea0-101e-44ea-b842-6a32433cbac0" />

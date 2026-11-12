@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.IDE.Services.Windowing;
+namespace Zarem.Services.Windowing;
 
 /// <summary>
 /// An interface for a service that manages the app's open windows.

@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using System.Linq;
-using Zarem.IDE.Services;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Services;
 
 namespace Zarem.IDE.ViewModels.Pages.CheatSheet;
 

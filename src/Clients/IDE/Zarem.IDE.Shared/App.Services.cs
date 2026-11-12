@@ -13,6 +13,11 @@ using Zarem.IDE.ViewModels;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.CheatSheet;
 using Zarem.IDE.ViewModels.Pages.Settings;
+using Zarem.Services;
+using Zarem.Services.Files;
+using Zarem.Services.Settings;
+using Zarem.Services.Versioning;
+using Zarem.Services.Windowing;
 using Zarem.ViewModels.Pages;
 using ServiceCollection = Microsoft.Extensions.DependencyInjection.ServiceCollection;
 

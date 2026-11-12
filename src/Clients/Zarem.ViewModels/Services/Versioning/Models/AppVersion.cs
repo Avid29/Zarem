@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.IDE.Services.Versioning.Models;
+namespace Zarem.Services.Versioning.Models;
 
 /// <summary>
 /// A struct containing the app's version info.

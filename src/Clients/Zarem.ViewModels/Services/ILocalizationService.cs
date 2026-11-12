@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Zarem.IDE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// An interface for a localization service

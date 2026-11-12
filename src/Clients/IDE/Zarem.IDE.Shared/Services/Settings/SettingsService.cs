@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
 using Windows.Storage;
 using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Services.Settings;
 
 namespace Zarem.IDE.Services.Settings;
 
@@ -24,13 +24,6 @@ public class SettingsService : ISettingsService
     }
 
     public ISettingsProvider Local { get; }
-
-    public Theme DefaultTheme => App.Current.RequestedTheme switch
-    {
-        ApplicationTheme.Dark => Theme.Dark,
-        ApplicationTheme.Light => Theme.Light,
-        _ => Theme.Dark,
-    };
 
     private void EstablishDefaults()
     {

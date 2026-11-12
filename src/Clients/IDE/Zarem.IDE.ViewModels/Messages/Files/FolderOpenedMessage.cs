@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.IDE.Services.Files.Models;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.IDE.Messages.Files;
 

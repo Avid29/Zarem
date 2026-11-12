@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2024
 
 using System.Threading.Tasks;
-using Zarem.IDE.Services.Files.Models;
+using Zarem.Services.Files.Models;
 
-namespace Zarem.IDE.Services.Files;
+namespace Zarem.Services.Files;
 
 /// <summary>
 /// An interface for a files service

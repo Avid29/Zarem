@@ -1,8 +1,8 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.Input;
-using Zarem.IDE.Services.Files.Models;
 using Zarem.Models.Files;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.IDE.Bindables.Files.Interfaces;
 

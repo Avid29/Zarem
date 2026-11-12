@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using Windows.UI.ViewManagement;
+using Zarem.Services.Windowing;
 
 namespace Zarem.IDE.Services.Windowing;
 

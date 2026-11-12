@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2025
 
 using System.Collections.ObjectModel;
-using Zarem.IDE.Services;
-using Zarem.IDE.Services.Files;
-using Zarem.IDE.Services.Settings;
-using Zarem.IDE.Services.Versioning;
+using Zarem.Services;
+using Zarem.Services.Files;
+using Zarem.Services.Settings;
+using Zarem.Services.Versioning;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels.Pages.Settings;

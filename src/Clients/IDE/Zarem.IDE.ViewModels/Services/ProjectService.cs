@@ -10,8 +10,6 @@ using Zarem.IDE.Messages.Files;
 using Zarem.IDE.Messages.Project;
 using Zarem.IDE.Models.Cache;
 using Zarem.IDE.Models.Enums;
-using Zarem.IDE.Services.Files;
-using Zarem.IDE.Services.Files.Models;
 using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Popup.Models;
 using Zarem.Mips;
@@ -20,6 +18,9 @@ using Zarem.Models.Files;
 using Zarem.Registry;
 using Zarem.RiscV;
 using Zarem.Serialization;
+using Zarem.Services;
+using Zarem.Services.Files;
+using Zarem.Services.Files.Models;
 using Zarem.TrapHandlers;
 
 namespace Zarem.IDE.Services;
