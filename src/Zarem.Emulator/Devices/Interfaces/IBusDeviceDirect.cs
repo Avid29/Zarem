@@ -8,7 +8,7 @@ namespace Zarem.Emulator.Devices.Interfaces;
 public unsafe interface IBusDeviceDirect : IBusDevice
 {
     /// <summary>
-    /// Gets a pointer to an address within the ram device.
+    /// Gets a pointer to an address within the device.
     /// </summary>
     /// <param name="offset">The offset within the device address range.</param>
     /// <returns>A pointer to the requested address.</returns>
