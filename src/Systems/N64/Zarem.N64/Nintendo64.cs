@@ -60,5 +60,6 @@ public class Nintendo64 : MipsComputer
         mapper.MapDevice(0x0000_0000, new RdramDevice(n64Config.HasExpansionPak));
         mapper.MapDevice(RealityCoProcessor.BusRangeBase, RealityCoProcessor);
         mapper.MapDevice(N64CartridgeSlot.BusRangeBase, _cartridgeSlot);
+        mapper.MapDevice(N64PeripheralInterface.BusRangeBase, new N64PeripheralInterface(n64Config.BootRomPath));
     }
 }

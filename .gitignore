@@ -371,3 +371,6 @@ FodyWeavers.xsd
 
 # Don't include the N64 game ROMs, which are large and may be copyrighted
 /tests/Systems/N64/Games/*
+
+# Don't include the N64 BIOS files, may be copyrighted
+/tests/Systems/N64/BIOS
