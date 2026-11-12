@@ -14,6 +14,9 @@
     <Nullable>enable</Nullable>
 	<GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Controls\DisplayControl.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -43,6 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Zarem.SAE.ViewModels\Zarem.SAE.ViewModels.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\DisplayControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!--
