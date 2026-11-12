@@ -35,15 +35,14 @@
     <Project Path="src/Clients/SAE/Zarem.SAE.ViewModels/Zarem.SAE.ViewModels.csproj" Id="65d3495f-ee49-4216-bc3c-447d30e71fad">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
-    <Project Path="src/Clients/SAE/Zarem.SAE.WinUI/Zarem.SAE.WinUI.csproj">
-      <BuildType Solution="Alpha|*" Project="Debug" />
-      <Platform Solution="*|arm64" Project="ARM64" />
-      <Platform Solution="*|x64" Project="x64" />
-      <Deploy />
-    </Project>
     <Project Path="src/Clients/Uno/Zarem.SAE/Zarem.SAE.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
+  </Folder>
+  <Folder Name="/Clients/Uno Solution Items/">
+    <File Path="src/Clients/Uno/Directory.Build.props" />
+    <File Path="src/Clients/Uno/Directory.Build.targets" />
+    <File Path="src/Clients/Uno/Directory.Packages.props" />
   </Folder>
   <Folder Name="/Plugins/" />
   <Folder Name="/Plugins/Archs/" />

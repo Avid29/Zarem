@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
     <!--<TargetFrameworks>net10.0-android;net10.0-ios;net10.0-windows10.0.26100;net10.0-browserwasm;net10.0-desktop</TargetFrameworks>-->
-    <TargetFrameworks>net10.0-desktop;net10.0-windows10.0.26100</TargetFrameworks>
+    <TargetFrameworks>net11.0-desktop;net11.0-windows10.0.26100</TargetFrameworks>
 
     <OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
@@ -17,6 +17,7 @@
     <ApplicationPublisher>avid29</ApplicationPublisher>
     <!-- Package Description -->
     <Description>Zarem.SAE powered by Uno Platform.</Description>
+	  
     <!--
       If you encounter this error message:
 
@@ -36,4 +37,22 @@
     <UnoFeatures>Lottie;Hosting;Toolkit;Logging;Mvvm;Configuration;Localization;Navigation;ThemeService;</UnoFeatures>
   </PropertyGroup>
 
+	<!--
+    Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+    Tools extension to be activated for this project even if the Windows App SDK Nuget
+    package has not yet been restored.
+  -->
+	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\SAE\Zarem.SAE.ViewModels\Zarem.SAE.ViewModels.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\DisplayControl.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
 </Project>
