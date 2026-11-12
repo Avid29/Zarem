@@ -25,10 +25,8 @@ namespace Zarem.IDE;
 
 public partial class App
 {
-    private static IServiceProvider ConfigureServices()
-    {
-        // Register services
-        return new ServiceCollection()
+    private static ServiceProvider ConfigureServices() =>
+        new ServiceCollection()
 
             // Basic Services
             .AddSingleton<ICacheService, CacheService>()
@@ -37,6 +35,7 @@ public partial class App
             .AddSingleton<IDispatcherService, DispatcherService>()
             .AddSingleton<ILocalizationService, LocalizationService>()
             .AddSingleton<IMessenger, WeakReferenceMessenger>()
+            .AddSingleton<IThemeService, ThemeService>()
             .AddSingleton<IVersioningService, VersioningService>()
             .AddSingleton<IWindowingService, WindowingService>()
 
@@ -70,5 +69,4 @@ public partial class App
             .AddTransient<PanelViewModel>()
             .AddSingleton<MainViewModel>()
             .BuildServiceProvider();
-    }
 }
