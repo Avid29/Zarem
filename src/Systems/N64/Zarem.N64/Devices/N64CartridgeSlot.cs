@@ -2,10 +2,10 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
-using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Zarem.Emulator.Devices.Interfaces;
+using Zarem.Emulator.Devices.MemoryBacking;
 
 namespace Zarem.N64.Devices;
 
@@ -16,16 +16,15 @@ public unsafe class N64CartridgeSlot : IBusDeviceDirect
 {
 #pragma warning disable CS1591
     public const ulong BusRangeBase = 0x1000_0000;
-    public const ulong BugRangeSize = 0x0100_0000;
+    private const ulong RangeSize = 0x0100_0000;
 #pragma warning restore CS1591
 
-    private byte* _ptr;
-    private ulong _size;
+    private FileBackedMemoryStore? _memoryStore;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="N64CartridgeSlot"/> class.
     /// </summary>
-    public N64CartridgeSlot(ulong maxSize = BugRangeSize)
+    public N64CartridgeSlot(ulong maxSize = RangeSize)
     {
         UnloadCartridge();
 
@@ -46,18 +45,7 @@ public unsafe class N64CartridgeSlot : IBusDeviceDirect
         // Unload the current cartidge
         UnloadCartridge();
 
-        // Load the file data
-        byte[] fileData = File.ReadAllBytes(z64FilePath);
-        _size = (ulong)fileData.Length;
-
-        // Allocate unmanaged memory
-        _ptr = (byte*)NativeMemory.Alloc((nuint)_size);
-
-        // Copy file data into the allocated native block
-        fixed (byte* src = fileData)
-        {
-            Buffer.MemoryCopy(src, _ptr, _size, _size);
-        }
+        _memoryStore = new FileBackedMemoryStore(z64FilePath, BusRangeSize, MemoryMappedFileAccess.Read);
     }
 
     /// <summary>
@@ -65,30 +53,12 @@ public unsafe class N64CartridgeSlot : IBusDeviceDirect
     /// </summary>
     public void UnloadCartridge()
     {
-        if (_ptr is not null)
-        {
-            NativeMemory.Free(_ptr);
-            _ptr = null;
-            _size = 0;
-        }
+        _memoryStore?.Dispose();
+        _memoryStore = null;
     }
 
     /// <inheritdoc/>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public byte* GetPointer(ulong offset)
-    {
-        Guard.IsLessThan(offset, _size);
-        return _ptr + offset;
-    }
-
-    /// <inheritdoc/>
-    public void Read(ulong offset, Span<byte> destination)
-    {
-        Guard.IsLessThan(offset + (ulong)destination.Length, _size);
-        byte* sourcePtr = _ptr + offset;
-        var span = new ReadOnlySpan<byte>(sourcePtr, destination.Length);
-        span.CopyTo(destination);
-    }
+    public void Read(ulong offset, Span<byte> destination) => _memoryStore?.Read(offset, destination);
 
     /// <inheritdoc/>
     public void Write(ulong offset, ReadOnlySpan<byte> source)
@@ -97,8 +67,14 @@ public unsafe class N64CartridgeSlot : IBusDeviceDirect
     }
 
     /// <inheritdoc/>
-    public void Dispose()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public byte* GetPointer(ulong offset)
     {
-        UnloadCartridge();
+        Guard.IsNotNull(_memoryStore, "Cartridge is not loaded.");
+        Guard.IsLessThan(offset, _memoryStore.Size);
+        return _memoryStore.GetPointer(offset);
     }
+
+    /// <inheritdoc/>
+    public void Dispose() => UnloadCartridge();
 }
