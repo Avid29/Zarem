@@ -32,12 +32,10 @@
     </Project>
   </Folder>
   <Folder Name="/Clients/SAE/">
-    <Project Path="src/Clients/SAE/Zarem.SAE.ViewModels/Zarem.SAE.ViewModels.csproj" Id="65d3495f-ee49-4216-bc3c-447d30e71fad">
-      <BuildType Solution="Alpha|*" Project="Debug" />
-    </Project>
     <Project Path="src/Clients/Uno/Zarem.SAE/Zarem.SAE.csproj">
       <BuildType Solution="Alpha|*" Project="Debug" />
     </Project>
+    <Project Path="src/Clients/Zarem.SAE.ViewModels/Zarem.SAE.ViewModels.csproj" />
   </Folder>
   <Folder Name="/Clients/Uno Solution Items/">
     <File Path="src/Clients/Uno/Directory.Build.props" />
