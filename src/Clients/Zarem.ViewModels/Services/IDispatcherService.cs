@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Zarem.IDE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// An interface for a dispatcher service.

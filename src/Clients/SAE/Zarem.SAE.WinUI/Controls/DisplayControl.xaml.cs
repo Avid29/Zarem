@@ -7,7 +7,7 @@ using Silk.NET.Direct3D11;
 using Silk.NET.DXGI;
 using System;
 
-namespace Zarem.SAE.WinUI.Controls;
+namespace Zarem.SAE.Controls;
 
 /// <summary>
 /// A user control that displays graphics output from the emulator.

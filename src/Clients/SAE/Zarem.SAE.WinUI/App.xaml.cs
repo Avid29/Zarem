@@ -1,8 +1,9 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 
-namespace Zarem.SAE.WinUI;
+namespace Zarem.SAE;
 
 /// <summary>
 /// Provides application-specific behavior to supplement the default Application class.
@@ -17,6 +18,10 @@ public partial class App : Application
     /// </summary>
     public App()
     {
+        // Setup services
+        Services = ConfigureServices();
+        Ioc.Default.ConfigureServices(Services);
+
         InitializeComponent();
     }
 

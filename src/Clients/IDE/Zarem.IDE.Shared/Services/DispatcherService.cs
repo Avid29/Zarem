@@ -2,6 +2,7 @@
 
 using Microsoft.UI.Dispatching;
 using System;
+using Zarem.Services;
 
 namespace Zarem.IDE.Services;
 

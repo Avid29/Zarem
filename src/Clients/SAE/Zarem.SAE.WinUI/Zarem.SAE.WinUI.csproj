@@ -3,7 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net11.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>Zarem.SAE.WinUI</RootNamespace>
+    <RootNamespace>Zarem.SAE</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
@@ -41,15 +41,30 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.251219" />
+    <PackageReference Include="GitInfo" Version="3.6.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2270" />
 	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Zarem.ViewModels\Zarem.ViewModels.csproj" />
     <ProjectReference Include="..\Zarem.SAE.ViewModels\Zarem.SAE.ViewModels.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Services\Popup\TextInputPopup.xaml.cs">
+      <DependentUpon>TextInputPopup.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\DisplayControl.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Services\Popup\TextInputPopup.xaml">
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
 
@@ -69,4 +84,13 @@
     <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
     <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="C:\Users\avid2\.nuget\packages\microsoft.windowsappsdk.foundation\1.8.260203002\buildTransitive\..\include\DeploymentManagerAutoInitializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="C:\Users\avid2\.nuget\packages\microsoft.windowsappsdk.foundation\1.8.260203002\buildTransitive\..\include\DeploymentManagerAutoInitializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="C:\Users\avid2\.nuget\packages\microsoft.windowsappsdk.runtime\1.8.260209005\buildTransitive\..\include\WindowsAppSDK-VersionInfo.cs" />
+  </ItemGroup>
 </Project>

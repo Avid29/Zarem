@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.IDE.Messages;
+namespace Zarem.Messages;
 
 /// <summary>
 /// A message sent when a cache value changes.
