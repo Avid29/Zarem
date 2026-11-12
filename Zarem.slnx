@@ -41,6 +41,9 @@
       <Platform Solution="*|x64" Project="x64" />
       <Deploy />
     </Project>
+    <Project Path="src/Clients/Uno/Zarem.SAE/Zarem.SAE.csproj">
+      <BuildType Solution="Alpha|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/Plugins/" />
   <Folder Name="/Plugins/Archs/" />

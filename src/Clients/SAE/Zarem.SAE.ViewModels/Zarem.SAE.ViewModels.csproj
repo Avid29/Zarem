@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Systems\N64\Zarem.N64\Zarem.N64.csproj" />
+    <ProjectReference Include="..\..\Zarem.ViewModels\Zarem.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>
