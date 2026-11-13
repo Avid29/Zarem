@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
+using Zarem.SAE.Windows;
 
 namespace Zarem.SAE;
 

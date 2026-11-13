@@ -50,6 +50,19 @@
   <ItemGroup>
     <ProjectReference Include="..\Zarem.SAE.ViewModels\Zarem.SAE.ViewModels.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\Shell\TitleBar.xaml.cs">
+      <DependentUpon>TitleBar.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Resources\Brushes.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Shell\TitleBar.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 
   <!--
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
