@@ -26,6 +26,8 @@ public sealed partial class TitleBar : UserControl
         SizeChanged += TitleBar_SizeChanged;
     }
 
+    private WindowViewModel ViewModel => (WindowViewModel)DataContext;
+
     private void TitleBar_SizeChanged(object sender, SizeChangedEventArgs e) => AdjustDragRegion();
 
     private void TitleBar_Loaded(object sender, RoutedEventArgs e)

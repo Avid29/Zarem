@@ -64,7 +64,7 @@
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/SelectBIOSfileMFI"
-                    IsEnabled="False"
+                    Command="{x:Bind ViewModel.ConfigureBIOSCommand, Mode=OneWay}"
                     Text="Configure BIOS ROM">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE950;" />

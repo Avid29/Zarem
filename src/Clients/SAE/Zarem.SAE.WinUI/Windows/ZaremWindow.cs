@@ -1,8 +1,10 @@
 ﻿// Avishai Dernis 2025
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
 using System.Runtime.InteropServices;
+using Zarem.SAE.ViewModels;
 using Zarem.Services;
 
 namespace Zarem.SAE.Windows;
@@ -14,8 +16,13 @@ public abstract partial class ZaremWindow : Window
     /// </summary>
     public ZaremWindow()
     {
-
+        ViewModel = App.Current.Services.GetRequiredService<WindowViewModel>();
     }
+
+    /// <summary>
+    /// Gets the <see cref="WindowViewModel"/>.
+    /// </summary>
+    public WindowViewModel ViewModel { get; }
 
     protected void SetupWindowStyle()
     {

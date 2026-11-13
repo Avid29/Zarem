@@ -13,6 +13,7 @@ using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Settings;
 using Zarem.Services.Versioning;
+using Zarem.Services.Windowing;
 using ServiceCollection = Microsoft.Extensions.DependencyInjection.ServiceCollection;
 
 namespace Zarem.SAE;
@@ -29,6 +30,7 @@ public partial class App
             .AddSingleton<IMessenger, WeakReferenceMessenger>()
             .AddSingleton<IThemeService, ThemeService>()
             .AddSingleton<IVersioningService, VersioningService>()
+            .AddSingleton<IWindowingService, WindowingService>()
 
             // Dependent Services
             .AddSingleton<IPopupService, PopupService>()
@@ -36,6 +38,7 @@ public partial class App
             .AddSingleton<ISettingsService, SettingsService>()
 
             // ViewModels
+            .AddTransient<WindowViewModel>()
             .AddSingleton<MainViewModel>()
             .BuildServiceProvider();
 }

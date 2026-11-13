@@ -3,7 +3,7 @@
 using Windows.UI.ViewManagement;
 using Zarem.Services.Windowing;
 
-namespace Zarem.IDE.Services.Windowing;
+namespace Zarem.SAE.Services;
 
 /// <summary>
 /// An implementation of the <see cref="IWindowingService"/>

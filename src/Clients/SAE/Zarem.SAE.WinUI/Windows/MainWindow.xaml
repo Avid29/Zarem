@@ -11,13 +11,13 @@
     Title="Zarem Stand-Alone-Emulator"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource PrimaryBackgroundBrush}" Loaded="RootGrid_Loaded">
+    <Grid Background="{ThemeResource PrimaryBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
         <!--  Title Bar  -->
-        <shell:TitleBar />
+        <shell:TitleBar DataContext="{x:Bind ViewModel, Mode=OneWay}" />
     </Grid>
 </local:ZaremWindow>
