@@ -18,6 +18,7 @@ using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.Windows;
+using Zarem.Messages;
 using Zarem.Services;
 using Zarem.Services.Settings;
 

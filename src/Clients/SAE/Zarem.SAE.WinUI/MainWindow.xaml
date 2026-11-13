@@ -10,7 +10,7 @@
     Title="Zarem Stand-Alone Emulator"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid Loaded="RootGrid_Loaded">
         <controls:DisplayControl />
     </Grid>
 </Window>

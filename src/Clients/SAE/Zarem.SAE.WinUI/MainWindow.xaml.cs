@@ -1,5 +1,6 @@
 // Avishai Dernis 2026
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Zarem.SAE.ViewModels;
 
@@ -14,8 +15,13 @@ public sealed partial class MainWindow : Window
     {
         InitializeComponent();
 
-        ViewModel = new MainViewModel();
+        ViewModel = App.Current.Services.GetRequiredService<MainViewModel>();
     }
 
     private MainViewModel ViewModel { get; }
+
+    private async void RootGrid_Loaded(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.InitializeEmulatorsAsync();
+    }
 }

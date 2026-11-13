@@ -43,6 +43,11 @@ public interface IComputer : IDisposable
     void Run(CancellationToken ct);
 
     /// <summary>
+    /// Resets the computer state in-preparation of a hardware boot.
+    /// </summary>
+    void Reset();
+
+    /// <summary>
     /// Loads a module into the computer's memory.
     /// </summary>
     /// <param name="module">The executable module to load.</param>

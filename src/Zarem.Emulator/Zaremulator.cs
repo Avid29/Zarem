@@ -54,6 +54,13 @@ public class Zaremulator : IDisposable
     } = EmulatorState.Stopped;
 
     /// <inheritdoc/>
+    public void Reset()
+    {
+        Computer.Reset();
+        State = EmulatorState.Ready;
+    }
+
+    /// <inheritdoc/>
     public void Load(Module module)
     {
         Computer.Load(module);

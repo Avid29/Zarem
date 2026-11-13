@@ -29,7 +29,7 @@ public class MemoryMapper
     public void MapDevice(ulong baseAddress, IBusDevice device)
     {
         uint startPage = (uint)(baseAddress >> 12);
-        uint pageCount = (uint)(device.BusRangeSize >> 12);
+        uint pageCount = (uint)((device.BusRangeSize + 0xFFF) >> 12);
 
         var mapping = new DeviceMapping(baseAddress, device);
         for (uint i = 0; i < pageCount; i++)
