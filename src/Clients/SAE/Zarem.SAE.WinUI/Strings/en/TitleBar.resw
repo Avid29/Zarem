@@ -135,7 +135,19 @@
   <data name="LoadCartridgeMFI.Text" xml:space="preserve">
     <value>Load Cartridge</value>
   </data>
+  <data name="PauseMFI.Text" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="ReportBugMFI.Text" xml:space="preserve">
+    <value>Report a Bug</value>
+  </data>
   <data name="SelectBIOSfileMFI.Text" xml:space="preserve">
-    <value>Select BIOS ROM</value>
+    <value>Configure BIOS</value>
+  </data>
+  <data name="ShutdownMFI.Text" xml:space="preserve">
+    <value>Shutdown</value>
+  </data>
+  <data name="ViewMBI.Title" xml:space="preserve">
+    <value>View</value>
   </data>
 </root>

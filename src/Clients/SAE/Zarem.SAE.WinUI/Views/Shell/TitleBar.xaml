@@ -45,11 +45,31 @@
                 <MenuBarItem.KeyboardAccelerators>
                     <KeyboardAccelerator Key="F" Modifiers="Menu" />
                 </MenuBarItem.KeyboardAccelerators>
-
-                <MenuFlyoutItem x:Uid="/TitleBar/LoadCartridgeMFI" Text="Load Cartridge" />
-                <MenuFlyoutItem x:Uid="/TitleBar/EjectCartridgeMFI" Text="Eject Cartridge" />
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/LoadCartridgeMFI"
+                    IsEnabled="False"
+                    Text="Load Cartridge">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE896;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/EjectCartridgeMFI"
+                    IsEnabled="False"
+                    Text="Eject Cartridge">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xF847;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
                 <MenuFlyoutSeparator />
-                <MenuFlyoutItem x:Uid="/TitleBar/SelectBIOSfileMFI" Text="Select BIOS ROM" />
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/SelectBIOSfileMFI"
+                    IsEnabled="False"
+                    Text="Configure BIOS ROM">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE950;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
             </MenuBarItem>
 
             <!--  Execution  -->
@@ -57,7 +77,30 @@
                 <MenuBarItem.KeyboardAccelerators>
                     <KeyboardAccelerator Key="E" Modifiers="Menu" />
                 </MenuBarItem.KeyboardAccelerators>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/ShutdownMFI"
+                    IsEnabled="False"
+                    Text="Shutdown">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7E8;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/PauseMFI"
+                    IsEnabled="False"
+                    Text="Pause">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE769;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
             </MenuBarItem>
+
+            <!--  View  -->
+            <!--<MenuBarItem x:Uid="/TitleBar/ViewMBI" Title="View">
+                <MenuBarItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="V" Modifiers="Menu" />
+                </MenuBarItem.KeyboardAccelerators>
+            </MenuBarItem>-->
 
             <!--  Help  -->
             <MenuBarItem x:Uid="/TitleBar/HelpMBI" Title="Help">
@@ -73,7 +116,10 @@
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE730;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
-                <MenuFlyoutItem x:Uid="/TitleBar/AboutMFI" Text="About Zarem">
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/AboutMFI"
+                    IsEnabled="False"
+                    Text="About Zarem">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE946;" />
                     </MenuFlyoutItem.Icon>

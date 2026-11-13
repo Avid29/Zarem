@@ -135,7 +135,19 @@
   <data name="LoadCartridgeMFI.Text" xml:space="preserve">
     <value>טעינת קסטה</value>
   </data>
+  <data name="PauseMFI.Text" xml:space="preserve">
+    <value>השהיה</value>
+  </data>
+  <data name="ReportBugMFI.Text" xml:space="preserve">
+    <value>דיווח באג</value>
+  </data>
   <data name="SelectBIOSfileMFI.Text" xml:space="preserve">
-    <value>בחירת קובץ BIOS</value>
+    <value>הגדרת BIOS</value>
+  </data>
+  <data name="ShutdownMFI.Text" xml:space="preserve">
+    <value>כיבוי</value>
+  </data>
+  <data name="ViewMBI.Title" xml:space="preserve">
+    <value>הצג</value>
   </data>
 </root>
