@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
+using Zarem.Emulator.Models.Enums;
 using Zarem.SAE.Services.Settings;
 
 namespace Zarem.SAE.ViewModels;
@@ -19,6 +20,27 @@ public partial class WindowViewModel
             return;
 
         _settingsService.Local.SetValue(SettingsKeys.BiosRomPath, biosRom?.Path);
+    }
+
+    #endregion
+
+    #region Execution
+
+    [RelayCommand]
+    private async Task TogglePower()
+    {
+        switch (_emulatorService.State)
+        {
+            case EmulatorState.Ready:
+            case EmulatorState.Stopped:
+                _emulatorService.StartEmulator();
+                break;
+            case EmulatorState.Running:
+            case EmulatorState.Pausing:
+            case EmulatorState.Paused:
+                _emulatorService.StopEmulator();
+                break;
+        }
     }
 
     #endregion

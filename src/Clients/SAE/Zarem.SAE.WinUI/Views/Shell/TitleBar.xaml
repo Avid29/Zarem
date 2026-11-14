@@ -78,9 +78,12 @@
                     <KeyboardAccelerator Key="E" Modifiers="Menu" />
                 </MenuBarItem.KeyboardAccelerators>
                 <MenuFlyoutItem
-                    x:Uid="/TitleBar/ShutdownMFI"
-                    IsEnabled="False"
-                    Text="Shutdown">
+                    x:Uid="/TitleBar/PowerMFI"
+                    Command="{x:Bind ViewModel.TogglePowerCommand, Mode=OneWay}"
+                    Text="Power On/Off">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F5" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7E8;" />
                     </MenuFlyoutItem.Icon>
@@ -89,6 +92,9 @@
                     x:Uid="/TitleBar/PauseMFI"
                     IsEnabled="False"
                     Text="Pause">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F5" Modifiers="Control" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE769;" />
                     </MenuFlyoutItem.Icon>
@@ -100,6 +106,17 @@
                 <MenuBarItem.KeyboardAccelerators>
                     <KeyboardAccelerator Key="V" Modifiers="Menu" />
                 </MenuBarItem.KeyboardAccelerators>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/ToggleFullScreenMFI"
+                    Command="{x:Bind ViewModel.ToggleFullScreenModeCommand, Mode=OneWay}"
+                    Text="Toggle Full Screen">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE72B;" />
+                    </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F11" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
             </MenuBarItem>-->
 
             <!--  Help  -->

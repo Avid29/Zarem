@@ -144,10 +144,13 @@
   <data name="SelectBIOSfileMFI.Text" xml:space="preserve">
     <value>הגדרת BIOS</value>
   </data>
-  <data name="ShutdownMFI.Text" xml:space="preserve">
-    <value>כיבוי</value>
+  <data name="PowerMFI.Text" xml:space="preserve">
+    <value>הפעלה / כיבוי</value>
   </data>
   <data name="ViewMBI.Title" xml:space="preserve">
     <value>הצג</value>
+  </data>
+  <data name="ToggleFullScreenMFI.Text" xml:space="preserve">
+    <value>הפעלה/כיבוי מסך מלא</value>
   </data>
 </root>

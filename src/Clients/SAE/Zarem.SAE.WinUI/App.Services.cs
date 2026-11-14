@@ -36,6 +36,7 @@ public partial class App
             .AddSingleton<IPopupService, PopupService>()
             .AddSingleton<IFileSystemService, FileSystemService>()
             .AddSingleton<ISettingsService, SettingsService>()
+            .AddSingleton<IEmulatorService, EmulatorService>()
 
             // ViewModels
             .AddTransient<WindowViewModel>()

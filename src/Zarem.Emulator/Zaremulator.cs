@@ -35,7 +35,7 @@ public class Zaremulator : IDisposable
         Computer.ShutdownRequested += Computer_ShutdownRequested;
     }
 
-    private void Computer_ShutdownRequested(object? sender, EventArgs e) => ShutDown();
+    private void Computer_ShutdownRequested(object? sender, EventArgs e) => Shutdown();
 
     /// <summary>
     /// Gets the emulated computer info.
@@ -121,7 +121,7 @@ public class Zaremulator : IDisposable
     }
 
     /// <inheritdoc/>
-    public void ShutDown()
+    public void Shutdown()
     {
         // Schedule the shutdown
         State = EmulatorState.Stopping;
@@ -176,7 +176,7 @@ public class Zaremulator : IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        ShutDown();
+        Shutdown();
         Computer.Dispose();
     }
 }
