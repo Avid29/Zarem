@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutHeaderTB.Text" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AboutSE.Description" xml:space="preserve">
+    <value>© Avishai Dernis</value>
+  </data>
+  <data name="AboutSE.Header" xml:space="preserve">
+    <value>About Zarem</value>
+  </data>
+  <data name="AnnotationThresholdSC.Description" xml:space="preserve">
+    <value>When should the editor show log messages as an annotation below the log.</value>
+  </data>
+  <data name="AnnotationThresholdSC.Header" xml:space="preserve">
+    <value>Annotations Threshold</value>
+  </data>
+  <data name="AppLanguageSE.Description" xml:space="preserve">
+    <value>Set the app's display language. (Requires a restart to take effect).</value>
+  </data>
+  <data name="AppLanguageSE.Header" xml:space="preserve">
+    <value>App Language</value>
+  </data>
+  <data name="AppSettingsTitle" xml:space="preserve">
+    <value>App Settings</value>
+  </data>
+  <data name="AppThemeSC.Description" xml:space="preserve">
+    <value>Change the app's theme.</value>
+  </data>
+  <data name="AppThemeSC.Header" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="AssemblerLanguageSC.Description" xml:space="preserve">
+    <value>Set the language used by for assembler log information.</value>
+  </data>
+  <data name="AssemblerLanguageSC.Header" xml:space="preserve">
+    <value>Assembler Language</value>
+  </data>
+  <data name="AssemblerSettingsTitle" xml:space="preserve">
+    <value>Assembler Settings</value>
+  </data>
+  <data name="EditorSettingsHeaderTB.Text" xml:space="preserve">
+    <value>Editor Settings</value>
+  </data>
+  <data name="EditorSettingsTitle" xml:space="preserve">
+    <value>Editor Settings</value>
+  </data>
+  <data name="LocalizationSettingsHeaderTB.Text" xml:space="preserve">
+    <value>Language Settings</value>
+  </data>
+  <data name="RealTimeAssemblySC.Description" xml:space="preserve">
+    <value>Should the editor continuously assemble the open file to show errors in real-time?</value>
+  </data>
+  <data name="RealTimeAssemblySC.Header" xml:space="preserve">
+    <value>Real-Time Assembly</value>
+  </data>
+  <data name="ThemeSettingsHeaderTB.Text" xml:space="preserve">
+    <value>Theme Settings</value>
+  </data>
+  <data name="UseAppLanguage" xml:space="preserve">
+    <value>Use App Language</value>
+  </data>
+  <data name="UseSystemLanguage" xml:space="preserve">
+    <value>Use System Language</value>
+  </data>
+  <data name="VersionFormat" xml:space="preserve">
+    <value>{0}.{1}.{2}</value>
+  </data>
+  <data name="EditorDemoText" xml:space="preserve">
+    <value># Editor Demo
+bar:  
+    addi    $s0, 10         # Error
+    sll     $s1, $s0, 33    # Warning
+    add     $zero, $s0, $s1 # Message
+.data
+foo:  
+    .asciiz "Hello World!"
+</value>
+  </data>
+  <data name="SelectSchemeFileBTN.Content" xml:space="preserve">
+    <value>Select File</value>
+  </data>
+  <data name="LoadSchemeFromFileSC.Header" xml:space="preserve">
+    <value>Load from File</value>
+  </data>
+  <data name="LoadSchemeFromFileSC.Description" xml:space="preserve">
+    <value>Load an editor Color Scheme from a JSON file.</value>
+  </data>
+  <data name="EditorColorSchemeSE.Header" xml:space="preserve">
+    <value>Color Scheme</value>
+  </data>
+  <data name="EditorColorSchemeSE.Description" xml:space="preserve">
+    <value>Fully customize the color scheme of the text editor.</value>
+  </data>
+  <data name="RestoreOpenProjectSC.Header" xml:space="preserve">
+    <value>Restore Open Project/Folder</value>
+  </data>
+  <data name="RestoreOpenProjectSC.Description" xml:space="preserve">
+    <value>Set whether or not the app should cache and restore the open the project/folder when opened.</value>
+  </data>
+  <data name="LanguageOptionsSE.Header" xml:space="preserve">
+    <value>Language Options</value>
+  </data>
+  <data name="LanguageOptionsSE.Description" xml:space="preserve">
+    <value>Manage the language(s) used throughout the app.</value>
+  </data>
+</root>
