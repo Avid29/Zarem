@@ -4,7 +4,7 @@ using Windows.UI.ViewManagement;
 using WinRT.Interop;
 using Zarem.Services.Windowing;
 
-namespace Zarem.IDE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// An implementation of the <see cref="IWindowingService"/>
@@ -12,7 +12,7 @@ namespace Zarem.IDE.Services;
 public class WindowingService : IWindowingService
 {
     /// <inheritdoc/>
-    public nint GetWindowHandle() => WindowNative.GetWindowHandle(ZaremIDEApp.Current.Window);
+    public nint GetWindowHandle() => WindowNative.GetWindowHandle(ZaremAppBase.Current.Window);
 
     /// <inheritdoc/>
     public void ToggleFullScreen()

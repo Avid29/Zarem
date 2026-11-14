@@ -3,25 +3,40 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace Zarem.SAE.Services.Popup;
+namespace Zarem.Services.Popup;
 
 /// <summary>
 /// A <see cref="ContentDialog"/> popup 
 /// </summary>
 public sealed partial class TextInputPopup : ContentDialog
 {
+    /// <summary>
+    /// Defines a backing <see cref="DependencyProperty"/> for the <see cref="Text"/> property.
+    /// </summary>
     public static readonly DependencyProperty TextProperty =
         DependencyProperty.Register(nameof(Text), typeof(string), typeof(TextInputPopup), new PropertyMetadata(null));
 
+    /// <summary>
+    /// Defines a backing <see cref="DependencyProperty"/> for the <see cref="Description"/> property.
+    /// </summary>
     public static readonly DependencyProperty DescriptionProperty =
         DependencyProperty.Register(nameof(Description), typeof(string), typeof(TextInputPopup), new PropertyMetadata(null));
-    
+
+    /// <summary>
+    /// Defines a backing <see cref="DependencyProperty"/> for the <see cref="PlaceholderText"/> property.
+    /// </summary>
     public static readonly DependencyProperty PlaceholderTextProperty =
         DependencyProperty.Register(nameof(PlaceholderText), typeof(string), typeof(TextInputPopup), new PropertyMetadata(null));
     
+    /// <summary>
+    /// Defines a backing <see cref="DependencyProperty"/> for the <see cref="ValidatonRegex"/> property.
+    /// </summary>
     public static readonly DependencyProperty ValidatonRegexProperty =
         DependencyProperty.Register(nameof(ValidatonRegex), typeof(string), typeof(TextInputPopup), new PropertyMetadata(null));
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextInputPopup"/> class.
+    /// </summary>
     public TextInputPopup()
     {
         InitializeComponent();

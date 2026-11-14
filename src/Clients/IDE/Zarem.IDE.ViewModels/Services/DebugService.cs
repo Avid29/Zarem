@@ -11,15 +11,15 @@ using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Models.Enums;
 using Zarem.IDE.Messages.DebugSessions;
 using Zarem.IDE.Models.Enums;
-using Zarem.IDE.Services.Popup;
-using Zarem.IDE.Services.Popup.Enums;
-using Zarem.IDE.Services.Popup.Models;
 using Zarem.IDE.ViewModels;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.Mips.Emulator.Machine;
 using Zarem.Models.Files;
 using Zarem.Models.Tables;
 using Zarem.Services;
+using Zarem.Services.Popup;
+using Zarem.Services.Popup.Enums;
+using Zarem.Services.Popup.Models;
 
 namespace Zarem.IDE.Services;
 

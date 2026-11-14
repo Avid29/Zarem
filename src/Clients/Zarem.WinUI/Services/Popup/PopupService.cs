@@ -2,14 +2,14 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Threading.Tasks;
-using Zarem.IDE.Services.Popup.Enums;
-using Zarem.IDE.Services.Popup.Models;
-using Zarem.Services;
+using Zarem.Services.Popup.Enums;
+using Zarem.Services.Popup.Models;
 
-namespace Zarem.IDE.Services.Popup;
+namespace Zarem.Services.Popup;
 
+/// <summary>
+/// A service for managing popups in the application.
+/// </summary>
 public class PopupService : IPopupService
 {
     private readonly ILocalizationService _localizationService;
@@ -44,7 +44,7 @@ public class PopupService : IPopupService
     public async Task<PopupResult> ShowPopupAsync(PopupDetails popup)
     {
         // TODO: Multi-Windowing
-        var xamlRoot = ZaremIDEApp.Current.Window?.Content.XamlRoot;
+        var xamlRoot = ZaremAppBase.Current.Window?.Content.XamlRoot;
         if (xamlRoot is null)
         {
             return PopupResult.Closed;
@@ -55,7 +55,7 @@ public class PopupService : IPopupService
             Title = popup.Title,
             Content = popup.Description,
             PrimaryButtonText = popup.PrimaryButtonText,
-            PrimaryButtonStyle = (Style)ZaremIDEApp.Current.Resources["AccentButtonStyle"],
+            PrimaryButtonStyle = (Style)ZaremAppBase.Current.Resources["AccentButtonStyle"],
             IsPrimaryButtonEnabled = popup.PrimaryButtonText is not null,
             SecondaryButtonText = popup.SecondaryButtonText,
             IsSecondaryButtonEnabled = popup.SecondaryButtonText is not null,
@@ -78,7 +78,7 @@ public class PopupService : IPopupService
     public async Task<string?> ShowPopupAsync(TextInputPopupDetails popup)
     {
         // TODO: Multi-Windowing
-        var xamlRoot = ZaremIDEApp.Current.Window?.Content.XamlRoot;
+        var xamlRoot = ZaremAppBase.Current.Window?.Content.XamlRoot;
         if (xamlRoot is null)
             return null;
 
@@ -88,7 +88,7 @@ public class PopupService : IPopupService
             Description = popup.Description,
             ValidatonRegex = popup.ValidationRegex,
             PrimaryButtonText = popup.PrimaryButtonText,
-            PrimaryButtonStyle = (Style)ZaremIDEApp.Current.Resources["AccentButtonStyle"],
+            PrimaryButtonStyle = (Style)ZaremAppBase.Current.Resources["AccentButtonStyle"],
             IsPrimaryButtonEnabled = popup.PrimaryButtonText is not null,
             SecondaryButtonText = popup.SecondaryButtonText,
             IsSecondaryButtonEnabled = popup.SecondaryButtonText is not null,

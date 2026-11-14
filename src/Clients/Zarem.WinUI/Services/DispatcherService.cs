@@ -1,10 +1,8 @@
 ﻿// Avishai Dernis 2024
 
 using Microsoft.UI.Dispatching;
-using System;
-using Zarem.Services;
 
-namespace Zarem.IDE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// A <see cref="IDispatcherService"/> implementation for the windows client.
@@ -24,7 +22,7 @@ public class DispatcherService : IDispatcherService
     public void Init()
     {
         // TODO: This won't work with multi-window
-        _dispatcherQueue = ZaremIDEApp.Current.Window?.DispatcherQueue;
+        _dispatcherQueue = ZaremAppBase.Current.Window?.DispatcherQueue;
     }
 
     /// <inheritdoc/>

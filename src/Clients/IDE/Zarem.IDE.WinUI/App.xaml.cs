@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.WinUI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
@@ -12,17 +11,15 @@ using Windows.ApplicationModel.Activation;
 using Windows.UI.StartScreen;
 using Zarem.IDE.Helpers;
 using Zarem.IDE.Services;
-using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Settings;
-using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.CheatSheet;
 using Zarem.IDE.ViewModels.Pages.Settings;
 using Zarem.IDE.Windows;
-using Zarem.Messages;
 using Zarem.Services;
 using Zarem.Services.Files;
+using Zarem.Services.Popup;
 using Zarem.Services.Settings;
 using Zarem.Services.Versioning;
 using Zarem.Services.Windowing;

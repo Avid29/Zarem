@@ -9,8 +9,6 @@ using Zarem.Elf;
 using Zarem.IDE.Messages.Files;
 using Zarem.IDE.Messages.Project;
 using Zarem.IDE.Models.Enums;
-using Zarem.IDE.Services.Popup;
-using Zarem.IDE.Services.Popup.Models;
 using Zarem.Mips;
 using Zarem.Mips.TrapHandlers;
 using Zarem.Models.Cache;
@@ -21,6 +19,8 @@ using Zarem.Serialization;
 using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Files.Models;
+using Zarem.Services.Popup;
+using Zarem.Services.Popup.Models;
 using Zarem.TrapHandlers;
 
 namespace Zarem.IDE.Services;

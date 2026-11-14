@@ -1,17 +1,12 @@
 ﻿// Avishai Dernis 2024
 
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-using Zarem.IDE.Services.Popup;
-using Zarem.IDE.Services.Popup.Enums;
-using Zarem.IDE.Services.Popup.Models;
-using Zarem.Services;
-using Zarem.Services.Files;
 using Zarem.Services.Files.Models;
+using Zarem.Services.Popup;
+using Zarem.Services.Popup.Enums;
+using Zarem.Services.Popup.Models;
 using Zarem.Services.Windowing;
 using File = Zarem.Services.Files.Models.File;
 using Folder = Zarem.Services.Files.Models.Folder;
