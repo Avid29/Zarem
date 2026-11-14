@@ -10,19 +10,19 @@ namespace Test.Zarem.Assembler.Parser;
 [TestClass]
 public class StringParserTests
 {
-    [TestMethod("Empty")]
+    [TestMethod(DisplayName = "Empty")]
     public void EmptyTest() => RunStringTest("", null);
 
-    [TestMethod("''")]
+    [TestMethod(DisplayName = "Literal Empty Char")]
     public void LiteralEmptyCharTest() => RunCharTest("''");
 
-    [TestMethod("\"\"")]
+    [TestMethod(DisplayName = "Literal Empty")]
     public void LiteralEmptyTest() => RunStringTest("\"\"", "");
 
-    [TestMethod(@"\")]
+    [TestMethod(DisplayName = "Invalid Escape")]
     public void InvalidEscapeTest() => RunStringTest(@"\");
 
-    [TestMethod("Hello\nWorld")]
+    [TestMethod(DisplayName = @"Hello\nWorld")]
     public void HelloWorld2LineTest() => RunStringTest("\"Hello\\nWorld\"", "Hello\nWorld");
 
     private static void RunStringTest(string input, string? expected = null)

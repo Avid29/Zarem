@@ -88,22 +88,22 @@ public class ExpressionParserTests
         ["3.2 << 3.2"],
     ];
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(IntegerSuccessTestsList))]
     public void IntegerSuccessTests(string input, long expected)
         => RunTest<long>(input, expected);
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(FloatSuccessTestsList))]
     public void FloatSuccessTests(string input, double expected)
         => RunTest<double>(input, expected);
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(IntegerFailureTestsList))]
     public void IntegerFailureTests(string input)
         => RunTest<long>(input);
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(FloatFailureTestsList))]
     public void FloatFailureTests(string input)
         => RunTest<double>(input);

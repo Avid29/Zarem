@@ -32,7 +32,7 @@ public class MipsProjectTests : ProjectTestsBase
         ZaremRegistry.RegisterArchitecture(new MipsArchitectureDescriptor());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DoNotParallelize]
     [DynamicData(nameof(ProjectsPaths), DynamicDataDisplayName = nameof(GetProjectDisplayName))]
     public Task RunTestAsync(string projectPath) => RunProjectTest(projectPath);

@@ -101,21 +101,21 @@ public class MipsInstructionParserTests
     }
 
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(RawInstructionSuccessTestsList),
         DynamicDataDisplayName = nameof(InstructionParsingTestCaseDisplayName),
         DynamicDataDisplayNameDeclaringType = typeof(MipsInstructionParserTests))]
     public void RawInstructionSuccessTests(MipsInstructionParsingTestCase @case)
         => RunTest(@case.Input, [@case.Expected!.Value]);
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(RawInstructionFailureTestsList),
         DynamicDataDisplayName = nameof(InstructionParsingTestCaseDisplayName),
         DynamicDataDisplayNameDeclaringType = typeof(MipsInstructionParserTests))]
     public void RawInstructionFailureTests(MipsInstructionParsingTestCase @case)
         => RunTest(@case.Input, logCode: @case.Code);
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(RawInstructionWarningTestsList),
         DynamicDataDisplayName = nameof(InstructionParsingTestCaseDisplayName),
         DynamicDataDisplayNameDeclaringType = typeof(MipsInstructionParserTests))]
@@ -124,7 +124,7 @@ public class MipsInstructionParserTests
 
     private const string LoadImmediate = "li $t0, 0x10001";
 
-    [TestMethod(LoadImmediate)]
+    [TestMethod(DisplayName = LoadImmediate)]
     public void LoadImmediateTest()
     {
         MipsInstruction[] expected =
@@ -135,62 +135,62 @@ public class MipsInstructionParserTests
         RunTest(LoadImmediate, expected);
     }
 
-    [DataTestMethod("MipsI")]
+    [TestMethod(DisplayName = "MipsI")]
     [MipsInstructionParserTestDataSource("mips1")]
     public void InstructionTests_Mips1(string input)
         => AssembleDisassembleTest(input, "mips1");
 
-    [DataTestMethod("MipsII")]
+    [TestMethod(DisplayName = "MipsII")]
     [MipsInstructionParserTestDataSource("mips2")]
     public void InstructionTests_Mips2(string input)
         => AssembleDisassembleTest(input, "mips2");
 
-    [DataTestMethod("MipsIII")]
+    [TestMethod(DisplayName = "MipsIII")]
     [MipsInstructionParserTestDataSource("mips3")]
     public void InstructionTests_Mips3(string input)
         => AssembleDisassembleTest(input, "mips3");
 
-    [DataTestMethod("MipsIII_32bit")]
+    [TestMethod(DisplayName = "MipsIII_32bit")]
     [MipsInstructionParserTestDataSource("mips3_32bit")]
     public void InstructionTests_Mips3_32Bit(string input)
         => AssembleDisassembleTest(input, "mips3_32bit");
 
-    [DataTestMethod("MipsIV")]
+    [TestMethod(DisplayName = "MipsIV")]
     [MipsInstructionParserTestDataSource("mips4")]
     public void InstructionTests_Mips4(string input)
         => AssembleDisassembleTest(input, "mips4");
 
-    [DataTestMethod("MipsIV_32bit")]
+    [TestMethod(DisplayName = "MipsIV_32bit")]
     [MipsInstructionParserTestDataSource("mips4_32bit")]
     public void InstructionTests_Mips4_32Bit(string input)
         => AssembleDisassembleTest(input, "mips4_32bit");
 
-    [DataTestMethod("MipsV")]
+    [TestMethod(DisplayName = "MipsV")]
     [MipsInstructionParserTestDataSource("mips5")]
     public void InstructionTests_Mips5(string input)
         => AssembleDisassembleTest(input, "mips5");
 
-    [DataTestMethod("MipsV_32bit")]
+    [TestMethod(DisplayName = "MipsV_32bit")]
     [MipsInstructionParserTestDataSource("mips5_32bit")]
     public void InstructionTests_Mips5_32Bit(string input)
         => AssembleDisassembleTest(input, "mips5_32bit");
 
-    [DataTestMethod("Mips32R1")]
+    [TestMethod(DisplayName = "Mips32R1")]
     [MipsInstructionParserTestDataSource("mips32r1")]
     public void InstructionTests_Mips32R1(string input)
         => AssembleDisassembleTest(input, "mips32r1");
 
-    [DataTestMethod("Mips64R1")]
+    [TestMethod(DisplayName = "Mips64R1")]
     [MipsInstructionParserTestDataSource("mips64r1")]
     public void InstructionTests_Mips64R1(string input)
         => AssembleDisassembleTest(input, "mips64r1");
 
-    [DataTestMethod("Mips32R2")]
+    [TestMethod(DisplayName = "Mips32R2")]
     [MipsInstructionParserTestDataSource("mips32r2")]
     public void InstructionTests_Mips32R2(string input)
         => AssembleDisassembleTest(input, "mips32r2");
 
-    [DataTestMethod("Mips64R2")]
+    [TestMethod(DisplayName = "Mips64R2")]
     [MipsInstructionParserTestDataSource("mips64r2")]
     public void InstructionTests_Mips64R2(string input)
         => AssembleDisassembleTest(input, "mips64r2");

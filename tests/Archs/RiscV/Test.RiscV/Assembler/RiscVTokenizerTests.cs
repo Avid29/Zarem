@@ -10,10 +10,10 @@ namespace Test.RiscV.Assembler;
 [TestClass]
 public class RiscVTokenizerTests : TokenizerTester
 {
-    [TestMethod("Empty")]
+    [TestMethod(DisplayName = "Empty")]
     public async Task EmptyTest() => await RunTest("", []);
 
-    [TestMethod("addi x10, x1, 42")]
+    [TestMethod(DisplayName = "addi x10, x1, 42")]
     public async Task SimpleTest()
     {
         var tokensBuilder = new TokenExpectationBuilder(MipsTokenizerProfile.Default)

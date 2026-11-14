@@ -8,7 +8,7 @@ namespace Test.Mips;
 [TestClass]
 public class MipsVersionParsingTests : VersionParsingTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("mips1")]
     [DataRow("mips2")]
     [DataRow("mips3")]

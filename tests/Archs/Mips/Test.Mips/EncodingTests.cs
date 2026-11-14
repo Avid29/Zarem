@@ -11,7 +11,7 @@ namespace Test.Mips;
 [TestClass]
 public class EncodingTests
 {
-    [TestMethod("Set OpCode")]
+    [TestMethod(DisplayName = "Set OpCode")]
     public void SetOpCodeTest()
     {
         // This test sets the opcode to each potential operation code with a random address.
@@ -23,7 +23,7 @@ public class EncodingTests
         }
     }
 
-    [TestMethod("Set Registers")]
+    [TestMethod(DisplayName = "Set Registers")]
     public void SetRegistersTest()
     {
         // This test sets each register argument to each potential register with an otherwise random instruction.
@@ -53,7 +53,7 @@ public class EncodingTests
         }
     }
 
-    [TestMethod("Set Address")]
+    [TestMethod(DisplayName = "Set Address")]
     public void SetAddressTest()
     {
         // This test sets the address to a random value 20 times.
@@ -66,7 +66,7 @@ public class EncodingTests
         }
     }
 
-    [TestMethod("Set Offset")]
+    [TestMethod(DisplayName = "Set Offset")]
     public void SetOffsetTest()
     {
         // This test sets the address to a random value 20 times.

@@ -33,42 +33,42 @@ public class RiscVInstructionParserTests
     public static string InstructionParsingTestCaseDisplayName(MethodInfo _, object[] data)
         => $"{(RiscVInstructionParsingTestCase)data[0]}";
 
-    [DataTestMethod("RV32I")]
+    [TestMethod(DisplayName = "RV32I")]
     [RiscVInstructionParserTestDataSource("RV32I")]
     public void InstructionTests_RV32I(string input)
         => AssembleDisassembleTest(input, "RV32I");
 
-    [DataTestMethod("RV32G")]
+    [TestMethod(DisplayName = "RV32G")]
     [RiscVInstructionParserTestDataSource("RV32G")]
     public void InstructionTests_RV32G(string input)
         => AssembleDisassembleTest(input, "RV32G");
 
-    [DataTestMethod("RV32GCB")]
+    [TestMethod(DisplayName = "RV32GCB")]
     [RiscVInstructionParserTestDataSource("RV32GCB")]
     public void InstructionTests_RV32GCB(string input)
         => AssembleDisassembleTest(input, "RV32GCB");
 
-    [DataTestMethod("RV32I")]
+    [TestMethod(DisplayName = "RV32I")]
     [RiscVInstructionParserTestDataSource("RV64I")]
     public void InstructionTests_RV64I(string input)
         => AssembleDisassembleTest(input, "RV64I");
 
-    [DataTestMethod("RV64G")]
+    [TestMethod(DisplayName = "RV64G")]
     [RiscVInstructionParserTestDataSource("RV64G")]
     public void InstructionTests_RV64G(string input)
         => AssembleDisassembleTest(input, "RV64G");
 
-    [DataTestMethod]
+    [TestMethod(DisplayName = "RV64GCB")]
     [RiscVInstructionParserTestDataSource("RV64GCB")]
     public void InstructionTests_RV64GCB(string input)
         => AssembleDisassembleTest(input, "RV64GCB");
 
-    [DataTestMethod("RV128I")]
+    [TestMethod(DisplayName = "RV128I")]
     [RiscVInstructionParserTestDataSource("RV128I")]
     public void InstructionTests_RV128I(string input)
         => AssembleDisassembleTest(input, "RV128I");
 
-    [DataTestMethod("RV128G")]
+    [TestMethod(DisplayName = "RV128G")]
     [RiscVInstructionParserTestDataSource("RV128G")]
     public void InstructionTests_RV128G(string input)
         => AssembleDisassembleTest(input, "RV128G");

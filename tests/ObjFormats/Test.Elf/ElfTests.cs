@@ -22,53 +22,53 @@ public class ElfTests : AssemblerTests
     private const string DisabledPseudoInstructions = "move $s0, $t0";
     private const string NotInVersion = "sync";
 
-    [TestMethod(nameof(InvalidInstruction))]
+    [TestMethod(DisplayName = nameof(InvalidInstruction))]
     public async Task InvalidInstructionTest() => await RunStringTest(InvalidInstruction, expected: LogId.InvalidInstructionName);
 
-    [TestMethod(nameof(MissingInstruction))]
+    [TestMethod(DisplayName = nameof(MissingInstruction))]
     public async Task MissingInstructionTest() => await RunStringTest(MissingInstruction, expected: LogId.UnexpectedToken);
 
-    [TestMethod(nameof(InvalidLabelNum))]
+    [TestMethod(DisplayName = nameof(InvalidLabelNum))]
     public async Task InvalidLabelNumTest() => await RunStringTest(InvalidLabelNum, expected: LogId.IllegalSymbolName);
 
-    [TestMethod(nameof(ExtraArgError))]
+    [TestMethod(DisplayName = nameof(ExtraArgError))]
     public async Task ExtraArgErrorTest() => await RunStringTest(ExtraArgError, expected: LogId.InvalidInstructionArgCount);
 
-    [TestMethod(nameof(MissingArgError))]
+    [TestMethod(DisplayName = nameof(MissingArgError))]
     public async Task MissingArgErrorTest() => await RunStringTest(MissingArgError, expected: LogId.InvalidInstructionArgCount);
 
-    [TestMethod(nameof(NumericalRegister))]
+    [TestMethod(DisplayName = nameof(NumericalRegister))]
     public async Task NumericalRegisterTest() => await RunStringTest(NumericalRegister);
 
-    [TestMethod(nameof(NumericalRegisterError))]
+    [TestMethod(DisplayName = nameof(NumericalRegisterError))]
     public async Task NumericalRegisterErrorTest() => await RunStringTest(NumericalRegisterError, expected: LogId.InvalidRegisterArgument);
 
-    [TestMethod(nameof(DisabledPseudoInstructions))]
+    [TestMethod(DisplayName = nameof(DisabledPseudoInstructions))]
     public async Task DisabledPseudoInstructionsErrorTest() =>
         await RunStringTest(DisabledPseudoInstructions, new() { PseudoInstructionPermissibility = PseudoInstructionPermissibility.Blacklist }, LogId.DisabledFeatureInUse);
 
-    [TestMethod(nameof(NotInVersion))]
+    [TestMethod(DisplayName = nameof(NotInVersion))]
     public async Task NotInVersionTest() => await RunStringTest(NotInVersion, new(new(MipsGeneration.MipsI)), LogId.NotInVersion);
 
-    [TestMethod(TestFilePathing.BranchLiteralFile)]
+    [TestMethod(DisplayName = TestFilePathing.BranchLiteralFile)]
     public async Task BranchLiteralFileTest() => await RunFileTest(TestFilePathing.BranchLiteralFile);
 
-    [TestMethod(TestFilePathing.BranchRelativeFile)]
+    [TestMethod(DisplayName = TestFilePathing.BranchRelativeFile)]
     public async Task BranchRelativeFileTest() => await RunFileTest(TestFilePathing.BranchRelativeFile);
 
-    [TestMethod(TestFilePathing.EmptyTestFile)]
+    [TestMethod(DisplayName = TestFilePathing.EmptyTestFile)]
     public async Task EmptyFileTest() => await RunFileTest(TestFilePathing.EmptyTestFile);
 
-    [TestMethod(TestFilePathing.InstructionsTestFile)]
+    [TestMethod(DisplayName = TestFilePathing.InstructionsTestFile)]
     public async Task InstructionsFileTest() => await RunFileTest(TestFilePathing.InstructionsTestFile);
 
-    [TestMethod(TestFilePathing.PseudoInstructionsTestFile)]
+    [TestMethod(DisplayName = TestFilePathing.PseudoInstructionsTestFile)]
     public async Task PseudoInstructionsFileTest() => await RunFileTest(TestFilePathing.PseudoInstructionsTestFile);
 
-    [TestMethod(TestFilePathing.PlaygroundTestFile1)]
+    [TestMethod(DisplayName = TestFilePathing.PlaygroundTestFile1)]
     public async Task PlaygroundTest() => await RunFileTest(TestFilePathing.PlaygroundTestFile1);
 
-    [TestMethod(TestFilePathing.CompositeFailTestFile)]
+    [TestMethod(DisplayName = TestFilePathing.CompositeFailTestFile)]
     public async Task CompositeFailTest() => await RunFileTest(TestFilePathing.CompositeFailTestFile,
         (LogId.InvalidInstructionArgCount, 13),
         (LogId.InvalidInstructionName, 15),
@@ -80,11 +80,11 @@ public class ElfTests : AssemblerTests
         (LogId.InvalidRegisterArgument, 31),
         (LogId.InvalidCharLiteral, 34));
 
-    [TestMethod(TestFilePathing.DuplicateSymbolFile)]
+    [TestMethod(DisplayName = TestFilePathing.DuplicateSymbolFile)]
     public async Task DuplicateSymbolTest() => await RunFileTest(TestFilePathing.DuplicateSymbolFile,
         (LogId.DuplicateSymbolDefinition, 14));
 
-    [TestMethod(TestFilePathing.SubtractAddressFile)]
+    [TestMethod(DisplayName = TestFilePathing.SubtractAddressFile)]
     public async Task SubtractAddressTest() => await RunFileTest(TestFilePathing.SubtractAddressFile,
         (LogId.InvalidExpressionOperation, 13));
 }
