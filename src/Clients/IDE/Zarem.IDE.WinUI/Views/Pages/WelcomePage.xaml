@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Zarem.IDE.Views.Pages.WelcomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid
+        Margin="36,64,36,0"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Column="1" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Image
+                Height="150"
+                Margin="16,8"
+                VerticalAlignment="Center"
+                Source="{StaticResource AppIconLarge}" />
+
+            <StackPanel
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                Margin="0,24"
+                VerticalAlignment="Top">
+                <TextBlock
+                    x:Uid="/Welcome/WelcomeToZaremTB"
+                    FontFamily="{StaticResource ShareTech}"
+                    FontSize="56"
+                    Text="Welcome to Zarem"
+                    TextWrapping="WrapWholeWords" />
+                <TextBlock
+                    x:Uid="/Welcome/AlphaTB"
+                    FontFamily="{StaticResource ShareTech}"
+                    FontSize="48"
+                    FontStyle="Italic"
+                    Text="Alpha"
+                    TextWrapping="WrapWholeWords">
+                    <TextBlock.Foreground>
+                        <LinearGradientBrush>
+                            <GradientStop Offset="0" Color="#5838FA" />
+                            <GradientStop Offset="1" Color="#034AC9" />
+                        </LinearGradientBrush>
+                    </TextBlock.Foreground>
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Margin="0,32"
+            VerticalAlignment="Top">
+            <TextBlock
+                x:Uid="/Welcome/GettingStartedTitleTB"
+                FontSize="22"
+                Text="Not sure where to start?"
+                TextWrapping="WrapWholeWords" />
+            <TextBlock
+                x:Uid="/Welcome/GettingStartedDescriptionTB"
+                FontSize="12"
+                Opacity=".8"
+                Text="Checkout the wiki to learn how to create a new Zarem project and write your first 'Hello World' program in MIPS."
+                TextWrapping="WrapWholeWords" />
+            <HyperlinkButton
+                x:Uid="/Welcome/WikiGettingStartedLinkHB"
+                Margin="0"
+                Padding="0,4"
+                Content="Zarem Wiki: Getting Started"
+                FontSize="12"
+                NavigateUri="https://github.com/Avid29/Zarem/wiki/Gettings-Started" />
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Margin="0,32"
+            VerticalAlignment="Top">
+            <TextBlock
+                x:Uid="/Welcome/GettingReadyTB"
+                FontSize="22"
+                Text="We're still getting ready..."
+                TextWrapping="WrapWholeWords" />
+            <TextBlock
+                x:Uid="/Welcome/GettingReadyDescriptionTB"
+                FontSize="12"
+                Opacity=".8"
+                Text="This is an alpha release missing significant functionality. Check us out on GitHub to see what's coming soon!"
+                TextWrapping="WrapWholeWords" />
+            <HyperlinkButton
+                x:Uid="/Welcome/GitHubLinkHB"
+                Margin="0"
+                Padding="0,4"
+                Content="GitHub Link"
+                FontSize="12"
+                NavigateUri="https://github.com/Avid29/Zarem" />
+        </StackPanel>
+
+
+        <Image
+            Grid.Row="2"
+            Grid.Column="0"
+            Height="64"
+            Margin="0,0,32,0"
+            VerticalAlignment="Center"
+            Source="{ThemeResource TrafficConeIcon}" />
+    </Grid>
+</UserControl>

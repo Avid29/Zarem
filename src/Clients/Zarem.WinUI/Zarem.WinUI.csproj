@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>Zarem</RootNamespace>
+    <UseWinUI>true</UseWinUI>
+    <WinUISDKReferences>false</WinUISDKReferences>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.251219" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="*" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zarem.ViewModels\Zarem.ViewModels.csproj" />
+  </ItemGroup>
+</Project>

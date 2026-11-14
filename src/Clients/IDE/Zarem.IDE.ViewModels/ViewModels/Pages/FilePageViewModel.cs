@@ -16,6 +16,7 @@ using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.IDE.ViewModels.Pages.Interfaces;
+using Zarem.Messages;
 using Zarem.Models.Tables;
 using Zarem.Services.Settings;
 

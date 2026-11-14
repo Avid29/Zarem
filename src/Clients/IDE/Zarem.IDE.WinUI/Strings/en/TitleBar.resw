@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutMFI.Text" xml:space="preserve">
+    <value>About Zarem</value>
+  </data>
+  <data name="AssembleFileMFI.Text" xml:space="preserve">
+    <value>Assemble File</value>
+  </data>
+  <data name="AssembleOpenFilesMFI.Text" xml:space="preserve">
+    <value>Assemble Open Files</value>
+  </data>
+  <data name="AssembleProjectMFI.Text" xml:space="preserve">
+    <value>Assemble Project</value>
+  </data>
+  <data name="BuildMBI.Title" xml:space="preserve">
+    <value>Build</value>
+  </data>
+  <data name="BuildProjectMFI.Text" xml:space="preserve">
+    <value>Build Project</value>
+  </data>
+  <data name="ShowCheatSheetMFI.Text" xml:space="preserve">
+    <value>Show Cheat Sheet</value>
+  </data>
+  <data name="CleanFileMFI.Text" xml:space="preserve">
+    <value>Clean File</value>
+  </data>
+  <data name="CleanOpenFilesMFI.Text" xml:space="preserve">
+    <value>Clean Open Files</value>
+  </data>
+  <data name="CleanProjectMFI.Text" xml:space="preserve">
+    <value>Clean Project</value>
+  </data>
+  <data name="ClosePage" xml:space="preserve">
+    <value>Close Page</value>
+  </data>
+  <data name="CloseProjectMFI.Text" xml:space="preserve">
+    <value>Close Project</value>
+  </data>
+  <data name="CollapseAllMFI.Text" xml:space="preserve">
+    <value>Collapse All</value>
+  </data>
+  <data name="CollapseCurrentMFI.Text" xml:space="preserve">
+    <value>Collapse Current</value>
+  </data>
+  <data name="CopyMFI.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="CutMFI.Text" xml:space="preserve">
+    <value>Cut</value>
+  </data>
+  <data name="DebugMBI.Title" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="DuplicateMFI.Text" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="EditMBI.Title" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditorAdvancedMFSI.Text" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="ExpandAllMFI.Text" xml:space="preserve">
+    <value>Expand All</value>
+  </data>
+  <data name="ExpandCurrentMFI.Text" xml:space="preserve">
+    <value>Expand Current</value>
+  </data>
+  <data name="FileMBI.Title" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="HelpMBI.Title" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="MoveLineDownMFI.Text" xml:space="preserve">
+    <value>Shift Line Down</value>
+  </data>
+  <data name="MoveLineUpMFI.Text" xml:space="preserve">
+    <value>Shift Line Up</value>
+  </data>
+  <data name="NewFileMFI.Text" xml:space="preserve">
+    <value>New File</value>
+  </data>
+  <data name="NewMFSI.Text" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="NewProjectMFI.Text" xml:space="preserve">
+    <value>New Project</value>
+  </data>
+  <data name="OpenFileMFI.Text" xml:space="preserve">
+    <value>Open File</value>
+  </data>
+  <data name="OpenFolderMFI.Text" xml:space="preserve">
+    <value>Open Folder</value>
+  </data>
+  <data name="OpenMFSI.Text" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="OpenProjectMFI.Text" xml:space="preserve">
+    <value>Open Project</value>
+  </data>
+  <data name="OutliningMFSI.Text" xml:space="preserve">
+    <value>Outlining</value>
+  </data>
+  <data name="PasteMFI.Text" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="RebuildProjectMFI.Text" xml:space="preserve">
+    <value>Rebuild Project</value>
+  </data>
+  <data name="RedoMFI.Text" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="SaveAllMFI.Text" xml:space="preserve">
+    <value>Save All</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Save File</value>
+  </data>
+  <data name="SelectAllMFI.Text" xml:space="preserve">
+    <value>Select All</value>
+  </data>
+  <data name="SettingsMFI.Text" xml:space="preserve">
+    <value>Zarem Settings</value>
+  </data>
+  <data name="StartDebuggingMFI.Text" xml:space="preserve">
+    <value>Start Debugging</value>
+  </data>
+  <data name="StartWithoutDebuggingMFI.Text" xml:space="preserve">
+    <value>Start Without Debugging</value>
+  </data>
+  <data name="StepIntoMFI.Text" xml:space="preserve">
+    <value>Step Into</value>
+  </data>
+  <data name="StepOutMFI.Text" xml:space="preserve">
+    <value>Step Out</value>
+  </data>
+  <data name="StepOverMFI.Text" xml:space="preserve">
+    <value>Step Over</value>
+  </data>
+  <data name="ToggleFullScreenMFI.Text" xml:space="preserve">
+    <value>Toggle Full Screen</value>
+  </data>
+  <data name="UndoMFI.Text" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="ViewMBI.Title" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="WelcomeMFI.Text" xml:space="preserve">
+    <value>Open Welcome Page</value>
+  </data>
+  <data name="OpenWikiMFI.Text" xml:space="preserve">
+    <value>Open Wiki</value>
+  </data>
+  <data name="StartFileWithoutDebuggingMFI.Text" xml:space="preserve">
+    <value>Start File Without Debugging</value>
+  </data>
+  <data name="SaveSpecificFile" xml:space="preserve">
+    <value>Save {0}</value>
+  </data>
+  <data name="CloseSpecificPage" xml:space="preserve">
+    <value>Close {0}</value>
+  </data>
+  <data name="SaveFIleMFI.Text" xml:space="preserve">
+    <value>Save File</value>
+  </data>
+  <data name="ClosePageMFI.Text" xml:space="preserve">
+    <value>Close Page</value>
+  </data>
+  <data name="StartDebuggingFileMFI.Text" xml:space="preserve">
+    <value>Start Debugging File</value>
+  </data>
+  <data name="StopDebuggingMFI.Text" xml:space="preserve">
+    <value>Stop Debugging</value>
+  </data>
+  <data name="ContinueMFI.Text" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="ToggleBreakpointMFI.Text" xml:space="preserve">
+    <value>Toggle Breakpoint</value>
+  </data>
+  <data name="ClearBreakpointsMFI.Text" xml:space="preserve">
+    <value>Clear Breakpoints</value>
+  </data>
+  <data name="StepMFI.Text" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="ReportBugMFI.Text" xml:space="preserve">
+    <value>Report a Bug</value>
+  </data>
+  <data name="ExecutionModeMFSI.Text" xml:space="preserve">
+    <value>Execution Mode</value>
+  </data>
+  <data name="InterpretRMFI.Text" xml:space="preserve">
+    <value>Interpret</value>
+  </data>
+  <data name="JITRMFI.Text" xml:space="preserve">
+    <value>JIT (Just-In-Time)</value>
+  </data>
+</root>
