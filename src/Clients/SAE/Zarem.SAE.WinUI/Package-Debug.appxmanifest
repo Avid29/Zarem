@@ -19,7 +19,7 @@
   <Properties>
     <DisplayName>ms-resource:/Manifest/AppDisplayName-Dev</DisplayName>
     <PublisherDisplayName>Avishai Dernis</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
+    <Logo>Assets\AppIcons\Dev\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
@@ -39,10 +39,10 @@
         DisplayName="ms-resource:/Manifest/AppDisplayName-Dev"
         Description="ms-resource:/Manifest/Description"
         BackgroundColor="transparent"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        Square150x150Logo="Assets\AppIcons\Dev\Square150x150Logo.png"
+        Square44x44Logo="Assets\AppIcons\Dev\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\AppIcons\Dev\Wide310x150Logo.png"  Square71x71Logo="Assets\AppIcons\Dev\SmallTile.png" Square310x310Logo="Assets\AppIcons\Dev\LargeTile.png"/>
+        <uap:SplashScreen Image="Assets\AppIcons\Dev\SplashScreen.png" />
       </uap:VisualElements>
     </Application>
   </Applications>
