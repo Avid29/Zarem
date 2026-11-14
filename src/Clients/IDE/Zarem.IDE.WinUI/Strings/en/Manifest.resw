@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Zarem</value>
+    <value>Zarem IDE</value>
   </data>
   <data name="AppDisplayName-Alpha" xml:space="preserve">
-    <value>Zarem - Alpha</value>
+    <value>Zarem IDE - Alpha</value>
   </data>
   <data name="AppDisplayName-Dev" xml:space="preserve">
-    <value>Zarem - Dev</value>
+    <value>Zarem IDE - Dev</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>Zarem is an IDE, Assembler, and Interpreter for the MIPS assembly language and architecture.</value>
