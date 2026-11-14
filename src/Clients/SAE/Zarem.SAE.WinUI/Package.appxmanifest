@@ -6,18 +6,19 @@
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   xmlns:systemai="http://schemas.microsoft.com/appx/manifest/systemai/windows10"
-  IgnorableNamespaces="uap rescap systemai">
+  xmlns:uap18="http://schemas.microsoft.com/appx/manifest/uap/windows10/18"
+  IgnorableNamespaces="uap rescap systemai uap18">
 
   <Identity
-    Name="04a90bf8-8582-42c0-9450-194fed588370"
-    Publisher="CN=avid29"
+    Name="38062AvishaiDernis.ZaremSAE"
+    Publisher="CN=43D24869-0557-46C9-8B30-13C6ACFDB86B"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="04a90bf8-8582-42c0-9450-194fed588370" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="3888fb46-55eb-4ffc-974d-9198f524751d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Zarem.SAE</DisplayName>
-    <PublisherDisplayName>avid29</PublisherDisplayName>
+    <DisplayName>ms-resource:/Manifest/AppDisplayName</DisplayName>
+    <PublisherDisplayName>Avishai Dernis</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -33,10 +34,10 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$">
+      EntryPoint="$targetentrypoint$" uap18:TrustLevel="appContainer">
       <uap:VisualElements
-        DisplayName="Zarem.SAE"
-        Description="Zarem.SAE"
+        DisplayName="ms-resource:/Manifest/AppDisplayName-Dev"
+        Description="ms-resource:/Manifest/Description"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">

@@ -13,11 +13,15 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <Nullable>enable</Nullable>
 	<GenerateDocumentationFile>false</GenerateDocumentationFile>
+	<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+	<DefaultLanguage>en</DefaultLanguage>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
+	<ItemGroup>
+		<AppxManifest Include="Package.appxmanifest">
+			<SubType>Designer</SubType>
+		</AppxManifest>
+	</ItemGroup>
 
   <!--
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
