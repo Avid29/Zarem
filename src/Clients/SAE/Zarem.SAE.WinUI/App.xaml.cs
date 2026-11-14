@@ -30,14 +30,14 @@ public partial class ZaremSAEApp : ZaremAppBase
         InitializeComponent();
     }
 
-    /// <summary>
-    /// Invoked when the application is launched.
-    /// </summary>
-    /// <param name="args">Details about the launch request and process.</param>
+    /// <inheritdoc/>
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         Window = new MainWindow();
         Window.Activate();
+
+        // Pass the launch arguments to the base class for further processing
+        base.OnLaunched(args);
     }
 
     protected override ServiceProvider ConfigureServices() =>

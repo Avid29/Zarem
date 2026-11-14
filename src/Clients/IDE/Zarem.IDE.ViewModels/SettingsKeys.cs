@@ -16,17 +16,17 @@ namespace Zarem.IDE;
 public static class SettingsKeys
 {
 #pragma warning disable CS1591
-    public const string RestoreOpenProject = "RestoreOpenProject";  // Old setting, key not removed
+    public const string RestoreOpenProject = nameof(RestoreOpenProject);  // Old setting, key not removed
 
     // Editor
-    public const string RealTimeAssembly = "RealTimeAssembly";
-    public const string AnnotationThreshold = "AnnotationThreshold";
-    public const string EditorColorSchemeBase = "EditorColorScheme";
+    public const string RealTimeAssembly = nameof(RealTimeAssembly);
+    public const string AnnotationThreshold = nameof(AnnotationThreshold);
+    public const string EditorColorSchemeBase = nameof(EditorColorSchemeBase);
 
     public static string EditorColorScheme => $"{EditorColorSchemeBase}-{Zarem.SettingsKeys.CurrentTheme}";
 
     // Assembler
-    public const string AssemblerLanguageOverride = "AssemblerLanguageOverride";
+    public const string AssemblerLanguageOverride = nameof(AssemblerLanguageOverride);
 
     public static EditorColorScheme? DefaultDarkColorScheme => LoadEditorColorScheme("Zarem-Dark.json");
     public static EditorColorScheme? DefaultLightColorScheme => LoadEditorColorScheme("Zarem-Light.json");

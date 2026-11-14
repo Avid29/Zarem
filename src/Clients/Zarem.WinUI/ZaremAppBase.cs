@@ -25,9 +25,11 @@ public abstract partial class ZaremAppBase : Application
     /// </summary>
     public ZaremAppBase()
     {
+        // Configure services and set up the service provider
         Services = ConfigureServices();
         Ioc.Default.ConfigureServices(Services);
 
+        // Retrieve required services
         _messenger = Service.Get<IMessenger>();
         _settingsService = Service.Get<ISettingsService>();
 
@@ -36,7 +38,7 @@ public abstract partial class ZaremAppBase : Application
         localizationService.LanguageOverride = _settingsService.Local.GetValue<string>(SettingsKeys.LanguageOverride);
 
         // Subscribe to messages
-        _messenger.Register<ZaremAppBase, SettingChangedMessage<Theme>>(this, (r, m) => r.ApplyRequestedTheme(m.NewValue));
+        SubscribeToMessages();
     }
 
     /// <summary>
@@ -59,13 +61,26 @@ public abstract partial class ZaremAppBase : Application
     /// </summary>
     protected abstract ServiceProvider ConfigureServices();
 
-    /// <summary>
-    /// Loads the requested theme from settings and applies it.
-    /// </summary>
-    protected void LoadRequestedTheme()
+    /// <inheritdoc/>
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
+        // Initiaize dispatcher on UI thread.
+        Services.GetRequiredService<IDispatcherService>().Init();
+
+        // Apply theme settings
         var theme = _settingsService.Local.GetValue<Theme>(SettingsKeys.AppTheme);
         ApplyRequestedTheme(theme);
+    }
+
+    private void SubscribeToMessages()
+    {
+        _messenger.Register<ZaremAppBase, SettingChangedMessage<Theme>>(this, (r, m) =>
+        {
+            if (m.Key is not SettingsKeys.AppTheme)
+                return;
+
+            r.ApplyRequestedTheme(m.NewValue);
+        });
     }
 
     private void ApplyRequestedTheme(Theme theme = default)

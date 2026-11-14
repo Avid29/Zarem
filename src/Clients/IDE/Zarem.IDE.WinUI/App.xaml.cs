@@ -52,11 +52,8 @@ public partial class ZaremIDEApp : ZaremAppBase
         Window = WindowHelper.CreateWindow<MainWindow>();
         Window.Activate();
 
-        // Apply theme settings
-        LoadRequestedTheme();
-
-        // Initiaize dispatcher on UI thread.
-        Services.GetRequiredService<IDispatcherService>().Init();
+        // Pass the launch arguments to the base class for further processing
+        base.OnLaunched(args);
 
 # if !HAS_UNO
         // Handle activiation arguments
