@@ -4,8 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
 using System.Runtime.InteropServices;
-using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels;
+using Zarem.Services;
 
 namespace Zarem.IDE.Windows;
 
@@ -18,6 +18,11 @@ public abstract partial class ZaremWindow : Window
     {
         ViewModel = App.Current.Services.GetRequiredService<WindowViewModel>();
     }
+
+    /// <summary>
+    /// Gets the <see cref="WindowViewModel"/>.
+    /// </summary>
+    public WindowViewModel ViewModel { get; }
 
     protected void SetupWindowStyle()
     {
@@ -38,11 +43,6 @@ public abstract partial class ZaremWindow : Window
             SetWindowLongPtr(hwnd, -20, exStyle);
         }
     }
-
-    /// <summary>
-    /// Gets the <see cref="WindowViewModel"/>.
-    /// </summary>
-    public WindowViewModel ViewModel { get; }
 
     [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr", SetLastError = false)]
     private static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);

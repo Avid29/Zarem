@@ -15,14 +15,15 @@ public class N64EmulatorConfig : MipsEmulatorConfig
     /// <summary>
     /// Initializes a new instance of the <see cref="N64EmulatorConfig"/> class.
     /// </summary>
-    public N64EmulatorConfig(ExecutionMode mode) : base(new MipsVersionInfo(MipsGeneration.MipsIII), mode)
+    public N64EmulatorConfig(string biosRomPath, ExecutionMode mode) : base(new MipsVersionInfo(MipsGeneration.MipsIII), mode)
     {
+        BiosRomPath = biosRomPath;
     }
 
     /// <summary>
     /// Gets or sets the path to the N64 boot ROM file.
     /// </summary>
-    public string BootRomPath { get; set; } = string.Empty;
+    public string BiosRomPath { get; set; }
 
     /// <summary>
     /// Gets or sets whether or not the N64 emulator should simulate the presence of an Expansion Pak.

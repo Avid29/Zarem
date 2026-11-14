@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
-using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels.Pages.Abstract;
+using Zarem.Services;
 
 namespace Zarem.IDE.ViewModels.Pages;
 

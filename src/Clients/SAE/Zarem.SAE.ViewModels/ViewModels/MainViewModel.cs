@@ -1,9 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using Zarem.Emulator.Config.Enums;
-using Zarem.N64;
-using Zarem.N64.Config;
 
 namespace Zarem.SAE.ViewModels;
 
@@ -17,12 +14,5 @@ public partial class MainViewModel : ObservableRecipient
     /// </summary>
     public MainViewModel()
     {
-        var config = new N64EmulatorConfig(ExecutionMode.Interpret);
-        N64 = new Nintendo64(config);
     }
-
-    /// <summary>
-    /// Gets the Nintendo 64 emulator instance.
-    /// </summary>
-    public Nintendo64 N64 { get; }
 }

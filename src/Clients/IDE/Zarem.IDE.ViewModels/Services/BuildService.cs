@@ -13,6 +13,8 @@ using Zarem.IDE.Services.Settings;
 using Zarem.IDE.ViewModels;
 using Zarem.Models;
 using Zarem.Models.Files;
+using Zarem.Services;
+using Zarem.Services.Settings;
 
 namespace Zarem.IDE.Services;
 

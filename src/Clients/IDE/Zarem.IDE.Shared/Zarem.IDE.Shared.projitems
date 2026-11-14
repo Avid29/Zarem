@@ -498,8 +498,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Services\Settings\SettingsProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Settings\SettingsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ThemeService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Versioning\VersioningService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\Windowing\WindowingService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\WindowingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>

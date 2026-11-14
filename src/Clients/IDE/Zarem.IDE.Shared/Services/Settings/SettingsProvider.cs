@@ -6,6 +6,7 @@ using System;
 using System.Text.Json;
 using Windows.Foundation.Collections;
 using Zarem.IDE.Messages;
+using Zarem.Services.Settings;
 
 namespace Zarem.IDE.Services.Settings;
 

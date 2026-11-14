@@ -1,0 +1,26 @@
+﻿// Avishai Dernis 2025
+
+using Windows.UI.ViewManagement;
+using Zarem.Services.Windowing;
+
+namespace Zarem.SAE.Services;
+
+/// <summary>
+/// An implementation of the <see cref="IWindowingService"/>
+/// </summary>
+public class WindowingService : IWindowingService
+{
+    /// <inheritdoc/>
+    public void ToggleFullScreen()
+    {
+        var view = ApplicationView.GetForCurrentView();
+        if (view.IsFullScreenMode)
+        {
+            view.ExitFullScreenMode();
+        }
+        else
+        {
+            view.TryEnterFullScreenMode();
+        }
+    }
+}

@@ -2,7 +2,8 @@
 
 using System;
 using Windows.ApplicationModel;
-using Zarem.IDE.Services.Versioning.Models;
+using Zarem.Services.Versioning;
+using Zarem.Services.Versioning.Models;
 
 namespace Zarem.IDE.Services.Versioning;
 

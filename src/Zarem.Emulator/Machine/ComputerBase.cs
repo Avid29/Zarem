@@ -47,6 +47,9 @@ public abstract class ComputerBase : IComputer
     public void RequestShutdown() => ShutdownRequested?.Invoke(this, EventArgs.Empty);
 
     /// <inheritdoc/>
+    public abstract void Reset();
+
+    /// <inheritdoc/>
     public void Load(Module module)
     {
         // Setup user space memory

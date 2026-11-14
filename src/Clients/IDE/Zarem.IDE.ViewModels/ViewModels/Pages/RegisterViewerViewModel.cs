@@ -8,8 +8,8 @@ using Zarem.Debugger;
 using Zarem.DebugSessions;
 using Zarem.Helpers;
 using Zarem.IDE.Bindables;
-using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels.Pages.Abstract;
+using Zarem.Services;
 
 namespace Zarem.IDE.ViewModels.Pages;
 

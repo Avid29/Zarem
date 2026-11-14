@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Text.Json;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
 using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Services;
+using Zarem.Services.Settings;
 
 namespace Zarem.IDE.Services.Settings;
 
@@ -31,6 +33,7 @@ public static class SettingsKeys
 
     public static EditorColorScheme? DefaultDarkColorScheme => LoadEditorColorScheme("Zarem-Dark.json");
     public static EditorColorScheme? DefaultLightColorScheme => LoadEditorColorScheme("Zarem-Light.json");
+#pragma warning restore CS1591
 
     private static string CurrentTheme
     {
@@ -39,7 +42,7 @@ public static class SettingsKeys
             var theme = SettingsService.Local.GetValue<Theme>(AppTheme);
             if (theme is Theme.Default)
             {
-                theme = SettingsService.DefaultTheme;
+                theme = ThemeService.DefaultTheme;
             }
 
             return theme switch
@@ -51,6 +54,8 @@ public static class SettingsKeys
     }
 
     private static ISettingsService SettingsService => Service.Get<ISettingsService>();
+
+    private static IThemeService ThemeService => Service.Get<IThemeService>();
 
     private static EditorColorScheme? LoadEditorColorScheme(string resource)
     {
@@ -68,5 +73,4 @@ public static class SettingsKeys
 
         return editorColorScheme;
     }
-#pragma warning restore CS1591
 }

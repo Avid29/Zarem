@@ -4,8 +4,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Zarem.IDE.Bindables;
 using Zarem.IDE.Models.Enums;
-using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels.Pages;
+using Zarem.Services;
 
 namespace Zarem.IDE.Views.Pages;
 

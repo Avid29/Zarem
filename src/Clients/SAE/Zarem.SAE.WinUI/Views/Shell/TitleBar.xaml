@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Zarem.SAE.Views.Shell.TitleBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Zarem.SAE.Views.Shell"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="MenuBar">
+                <Setter Property="MinHeight" Value="8" />
+            </Style>
+            <Style TargetType="MenuBarItem">
+                <Setter Property="Margin" Value="0,4" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <!--  Title Bar  -->
+    <Grid Padding="4,0" Background="{ThemeResource TitleBarBackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <!--  App Icon  -->
+            <ColumnDefinition Width="auto" />
+
+            <!--  Menu Bar  -->
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+
+        <!--<ImageIcon
+            Height="18"
+            Margin="8,4,8,2"
+            VerticalAlignment="Center"
+            Source="{StaticResource AppIconSmall}" />-->
+
+        <MenuBar
+            Grid.Column="1"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top">
+
+            <!--  File  -->
+            <MenuBarItem x:Uid="/TitleBar/FileMBI" Title="File">
+                <MenuBarItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="F" Modifiers="Menu" />
+                </MenuBarItem.KeyboardAccelerators>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/LoadCartridgeMFI"
+                    IsEnabled="False"
+                    Text="Load Cartridge">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE896;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/EjectCartridgeMFI"
+                    IsEnabled="False"
+                    Text="Eject Cartridge">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xF847;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/SelectBIOSfileMFI"
+                    Command="{x:Bind ViewModel.ConfigureBIOSCommand, Mode=OneWay}"
+                    Text="Configure BIOS ROM">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE950;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+            </MenuBarItem>
+
+            <!--  Execution  -->
+            <MenuBarItem x:Uid="/TitleBar/ExecutionMBI" Title="Execution">
+                <MenuBarItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="E" Modifiers="Menu" />
+                </MenuBarItem.KeyboardAccelerators>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/PowerMFI"
+                    Command="{x:Bind ViewModel.TogglePowerCommand, Mode=OneWay}"
+                    Text="Power On/Off">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F5" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7E8;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/PauseMFI"
+                    IsEnabled="False"
+                    Text="Pause">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F5" Modifiers="Control" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE769;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+            </MenuBarItem>
+
+            <!--  View  -->
+            <!--<MenuBarItem x:Uid="/TitleBar/ViewMBI" Title="View">
+                <MenuBarItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="V" Modifiers="Menu" />
+                </MenuBarItem.KeyboardAccelerators>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/ToggleFullScreenMFI"
+                    Command="{x:Bind ViewModel.ToggleFullScreenModeCommand, Mode=OneWay}"
+                    Text="Toggle Full Screen">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE72B;" />
+                    </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F11" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+            </MenuBarItem>-->
+
+            <!--  Help  -->
+            <MenuBarItem x:Uid="/TitleBar/HelpMBI" Title="Help">
+                <MenuBarItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="H" Modifiers="Menu" />
+                </MenuBarItem.KeyboardAccelerators>
+                <MenuFlyoutItem
+                    x:Name="ReportBugMFI"
+                    x:Uid="/TitleBar/ReportBugMFI"
+                    Click="ReportBugMFI_Click"
+                    Text="Report a Bug">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE730;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/AboutMFI"
+                    IsEnabled="False"
+                    Text="About Zarem">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE946;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+            </MenuBarItem>
+        </MenuBar>
+    </Grid>
+</UserControl>

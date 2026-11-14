@@ -10,7 +10,8 @@ using Zarem.IDE.Bindables.Files.Abstract;
 using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Files;
-using Zarem.IDE.Services.Files.Models;
+using Zarem.Services;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.Bindables.Files.Abstract;
 

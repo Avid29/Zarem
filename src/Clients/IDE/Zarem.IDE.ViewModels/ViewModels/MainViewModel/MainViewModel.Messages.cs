@@ -11,6 +11,7 @@ using Zarem.IDE.Messages.Files;
 using Zarem.IDE.Messages.Navigation;
 using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels.Pages;
+using Zarem.Services;
 
 namespace Zarem.IDE.ViewModels;
 

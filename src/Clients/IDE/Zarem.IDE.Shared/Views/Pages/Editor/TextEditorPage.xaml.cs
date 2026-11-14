@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using Zarem.IDE.Messages;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
-using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.Interfaces;
 using Zarem.Models;
 using Zarem.Models.Tables;
+using Zarem.Services;
 
 namespace Zarem.IDE.Views.Pages.Editor;
 

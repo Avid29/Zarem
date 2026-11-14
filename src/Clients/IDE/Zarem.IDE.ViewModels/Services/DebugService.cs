@@ -20,11 +20,12 @@ using Zarem.IDE.ViewModels.Pages;
 using Zarem.Mips.Emulator.Machine;
 using Zarem.Models.Files;
 using Zarem.Models.Tables;
+using Zarem.Services;
 
 namespace Zarem.IDE.Services;
 
 /// <summary>
-/// A service for handling emulation.
+/// A service for handling debugging.
 /// </summary>
 public class DebugService : IDebugService
 {
@@ -178,7 +179,7 @@ public class DebugService : IDebugService
     public void StopDebugging()
     {
         if (_session?.Emulator.State is not (EmulatorState.Stopped or EmulatorState.Stopping))
-            _session?.Emulator.ShutDown();
+            _session?.Emulator.Shutdown();
 
         // Resume to ensure it reaches the shutdown
         Continue();

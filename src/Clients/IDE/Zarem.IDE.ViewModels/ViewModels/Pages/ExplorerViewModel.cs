@@ -12,11 +12,11 @@ using Zarem.IDE.Messages;
 using Zarem.IDE.Messages.Files;
 using Zarem.IDE.Messages.Project;
 using Zarem.IDE.Models.Cache;
-using Zarem.IDE.Services;
 using Zarem.IDE.Services.Files;
 using Zarem.IDE.ViewModels;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.Abstract;
+using Zarem.Services;
 
 namespace Zarem.ViewModels.Pages;
 

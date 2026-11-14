@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-using Zarem.IDE.Services.Files.Models;
 using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Popup.Enums;
 using Zarem.IDE.Services.Popup.Models;
+using Zarem.Services;
+using Zarem.Services.Files;
+using Zarem.Services.Files.Models;
 using File = Zarem.IDE.Services.Files.Models.File;
 using Folder = Zarem.IDE.Services.Files.Models.Folder;
 

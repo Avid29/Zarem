@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2025
 
+using System.Threading.Tasks;
 using Zarem.Config;
 using Zarem.Models.Files;
-using System.Threading.Tasks;
-using Zarem.IDE.Services.Files.Models;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.IDE.Services;
 

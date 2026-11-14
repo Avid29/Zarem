@@ -7,7 +7,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Zarem.Bindables.Files;
 using Zarem.IDE.Bindables.Files.Interfaces;
-using Zarem.IDE.Services.Files.Models;
+using Zarem.Services.Files;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.IDE.Services.Files;
 

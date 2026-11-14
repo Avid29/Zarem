@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using System;
-using Zarem.IDE.Services;
+using Zarem.Services;
 
 namespace Zarem.IDE.Helpers;
 

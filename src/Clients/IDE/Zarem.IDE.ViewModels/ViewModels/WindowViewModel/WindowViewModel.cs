@@ -9,7 +9,7 @@ using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Messages.Navigation;
 using Zarem.IDE.Messages.Project;
 using Zarem.IDE.Services;
-using Zarem.IDE.Services.Windowing;
+using Zarem.Services.Windowing;
 using Zarem.IDE.ViewModels.Pages;
 
 namespace Zarem.IDE.ViewModels;

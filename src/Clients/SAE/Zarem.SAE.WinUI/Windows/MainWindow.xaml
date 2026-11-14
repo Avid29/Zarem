@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<local:ZaremWindow
+    x:Class="Zarem.SAE.Windows.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Zarem.SAE.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Zarem.SAE.Windows"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:shell="using:Zarem.SAE.Views.Shell"
+    Title="Zarem Stand-Alone-Emulator"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource PrimaryBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--  Title Bar  -->
+        <shell:TitleBar DataContext="{x:Bind ViewModel, Mode=OneWay}" />
+    </Grid>
+</local:ZaremWindow>

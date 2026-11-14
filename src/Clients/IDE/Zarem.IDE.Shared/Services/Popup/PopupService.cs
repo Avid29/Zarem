@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using Zarem.IDE.Services.Popup.Enums;
 using Zarem.IDE.Services.Popup.Models;
+using Zarem.Services;
 
 namespace Zarem.IDE.Services.Popup;
 

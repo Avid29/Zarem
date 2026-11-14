@@ -1,8 +1,9 @@
 ﻿// Avishai Dernis 2025
 
 using System.Collections.Generic;
-using Zarem.IDE.Services;
+using Zarem.Services;
 using Zarem.IDE.Services.Settings;
+using Zarem.Services.Settings;
 
 namespace Zarem.IDE.ViewModels.Pages.Settings;
 

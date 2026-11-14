@@ -9,6 +9,8 @@ using Zarem.IDE.Extensions;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Settings;
+using Zarem.Services;
+using Zarem.Services.Settings;
 
 namespace Zarem.IDE.Controls.CodeEditor;
 

@@ -14,11 +14,12 @@ using Zarem.Descriptors;
 using Zarem.Emulator.TrapHandlers;
 using Zarem.IDE.Messages.Navigation;
 using Zarem.IDE.Services;
-using Zarem.IDE.Services.Files;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.IDE.ViewModels.Pages.CheatSheet;
 using Zarem.Registry;
 using Zarem.Serialization;
+using Zarem.Services;
+using Zarem.Services.Files;
 
 namespace Zarem.IDE.ViewModels.Pages;
 

@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Zarem.Services.Files.Models;
 
 namespace Zarem.IDE.Services.Files.Models;
 

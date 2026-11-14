@@ -13,6 +13,11 @@ using Zarem.IDE.ViewModels;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.CheatSheet;
 using Zarem.IDE.ViewModels.Pages.Settings;
+using Zarem.Services;
+using Zarem.Services.Files;
+using Zarem.Services.Settings;
+using Zarem.Services.Versioning;
+using Zarem.Services.Windowing;
 using Zarem.ViewModels.Pages;
 using ServiceCollection = Microsoft.Extensions.DependencyInjection.ServiceCollection;
 
@@ -20,10 +25,8 @@ namespace Zarem.IDE;
 
 public partial class App
 {
-    private static IServiceProvider ConfigureServices()
-    {
-        // Register services
-        return new ServiceCollection()
+    private static ServiceProvider ConfigureServices() =>
+        new ServiceCollection()
 
             // Basic Services
             .AddSingleton<ICacheService, CacheService>()
@@ -32,6 +35,7 @@ public partial class App
             .AddSingleton<IDispatcherService, DispatcherService>()
             .AddSingleton<ILocalizationService, LocalizationService>()
             .AddSingleton<IMessenger, WeakReferenceMessenger>()
+            .AddSingleton<IThemeService, ThemeService>()
             .AddSingleton<IVersioningService, VersioningService>()
             .AddSingleton<IWindowingService, WindowingService>()
 
@@ -65,5 +69,4 @@ public partial class App
             .AddTransient<PanelViewModel>()
             .AddSingleton<MainViewModel>()
             .BuildServiceProvider();
-    }
 }

@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Application
-    x:Class="Zarem.SAE.WinUI.App"
+    x:Class="Zarem.SAE.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Zarem.SAE.WinUI">
+    xmlns:convert="using:Zarem.SAE.Converters"
+    xmlns:local="using:Zarem.SAE">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!--  Other merged dictionaries here  -->
+
+                <ResourceDictionary Source="Resources/Brushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <!--  Other app resources here  -->
+
+            <convert:StringLocalizeConverter x:Key="StringLocalizeConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

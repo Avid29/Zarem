@@ -82,6 +82,12 @@ public class MipsComputer : ComputerBase
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;
 
     /// <inheritdoc/>
+    public override void Reset()
+    {
+        Cpu.ProgramCounter = MipsCpu<uint, uint>.BOOT_ADDRESS;
+    }
+
+    /// <inheritdoc/>
     protected override void SetupUserSpaceMapping(Module module)
     {
         // Force the CPU status register into User Mode privileges instantly

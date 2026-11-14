@@ -84,6 +84,11 @@ public sealed class RiscVComputer : ComputerBase
     public override IEnumerable<IDevice> Devices => _memoryMapper.Devices;
 
     /// <inheritdoc/>
+    public override void Reset()
+    {
+    }
+
+    /// <inheritdoc/>
     protected override void MapDevices(MemoryMapper mapper)
     {
         // System RAM

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Zarem.IDE.Services;
 using Zarem.IDE.Services.Files;
+using Zarem.Services.Files;
 using Zarem.ViewModels.Pages;
 
 namespace Zarem.IDE.ViewModels;
