@@ -6,7 +6,6 @@ using Zarem.IDE.Services;
 using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Settings;
-using Zarem.IDE.Services.Versioning;
 using Zarem.IDE.ViewModels;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.IDE.ViewModels.Pages.CheatSheet;

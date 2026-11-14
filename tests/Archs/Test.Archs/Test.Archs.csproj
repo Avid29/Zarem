@@ -10,7 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Zarem.Assembler\Zarem.Assembler.csproj" />
     <ProjectReference Include="..\..\..\src\Zarem.Emulator\Zarem.Emulator.csproj" />
-	<PackageReference Include="MSTest" Version="3.6.4" />
+	<PackageReference Include="MSTest" Version="4.5.3" />
   </ItemGroup>
 
 </Project>
