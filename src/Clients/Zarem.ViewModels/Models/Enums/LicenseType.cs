@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.IDE.Models.Enums;
+namespace Zarem.Models.Enums;
 
 /// <summary>
 /// An enum for specifying the license type on a third party notice.
