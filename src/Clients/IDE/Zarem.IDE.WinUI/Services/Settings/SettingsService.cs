@@ -28,8 +28,8 @@ public class SettingsService : ISettingsService
     private void EstablishDefaults()
     {
         // App
-        ValidateSetting(SettingsKeys.AppTheme, Theme.Default);
-        ValidateSetting<string?>(SettingsKeys.LanguageOverride, null);
+        ValidateSetting(Zarem.SettingsKeys.AppTheme, Theme.Default);
+        ValidateSetting<string?>(Zarem.SettingsKeys.LanguageOverride, null);
         ValidateSetting(SettingsKeys.RestoreOpenProject, true);
 
         // Editor

@@ -10,10 +10,10 @@ namespace Test.Mips.Assembler;
 [TestClass]
 public class MipsTokenizerTests : TokenizerTester
 {
-    [TestMethod("Empty")]
+    [TestMethod(DisplayName = "Empty")]
     public async Task EmptyTest() => await RunTest("", []);
 
-    [TestMethod("ori $s0, $zero, 10")]
+    [TestMethod(DisplayName = "ori $s0, $zero, 10")]
     public async Task SimpleTest()
     {
         var tokensBuilder = new TokenExpectationBuilder(MipsTokenizerProfile.Default)
@@ -22,7 +22,7 @@ public class MipsTokenizerTests : TokenizerTester
         await RunTest("ori $s0, $zero, 10", tokensBuilder.Build());
     }
 
-    [TestMethod("ori $s0, $zero, %hi(10)")]
+    [TestMethod(DisplayName = "ori $s0, $zero, %hi(10)")]
     public async Task RelocTest()
     {
         var tokensBuilder = new TokenExpectationBuilder(MipsTokenizerProfile.Default)

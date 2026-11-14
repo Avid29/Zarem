@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Application
-    x:Class="Zarem.SAE.App"
+<zarem:ZaremAppBase
+    x:Class="Zarem.SAE.ZaremSAEApp"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:convert="using:Zarem.Converters"
-    xmlns:local="using:Zarem.SAE">
-    <Application.Resources>
+    xmlns:local="using:Zarem.SAE"
+    xmlns:zarem="using:Zarem">
+    <zarem:ZaremAppBase.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
@@ -15,5 +16,5 @@
 
             <convert:StringLocalizeConverter x:Key="StringLocalizeConverter" />
         </ResourceDictionary>
-    </Application.Resources>
-</Application>
+    </zarem:ZaremAppBase.Resources>
+</zarem:ZaremAppBase>

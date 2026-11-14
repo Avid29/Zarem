@@ -32,7 +32,7 @@ public class RiscVProjectTests : ProjectTestsBase
         ZaremRegistry.RegisterArchitecture(new RiscVArchitectureDescriptor());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DoNotParallelize]
     [DynamicData(nameof(ProjectsPaths), DynamicDataDisplayName = nameof(GetProjectDisplayName))]
     public Task RunTestAsync(string projectPath) => RunProjectTest(projectPath);

@@ -37,7 +37,7 @@ public sealed partial class TitleBar : UserControl
 
     private void ExtendIntoTitleBar()
     {
-        var window = App.Current.Window;
+        var window = ZaremIDEApp.Current.Window;
         Guard.IsNotNull(window);
 
         window.ExtendsContentIntoTitleBar = true;
@@ -46,7 +46,7 @@ public sealed partial class TitleBar : UserControl
 
     private void AdjustDragRegion()
     {
-        var window = App.Current.Window;
+        var window = ZaremIDEApp.Current.Window;
         Guard.IsNotNull(window);
 
         var rect = new RectInt32

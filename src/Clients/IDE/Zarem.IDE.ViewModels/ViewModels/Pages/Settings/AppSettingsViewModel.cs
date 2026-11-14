@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Services;
 using Zarem.Services.Settings;
@@ -39,8 +38,8 @@ public partial class AppSettingsViewModel : SettingsSubPageViewModel
     /// </summary>
     public Theme AppTheme
     {
-        get => _settingsService.Local.GetValue<Theme>(SettingsKeys.AppTheme);
-        set => _settingsService.Local.SetValue(SettingsKeys.AppTheme, value, notify: true);
+        get => _settingsService.Local.GetValue<Theme>(Zarem.SettingsKeys.AppTheme);
+        set => _settingsService.Local.SetValue(Zarem.SettingsKeys.AppTheme, value, notify: true);
     }
 
     /// <summary>
@@ -53,8 +52,8 @@ public partial class AppSettingsViewModel : SettingsSubPageViewModel
     /// </summary>
     public string AppLanguage
     {
-        get => _settingsService.Local.GetValue<string>(SettingsKeys.LanguageOverride) ?? "system";
-        set => _settingsService.Local.SetValue(SettingsKeys.LanguageOverride, value is "system" ? null : value);
+        get => _settingsService.Local.GetValue<string>(Zarem.SettingsKeys.LanguageOverride) ?? "system";
+        set => _settingsService.Local.SetValue(Zarem.SettingsKeys.LanguageOverride, value is "system" ? null : value);
     }
 
     /// <summary>

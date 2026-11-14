@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.IDE.Services.Popup.Models;
+namespace Zarem.Services.Popup.Models;
 
 /// <summary>
 /// Details for a popup to display.

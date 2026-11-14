@@ -1,12 +1,12 @@
 ﻿// Avishai Dernis 2025
 
 using System.Collections.Generic;
-using Zarem.IDE.Models;
-using Zarem.IDE.Models.Enums;
+using Zarem.IDE.ViewModels.Pages.Abstract;
+using Zarem.Models;
+using Zarem.Models.Enums;
 using Zarem.Services;
 using Zarem.Services.Versioning;
 using Zarem.Services.Versioning.Models;
-using Zarem.IDE.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels.Pages;
 

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Zarem.Assembler.Logging;
 using Zarem.IDE.Messages.Build;
 using Zarem.IDE.Models.Enums;
-using Zarem.IDE.Services.Settings;
 using Zarem.IDE.ViewModels;
 using Zarem.Models;
 using Zarem.Models.Files;

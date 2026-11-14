@@ -11,21 +11,21 @@ namespace Test.Elf;
 [TestClass]
 public class AbstractionTests : AbstractionTests<ElfModule, ElfConfig>
 {
-    [TestMethod(TestFilePathing.BranchLiteralFile)]
+    [TestMethod(DisplayName = TestFilePathing.BranchLiteralFile)]
     public async Task BranchLiteralFileTest() => await RunFileTest(TestFilePathing.BranchLiteralFile);
 
-    [TestMethod(TestFilePathing.BranchRelativeFile)]
+    [TestMethod(DisplayName = TestFilePathing.BranchRelativeFile)]
     public async Task BranchRelativeFileTest() => await RunFileTest(TestFilePathing.BranchRelativeFile);
 
-    [TestMethod(TestFilePathing.EmptyTestFile)]
+    [TestMethod(DisplayName = TestFilePathing.EmptyTestFile)]
     public async Task EmptyFileTest() => await RunFileTest(TestFilePathing.EmptyTestFile);
 
-    [TestMethod(TestFilePathing.InstructionsTestFile)]
+    [TestMethod(DisplayName = TestFilePathing.InstructionsTestFile)]
     public async Task InstructionsFileTest() => await RunFileTest(TestFilePathing.InstructionsTestFile);
 
-    [TestMethod(TestFilePathing.PseudoInstructionsTestFile)]
+    [TestMethod(DisplayName = TestFilePathing.PseudoInstructionsTestFile)]
     public async Task PseudoInstructionsFileTest() => await RunFileTest(TestFilePathing.PseudoInstructionsTestFile);
 
-    [TestMethod(TestFilePathing.PlaygroundTestFile1)]
+    [TestMethod(DisplayName = TestFilePathing.PlaygroundTestFile1)]
     public async Task PlaygroundTest() => await RunFileTest(TestFilePathing.PlaygroundTestFile1);
 }

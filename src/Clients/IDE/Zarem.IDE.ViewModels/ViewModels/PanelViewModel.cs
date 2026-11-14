@@ -3,9 +3,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Zarem.IDE.Services.Popup;
-using Zarem.IDE.Services.Popup.Enums;
-using Zarem.IDE.Services.Popup.Models;
+using Zarem.Services.Popup;
+using Zarem.Services.Popup.Enums;
+using Zarem.Services.Popup.Models;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.Services;
 

@@ -1,10 +1,10 @@
 ﻿// Avishai Dernis 2025
 
 using System.Threading.Tasks;
-using Zarem.IDE.Services.Popup.Models;
-using Zarem.IDE.Services.Popup.Enums;
+using Zarem.Services.Popup.Enums;
+using Zarem.Services.Popup.Models;
 
-namespace Zarem.IDE.Services.Popup;
+namespace Zarem.Services.Popup;
 
 /// <summary>
 /// An interface for a service to create popups.

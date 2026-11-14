@@ -44,13 +44,13 @@ public class DirectiveParserTests
     private const string Global = ".globl main";
     private const string DefinePrintInt = ".def SYS_PRINT_INT 1";
 
-    [TestMethod(Global)]
+    [TestMethod(DisplayName = Global)]
     public void GlobalTest() => RunGlobalTest(Global, "main");
 
-    [TestMethod(DefinePrintInt)]
+    [TestMethod(DisplayName = DefinePrintInt)]
     public void DefinePrintIntText() => RunDefineTest(DefinePrintInt, "SYS_PRINT_INT", 1);
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(DataTestsList))]
     public void DirectiveDataTest(DirectiveDataTestCase @case) =>
         RunDataTest(@case.Input, @case.Expected);

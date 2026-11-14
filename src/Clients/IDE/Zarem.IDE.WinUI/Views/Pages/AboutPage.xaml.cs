@@ -4,8 +4,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using Windows.System;
-using Zarem.IDE.Models;
 using Zarem.IDE.ViewModels.Pages;
+using Zarem.Models;
 
 namespace Zarem.IDE.Views.Pages;
 

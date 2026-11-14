@@ -8,7 +8,7 @@ namespace Test.RiscV;
 [TestClass]
 public class RiscVVersionParsingTests : VersionParsingTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("RV32I")]
     [DataRow("RV32G")]
     [DataRow("RV32ICD", true)]
