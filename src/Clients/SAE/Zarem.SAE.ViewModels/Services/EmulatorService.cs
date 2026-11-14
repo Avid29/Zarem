@@ -1,14 +1,11 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Zarem.Config;
 using Zarem.Emulator;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Mips.Disassembler.Services;
 using Zarem.Mips.Services;
 using Zarem.N64;
 using Zarem.N64.Config;
@@ -52,7 +49,7 @@ public class EmulatorService : IEmulatorService
         _emulator = new Zaremulator(_n64);
 
 #if DEBUG
-        ServiceCollection.DisassemblerService = new MipsDisassemblerService(new(config.VersionInfo));
+        ServiceCollection.DisassemblerService = new Mips.Disassembler.Services.MipsDisassemblerService(new(config.VersionInfo));
 #endif
     }
 

@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:systemai="http://schemas.microsoft.com/appx/manifest/systemai/windows10"
+  xmlns:uap18="http://schemas.microsoft.com/appx/manifest/uap/windows10/18"
+  IgnorableNamespaces="uap rescap systemai uap18">
+
+  <Identity
+    Name="38062AvishaiDernis.ZaremSAE.Dev"
+    Publisher="CN=43D24869-0557-46C9-8B30-13C6ACFDB86B"
+    Version="1.0.0.0" />
+
+  <mp:PhoneIdentity PhoneProductId="3888fb46-55eb-4ffc-974d-9198f524751d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+
+  <Properties>
+    <DisplayName>ms-resource:/Manifest/AppDisplayName-Dev</DisplayName>
+    <PublisherDisplayName>Avishai Dernis</PublisherDisplayName>
+    <Logo>Assets\AppIcons\Dev\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26226.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26226.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="$targetentrypoint$" >
+      <uap:VisualElements
+        DisplayName="ms-resource:/Manifest/AppDisplayName-Dev"
+        Description="ms-resource:/Manifest/Description"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\AppIcons\Dev\Square150x150Logo.png"
+        Square44x44Logo="Assets\AppIcons\Dev\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\AppIcons\Dev\Wide310x150Logo.png"  Square71x71Logo="Assets\AppIcons\Dev\SmallTile.png" Square310x310Logo="Assets\AppIcons\Dev\LargeTile.png"/>
+        <uap:SplashScreen Image="Assets\AppIcons\Dev\SplashScreen.png" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+    <systemai:Capability Name="systemAIModels"/>
+  </Capabilities>
+</Package>

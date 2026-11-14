@@ -18,6 +18,9 @@ public sealed unsafe partial class DisplayControl : UserControl
     private ID3D11DeviceContext* _context;
     private IDXGISwapChain1* _swapChain;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DisplayControl"/> class.
+    /// </summary>
     public DisplayControl()
     {
         this.InitializeComponent();

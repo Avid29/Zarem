@@ -366,8 +366,9 @@ FodyWeavers.xsd
 # TODO: Consult Prof. Carithers about copyright and permissions
 /rasm-info
 
-/src/Clients/Zarem.IDE.WinUI/Assets/AppIconSources/
-/src/Clients/Zarem.IDE.Shared/Assets/AppIconSources/
+# Don't include the AppIconSources folder, which contains the source images for the app icons.
+ #These are large and not needed for building the project.
+AppIconSources/
 
 # Don't include the N64 game ROMs, which are large and may be copyrighted
 /tests/Systems/N64/Games/*
