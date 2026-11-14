@@ -34,9 +34,9 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$" uap18:TrustLevel="appContainer">
+      EntryPoint="$targetentrypoint$" >
       <uap:VisualElements
-        DisplayName="ms-resource:/Manifest/AppDisplayName-Dev"
+        DisplayName="ms-resource:/Manifest/AppDisplayName-Alpha"
         Description="ms-resource:/Manifest/Description"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"

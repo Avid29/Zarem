@@ -3,25 +3,24 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+	<GenerateDocumentationFile>false</GenerateDocumentationFile>
     <RootNamespace>Zarem.SAE</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
-    <UseWinUI>true</UseWinUI>
-    <WinUISDKReferences>false</WinUISDKReferences>
-    <EnableMsixTooling>true</EnableMsixTooling>
-    <Nullable>enable</Nullable>
-	<GenerateDocumentationFile>false</GenerateDocumentationFile>
-	<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
-	<DefaultLanguage>en</DefaultLanguage>
+	<UseWinUI>true</UseWinUI>
+	<WindowsPackageType>MSIX</WindowsPackageType>
+	<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+	<Configurations>Debug;Alpha;Release</Configurations>
   </PropertyGroup>
 
-	<ItemGroup>
-		<AppxManifest Include="Package.appxmanifest">
-			<SubType>Designer</SubType>
-		</AppxManifest>
-	</ItemGroup>
+  <ItemGroup>
+  	<AppxManifest Include="Package-$(Configuration).appxmanifest">
+  	  <SubType>Designer</SubType>
+  	</AppxManifest>
+  </ItemGroup>
 
   <!--
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
