@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using Zarem.Services;
-using Zarem.IDE.Services.Settings;
 using Zarem.Services.Settings;
 
 namespace Zarem.IDE.ViewModels.Pages.Settings;

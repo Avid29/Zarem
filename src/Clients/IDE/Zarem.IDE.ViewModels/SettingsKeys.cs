@@ -8,7 +8,7 @@ using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Services;
 using Zarem.Services.Settings;
 
-namespace Zarem.IDE.Services.Settings;
+namespace Zarem.IDE;
 
 /// <summary>
 /// A collection of keys used for settings.

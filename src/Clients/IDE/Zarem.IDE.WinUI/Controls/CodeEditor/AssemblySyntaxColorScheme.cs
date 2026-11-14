@@ -7,7 +7,6 @@ using System;
 using Windows.UI;
 using Zarem.IDE.Extensions;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
-using Zarem.IDE.Services.Settings;
 using Zarem.Services;
 using Zarem.Services.Settings;
 

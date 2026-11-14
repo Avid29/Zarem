@@ -2,7 +2,7 @@
 
 using System.Threading.Tasks;
 using Zarem.Bindables.Files;
-using Zarem.IDE.Services.Files;
+using Zarem.IDE.Services;
 using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Files.Models;

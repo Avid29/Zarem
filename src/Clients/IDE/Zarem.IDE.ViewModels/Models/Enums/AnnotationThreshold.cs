@@ -8,9 +8,12 @@ namespace Zarem.IDE.Services.Settings.Enums;
 public enum AnnotationThreshold
 {
     #pragma warning disable CS1591
+
     Never,
     Errors,
     Warnings,
-    Always, //Messages,
+    Messages,
+    Always = Messages, 
+
     #pragma warning restore CS1591
 }

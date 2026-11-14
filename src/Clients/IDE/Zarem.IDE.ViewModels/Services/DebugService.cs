@@ -11,7 +11,6 @@ using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Models.Enums;
 using Zarem.IDE.Messages.DebugSessions;
 using Zarem.IDE.Models.Enums;
-using Zarem.IDE.Services.Files;
 using Zarem.IDE.Services.Popup;
 using Zarem.IDE.Services.Popup.Enums;
 using Zarem.IDE.Services.Popup.Models;

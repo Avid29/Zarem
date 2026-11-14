@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.SAE.Services.Settings;
+namespace Zarem.SAE;
 
 /// <summary>
 /// A collection of keys used for settings.

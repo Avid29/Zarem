@@ -10,7 +10,7 @@ using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.Services.Files;
 using Zarem.Services.Files.Models;
 
-namespace Zarem.IDE.Services.Files;
+namespace Zarem.IDE.Services;
 
 /// <summary>
 /// A wrapper for the <see cref="IFileSystemService"/> which also tracks open files.

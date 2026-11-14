@@ -12,7 +12,6 @@ using Zarem.Mips.Disassembler.Services;
 using Zarem.Mips.Services;
 using Zarem.N64;
 using Zarem.N64.Config;
-using Zarem.SAE.Services.Settings;
 using Zarem.Services.Settings;
 
 namespace Zarem.SAE.Services;

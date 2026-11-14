@@ -6,7 +6,7 @@ using Zarem.Bindables.Files.Abstract;
 using Zarem.IDE.Bindables.Files.Abstract;
 using Zarem.IDE.Bindables.Files.Interfaces;
 using Zarem.IDE.Messages.Navigation;
-using Zarem.IDE.Services.Files;
+using Zarem.IDE.Services;
 using Zarem.Models.Files;
 using Zarem.Services;
 using Zarem.Services.Files.Models;

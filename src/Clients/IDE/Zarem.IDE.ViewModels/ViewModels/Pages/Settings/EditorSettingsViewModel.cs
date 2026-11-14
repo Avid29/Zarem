@@ -15,7 +15,6 @@ using Zarem.IDE.Models.EditorConfig.ColorScheme;
 using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Settings;
-using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Mips.Assembler;
 using Zarem.Mips;

@@ -3,7 +3,6 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
 using Zarem.Emulator.Models.Enums;
-using Zarem.SAE.Services.Settings;
 
 namespace Zarem.SAE.ViewModels;
 

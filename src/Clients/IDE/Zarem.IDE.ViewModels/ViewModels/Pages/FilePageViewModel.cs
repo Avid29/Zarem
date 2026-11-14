@@ -12,7 +12,6 @@ using Zarem.IDE.Messages.DebugSessions;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Messages.Project;
 using Zarem.IDE.Services;
-using Zarem.IDE.Services.Settings;
 using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.IDE.ViewModels.Pages.Interfaces;
