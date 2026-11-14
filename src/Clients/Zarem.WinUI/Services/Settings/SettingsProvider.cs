@@ -2,14 +2,11 @@
 
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.Messaging;
-using System;
 using System.Text.Json;
 using Windows.Foundation.Collections;
-using Zarem.IDE.Messages;
 using Zarem.Messages;
-using Zarem.Services.Settings;
 
-namespace Zarem.IDE.Services.Settings;
+namespace Zarem.Services.Settings;
 
 /// <summary>
 /// An implementation of the <see cref="ISettingsProvider"/> that handles storing settings in a given folder.
@@ -40,6 +37,7 @@ public class SettingsProvider : ISettingsProvider
         return ThrowHelper.ThrowInvalidOperationException<T?>($"The setting {key} was requested, but not found.");
     }
 
+    /// <inheritdoc/>
     public bool TryGetValue<T>(string key, out T? value)
     {
         bool status = _storage.TryGetValue(key, out var raw);

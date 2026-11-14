@@ -1,13 +1,11 @@
 ﻿// Avishai Dernis 2024
 
-using System.Collections.Generic;
 using System.Globalization;
 using Windows.ApplicationModel.Resources;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Globalization;
-using Zarem.Services;
 
-namespace Zarem.SAE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// A service that retrieves localization details.

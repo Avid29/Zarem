@@ -5,7 +5,7 @@ using Windows.ApplicationModel;
 using Zarem.Services.Versioning;
 using Zarem.Services.Versioning.Models;
 
-namespace Zarem.SAE.Services.Versioning;
+namespace Zarem.Services.Versioning;
 
 /// <summary>
 /// An implementation of the <see cref="IVersioningService"/>.

@@ -1,14 +1,9 @@
 ﻿// Avishai Dernis 2025
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Zarem.SAE.Services.Files.Models;
-using Zarem.Services;
 using Zarem.Services.Files.Models;
 
-namespace Zarem.SAE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// An implementation of the <see cref="IClipboardService"/>
@@ -31,6 +26,7 @@ public class ClipboardService : IClipboardService
     public async Task CopyFileItemsAsync(IEnumerable<IFileItem> fileItems, bool flush = true)
         => await ClipFileItemsAsync(fileItems, DataPackageOperation.Copy, flush);
 
+    /// <inheritdoc/>
     public static async Task ClipFileItemsAsync(IEnumerable<IFileItem> fileItems, DataPackageOperation operation, bool flush = true)
     {
         // Convert the file items to storage items using the assumption they're FileItemBases in implementation

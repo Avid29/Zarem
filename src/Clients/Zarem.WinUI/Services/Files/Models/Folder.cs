@@ -1,13 +1,9 @@
 ﻿// Avishai Dernis 2024
 
 using CommunityToolkit.Diagnostics;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.Storage;
-using Zarem.Services.Files.Models;
 
-namespace Zarem.SAE.Services.Files.Models;
+namespace Zarem.Services.Files.Models;
 
 /// <summary>
 /// An <see cref="IFolder"/> implementation wrapping a <see cref="StorageFolder"/>.
@@ -32,7 +28,7 @@ public class Folder : FileItemBase, IFolder
     public async Task<IFileItem[]> GetItemsAsync()
     {
         var items = await _storageFolder.GetItemsAsync();
-        return items.Select(x =>
+        return [.. items.Select(x =>
         {
             return x switch
             {
@@ -40,7 +36,7 @@ public class Folder : FileItemBase, IFolder
                 StorageFolder folder => new Folder(folder),
                 _ => ThrowHelper.ThrowArgumentOutOfRangeException<IFileItem>(),
             };
-        }).ToArray();
+        })];
     }
 
     /// <inheritdoc/>

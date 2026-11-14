@@ -8,7 +8,12 @@ namespace Zarem.Services.Windowing;
 public interface IWindowingService
 {
     /// <summary>
+    /// Gets the Window handle.
+    /// </summary>
+    nint GetWindowHandle();
+
+    /// <summary>
     /// Toggles full screen for the current window.
     /// </summary>
-    public void ToggleFullScreen();
+    void ToggleFullScreen();
 }

@@ -1,10 +1,8 @@
 ﻿// Avishai Dernis 2024
 
 using Microsoft.UI.Dispatching;
-using System;
-using Zarem.Services;
 
-namespace Zarem.SAE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// A <see cref="IDispatcherService"/> implementation for the windows client.

@@ -2,16 +2,16 @@
 
 using Microsoft.UI.Xaml;
 using Zarem.IDE.Services.Settings.Enums;
-using Zarem.Services;
 
-namespace Zarem.SAE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// An implementation of the <see cref="IThemeService"/>
 /// </summary>
 public class ThemeService : IThemeService
 {
-    public Theme DefaultTheme => App.Current.RequestedTheme switch
+    /// <inheritdoc/>
+    public Theme DefaultTheme => Application.Current.RequestedTheme switch
     {
         ApplicationTheme.Dark => Theme.Dark,
         ApplicationTheme.Light => Theme.Light,

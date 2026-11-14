@@ -1,10 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using Microsoft.UI.Xaml.Data;
-using System;
 using Zarem.Services;
 
-namespace Zarem.IDE.Converters;
+namespace Zarem.Converters;
 
 /// <summary>
 /// An <see cref="IValueConverter"/> that localizes and formats strings.

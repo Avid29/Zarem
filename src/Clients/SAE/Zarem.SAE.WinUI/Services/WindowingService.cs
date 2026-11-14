@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using Windows.UI.ViewManagement;
+using WinRT.Interop;
 using Zarem.Services.Windowing;
 
 namespace Zarem.SAE.Services;
@@ -10,6 +11,9 @@ namespace Zarem.SAE.Services;
 /// </summary>
 public class WindowingService : IWindowingService
 {
+    /// <inheritdoc/>
+    public nint GetWindowHandle() => WindowNative.GetWindowHandle(App.Current.Window);
+
     /// <inheritdoc/>
     public void ToggleFullScreen()
     {

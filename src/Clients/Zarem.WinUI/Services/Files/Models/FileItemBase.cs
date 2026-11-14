@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Zarem.Services.Files.Models;
 
-namespace Zarem.SAE.Services.Files.Models;
+namespace Zarem.Services.Files.Models;
 
+/// <summary>
+/// A base class for file items that provides common functionality for file operations.
+/// </summary>
 public abstract class FileItemBase : IFileItem
 {
     /// <inheritdoc/>

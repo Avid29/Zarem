@@ -12,10 +12,11 @@ using Zarem.IDE.Services.Popup.Models;
 using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Files.Models;
-using File = Zarem.IDE.Services.Files.Models.File;
-using Folder = Zarem.IDE.Services.Files.Models.Folder;
+using Zarem.Services.Windowing;
+using File = Zarem.Services.Files.Models.File;
+using Folder = Zarem.Services.Files.Models.Folder;
 
-namespace Zarem.IDE.Services.Files;
+namespace Zarem.Services.Files;
 
 /// <summary>
 /// An <see cref="IFileSystemService"/> implementation wrapping <see cref="StorageFile"/>.
@@ -26,14 +27,16 @@ public class FileSystemService : IFileSystemService
 
     private readonly ILocalizationService _localizationService;
     private readonly IPopupService _popupService;
+    private readonly IWindowingService _windowingService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FileSystemService"/> class.
     /// </summary>
-    public FileSystemService(ILocalizationService localizationService, IPopupService popupService)
+    public FileSystemService(ILocalizationService localizationService, IPopupService popupService, IWindowingService windowingService)
     {
         _localizationService = localizationService;
         _popupService = popupService;
+        _windowingService = windowingService;
     }
 
     /// <inheritdoc/>
@@ -243,7 +246,7 @@ public class FileSystemService : IFileSystemService
 
     private void InitWindow(object picker)
     {
-        nint windowHandle = WindowNative.GetWindowHandle(App.Current.Window);
+        nint windowHandle = _windowingService.GetWindowHandle();
         InitializeWithWindow.Initialize(picker, windowHandle);
     }
 }

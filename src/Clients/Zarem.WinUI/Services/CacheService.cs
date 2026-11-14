@@ -9,7 +9,7 @@ using Windows.Storage;
 using Zarem.Messages;
 using Zarem.Services;
 
-namespace Zarem.SAE.Services;
+namespace Zarem.Services;
 
 /// <summary>
 /// An implementation of the <see cref="ICacheService"/>.
