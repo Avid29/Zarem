@@ -16,9 +16,6 @@ namespace Zarem.IDE;
 public static class SettingsKeys
 {
 #pragma warning disable CS1591
-    // App
-    public const string AppTheme = "AppTheme";
-    public const string LanguageOverride = "LanguageOverride";
     public const string RestoreOpenProject = "RestoreOpenProject";  // Old setting, key not removed
 
     // Editor
@@ -26,7 +23,7 @@ public static class SettingsKeys
     public const string AnnotationThreshold = "AnnotationThreshold";
     public const string EditorColorSchemeBase = "EditorColorScheme";
 
-    public static string EditorColorScheme => $"{EditorColorSchemeBase}-{CurrentTheme}";
+    public static string EditorColorScheme => $"{EditorColorSchemeBase}-{Zarem.SettingsKeys.CurrentTheme}";
 
     // Assembler
     public const string AssemblerLanguageOverride = "AssemblerLanguageOverride";
@@ -34,28 +31,6 @@ public static class SettingsKeys
     public static EditorColorScheme? DefaultDarkColorScheme => LoadEditorColorScheme("Zarem-Dark.json");
     public static EditorColorScheme? DefaultLightColorScheme => LoadEditorColorScheme("Zarem-Light.json");
 #pragma warning restore CS1591
-
-    private static string CurrentTheme
-    {
-        get
-        {
-            var theme = SettingsService.Local.GetValue<Theme>(AppTheme);
-            if (theme is Theme.Default)
-            {
-                theme = ThemeService.DefaultTheme;
-            }
-
-            return theme switch
-            {
-                Theme.Light => "Light",
-                Theme.Dark or _ => "Dark",
-            };
-        }
-    }
-
-    private static ISettingsService SettingsService => Service.Get<ISettingsService>();
-
-    private static IThemeService ThemeService => Service.Get<IThemeService>();
 
     private static EditorColorScheme? LoadEditorColorScheme(string resource)
     {

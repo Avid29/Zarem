@@ -12,7 +12,7 @@ namespace Zarem.IDE.Services;
 public class WindowingService : IWindowingService
 {
     /// <inheritdoc/>
-    public nint GetWindowHandle() => WindowNative.GetWindowHandle(App.Current.Window);
+    public nint GetWindowHandle() => WindowNative.GetWindowHandle(ZaremIDEApp.Current.Window);
 
     /// <inheritdoc/>
     public void ToggleFullScreen()

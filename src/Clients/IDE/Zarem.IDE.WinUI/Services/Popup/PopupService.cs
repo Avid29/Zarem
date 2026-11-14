@@ -44,7 +44,7 @@ public class PopupService : IPopupService
     public async Task<PopupResult> ShowPopupAsync(PopupDetails popup)
     {
         // TODO: Multi-Windowing
-        var xamlRoot = App.Current.Window?.Content.XamlRoot;
+        var xamlRoot = ZaremIDEApp.Current.Window?.Content.XamlRoot;
         if (xamlRoot is null)
         {
             return PopupResult.Closed;
@@ -55,7 +55,7 @@ public class PopupService : IPopupService
             Title = popup.Title,
             Content = popup.Description,
             PrimaryButtonText = popup.PrimaryButtonText,
-            PrimaryButtonStyle = (Style)App.Current.Resources["AccentButtonStyle"],
+            PrimaryButtonStyle = (Style)ZaremIDEApp.Current.Resources["AccentButtonStyle"],
             IsPrimaryButtonEnabled = popup.PrimaryButtonText is not null,
             SecondaryButtonText = popup.SecondaryButtonText,
             IsSecondaryButtonEnabled = popup.SecondaryButtonText is not null,
@@ -78,7 +78,7 @@ public class PopupService : IPopupService
     public async Task<string?> ShowPopupAsync(TextInputPopupDetails popup)
     {
         // TODO: Multi-Windowing
-        var xamlRoot = App.Current.Window?.Content.XamlRoot;
+        var xamlRoot = ZaremIDEApp.Current.Window?.Content.XamlRoot;
         if (xamlRoot is null)
             return null;
 
@@ -88,7 +88,7 @@ public class PopupService : IPopupService
             Description = popup.Description,
             ValidatonRegex = popup.ValidationRegex,
             PrimaryButtonText = popup.PrimaryButtonText,
-            PrimaryButtonStyle = (Style)App.Current.Resources["AccentButtonStyle"],
+            PrimaryButtonStyle = (Style)ZaremIDEApp.Current.Resources["AccentButtonStyle"],
             IsPrimaryButtonEnabled = popup.PrimaryButtonText is not null,
             SecondaryButtonText = popup.SecondaryButtonText,
             IsSecondaryButtonEnabled = popup.SecondaryButtonText is not null,

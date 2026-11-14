@@ -24,7 +24,7 @@ public class DispatcherService : IDispatcherService
     public void Init()
     {
         // TODO: This won't work with multi-window
-        _dispatcherQueue = App.Current.Window?.DispatcherQueue;
+        _dispatcherQueue = ZaremIDEApp.Current.Window?.DispatcherQueue;
     }
 
     /// <inheritdoc/>
