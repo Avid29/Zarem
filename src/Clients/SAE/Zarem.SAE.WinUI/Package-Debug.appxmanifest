@@ -10,7 +10,7 @@
   IgnorableNamespaces="uap rescap systemai uap18">
 
   <Identity
-    Name="38062AvishaiDernis.ZaremSAE"
+    Name="38062AvishaiDernis.ZaremSAE.Dev"
     Publisher="CN=43D24869-0557-46C9-8B30-13C6ACFDB86B"
     Version="1.0.0.0" />
 
