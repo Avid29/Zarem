@@ -8,7 +8,7 @@ namespace Zarem.SAE;
 public static class SettingsKeys
 {
 #pragma warning disable CS1591
-    public const string BiosRomPath = "BiosRomPath";
-    public const string CartridgeRomPath = "CartridgeRomPath";
+    public const string BiosRomPath = nameof(BiosRomPath);
+    public const string CartridgeRomPath = nameof(CartridgeRomPath);
 #pragma warning restore CS1591
 }

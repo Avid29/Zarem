@@ -28,7 +28,7 @@ public class RealityCoProcessor : IBusDevice, IDXGraphicsDevice
     {
         _childDevices =
         [
-            new RealitySignalProcessor(),
+            new RealitySignalProcessor(bus),
             new RealityDisplayProcessor(),
             new N64MipsInterface(),
             new N64VideoInterface(),
@@ -72,7 +72,7 @@ public class RealityCoProcessor : IBusDevice, IDXGraphicsDevice
         deviceOffset = 0;
         foreach (var device in _childDevices)
         {
-            if (offset >= device.BusRangeBase && offset < device.BusRangeBase + device.BusRangeSize)
+            if (offset >= (device.BusRangeBase - RealityCoProcessor.BusRangeBase) && offset < (device.BusRangeBase - RealityCoProcessor.BusRangeBase) + device.BusRangeSize)
             {
                 deviceOffset = offset - device.BusRangeBase;
                 return device;
