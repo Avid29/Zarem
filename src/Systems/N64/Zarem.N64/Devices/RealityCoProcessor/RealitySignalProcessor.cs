@@ -1,8 +1,10 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.HighPerformance;
 using System;
 using System.Buffers.Binary;
 using Zarem.Emulator.Devices.MemoryBacking;
+using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.N64.Devices.RealityCoProcessor.Enums;
 
@@ -11,7 +13,7 @@ namespace Zarem.N64.Devices.RealityCoProcessor;
 /// <summary>
 /// A sub-components of the <see cref="RealityCoProcessor"/> responsible for ...
 /// </summary>
-public partial class RealitySignalProcessor : IRealityCoProcessorDevice
+public partial class RealitySignalProcessor : N64DmaDeviceBase
 {
     private const ulong DataMemorySize = 0x1000;
     private const ulong InstructionMemoryOffset = 0x1000;
@@ -22,14 +24,12 @@ public partial class RealitySignalProcessor : IRealityCoProcessorDevice
     private readonly FlatMemoryStore _dMem;
     private readonly FlatMemoryStore _iMem;
     private readonly FlatMemoryStore _regs;
-    private readonly PhysicalBus _bus;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RealitySignalProcessor"/> class.
     /// </summary>
-    public RealitySignalProcessor(PhysicalBus bus)
+    public RealitySignalProcessor(PhysicalBus bus) : base(bus)
     {
-        _bus = bus;
         _dMem = new(DataMemorySize);
         _iMem = new(InstructionMemorySize);
         _regs = new(RegisterSize);
@@ -40,23 +40,23 @@ public partial class RealitySignalProcessor : IRealityCoProcessorDevice
     }
 
     /// <inheritdoc/>
-    public string Name => "Reality Signal Processor (RSP)";
+    public override string Name => "Reality Signal Processor (RSP)";
 
     /// <inheritdoc/>
-    public ulong BusRangeBase => 0x0400_0000;
+    public override ulong BusRangeBase => 0x0400_0000;
 
     /// <inheritdoc/>
-    public ulong BusRangeSize => 0x4_0020;
+    public override ulong BusRangeSize => 0x4_0020;
 
     /// <inheritdoc/>
-    public void Read(ulong offset, Span<byte> destination)
+    public override void Read(ulong offset, Span<byte> destination)
     {
         var childDevice = GetChildDevice(offset, out var deviceOffset);
         childDevice?.Read(deviceOffset, destination);
     }
 
     /// <inheritdoc/>
-    public void Write(ulong offset, ReadOnlySpan<byte> source)
+    public override void Write(ulong offset, ReadOnlySpan<byte> source)
     {
         var childDevice = GetChildDevice(offset, out var deviceOffset);
         if (childDevice is null)
@@ -66,16 +66,24 @@ public partial class RealitySignalProcessor : IRealityCoProcessorDevice
         if (childDevice == _regs && source.Length >= 4)
         {
             var register = (RspRegister)deviceOffset;
+            var value = BinaryPrimitives.ReadUInt32BigEndian(source);
 
-            // Check if this register requires command parsing / side-effects instead of raw storage
-            if (register is RspRegister.Status
-                or RspRegister.DmaReadLength
-                or RspRegister.DmaWriteLength
-                or RspRegister.Semaphore)
+            switch (register)
             {
-                var value = BinaryPrimitives.ReadUInt32BigEndian(source);
-                CommandRegisterWrite(register, value);
-                return;
+                // Handle status register side effects
+                case RspRegister.Status:
+                    HandleStatusRegisterWrite(value);
+                    return;
+                    
+                // Initiate DMA transfer
+                case RspRegister.ReadLength:
+                case RspRegister.WriteLength:
+                    ExecuteDmaTransfer(value, register is RspRegister.ReadLength);
+                    break;
+
+                // TODO: Handle semaphore lock/clear
+                case RspRegister.Semaphore:
+                    return;
             }
         }
 
@@ -84,11 +92,24 @@ public partial class RealitySignalProcessor : IRealityCoProcessorDevice
     }
 
     /// <inheritdoc/>
-    public void Dispose()
+    public override void Dispose()
     {
         _dMem.Dispose();
         _iMem.Dispose();
         _regs.Dispose();
+    }
+
+    /// <inheritdoc/>
+    protected override void SetBusyState(bool busy)
+    {
+        if (busy)
+        {
+            // TODO: 
+        }
+        else
+        {
+            _regs.Write((int)RspRegister.DmaBusy, 0);
+        }
     }
 
     private FlatMemoryStore? GetChildDevice(ulong offset, out ulong deviceOffset)
@@ -102,5 +123,36 @@ public partial class RealitySignalProcessor : IRealityCoProcessorDevice
             _ => (null, offset),
         };
         return device;
+    }
+
+    private void ExecuteDmaTransfer(uint command, bool writeToDram)
+    {
+        // N64 DMA length registers encode length and count/skip parameters:
+        uint transferLength = (command & 0xFFF) + 1;
+        uint count = ((command >> 12) & 0xFF) + 1;
+        uint skip = (command >> 20) & 0xFFF;
+
+        // Retreive transfer start addresses
+        uint rspMemAddress = _regs.Read<uint>((int)RspRegister.MemoryAddress) & 0x1FFF;
+        uint dramAddress = _regs.Read<uint>((int)RspRegister.DramAddress) & 0x00FFFFFF;
+        rspMemAddress += (uint)BusRangeBase;
+
+        ExecuteDmaTransfer(dramAddress, rspMemAddress, transferLength, writeToDram, count, skip);
+    }
+
+    private void HandleStatusRegisterWrite(uint command)
+    {
+        // Fetch status value
+        uint currentStatus = _regs.Read<uint>((int)RspRegister.Status);
+
+        // Modify status value
+        if ((command & 0x0001) != 0) currentStatus &= ~0x0001u; // Clear Halt
+        if ((command & 0x0002) != 0) currentStatus |= 0x0001u;  // Set Halt
+        if ((command & 0x0004) != 0) currentStatus &= ~0x0002u; // Clear Broke
+        if ((command & 0x0008) != 0) currentStatus |= 0x0004u;  // Set Intr on Break
+        if ((command & 0x0010) != 0) currentStatus &= ~0x0004u; // Clear Intr on Break
+
+        // Writeback new status value
+        _regs.Write((int)RspRegister.Status, currentStatus);
     }
 }

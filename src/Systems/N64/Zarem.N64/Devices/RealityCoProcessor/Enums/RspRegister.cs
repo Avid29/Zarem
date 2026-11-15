@@ -10,22 +10,22 @@ public enum RspRegister
     /// <remarks>
     /// SP_MEM_ADDR_REG
     /// </remarks>
-    DmaMemoryAddress = 0x00,
+    MemoryAddress = 0x00,
 
     /// <remarks>
     /// SP_DRAM_ADDR_REG
     /// </remarks>
-    DmaDramAddress = 0x04,
+    DramAddress = 0x04,
 
     /// <remarks>
     /// SP_RD_LEN_REG
     /// </remarks>
-    DmaReadLength = 0x8,
+    ReadLength = 0x8,
 
     /// <remarks>
     /// SP_WR_LEN_REG
     /// </remarks>
-    DmaWriteLength = 0xC,
+    WriteLength = 0xC,
 
     /// <remarks>
     /// SP_STATUS_REG

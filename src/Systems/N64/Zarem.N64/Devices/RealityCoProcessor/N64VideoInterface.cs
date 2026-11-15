@@ -16,7 +16,7 @@ public class N64VideoInterface : IRealityCoProcessorDevice
     public ulong BusRangeBase => 0x0440_0000;
 
     /// <inheritdoc/>
-    public ulong BusRangeSize => 0x39;
+    public ulong BusRangeSize => 0x40;
 
     /// <inheritdoc/>
     public void Read(ulong offset, Span<byte> destination)
