@@ -15,13 +15,6 @@ public unsafe interface IMemoryBackingStore : IDisposable
     ulong Size { get; }
 
     /// <summary>
-    /// Gets a pointer to the memory region at the specified offset.
-    /// </summary>
-    /// <param name="offset">The offset within the memory region.</param>
-    /// <returns>A pointer to the requested address.</returns>
-    byte* GetPointer(ulong offset);
-
-    /// <summary>
     /// Reads data from the memory region into the provided span.
     /// </summary>
     void Read(ulong offset, Span<byte> destination);
@@ -30,4 +23,11 @@ public unsafe interface IMemoryBackingStore : IDisposable
     /// Writes data from the span into the memory region.
     /// </summary>
     void Write(ulong offset, ReadOnlySpan<byte> source);
+
+    /// <summary>
+    /// Gets a pointer to the memory region at the specified offset.
+    /// </summary>
+    /// <param name="offset">The offset within the memory region.</param>
+    /// <returns>A pointer to the requested address.</returns>
+    byte* GetPointer(ulong offset);
 }

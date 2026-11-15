@@ -28,7 +28,7 @@ public class RealityCoProcessor : IBusDevice, IDXGraphicsDevice
     {
         _childDevices =
         [
-            new RealitySignalProcessor(),
+            new RealitySignalProcessor(bus),
             new RealityDisplayProcessor(),
             new N64MipsInterface(),
             new N64VideoInterface(),

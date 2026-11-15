@@ -168,7 +168,6 @@ public unsafe class PhysicalBus : IMemoryAccessor
         var span = new Span<byte>(buffer, size);
 
         span.WriteEndianness(value, Endianness is Endianness.Little);
-
         device.Write(offset, span);
     }
 

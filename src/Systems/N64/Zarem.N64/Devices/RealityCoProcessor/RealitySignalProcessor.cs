@@ -3,13 +3,14 @@
 using System;
 using System.Buffers.Binary;
 using Zarem.Emulator.Devices.MemoryBacking;
+using Zarem.Emulator.Machine.Memory;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
 /// <summary>
 /// A sub-components of the <see cref="RealityCoProcessor"/> responsible for ...
 /// </summary>
-public class RealitySignalProcessor : IRealityCoProcessorDevice
+public partial class RealitySignalProcessor : IRealityCoProcessorDevice
 {
     private const ulong DataMemorySize = 0x1000;
     private const ulong InstructionMemoryOffset = 0x1000;
@@ -20,13 +21,14 @@ public class RealitySignalProcessor : IRealityCoProcessorDevice
     private readonly FlatMemoryStore _dMem;
     private readonly FlatMemoryStore _iMem;
     private readonly FlatMemoryStore _regs;
+    private readonly PhysicalBus _bus;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RealitySignalProcessor"/> class.
     /// </summary>
-    public RealitySignalProcessor()
+    public RealitySignalProcessor(PhysicalBus bus)
     {
-        // Initialize RAM regions and registers
+        _bus = bus;
         _dMem = new(DataMemorySize);
         _iMem = new(InstructionMemorySize);
         _regs = new(RegisterSize);
@@ -34,7 +36,7 @@ public class RealitySignalProcessor : IRealityCoProcessorDevice
         // Initialize SP_STATUS_REG (Offset 0x10 in the register block) as halted (bit 0 set)
         Span<byte> initStatus = stackalloc byte[4];
         BinaryPrimitives.WriteUInt32BigEndian(initStatus, 0x00000001);
-        Write(RegisterOffset + 0x10, initStatus);
+        Write(RegisterOffset + (int)RspRegister.Status, initStatus);
     }
 
     /// <inheritdoc/>
@@ -59,9 +61,19 @@ public class RealitySignalProcessor : IRealityCoProcessorDevice
         var childDevice = GetChildDevice(offset, out var deviceOffset);
         childDevice?.Write(deviceOffset, source);
 
-        if (childDevice == _regs)
+        // Handle side effects of register writes
+        if (childDevice == _regs && source.Length is >= 4)
         {
-            // TODO: Handle register effects
+            // Early exit on pure storage registers
+            var register = (RspRegister)deviceOffset;
+            if (register is not (RspRegister.Status
+                or RspRegister.DmaReadLength
+                or RspRegister.DmaWriteLength
+                or RspRegister.Semaphore))
+                return;
+
+            var value = BinaryPrimitives.ReadUInt32BigEndian(source);
+            HandleRegisterSideEffects(register, value);
         }
     }
 
