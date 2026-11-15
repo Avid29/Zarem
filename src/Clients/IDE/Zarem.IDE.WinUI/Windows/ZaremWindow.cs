@@ -16,7 +16,7 @@ public abstract partial class ZaremWindow : Window
     /// </summary>
     public ZaremWindow()
     {
-        ViewModel = ZaremIDEApp.Current.Services.GetRequiredService<WindowViewModel>();
+        ViewModel = ZaremAppBase.Current.Services.GetRequiredService<WindowViewModel>();
     }
 
     /// <summary>

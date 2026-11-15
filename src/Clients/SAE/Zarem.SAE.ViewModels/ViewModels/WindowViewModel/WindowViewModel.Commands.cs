@@ -32,7 +32,7 @@ public partial class WindowViewModel
         {
             case EmulatorState.Ready:
             case EmulatorState.Stopped:
-                _emulatorService.StartEmulator();
+                await _emulatorService.StartEmulatorAsync();
                 break;
             case EmulatorState.Running:
             case EmulatorState.Pausing:
