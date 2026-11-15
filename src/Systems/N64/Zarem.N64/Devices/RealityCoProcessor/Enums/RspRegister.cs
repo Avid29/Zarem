@@ -7,10 +7,43 @@ namespace Zarem.N64.Devices.RealityCoProcessor.Enums;
 /// </summary>
 public enum RspRegister
 {
-#pragma warning disable CS1591
-    DramAddress,
-    RspMemoryAddress,
-    ReadLength,
-    WriteLength,
-#pragma warning restore CS1591
+    /// <remarks>
+    /// SP_MEM_ADDR_REG
+    /// </remarks>
+    DmaMemoryAddress = 0x00,
+
+    /// <remarks>
+    /// SP_DRAM_ADDR_REG
+    /// </remarks>
+    DmaDramAddress = 0x04,
+
+    /// <remarks>
+    /// SP_RD_LEN_REG
+    /// </remarks>
+    DmaReadLength = 0x8,
+
+    /// <remarks>
+    /// SP_WR_LEN_REG
+    /// </remarks>
+    DmaWriteLength = 0xC,
+
+    /// <remarks>
+    /// SP_STATUS_REG
+    /// </remarks>
+    Status = 0x10,
+
+    /// <remarks>
+    /// SP_DMA_FULL_REG
+    /// </remarks>
+    DmaFull = 0x14,
+
+    /// <remarks>
+    /// SP_DMA_BUSY_REG
+    /// </remarks>
+    DmaBusy = 0x18,
+
+    /// <remarks>
+    /// SP_SEMAPHORE_REG
+    /// </remarks>
+    Semaphore = 0x1C,
 }

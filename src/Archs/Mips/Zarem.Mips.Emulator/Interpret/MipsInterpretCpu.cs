@@ -180,9 +180,7 @@ public sealed class MipsInterpretCpu<T, TFloat> : MipsCpu<T, TFloat>, IInterpret
 
         // Handle gpr writeback
         if (execution.SideEffect is not (MipsSideEffect.ReadMemory or MipsSideEffect.WriteMemory))
-        {
             RegisterFile[(int)execution.WritebackGPRegister] = execution.Writeback;
-        }
 
         // Apply side effects
         switch (execution.SideEffect)
