@@ -15,7 +15,7 @@ public partial class RealitySignalProcessor : IRealityCoProcessorDevice
     private const ulong DataMemorySize = 0x1000;
     private const ulong InstructionMemoryOffset = 0x1000;
     private const ulong InstructionMemorySize = 0x1000;
-    private const ulong RegisterOffset = 0x2000;
+    private const ulong RegisterOffset = 0x4_0000;
     private const ulong RegisterSize = 0x20;
 
     private readonly FlatMemoryStore _dMem;
@@ -34,9 +34,8 @@ public partial class RealitySignalProcessor : IRealityCoProcessorDevice
         _regs = new(RegisterSize);
 
         // Initialize SP_STATUS_REG (Offset 0x10 in the register block) as halted (bit 0 set)
-        Span<byte> initStatus = stackalloc byte[4];
-        BinaryPrimitives.WriteUInt32BigEndian(initStatus, 0x00000001);
-        Write(RegisterOffset + (int)RspRegister.Status, initStatus);
+        // This is done with command 0x2 (set halt)
+        HandleStatusRegisterWrite(0x2);
     }
 
     /// <inheritdoc/>
@@ -59,22 +58,28 @@ public partial class RealitySignalProcessor : IRealityCoProcessorDevice
     public void Write(ulong offset, ReadOnlySpan<byte> source)
     {
         var childDevice = GetChildDevice(offset, out var deviceOffset);
-        childDevice?.Write(deviceOffset, source);
+        if (childDevice is null)
+            return;
 
-        // Handle side effects of register writes
-        if (childDevice == _regs && source.Length is >= 4)
+        // Handle side effects and command registers first (bypassing raw store for commands)
+        if (childDevice == _regs && source.Length >= 4)
         {
-            // Early exit on pure storage registers
             var register = (RspRegister)deviceOffset;
-            if (register is not (RspRegister.Status
+
+            // Check if this register requires command parsing / side-effects instead of raw storage
+            if (register is RspRegister.Status
                 or RspRegister.DmaReadLength
                 or RspRegister.DmaWriteLength
-                or RspRegister.Semaphore))
+                or RspRegister.Semaphore)
+            {
+                var value = BinaryPrimitives.ReadUInt32BigEndian(source);
+                CommandRegisterWrite(register, value);
                 return;
-
-            var value = BinaryPrimitives.ReadUInt32BigEndian(source);
-            HandleRegisterSideEffects(register, value);
+            }
         }
+
+        // Fallback: Perform standard raw write for normal storage registers, DMEM, or IMEM
+        childDevice.Write(deviceOffset, source);
     }
 
     /// <inheritdoc/>
@@ -90,9 +95,9 @@ public partial class RealitySignalProcessor : IRealityCoProcessorDevice
         FlatMemoryStore? device;
         (device, deviceOffset) = offset switch
         {
-            < DataMemorySize => (_dMem, offset),
-            < InstructionMemoryOffset + InstructionMemorySize => (_iMem, offset - InstructionMemoryOffset),
-            < RegisterOffset + RegisterSize => (_regs, offset - RegisterOffset),
+            > 0 and < DataMemorySize => (_dMem, offset),
+            > InstructionMemoryOffset and < InstructionMemoryOffset + InstructionMemorySize => (_iMem, offset - InstructionMemoryOffset),
+            > RegisterOffset and < RegisterOffset + RegisterSize => (_regs, offset - RegisterOffset),
             _ => (null, offset),
         };
         return device;

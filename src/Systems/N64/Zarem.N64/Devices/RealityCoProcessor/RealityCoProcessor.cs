@@ -72,9 +72,10 @@ public class RealityCoProcessor : IBusDevice, IDXGraphicsDevice
         deviceOffset = 0;
         foreach (var device in _childDevices)
         {
-            if (offset >= (device.BusRangeBase - RealityCoProcessor.BusRangeBase) && offset < (device.BusRangeBase - RealityCoProcessor.BusRangeBase) + device.BusRangeSize)
+            var deviceRelativeBase = device.BusRangeBase - RealityCoProcessor.BusRangeBase;
+            if (offset >= deviceRelativeBase && offset < deviceRelativeBase + device.BusRangeSize)
             {
-                deviceOffset = offset - device.BusRangeBase;
+                deviceOffset = offset - deviceRelativeBase;
                 return device;
             }
         }

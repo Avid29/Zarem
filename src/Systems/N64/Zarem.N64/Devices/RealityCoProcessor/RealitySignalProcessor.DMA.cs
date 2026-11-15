@@ -53,7 +53,7 @@ public partial class RealitySignalProcessor
         Semaphore = 0x1C,
     }
 
-    private void HandleRegisterSideEffects(RspRegister register, uint value)
+    private void CommandRegisterWrite(RspRegister register, uint value)
     {
         switch (register)
         {
