@@ -102,14 +102,22 @@ public partial class RealitySignalProcessor : N64DmaDeviceBase
     /// <inheritdoc/>
     protected override void SetBusyState(bool busy)
     {
+        // SP_STATUS_REG is at offset 0x10. Bit 2 (0x4) is the DMA Busy flag.
+        uint currentStatus = _regs.Read<uint>((int)RspRegister.Status);
+
         if (busy)
         {
-            // TODO: 
+            currentStatus |= 0x4; // Set DMA busy bit
         }
         else
         {
-            _regs.Write((int)RspRegister.DmaBusy, 0);
+            currentStatus &= ~0x4u; // Clear DMA busy bit
         }
+
+        _regs.Write((int)RspRegister.Status, currentStatus);
+
+        // Keep SP_DMA_BUSY_REG (offset 0x18) in sync if read directly elsewhere
+        _regs.Write((int)RspRegister.DmaBusy, busy ? 1u : 0u);
     }
 
     private FlatMemoryStore? GetChildDevice(ulong offset, out ulong deviceOffset)
