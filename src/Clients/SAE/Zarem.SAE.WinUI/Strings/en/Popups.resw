@@ -141,4 +141,13 @@
   <data name="SelectBiosFile" xml:space="preserve">
     <value>Select BIOS file</value>
   </data>
+  <data name="CartridgeSlotEmptyTitle" xml:space="preserve">
+    <value>Cartridge Slot Empty</value>
+  </data>
+  <data name="CartridgeSlotEmptyDesc" xml:space="preserve">
+    <value>A N64 Cartridge file is required to start the emulator. Would you like to select one now?</value>
+  </data>
+  <data name="SelectCartridgeFile" xml:space="preserve">
+    <value>Select Cartridge file</value>
+  </data>
 </root>

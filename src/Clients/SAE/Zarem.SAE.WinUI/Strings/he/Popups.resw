@@ -141,4 +141,13 @@
   <data name="SelectBiosFile" xml:space="preserve">
     <value>בחירת קובץ BIOS</value>
   </data>
+  <data name="CartridgeSlotEmptyTitle" xml:space="preserve">
+    <value>חריץ קסטה ריק</value>
+  </data>
+  <data name="CartridgeSlotEmptyDesc" xml:space="preserve">
+    <value>נדרש קובץ קסטה N64 כדי להפעיל את האמולטור. האם ברצונך לבחור קובץ כעת?</value>
+  </data>
+  <data name="SelectCartridgeFile" xml:space="preserve">
+    <value>בחירת קובץ קסטה</value>
+  </data>
 </root>

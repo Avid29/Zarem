@@ -16,7 +16,7 @@ public unsafe class N64CartridgeSlot : IBusDeviceDirect
 {
 #pragma warning disable CS1591
     public const ulong BusRangeBase = 0x1000_0000;
-    private const ulong RangeSize = 0x0100_0000;
+    private const ulong RangeSize = 0x0FC0_0000;
 #pragma warning restore CS1591
 
     private FileBackedMemoryStore? _memoryStore;

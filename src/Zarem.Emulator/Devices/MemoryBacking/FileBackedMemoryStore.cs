@@ -24,8 +24,9 @@ public unsafe class FileBackedMemoryStore : IMemoryBackingStore
     public FileBackedMemoryStore(string filePath, ulong size, MemoryMappedFileAccess access = MemoryMappedFileAccess.ReadWrite)
     {
         Size = size;
-        _mmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, null, (long)size, access);
-        _accessor = _mmf.CreateViewAccessor(0, (long)size, access);
+
+        _mmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, null, 0, access);
+        _accessor = _mmf.CreateViewAccessor(0, 0, access);
 
         // Acquire an unmanaged pointer directly from the MMF view handle
         _viewHandle = _accessor.SafeMemoryMappedViewHandle;
