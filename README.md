@@ -1,9 +1,14 @@
 <p align="center">
   <img height="200" align="center" src="https://github.com/user-attachments/assets/5cefe164-a038-4fd9-91ec-158baf586ca5"/>
 </p>
-<a href="https://apps.microsoft.com/detail/9ng185jd1rfd?referrer=appbadge&mode=full" target="_blank"  rel="noopener noreferrer">
-	<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200"/>
-</a>
+
+## 🚀 The Zarem Ecosystem
+
+| Component | Description | Download |
+| :--- | :--- | :--- |
+| **Zarem IDE** | An assembly editing workspace featuring rich code editing, interactive debugging, and multi-language support. | <a href="https://apps.microsoft.com/detail/9ng185jd1rfd?referrer=appbadge&mode=full" target="_blank"  rel="noopener noreferrer"> <img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200"/></a> |
+| **Zarem Emulator** | A client for running emulated systems. | Not Yet Available |
+
 
 # Introduction
 
@@ -13,16 +18,9 @@ Additionally, rather than being a single monolithic tool, Zarem is built on deco
 As a result, its core components can even be consumed standalone as libraries for handling ASM programmatically.
 On top of that foundation, Zarem splits into two primary user-facing clients, tied together by a plugin architecture that allows support for additional architectures and emulation systems to be added cleanly.
 
-## 🚀 The Zarem Ecosystem
-
-| Component | Description | Wiki & Documentation |
-| :--- | :--- | :--- |
-| **Zarem IDE** | WinUI 3 workspace featuring rich code editing, interactive debugging, and multi-language support. | [Explore IDE Wiki →](https://github.com/Avid29/Zarem/wiki/Zarem-IDE) |
-| **Zarem Emulator** | A WinUI client for running emulated systems. | [Explore Emulator Wiki →](https://github.com/Avid29/Zarem/wiki/Zarem-Emulator) |
-
 ## 📌 Pre-release Notice
 
-This project is in its pre-release stages. Project file formats, emulator behavior, and plugin APIs are actively evolving and subject to change. If you have questions or run into issues, please open a **[Q&A Discussion](https://github.com/Avid29/Zarem/discussions/categories/q-a)** or an **[issue](https://github.com/Avid29/Zarem/issues)** on GitHub.
+This project is in pre-release stages. Project file formats, emulator behavior, and plugin APIs are actively evolving and subject to change. If you have questions or run into issues, please open a **[Q&A Discussion](https://github.com/Avid29/Zarem/discussions/categories/q-a)** or an **[issue](https://github.com/Avid29/Zarem/issues)** on GitHub.
 
 # Assembly/Emulation Architectures
 
