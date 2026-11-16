@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using System.Buffers.Binary;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Devices.Interfaces;
@@ -33,6 +34,10 @@ public unsafe class N64PeripheralInterface : IBusDeviceDirect
     {
         _romStore = new(bootRomPath, RomSize, MemoryMappedFileAccess.Read);
         _ramStore = new(RamSize);
+
+        // Initialize with CIC-6102 seed
+        // TODO: Dynamically inject the seed based on the title
+        InitializeCicSeed(0x00003F3F);
     }
 
     /// <inheritdoc/>
@@ -94,5 +99,11 @@ public unsafe class N64PeripheralInterface : IBusDeviceDirect
     {
         _romStore.Dispose();
         _ramStore.Dispose();
+    }
+
+    private void InitializeCicSeed(uint seed)
+    {
+        Span<byte> ramSpan = new(_ramStore.GetPointer(0), (int)RamSize);
+        BinaryPrimitives.WriteUInt32BigEndian(ramSpan[0x24..], seed);
     }
 }

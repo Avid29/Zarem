@@ -3,7 +3,7 @@
 using System;
 using System.Buffers.Binary;
 using Zarem.Emulator.Devices.MemoryBacking;
-using Zarem.N64.Devices.RealityCoProcessor.Enums;
+using Zarem.N64.Devices.RealityCoProcessor.Enums.Registers;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
