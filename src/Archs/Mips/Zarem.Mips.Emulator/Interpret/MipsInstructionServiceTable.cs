@@ -278,10 +278,11 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
     private static MipsTrap BranchLinkOn<TLogic>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
+        var linkOffset = cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
         var rs = T.CreateTruncating(cpu[inst.RS]);
         var rt = T.CreateTruncating(cpu[inst.RT]);
         var jump = cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
-        var ret = cpu.ProgramCounter + T.CreateTruncating(4);
+        var ret = cpu.ProgramCounter + linkOffset;
         exec = TLogic.Check(rs, rt) ? MipsExecution<T>.CreateJumpAndLink(jump, ret) : default;
         return MipsTrap.None;
     }
@@ -321,8 +322,9 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         var rs = T.CreateTruncating(cpu[inst.RS]);
         var rt = T.CreateTruncating(cpu[inst.RT]);
 
+        var linkOffset = cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
         var jumpTarget = cpu.ProgramCounter + T.CreateTruncating(inst.Offset + 4);
-        var linkAddr = cpu.ProgramCounter + T.CreateTruncating(8);
+        var linkAddr = cpu.ProgramCounter + linkOffset;
 
         if (TLogic.Check(rs, rt))
         {
@@ -332,11 +334,12 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         else if (!cpu.Config.DisableDelaySlots)
         {
             // NOT Taken: Skip delay slot. No linking occurs on failed Branch Likely.
-            var skipDelaySlot = cpu.ProgramCounter + T.CreateTruncating(8);
+            var skipDelaySlot = cpu.ProgramCounter + linkOffset;
             exec = MipsExecution<T>.CreateJump(skipDelaySlot, force: true);
         }
         else
         {
+            // NOT Taken: Delay slots are disabled, so just execute
             exec = default;
         }
 
