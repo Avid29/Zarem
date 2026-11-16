@@ -122,19 +122,19 @@ public sealed class MipsInterpretCpu<T, TFloat> : MipsCpu<T, TFloat>, IInterpret
             {
                 case 1:
                     accessResult = Memory.TryRead(addr, out byte b);
-                    read = signed ? T.CreateSaturating((sbyte)b) : T.CreateTruncating(b);
+                    read = signed ? T.CreateTruncating((sbyte)b) : T.CreateTruncating(b);
                     break;
                 case 2:
                     accessResult = Memory.TryRead(addr, out ushort s);
-                    read = signed ? T.CreateSaturating((short)s) : T.CreateTruncating(s);
+                    read = signed ? T.CreateTruncating((short)s) : T.CreateTruncating(s);
                     break;
                 case 4:
                     accessResult = Memory.TryRead(addr, out uint i);
-                    read = signed ? T.CreateSaturating((int)i) : T.CreateTruncating(i);
+                    read = signed ? T.CreateTruncating((int)i) : T.CreateTruncating(i);
                     break;
                 case 8:
                     accessResult = Memory.TryRead(addr, out ulong l);
-                    read = signed ? T.CreateSaturating((long)l) : T.CreateTruncating(l);
+                    read = signed ? T.CreateTruncating((long)l) : T.CreateTruncating(l);
                     break;
                 default:
                     return ThrowHelper.ThrowInvalidOperationException<MipsTrap>($"Invalid memory read size: {size}");
