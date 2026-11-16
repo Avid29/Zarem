@@ -125,9 +125,9 @@ public partial class RealitySignalProcessor : N64DmaDeviceBase
         FlatMemoryStore? device;
         (device, deviceOffset) = offset switch
         {
-            > 0 and < DataMemorySize => (_dMem, offset),
-            > InstructionMemoryOffset and < InstructionMemoryOffset + InstructionMemorySize => (_iMem, offset - InstructionMemoryOffset),
-            > RegisterOffset and < RegisterOffset + RegisterSize => (_regs, offset - RegisterOffset),
+            >= 0 and < DataMemorySize => (_dMem, offset),
+            >= InstructionMemoryOffset and < InstructionMemoryOffset + InstructionMemorySize => (_iMem, offset - InstructionMemoryOffset),
+            >= RegisterOffset and < RegisterOffset + RegisterSize => (_regs, offset - RegisterOffset),
             _ => (null, offset),
         };
         return device;
@@ -153,12 +153,15 @@ public partial class RealitySignalProcessor : N64DmaDeviceBase
         // Fetch status value
         uint currentStatus = _regs.Read<uint>((int)RspRegister.Status);
 
-        // Modify status value
-        if ((command & 0x0001) != 0) currentStatus &= ~0x0001u; // Clear Halt
-        if ((command & 0x0002) != 0) currentStatus |= 0x0001u;  // Set Halt
-        if ((command & 0x0004) != 0) currentStatus &= ~0x0002u; // Clear Broke
-        if ((command & 0x0008) != 0) currentStatus |= 0x0004u;  // Set Intr on Break
-        if ((command & 0x0010) != 0) currentStatus &= ~0x0004u; // Clear Intr on Break
+        if ((command & 0x0001) != 0) currentStatus &= ~0x0001u;     // Command Bit 0: Clear Halt
+        if ((command & 0x0002) != 0) currentStatus |= 0x0001u;      // Command Bit 1: Set Halt
+        if ((command & 0x0004) != 0) currentStatus &= ~0x0002u;     // Command Bit 2: Clear Broke
+        if ((command & 0x0008) != 0) { /* TODO: */ }                // Command Bit 3: Clear Interrupt
+        if ((command & 0x0010) != 0) { /* TODO: */ }                // Command Bit 4: Set Interrupt
+        if ((command & 0x0020) != 0) currentStatus &= ~0x0020u;     // Command Bit 5: Clear Single Step Mode
+        if ((command & 0x0040) != 0) currentStatus |= 0x0020u;      // Command Bit 6: Set Single Step Mode
+        if ((command & 0x0080) != 0) currentStatus &= ~0x0040u;     // Command Bit 7: Clear Interrupt on Break
+        if ((command & 0x0100) != 0) currentStatus |= 0x0040u;      // Command Bit 8: Set Interrupt on Break
 
         // Writeback new status value
         _regs.Write((int)RspRegister.Status, currentStatus);
