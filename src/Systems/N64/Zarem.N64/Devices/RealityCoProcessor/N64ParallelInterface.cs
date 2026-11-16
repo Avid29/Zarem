@@ -21,7 +21,7 @@ public partial class N64ParallelInterface : N64DmaDeviceBase
     /// </summary>
     public N64ParallelInterface(PhysicalBus bus) : base(bus)
     {
-        _regs = new FlatMemoryStore(BusRangeBase);
+        _regs = new FlatMemoryStore(BusRangeSize);
     }
 
     /// <inheritdoc/>
