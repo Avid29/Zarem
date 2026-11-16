@@ -35,7 +35,7 @@ public class RealityCoProcessor : IBusDevice, IDXGraphicsDevice
             new N64AudioInterface(),
             new N64ParallelInterface(bus),
             new N64RamInterface(),
-            new N64SerialInterface(),
+            new N64SerialInterface(bus),
         ];
     }
 

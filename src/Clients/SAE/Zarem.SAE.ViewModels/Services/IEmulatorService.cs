@@ -31,6 +31,17 @@ public interface IEmulatorService
     void StopEmulator();
 
     /// <summary>
+    /// Prompts the user to select an N64 Cartridge file, and saves it in settings.
+    /// </summary>
+    /// <returns>The selected N64 Cartridge file path.</returns>
+    Task<string?> InsertCartridgeAsync();
+
+    /// <summary>
+    /// Clears the selected N64 Cartridge file in settings.
+    /// </summary>
+    void EjectCartridge();
+
+    /// <summary>
     /// Prompts the user to select a BIOS file, and saves it in settings.
     /// </summary>
     /// <returns>The selected BIOS file path.</returns>

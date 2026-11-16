@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using System.Buffers.Binary;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Devices.Interfaces;
@@ -15,11 +16,12 @@ namespace Zarem.N64.Devices;
 public unsafe class N64PeripheralInterface : IBusDeviceDirect
 {
 #pragma warning disable CS1591
-    public const ulong BusRangeBase = 0x1FC0_0000;
-    private const ulong RangeSize = 0x0800; // 2 KB total window
-    private const ulong RomSize = 0x7C0;      // 1984 bytes
-    private const ulong RamOffset = 0x7C0;
-    private const ulong RamSize = 0x40;       // 64 bytes
+    public const uint BusRangeBase = 0x1FC0_0000;
+    public const uint RangeSize = 0x0800; // 2 KB total window
+    public const uint RomSize = 0x7C0;      // 1984 bytes
+    public const uint RamOffset = 0x7C0;
+    public const uint RamSize = 0x40;       // 64 bytes
+    public const uint RamAbsoluteBase = BusRangeBase + RamOffset;
 #pragma warning restore CS1591
 
     private readonly FileBackedMemoryStore _romStore;
@@ -33,6 +35,10 @@ public unsafe class N64PeripheralInterface : IBusDeviceDirect
     {
         _romStore = new(bootRomPath, RomSize, MemoryMappedFileAccess.Read);
         _ramStore = new(RamSize);
+
+        // Initialize with CIC-6102 seed
+        // TODO: Dynamically inject the seed based on the title
+        InitializeCicSeed(0x00003F3F);
     }
 
     /// <inheritdoc/>
@@ -94,5 +100,11 @@ public unsafe class N64PeripheralInterface : IBusDeviceDirect
     {
         _romStore.Dispose();
         _ramStore.Dispose();
+    }
+
+    private void InitializeCicSeed(uint seed)
+    {
+        Span<byte> ramSpan = new(_ramStore.GetPointer(0), (int)RamSize);
+        BinaryPrimitives.WriteUInt32BigEndian(ramSpan[0x24..], seed);
     }
 }

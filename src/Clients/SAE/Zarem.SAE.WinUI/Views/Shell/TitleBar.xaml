@@ -47,7 +47,7 @@
                 </MenuBarItem.KeyboardAccelerators>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/LoadCartridgeMFI"
-                    IsEnabled="False"
+                    Command="{x:Bind ViewModel.InsertCartridgeCommand, Mode=OneWay}"
                     Text="Load Cartridge">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE896;" />
@@ -55,7 +55,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/EjectCartridgeMFI"
-                    IsEnabled="False"
+                    Command="{x:Bind ViewModel.EjectCartridgeCommand, Mode=OneWay}"
                     Text="Eject Cartridge">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xF847;" />

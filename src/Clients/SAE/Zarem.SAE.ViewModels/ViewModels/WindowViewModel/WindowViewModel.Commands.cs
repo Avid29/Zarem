@@ -11,22 +11,20 @@ public partial class WindowViewModel
     #region File
 
     [RelayCommand]
-    private async Task ConfigureBIOS()
-    {
-        // TODO: Move to emulation service or something more centralized.
-        var biosRom = await _fileSystemService.PickFileAsync([".bin", ".rom"]);
-        if (biosRom is null)
-            return;
+    private async Task InsertCartridgeAsync() => await _emulatorService.InsertCartridgeAsync();
 
-        _settingsService.Local.SetValue(SettingsKeys.BiosRomPath, biosRom?.Path);
-    }
+    [RelayCommand]
+    private void EjectCartridge() => _emulatorService.EjectCartridge();
+
+    [RelayCommand]
+    private async Task ConfigureBIOSAsync() => await _emulatorService.ConfigureBiosAsync();
 
     #endregion
 
     #region Execution
 
     [RelayCommand]
-    private async Task TogglePower()
+    private async Task TogglePowerAsync()
     {
         switch (_emulatorService.State)
         {

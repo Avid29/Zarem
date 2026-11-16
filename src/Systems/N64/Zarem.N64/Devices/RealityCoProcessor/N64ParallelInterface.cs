@@ -5,7 +5,7 @@ using System.Buffers.Binary;
 using Zarem.Emulator.Devices.MemoryBacking;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Machine.Memory;
-using Zarem.N64.Devices.RealityCoProcessor.Enums;
+using Zarem.N64.Devices.RealityCoProcessor.Enums.Registers;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
@@ -21,7 +21,7 @@ public partial class N64ParallelInterface : N64DmaDeviceBase
     /// </summary>
     public N64ParallelInterface(PhysicalBus bus) : base(bus)
     {
-        _regs = new FlatMemoryStore(BusRangeBase);
+        _regs = new FlatMemoryStore(BusRangeSize);
     }
 
     /// <inheritdoc/>

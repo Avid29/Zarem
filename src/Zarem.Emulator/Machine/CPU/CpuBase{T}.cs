@@ -57,7 +57,15 @@ public abstract class CpuBase<T> : ICpu
         {
             field = value;
 #if DEBUG
-            Debug.WriteLine($"Speed: {value / 1_000_000:F2} MHz");
+            var speedText = value switch
+            {
+                < 1_000 => $"{value:F2} Hz",
+                < 1_000_000 => $"{value / 1_000 :F2} KHz",
+                < 1_000_000_000 => $"{value / 1_000_000:F2} MHz",
+                _ => $"{value / 1_000_000_000:F2} GHz"
+            };
+
+            Debug.WriteLine($"Speed: {speedText}");
 #endif
         }
     }
