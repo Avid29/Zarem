@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="200" align="center" src="https://github.com/user-attachments/assets/fecd6c5f-0afd-4e37-a46a-5335dbc38b21"/>
+  <img height="200" align="center" src="https://github.com/user-attachments/assets/5cefe164-a038-4fd9-91ec-158baf586ca5"/>
 </p>
 <a href="https://apps.microsoft.com/detail/9ng185jd1rfd?referrer=appbadge&mode=full" target="_blank"  rel="noopener noreferrer">
 	<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200"/>
@@ -27,7 +27,7 @@ This project is in its pre-release stages. Project file formats, emulator behavi
 # Assembly/Emulation Architectures
 
 | Architecture | Assembling | Emulation (Interpret) | Emulation (JIT) | Debugging | Disassembly | Static Analysis |
-| :--- | :--- | :--- |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | [MIPS](https://github.com/Avid29/Zarem/wiki/MIPS) | ✅ Supported | ✅ Supported | ⚠️ WIP | ✅ Supported | ⚠️ WIP | ⌛ Planned |
 | [RISC-V](https://github.com/Avid29/Zarem/wiki/RISC%E2%80%90V) | ✅ Supported | ✅ Supported | ⚠️ WIP | ✅ Supported | ⌛ Planned | ⌛ Planned |
 | ARM | ⌛ Planned | ⌛ Planned | ⌛ Planned | ⌛ Planned | ⌛ Planned | ⌛ Planned |
@@ -48,8 +48,8 @@ This project is in its pre-release stages. Project file formats, emulator behavi
 
 The Zarem IDE is a WinUI 3 project, and therefore only available on Windows. **However**, the Assembler and Emulator are made in .NET with no windows only dependendencies, and therefore available on any machine with the .NET runtime.
 
-| | Assembler | Emulator | CLI | IDE | Cross Assembling |
-| :--- | :--- | :--- |
+| Platform | Assembler | Emulator | CLI | IDE | Cross Assembling |
+| :--- | :--- | :--- | :--- | :--- | :--- |
 | Windows | ✅ Yes | ✅ Yes | ⚠️ WIP | ✅ Native WinUI | ⌛ Planned |
 | MacOS   | ✅ Yes | ✅ Yes | ⚠️ WIP | ⚠️ WIP Uno Platform | ⌛ Planned |
 | Linux   | ✅ Yes | ✅ Yes | ⚠️ WIP | ⚠️ WIP Uno Platform | ⌛ Planned |
