@@ -12,7 +12,7 @@
   <Identity
     Name="38062AvishaiDernis.ZaremSAE"
     Publisher="CN=43D24869-0557-46C9-8B30-13C6ACFDB86B"
-    Version="1.0.0.0" />
+    Version="0.1.61117.0" />
 
   <mp:PhoneIdentity PhoneProductId="3888fb46-55eb-4ffc-974d-9198f524751d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
