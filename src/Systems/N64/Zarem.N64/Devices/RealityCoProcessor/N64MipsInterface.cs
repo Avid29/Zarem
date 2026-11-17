@@ -4,6 +4,7 @@ using Zarem.Emulator.Devices.MemoryBacking;
 using Zarem.Emulator.Extensions;
 using Zarem.N64.Devices.RealityCoProcessor.Abstract;
 using Zarem.N64.Models.Enums.Registers;
+using Zarem.N64.Models.MipsInterface;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
@@ -44,29 +45,70 @@ public class N64MipsInterface : N64RegisterDeviceBase<MiRegister>
         switch (register)
         {
             case MiRegister.Mode:
-                HandleModeWrite(value);
+                HandleModeWrite((ModeCommand)value);
                 break;
 
             case MiRegister.InterruptMask:
-                HandleInterruptMaskWrite(value);
+                HandleInterruptMaskWrite((N64InterruptCommand)value);
                 break;
         }
     }
 
-    private void HandleModeWrite(uint value)
+    private void HandleModeWrite(ModeCommand command)
     {
-        // MI_MODE_REG bit operations (e.g., setting/clearing init mode, EBRAM size, etc.)
-        // Bit 7: clear init mode, Bit 8: set init mode, etc.
-        uint currentMode = Registers.Read<uint>((ulong)MiRegister.Mode);
+        var mode = (Mode)Registers.Read<uint>((ulong)MiRegister.Mode);
 
-        // Apply bit modifications per N64 hardware specs if needed
-        Registers.Write((ulong)MiRegister.Mode, value);
+        // Update repeat
+        if (command.ClearRepeat) mode.Repeat = false;
+        if (command.SetRepeat)
+        {
+            mode.Repeat = true;
+            mode.RepeatCount = command.RepeatCount;
+        }
+
+        // Update EBus
+        if (command.ClearEBus) mode.EBus = false;
+        if (command.SetEBus) mode.EBus = true;
+
+        //if (command.ClearDP) TODO: What?
+
+        // Update Upper
+        if (command.ClearUpper) mode.Upper = false;
+        if (command.SetUpper) mode.Upper = true;
+
+        // Writeback
+        Registers.Write((ulong)MiRegister.Mode, (uint)mode);
     }
 
-    private void HandleInterruptMaskWrite(uint value)
+    private void HandleInterruptMaskWrite(N64InterruptCommand command)
     {
-        // MI_INTR_MASK_REG handles setting and clearing mask bits via individual bits
-        // Bits 0-5 set/clear masks for SP, SI, AI, VI, PI, DP interrupts
-        Registers.Write((ulong)MiRegister.InterruptMask, value);
+        var flags = (N64InterruptFlags)Registers.Read<uint>((ulong)MiRegister.Mode);
+
+        // Update RSP
+        if (command.HasFlag(N64InterruptCommand.ClearRealitySignalProcessor)) flags &= ~N64InterruptFlags.RealitySignalProcessor;
+        if (command.HasFlag(N64InterruptCommand.SetRealitySignalProcessor)) flags |= N64InterruptFlags.RealitySignalProcessor;
+
+        // Update SI
+        if (command.HasFlag(N64InterruptCommand.ClearSerialInterface)) flags &= ~N64InterruptFlags.SerialInterface;
+        if (command.HasFlag(N64InterruptCommand.SetSerialInterface)) flags |= N64InterruptFlags.SerialInterface;
+
+        // Update AI
+        if (command.HasFlag(N64InterruptCommand.ClearAudioInterace)) flags &= ~N64InterruptFlags.AudioInterace;
+        if (command.HasFlag(N64InterruptCommand.SetAudioInterace)) flags |= N64InterruptFlags.AudioInterace;
+
+        // Update VI
+        if (command.HasFlag(N64InterruptCommand.ClearVideoInterface)) flags &= ~N64InterruptFlags.VideoInterface;
+        if (command.HasFlag(N64InterruptCommand.SetVideoInterface)) flags |= N64InterruptFlags.VideoInterface;
+
+        // Update PI
+        if (command.HasFlag(N64InterruptCommand.ClearParallelInterface)) flags &= ~N64InterruptFlags.ParallelInterface;
+        if (command.HasFlag(N64InterruptCommand.SetParallelInterface)) flags |= N64InterruptFlags.ParallelInterface;
+
+        // Update RDP
+        if (command.HasFlag(N64InterruptCommand.ClearRealityDisplayProcessor)) flags &= ~N64InterruptFlags.RealityDisplayProcessor;
+        if (command.HasFlag(N64InterruptCommand.SetRealityDisplayProcessor)) flags |= N64InterruptFlags.RealityDisplayProcessor;
+
+        // Writeback
+        Registers.Write((ulong)MiRegister.InterruptMask, (uint)flags);
     }
 }
