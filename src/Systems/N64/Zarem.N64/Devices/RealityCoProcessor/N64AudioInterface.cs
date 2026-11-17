@@ -2,6 +2,7 @@
 
 using System;
 using Zarem.Emulator.Devices.MemoryBacking;
+using Zarem.N64.Devices.RealityCoProcessor.Abstract;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 

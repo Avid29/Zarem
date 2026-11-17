@@ -2,7 +2,7 @@
 
 using Zarem.Emulator.Devices.Interfaces;
 
-namespace Zarem.N64.Devices.RealityCoProcessor;
+namespace Zarem.N64.Devices.RealityCoProcessor.Abstract;
 
 /// <summary>
 /// An interface for a <see cref="RealityCoProcessor"/> child device.

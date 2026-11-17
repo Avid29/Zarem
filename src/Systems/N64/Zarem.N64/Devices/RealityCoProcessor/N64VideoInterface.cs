@@ -3,7 +3,8 @@
 using System;
 using System.Buffers.Binary;
 using Zarem.Emulator.Devices.MemoryBacking;
-using Zarem.N64.Devices.RealityCoProcessor.Enums.Registers;
+using Zarem.N64.Devices.RealityCoProcessor.Abstract;
+using Zarem.N64.Models.Enums.Registers;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
@@ -58,5 +59,4 @@ public class N64VideoInterface : IRealityCoProcessorDevice
 
     /// <inheritdoc/>
     public void Dispose() => _regs.Dispose();
-
 }

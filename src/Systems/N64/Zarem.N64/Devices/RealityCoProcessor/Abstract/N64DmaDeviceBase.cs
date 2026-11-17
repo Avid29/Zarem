@@ -4,7 +4,7 @@ using System;
 using System.Buffers;
 using Zarem.Emulator.Machine.Memory;
 
-namespace Zarem.N64.Devices.RealityCoProcessor;
+namespace Zarem.N64.Devices.RealityCoProcessor.Abstract;
 
 /// <summary>
 /// A base class for <see cref="IRealityCoProcessorDevice"/> classes with DMA features.

@@ -1,6 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-namespace Zarem.N64.Devices.RealityCoProcessor.Enums.Registers;
+using Zarem.N64.Devices.RealityCoProcessor;
+
+namespace Zarem.N64.Models.Enums.Registers;
 
 /// <summary>
 /// An enum for the fixed registers in the <see cref="N64AudioInterface"/>.

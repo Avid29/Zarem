@@ -5,6 +5,7 @@ using Silk.NET.DXGI;
 using System;
 using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Machine.Memory;
+using Zarem.N64.Devices.RealityCoProcessor.Abstract;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 

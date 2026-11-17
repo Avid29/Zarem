@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using Zarem.N64.Devices.RealityCoProcessor.Abstract;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
