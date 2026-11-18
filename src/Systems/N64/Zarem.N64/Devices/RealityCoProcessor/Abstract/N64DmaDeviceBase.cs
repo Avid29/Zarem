@@ -4,7 +4,7 @@ using System;
 using System.Buffers;
 using Zarem.Emulator.Machine.Memory;
 
-namespace Zarem.N64.Devices.RealityCoProcessor;
+namespace Zarem.N64.Devices.RealityCoProcessor.Abstract;
 
 /// <summary>
 /// A base class for <see cref="IRealityCoProcessorDevice"/> classes with DMA features.
@@ -70,6 +70,8 @@ public abstract class N64DmaDeviceBase : IRealityCoProcessorDevice
             (pooledArray = ArrayPool<byte>.Shared.Rent((int)transferLength)).AsSpan(0, (int)transferLength);
 
         // TODO - Optimization: Replace bus calls with direct use of devices and RDRAM instance
+        // NOTE: When implemeneted, an event will still need to be raised that the address was written
+        // in order to properly block swaps in JIT conditions.
 
         for (uint i = 0; i < count; i++)
         {

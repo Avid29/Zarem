@@ -1,62 +1,42 @@
 ﻿// Avishai Dernis 2026
 
-using System;
-using System.Buffers.Binary;
 using Zarem.Emulator.Devices.MemoryBacking;
-using Zarem.N64.Devices.RealityCoProcessor.Enums.Registers;
+using Zarem.N64.Devices.RealityCoProcessor.Abstract;
+using Zarem.N64.Models.Enums.Registers;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
 /// <summary>
 /// A sub-components of the <see cref="RealityCoProcessor"/> responsible for output and timing.
 /// </summary>
-public class N64VideoInterface : IRealityCoProcessorDevice
+public class N64VideoInterface : N64RegisterDeviceBase<ViRegister>
 {
-    private readonly FlatMemoryStore _regs;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="N64VideoInterface"/> class.
     /// </summary>
-    public N64VideoInterface()
+    public N64VideoInterface() : base(new FlatMemoryStore(0x40))
     {
-        _regs = new FlatMemoryStore(BusRangeSize);
     }
 
     /// <inheritdoc/>
-    public string Name => "N64 Video Interface (VI)";
+    public override string Name => "N64 Video Interface (VI)";
 
     /// <inheritdoc/>
-    public ulong BusRangeBase => 0x0440_0000;
+    public override ulong BusRangeBase => 0x0440_0000;
 
     /// <inheritdoc/>
-    public ulong BusRangeSize => 0x40;
+    public override ulong BusRangeSize => 0x40;
 
     /// <inheritdoc/>
-    public void Read(ulong offset, Span<byte> destination) => _regs.Read(offset, destination);
-
-    /// <inheritdoc/>
-    public void Write(ulong offset, ReadOnlySpan<byte> source)
+    protected override bool HasWriteSideEffects(ViRegister register, out bool directWrite)
     {
-        if (source.Length < 4)
-            return;
-
-        var register = (ViRegister)(uint)offset;
-        uint value = BinaryPrimitives.ReadUInt32BigEndian(source);
-
-        // Handle special register write side effects
-        switch (register)
-        {
-            // TODO: Handle VI Register write side-effects
-
-            default:
-                break;
-        }
-
-        // Perform standard storage write
-        _regs.Write(offset, source);
+        directWrite = true;
+        return false;
     }
 
     /// <inheritdoc/>
-    public void Dispose() => _regs.Dispose();
-
+    protected override void HandleWriteSideEffects(ViRegister register, uint value)
+    {
+        // TODO: Implement
+    }
 }

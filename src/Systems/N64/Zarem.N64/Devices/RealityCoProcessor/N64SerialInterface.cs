@@ -3,7 +3,8 @@
 using System;
 using System.Buffers.Binary;
 using Zarem.Emulator.Machine.Memory;
-using Zarem.N64.Devices.RealityCoProcessor.Enums.Registers;
+using Zarem.N64.Devices.RealityCoProcessor.Abstract;
+using Zarem.N64.Models.Enums.Registers;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
@@ -57,11 +58,11 @@ public class N64SerialInterface : N64DmaDeviceBase
                 _dramAddress = value & 0x00FF_FFFF;
                 break;
 
-            case SiRegister.PifAddrRd64b: // PIF-RAM -> RDRAM (write to DRAM is true)
+            case SiRegister.PifAddrRd64b: // PIF-RAM -> RDRAM
                 ExecuteDmaTransfer(_dramAddress, N64PeripheralInterface.RamAbsoluteBase, N64PeripheralInterface.RamSize, writeToDram: true);
                 break;
 
-            case SiRegister.PifAddrWr64b: // RDRAM -> PIF-RAM (write to DRAM is false)
+            case SiRegister.PifAddrWr64b: // RDRAM -> PIF-RAM
                 ExecuteDmaTransfer(_dramAddress, N64PeripheralInterface.RamAbsoluteBase, N64PeripheralInterface.RamSize, writeToDram: false);
                 break;
 

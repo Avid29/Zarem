@@ -1,38 +1,31 @@
 ﻿// Avishai Dernis 2026
 
-using System;
+using Zarem.Emulator.Devices.MemoryBacking;
+using Zarem.N64.Devices.RealityCoProcessor.Abstract;
+using Zarem.N64.Models.Enums.Registers;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
 /// <summary>
 /// A sub-components of the <see cref="RealityCoProcessor"/> responsible for ...
 /// </summary>
-public class N64RamInterface : IRealityCoProcessorDevice
+public class N64RamInterface : N64RegisterDeviceBase<RiRegister>
 {
-    /// <inheritdoc/>
-    public string Name => "N64 RAM Interface (RI)";
-
-    /// <inheritdoc/>
-    public ulong BusRangeBase => 0x0470_0000;
-
-    /// <inheritdoc/>
-    public ulong BusRangeSize => 0x1D;
-
-    /// <inheritdoc/>
-    public void Read(ulong offset, Span<byte> destination)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="N64RamInterface"/> class.
+    /// </summary>
+    public N64RamInterface() : base(new FlatMemoryStore(0x20))
     {
-        throw new NotImplementedException();
+        // Initialize standard default configuration values for RDRAM/RI registers if required
+        // e.g., default latency or mode settings
     }
 
     /// <inheritdoc/>
-    public void Write(ulong offset, ReadOnlySpan<byte> source)
-    {
-        throw new NotImplementedException();
-    }
+    public override string Name => "N64 RAM Interface (RI)";
 
     /// <inheritdoc/>
-    public void Dispose()
-    {
-        throw new NotImplementedException();
-    }
+    public override ulong BusRangeBase => 0x0470_0000;
+
+    /// <inheritdoc/>
+    public override ulong BusRangeSize => 0x20;
 }
