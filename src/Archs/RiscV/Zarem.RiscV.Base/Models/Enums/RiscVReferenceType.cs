@@ -5,7 +5,7 @@ using Zarem.Attributes;
 namespace Zarem.RiscV.Models.Enums;
 
 /// <summary>
-/// An enum for RISC-V relocation and reference types.
+/// An enum for RISC-V reference types.
 /// </summary>
 public enum RiscVReferenceType : uint
 {

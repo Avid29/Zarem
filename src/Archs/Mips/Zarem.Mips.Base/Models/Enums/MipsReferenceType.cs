@@ -5,7 +5,7 @@ using Zarem.Attributes;
 namespace Zarem.Mips.Models.Enums;
 
 /// <summary>
-/// An enum for the type of references and relocations.
+/// An enum for MIPS reference types.
 /// </summary>
 public enum MipsReferenceType : uint
 {

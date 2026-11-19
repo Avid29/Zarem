@@ -5,7 +5,7 @@ using Zarem.Attributes.Register;
 namespace Zarem.Mips.Models.Instructions.Enums.Registers;
 
 /// <summary>
-/// An enum for register sets.
+/// An enum for MIPS register sets.
 /// </summary>
 public enum MipsRegisterSet
 {

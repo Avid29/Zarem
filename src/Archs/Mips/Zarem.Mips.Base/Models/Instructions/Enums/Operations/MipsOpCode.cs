@@ -5,7 +5,7 @@ using Zarem.Mips.Models.Instructions.Enums.Functions;
 namespace Zarem.Mips.Models.Instructions.Enums.Operations;
 
 /// <summary>
-/// An enum for instruction op codes.
+/// An enum for MIPS instruction op codes.
 /// </summary>
 public enum MipsOpCode : byte
 {

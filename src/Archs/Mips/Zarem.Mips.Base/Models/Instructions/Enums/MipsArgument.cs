@@ -8,7 +8,7 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 namespace Zarem.Mips.Models.Instructions.Enums;
 
 /// <summary>
-/// An enum for argument types.
+/// An enum for MIPS argument types.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MipsArgument
