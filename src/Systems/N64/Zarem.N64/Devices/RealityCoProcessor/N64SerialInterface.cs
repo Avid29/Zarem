@@ -5,6 +5,7 @@ using System.Buffers.Binary;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.N64.Devices.RealityCoProcessor.Abstract;
 using Zarem.N64.Models.Enums.Registers;
+using Zarem.N64.Models.SerialInterface;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
@@ -14,7 +15,7 @@ namespace Zarem.N64.Devices.RealityCoProcessor;
 public class N64SerialInterface : N64DmaDeviceBase
 {
     private uint _dramAddress;
-    private uint _status;
+    private Status _status;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="N64SerialInterface"/> class.
@@ -39,7 +40,7 @@ public class N64SerialInterface : N64DmaDeviceBase
         uint value = register switch
         {
             SiRegister.DramAddress => _dramAddress,
-            SiRegister.Status => _status,
+            SiRegister.Status => (uint)_status,
             _ => 0,
         };
 
@@ -67,7 +68,7 @@ public class N64SerialInterface : N64DmaDeviceBase
                 break;
 
             case SiRegister.Status:
-                _status &= ~2u;
+                _status.IOBusy = false;
                 break;
         }
     }
@@ -80,13 +81,6 @@ public class N64SerialInterface : N64DmaDeviceBase
     /// <inheritdoc/>
     protected override void SetBusyState(bool busy)
     {
-        if (busy)
-        {
-            _status |= 0x1; // Set DMA busy bit
-        }
-        else
-        {
-            _status &= ~0x1u; // Clear DMA busy bit
-        }
+        _status.DmaBusy = busy;
     }
 }

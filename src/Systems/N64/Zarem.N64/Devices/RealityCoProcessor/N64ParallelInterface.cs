@@ -7,6 +7,7 @@ using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.N64.Devices.RealityCoProcessor.Abstract;
 using Zarem.N64.Models.Enums.Registers;
+using Zarem.N64.Models.ParallelInterface;
 
 namespace Zarem.N64.Devices.RealityCoProcessor;
 
@@ -47,7 +48,7 @@ public partial class N64ParallelInterface : N64DmaDeviceBase
         {
             // Handle status register side effects
             case PiRegister.Status:
-                HandleStatusWrite(value);
+                HandleStatusWrite((StatusCommand)value);
                 break;
 
             // Initiate DMA transfer
@@ -69,19 +70,19 @@ public partial class N64ParallelInterface : N64DmaDeviceBase
     /// <inheritdoc/>
     protected override void SetBusyState(bool busy)
     {
-        uint status = _regs.Read<uint>((int)PiRegister.Status);
+        var status = (StatusFlags)_regs.Read<uint>((int)PiRegister.Status);
 
         if (busy)
         {
-            status |= 0x01;     // Set DMA Busy
+            status |= StatusFlags.Busy;     // Set DMA Busy
         }
         else
         {
-            status &= ~0x01U;   // Clear DMA busy
-            status |= 0x04U;    // Set PI interrupt flag
+            status &= ~StatusFlags.Busy;    // Clear DMA busy
+            status |= StatusFlags.DmaError; // Set PI interrupt
         }
 
-        _regs.Write((int)PiRegister.Status, status);
+        _regs.Write((int)PiRegister.Status, (uint)status);
     }
 
     private void ExcecuteDmaTransfer(uint length, bool writeToDram)
@@ -100,16 +101,16 @@ public partial class N64ParallelInterface : N64DmaDeviceBase
         _regs.Write((int)PiRegister.CartridgeAddress, cartridgeAddress + transferLength);
     }
 
-    private void HandleStatusWrite(uint value)
+    private void HandleStatusWrite(StatusCommand value)
     {
         // Fetch status value
-        uint currentStatus = _regs.Read<uint>((int)PiRegister.Status);
+        StatusFlags currentStatus = (StatusFlags)_regs.Read<uint>((int)PiRegister.Status);
 
         // Modify status value
-        if ((value & 0x1) != 0) currentStatus &= ~0x04U; // Clear PI interrupt
-        if ((value & 0x2) != 0) currentStatus = 0;      // Reset PI controller
+        if (value.HasFlag(StatusCommand.ClearInterrupt)) currentStatus &= ~StatusFlags.DmaError;    // Clear PI interrupt
+        if (value.HasFlag(StatusCommand.Reset)) currentStatus = 0;                                  // Reset PI controller
 
         // Writeback new status value
-        _regs.Write((int)PiRegister.Status, currentStatus);
+        _regs.Write((int)PiRegister.Status, (uint)currentStatus);
     }
 }

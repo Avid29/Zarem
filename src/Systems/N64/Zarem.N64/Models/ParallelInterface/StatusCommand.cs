@@ -12,7 +12,7 @@ namespace Zarem.N64.Models.ParallelInterface;
 public enum StatusCommand : uint
 {
 #pragma warning disable CS1591
-    Reset,
-    ClearInterrupt,
+    Reset = 0x1,
+    ClearInterrupt = 0x2,
 #pragma warning restore CS1591
 }
