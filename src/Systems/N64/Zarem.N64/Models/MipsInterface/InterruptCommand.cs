@@ -9,7 +9,7 @@ namespace Zarem.N64.Models.MipsInterface;
 /// An enum for parsing a command written to the <see cref="MiRegister.InterruptMask"/> register.
 /// </summary>
 [Flags]
-public enum N64InterruptCommand : uint
+public enum InterruptCommand : uint
 {
 #pragma warning disable CS1591
     ClearRealitySignalProcessor = 0x1,

@@ -39,10 +39,10 @@ public abstract class N64RegisterDeviceBase<T> : IRealityCoProcessorDevice
     protected FlatMemoryStore Registers { get; }
 
     /// <inheritdoc/>
-    public void Read(ulong offset, Span<byte> destination) => Registers.Read(offset, destination);
+    public virtual void Read(ulong offset, Span<byte> destination) => Registers.Read(offset, destination);
 
     /// <inheritdoc/>
-    public void Write(ulong offset, ReadOnlySpan<byte> source)
+    public virtual void Write(ulong offset, ReadOnlySpan<byte> source)
     {
         // Get register write behavior info
         var register = Unsafe.BitCast<ulong, T>(offset);

@@ -49,7 +49,7 @@ public class N64MipsInterface : N64RegisterDeviceBase<MiRegister>
                 break;
 
             case MiRegister.InterruptMask:
-                HandleInterruptMaskWrite((N64InterruptCommand)value);
+                HandleInterruptMaskWrite((InterruptCommand)value);
                 break;
         }
     }
@@ -80,33 +80,33 @@ public class N64MipsInterface : N64RegisterDeviceBase<MiRegister>
         Registers.Write((ulong)MiRegister.Mode, (uint)mode);
     }
 
-    private void HandleInterruptMaskWrite(N64InterruptCommand command)
+    private void HandleInterruptMaskWrite(InterruptCommand command)
     {
-        var flags = (N64InterruptFlags)Registers.Read<uint>((ulong)MiRegister.Mode);
+        var flags = (InterruptFlags)Registers.Read<uint>((ulong)MiRegister.Mode);
 
         // Update RSP
-        if (command.HasFlag(N64InterruptCommand.ClearRealitySignalProcessor)) flags &= ~N64InterruptFlags.RealitySignalProcessor;
-        if (command.HasFlag(N64InterruptCommand.SetRealitySignalProcessor)) flags |= N64InterruptFlags.RealitySignalProcessor;
+        if (command.HasFlag(InterruptCommand.ClearRealitySignalProcessor)) flags &= ~InterruptFlags.RealitySignalProcessor;
+        if (command.HasFlag(InterruptCommand.SetRealitySignalProcessor)) flags |= InterruptFlags.RealitySignalProcessor;
 
         // Update SI
-        if (command.HasFlag(N64InterruptCommand.ClearSerialInterface)) flags &= ~N64InterruptFlags.SerialInterface;
-        if (command.HasFlag(N64InterruptCommand.SetSerialInterface)) flags |= N64InterruptFlags.SerialInterface;
+        if (command.HasFlag(InterruptCommand.ClearSerialInterface)) flags &= ~InterruptFlags.SerialInterface;
+        if (command.HasFlag(InterruptCommand.SetSerialInterface)) flags |= InterruptFlags.SerialInterface;
 
         // Update AI
-        if (command.HasFlag(N64InterruptCommand.ClearAudioInterace)) flags &= ~N64InterruptFlags.AudioInterace;
-        if (command.HasFlag(N64InterruptCommand.SetAudioInterace)) flags |= N64InterruptFlags.AudioInterace;
+        if (command.HasFlag(InterruptCommand.ClearAudioInterace)) flags &= ~InterruptFlags.AudioInterace;
+        if (command.HasFlag(InterruptCommand.SetAudioInterace)) flags |= InterruptFlags.AudioInterace;
 
         // Update VI
-        if (command.HasFlag(N64InterruptCommand.ClearVideoInterface)) flags &= ~N64InterruptFlags.VideoInterface;
-        if (command.HasFlag(N64InterruptCommand.SetVideoInterface)) flags |= N64InterruptFlags.VideoInterface;
+        if (command.HasFlag(InterruptCommand.ClearVideoInterface)) flags &= ~InterruptFlags.VideoInterface;
+        if (command.HasFlag(InterruptCommand.SetVideoInterface)) flags |= InterruptFlags.VideoInterface;
 
         // Update PI
-        if (command.HasFlag(N64InterruptCommand.ClearParallelInterface)) flags &= ~N64InterruptFlags.ParallelInterface;
-        if (command.HasFlag(N64InterruptCommand.SetParallelInterface)) flags |= N64InterruptFlags.ParallelInterface;
+        if (command.HasFlag(InterruptCommand.ClearParallelInterface)) flags &= ~InterruptFlags.ParallelInterface;
+        if (command.HasFlag(InterruptCommand.SetParallelInterface)) flags |= InterruptFlags.ParallelInterface;
 
         // Update RDP
-        if (command.HasFlag(N64InterruptCommand.ClearRealityDisplayProcessor)) flags &= ~N64InterruptFlags.RealityDisplayProcessor;
-        if (command.HasFlag(N64InterruptCommand.SetRealityDisplayProcessor)) flags |= N64InterruptFlags.RealityDisplayProcessor;
+        if (command.HasFlag(InterruptCommand.ClearRealityDisplayProcessor)) flags &= ~InterruptFlags.RealityDisplayProcessor;
+        if (command.HasFlag(InterruptCommand.SetRealityDisplayProcessor)) flags |= InterruptFlags.RealityDisplayProcessor;
 
         // Writeback
         Registers.Write((ulong)MiRegister.InterruptMask, (uint)flags);

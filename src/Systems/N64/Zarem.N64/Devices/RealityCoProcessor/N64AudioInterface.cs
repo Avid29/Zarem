@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using Zarem.Emulator.Devices.MemoryBacking;
 using Zarem.N64.Devices.RealityCoProcessor.Abstract;
 using Zarem.N64.Models.Enums.Registers;
@@ -26,4 +27,18 @@ public class N64AudioInterface : N64RegisterDeviceBase<AiRegister>
 
     /// <inheritdoc/>
     public override ulong BusRangeSize => 0x20;
+
+    /// <inheritdoc/>
+    public override void Read(ulong offset, Span<byte> destination)
+    {
+        if ((AiRegister)offset is AiRegister.Status)
+        {
+            // TODO: Handle status reads
+        }
+
+        // All other registers mirror AI_LENGTH
+        Registers.Read((ulong)AiRegister.Length, destination);
+    }
+
+    // TODO: Handle overwriting writes
 }

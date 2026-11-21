@@ -9,7 +9,7 @@ namespace Zarem.N64.Models.MipsInterface;
 /// An enum for parsing the <see cref="MiRegister.Interrupt"/> or <see cref="MiRegister.InterruptMask"/> register.
 /// </summary>
 [Flags]
-public enum N64InterruptFlags : uint
+public enum InterruptFlags : uint
 {
 #pragma warning disable CS1591
     RealitySignalProcessor = 0x1,
