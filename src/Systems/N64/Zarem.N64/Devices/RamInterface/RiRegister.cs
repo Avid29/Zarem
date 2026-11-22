@@ -64,10 +64,10 @@ public enum RiRegister
     Error = 0x18,
 
     /// <summary>
-    /// RDRAM error log register.
+    /// RDRAM bank status.
     /// </summary>
     /// <remarks>
-    /// RI_WERROR_REG
+    /// RI_BANK_STATUS or RI_WERROR
     /// </remarks>
-    ErrorLog = 0x1C,
+    BankStatus = 0x1C,
 }
