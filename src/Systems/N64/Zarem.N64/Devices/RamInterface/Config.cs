@@ -25,7 +25,7 @@ public struct Config
     public byte CurrentControl
     {
         readonly get => (byte)BitField.GetField(_value, CurrentControlSize, CurrentControlOffset);
-        set => BitField.SetField(ref _value, CurrentControlSize, CurrentControlOffset, (byte)(value - 1));
+        set => BitField.SetField(ref _value, CurrentControlSize, CurrentControlOffset, value);
     }
 
     /// <summary>

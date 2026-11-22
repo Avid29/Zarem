@@ -14,9 +14,9 @@ namespace Zarem.N64.Devices.RamInterface;
 public struct BankStatus
 {
     private const int BankValidOffset = 0;
-    private const int BankValidSize = 7;
+    private const int BankValidSize = 8;
     private const int BankDirtyOffset = 8;
-    private const int BankDirtySize = 7;
+    private const int BankDirtySize = 8;
 
     private uint _value;
 
@@ -29,7 +29,7 @@ public struct BankStatus
     public BankFlags BankValid
     {
         readonly get => (BankFlags)BitField.GetField(_value, BankValidSize, BankValidOffset);
-        set => BitField.SetField(ref _value, BankValidSize, BankValidOffset, (byte)(value - 1));
+        set => BitField.SetField(ref _value, BankValidSize, BankValidOffset, (byte)value);
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public struct BankStatus
     public BankFlags BankDirty
     {
         readonly get => (BankFlags)BitField.GetField(_value, BankDirtySize, BankDirtyOffset);
-        set => BitField.SetField(ref _value, BankDirtySize, BankDirtyOffset, (byte)(value - 1));
+        set => BitField.SetField(ref _value, BankDirtySize, BankDirtyOffset, (byte)value);
     }
 
     /// <summary>

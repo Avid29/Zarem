@@ -29,7 +29,7 @@ public struct Mode
     public OpMode OpMode
     {
         readonly get => (OpMode)BitField.GetField(_value, OpModeSize, OpModeOffset);
-        set => BitField.SetField(ref _value, OpModeSize, OpModeOffset, (byte)(value - 1));
+        set => BitField.SetField(ref _value, OpModeSize, OpModeOffset, (byte)value);
     }
 
     /// <summary>
