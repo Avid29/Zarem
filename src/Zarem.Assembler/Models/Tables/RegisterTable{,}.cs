@@ -59,7 +59,7 @@ public static class RegisterTable<TRegister, TSet>
             var numStr = match.Groups.Count > 1 ? match.Groups[1].Value : match.Value;
             if (byte.TryParse(numStr, out var num))
             {
-                register = Unsafe.As<byte, TRegister>(ref num);
+                register = Unsafe.BitCast<byte, TRegister>(num);
                 indexed = true;
                 return true;
             }
@@ -187,7 +187,7 @@ public static class RegisterTable<TRegister, TSet>
                 continue;
 
             byte x = Convert.ToByte(rawValue);
-            table[attr.Alias] = Unsafe.As<byte, TRegister>(ref x);
+            table[attr.Alias] = Unsafe.BitCast<byte, TRegister>(x);
         }
 
         return table;

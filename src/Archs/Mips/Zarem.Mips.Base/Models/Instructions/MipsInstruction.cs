@@ -481,10 +481,10 @@ public unsafe struct MipsInstruction : IInstruction
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="MipsInstruction"/>.
     /// </summary>
-    public static explicit operator MipsInstruction(uint value) => Unsafe.As<uint, MipsInstruction>(ref value);
+    public static explicit operator MipsInstruction(uint value) => Unsafe.BitCast<uint, MipsInstruction>(value);
 
     /// <summary>
     /// Casts a <see cref="MipsInstruction"/> to a <see cref="uint"/>.
     /// </summary>
-    public static explicit operator uint(MipsInstruction value) => Unsafe.As<MipsInstruction, uint>(ref value);
+    public static explicit operator uint(MipsInstruction value) => Unsafe.BitCast<MipsInstruction, uint>(value);
 }

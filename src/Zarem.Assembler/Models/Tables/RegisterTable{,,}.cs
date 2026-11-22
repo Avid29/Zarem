@@ -74,7 +74,7 @@ public static class RegisterTable<TRegister, TSet, TCategory>
                 continue;
 
             byte x = Convert.ToByte(rawValue);
-            table[Unsafe.As<byte, TRegister>(ref x)] = attr.Category;
+            table[Unsafe.BitCast<byte, TRegister>(x)] = attr.Category;
         }
 
         return table;

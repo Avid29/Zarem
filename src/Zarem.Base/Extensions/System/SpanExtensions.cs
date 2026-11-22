@@ -56,11 +56,11 @@ public unsafe static class SpanExtensions
         // The CLR optimizes this into a single path based on the caller's 'T'
         if (sizeof(T) == 1)
         {
-            buffer[0] = Unsafe.As<T, byte>(ref value);
+            buffer[0] = Unsafe.BitCast<T, byte>(value);
         }
         else if (sizeof(T) == 2)
         {
-            ushort val = Unsafe.As<T, ushort>(ref value);
+            ushort val = Unsafe.BitCast<T, ushort>(value);
             if (BitConverter.IsLittleEndian)
                 BinaryPrimitives.WriteUInt16BigEndian(buffer, val);
             else
@@ -68,7 +68,7 @@ public unsafe static class SpanExtensions
         }
         else if (sizeof(T) == 4)
         {
-            uint val = Unsafe.As<T, uint>(ref value);
+            uint val = Unsafe.BitCast<T, uint>(value);
             if (BitConverter.IsLittleEndian)
                 BinaryPrimitives.WriteUInt32BigEndian(buffer, val);
             else
@@ -76,7 +76,7 @@ public unsafe static class SpanExtensions
         }
         else if (sizeof(T) == 8)
         {
-            ulong val = Unsafe.As<T, ulong>(ref value);
+            ulong val = Unsafe.BitCast<T, ulong>(value);
             if (BitConverter.IsLittleEndian)
                 BinaryPrimitives.WriteUInt64BigEndian(buffer, val);
             else
@@ -136,23 +136,23 @@ public unsafe static class SpanExtensions
         if (sizeof(T) == 2)
         {
             // Reinterprets the bytes of T as a ushort without boxing or conversion logic.
-            ushort val = Unsafe.As<T, ushort>(ref value);
+            ushort val = Unsafe.BitCast<T, ushort>(value);
             ushort swapped = BinaryPrimitives.ReverseEndianness(val);
-            return Unsafe.As<ushort, T>(ref swapped);
+            return Unsafe.BitCast<ushort, T>(swapped);
         }
 
         if (sizeof(T) == 4)
         {
-            uint val = Unsafe.As<T, uint>(ref value);
+            uint val = Unsafe.BitCast<T, uint>(value);
             uint swapped = BinaryPrimitives.ReverseEndianness(val);
-            return Unsafe.As<uint, T>(ref swapped);
+            return Unsafe.BitCast<uint, T>(swapped);
         }
 
         if (sizeof(T) == 8)
         {
-            ulong val = Unsafe.As<T, ulong>(ref value);
+            ulong val = Unsafe.BitCast<T, ulong>(value);
             ulong swapped = BinaryPrimitives.ReverseEndianness(val);
-            return Unsafe.As<ulong, T>(ref swapped);
+            return Unsafe.BitCast<ulong, T>(swapped);
         }
 
         throw new NotSupportedException($"Size {sizeof(T)} not supported for endianness swap.");

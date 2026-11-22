@@ -190,23 +190,23 @@ public unsafe class PhysicalBus : IMemoryAccessor
         if (sizeof(T) == 2)
         {
             // Reinterprets the bytes of T as a ushort without boxing or conversion logic.
-            ushort val = Unsafe.As<T, ushort>(ref value);
+            ushort val = Unsafe.BitCast<T, ushort>(value);
             ushort swapped = BinaryPrimitives.ReverseEndianness(val);
-            return Unsafe.As<ushort, T>(ref swapped);
+            return Unsafe.BitCast<ushort, T>(swapped);
         }
 
         if (sizeof(T) == 4)
         {
-            uint val = Unsafe.As<T, uint>(ref value);
+            uint val = Unsafe.BitCast<T, uint>(value);
             uint swapped = BinaryPrimitives.ReverseEndianness(val);
-            return Unsafe.As<uint, T>(ref swapped);
+            return Unsafe.BitCast<uint, T>(swapped);
         }
 
         if (sizeof(T) == 8)
         {
-            ulong val = Unsafe.As<T, ulong>(ref value);
+            ulong val = Unsafe.BitCast<T, ulong>(value);
             ulong swapped = BinaryPrimitives.ReverseEndianness(val);
-            return Unsafe.As<ulong, T>(ref swapped);
+            return Unsafe.BitCast<ulong, T>(swapped);
         }
 
         throw new NotSupportedException($"Size {sizeof(T)} not supported for endianness swap.");
