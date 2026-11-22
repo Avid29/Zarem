@@ -350,10 +350,10 @@ public unsafe struct RiscVInstruction : IInstruction
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="RiscVInstruction"/>.
     /// </summary>
-    public static explicit operator RiscVInstruction(uint value) => Unsafe.As<uint, RiscVInstruction>(ref value);
+    public static explicit operator RiscVInstruction(uint value) => Unsafe.BitCast<uint, RiscVInstruction>(value);
 
     /// <summary>
     /// Casts a <see cref="RiscVInstruction"/> to a <see cref="uint"/>.
     /// </summary>
-    public static explicit operator uint(RiscVInstruction value) => Unsafe.As<RiscVInstruction, uint>(ref value);
+    public static explicit operator uint(RiscVInstruction value) => Unsafe.BitCast<RiscVInstruction, uint>(value);
 }

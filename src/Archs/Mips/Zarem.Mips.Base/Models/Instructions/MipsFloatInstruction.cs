@@ -191,20 +191,20 @@ public unsafe struct MipsFloatInstruction : IInstruction
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="MipsFloatInstruction"/>.
     /// </summary>
-    public static explicit operator MipsFloatInstruction(uint value) => Unsafe.As<uint, MipsFloatInstruction>(ref value);
+    public static explicit operator MipsFloatInstruction(uint value) => Unsafe.BitCast<uint, MipsFloatInstruction>(value);
 
     /// <summary>
     /// Casts a <see cref="MipsFloatInstruction"/> to a <see cref="uint"/>.
     /// </summary>
-    public static explicit operator uint(MipsFloatInstruction value) => Unsafe.As<MipsFloatInstruction, uint>(ref value);
+    public static explicit operator uint(MipsFloatInstruction value) => Unsafe.BitCast<MipsFloatInstruction, uint>(value);
 
     /// <summary>
     /// Casts an <see cref="MipsInstruction"/> to a <see cref="MipsFloatInstruction"/>.
     /// </summary>
-    public static implicit operator MipsFloatInstruction(MipsInstruction value) => Unsafe.As<MipsInstruction, MipsFloatInstruction>(ref value);
+    public static implicit operator MipsFloatInstruction(MipsInstruction value) => Unsafe.BitCast<MipsInstruction, MipsFloatInstruction>(value);
 
     /// <summary>
     /// Casts a <see cref="MipsFloatInstruction"/> to a <see cref="MipsInstruction"/>.
     /// </summary>
-    public static implicit operator MipsInstruction(MipsFloatInstruction value) => Unsafe.As<MipsFloatInstruction, MipsInstruction>(ref value);
+    public static implicit operator MipsInstruction(MipsFloatInstruction value) => Unsafe.BitCast<MipsFloatInstruction, MipsInstruction>(value);
 }

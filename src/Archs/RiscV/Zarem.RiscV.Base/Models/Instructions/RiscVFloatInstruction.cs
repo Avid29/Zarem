@@ -190,20 +190,20 @@ public struct RiscVFloatInstruction : IInstruction
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="RiscVFloatInstruction"/>.
     /// </summary>
-    public static explicit operator RiscVFloatInstruction(uint value) => Unsafe.As<uint, RiscVFloatInstruction>(ref value);
+    public static explicit operator RiscVFloatInstruction(uint value) => Unsafe.BitCast<uint, RiscVFloatInstruction>(value);
 
     /// <summary>
     /// Casts a <see cref="RiscVFloatInstruction"/> to a <see cref="uint"/>.
     /// </summary>
-    public static explicit operator uint(RiscVFloatInstruction value) => Unsafe.As<RiscVFloatInstruction, uint>(ref value);
+    public static explicit operator uint(RiscVFloatInstruction value) => Unsafe.BitCast<RiscVFloatInstruction, uint>(value);
 
     /// <summary>
     /// Casts an <see cref="RiscVInstruction"/> to a <see cref="RiscVFloatInstruction"/>.
     /// </summary>
-    public static implicit operator RiscVFloatInstruction(RiscVInstruction value) => Unsafe.As<RiscVInstruction, RiscVFloatInstruction>(ref value);
+    public static implicit operator RiscVFloatInstruction(RiscVInstruction value) => Unsafe.BitCast<RiscVInstruction, RiscVFloatInstruction>(value);
 
     /// <summary>
     /// Casts a <see cref="RiscVFloatInstruction"/> to a <see cref="RiscVInstruction"/>.
     /// </summary>
-    public static implicit operator RiscVInstruction(RiscVFloatInstruction value) => Unsafe.As<RiscVFloatInstruction, RiscVInstruction>(ref value);
+    public static implicit operator RiscVInstruction(RiscVFloatInstruction value) => Unsafe.BitCast<RiscVFloatInstruction, RiscVInstruction>(value);
 }

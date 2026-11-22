@@ -66,10 +66,10 @@ public struct CauseRegister
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="CauseRegister"/>.
     /// </summary>
-    public static explicit operator CauseRegister(uint value) => Unsafe.As<uint, CauseRegister>(ref value);
+    public static explicit operator CauseRegister(uint value) => Unsafe.BitCast<uint, CauseRegister>(value);
 
     /// <summary>
     /// Casts a <see cref="CauseRegister"/> to a <see cref="uint"/>.
     /// </summary>
-    public static explicit operator uint(CauseRegister value) => Unsafe.As<CauseRegister, uint>(ref value);
+    public static explicit operator uint(CauseRegister value) => Unsafe.BitCast<CauseRegister, uint>(value);
 }

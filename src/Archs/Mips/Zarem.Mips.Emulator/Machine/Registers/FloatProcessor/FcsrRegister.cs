@@ -99,10 +99,10 @@ public struct FcsrRegister
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="FcsrRegister"/>.
     /// </summary>
-    public static explicit operator FcsrRegister(uint value) => Unsafe.As<uint, FcsrRegister>(ref value);
+    public static explicit operator FcsrRegister(uint value) => Unsafe.BitCast<uint, FcsrRegister>(value);
 
     /// <summary>
     /// Casts a <see cref="FcsrRegister"/> to a <see cref="uint"/>.
     /// </summary>
-    public static explicit operator uint(FcsrRegister value) => Unsafe.As<FcsrRegister, uint>(ref value);
+    public static explicit operator uint(FcsrRegister value) => Unsafe.BitCast<FcsrRegister, uint>(value);
 }

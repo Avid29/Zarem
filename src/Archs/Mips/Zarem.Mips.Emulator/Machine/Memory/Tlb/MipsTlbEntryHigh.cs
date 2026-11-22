@@ -83,10 +83,10 @@ public unsafe struct MipsTlbEntryHigh<T>
     /// <summary>
     /// Casts a <see cref="MipsTlbEntryHigh{T}"/> to a <typeparamref name="T"/>.
     /// </summary>
-    public static implicit operator T(MipsTlbEntryHigh<T> value) => Unsafe.As<MipsTlbEntryHigh<T>, T>(ref value);
+    public static implicit operator T(MipsTlbEntryHigh<T> value) => Unsafe.BitCast<MipsTlbEntryHigh<T>, T>(value);
 
     /// <summary>
     /// Casts a <typeparamref name="T"/> to a <see cref="MipsTlbEntryHigh{T}"/>.
     /// </summary>
-    public static explicit operator MipsTlbEntryHigh<T>(T value) => Unsafe.As<T, MipsTlbEntryHigh<T>>(ref value);
+    public static explicit operator MipsTlbEntryHigh<T>(T value) => Unsafe.BitCast<T, MipsTlbEntryHigh<T>>(value);
 }

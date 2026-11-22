@@ -473,12 +473,12 @@ public struct RiscVCompressedInstruction : IInstruction
     /// <summary>
     /// Casts a <see cref="ushort"/> to a <see cref="RiscVCompressedInstruction"/>.
     /// </summary>
-    public static explicit operator RiscVCompressedInstruction(ushort value) => Unsafe.As<ushort, RiscVCompressedInstruction>(ref value);
+    public static explicit operator RiscVCompressedInstruction(ushort value) => Unsafe.BitCast<ushort, RiscVCompressedInstruction>(value);
 
     /// <summary>
     /// Casts a <see cref="RiscVCompressedInstruction"/> to a <see cref="ushort"/>.
     /// </summary>
-    public static explicit operator ushort(RiscVCompressedInstruction value) => Unsafe.As<RiscVCompressedInstruction, ushort>(ref value);
+    public static explicit operator ushort(RiscVCompressedInstruction value) => Unsafe.BitCast<RiscVCompressedInstruction, ushort>(value);
 
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="RiscVCompressedInstruction"/>.

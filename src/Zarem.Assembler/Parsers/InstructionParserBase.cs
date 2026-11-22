@@ -287,7 +287,7 @@ public abstract class InstructionParserBase<TInstruction, TMeta, TArg, TRegister
             // Create reference entry or adjust immediate
             if (expResult.IsSymbolic)
             {
-                _references.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, Unsafe.As<TRef, uint>(ref type), default));
+                _references.Add(new RelocationEntry(expResult.Symbol.Name, CurrentAddress, Unsafe.BitCast<TRef, uint>(type), default));
             }
             else
             {

@@ -256,20 +256,20 @@ public unsafe partial struct CoProc0Instruction : IInstruction
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="CoProc0Instruction"/>.
     /// </summary>
-    public static explicit operator CoProc0Instruction(uint value) => Unsafe.As<uint, CoProc0Instruction>(ref value);
+    public static explicit operator CoProc0Instruction(uint value) => Unsafe.BitCast<uint, CoProc0Instruction>(value);
 
     /// <summary>
     /// Casts a <see cref="CoProc0Instruction"/> to a <see cref="uint"/>.
     /// </summary>
-    public static explicit operator uint(CoProc0Instruction value) => Unsafe.As<CoProc0Instruction, uint>(ref value);
+    public static explicit operator uint(CoProc0Instruction value) => Unsafe.BitCast<CoProc0Instruction, uint>(value);
 
     /// <summary>
     /// Casts an <see cref="MipsInstruction"/> to a <see cref="CoProc0Instruction"/>.
     /// </summary>
-    public static implicit operator CoProc0Instruction(MipsInstruction value) => Unsafe.As<MipsInstruction, CoProc0Instruction>(ref value);
+    public static implicit operator CoProc0Instruction(MipsInstruction value) => Unsafe.BitCast<MipsInstruction, CoProc0Instruction>(value);
 
     /// <summary>
     /// Casts a <see cref="CoProc0Instruction"/> to a <see cref="MipsInstruction"/>.
     /// </summary>
-    public static implicit operator MipsInstruction(CoProc0Instruction value) => Unsafe.As<CoProc0Instruction, MipsInstruction>(ref value);
+    public static implicit operator MipsInstruction(CoProc0Instruction value) => Unsafe.BitCast<CoProc0Instruction, MipsInstruction>(value);
 }

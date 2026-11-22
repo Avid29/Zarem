@@ -110,10 +110,10 @@ public struct StatusRegister
     /// <summary>
     /// Casts a <see cref="uint"/> to a <see cref="StatusRegister"/>.
     /// </summary>
-    public static explicit operator StatusRegister(uint value) => Unsafe.As<uint, StatusRegister>(ref value);
+    public static explicit operator StatusRegister(uint value) => Unsafe.BitCast<uint, StatusRegister>(value);
 
     /// <summary>
     /// Casts a <see cref="StatusRegister"/> to a <see cref="uint"/>.
     /// </summary>
-    public static explicit operator uint(StatusRegister value) => Unsafe.As<StatusRegister, uint>(ref value);
+    public static explicit operator uint(StatusRegister value) => Unsafe.BitCast<StatusRegister, uint>(value);
 }
