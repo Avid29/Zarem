@@ -4,7 +4,6 @@ using Zarem.Emulator.Machine.CPU;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
-using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
@@ -26,24 +25,24 @@ public interface IMipsCpu : ICpu<IMipsCpu, MipsInstruction, MipsTrap>
     ulong? DelaySlot { get; }
 
     /// <summary>
-    /// Gets the floating-point processor unit.
-    /// </summary>
-    IFloatProcessor FloatProcessor { get; }
-
-    /// <summary>
-    /// Gets the coprocessor 0 unit of the computer system.
-    /// </summary>
-    ICoProcessor0 CoProcessor0 { get; }
-
-    /// <summary>
-    /// Gets the translation look-aside buffer.
-    /// </summary>
-    IMipsTlb Tlb { get; }
-
-    /// <summary>
     /// Gets or sets the value of a general-purpose register on the processor.
     /// </summary>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
     ulong this[MipsGpRegister reg] { get; set; }
+
+    /// <summary>
+    /// Gets an array of coprocessors for the MIPS CPU.
+    /// </summary>
+    ICoProcessor[] CoProcessors { get; }
+
+    /// <summary>
+    /// Gets the control coprocessor for the MIPS CPU.
+    /// </summary>
+    IControlCoProcessor? ControlCoProcessor { get; }
+
+    /// <summary>
+    /// Gets the floating-point coprocessor for the MIPS CPU.
+    /// </summary>
+    IFloatCoProcessor? FloatCoProcessor { get; }
 }

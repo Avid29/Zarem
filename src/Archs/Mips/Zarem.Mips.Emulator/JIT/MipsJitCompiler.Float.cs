@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using System;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
+using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
@@ -108,7 +109,7 @@ public unsafe partial class MipsJitCompiler<T, TFloat>
     {
         // In legacy mode, double precision floating point values are stored in two consecutive single precision registers.
         // We use paired registers when we are loading a double precision value (TFloatData is 64 bits) and we are in legacy mode.
-        bool legacyMode = sizeof(TFloat) == sizeof(uint) || !_cpu.CoProcessor0.FloatingPoint64BitMode;
+        bool legacyMode = sizeof(TFloat) == sizeof(uint) || !_cpu.ControlCoProcessor.FloatingPoint64BitMode;
         bool usePairedRegisters = sizeof(TFloatData) == sizeof(ulong) && legacyMode;
 
         if (usePairedRegisters)
@@ -148,7 +149,7 @@ public unsafe partial class MipsJitCompiler<T, TFloat>
     {
         // In legacy mode, double precision floating point values are stored in two consecutive single precision registers.
         // We use paired registers when we are loading a double precision value (TFloatData is 64 bits) and we are in legacy mode.
-        bool legacyMode = sizeof(TFloat) == sizeof(uint) || !_cpu.CoProcessor0.FloatingPoint64BitMode;
+        bool legacyMode = sizeof(TFloat) == sizeof(uint) || !_cpu.ControlCoProcessor.FloatingPoint64BitMode;
         bool usePairedRegisters = sizeof(TFloatData) == sizeof(ulong) && legacyMode;
 
         if (usePairedRegisters)
@@ -210,5 +211,5 @@ public unsafe partial class MipsJitCompiler<T, TFloat>
         }
     }
 
-    private void EmitLoadRegisterAddress(ILGenerator il, MipsFloatRegister register) => EmitLoadRegisterAddress(il, (int)register, _cpu.FloatProcessor.RegisterFile.Regs);
+    private void EmitLoadRegisterAddress(ILGenerator il, MipsFloatRegister register) => EmitLoadRegisterAddress(il, (int)register, ((FloatCoProcessor<T, TFloat>)_cpu.FloatCoProcessor).RegisterFile.Regs);
 }

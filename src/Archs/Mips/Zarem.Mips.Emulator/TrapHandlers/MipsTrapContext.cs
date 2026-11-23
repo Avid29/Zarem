@@ -44,10 +44,10 @@ public readonly struct MipsTrapContext : ITrapContext
     public ulong Argument2 => Cpu[MipsGpRegister.Argument2];
 
     /// <inheritdoc/>
-    public float FloatArgument0 => Cpu.FloatProcessor.Singles[(int)MipsFloatRegister.F12];
+    public float FloatArgument0 => Cpu.FloatCoProcessor?.Singles[(int)MipsFloatRegister.F12] ?? float.NaN;
 
     /// <inheritdoc/>
-    public double DoubleArgument0 => Cpu.FloatProcessor.Doubles[(int)MipsFloatRegister.F12];
+    public double DoubleArgument0 => Cpu.FloatCoProcessor?.Doubles[(int)MipsFloatRegister.F12] ?? float.NaN;
 
     /// <inheritdoc/>
     public ulong Result0
@@ -66,14 +66,14 @@ public readonly struct MipsTrapContext : ITrapContext
     /// <inheritdoc/>
     public float FloatResult0
     {
-        get => Cpu.FloatProcessor.Singles[(int)MipsFloatRegister.F0];
-        set => Cpu.FloatProcessor.Singles[(int)MipsFloatRegister.F0] = value;
+        get => Cpu.FloatCoProcessor?.Singles[(int)MipsFloatRegister.F0] ?? float.NaN;
+        set => Cpu.FloatCoProcessor?.Singles[(int)MipsFloatRegister.F0] = value;
     }
 
     /// <inheritdoc/>
     public double DoubleResult0
     {
-        get => Cpu.FloatProcessor.Doubles[(int)MipsFloatRegister.F0];
-        set => Cpu.FloatProcessor.Doubles[(int)MipsFloatRegister.F0] = value;
+        get => Cpu.FloatCoProcessor?.Doubles[(int)MipsFloatRegister.F0] ?? float.NaN;
+        set => Cpu.FloatCoProcessor?.Doubles[(int)MipsFloatRegister.F0] = value;
     }
 }

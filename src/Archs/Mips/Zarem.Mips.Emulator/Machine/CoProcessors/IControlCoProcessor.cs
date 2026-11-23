@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Zarem.Mips.Emulator.Machine.Enums;
+using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
 
 namespace Zarem.Mips.Emulator.Machine.CoProcessors;
@@ -8,8 +9,13 @@ namespace Zarem.Mips.Emulator.Machine.CoProcessors;
 /// <summary>
 /// An interface for a MIPS CoProcessor0 unit.
 /// </summary>
-public interface ICoProcessor0
+public interface IControlCoProcessor : ICoProcessor
 {
+    /// <summary>
+    /// Gets the translation look-aside buffer.
+    /// </summary>
+    IMipsTlb Tlb { get; }
+
     /// <summary>
     /// Gets the processor's acting privilege mode.
     /// </summary>
@@ -17,15 +23,15 @@ public interface ICoProcessor0
     /// This is not neccesarily the same as the <see cref="StatusRegister.PrivilegeMode"/>.
     /// If the processor is in <see cref="StatusRegister.ErrorLevel"/> or <see cref="StatusRegister.ExceptionLevel"/>, the privilege mode is always kernel, regardless of the value of <see cref="StatusRegister.PrivilegeMode"/>.
     /// </remarks>
-    public PrivilegeMode ActingPrivilegeMode { get; }
+    PrivilegeMode ActingPrivilegeMode { get; }
 
     /// <summary>
     /// Gets or sets the processor's privilege mode.
     /// </summary>
-    public PrivilegeMode PrivilegeMode { get; set; }
+    PrivilegeMode PrivilegeMode { get; set; }
 
     /// <summary>
     /// Gets or sets if the processor is in 64-bit floating-point mode.
     /// </summary>
-    public bool FloatingPoint64BitMode { get; set; }
+    bool FloatingPoint64BitMode { get; set; }
 }

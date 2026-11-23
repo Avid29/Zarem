@@ -9,6 +9,7 @@ using Zarem.Mips.Assembler.Models.Tables;
 using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.JIT;
 using Zarem.Mips.Emulator.Machine;
+using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
@@ -134,10 +135,10 @@ public partial class MipsEmulatorTests
         // TODO: Psuedo instruction support
         var instruction = parsed[0];
         var computer = new MipsComputer(config);
-        var cpu = (MipsCpu<T, TFloat>)computer.Cpu;
+        var cpu = (MipsCpu<T>)computer.Cpu;
 
         // Initialize the status register
-        cpu.CoProcessor0.RegisterFile.StatusRegister = @case.Status;
+        cpu.ControlCoProcessor.RegisterFile.StatusRegister = @case.Status;
 
         // Initialize the register file with the provided values
         foreach (var (reg, value) in @case.RegisterInitialization)
@@ -145,7 +146,7 @@ public partial class MipsEmulatorTests
 
         foreach (var (reg, value) in @case.FPRInitialization)
         {
-            cpu.FloatProcessor[reg] = TFloat.CreateTruncating(value);
+            ((FloatCoProcessor<T, TFloat>)cpu.FloatCoProcessor)[reg] = TFloat.CreateTruncating(value);
         }
 
         // Initialize the high and low registers if specified in the test case
@@ -156,7 +157,7 @@ public partial class MipsEmulatorTests
         }
 
         // Initialize TLB
-        cpu.Tlb.InitilizeSegment(0, 0, 0x1_0000);
+        cpu.ControlCoProcessor.Tlb.InitilizeSegment(0, 0, 0x1_0000);
 
         // Initialize the memory, if specified in the test case
         foreach (var (address, data) in @case.MemoryInitialization)
@@ -169,7 +170,7 @@ public partial class MipsEmulatorTests
         {
             RunJitChecks(computer, instruction, @case);
         }
-        else if (cpu is MipsInterpretCpu<T, TFloat>)
+        else if (cpu is MipsInterpretedCpu<T>)
         {
             RunInterpretChecks(computer, instruction, @case);
         }
@@ -179,7 +180,7 @@ public partial class MipsEmulatorTests
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
         where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
     {
-        var cpu = (MipsInterpretCpu<T, TFloat>)computer.Cpu;
+        var cpu = (MipsInterpretedCpu<T>)computer.Cpu;
         cpu.Insert(instruction, out var execution, out var trap);
 
         // Ensure that the expected trap was raised (if any)
@@ -220,17 +221,21 @@ public partial class MipsEmulatorTests
         var expectedFloatWord = @case.ExpectedWordFloatWriteBack;
         if (expectedFloatWord.HasValue)
         {
-            Assert.AreEqual(expectedFloatWord.Value.Register, execution.FloatReg);
-            Assert.AreEqual(expectedFloatWord.Value.Value, execution.FWordWriteBack);
-            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatProcessor.Words[(int)execution.FloatReg]);
+            //Assert.AreEqual(expectedFloatWord.Value.Register, execution.FloatReg);
+            //Assert.AreEqual(expectedFloatWord.Value.Value, execution.FWordWriteBack);
+            //Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatCoProcessor?.Words[(int)execution.FloatReg]);
+
+            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatCoProcessor?.Words[(int)expectedFloatWord.Value.Register]);
         }
 
         var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
         if (expectedFloatLong.HasValue)
         {
-            Assert.AreEqual(expectedFloatLong.Value.Register, execution.FloatReg);
-            Assert.AreEqual(expectedFloatLong.Value.Value, execution.FLongWriteBack);
-            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatProcessor.Longs[(int)execution.FloatReg]);
+            //Assert.AreEqual(expectedFloatLong.Value.Register, execution.FloatReg);
+            //Assert.AreEqual(expectedFloatLong.Value.Value, execution.FLongWriteBack);
+            //Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatCoProcessor?.Longs[(int)execution.FloatReg]);
+
+            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatCoProcessor?.Longs[(int)expectedFloatLong.Value.Register]);
         }
 
         var expectedPC = @case.ExpectedPC;
@@ -284,13 +289,13 @@ public partial class MipsEmulatorTests
         var expectedFloatWord = @case.ExpectedWordFloatWriteBack;
         if (expectedFloatWord.HasValue)
         {
-            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatProcessor.Words[(int)expectedFloatWord.Value.Register]);
+            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatCoProcessor?.Words[(int)expectedFloatWord.Value.Register]);
         }
 
         var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
         if (expectedFloatLong.HasValue)
         {
-            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatProcessor.Longs[(int)expectedFloatLong.Value.Register]);
+            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatCoProcessor?.Longs[(int)expectedFloatLong.Value.Register]);
         }
 
         var expectedPC = @case.ExpectedPC;

@@ -9,13 +9,13 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models;
 
-public partial class MipsInstructionServiceTable<T, TFloat, TSigned>
+public partial class MipsInstructionServiceTable<T, TSigned>
 {
-    private static MipsTrap CreateCoProc0Execution(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CreateCoProc0Execution(MipsInterpretedCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?
-        if (cpu.CoProcessor0.ActingPrivilegeMode is not PrivilegeMode.Kernel)
+        if (cpu.ControlCoProcessor.ActingPrivilegeMode is not PrivilegeMode.Kernel)
         {
             exec = default;
             return MipsTrap.ReservedInstruction;
@@ -46,7 +46,7 @@ public partial class MipsInstructionServiceTable<T, TFloat, TSigned>
             },
 
             // Move instructions
-            CoProc0RSCode.MFC0 => MipsExecution<T>.CreateWriteback(inst.RT, cpu.CoProcessor0[(CP0Registers)inst.RD]),
+            CoProc0RSCode.MFC0 => MipsExecution<T>.CreateWriteback(inst.RT, cpu.ControlCoProcessor[(CP0Registers)inst.RD]),
             CoProc0RSCode.MTC0 => MipsExecution<T>.CreateWriteback((CP0Registers)inst.RD, cpu[inst.RT]),
 
             _ => throw new NotImplementedException()
@@ -55,15 +55,15 @@ public partial class MipsInstructionServiceTable<T, TFloat, TSigned>
         return MipsTrap.None;
     }
 
-    private static MipsExecution<T> Eret(MipsInterpretCpu<T, TFloat> cpu)
+    private static MipsExecution<T> Eret(MipsInterpretedCpu<T> cpu)
     {
         // Retrieve the status register value
-        var status = cpu.CoProcessor0.RegisterFile.StatusRegister;
+        var status = cpu.ControlCoProcessor.RegisterFile.StatusRegister;
 
         // Determine the target program counter based on the error level
         T targetPC = status.ErrorLevel
-            ? cpu.CoProcessor0[CP0Registers.ErrorEPC]
-            : cpu.CoProcessor0[CP0Registers.ExceptionPC];
+            ? cpu.ControlCoProcessor[CP0Registers.ErrorEPC]
+            : cpu.ControlCoProcessor[CP0Registers.ExceptionPC];
 
         // Clear the appropriate level bit in the status register
         if (status.ErrorLevel)
@@ -85,10 +85,10 @@ public partial class MipsInstructionServiceTable<T, TFloat, TSigned>
         };
     }
 
-    private static MipsExecution<T> SetInterrupts(MipsInterpretCpu<T, TFloat> cpu, CoProc0Instruction inst, bool enabled)
+    private static MipsExecution<T> SetInterrupts(MipsInterpretedCpu<T> cpu, CoProc0Instruction inst, bool enabled)
     {
         // Retrieve the status register
-        var status = cpu.CoProcessor0.RegisterFile.StatusRegister;
+        var status = cpu.ControlCoProcessor.RegisterFile.StatusRegister;
 
         // Apply the update function
         status.InteruptEnabled = enabled;

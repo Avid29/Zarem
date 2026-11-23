@@ -28,6 +28,7 @@ public unsafe partial class MipsJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRe
     private delegate void MipsEmitter(ILGenerator il, MipsInstruction inst, T pc);
 
     private readonly MipsInstructionDecodeTable<MipsEmitter> _instructionTable;
+    private readonly MipsFloatInstructionDecodeTable<MipsEmitter> _floatInstructionTable;
 
     private readonly MethodInfo _clzMethod;
     private readonly Dictionary<Type, MethodInfo> _multiplyMethod = [];
@@ -47,6 +48,7 @@ public unsafe partial class MipsJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRe
         _cpu = cpu;
 
         _instructionTable = new MipsInstructionDecodeTable<MipsEmitter>(ReservedInstruction);
+        _floatInstructionTable = new MipsFloatInstructionDecodeTable<MipsEmitter>(ReservedInstruction);
 
         var clzMethod = typeof(BitOperations).GetMethod(nameof(BitOperations.LeadingZeroCount), [typeof(uint)]);
         Guard.IsNotNull(clzMethod);
@@ -609,6 +611,12 @@ public unsafe partial class MipsJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRe
         uint value = (uint)inst.Immediate << 16;
 
         EmitStoreRegister(il, inst.RT, il => il.EmitLoadConstant(T.CreateTruncating(value)));
+    }
+
+    private void ExecuteFloatTable(ILGenerator il, MipsInstruction inst, T pc)
+    {
+        var emitter = _floatInstructionTable.Lookup(inst);
+        emitter(il, inst, pc);
     }
 
     private void ReservedInstruction(ILGenerator il, MipsInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);

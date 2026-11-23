@@ -6,16 +6,20 @@ using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.JIT;
 using Zarem.Mips.Emulator.Config;
+using Zarem.Mips.Emulator.JIT.CoProcessors;
+using Zarem.Mips.Emulator.JIT.CoProcessors.FloatCoProcessor;
 using Zarem.Mips.Emulator.Machine;
+using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Mips.Emulator.JIT;
 
 /// <summary>
-/// A <see cref="MipsCpu{T, TFloat}"/> which uses JIT cross-compilation for execution.
+/// A <see cref="MipsCpu{T}"/> which uses JIT cross-compilation for execution.
 /// </summary>
-public partial class MipsJitCpu<T, TFloat> : MipsCpu<T, TFloat>
+public partial class MipsJitCpu<T, TFloat> : MipsCpu<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
@@ -31,8 +35,20 @@ public partial class MipsJitCpu<T, TFloat> : MipsCpu<T, TFloat>
         _blockCache = new();
         _jitCompiler = new MipsJitCompiler<T, TFloat>(this);
 
+        var coProcessorCount = config.VersionInfo.Generation is < MipsGeneration.MipsIII ? 3 : 2;
+        CoProcessors = new IJitCoProcessor<T>[coProcessorCount];
+
+        FloatCoProcessor = new JitFloatCoProcessor<T, TFloat>(ControlCoProcessor);
+        CoProcessors[1] = FloatCoProcessor;
+
         bus.AddressWritten += OnAddressWritten;
     }
+
+    /// <inheritdoc/>
+    public override IJitCoProcessor<T>[] CoProcessors { get; }
+
+    /// <inheritdoc/>
+    public override JitFloatCoProcessor<T, TFloat> FloatCoProcessor { get; }
 
     /// <inheritdoc/>
     public override void Insert(MipsInstruction instruction, out MipsTrap trap)

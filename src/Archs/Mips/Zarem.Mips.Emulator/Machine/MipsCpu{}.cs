@@ -12,6 +12,7 @@ using Zarem.Mips.Emulator.Machine.Registers;
 using Zarem.Mips.Emulator.TrapHandlers;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Versioning.Enums;
 using Zarem.Models.Enums;
 
 namespace Zarem.Mips.Emulator.Machine;
@@ -35,9 +36,9 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         Config = config;
         RegisterFile = new(config.VersionInfo);
 
-        Tlb = new MipsTlb<T>();
-        Memory = new MemorySystem(bus, new MipsAddressTranslator<T>(this));
-        CoProcessor0 = new(Tlb);
+        var tlb = new MipsTlb<T>();
+        ControlCoProcessor = new(tlb);
+        Memory = new MemorySystem(bus, new MipsAddressTranslator<T>(ControlCoProcessor));
 
         ProgramCounter = T.CreateTruncating(BOOT_ADDRESS);
     }
@@ -55,19 +56,13 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     public override MipsGPRegisterFile<T> RegisterFile { get; }
 
     /// <inheritdoc/>
-    public CoProcessor0<T> CoProcessor0 { get; }
+    public ControlCoProcessor<T> ControlCoProcessor { get; }
 
     /// <inheritdoc/>
-    ICoProcessor0 IMipsCpu.CoProcessor0 => CoProcessor0;
+    public abstract IFloatCoProcessor FloatCoProcessor { get; }
 
     /// <inheritdoc/>
-    public abstract IFloatProcessor FloatProcessor { get; }
-
-    /// <inheritdoc/>
-    public MipsTlb<T> Tlb { get; }
-
-    /// <inheritdoc/>
-    IMipsTlb IMipsCpu.Tlb => Tlb;
+    public abstract ICoProcessor[] CoProcessors { get; }
 
     /// <summary>
     /// Gets the system memory.
@@ -93,12 +88,13 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         set => RegisterFile[(int)reg] = value;
     }
 
-    /// <inheritdoc/>
     ulong IMipsCpu.this[MipsGpRegister reg]
     {
         get => ulong.CreateTruncating(RegisterFile[(int)reg]);
         set => RegisterFile[(int)reg] = T.CreateTruncating(value);
     }
+
+    IControlCoProcessor? IMipsCpu.ControlCoProcessor => ControlCoProcessor;
 
     /// <inheritdoc/>
     public abstract void Insert(MipsInstruction instruction, out MipsTrap trap);
@@ -125,8 +121,8 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         }
         else
         {
-            CoProcessor0.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
-            ProgramCounter = CoProcessor0.ExceptionVector;
+            ControlCoProcessor.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
+            ProgramCounter = ControlCoProcessor.ExceptionVector;
         }
     }
 
@@ -134,6 +130,6 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     public override void Dispose()
     {
         base.Dispose();
-        CoProcessor0.RegisterFile.Dispose();
+        ControlCoProcessor.RegisterFile.Dispose();
     }
 }

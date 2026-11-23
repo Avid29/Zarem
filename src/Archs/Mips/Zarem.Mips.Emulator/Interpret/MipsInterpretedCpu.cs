@@ -9,30 +9,48 @@ using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Mips.Emulator.Config;
+using Zarem.Mips.Emulator.Interpret.CoProcessors;
+using Zarem.Mips.Emulator.Interpret.CoProcessors.FloatCoProcessor;
 using Zarem.Mips.Emulator.Machine;
+using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Mips.Emulator.Interpret;
 
 /// <summary>
 /// A <see cref="MipsCpu{T}"/> that executes by interpreting each instruction.
 /// </summary>
-public sealed class MipsInterpretCpu<T, TFloat> : MipsCpu<T, TFloat>, IInterpretCpu<MipsInterpretCpu<T, TFloat>, MipsInstruction, MipsExecution<T>, MipsTrap>
+public sealed class MipsInterpretedCpu<T> : MipsCpu<T>, IInterpretedCpu<MipsInterpretedCpu<T>, MipsInstruction, MipsExecution<T>, MipsTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private readonly IMipsInstructionServiceTable<T> _instructionServiceTable;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
     /// </summary>
-    public MipsInterpretCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
+    public MipsInterpretedCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
         _instructionServiceTable = config.VersionInfo.Is64Bit
-            ? new MipsInstructionServiceTable<T, TFloat, long>(this)
-            : new MipsInstructionServiceTable<T, TFloat, int>(this);
+            ? new MipsInstructionServiceTable<T, long>(this)
+            : new MipsInstructionServiceTable<T, int>(this);
+
+        var coProcessorCount = config.VersionInfo.Generation is < MipsGeneration.MipsIII ? 3 : 2;
+        CoProcessors = new IInterpretedCoProcessor<T>[coProcessorCount];
+
+        FloatCoProcessor = config.VersionInfo.Generation is >= MipsGeneration.MipsIII
+            ? new InterpretedFloatCoProcessor<T, ulong>(this)
+            : new InterpretedFloatCoProcessor<T, uint>(this);
+
+        CoProcessors[1] = FloatCoProcessor;
     }
+
+    /// <inheritdoc/>
+    public override IInterpretedCoProcessor<T>[] CoProcessors { get; }
+
+    /// <inheritdoc/>
+    public override IInterpretedFloatCoProcessor<T> FloatCoProcessor { get; }
 
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -203,28 +221,19 @@ public sealed class MipsInterpretCpu<T, TFloat> : MipsCpu<T, TFloat>, IInterpret
                 RegisterFile[(int)execution.WritebackGPRegister] = memRead;
                 break;
             case MipsSideEffect.WriteCoProc0:
-                CoProcessor0[execution.CoProc0Reg] = execution.CoProcWriteBack;
-                break;
-            case MipsSideEffect.WriteCoProc1Control:
-                FloatProcessor.ControlRegisterFile[execution.CoProc1ControlReg] = execution.CoProc1ControlWriteBack;
-                break;
-            case MipsSideEffect.WriteSingle:
-                FloatProcessor.Words[(int)execution.FloatReg] = execution.FWordWriteBack;
-                break;
-            case MipsSideEffect.WriteDouble:
-                FloatProcessor.Longs[(int)execution.FloatReg] = execution.FLongWriteBack;
+                ControlCoProcessor[execution.CoProc0Reg] = execution.CoProcWriteBack;
                 break;
             case MipsSideEffect.TLBProbe:
-                CoProcessor0.WritebackTlbp();
+                ControlCoProcessor.WritebackTlbp();
                 break;
             case MipsSideEffect.TLBRead:
-                CoProcessor0.WritebackTlbr();
+                ControlCoProcessor.WritebackTlbr();
                 break;
             case MipsSideEffect.TLBWriteIndexed:
-                CoProcessor0.WritebackTlbwi();
+                ControlCoProcessor.WritebackTlbwi();
                 break;
             case MipsSideEffect.TLBWriteRandom:
-                CoProcessor0.WritebackTlbwr();
+                ControlCoProcessor.WritebackTlbwr();
                 break;
         }
 
