@@ -1,56 +1,24 @@
-﻿// Avishai Dernis 2026
+﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Machine.CPU;
-using Zarem.Emulator.Machine.Memory;
-using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Mips.Emulator.Config;
-using Zarem.Mips.Emulator.Interpret.CoProcessors;
-using Zarem.Mips.Emulator.Interpret.CoProcessors.FloatCoProcessor;
-using Zarem.Mips.Emulator.Machine;
-using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
-using Zarem.Mips.Models.Versioning.Enums;
 
-namespace Zarem.Mips.Emulator.Interpret;
+namespace Zarem.Mips.Emulator.Machine;
 
 /// <summary>
-/// A <see cref="MipsCpu{T}"/> that executes by interpreting each instruction.
+/// A base class representing a processor unit.
 /// </summary>
-public sealed class MipsInterpretedCpu<T> : MipsCpu<T>, IInterpretedCpu<MipsInterpretedCpu<T>, MipsInstruction, MipsExecution<T>, MipsTrap>
+public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private readonly IMipsInstructionServiceTable<T> _instructionServiceTable;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
-    /// </summary>
-    public MipsInterpretedCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
-    {
-        _instructionServiceTable = config.VersionInfo.Is64Bit
-            ? new MipsInstructionServiceTable<T, long>(this)
-            : new MipsInstructionServiceTable<T, int>(this);
-
-        var coProcessorCount = config.VersionInfo.Generation is < MipsGeneration.MipsIII ? 3 : 2;
-        CoProcessors = new IInterpretedCoProcessor<T>[coProcessorCount];
-
-        FloatCoProcessor = config.VersionInfo.Generation is >= MipsGeneration.MipsIII
-            ? new InterpretedFloatCoProcessor<T, ulong>(this)
-            : new InterpretedFloatCoProcessor<T, uint>(this);
-
-        CoProcessors[1] = FloatCoProcessor;
-    }
-
-    /// <inheritdoc/>
-    public override IInterpretedCoProcessor<T>[] CoProcessors { get; }
-
-    /// <inheritdoc/>
-    public override IInterpretedFloatCoProcessor<T> FloatCoProcessor { get; }
+    private readonly IMipsInstructionServiceTable<T>? _instructionServiceTable;
 
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -69,7 +37,7 @@ public sealed class MipsInterpretedCpu<T> : MipsCpu<T>, IInterpretedCpu<MipsInte
     }
 
     /// <inheritdoc/>
-    public override void Insert(MipsInstruction instruction, out MipsTrap trap)
+    public void Insert(MipsInstruction instruction, out MipsTrap trap)
         => Insert(instruction, out _, out trap);
 
     /// <inheritdoc cref="ICpu{TSelf, TInstruction, TTrap}.Insert(TInstruction, out TTrap)"/>
@@ -120,7 +88,7 @@ public sealed class MipsInterpretedCpu<T> : MipsCpu<T>, IInterpretedCpu<MipsInte
     /// Immitates the execute step in a MIPS cpu, constructing the modifications to apply in the following stages.
     /// </summary>
     private MipsTrap Execute(MipsInstruction instruction, out MipsExecution<T> execution)
-        => _instructionServiceTable.Execute(instruction, out execution);
+        => _instructionServiceTable!.Execute(instruction, out execution);
 
     private MipsTrap MemAccess(MipsExecution<T> execution, out T read)
     {

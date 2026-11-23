@@ -6,6 +6,7 @@ using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Logic;
 using Zarem.Mips.Emulator.Interpret.CoProcessors.FloatCoProcessor;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models;
@@ -22,13 +23,13 @@ public unsafe partial class MipsFloatInstructionServiceTable<T, TFloat>
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private readonly MipsFloatInstructionDecodeTable<IntPtr> _instructionTable;
-    private readonly MipsInterpretedCpu<T> _cpu;
+    private readonly MipsCpu<T> _cpu;
     private readonly FloatCoProcessor<T, TFloat> _fpu;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsInstructionServiceTable{T, TS}"/> struct.
     /// </summary>
-    public MipsFloatInstructionServiceTable(MipsInterpretedCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu)
+    public MipsFloatInstructionServiceTable(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu)
     {
         _cpu = cpu;
         _fpu = fpu;
@@ -41,11 +42,11 @@ public unsafe partial class MipsFloatInstructionServiceTable<T, TFloat>
     /// <inheritdoc/>
     public MipsTrap Execute(MipsInstruction instruction, out MipsFloatExecution<T> execution)
     {
-        var func = (delegate*<MipsInterpretedCpu<T>, FloatCoProcessor<T, TFloat>, MipsFloatInstruction, out MipsFloatExecution<T>, MipsTrap>)_instructionTable.Lookup(instruction);
+        var func = (delegate*<MipsCpu<T>, FloatCoProcessor<T, TFloat>, MipsFloatInstruction, out MipsFloatExecution<T>, MipsTrap>)_instructionTable.Lookup(instruction);
         return func(_cpu, _fpu, instruction, out execution);
     }
 
-    private static MipsTrap FloatAlu<TLogic, TFormat>(MipsInterpretedCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
+    private static MipsTrap FloatAlu<TLogic, TFormat>(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
@@ -58,7 +59,7 @@ public unsafe partial class MipsFloatInstructionServiceTable<T, TFloat>
         return MipsTrap.None;
     }
 
-    private static MipsTrap FloatFAlu<TLogic, TFormat>(MipsInterpretedCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
+    private static MipsTrap FloatFAlu<TLogic, TFormat>(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
         where TLogic : struct, IFAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
@@ -70,7 +71,7 @@ public unsafe partial class MipsFloatInstructionServiceTable<T, TFloat>
         return MipsTrap.None;
     }
 
-    private static MipsTrap FloatRound<TLogic, TFrom, TTo>(MipsInterpretedCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
+    private static MipsTrap FloatRound<TLogic, TFrom, TTo>(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
         where TLogic : struct, IRoundLogic<TFrom>
         where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
         where TTo : unmanaged, IBinaryInteger<TTo>, IMinMaxValue<TTo>
@@ -101,7 +102,7 @@ public unsafe partial class MipsFloatInstructionServiceTable<T, TFloat>
         return MipsTrap.None;
     }
 
-    private static MipsTrap FloatConvert<TFrom, TTo>(MipsInterpretedCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
+    private static MipsTrap FloatConvert<TFrom, TTo>(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
         where TFrom : unmanaged, INumber<TFrom>
         where TTo : unmanaged, INumber<TTo>
     {
@@ -112,32 +113,32 @@ public unsafe partial class MipsFloatInstructionServiceTable<T, TFloat>
         return MipsTrap.None;
     }
 
-    private static MipsTrap MFC1(MipsInterpretedCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
+    private static MipsTrap MFC1(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
     {
         var source = T.CreateTruncating(fpu[inst.FS]);
         exec = MipsExecution<T>.CreateWriteback(inst.RT, source);
         return MipsTrap.None;
     }
 
-    private static MipsTrap MTC1(MipsInterpretedCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
+    private static MipsTrap MTC1(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
     {
         exec = MipsFloatExecution<T>.CreateFloatWriteback(inst.FS, cpu[inst.RT]);
         return MipsTrap.None;
     }
 
-    private static MipsTrap CFC1(MipsInterpretedCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
+    private static MipsTrap CFC1(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(fpu.ControlRegisterFile[(int)inst.FS]));
         return MipsTrap.None;
     }
 
-    private static MipsTrap CTC1(MipsInterpretedCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
+    private static MipsTrap CTC1(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsFloatInstruction inst, out MipsFloatExecution<T> exec)
     {
         exec = MipsFloatExecution<T>.CreateControlWriteback((CP1CRegisters)inst.FS, uint.CreateTruncating(cpu[inst.RT]));
         return MipsTrap.None;
     }
 
-    private static MipsTrap ReservedInstruction(MipsInterpretedCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap ReservedInstruction(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = default;
         return MipsTrap.ReservedInstruction;

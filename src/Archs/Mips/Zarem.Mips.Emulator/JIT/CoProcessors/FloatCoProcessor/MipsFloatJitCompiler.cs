@@ -7,6 +7,8 @@ using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Models.JIT;
+using Zarem.Mips.Emulator.Machine;
+using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
@@ -24,13 +26,13 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
     private delegate void MipsFloatEmitter(ILGenerator il, MipsFloatInstruction inst, T pc);
 
     private readonly MipsFloatInstructionDecodeTable<MipsFloatEmitter> _instructionTable;
-    private readonly MipsJitCpu<T> _cpu;
-    private readonly JitFloatCoProcessor<T, TFloat> _fpu;
+    private readonly MipsCpu<T> _cpu;
+    private readonly FloatCoProcessor<T, TFloat> _fpu;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsFloatJitCompiler{T, TFloat}"/> class.
     /// </summary>
-    public MipsFloatJitCompiler(MipsJitCpu<T> cpu, JitFloatCoProcessor<T, TFloat> fpu) : base(cpu)
+    public MipsFloatJitCompiler(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu) : base(cpu)
     {
         _cpu = cpu;
         _fpu = fpu;

@@ -4,6 +4,7 @@ using System;
 using System.Numerics;
 using Zarem.Emulator.Models.Logic;
 using Zarem.Mips.Emulator.Interpret.CoProcessors.FloatCoProcessor;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models;
@@ -102,13 +103,13 @@ public unsafe partial class MipsFloatInstructionServiceTable<T, TFloat>
         Register(format, code, &FloatConvert<TFrom, TTo>);
     }
 
-    private void Register(CoProc1RSCode funcCode, delegate*<MipsInterpretedCpu<T>, FloatCoProcessor<T, TFloat>, MipsFloatInstruction, out MipsFloatExecution<T>, MipsTrap> func)
+    private void Register(CoProc1RSCode funcCode, delegate*<MipsCpu<T>, FloatCoProcessor<T, TFloat>, MipsFloatInstruction, out MipsFloatExecution<T>, MipsTrap> func)
         => _instructionTable.Register(funcCode, (IntPtr)func);
 
-    private void Register(MipsFloatFormat format, MipsFloatFuncCode funcCode, delegate*<MipsInterpretedCpu<T>, FloatCoProcessor<T, TFloat>, MipsFloatInstruction, out MipsFloatExecution<T>, MipsTrap> func)
+    private void Register(MipsFloatFormat format, MipsFloatFuncCode funcCode, delegate*<MipsCpu<T>, FloatCoProcessor<T, TFloat>, MipsFloatInstruction, out MipsFloatExecution<T>, MipsTrap> func)
         => _instructionTable.Register(format, funcCode, (IntPtr)func);
 
 
-    private static IntPtr GetFunctionPtrValue(delegate*<MipsInterpretedCpu<T>, FloatCoProcessor<T, TFloat>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private static IntPtr GetFunctionPtrValue(delegate*<MipsCpu<T>, FloatCoProcessor<T, TFloat>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => (IntPtr)func;
 }

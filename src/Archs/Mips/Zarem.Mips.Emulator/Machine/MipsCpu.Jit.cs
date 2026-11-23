@@ -1,0 +1,61 @@
+﻿// Avishai Dernis 2025
+
+using System.Numerics;
+using System.Runtime.CompilerServices;
+using Zarem.Emulator.JIT;
+using Zarem.Emulator.Machine.CPU;
+using Zarem.Emulator.Models.JIT;
+using Zarem.Mips.Emulator.JIT;
+using Zarem.Mips.Emulator.Machine.Enums;
+using Zarem.Mips.Models.Instructions;
+
+namespace Zarem.Mips.Emulator.Machine;
+
+/// <summary>
+/// A base class representing a processor unit.
+/// </summary>
+public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+{
+    // Cache mapping a PC to its compiled IL block.
+    private readonly JitBlockCache<T, MipsJitBlock<T>>? _blockCache;
+    private readonly MipsJitCompiler<T>? _jitCompiler;
+
+    /// <inheritdoc/>
+    public override void Insert(MipsInstruction instruction, out MipsTrap trap)
+    {
+        var @delegate = _jitCompiler.CompileLoneInstruction(instruction, ProgramCounter);
+        ProgramCounter = @delegate(this, out trap);
+    }
+
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override long ExecutionLoop()
+    {
+        // Look up the current block
+        if (!_blockCache.TryGet(ProgramCounter, out var compiledBlock))
+        {
+            // Cache Miss. Compile the basic block starting at ProgramCounter
+            compiledBlock = _jitCompiler.CompileBlock(ProgramCounter);
+            _blockCache.Store(ProgramCounter, compiledBlock);
+        }
+
+        // Execute the block, and update the PC to the next block start
+        ProgramCounter = compiledBlock.Delegate(this, out var trap);
+
+        // Handle trap
+        if (trap is not MipsTrap.None)
+            HandleTrap(trap);
+
+        // Return the number of instructions executed.
+        return long.CreateTruncating(compiledBlock.Size);
+    }
+
+    private void OnAddressWritten(object? sender, ulong e)
+    {
+        // Invalidate the JIT cache for the page that was modified.
+        // This allows self-modifying code to work correctly, as the next time the CPU tries to execute
+        // from that address, it will recompile the block.
+        _blockCache.InvalidatePage(T.CreateTruncating(e));
+    }
+}

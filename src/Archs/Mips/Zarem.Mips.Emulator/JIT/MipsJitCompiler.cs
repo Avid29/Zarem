@@ -12,6 +12,7 @@ using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Mips.Emulator.JIT;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
@@ -35,7 +36,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private readonly Dictionary<Type, MethodInfo> _castDownMethods = [];
     private readonly Dictionary<Type, MethodInfo> _rightShiftMethods = [];
     private readonly MethodInfo _handleAccessResultMethod;
-    private readonly MipsJitCpu<T> _cpu;
+    private readonly MipsCpu<T> _cpu;
 
     private readonly HashSet<MipsGpRegister> _loadRegs = [];
     private readonly HashSet<MipsGpRegister> _storeRegs = [];
@@ -43,7 +44,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsJitCompiler{T}"/> class.
     /// </summary>
-    public MipsJitCompiler(MipsJitCpu<T> cpu) : base(cpu)
+    public MipsJitCompiler(MipsCpu<T> cpu) : base(cpu)
     {
         _cpu = cpu;
 

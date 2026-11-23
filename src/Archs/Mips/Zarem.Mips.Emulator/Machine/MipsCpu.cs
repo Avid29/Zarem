@@ -1,8 +1,11 @@
 ﻿// Avishai Dernis 2025
 
 using System.Numerics;
+using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
+using Zarem.Emulator.Models;
+using Zarem.Emulator.Models.JIT;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
@@ -10,7 +13,6 @@ using Zarem.Mips.Emulator.Machine.Memory;
 using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Emulator.Machine.Registers;
 using Zarem.Mips.Emulator.TrapHandlers;
-using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 using Zarem.Mips.Models.Versioning.Enums;
 using Zarem.Models.Enums;
@@ -36,11 +38,36 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         Config = config;
         RegisterFile = new(config.VersionInfo);
 
+        var coProcessorCount = config.VersionInfo.Generation is < MipsGeneration.MipsIII ? 3 : 2;
+        CoProcessors = new ICoProcessor<T>[coProcessorCount];
+
+        switch (Config.ExecutionMode)
+        {
+            case ExecutionMode.Interpret:
+                _instructionServiceTable = config.VersionInfo.Is64Bit
+                    ? new MipsInstructionServiceTable<T, long>(this)
+                    : new MipsInstructionServiceTable<T, int>(this);
+                break;
+            case ExecutionMode.JustInTime:
+                _blockCache = new();
+                _jitCompiler = new MipsJitCompiler<T>(this);
+
+                bus.AddressWritten += OnAddressWritten;
+                break;
+        }
+
+
+
         var tlb = new MipsTlb<T>();
         ControlCoProcessor = new(tlb);
-        Memory = new MemorySystem(bus, new MipsAddressTranslator<T>(ControlCoProcessor));
 
+        FloatCoProcessor = config.VersionInfo.Generation is >= MipsGeneration.MipsIII
+            ? new FloatCoProcessor<T, ulong>(this)
+            : new FloatCoProcessor<T, uint>(this);
+
+        Memory = new MemorySystem(bus, new MipsAddressTranslator<T>(ControlCoProcessor));
         ProgramCounter = T.CreateTruncating(BOOT_ADDRESS);
+
     }
 
     /// <inheritdoc/>
@@ -59,10 +86,10 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     public ControlCoProcessor<T> ControlCoProcessor { get; }
 
     /// <inheritdoc/>
-    public abstract IFloatCoProcessor FloatCoProcessor { get; }
+    public IFloatCoProcessor<T> FloatCoProcessor { get; }
 
     /// <inheritdoc/>
-    public abstract ICoProcessor[] CoProcessors { get; }
+    public ICoProcessor<T>[] CoProcessors { get; }
 
     /// <summary>
     /// Gets the system memory.
@@ -96,8 +123,9 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
 
     IControlCoProcessor? IMipsCpu.ControlCoProcessor => ControlCoProcessor;
 
-    /// <inheritdoc/>
-    public abstract void Insert(MipsInstruction instruction, out MipsTrap trap);
+    ICoProcessor[] IMipsCpu.CoProcessors => CoProcessors;
+
+    IFloatCoProcessor? IMipsCpu.FloatCoProcessor => FloatCoProcessor;
 
     /// <summary>
     /// Handles a trap.

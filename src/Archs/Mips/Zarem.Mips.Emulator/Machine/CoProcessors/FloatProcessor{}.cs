@@ -2,10 +2,14 @@
 
 using System;
 using System.Numerics;
+using System.Reflection.Emit;
+using Zarem.Emulator.JIT;
+using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.Interpret.CoProcessors;
 using Zarem.Mips.Emulator.Interpret.CoProcessors.FloatCoProcessor;
+using Zarem.Mips.Emulator.JIT.CoProcessors.FloatCoProcessor;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Registers.FloatProcessor;
 using Zarem.Mips.Models.Instructions;
@@ -16,20 +20,25 @@ namespace Zarem.Mips.Emulator.Machine.CoProcessors;
 /// <summary>
 /// a class representing the floating-point coprocessor unit.
 /// </summary>
-public unsafe class FloatCoProcessor<T, TFloat> : IFloatCoProcessor, IDisposable
+public unsafe class FloatCoProcessor<T, TFloat> : IFloatCoProcessor<T>, IDisposable
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
+    private readonly MipsFloatInstructionServiceTable<T, TFloat> _instructionServiceTable;
+    private readonly MipsFloatJitCompiler<T, TFloat> _jitCompiler;
     private readonly IControlCoProcessor _co0;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FloatCoProcessor{T, TFloat}"/> class.
     /// </summary>
-    public FloatCoProcessor(IControlCoProcessor co0)
+    public FloatCoProcessor(MipsCpu<T> cpu)
     {
-        _co0 = co0;
+        _co0 = cpu.ControlCoProcessor;
         RegisterFile = new(32);
         ControlRegisterFile = new();
+
+        _instructionServiceTable = new MipsFloatInstructionServiceTable<T, TFloat>(cpu, this);
+        _jitCompiler = new MipsFloatJitCompiler<T, TFloat>(cpu, this);
     }
 
     internal FormattedRegisterFile<TFloat> RegisterFile { get; }
@@ -86,6 +95,37 @@ public unsafe class FloatCoProcessor<T, TFloat> : IFloatCoProcessor, IDisposable
     {
         get => RegisterFile[(int)reg];
         set => RegisterFile[(int)reg] = value;
+    }
+
+    /// <inheritdoc/>
+    public MipsTrap Execute(MipsInstruction instruction, out MipsExecution<T> execution)
+    {
+        var trap = _instructionServiceTable.Execute(instruction, out var fExecution);
+        execution = fExecution.ChildExecution;
+
+        if (trap is not MipsTrap.None)
+            return trap;
+
+        switch (fExecution.Format)
+        {
+            case FloatWriteback.Word:
+                Words[(int)fExecution.Register] = (int)fExecution.Writeback;
+                break;
+            case FloatWriteback.Long:
+                Longs[(int)fExecution.Register] = fExecution.Writeback;
+                break;
+            case FloatWriteback.Control:
+                ControlRegisterFile[(int)fExecution.Register] = (uint)fExecution.Writeback;
+                break;
+        }
+
+        return MipsTrap.None;
+    }
+
+    /// <inheritdoc/>
+    public void CompileInstruction(ILGenerator il, MipsInstruction instruction, T pc)
+    {
+        _jitCompiler.CompileInstruction(il, instruction, pc);
     }
 
     /// <summary>

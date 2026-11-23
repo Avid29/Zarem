@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System.Numerics;
 using Zarem.Emulator.Machine.Registers;
 
 namespace Zarem.Mips.Emulator.Machine.CoProcessors;
