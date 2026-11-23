@@ -41,27 +41,16 @@ public class MipsComputer : ComputerBase
             ? typeof(ulong)
             : typeof(uint);
 
-        // Determine float reg size
-        // Regardless of the CPU's GPR size, the floating point registers are always 64-bit in MIPS III and above.
-        var floatType = config.VersionInfo.Generation is >= MipsGeneration.MipsIII
-            ? typeof(ulong)
-            : typeof(uint);
-
         // Determine the CPU implementation type
         var cpuType = config.ExecutionMode switch
         {
             ExecutionMode.Interpret => typeof(MipsInterpretedCpu<>),
-            ExecutionMode.JustInTime => typeof(MipsJitCpu<,>),
+            ExecutionMode.JustInTime => typeof(MipsJitCpu<>),
             _ => throw new NotImplementedException(),
         };
 
         // Determine the CPU implementation type
-        var closedCpuType = config.ExecutionMode switch
-        {
-            ExecutionMode.Interpret => cpuType.MakeGenericType(gprType),
-            ExecutionMode.JustInTime => cpuType.MakeGenericType(gprType, floatType),
-            _ => throw new NotImplementedException(),
-        };
+        var closedCpuType = cpuType.MakeGenericType(gprType);
 
         // Construct the CPU
         var cpu = (IMipsCpu?)Activator.CreateInstance(closedCpuType, config, bus);

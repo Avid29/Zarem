@@ -166,7 +166,7 @@ public partial class MipsEmulatorTests
         // Initialize the program counter
         cpu.ProgramCounter = @case.InitialPC;
 
-        if (cpu is MipsJitCpu<T, TFloat>)
+        if (cpu is MipsJitCpu<T>)
         {
             RunJitChecks(computer, instruction, @case);
         }
@@ -256,7 +256,7 @@ public partial class MipsEmulatorTests
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
         where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
     {
-        var cpu = (MipsJitCpu<T, TFloat>)computer.Cpu;
+        var cpu = (MipsJitCpu<T>)computer.Cpu;
         cpu.Insert(instruction, out var trap);
 
         // Ensure that the expected trap was raised (if any)

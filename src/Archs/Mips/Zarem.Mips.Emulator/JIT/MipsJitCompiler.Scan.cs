@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using System.Numerics;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Functions;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
@@ -8,7 +7,7 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models.JIT;
 
-public partial class MipsJitCompiler<T, TFloat>
+public partial class MipsJitCompiler<T>
 {
     private const int MaxBlockSize = 1024;
 

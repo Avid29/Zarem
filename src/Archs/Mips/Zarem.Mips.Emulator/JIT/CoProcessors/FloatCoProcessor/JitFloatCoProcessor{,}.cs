@@ -8,22 +8,25 @@ using Zarem.Mips.Models.Instructions;
 namespace Zarem.Mips.Emulator.JIT.CoProcessors.FloatCoProcessor;
 
 /// <summary>
-/// A <see cref="FloatCoProcessor{T, TFloat}{T}"/> that executes by JIT cross-compilation.
+/// A <see cref="FloatCoProcessor{T, TFloat}"/> that executes by JIT cross-compilation.
 /// </summary>
-public class JitFloatCoProcessor<T, TFloat> : FloatCoProcessor<T, TFloat>, IJitCoProcessor<T>
+public class JitFloatCoProcessor<T, TFloat> : FloatCoProcessor<T, TFloat>, IJitFloatCoProcessor<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
+    private readonly MipsFloatJitCompiler<T, TFloat> _jitCompiler;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="JitFloatCoProcessor{T, TFloat}"/> class.
     /// </summary>
-    public JitFloatCoProcessor(IControlCoProcessor co0) : base(co0)
+    public JitFloatCoProcessor(MipsJitCpu<T> cpu) : base(cpu.ControlCoProcessor)
     {
+        _jitCompiler = new MipsFloatJitCompiler<T, TFloat>(cpu, this);
     }
 
     /// <inheritdoc/>
     public void CompileInstruction(ILGenerator il, MipsInstruction instruction, T pc)
     {
-        throw new System.NotImplementedException();
+        _jitCompiler.CompileInstruction(il, instruction, pc);
     }
 }

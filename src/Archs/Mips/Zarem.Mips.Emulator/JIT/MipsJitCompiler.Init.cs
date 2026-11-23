@@ -17,7 +17,7 @@ using Zarem.Mips.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Models.JIT;
 
-public partial class MipsJitCompiler<T, TFloat>
+public partial class MipsJitCompiler<T>
 {
     private void InitTables(MipsEmulatorConfig config)
     {
@@ -25,7 +25,6 @@ public partial class MipsJitCompiler<T, TFloat>
         InitRoot(versionInfo);
         InitSpecial(versionInfo);
         InitRegImm(versionInfo);
-        InitFloat(versionInfo);
     }
 
     private void InitRoot(MipsVersionInfo versionInfo)
@@ -191,88 +190,5 @@ public partial class MipsJitCompiler<T, TFloat>
             il.Emit(OpCodes.Not);
             il.Emit(OpCodes.Call, _clzMethod);
         }));
-    }
-
-    private void InitFloat(MipsVersionInfo versionInfo)
-    {
-        InitFloatRoot(versionInfo);
-        InitFloatFuncs<float>(versionInfo);
-        InitFloatFuncs<double>(versionInfo);
-
-        InitConvertFuncs<float>(versionInfo);
-        InitConvertFuncs<double>(versionInfo);
-        InitConvertFuncs<int>(versionInfo);
-
-        if (versionInfo.Is64Bit)
-        {
-            InitConvertFuncs<long>(versionInfo);
-        }
-    }
-
-    private void InitFloatRoot(MipsVersionInfo versionInfo)
-    {
-        _floatInstructionTable.Register(CoProc1RSCode.MFC1, (il, inst, pc) => MoveFromFloat(il, inst));
-        _floatInstructionTable.Register(CoProc1RSCode.MTC1, (il, inst, pc) => MoveToFloat(il, inst));
-    }
-
-    private void InitFloatFuncs<TFormat>(MipsVersionInfo versionInfo)
-        where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
-    {
-        var format = MipsFloatInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.Add, (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Add));
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.Subtract, (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Sub));
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.Multiply, (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Mul));
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.Divide, (il, inst, pc) => FloatAlu<TFormat>(il, inst, OpCodes.Div));
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.SquareRoot, (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.Sqrt)));
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.AbsoluteValue, (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.Abs)));
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.Move, (il, inst, pc) => MoveFloat<TFormat>(il, ((MipsFloatInstruction)inst).FS, ((MipsFloatInstruction)inst).FD));
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.Negate, (il, inst, pc) => FloatUnary<TFormat>(il, inst, OpCodes.Neg));
-
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.Round_W, (il, inst, pc) => FloatRound<TFormat, int>(il, inst, nameof(Math.Round)));
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.Truncate_W, (il, inst, pc) => FloatRound<TFormat, int>(il, inst, nameof(Math.Truncate)));
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.Ceiling_W, (il, inst, pc) => FloatRound<TFormat, int>(il, inst, nameof(Math.Ceiling)));
-        _floatInstructionTable.Register(format, MipsFloatFuncCode.Floor_W, (il, inst, pc) => FloatRound<TFormat, int>(il, inst, nameof(Math.Floor)));
-
-        if (versionInfo.Is64Bit)
-        {
-            _floatInstructionTable.Register(format, MipsFloatFuncCode.Round_L, (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Round)));
-            _floatInstructionTable.Register(format, MipsFloatFuncCode.Truncate_L, (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Truncate)));
-            _floatInstructionTable.Register(format, MipsFloatFuncCode.Ceiling_L, (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Ceiling)));
-            _floatInstructionTable.Register(format, MipsFloatFuncCode.Floor_L, (il, inst, pc) => FloatRound<TFormat, long>(il, inst, nameof(Math.Floor)));
-        }
-
-        if (versionInfo.Generation >= MipsGeneration.MipsIV)
-        {
-            _floatInstructionTable.Register(format, MipsFloatFuncCode.Reciprical, (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.ReciprocalEstimate)));
-        }
-
-        if (versionInfo.Generation >= MipsGeneration.R2)
-        {
-            _floatInstructionTable.Register(format, MipsFloatFuncCode.RecipricalSquareRoot, (il, inst, pc) => FloatUnary<TFormat>(il, inst, nameof(Math.ReciprocalSqrtEstimate)));
-        }
-    }
-
-    private void InitConvertFuncs<TFormat>(MipsVersionInfo versionInfo)
-        where TFormat : unmanaged, INumber<TFormat>
-    {
-        var format = MipsFloatInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
-        InitConvertFunc<TFormat, float>(format, MipsFloatFuncCode.ConvertToSingle);
-        InitConvertFunc<TFormat, double>(format, MipsFloatFuncCode.ConvertToDouble);
-        InitConvertFunc<TFormat, int>(format, MipsFloatFuncCode.ConvertToWord);
-
-        if (versionInfo.Is64Bit && typeof(TFormat) != typeof(long))
-        {
-            InitConvertFunc<TFormat, long>(format, MipsFloatFuncCode.ConvertToLong);
-        }
-    }
-
-    private void InitConvertFunc<TFrom, TTo>(MipsFloatFormat format, MipsFloatFuncCode code)
-        where TFrom : unmanaged, INumber<TFrom>
-        where TTo : unmanaged, INumber<TTo>
-    {
-        if (typeof(TFrom) == typeof(TTo))
-            return;
-
-        _floatInstructionTable.Register(format, code, (il, inst, pc) => FloatConvert<TFrom, TTo>(il, ((MipsFloatInstruction)inst).FS, ((MipsFloatInstruction)inst).FD));
     }
 }

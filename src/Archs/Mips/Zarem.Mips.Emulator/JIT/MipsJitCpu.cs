@@ -6,6 +6,7 @@ using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.JIT;
 using Zarem.Mips.Emulator.Config;
+using Zarem.Mips.Emulator.Interpret.CoProcessors.FloatCoProcessor;
 using Zarem.Mips.Emulator.JIT.CoProcessors;
 using Zarem.Mips.Emulator.JIT.CoProcessors.FloatCoProcessor;
 using Zarem.Mips.Emulator.Machine;
@@ -19,13 +20,12 @@ namespace Zarem.Mips.Emulator.JIT;
 /// <summary>
 /// A <see cref="MipsCpu{T}"/> which uses JIT cross-compilation for execution.
 /// </summary>
-public partial class MipsJitCpu<T, TFloat> : MipsCpu<T>
+public partial class MipsJitCpu<T> : MipsCpu<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     // Cache mapping a PC to its compiled IL block.
-    private readonly JitBlockCache<T, MipsJitBlock<T, TFloat>> _blockCache;
-    private readonly MipsJitCompiler<T, TFloat> _jitCompiler;
+    private readonly JitBlockCache<T, MipsJitBlock<T>> _blockCache;
+    private readonly MipsJitCompiler<T> _jitCompiler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
@@ -33,12 +33,15 @@ public partial class MipsJitCpu<T, TFloat> : MipsCpu<T>
     public MipsJitCpu(MipsEmulatorConfig config, PhysicalBus bus) : base(config, bus)
     {
         _blockCache = new();
-        _jitCompiler = new MipsJitCompiler<T, TFloat>(this);
+        _jitCompiler = new MipsJitCompiler<T>(this);
 
         var coProcessorCount = config.VersionInfo.Generation is < MipsGeneration.MipsIII ? 3 : 2;
         CoProcessors = new IJitCoProcessor<T>[coProcessorCount];
 
-        FloatCoProcessor = new JitFloatCoProcessor<T, TFloat>(ControlCoProcessor);
+        FloatCoProcessor = config.VersionInfo.Generation is >= MipsGeneration.MipsIII
+            ? new JitFloatCoProcessor<T, ulong>(this)
+            : new JitFloatCoProcessor<T, uint>(this);
+
         CoProcessors[1] = FloatCoProcessor;
 
         bus.AddressWritten += OnAddressWritten;
@@ -48,7 +51,7 @@ public partial class MipsJitCpu<T, TFloat> : MipsCpu<T>
     public override IJitCoProcessor<T>[] CoProcessors { get; }
 
     /// <inheritdoc/>
-    public override JitFloatCoProcessor<T, TFloat> FloatCoProcessor { get; }
+    public override IJitFloatCoProcessor<T> FloatCoProcessor { get; }
 
     /// <inheritdoc/>
     public override void Insert(MipsInstruction instruction, out MipsTrap trap)

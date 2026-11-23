@@ -9,11 +9,13 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
+using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Mips.Emulator.JIT;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models.JIT;
@@ -21,40 +23,37 @@ namespace Zarem.Emulator.Models.JIT;
 /// <summary>
 /// A class which compiles blocks of MIPS code into JIT IL code.
 /// </summary>
-public unsafe partial class MipsJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRegister, MipsTrap>
+public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, MipsTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private delegate void MipsEmitter(ILGenerator il, MipsInstruction inst, T pc);
 
     private readonly MipsInstructionDecodeTable<MipsEmitter> _instructionTable;
-    private readonly MipsFloatInstructionDecodeTable<MipsEmitter> _floatInstructionTable;
 
     private readonly MethodInfo _clzMethod;
     private readonly Dictionary<Type, MethodInfo> _multiplyMethod = [];
     private readonly Dictionary<Type, MethodInfo> _castDownMethods = [];
     private readonly Dictionary<Type, MethodInfo> _rightShiftMethods = [];
     private readonly MethodInfo _handleAccessResultMethod;
-    private readonly MipsJitCpu<T, TFloat> _cpu;
+    private readonly MipsJitCpu<T> _cpu;
 
     private readonly HashSet<MipsGpRegister> _loadRegs = [];
     private readonly HashSet<MipsGpRegister> _storeRegs = [];
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MipsJitCompiler{T, TFloat}"/> class.
+    /// Initializes a new instance of the <see cref="MipsJitCompiler{T}"/> class.
     /// </summary>
-    public MipsJitCompiler(MipsJitCpu<T, TFloat> cpu) : base(cpu)
+    public MipsJitCompiler(MipsJitCpu<T> cpu) : base(cpu)
     {
         _cpu = cpu;
 
         _instructionTable = new MipsInstructionDecodeTable<MipsEmitter>(ReservedInstruction);
-        _floatInstructionTable = new MipsFloatInstructionDecodeTable<MipsEmitter>(ReservedInstruction);
 
         var clzMethod = typeof(BitOperations).GetMethod(nameof(BitOperations.LeadingZeroCount), [typeof(uint)]);
         Guard.IsNotNull(clzMethod);
         _clzMethod = clzMethod;
 
-        var handleAccessResultMethod = typeof(MipsJitCompiler<T, TFloat>).GetMethod(nameof(HandleMemoryAccessResult), BindingFlags.Static | BindingFlags.NonPublic);
+        var handleAccessResultMethod = typeof(MipsJitCompiler<T>).GetMethod(nameof(HandleMemoryAccessResult), BindingFlags.Static | BindingFlags.NonPublic);
         Guard.IsNotNull(handleAccessResultMethod);
         _handleAccessResultMethod = handleAccessResultMethod;
 
@@ -86,9 +85,9 @@ public unsafe partial class MipsJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRe
     /// </summary>
     /// <param name="startPc">The entry point of the JIT block.</param>
     /// <returns>The method block.</returns>
-    public MipsJitBlock<T, TFloat> CompileBlock(T startPc)
+    public MipsJitBlock<T> CompileBlock(T startPc)
     {
-        Type[] parameterTypes = [typeof(MipsJitCpu<T, TFloat>), typeof(MipsTrap).MakeByRefType()];
+        Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
@@ -104,16 +103,16 @@ public unsafe partial class MipsJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRe
             currentPc += T.CreateTruncating(4);
         }
 
-        var @delegate = (MipsBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(MipsBlockDelegate<T, TFloat>));
+        var @delegate = (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
         return new(@delegate, endPc - startPc);
     }
 
     /// <summary>
     /// Compiles a single instruction as a cli dynamic method.
     /// </summary>
-    public MipsBlockDelegate<T, TFloat> CompileLoneInstruction(MipsInstruction inst, T pc)
+    public MipsBlockDelegate<T> CompileLoneInstruction(MipsInstruction inst, T pc)
     {
-        Type[] parameterTypes = [typeof(MipsJitCpu<T, TFloat>), typeof(MipsTrap).MakeByRefType()];
+        Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
@@ -127,10 +126,13 @@ public unsafe partial class MipsJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRe
             EmitRet(il, pc + T.CreateTruncating(4));
         }
 
-        return (MipsBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(MipsBlockDelegate<T, TFloat>));
+        return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
     }
 
-    private void CompileInstruction(ILGenerator il, MipsInstruction instruction, T pc)
+    /// <summary>
+    /// Compiles a single instruction as part of a <see cref="ILGenerator"/> block.
+    /// </summary>
+    public virtual void CompileInstruction(ILGenerator il, MipsInstruction instruction, T pc)
     {
         var emitter = _instructionTable.Lookup(instruction);
         emitter(il, instruction, pc);
@@ -615,8 +617,17 @@ public unsafe partial class MipsJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRe
 
     private void ExecuteFloatTable(ILGenerator il, MipsInstruction inst, T pc)
     {
-        var emitter = _floatInstructionTable.Lookup(inst);
-        emitter(il, inst, pc);
+        var coProcIndex = inst.OpCode switch
+        {
+            MipsOpCode.Coprocessor0 => 0,
+            MipsOpCode.Coprocessor1 => 1,
+            MipsOpCode.Coprocessor2 => 2,
+            MipsOpCode.Coprocessor3 => 3,
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<int>(),
+        };
+
+        var coProc = _cpu.CoProcessors[coProcIndex];
+        coProc.CompileInstruction(il, inst, pc);
     }
 
     private void ReservedInstruction(ILGenerator il, MipsInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);

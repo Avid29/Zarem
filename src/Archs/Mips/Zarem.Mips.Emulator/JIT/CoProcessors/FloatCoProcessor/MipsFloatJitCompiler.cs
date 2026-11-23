@@ -2,16 +2,51 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
+using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
-using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Emulator.JIT;
+using Zarem.Emulator.Models.JIT;
+using Zarem.Mips.Emulator.Machine.Enums;
+using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Emulator.Models.JIT;
+namespace Zarem.Mips.Emulator.JIT.CoProcessors.FloatCoProcessor;
 
-public unsafe partial class MipsJitCompiler<T, TFloat>
+/// <summary>
+/// A class which compiles blocks of MIPS floating-point code into JIT IL code.
+/// </summary>
+public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRegister, MipsTrap>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
+    private delegate void MipsFloatEmitter(ILGenerator il, MipsFloatInstruction inst, T pc);
+
+    private readonly MipsFloatInstructionDecodeTable<MipsFloatEmitter> _instructionTable;
+    private readonly MipsJitCpu<T> _cpu;
+    private readonly JitFloatCoProcessor<T, TFloat> _fpu;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MipsFloatJitCompiler{T, TFloat}"/> class.
+    /// </summary>
+    public MipsFloatJitCompiler(MipsJitCpu<T> cpu, JitFloatCoProcessor<T, TFloat> fpu) : base(cpu)
+    {
+        _cpu = cpu;
+        _fpu = fpu;
+
+        _instructionTable = new MipsFloatInstructionDecodeTable<MipsFloatEmitter>(ReservedInstruction);
+
+        InitFloat(cpu.Config.VersionInfo);
+    }
+
+    /// <inheritdoc/>
+    public void CompileInstruction(ILGenerator il, MipsInstruction instruction, T pc)
+    {
+        var emitter = _instructionTable.Lookup(instruction);
+        emitter(il, instruction, pc);
+    }
+
     private void FloatAlu<TFormat>(ILGenerator il, MipsFloatInstruction inst, OpCode ilOpCode)
         where TFormat : unmanaged
     {
@@ -211,5 +246,18 @@ public unsafe partial class MipsJitCompiler<T, TFloat>
         }
     }
 
-    private void EmitLoadRegisterAddress(ILGenerator il, MipsFloatRegister register) => EmitLoadRegisterAddress(il, (int)register, ((FloatCoProcessor<T, TFloat>)_cpu.FloatCoProcessor).RegisterFile.Regs);
+
+    /// <inheritdoc/>
+    protected override void EmitSetupLocalRegisters(ILGenerator il)
+    {
+    }
+
+    /// <inheritdoc/>
+    protected override void EmitFlushLocalRegisters(ILGenerator il)
+    {
+    }
+
+    private void EmitLoadRegisterAddress(ILGenerator il, MipsFloatRegister register) => EmitLoadRegisterAddress(il, (int)register, _fpu.RegisterFile.Regs);
+
+    private void ReservedInstruction(ILGenerator il, MipsFloatInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
 }

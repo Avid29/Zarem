@@ -9,7 +9,7 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models.JIT;
 
-public unsafe partial class MipsJitCompiler<T, TFloat>
+public unsafe partial class MipsJitCompiler<T>
 {
     private void EmitDelaySlot(ILGenerator il, T delaySlotPc)
     {
