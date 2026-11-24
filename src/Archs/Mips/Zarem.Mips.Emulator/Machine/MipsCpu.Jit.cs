@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2025
 
-using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.CPU;
+using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.JIT;
 using Zarem.Mips.Emulator.JIT;
 using Zarem.Mips.Emulator.Machine.Enums;
@@ -14,48 +14,67 @@ namespace Zarem.Mips.Emulator.Machine;
 /// <summary>
 /// A base class representing a processor unit.
 /// </summary>
-public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
-    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+public partial class MipsCpu<T>
 {
-    // Cache mapping a PC to its compiled IL block.
-    private readonly JitBlockCache<T, MipsJitBlock<T>>? _blockCache;
-    private readonly MipsJitCompiler<T>? _jitCompiler;
-
-    /// <inheritdoc/>
-    public override void Insert(MipsInstruction instruction, out MipsTrap trap)
+    /// <summary>
+    /// A <see cref="CpuBase{T}.IExecutor{TInstruction,TTrap}"/> for a JIT cross-compiling MIPS cpu.
+    /// </summary>
+    protected class MipsJitExecutor : IExecutor<MipsInstruction, MipsTrap>
     {
-        var @delegate = _jitCompiler.CompileLoneInstruction(instruction, ProgramCounter);
-        ProgramCounter = @delegate(this, out trap);
-    }
+        // Cache mapping a PC to its compiled IL block.
+        private readonly JitBlockCache<T, MipsJitBlock<T>> _blockCache;
+        private readonly MipsJitCompiler<T> _jitCompiler;
+        private readonly MipsCpu<T> _cpu;
 
-    /// <inheritdoc/>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected override long ExecutionLoop()
-    {
-        // Look up the current block
-        if (!_blockCache.TryGet(ProgramCounter, out var compiledBlock))
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MipsJitExecutor"/> class.
+        /// </summary>
+        public MipsJitExecutor(MipsCpu<T> cpu, PhysicalBus bus)
         {
-            // Cache Miss. Compile the basic block starting at ProgramCounter
-            compiledBlock = _jitCompiler.CompileBlock(ProgramCounter);
-            _blockCache.Store(ProgramCounter, compiledBlock);
+            _cpu = cpu;
+
+            _blockCache = new();
+            _jitCompiler = new MipsJitCompiler<T>(cpu);
+
+            bus.AddressWritten += OnAddressWritten;
         }
 
-        // Execute the block, and update the PC to the next block start
-        ProgramCounter = compiledBlock.Delegate(this, out var trap);
+        /// <inheritdoc/>
+        public void Insert(MipsInstruction instruction, out MipsTrap trap)
+        {
+            var @delegate = _jitCompiler.CompileLoneInstruction(instruction, _cpu.ProgramCounter);
+            _cpu.ProgramCounter = @delegate(_cpu, out trap);
+        }
 
-        // Handle trap
-        if (trap is not MipsTrap.None)
-            HandleTrap(trap);
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public long ExecutionLoop()
+        {
+            // Look up the current block
+            if (!_blockCache.TryGet(_cpu.ProgramCounter, out var compiledBlock))
+            {
+                // Cache Miss. Compile the basic block starting at ProgramCounter
+                compiledBlock = _jitCompiler.CompileBlock(_cpu.ProgramCounter);
+                _blockCache.Store(_cpu.ProgramCounter, compiledBlock);
+            }
 
-        // Return the number of instructions executed.
-        return long.CreateTruncating(compiledBlock.Size);
-    }
+            // Execute the block, and update the PC to the next block start
+            _cpu.ProgramCounter = compiledBlock.Delegate(_cpu, out var trap);
 
-    private void OnAddressWritten(object? sender, ulong e)
-    {
-        // Invalidate the JIT cache for the page that was modified.
-        // This allows self-modifying code to work correctly, as the next time the CPU tries to execute
-        // from that address, it will recompile the block.
-        _blockCache.InvalidatePage(T.CreateTruncating(e));
+            // Handle trap
+            if (trap is not MipsTrap.None)
+                _cpu.HandleTrap(trap);
+
+            // Return the number of instructions executed.
+            return long.CreateTruncating(compiledBlock.Size);
+        }
+
+        private void OnAddressWritten(object? sender, ulong e)
+        {
+            // Invalidate the JIT cache for the page that was modified.
+            // This allows self-modifying code to work correctly, as the next time the CPU tries to execute
+            // from that address, it will recompile the block.
+            _blockCache.InvalidatePage(T.CreateTruncating(e));
+        }
     }
 }

@@ -88,7 +88,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     /// <returns>The method block.</returns>
     public MipsJitBlock<T> CompileBlock(T startPc)
     {
-        Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
+        Type[] parameterTypes = [typeof(MipsCpu<T>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
@@ -113,7 +113,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     /// </summary>
     public MipsBlockDelegate<T> CompileLoneInstruction(MipsInstruction inst, T pc)
     {
-        Type[] parameterTypes = [typeof(MipsJitCpu<T>), typeof(MipsTrap).MakeByRefType()];
+        Type[] parameterTypes = [typeof(MipsCpu<T>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 

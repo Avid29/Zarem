@@ -4,6 +4,7 @@ using System;
 using Zarem.Emulator.Models.Logic;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Interpret;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Functions;
@@ -241,18 +242,18 @@ public unsafe partial class MipsInstructionServiceTable<T, TSigned>
         Register(Func2Code.CountLeadingOnes, &AluR<CloLogic<uint>, uint>);
     }
 
-    private void Register(MipsOpCode opCode, delegate*<MipsInterpretedCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private void Register(MipsOpCode opCode, delegate*<MipsCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => _instructionTable.Register(opCode, (IntPtr)func);
 
-    private void Register(FunctionCode funcCode, delegate*<MipsInterpretedCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private void Register(FunctionCode funcCode, delegate*<MipsCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => _instructionTable.Register(funcCode, (IntPtr)func);
 
-    private void Register(Func2Code funcCode, delegate*<MipsInterpretedCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private void Register(Func2Code funcCode, delegate*<MipsCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => _instructionTable.Register(funcCode, (IntPtr)func);
 
-    private void Register(RegImmFuncCode funcCode, delegate*<MipsInterpretedCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private void Register(RegImmFuncCode funcCode, delegate*<MipsCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => _instructionTable.Register(funcCode, (IntPtr)func);
 
-    private static IntPtr GetFunctionPtrValue(delegate*<MipsInterpretedCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
+    private static IntPtr GetFunctionPtrValue(delegate*<MipsCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap> func)
         => (IntPtr)func;
 }

@@ -2,6 +2,7 @@
 
 using System;
 using Zarem.Mips.Emulator.Interpret;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;
@@ -11,7 +12,7 @@ namespace Zarem.Emulator.Models;
 
 public partial class MipsInstructionServiceTable<T, TSigned>
 {
-    private static MipsTrap CreateCoProc0Execution(MipsInterpretedCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CreateCoProc0Execution(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         // Check if the current privilege mode allows executing coprocessor instructions
         // NOTE: Make mfc0 permissions in user mode configurable?
@@ -55,7 +56,7 @@ public partial class MipsInstructionServiceTable<T, TSigned>
         return MipsTrap.None;
     }
 
-    private static MipsExecution<T> Eret(MipsInterpretedCpu<T> cpu)
+    private static MipsExecution<T> Eret(MipsCpu<T> cpu)
     {
         // Retrieve the status register value
         var status = cpu.ControlCoProcessor.RegisterFile.StatusRegister;
@@ -85,7 +86,7 @@ public partial class MipsInstructionServiceTable<T, TSigned>
         };
     }
 
-    private static MipsExecution<T> SetInterrupts(MipsInterpretedCpu<T> cpu, CoProc0Instruction inst, bool enabled)
+    private static MipsExecution<T> SetInterrupts(MipsCpu<T> cpu, CoProc0Instruction inst, bool enabled)
     {
         // Retrieve the status register
         var status = cpu.ControlCoProcessor.RegisterFile.StatusRegister;

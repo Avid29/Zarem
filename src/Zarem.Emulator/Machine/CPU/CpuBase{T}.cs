@@ -15,7 +15,7 @@ namespace Zarem.Emulator.Machine.CPU;
 /// <summary>
 /// A base class for an emulated CPU.
 /// </summary>
-public abstract class CpuBase<T> : ICpu
+public abstract partial class CpuBase<T> : ICpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <inheritdoc/>

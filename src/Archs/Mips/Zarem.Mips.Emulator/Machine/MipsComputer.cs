@@ -36,26 +36,10 @@ public class MipsComputer : ComputerBase
         _memoryMapper = new MemoryMapper();
         var bus = new PhysicalBus(_memoryMapper, Endianness.Big);
 
-        // Determine gpr size
-        var gprType = config.VersionInfo.Is64Bit
-            ? typeof(ulong)
-            : typeof(uint);
-
-        // Determine the CPU implementation type
-        var cpuType = config.ExecutionMode switch
-        {
-            ExecutionMode.Interpret => typeof(MipsInterpretedCpu<>),
-            ExecutionMode.JustInTime => typeof(MipsJitCpu<>),
-            _ => throw new NotImplementedException(),
-        };
-
-        // Determine the CPU implementation type
-        var closedCpuType = cpuType.MakeGenericType(gprType);
-
         // Construct the CPU
-        var cpu = (IMipsCpu?)Activator.CreateInstance(closedCpuType, config, bus);
-        Guard.IsNotNull(cpu);
-        Cpu = cpu;
+        Cpu = config.VersionInfo.Is64Bit
+            ? new MipsCpu<ulong>(config, bus)
+            : new MipsCpu<uint>(config, bus);
 
         Cpu.ShutdownRequested += Processor_ShutdownRequested;
 

@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2026
 
+using System;
 using System.Numerics;
 using Zarem.Assembler;
 using Zarem.Assembler.Tokenization;
@@ -166,21 +167,69 @@ public partial class MipsEmulatorTests
         // Initialize the program counter
         cpu.ProgramCounter = @case.InitialPC;
 
-        if (cpu is MipsJitCpu<T>)
+        // Execute
+        cpu.Insert(instruction, out var trap);
+
+        // Ensure that the expected trap was raised (if any)
+        Assert.AreEqual(@case.ExpectedTrap, trap);
+
+        var writeback = @case.ExpectedWriteBack;
+        if (writeback.HasValue)
         {
-            RunJitChecks(computer, instruction, @case);
+            var writeBackValue = writeback.Value.Value;
+            if (writeBackValue.HasValue)
+            {
+                Assert.AreEqual(writeBackValue.Value, cpu[writeback.Value.Register]);
+            }
         }
-        else if (cpu is MipsInterpretedCpu<T>)
+
+        var highLow = @case.ExpectedHighLow;
+        if (highLow.HasValue)
         {
-            RunInterpretChecks(computer, instruction, @case);
+            Assert.AreEqual(highLow.Value, (cpu.RegisterFile.High, cpu.RegisterFile.Low));
+        }
+
+        var expectedMemory = @case.ExpectedMemory;
+        if (expectedMemory is not null)
+        {
+            var buffer = new byte[expectedMemory.Value.Data.Length];
+            computer.Memory.Read(ulong.CreateTruncating(expectedMemory.Value.Address), buffer);
+            Assert.AreSequenceEqual(expectedMemory.Value.Data, buffer);
+        }
+
+        var expectedFloatWord = @case.ExpectedWordFloatWriteBack;
+        if (expectedFloatWord.HasValue)
+        {
+            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatCoProcessor?.Words[(int)expectedFloatWord.Value.Register]);
+        }
+
+        var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
+        if (expectedFloatLong.HasValue)
+        {
+            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatCoProcessor?.Longs[(int)expectedFloatLong.Value.Register]);
+        }
+
+        var expectedPC = @case.ExpectedPC;
+        if (expectedPC is not null)
+        {
+            if (cpu.DelaySlot is not null)
+            {
+                // Assert the branch has not occured, then execute a NOP to apply the delayed branch
+                Assert.AreEqual(ulong.CreateTruncating(@case.InitialPC) + 4, computer.Cpu.ProgramCounter);
+                cpu.Insert(MipsInstruction.NOP, out _);
+            }
+
+            Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
         }
     }
 
+    /*
     private static void RunInterpretChecks<T, TFloat>(MipsComputer computer, MipsInstruction instruction, MipsEmulatorTestCase<T, TFloat> @case)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
         where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
     {
-        var cpu = (MipsInterpretedCpu<T>)computer.Cpu;
+        var cpu = (MipsCpu<T>)computer.Cpu;
+        //cpu.Insert(instruction, out var execution, out var trap);
         cpu.Insert(instruction, out var execution, out var trap);
 
         // Ensure that the expected trap was raised (if any)
@@ -251,57 +300,5 @@ public partial class MipsEmulatorTests
             Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
         }
     }
-
-    private static void RunJitChecks<T, TFloat>(MipsComputer computer, MipsInstruction instruction, MipsEmulatorTestCase<T, TFloat> @case)
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
-        where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
-    {
-        var cpu = (MipsJitCpu<T>)computer.Cpu;
-        cpu.Insert(instruction, out var trap);
-
-        // Ensure that the expected trap was raised (if any)
-        Assert.AreEqual(@case.ExpectedTrap, trap);
-
-        var writeback = @case.ExpectedWriteBack;
-        if (writeback.HasValue)
-        {
-            var writeBackValue = writeback.Value.Value;
-            if (writeBackValue.HasValue)
-            {
-                Assert.AreEqual(writeBackValue.Value, cpu[writeback.Value.Register]);
-            }
-        }
-
-        var highLow = @case.ExpectedHighLow;
-        if (highLow.HasValue)
-        {
-            Assert.AreEqual(highLow.Value, (cpu.RegisterFile.High, cpu.RegisterFile.Low));
-        }
-
-        var expectedMemory = @case.ExpectedMemory;
-        if (expectedMemory is not null)
-        {
-            var buffer = new byte[expectedMemory.Value.Data.Length];
-            computer.Memory.Read(ulong.CreateTruncating(expectedMemory.Value.Address), buffer);
-            CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
-        }
-
-        var expectedFloatWord = @case.ExpectedWordFloatWriteBack;
-        if (expectedFloatWord.HasValue)
-        {
-            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatCoProcessor?.Words[(int)expectedFloatWord.Value.Register]);
-        }
-
-        var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
-        if (expectedFloatLong.HasValue)
-        {
-            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatCoProcessor?.Longs[(int)expectedFloatLong.Value.Register]);
-        }
-
-        var expectedPC = @case.ExpectedPC;
-        if (expectedPC is not null)
-        {
-            Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
-        }
-    }
+    */
 }

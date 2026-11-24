@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.Enums;
 
 namespace Zarem.Mips.Emulator.JIT;
@@ -12,6 +13,6 @@ namespace Zarem.Mips.Emulator.JIT;
 /// <param name="cpu">The CPU instance to operate on.</param>
 /// <param name="trap">The trap which caused the block to exit.</param>
 /// <returns>The Program Counter where execution should continue.</returns>
-public delegate T MipsBlockDelegate<T>(MipsJitCpu<T> cpu, out MipsTrap trap)
+public delegate T MipsBlockDelegate<T>(MipsCpu<T> cpu, out MipsTrap trap)
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 ;
