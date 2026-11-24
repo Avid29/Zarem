@@ -78,22 +78,6 @@ public enum MipsSideEffect
     WriteCoProc1Control,
 
     /// <summary>
-    /// Writes a word to the floating-point processor.
-    /// </summary>
-    /// <remarks>
-    /// Could be a float, could be an int.
-    /// </remarks>
-    WriteSingle,
-
-    /// <summary>
-    /// Writes a dword to the floating-point processor.
-    /// </summary>
-    /// <remarks>
-    /// Could be a double, could be a long.
-    /// </remarks>
-    WriteDouble,
-
-    /// <summary>
     /// Reads a TLB entry into EntryHi/Lo registers.
     /// </summary>
     TLBRead,

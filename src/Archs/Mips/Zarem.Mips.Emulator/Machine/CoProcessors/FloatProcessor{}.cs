@@ -3,8 +3,6 @@
 using System;
 using System.Numerics;
 using System.Reflection.Emit;
-using Zarem.Emulator.JIT;
-using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.Interpret.CoProcessors;

@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Diagnostics;
 using System.Numerics;
-using System.Transactions;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;

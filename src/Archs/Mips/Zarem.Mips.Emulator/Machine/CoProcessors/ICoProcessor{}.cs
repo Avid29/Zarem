@@ -2,7 +2,6 @@
 
 using System.Numerics;
 using System.Reflection.Emit;
-using Zarem.Emulator.JIT;
 using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;

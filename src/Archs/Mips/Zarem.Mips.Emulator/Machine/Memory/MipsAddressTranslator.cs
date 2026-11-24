@@ -3,7 +3,6 @@
 using CommunityToolkit.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
