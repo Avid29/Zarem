@@ -1,19 +1,15 @@
 ﻿// Avishai Dernis 2026
 
-using System;
 using System.Numerics;
 using Zarem.Assembler;
 using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Mips.Assembler;
 using Zarem.Mips.Assembler.Models.Tables;
-using Zarem.Mips.Emulator.Interpret;
-using Zarem.Mips.Emulator.JIT;
 using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
-using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Test.Mips.Emulator;
 

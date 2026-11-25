@@ -36,17 +36,13 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     private readonly Dictionary<Type, MethodInfo> _castDownMethods = [];
     private readonly Dictionary<Type, MethodInfo> _rightShiftMethods = [];
     private readonly MethodInfo _handleAccessResultMethod;
-    private readonly MipsCpu<T> _cpu;
-
-    private readonly HashSet<MipsGpRegister> _loadRegs = [];
-    private readonly HashSet<MipsGpRegister> _storeRegs = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsJitCompiler{T}"/> class.
     /// </summary>
     public MipsJitCompiler(MipsCpu<T> cpu) : base(cpu)
     {
-        _cpu = cpu;
+        Cpu = cpu;
 
         _instructionTable = new MipsInstructionDecodeTable<MipsEmitter>(ReservedInstruction);
 
@@ -78,34 +74,32 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             _rightShiftMethods[type] = rightShiftMethod;
         }
 
-        InitTables(_cpu.Config);
+        InitTables(Cpu.Config);
     }
 
-    /// <summary>
-    /// Compiles a block of MIPS code to JIT starting at <paramref name="startPc"/>.
-    /// </summary>
-    /// <param name="startPc">The entry point of the JIT block.</param>
-    /// <returns>The method block.</returns>
-    public MipsJitBlock<T> CompileBlock(T startPc)
+    /// <inheritdoc/>
+    protected override MipsCpu<T> Cpu { get; }
+
+    /// <inheritdoc/>
+    public override MipsJitBlock<T> CompileBlock(T startPc)
     {
         Type[] parameterTypes = [typeof(MipsCpu<T>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
-        var endPc = DiscoverBlock(startPc);
-        ScanRegisterUsage(startPc, endPc);
-        EmitSetupLocalRegisters(il);
+        var context = DiscoverBlock(il, startPc);
+        ScanRegisterUsage(context);
+        context.EmitSetupLocalRegisters(this);
 
         T currentPc = startPc;
 
-        while (currentPc < endPc)
+        while (currentPc < context.End)
         {
             CompileInstruction(il, Fetch(currentPc), currentPc);
             currentPc += T.CreateTruncating(4);
         }
 
-        var @delegate = (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
-        return new(@delegate, endPc - startPc);
+        return CreateBlockDelegate(method, context);
     }
 
     /// <summary>
@@ -117,9 +111,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
-        ScanRegisterUsage(pc, pc);
-        LogRegisterUsage(inst);
-        EmitSetupLocalRegisters(il);
+        var context = new JitBlockContext<T, MipsGpRegister, MipsTrap>(il ,pc, pc);
+        ScanRegisterUsage(context);
+        LogRegisterUsage(context, inst);
+        context.EmitSetupLocalRegisters(this);
         CompileInstruction(il, inst, pc);
 
         if (!IsControlFlow(inst))
@@ -128,6 +123,13 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         }
 
         return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
+    }
+
+    /// <inheritdoc/>
+    protected override MipsJitBlock<T> CreateBlockDelegate(DynamicMethod method, JitBlockContext<T, MipsGpRegister, MipsTrap> context)
+    {
+        var @delegate = (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
+        return new MipsJitBlock<T>(@delegate, context.End - context.End);
     }
 
     /// <summary>
@@ -489,7 +491,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
     private void Jump(ILGenerator il, T pc, Action<ILGenerator> pushAddress, bool link = false)
     {
-        bool delaySlots = !_cpu.Config.DisableDelaySlots;
+        bool delaySlots = !Cpu.Config.DisableDelaySlots;
 
         if (link)
         {
@@ -526,7 +528,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
     private void Branch(ILGenerator il, MipsInstruction inst, T pc, OpCode conditionOpCode, Action<ILGenerator> pushOperands, bool likely = false)
     {
-        bool delaySlotsEnabled = !_cpu.Config.DisableDelaySlots;
+        bool delaySlotsEnabled = !Cpu.Config.DisableDelaySlots;
 
         Label takeBranch = il.DefineLabel();
 
@@ -627,7 +629,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<int>(),
         };
 
-        var coProc = _cpu.CoProcessors[coProcIndex];
+        var coProc = Cpu.CoProcessors[coProcIndex];
         coProc.CompileInstruction(il, inst, pc);
     }
 

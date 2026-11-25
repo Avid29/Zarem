@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using System.Runtime.InteropServices;
 using Zarem.Emulator.JIT;
 
 namespace Zarem.Mips.Emulator.JIT;

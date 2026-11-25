@@ -25,13 +25,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
-    private delegate void RiscVEmitter(ILGenerator il, RiscVInstruction inst, T pc, bool compressed);
+    private delegate void RiscVEmitter(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed);
 
     private readonly RiscVInstructionDecodeTable<RiscVEmitter> _instructionTable;
-    private readonly RiscVJitCpu<T, TFloat> _cpu;
 
-    private readonly HashSet<RiscVGpRegister> _loadRegs = [];
-    private readonly HashSet<RiscVGpRegister> _storeRegs = [];
     private readonly InstructionDecompressor? _decompressor;
 
     /// <summary>
@@ -39,9 +36,9 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
     /// </summary>
     public RiscVJitCompiler(RiscVJitCpu<T, TFloat> cpu) : base(cpu)
     {
-        _cpu = cpu;
+        Cpu = cpu;
 
-        _instructionTable = new RiscVInstructionDecodeTable<RiscVEmitter>(_cpu.Config.VersionInfo.Base, IllegalInstruction);
+        _instructionTable = new RiscVInstructionDecodeTable<RiscVEmitter>(Cpu.Config.VersionInfo.Base, IllegalInstruction);
         InitTables(cpu.Config);
 
         // Initialize the decompressor if the compression extension is in use
@@ -49,32 +46,33 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
             _decompressor = new InstructionDecompressor(cpu.Config);
     }
 
+    /// <inheritdoc/>
+    protected override RiscVJitCpu<T, TFloat> Cpu { get; }
+
     /// <summary>
     /// Compiles a block of RISC-V code to JIT starting at <paramref name="startPc"/>.
     /// </summary>
     /// <param name="startPc">The entry point of the JIT block.</param>
     /// <returns>The method block.</returns>
-    public RiscVJitBlock<T, TFloat> CompileBlock(T startPc)
+    public override RiscVJitBlock<T, TFloat> CompileBlock(T startPc)
     {
         Type[] parameterTypes = [typeof(RiscVJitCpu<T, TFloat>), typeof(RiscVTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
-        var endPc = DiscoverBlock(startPc);
-        ScanRegisterUsage(startPc, endPc);
-        EmitSetupLocalRegisters(il);
+        var context = DiscoverBlock(il, startPc);
+        ScanRegisterUsage(context);
+        context.EmitSetupLocalRegisters(this);
 
         T currentPc = startPc;
-
-        while (currentPc < endPc)
+        while (currentPc < context.End)
         {
             var inst = Fetch(currentPc, out var decompressed);
-            CompileInstruction(il, decompressed, currentPc, inst.IsCompressed);
+            CompileInstruction(context, decompressed, currentPc, inst.IsCompressed);
             currentPc += T.CreateTruncating(inst.IsCompressed ? 2 : 4);
         }
 
-        var @delegate = (RiscVBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(RiscVBlockDelegate<T, TFloat>));
-        return new(@delegate, endPc - startPc);
+        return CreateBlockDelegate(method, context);
     }
 
     /// <summary>
@@ -92,32 +90,40 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
             _decompressor?.Decompress((RiscVCompressedInstruction)inst, out decompressed);
         }
 
-        ScanRegisterUsage(pc, pc);
-        LogRegisterUsage(decompressed);
-        EmitSetupLocalRegisters(il);
-        CompileInstruction(il, decompressed, pc, inst.IsCompressed);
+        var context = new JitBlockContext<T, RiscVGpRegister, RiscVTrap>(il, pc, pc);
+        ScanRegisterUsage(context);
+        LogRegisterUsage(context, decompressed);
+        context.EmitSetupLocalRegisters(this);
+        CompileInstruction(context, decompressed, pc, inst.IsCompressed);
 
         if (!IsControlFlow(decompressed))
         {
-            EmitRet(il, pc + T.CreateTruncating(inst.IsCompressed ? 2 : 4));
+            EmitRet(context, pc + T.CreateTruncating(inst.IsCompressed ? 2 : 4));
         }
 
         return (RiscVBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(RiscVBlockDelegate<T, TFloat>));
     }
 
-    private void CompileInstruction(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
+    /// <inheritdoc/>
+    protected override RiscVJitBlock<T, TFloat> CreateBlockDelegate(DynamicMethod method, JitBlockContext<T, RiscVGpRegister, RiscVTrap> context)
     {
-        var func = _instructionTable.Lookup(inst);
-        func(il, inst, pc, compressed);
+        var @delegate = (RiscVBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(RiscVBlockDelegate<T, TFloat>));
+        return new(@delegate, context.End - context.End);
     }
 
-    private void AluR<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode, bool not = false)
+    private void CompileInstruction(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
+    {
+        var func = _instructionTable.Lookup(inst);
+        func(context, inst, pc, compressed);
+    }
+
+    private void AluR<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, OpCode ilOpCode, bool not = false)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, il =>
+        EmitStoreRegister(context, inst.RD, il =>
         {
-            EmitLoadRegister<TData>(il, inst.RS1);
-            EmitLoadRegister<TData>(il, inst.RS2);
+            EmitLoadRegister<TData>(context, inst.RS1);
+            EmitLoadRegister<TData>(context, inst.RS2);
             if (not)
             {
                 il.Emit(OpCodes.Not);
@@ -127,33 +133,32 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         });
 
         // Convert to T if neccesary
-        if (sizeof(TData) != sizeof(T))
-            il.EmitConv<T>(IsSigned<TData>());
+        context.ILGenerator.EmitConv<TData, T>(IsSigned<TData>());
     }
 
-    private void AluI<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
+    private void AluI<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, il =>
+        EmitStoreRegister(context, inst.RD, il =>
         {
-            EmitLoadRegister<TData>(il, inst.RS1);
+            EmitLoadRegister<TData>(context, inst.RS1);
             il.EmitLoadConstant<int>(inst.Immediate);
             il.Emit(ilOpCode);
         });
     }
 
-    private void ShiftI<TData>(ILGenerator il, RiscVInstruction inst, OpCode ilOpCode)
+    private void ShiftI<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, il =>
+        EmitStoreRegister(context, inst.RD, il =>
         {
-            EmitLoadRegister<TData>(il, inst.RS1);
+            EmitLoadRegister<TData>(context, inst.RS1);
             il.EmitLoadConstant(inst.Immediate & (sizeof(TData) * 8 - 1));
             il.Emit(ilOpCode);
         });
     }
 
-    private void MulH<TData, TLong>(ILGenerator il, RiscVInstruction inst)
+    private void MulH<TData, TLong>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
         where TData : unmanaged, INumber<TData>
         where TLong : unmanaged, INumber<TLong>
     {
@@ -163,10 +168,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         // Primitive types can use native CIL hardware opcodes
         if (longType.IsPrimitive)
         {
-            EmitStoreRegister(il, inst.RD, il =>
+            EmitStoreRegister(context, inst.RD, il =>
             {
-                EmitLoadRegister<TLong>(il, inst.RS1);
-                EmitLoadRegister<TLong>(il, inst.RS2);
+                EmitLoadRegister<TLong>(context, inst.RS1);
+                EmitLoadRegister<TLong>(context, inst.RS2);
                 il.Emit(OpCodes.Mul);
                 il.EmitLoadConstant(shiftAmount);
                 il.Emit(OpCodes.Shr_Un);
@@ -192,12 +197,12 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
             Guard.IsNotNull(convUpMethod);
             Guard.IsNotNull(convDownMethod);
 
-            EmitStoreRegister(il, inst.RD, il =>
+            EmitStoreRegister(context, inst.RD, il =>
             {
                 // Load and widen both operands to TLong
-                EmitLoadRegister<TData>(il, inst.RS1);
+                EmitLoadRegister<TData>(context, inst.RS1);
                 il.Emit(OpCodes.Call, convUpMethod);
-                EmitLoadRegister<TData>(il, inst.RS2);
+                EmitLoadRegister<TData>(context, inst.RS2);
                 il.Emit(OpCodes.Call, convUpMethod);
 
                 // TLong multiplication and shift
@@ -212,15 +217,15 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         }
     }
 
-    private void MulSH<TData, TLong, TLongSigned>(ILGenerator il, RiscVInstruction inst)
+    private void MulSH<TData, TLong, TLongSigned>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
         where TData : unmanaged, INumber<TData>, IUnsignedNumber<TData>
         where TLong : unmanaged, INumber<TLong>, IUnsignedNumber<TLong>
         where TLongSigned : unmanaged, INumber<TLongSigned>, ISignedNumber<TLongSigned>
     {
-        EmitStoreRegister(il, inst.RD, il =>
+        EmitStoreRegister(context, inst.RD, il =>
         {
-            EmitLoadRegister<TLongSigned>(il, inst.RS1);
-            EmitLoadRegister<TLong>(il, inst.RS2);
+            EmitLoadRegister<TLongSigned>(context, inst.RS1);
+            EmitLoadRegister<TLong>(context, inst.RS2);
             il.Emit(OpCodes.Mul);
 
             int shiftAmount = sizeof(TData) * 8;
@@ -230,17 +235,17 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         });
     }
 
-    private void JumpAndLink(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
-        => JumpAndLink(il, inst, pc, compressed, pushAddress: il =>
+    private void JumpAndLink(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
+        => JumpAndLink(context, inst, pc, compressed, pushAddress: il =>
         {
             var target = pc + T.CreateTruncating(inst.JumpOffset);
             il.EmitLoadConstant(target);
         });
 
-    private void JumpAndLinkRegister(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
-        => JumpAndLink(il, inst, pc, compressed, pushAddress: il =>
+    private void JumpAndLinkRegister(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
+        => JumpAndLink(context, inst, pc, compressed, pushAddress: il =>
         {
-            EmitLoadRegister(il, inst.RS1);
+            EmitLoadRegister(context, inst.RS1);
 
             // Add offset if non-zero
             if (inst.Immediate is not 0)
@@ -254,25 +259,26 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
             il.Emit(OpCodes.And);
         });
 
-    private void JumpAndLink(ILGenerator il, RiscVInstruction inst, T pc, bool compressed, Action<ILGenerator> pushAddress)
+    private void JumpAndLink(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed, Action<ILGenerator> pushAddress)
     {
         // Link if needed
         if (inst.RD is not RiscVGpRegister.Zero)
         {
-            EmitStoreRegister(il, inst.RD, il =>
+            EmitStoreRegister(context, inst.RD, il =>
             {
                 var returnAddress = pc + T.CreateTruncating(compressed ? 2 : 4);
                 il.EmitLoadConstant(returnAddress);
             });
         }
 
-        EmitRet(il, pushAddress);
+        EmitRet(context, pushAddress);
     }
 
-    private void Load<TData>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
+    private void Load<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
         where TData : unmanaged
     {
-        var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, inst.Immediate, RiscVTrap.LoadAddressMisaligned);
+        var il = context.ILGenerator;
+        var addrVar = EmitLoadEffectiveAddress<TData>(context, inst, pc, inst.Immediate, RiscVTrap.LoadAddressMisaligned);
 
         // Allocate a local variable to receive the 'out TData value'
         var dataVar = il.DeclareLocal(typeof(TData));
@@ -290,7 +296,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         il.Emit(OpCodes.Pop);
 
         // Write Back to RD
-        EmitStoreRegister(il, inst.RD, il =>
+        EmitStoreRegister(context, inst.RD, il =>
         {
             // Load the value filled by TryRead
             il.Emit(OpCodes.Ldloc, dataVar);
@@ -301,10 +307,11 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         });
     }
 
-    private void Store<TData>(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
+    private void Store<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
         where TData : unmanaged
     {
-        var addrVar = EmitLoadEffectiveAddress<TData>(il, inst, pc, inst.StoreOffset, RiscVTrap.StoreAddressMisaligned);
+        var il = context.ILGenerator;
+        var addrVar = EmitLoadEffectiveAddress<TData>(context, inst, pc, inst.StoreOffset, RiscVTrap.StoreAddressMisaligned);
 
         // Call Memory.Write<TData>(ulong, TData)
         var writeMethod = TryWriteMethods[typeof(TData)];
@@ -312,7 +319,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         il.Emit(OpCodes.Callvirt, GetMemoryMethod);
         il.Emit(OpCodes.Ldloc, addrVar);                // Arg 1: ulong addr
         il.Emit(OpCodes.Conv_U8);
-        EmitLoadRegister(il, inst.RS2);                 // Arg 2: TData value (Truncate the RS2 register value)
+        EmitLoadRegister(context, inst.RS2);                 // Arg 2: TData value (Truncate the RS2 register value)
         il.EmitConv<TData>();
         il.Emit(OpCodes.Callvirt, writeMethod);
 
@@ -320,63 +327,65 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         il.Emit(OpCodes.Pop);
     }
 
-    private void Branch(ILGenerator il, RiscVInstruction inst, T pc, bool compressed, OpCode conditionCode)
+    private void Branch(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed, OpCode conditionCode)
     {
+        var il = context.ILGenerator;
         Label takeBranch = il.DefineLabel();
 
-        EmitLoadRegister(il, inst.RS1);
-        EmitLoadRegister(il, inst.RS2);
+        EmitLoadRegister(context, inst.RS1);
+        EmitLoadRegister(context, inst.RS2);
         il.Emit(conditionCode, takeBranch);
 
         // Branch NOT taken
         var nextPc = pc + T.CreateTruncating(compressed ? 2 : 4);
-        EmitRet(il, nextPc);
+        EmitRet(context, nextPc);
 
         // Branch taken
         il.MarkLabel(takeBranch);
 
         T targetPc = pc + T.CreateTruncating(inst.BranchOffset);
-        EmitRet(il, targetPc);
+        EmitRet(context, targetPc);
     }
 
-    private void Lui(ILGenerator il, RiscVInstruction inst, T pc, bool compressed)
+    private void Lui(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
     {
+        var il = context.ILGenerator;
         uint value = (uint)inst.Immediate << 12;
 
-        EmitStoreRegister(il, inst.RD, il => il.EmitLoadConstant(T.CreateTruncating(value)));
+        EmitStoreRegister(context, inst.RD, il => il.EmitLoadConstant(T.CreateTruncating(value)));
     }
 
-    private void IllegalInstruction(ILGenerator il, RiscVInstruction inst, T pc, bool compressed) => EmitTrapRet(il, RiscVTrap.IllegalInstruction, pc);
+    private void IllegalInstruction(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed) => EmitTrapRet(context, RiscVTrap.IllegalInstruction, pc);
 
-    private void MethodBinary<TData>(ILGenerator il, RiscVInstruction inst, string methodName)
+    private void MethodBinary<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, string methodName)
         where TData : unmanaged, INumber<TData>
-        => MethodBinary<TData, TData>(il, inst, methodName);
+        => MethodBinary<TData, TData>(context, inst, methodName);
 
-    private void MethodBinary<TData, TData2>(ILGenerator il, RiscVInstruction inst, string methodName)
+    private void MethodBinary<TData, TData2>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, string methodName)
         where TData : unmanaged, INumber<TData>
         where TData2 : unmanaged, INumber<TData2>
     {
         MethodInfo? method = typeof(TData).GetMethod(methodName, BindingFlags.Public | BindingFlags.Static, [typeof(TData), typeof(TData2)]);
         Guard.IsNotNull(method);
-        MethodBinary<T, TData2>(il, inst, il => il.Emit(OpCodes.Call, method));
+        MethodBinary<T, TData2>(context, inst, il => il.Emit(OpCodes.Call, method));
     }
 
-    private void MethodUnary<TData>(ILGenerator il, RiscVInstruction inst, string methodName)
+    private void MethodUnary<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, string methodName)
         where TData : unmanaged, INumber<TData>
     {
         MethodInfo? method = typeof(TData).GetMethod(methodName, BindingFlags.Public | BindingFlags.Static, [typeof(TData)]);
         Guard.IsNotNull(method);
-        MethodUnary<T>(il, inst, il => il.Emit(OpCodes.Call, method));
+        MethodUnary<T>(context, inst, il => il.Emit(OpCodes.Call, method));
     }
 
-    private void MethodBinary<TData, TData2>(ILGenerator il, RiscVInstruction inst, Action<ILGenerator> method)
+    private void MethodBinary<TData, TData2>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, Action<ILGenerator> method)
         where TData : unmanaged, INumber<TData>
         where TData2 : unmanaged, INumber<TData2>
     {
-        EmitStoreRegister(il, inst.RD, il =>
+        EmitStoreRegister(context, inst.RD, il =>
         {
-            EmitLoadRegister<TData>(il, inst.RS1);
-            EmitLoadRegister<TData2>(il, inst.RS2);
+            EmitLoadRegister<TData>(context, inst.RS1);
+            EmitLoadRegister<TData2>(context, inst.RS2);
             method(il);
 
             // Convert to T if neccesary
@@ -385,12 +394,12 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
         });
     }
 
-    private void MethodUnary<TData>(ILGenerator il, RiscVInstruction inst, Action<ILGenerator> method)
+    private void MethodUnary<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, Action<ILGenerator> method)
         where TData : unmanaged, INumber<TData>
     {
-        EmitStoreRegister(il, inst.RD, il =>
+        EmitStoreRegister(context, inst.RD, il =>
         {
-            EmitLoadRegister<TData>(il, inst.RS1);
+            EmitLoadRegister<TData>(context, inst.RS1);
             method(il);
 
             // Convert to T if neccesary

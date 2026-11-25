@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using System.Reflection.Emit;
@@ -141,25 +140,25 @@ public partial class RiscVJitCompiler<T, TFloat>
         where T2Signed : unmanaged, IBinaryInteger<T2Signed>, ISignedNumber<T2Signed>
     {
         // R Type
-        _instructionTable.Register(rOpCode, Funct3Code.Arithmetic, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Add), (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Sub));
-        _instructionTable.Register(rOpCode, Funct3Code.ShiftLeft, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Shl));
-        _instructionTable.Register(rOpCode, Funct3Code.SetLessThan, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Clt));
-        _instructionTable.Register(rOpCode, Funct3Code.SetLessThanUnsigned, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Clt_Un));
-        _instructionTable.Register(rOpCode, Funct3Code.Xor, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.Xor));
-        _instructionTable.Register(rOpCode, Funct3Code.ShiftRight, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Shr_Un), (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Shr));
-        _instructionTable.Register(rOpCode, Funct3Code.Or, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.Or));
-        _instructionTable.Register(rOpCode, Funct3Code.And, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.And));
+        _instructionTable.Register(rOpCode, Funct3Code.Arithmetic, (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Add), (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Sub));
+        _instructionTable.Register(rOpCode, Funct3Code.ShiftLeft, (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Shl));
+        _instructionTable.Register(rOpCode, Funct3Code.SetLessThan, (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Clt));
+        _instructionTable.Register(rOpCode, Funct3Code.SetLessThanUnsigned, (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Clt_Un));
+        _instructionTable.Register(rOpCode, Funct3Code.Xor, (context, inst, _, _) => AluR<T2>(context, inst, OpCodes.Xor));
+        _instructionTable.Register(rOpCode, Funct3Code.ShiftRight, (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Shr_Un), (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Shr));
+        _instructionTable.Register(rOpCode, Funct3Code.Or, (context, inst, _, _) => AluR<T2>(context, inst, OpCodes.Or));
+        _instructionTable.Register(rOpCode, Funct3Code.And, (context, inst, _, _) => AluR<T2>(context, inst, OpCodes.And));
         
         // I Type
-        _instructionTable.Register(iOpCode, Funct3Code.Arithmetic, (il, inst, _, _) => AluI<T2Signed>(il, inst, OpCodes.Add));
-        _instructionTable.Register(iOpCode, Funct3Code.ShiftLeft, 0, (il, inst, _, _) => ShiftI<T2Signed>(il, inst, OpCodes.Shl));
-        _instructionTable.Register(iOpCode, Funct3Code.SetLessThan, (il, inst, _, _) => AluI<T2Signed>(il, inst, OpCodes.Clt));
-        _instructionTable.Register(iOpCode, Funct3Code.SetLessThanUnsigned, (il, inst, _, _) => AluI<T2Signed>(il, inst, OpCodes.Clt_Un));
-        _instructionTable.Register(iOpCode, Funct3Code.Xor, (il, inst, _, _) => AluI<T2>(il, inst, OpCodes.Xor));
-        _instructionTable.Register(iOpCode, Funct3Code.ShiftRight, 0, (il, inst, _, _) => ShiftI<T2Signed>(il, inst, OpCodes.Shr_Un));
-        _instructionTable.Register(iOpCode, Funct3Code.ShiftRight, 32, (il, inst, _, _) => ShiftI<T2Signed>(il, inst, OpCodes.Shr));
-        _instructionTable.Register(iOpCode, Funct3Code.Or, (il, inst, _, _) => AluI<T2>(il, inst, OpCodes.Or));
-        _instructionTable.Register(iOpCode, Funct3Code.And, (il, inst, _, _) => AluI<T2>(il, inst, OpCodes.And));
+        _instructionTable.Register(iOpCode, Funct3Code.Arithmetic, (context, inst, _, _) => AluI<T2Signed>(context, inst, OpCodes.Add));
+        _instructionTable.Register(iOpCode, Funct3Code.ShiftLeft, 0, (context, inst, _, _) => ShiftI<T2Signed>(context, inst, OpCodes.Shl));
+        _instructionTable.Register(iOpCode, Funct3Code.SetLessThan, (context, inst, _, _) => AluI<T2Signed>(context, inst, OpCodes.Clt));
+        _instructionTable.Register(iOpCode, Funct3Code.SetLessThanUnsigned, (context, inst, _, _) => AluI<T2Signed>(context, inst, OpCodes.Clt_Un));
+        _instructionTable.Register(iOpCode, Funct3Code.Xor, (context, inst, _, _) => AluI<T2>(context, inst, OpCodes.Xor));
+        _instructionTable.Register(iOpCode, Funct3Code.ShiftRight, 0, (context, inst, _, _) => ShiftI<T2Signed>(context, inst, OpCodes.Shr_Un));
+        _instructionTable.Register(iOpCode, Funct3Code.ShiftRight, 32, (context, inst, _, _) => ShiftI<T2Signed>(context, inst, OpCodes.Shr));
+        _instructionTable.Register(iOpCode, Funct3Code.Or, (context, inst, _, _) => AluI<T2>(context, inst, OpCodes.Or));
+        _instructionTable.Register(iOpCode, Funct3Code.And, (context, inst, _, _) => AluI<T2>(context, inst, OpCodes.And));
     }
 
     private void InitMultiplyAluOperations<T2, T2Signed, T2Long, T2SignedLong>(RiscVOpCode opCode)
@@ -168,14 +167,14 @@ public partial class RiscVJitCompiler<T, TFloat>
         where T2Long : unmanaged, IBinaryInteger<T2Long>, IUnsignedNumber<T2Long>
         where T2SignedLong : unmanaged, IBinaryInteger<T2SignedLong>, ISignedNumber<T2SignedLong>
     {
-        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.Multiply, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Mul));
-        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHigh, (il, inst, _, _) => MulH<T2Signed, T2SignedLong>(il, inst));
-        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHighSignedUnsigned, (il, inst, _, _) => MulSH<T2, T2Long, T2SignedLong>(il, inst));
-        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHighUnsigned, (il, inst, _, _) => MulH<T2, T2Long>(il, inst));
-        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.Divide, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Div));
-        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.DivideUnsigned, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Div_Un));
-        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.Remainder, (il, inst, _, _) => AluR<T2Signed>(il, inst, OpCodes.Rem));
-        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.RemainderUnsigned, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.Rem_Un));
+        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.Multiply, (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Mul));
+        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHigh, (context, inst, _, _) => MulH<T2Signed, T2SignedLong>(context, inst));
+        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHighSignedUnsigned, (context, inst, _, _) => MulSH<T2, T2Long, T2SignedLong>(context, inst));
+        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.MultiplyHighUnsigned, (context, inst, _, _) => MulH<T2, T2Long>(context, inst));
+        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.Divide, (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Div));
+        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.DivideUnsigned, (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Div_Un));
+        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.Remainder, (context, inst, _, _) => AluR<T2Signed>(context, inst, OpCodes.Rem));
+        _instructionTable.Register(Funct7Code.MExtension, opCode, Funct3Code.RemainderUnsigned, (context, inst, _, _) => AluR<T2>(context, inst, OpCodes.Rem_Un));
     }
 
     private void InitBitManipulationOperations<T2, T2Signed>(RiscVVersionInfo versionInfo, RiscVOpCode rOpCode, RiscVOpCode iOpCode)
@@ -185,41 +184,41 @@ public partial class RiscVJitCompiler<T, TFloat>
         // Zba
         if (versionInfo.HasExtensions(RiscVZExtensions.AddressGeneration))
         {
-            _instructionTable.Register(Funct7Code.ShiftAdd, rOpCode, Funct3Code.Shift1Add, (il, inst, _, _) => ShiftAdd<T2>(il, inst, 1));
-            _instructionTable.Register(Funct7Code.ShiftAdd, rOpCode, Funct3Code.Shift2Add, (il, inst, _, _) => ShiftAdd<T2>(il, inst, 2));
-            _instructionTable.Register(Funct7Code.ShiftAdd, rOpCode, Funct3Code.Shift3Add, (il, inst, _, _) => ShiftAdd<T2>(il, inst, 3));
+            _instructionTable.Register(Funct7Code.ShiftAdd, rOpCode, Funct3Code.Shift1Add, (context, inst, _, _) => ShiftAdd<T2>(context, inst, 1));
+            _instructionTable.Register(Funct7Code.ShiftAdd, rOpCode, Funct3Code.Shift2Add, (context, inst, _, _) => ShiftAdd<T2>(context, inst, 2));
+            _instructionTable.Register(Funct7Code.ShiftAdd, rOpCode, Funct3Code.Shift3Add, (context, inst, _, _) => ShiftAdd<T2>(context, inst, 3));
         }
 
         // Zbb
         if (versionInfo.HasExtensions(RiscVZExtensions.BasicBitManipulation))
         {
             _instructionTable.Register(Funct7Code.BitManipulationCountRotate, rOpCode, Funct3Code.BitCountSignExtendRotateLeft, BitCountSignExtend<T2>);
-            _instructionTable.Register(Funct7Code.BitManipulationCountRotate, rOpCode, Funct3Code.RotateRight, (il, inst, _, _) => MethodBinary<T2, int>(il, inst, nameof(T.RotateRight)));
-            _instructionTable.Register(Funct7Code.MinMaxClmul, rOpCode, Funct3Code.Min, (il, inst, _, _) => MethodBinary<T2Signed>(il, inst, nameof(T.Min)));
-            _instructionTable.Register(Funct7Code.MinMaxClmul, rOpCode, Funct3Code.MinUnsigned, (il, inst, _, _) => MethodBinary<T2>(il, inst, nameof(T.Min)));
-            _instructionTable.Register(Funct7Code.MinMaxClmul, rOpCode, Funct3Code.Max, (il, inst, _, _) => MethodBinary<T2Signed>(il, inst, nameof(T.Max)));
-            _instructionTable.Register(Funct7Code.MinMaxClmul, rOpCode, Funct3Code.MaxUnsigned, (il, inst, _, _) => MethodBinary<T2>(il, inst, nameof(T.Max)));
+            _instructionTable.Register(Funct7Code.BitManipulationCountRotate, rOpCode, Funct3Code.RotateRight, (context, inst, _, _) => MethodBinary<T2, int>(context, inst, nameof(T.RotateRight)));
+            _instructionTable.Register(Funct7Code.MinMaxClmul, rOpCode, Funct3Code.Min, (context, inst, _, _) => MethodBinary<T2Signed>(context, inst, nameof(T.Min)));
+            _instructionTable.Register(Funct7Code.MinMaxClmul, rOpCode, Funct3Code.MinUnsigned, (context, inst, _, _) => MethodBinary<T2>(context, inst, nameof(T.Min)));
+            _instructionTable.Register(Funct7Code.MinMaxClmul, rOpCode, Funct3Code.Max, (context, inst, _, _) => MethodBinary<T2Signed>(context, inst, nameof(T.Max)));
+            _instructionTable.Register(Funct7Code.MinMaxClmul, rOpCode, Funct3Code.MaxUnsigned, (context, inst, _, _) => MethodBinary<T2>(context, inst, nameof(T.Max)));
 
             // Overwrite bitwise as modifyable
-            _instructionTable.Register(rOpCode, Funct3Code.Xor, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.Xor), (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.Xor, true));
-            _instructionTable.Register(rOpCode, Funct3Code.Or, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.Or), (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.Or, true));
-            _instructionTable.Register(rOpCode, Funct3Code.And, (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.And), (il, inst, _, _) => AluR<T2>(il, inst, OpCodes.And, true));
+            _instructionTable.Register(rOpCode, Funct3Code.Xor, (context, inst, _, _) => AluR<T2>(context, inst, OpCodes.Xor), (context, inst, _, _) => AluR<T2>(context, inst, OpCodes.Xor, true));
+            _instructionTable.Register(rOpCode, Funct3Code.Or, (context, inst, _, _) => AluR<T2>(context, inst, OpCodes.Or), (context, inst, _, _) => AluR<T2>(context, inst, OpCodes.Or, true));
+            _instructionTable.Register(rOpCode, Funct3Code.And, (context, inst, _, _) => AluR<T2>(context, inst, OpCodes.And), (context, inst, _, _) => AluR<T2>(context, inst, OpCodes.And, true));
         }
 
         // Zbs
         if (versionInfo.HasExtensions(RiscVZExtensions.SingleBitManipulation))
         {
             // R Type
-            _instructionTable.Register(Funct7Code.ZbsBClr, rOpCode, Funct3Code.BitClear, (il, inst, _, _) => BitSetClearR<T2>(il, inst, false));
-            _instructionTable.Register(Funct7Code.ZbsBSet, rOpCode, Funct3Code.BitSet, (il, inst, _, _) => BitSetClearR<T2>(il, inst, true));
-            _instructionTable.Register(Funct7Code.ZbsBInv, rOpCode, Funct3Code.BitInvert, (il, inst, _, _) => BitInvertR<T2>(il, inst));
-            _instructionTable.Register(Funct7Code.ZbsBExt, rOpCode, Funct3Code.BitExtract, (il, inst, _, _) => BitExtractR<T2>(il, inst));
+            _instructionTable.Register(Funct7Code.ZbsBClr, rOpCode, Funct3Code.BitClear, (context, inst, _, _) => BitSetClearR<T2>(context, inst, false));
+            _instructionTable.Register(Funct7Code.ZbsBSet, rOpCode, Funct3Code.BitSet, (context, inst, _, _) => BitSetClearR<T2>(context, inst, true));
+            _instructionTable.Register(Funct7Code.ZbsBInv, rOpCode, Funct3Code.BitInvert, (context, inst, _, _) => BitInvertR<T2>(context, inst));
+            _instructionTable.Register(Funct7Code.ZbsBExt, rOpCode, Funct3Code.BitExtract, (context, inst, _, _) => BitExtractR<T2>(context, inst));
 
             // I Type
-            _instructionTable.Register(Funct7Code.ZbsBClr, iOpCode, Funct3Code.BitClear, (il, inst, _, _) => BitSetClearI<T2>(il, inst, false));
-            _instructionTable.Register(Funct7Code.ZbsBSet, iOpCode, Funct3Code.BitSet, (il, inst, _, _) => BitSetClearI<T2>(il, inst, true));
-            _instructionTable.Register(Funct7Code.ZbsBInv, iOpCode, Funct3Code.BitInvert, (il, inst, _, _) => BitInvertI<T2>(il, inst));
-            _instructionTable.Register(Funct7Code.ZbsBExt, iOpCode, Funct3Code.BitExtract, (il, inst, _, _) => BitExtractI<T2>(il, inst));
+            _instructionTable.Register(Funct7Code.ZbsBClr, iOpCode, Funct3Code.BitClear, (context, inst, _, _) => BitSetClearI<T2>(context, inst, false));
+            _instructionTable.Register(Funct7Code.ZbsBSet, iOpCode, Funct3Code.BitSet, (context, inst, _, _) => BitSetClearI<T2>(context, inst, true));
+            _instructionTable.Register(Funct7Code.ZbsBInv, iOpCode, Funct3Code.BitInvert, (context, inst, _, _) => BitInvertI<T2>(context, inst));
+            _instructionTable.Register(Funct7Code.ZbsBExt, iOpCode, Funct3Code.BitExtract, (context, inst, _, _) => BitExtractI<T2>(context, inst));
         }
     }
 
@@ -237,17 +236,17 @@ public partial class RiscVJitCompiler<T, TFloat>
             return;
 
         var format = RiscVInstructionDecodeTable<T>.GetFloatFuncTableIndex<TFormat>();
-        _instructionTable.Register(format, FloatFunc5Code.Add, (il, inst, _, _) => FloatAlu<TFormat>(il, inst, OpCodes.Add));
-        _instructionTable.Register(format, FloatFunc5Code.Subtract, (il, inst, _, _) => FloatAlu<TFormat>(il, inst, OpCodes.Sub));
-        _instructionTable.Register(format, FloatFunc5Code.Multiply, (il, inst, _, _) => FloatAlu<TFormat>(il, inst, OpCodes.Mul));
-        _instructionTable.Register(format, FloatFunc5Code.Divide, (il, inst, _, _) => FloatAlu<TFormat>(il, inst, OpCodes.Div));
-        _instructionTable.Register(format, FloatFunc5Code.MinMax, (il, inst, pc, compressed) => FloatMinMax<TFormat>(il, inst, pc, compressed));
-        _instructionTable.Register(format, FloatFunc5Code.SquareRoot, (il, inst, pc, _) => FloatUnary<TFormat>(il, inst, pc, nameof(TFormat.Sqrt)));
-        _instructionTable.Register(format, FloatFunc5Code.ConvertToInt, (il, inst, pc, compressed) => FloatConvertFrom<TFormat>(il, inst, pc, compressed));
-        _instructionTable.Register(format, FloatFunc5Code.Classify, (il, inst, pc, compressed) => FloatMacGuffin<TFormat>(il, inst, pc, compressed));
+        _instructionTable.Register(format, FloatFunc5Code.Add, (context, inst, _, _) => FloatAlu<TFormat>(context, inst, OpCodes.Add));
+        _instructionTable.Register(format, FloatFunc5Code.Subtract, (context, inst, _, _) => FloatAlu<TFormat>(context, inst, OpCodes.Sub));
+        _instructionTable.Register(format, FloatFunc5Code.Multiply, (context, inst, _, _) => FloatAlu<TFormat>(context, inst, OpCodes.Mul));
+        _instructionTable.Register(format, FloatFunc5Code.Divide, (context, inst, _, _) => FloatAlu<TFormat>(context, inst, OpCodes.Div));
+        _instructionTable.Register(format, FloatFunc5Code.MinMax, (context, inst, pc, compressed) => FloatMinMax<TFormat>(context, inst, pc, compressed));
+        _instructionTable.Register(format, FloatFunc5Code.SquareRoot, (context, inst, pc, _) => FloatUnary<TFormat>(context, inst, pc, nameof(TFormat.Sqrt)));
+        _instructionTable.Register(format, FloatFunc5Code.ConvertToInt, (context, inst, pc, compressed) => FloatConvertFrom<TFormat>(context, inst, pc, compressed));
+        _instructionTable.Register(format, FloatFunc5Code.Classify, (context, inst, pc, compressed) => FloatMacGuffin<TFormat>(context, inst, pc, compressed));
         // TODO: MoveFToX
-        _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessOrEqual, (il, inst, _, _) => FloatFle<TFormat>(il, inst));
-        _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessThan, (il, inst, _, _) => FloatCompare<TFormat>(il, inst, OpCodes.Clt));
-        _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatEqual, (il, inst, _, _) => FloatCompare<TFormat>(il, inst, OpCodes.Ceq));
+        _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessOrEqual, (context, inst, _, _) => FloatFle<TFormat>(context, inst));
+        _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatLessThan, (context, inst, _, _) => FloatCompare<TFormat>(context, inst, OpCodes.Clt));
+        _instructionTable.Register(format, FloatFunc5Code.Compare, FloatFunct3Code.FloatEqual, (context, inst, _, _) => FloatCompare<TFormat>(context, inst, OpCodes.Ceq));
     }
 }

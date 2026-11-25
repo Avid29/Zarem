@@ -23,7 +23,7 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
-    private delegate void MipsFloatEmitter(ILGenerator il, MipsFloatInstruction inst, T pc);
+    private delegate void MipsFloatEmitter(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst, T pc);
 
     private readonly MipsFloatInstructionDecodeTable<MipsFloatEmitter> _instructionTable;
     private readonly MipsCpu<T> _cpu;
@@ -43,107 +43,109 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
     }
 
     /// <inheritdoc/>
-    public void CompileInstruction(ILGenerator il, MipsInstruction instruction, T pc)
+    public void CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
     {
         var emitter = _instructionTable.Lookup(instruction);
-        emitter(il, instruction, pc);
+        emitter(context, instruction, pc);
     }
 
-    private void FloatAlu<TFormat>(ILGenerator il, MipsFloatInstruction inst, OpCode ilOpCode)
+    private void FloatAlu<TFormat>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst, OpCode ilOpCode)
         where TFormat : unmanaged
     {
-        EmitStoreRegister<TFormat>(il, inst.FD, () =>
+        EmitStoreRegister<TFormat>(context, inst.FD, () =>
         {
-            EmitLoadRegister<TFormat>(il, inst.FS);
-            EmitLoadRegister<TFormat>(il, inst.FT);
-            il.Emit(ilOpCode);
+            EmitLoadRegister<TFormat>(context, inst.FS);
+            EmitLoadRegister<TFormat>(context, inst.FT);
+            context.ILGenerator.Emit(ilOpCode);
         });
     }
 
-    private void FloatUnary<TFormat>(ILGenerator il, MipsFloatInstruction inst, OpCode ilOpCode)
+    private void FloatUnary<TFormat>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst, OpCode ilOpCode)
         where TFormat : unmanaged
     {
-        EmitStoreRegister<TFormat>(il, inst.FD, () =>
+        EmitStoreRegister<TFormat>(context, inst.FD, () =>
         {
-            EmitLoadRegister<TFormat>(il, inst.FS);
-            il.Emit(ilOpCode);
+            EmitLoadRegister<TFormat>(context, inst.FS);
+            context.ILGenerator.Emit(ilOpCode);
         });
     }
 
-    private void FloatUnary<TFormat>(ILGenerator il, MipsFloatInstruction inst, string methodName)
+    private void FloatUnary<TFormat>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst, string methodName)
         where TFormat : unmanaged
     {
-        EmitStoreRegister<TFormat>(il, inst.FD, () =>
+        EmitStoreRegister<TFormat>(context, inst.FD, () =>
         {
-            EmitLoadRegister<TFormat>(il, inst.FS);
+            EmitLoadRegister<TFormat>(context, inst.FS);
 
             Type mathClass = typeof(TFormat) == typeof(float) ? typeof(MathF) : typeof(Math);
             var method = mathClass.GetMethod(methodName, [typeof(TFormat)]);
             Guard.IsNotNull(method);
-            il.Emit(OpCodes.Call, method);
+            context.ILGenerator.Emit(OpCodes.Call, method);
         });
     }
 
-    private void FloatRound<TFrom, TTo>(ILGenerator il, MipsFloatInstruction inst, string methodName)
+    private void FloatRound<TFrom, TTo>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst, string methodName)
         where TFrom : unmanaged
         where TTo : unmanaged
     {
-        EmitStoreRegister<TTo>(il, inst.FD, () =>
+        EmitStoreRegister<TTo>(context, inst.FD, () =>
         {
-            EmitLoadRegister<TFrom>(il, inst.FS);
+            EmitLoadRegister<TFrom>(context, inst.FS);
 
             Type mathClass = typeof(TFrom) == typeof(float) ? typeof(MathF) : typeof(Math);
             var method = mathClass.GetMethod(methodName, [typeof(TFrom)]);
             Guard.IsNotNull(method);
-            il.Emit(OpCodes.Call, method);
-            il.EmitConv<TTo>();
+            context.ILGenerator.Emit(OpCodes.Call, method);
+            context.ILGenerator.EmitConv<TTo>();
         });
     }
 
-    private void FloatConvert<TFrom, TTo>(ILGenerator il, MipsFloatRegister fs, MipsFloatRegister fd)
+    private void FloatConvert<TFrom, TTo>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatRegister fs, MipsFloatRegister fd)
         where TFrom : unmanaged
         where TTo : unmanaged
     {
         if (typeof(TTo) != typeof(TFrom))
         {
-            EmitStoreRegister<TTo>(il, fd, () =>
+            EmitStoreRegister<TTo>(context, fd, () =>
             {
-                EmitLoadRegister<TFrom>(il, fs);
-                il.EmitConv<TTo>();
+                EmitLoadRegister<TFrom>(context, fs);
+                context.ILGenerator.EmitConv<TTo>();
             });
         }
     }
 
-    private void MoveFloat<TFormat>(ILGenerator il, MipsFloatRegister fs, MipsFloatRegister fd)
+    private void MoveFloat<TFormat>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatRegister fs, MipsFloatRegister fd)
         where TFormat : unmanaged
     {
-        EmitStoreRegister<TFormat>(il, fd, () =>
+        EmitStoreRegister<TFormat>(context, fd, () =>
         {
-            EmitLoadRegister<TFormat>(il, fs);
+            EmitLoadRegister<TFormat>(context, fs);
         });
     }
 
-    private void MoveToFloat(ILGenerator il, MipsFloatInstruction inst)
+    private void MoveToFloat(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst)
     {
-        EmitStoreRegister<T>(il, inst.FS, () =>
+        EmitStoreRegister<T>(context, inst.FS, () =>
         {
-            EmitLoadRegister(il, inst.RT);
+            EmitLoadRegister(context, inst.RT);
+            context.ILGenerator.EmitConv<T>();
+        });
+    }
+
+    private void MoveFromFloat(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst)
+    {
+        EmitStoreRegister(context, inst.RT, il =>
+        {
+            EmitLoadRegister<T>(context, inst.FS);
             il.EmitConv<T>();
         });
     }
 
-    private void MoveFromFloat(ILGenerator il, MipsFloatInstruction inst)
-    {
-        EmitStoreRegister(il, inst.RT, il =>
-        {
-            EmitLoadRegister<T>(il, inst.FS);
-            il.EmitConv<T>();
-        });
-    }
-
-    private void EmitLoadRegister<TFloatData>(ILGenerator il, MipsFloatRegister register)
+    private void EmitLoadRegister<TFloatData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatRegister register)
         where TFloatData : unmanaged
     {
+        var il = context.ILGenerator;
+
         // In legacy mode, double precision floating point values are stored in two consecutive single precision registers.
         // We use paired registers when we are loading a double precision value (TFloatData is 64 bits) and we are in legacy mode.
         bool legacyMode = sizeof(TFloat) == sizeof(uint) || !_cpu.ControlCoProcessor.FloatingPoint64BitMode;
@@ -152,13 +154,13 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
         if (usePairedRegisters)
         {
             // Load the upper half of the double (the second 32 bits)
-            EmitLoadRegisterAddress(il, register + 1);
+            EmitLoadRegisterAddress(context, register + 1);
             il.EmitLdind<TFloat>();
             il.EmitConv<uint>();
             il.EmitConv<ulong>();
             il.EmitLoadConstant(32);                        // Shift the upper half left by 32 bits to make room for the lower half
             il.Emit(OpCodes.Shl);
-            EmitLoadRegisterAddress(il, register);          // Load the lower half of the double (the first 32 bits)
+            EmitLoadRegisterAddress(context, register);          // Load the lower half of the double (the first 32 bits)
             il.EmitLdind<TFloat>();
             il.EmitConv<uint>();
             il.EmitConv<ulong>();
@@ -176,14 +178,16 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
         else
         {
             // Load the register's address then retrieve the value at that address
-            EmitLoadRegisterAddress(il, register);
+            EmitLoadRegisterAddress(context, register);
             il.EmitLdind<TFloatData>();
         }
     }
 
-    private void EmitStoreRegister<TFloatData>(ILGenerator il, MipsFloatRegister register, Action emitEvaluation)
+    private void EmitStoreRegister<TFloatData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatRegister register, Action emitEvaluation)
         where TFloatData : unmanaged
     {
+        var il = context.ILGenerator;
+
         // In legacy mode, double precision floating point values are stored in two consecutive single precision registers.
         // We use paired registers when we are loading a double precision value (TFloatData is 64 bits) and we are in legacy mode.
         bool legacyMode = sizeof(TFloat) == sizeof(uint) || !_cpu.ControlCoProcessor.FloatingPoint64BitMode;
@@ -206,7 +210,7 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
             il.Emit(OpCodes.Stloc, value64Local);
 
             // Store Lower 32 Bits into _regs[register]
-            EmitLoadRegisterAddress(il, register);
+            EmitLoadRegisterAddress(context, register);
 
             // For host-endian safety: Load existing full TFloat native slot first
             il.Emit(OpCodes.Dup);
@@ -222,7 +226,7 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
             il.EmitStind<TFloat>();
 
             // Store Upper 32 Bits into _regs[register + 1]
-            EmitLoadRegisterAddress(il, register + 1);
+            EmitLoadRegisterAddress(context, register + 1);
 
             // Load existing full TFloat native slot
             il.Emit(OpCodes.Dup);
@@ -242,24 +246,13 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
         else
         {
             // Load the register's address, emit the evaluation instructions, and store the value
-            EmitLoadRegisterAddress(il, register);
+            EmitLoadRegisterAddress(context, register);
             emitEvaluation();
             il.EmitStind<TFloatData>();
         }
     }
 
+    private void EmitLoadRegisterAddress(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatRegister register) => EmitLoadRegisterAddress(context.ILGenerator, (int)register, _fpu.RegisterFile.Regs);
 
-    /// <inheritdoc/>
-    protected override void EmitSetupLocalRegisters(ILGenerator il)
-    {
-    }
-
-    /// <inheritdoc/>
-    protected override void EmitFlushLocalRegisters(ILGenerator il)
-    {
-    }
-
-    private void EmitLoadRegisterAddress(ILGenerator il, MipsFloatRegister register) => EmitLoadRegisterAddress(il, (int)register, _fpu.RegisterFile.Regs);
-
-    private void ReservedInstruction(ILGenerator il, MipsFloatInstruction inst, T pc) => EmitTrapRet(il, MipsTrap.ReservedInstruction, pc);
+    private void ReservedInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst, T pc) => EmitTrapRet(context, MipsTrap.ReservedInstruction, pc);
 }

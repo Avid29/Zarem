@@ -1,5 +1,8 @@
 ﻿// Avishai Dernis 2026
 
+using System.Reflection.Emit;
+using Zarem.Emulator.JIT;
+using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions;
 using Zarem.RiscV.Models.Instructions.Enums.Operations;
 using Zarem.RiscV.Models.Instructions.Enums.Registers;
@@ -10,7 +13,8 @@ public partial class RiscVJitCompiler<T, TFloat>
 {
     private const int MaxBlockSize = 1024;
 
-    private T DiscoverBlock(T startPc)
+    /// <inheritdoc/>
+    protected override JitBlockContext<T, RiscVGpRegister, RiscVTrap> DiscoverBlock(ILGenerator il, T startPc)
     {
         T currentPc = startPc;
 
@@ -28,40 +32,39 @@ public partial class RiscVJitCompiler<T, TFloat>
             currentPc += increment;
         }
 
-        return currentPc;
+        return new(il, startPc, currentPc);
     }
 
-    private void ScanRegisterUsage(T start, T end)
+    /// <inheritdoc/>
+    protected override void ScanRegisterUsage(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context)
     {
-        _loadRegs.Clear();
-        _storeRegs.Clear();
-
+        var file = Cpu.RegisterFile;
         T increment;
-        for (T pc = start; pc <= end; pc += increment)
+        for (T pc = context.Start; pc <= context.End; pc += increment)
         {
             var inst = Fetch(pc, out var decompressed);
-            LogRegisterUsage(decompressed);
+            LogRegisterUsage(context, decompressed);
             increment = T.CreateTruncating(inst.IsCompressed ? 2 : 4);
         }
 
-        _loadRegs.Remove(RiscVGpRegister.Zero);
-        _storeRegs.Remove(RiscVGpRegister.Zero);
+        context.UnregisterLoadUsage(file, RiscVGpRegister.Zero);
+        context.UnregisterStoreUsage(file, RiscVGpRegister.Zero);
     }
 
-    private void LogRegisterUsage(RiscVInstruction inst)
+    private void LogRegisterUsage(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
     {
         var rs1 = inst.RS1;
         var rs2 = inst.RS2;
         var rd = inst.RD;
 
-        _loadRegs.Add(rs1);
-        _loadRegs.Add(rs2);
-        _storeRegs.Add(rd);
+        context.RegisterLoadUsage(Cpu.RegisterFile, rs1);
+        context.RegisterLoadUsage(Cpu.RegisterFile, rs2);
+        context.RegisterStoreUsage(Cpu.RegisterFile, rd);
     }
 
     private RiscVInstruction Fetch(T pc, out RiscVInstruction decompressed)
     {
-        var inst = (RiscVInstruction)_cpu.Memory.Read<uint>(ulong.CreateTruncating(pc));
+        var inst = (RiscVInstruction)Cpu.Memory.Read<uint>(ulong.CreateTruncating(pc));
         decompressed = inst;
 
         if (inst.IsCompressed)
