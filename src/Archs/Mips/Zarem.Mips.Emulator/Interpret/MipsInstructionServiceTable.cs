@@ -483,7 +483,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TSigned> : IMipsInstr
         };
 
         var coProc = cpu.CoProcessors[coProcIndex];
-        return coProc.Execute(inst, out exec);
+        return coProc.Executor.Execute(inst, out exec);
     }
 
     private static MipsTrap ReservedInstruction(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)

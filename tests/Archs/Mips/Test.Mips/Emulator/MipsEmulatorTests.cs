@@ -7,7 +7,7 @@ using Zarem.Emulator.Config.Enums;
 using Zarem.Mips.Assembler;
 using Zarem.Mips.Assembler.Models.Tables;
 using Zarem.Mips.Emulator.Machine;
-using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 

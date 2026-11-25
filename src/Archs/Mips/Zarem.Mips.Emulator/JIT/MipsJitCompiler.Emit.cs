@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
 using System;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
@@ -13,18 +12,8 @@ namespace Zarem.Emulator.Models.JIT;
 
 public unsafe partial class MipsJitCompiler<T>
 {
-    private void EmitDelaySlot(ILGenerator il, T delaySlotPc)
-    {
-        uint rawInstr = Cpu.Memory.Read<uint>(ulong.CreateTruncating(delaySlotPc));
-        MipsInstruction instr = (MipsInstruction)rawInstr;
-
-        // We dispatch to our existing table to emit the IL for this instruction
-        // Note: MIPS forbids putting a jump/branch inside a delay slot!
-        CompileInstruction(il, instr, delaySlotPc);
-    }
-
     /// <inheritdoc/>
-    protected override void EmitLoadRegister<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsGpRegister register)
+    public override void EmitLoadRegister<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsGpRegister register)
     {
         if (register is 0)
         {
@@ -38,7 +27,7 @@ public unsafe partial class MipsJitCompiler<T>
     }
 
     /// <inheritdoc/>
-    protected override void EmitStoreRegister(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsGpRegister register, Action<ILGenerator> emitEvaluation)
+    public override void EmitStoreRegister(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsGpRegister register, Action<ILGenerator> emitEvaluation)
     {
         var il = context.ILGenerator;
 
@@ -89,6 +78,16 @@ public unsafe partial class MipsJitCompiler<T>
         }
 
         return addrVar;
+    }
+    
+    private void EmitDelaySlot(JitBlockContext<T, MipsGpRegister, MipsTrap> context, T delaySlotPc)
+    {
+        uint rawInstr = Cpu.Memory.Read<uint>(ulong.CreateTruncating(delaySlotPc));
+        MipsInstruction instr = (MipsInstruction)rawInstr;
+
+        // We dispatch to our existing table to emit the IL for this instruction
+        // Note: MIPS forbids putting a jump/branch inside a delay slot!
+        CompileInstruction(context, instr, delaySlotPc);
     }
 
     private void EmitRet(JitBlockContext<T, MipsGpRegister, MipsTrap> context, T pc) => EmitTrapRet(context, MipsTrap.None, pc);

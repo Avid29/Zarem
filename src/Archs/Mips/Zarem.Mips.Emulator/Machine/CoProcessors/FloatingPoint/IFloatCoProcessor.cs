@@ -1,9 +1,9 @@
 ﻿// Avishai Dernis 2026
 
-using System.Numerics;
+using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Registers;
 
-namespace Zarem.Mips.Emulator.Machine.CoProcessors;
+namespace Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 
 /// <summary>
 /// An interface for a <see cref="FloatCoProcessor{T, TFloat}"/> without a concrete type.

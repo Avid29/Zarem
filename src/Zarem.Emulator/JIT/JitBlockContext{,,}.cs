@@ -14,7 +14,7 @@ namespace Zarem.Emulator.JIT;
 /// <summary>
 /// A class for managing the results of the compiler scan stage.
 /// </summary>
-public unsafe class JitBlockContext<T, TRegister, TTrap>
+public unsafe class JitBlockContext<T, TRegister, TTrap> : JitBlockContext<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TRegister : unmanaged, Enum
     where TTrap : unmanaged, Enum
@@ -26,31 +26,12 @@ public unsafe class JitBlockContext<T, TRegister, TTrap>
     /// <summary>
     /// Initializes a new instance of the <see cref="JitBlockContext{T, TRegister, TTrap}"/> class.
     /// </summary>
-    public JitBlockContext(ILGenerator il, T start, T end)
+    public JitBlockContext(ILGenerator il, T start, T end) : base(il, start, end)
     {
         _locals = [];
         _loadRegisters = [];
         _storeRegisters = [];
-
-        ILGenerator = il;
-        Start = start;
-        End = end;
     }
-
-    /// <summary>
-    /// Gets the IL Generator for the block.
-    /// </summary>
-    public ILGenerator ILGenerator { get; }
-
-    /// <summary>
-    /// Gets the start address for the block.
-    /// </summary>
-    public T Start { get; }
-
-    /// <summary>
-    /// Gets the end address for the block.
-    /// </summary>
-    public T End { get; }
 
     /// <summary>
     /// Gets the <see cref="LocalBuilder"/> for the specified <typeparamref name="TRegister"/>.
@@ -130,7 +111,7 @@ public unsafe class JitBlockContext<T, TRegister, TTrap>
     /// <param name="file">The register file the register belongs to.</param>
     /// <param name="register">The register in the file.</param>
     public void RegisterStoreUsage(IRegisterFile file, TRegister register)
-        => UnregisterUsage(_storeRegisters, file, register);
+        => RegisterUsage(_storeRegisters, file, register);
 
     /// <summary>
     /// Removes log of a register loading usage.
@@ -146,7 +127,7 @@ public unsafe class JitBlockContext<T, TRegister, TTrap>
     /// <param name="file">The register file the register belongs to.</param>
     /// <param name="register">The register in the file.</param>
     public void UnregisterStoreUsage(IRegisterFile file, TRegister register)
-        => RegisterUsage(_storeRegisters, file, register);
+        => UnregisterUsage(_storeRegisters, file, register);
 
     private static void RegisterUsage(Dictionary<IRegisterFile, HashSet<TRegister>> dictionary, IRegisterFile file, TRegister register)
     {

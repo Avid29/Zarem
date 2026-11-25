@@ -13,7 +13,7 @@ namespace Zarem.RiscV.Emulator.JIT;
 public unsafe partial class RiscVJitCompiler<T, TFloat>
 {
     /// <inheritdoc/>
-    protected override void EmitLoadRegister<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVGpRegister register)
+    public override void EmitLoadRegister<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVGpRegister register)
     {
         var il = context.ILGenerator;
 
@@ -29,7 +29,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
     }
 
     /// <inheritdoc/>
-    protected override void EmitStoreRegister(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVGpRegister register, Action<ILGenerator> emitEvaluation)
+    public override void EmitStoreRegister(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVGpRegister register, Action<ILGenerator> emitEvaluation)
     {
         var il = context.ILGenerator;
 

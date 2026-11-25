@@ -6,9 +6,10 @@ using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
+using Zarem.Emulator.JIT.Compilers;
 using Zarem.Emulator.Models.JIT;
 using Zarem.Mips.Emulator.Machine;
-using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
@@ -19,28 +20,30 @@ namespace Zarem.Mips.Emulator.JIT.CoProcessors.FloatCoProcessor;
 /// <summary>
 /// A class which compiles blocks of MIPS floating-point code into JIT IL code.
 /// </summary>
-public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, MipsGpRegister, MipsTrap>
+public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitChildCompiler<T, MipsGpRegister, MipsTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
     private delegate void MipsFloatEmitter(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst, T pc);
 
     private readonly MipsFloatInstructionDecodeTable<MipsFloatEmitter> _instructionTable;
-    private readonly MipsCpu<T> _cpu;
     private readonly FloatCoProcessor<T, TFloat> _fpu;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsFloatJitCompiler{T, TFloat}"/> class.
     /// </summary>
-    public MipsFloatJitCompiler(MipsCpu<T> cpu, FloatCoProcessor<T, TFloat> fpu) : base(cpu)
+    public MipsFloatJitCompiler(MipsJitCompiler<T> parent, FloatCoProcessor<T, TFloat> fpu)
     {
-        _cpu = cpu;
-        _fpu = fpu;
-
         _instructionTable = new MipsFloatInstructionDecodeTable<MipsFloatEmitter>(ReservedInstruction);
 
-        InitFloat(cpu.Config.VersionInfo);
+        Parent = parent;
+        _fpu = fpu;
+
+        InitFloat(Parent.Cpu.Config.VersionInfo);
     }
+
+    /// <inheritdoc/>
+    public override MipsJitCompiler<T> Parent { get; }
 
     /// <inheritdoc/>
     public void CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
@@ -127,14 +130,14 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
     {
         EmitStoreRegister<T>(context, inst.FS, () =>
         {
-            EmitLoadRegister(context, inst.RT);
+            Parent.EmitLoadRegister(context, inst.RT);
             context.ILGenerator.EmitConv<T>();
         });
     }
 
     private void MoveFromFloat(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst)
     {
-        EmitStoreRegister(context, inst.RT, il =>
+        Parent.EmitStoreRegister(context, inst.RT, il =>
         {
             EmitLoadRegister<T>(context, inst.FS);
             il.EmitConv<T>();
@@ -148,7 +151,7 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
 
         // In legacy mode, double precision floating point values are stored in two consecutive single precision registers.
         // We use paired registers when we are loading a double precision value (TFloatData is 64 bits) and we are in legacy mode.
-        bool legacyMode = sizeof(TFloat) == sizeof(uint) || !_cpu.ControlCoProcessor.FloatingPoint64BitMode;
+        bool legacyMode = sizeof(TFloat) == sizeof(uint) || !Parent.Cpu.ControlCoProcessor.FloatingPoint64BitMode;
         bool usePairedRegisters = sizeof(TFloatData) == sizeof(ulong) && legacyMode;
 
         if (usePairedRegisters)
@@ -190,7 +193,7 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
 
         // In legacy mode, double precision floating point values are stored in two consecutive single precision registers.
         // We use paired registers when we are loading a double precision value (TFloatData is 64 bits) and we are in legacy mode.
-        bool legacyMode = sizeof(TFloat) == sizeof(uint) || !_cpu.ControlCoProcessor.FloatingPoint64BitMode;
+        bool legacyMode = sizeof(TFloat) == sizeof(uint) || !Parent.Cpu.ControlCoProcessor.FloatingPoint64BitMode;
         bool usePairedRegisters = sizeof(TFloatData) == sizeof(ulong) && legacyMode;
 
         if (usePairedRegisters)
@@ -252,7 +255,9 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitCompiler<T, Mip
         }
     }
 
-    private void EmitLoadRegisterAddress(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatRegister register) => EmitLoadRegisterAddress(context.ILGenerator, (int)register, _fpu.RegisterFile.Regs);
+    private void EmitLoadRegisterAddress(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatRegister register)
+        => Parent.EmitLoadRegisterAddress(context.ILGenerator, (int)register, _fpu.RegisterFile.Regs);
 
-    private void ReservedInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst, T pc) => EmitTrapRet(context, MipsTrap.ReservedInstruction, pc);
+    private void ReservedInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst, T pc)
+        => Parent.EmitTrapRet(context, MipsTrap.ReservedInstruction, pc);
 }

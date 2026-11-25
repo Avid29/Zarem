@@ -1,30 +1,28 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
-using System.Reflection.Emit;
+using Zarem.Emulator.Config.Enums;
+using Zarem.Emulator.JIT;
+using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Mips.Emulator.Interpret;
-using Zarem.Mips.Emulator.Interpret.CoProcessors;
-using Zarem.Mips.Emulator.Interpret.CoProcessors.FloatCoProcessor;
-using Zarem.Mips.Emulator.JIT.CoProcessors.FloatCoProcessor;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Registers.FloatProcessor;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Mips.Emulator.Machine.CoProcessors;
+namespace Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 
 /// <summary>
 /// a class representing the floating-point coprocessor unit.
 /// </summary>
-public unsafe class FloatCoProcessor<T, TFloat> : IFloatCoProcessor<T>, IDisposable
+public unsafe partial class FloatCoProcessor<T, TFloat> : IFloatCoProcessor<T>, IDisposable
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
-    private readonly MipsFloatInstructionServiceTable<T, TFloat> _instructionServiceTable;
-    private readonly MipsFloatJitCompiler<T, TFloat> _jitCompiler;
-    private readonly IControlCoProcessor _co0;
+    private readonly ControlCoProcessor<T> _co0;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FloatCoProcessor{T, TFloat}"/> class.
@@ -35,9 +33,16 @@ public unsafe class FloatCoProcessor<T, TFloat> : IFloatCoProcessor<T>, IDisposa
         RegisterFile = new(32);
         ControlRegisterFile = new();
 
-        _instructionServiceTable = new MipsFloatInstructionServiceTable<T, TFloat>(cpu, this);
-        _jitCompiler = new MipsFloatJitCompiler<T, TFloat>(cpu, this);
+        Executor = cpu.Config.ExecutionMode switch
+        {
+            ExecutionMode.Interpret => new FloatInterpretedExecutor(cpu, this),
+            ExecutionMode.JustInTime => new FloatJitExecutor(cpu, this),
+            _ => ThrowHelper.ThrowArgumentException<ICoProcessor<T>.ICoExecutor<MipsInstruction, MipsExecution<T>, MipsGpRegister, MipsTrap>>(),
+        };
     }
+
+    /// <inheritdoc/>
+    public ICoProcessor<T>.ICoExecutor<MipsInstruction, MipsExecution<T>, MipsGpRegister, MipsTrap> Executor { get; }
 
     internal FormattedRegisterFile<TFloat> RegisterFile { get; }
 
@@ -96,35 +101,8 @@ public unsafe class FloatCoProcessor<T, TFloat> : IFloatCoProcessor<T>, IDisposa
     }
 
     /// <inheritdoc/>
-    public MipsTrap Execute(MipsInstruction instruction, out MipsExecution<T> execution)
-    {
-        var trap = _instructionServiceTable.Execute(instruction, out var fExecution);
-        execution = fExecution.ChildExecution;
-
-        if (trap is not MipsTrap.None)
-            return trap;
-
-        switch (fExecution.Format)
-        {
-            case FloatWriteback.Word:
-                Words[(int)fExecution.Register] = (int)fExecution.Writeback;
-                break;
-            case FloatWriteback.Long:
-                Longs[(int)fExecution.Register] = fExecution.Writeback;
-                break;
-            case FloatWriteback.Control:
-                ControlRegisterFile[(int)fExecution.Register] = (uint)fExecution.Writeback;
-                break;
-        }
-
-        return MipsTrap.None;
-    }
-
-    /// <inheritdoc/>
-    public void CompileInstruction(ILGenerator il, MipsInstruction instruction, T pc)
-    {
-        _jitCompiler.CompileInstruction(il, instruction, pc);
-    }
+    public void CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
+        => Executor.CompileInstruction(context, instruction, pc);
 
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.

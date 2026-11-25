@@ -15,12 +15,12 @@ namespace Zarem.Emulator.JIT;
 public unsafe abstract partial class JitCompiler<T, TRegister, TTrap>
 {
     /// <inheritdoc cref="EmitLoadRegister{TData}(JitBlockContext{T, TRegister, TTrap}, TRegister)"/>
-    protected void EmitLoadRegister(JitBlockContext<T, TRegister, TTrap> context, TRegister register) => EmitLoadRegister<T>(context, register);
+    public void EmitLoadRegister(JitBlockContext<T, TRegister, TTrap> context, TRegister register) => EmitLoadRegister<T>(context, register);
 
     /// <summary>
     /// Emits the CIL to load a register to the CLR stack from locals.
     /// </summary>
-    protected internal virtual void EmitLoadRegister<TData>(JitBlockContext<T, TRegister, TTrap> context, TRegister register)
+    public virtual void EmitLoadRegister<TData>(JitBlockContext<T, TRegister, TTrap> context, TRegister register)
         where TData : unmanaged, INumber<TData>
     {
         var il = context.ILGenerator;
@@ -47,7 +47,7 @@ public unsafe abstract partial class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Emits the CIL to load a register to the CLR stack from locals.
     /// </summary>
-    protected internal virtual void EmitStoreRegister(JitBlockContext<T, TRegister, TTrap> context, TRegister register, Action<ILGenerator> emitEvaluation)
+    public virtual void EmitStoreRegister(JitBlockContext<T, TRegister, TTrap> context, TRegister register, Action<ILGenerator> emitEvaluation)
     {
         var il = context.ILGenerator;
         emitEvaluation(il);
@@ -61,14 +61,12 @@ public unsafe abstract partial class JitCompiler<T, TRegister, TTrap>
     /// Gets the <see cref="LocalBuilder"/> for the specified <typeparamref name="TRegister"/>.
     /// </summary>
     protected virtual LocalBuilder GetRegisterLocal(JitBlockContext<T, TRegister, TTrap> context, TRegister register)
-    {
-        return context.GetRegisterLocal(Cpu.RegisterFile, register);
-    }
+        => context.GetRegisterLocal(Cpu.RegisterFile, register);
 
     /// <summary>
     /// Emits the CIL to load the address of a register from a register file in memory.
     /// </summary>
-    protected internal void EmitLoadRegisterAddress<TData>(ILGenerator il, int index , TData* regs)
+    public void EmitLoadRegisterAddress<TData>(ILGenerator il, int index , TData* regs)
         where TData : unmanaged
     {
         // Calculate the address of the register in memory
@@ -152,7 +150,7 @@ public unsafe abstract partial class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Emits the CIL to return a trap.
     /// </summary>
-    protected void EmitTrapRet(JitBlockContext<T, TRegister, TTrap> context, TTrap trap, T pc)
+    public void EmitTrapRet(JitBlockContext<T, TRegister, TTrap> context, TTrap trap, T pc)
     {
         var il = context.ILGenerator;
         context.EmitFlushLocalRegisters(this);

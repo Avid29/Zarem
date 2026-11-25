@@ -2,6 +2,7 @@
 
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.JIT;
+using Zarem.Emulator.JIT.Compilers;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.JIT;
@@ -23,7 +24,6 @@ public partial class MipsCpu<T>
     {
         // Cache mapping a PC to its compiled IL block.
         private readonly JitBlockCache<T, MipsJitBlock<T>> _blockCache;
-        private readonly MipsJitCompiler<T> _jitCompiler;
         private readonly MipsCpu<T> _cpu;
 
         /// <summary>
@@ -34,15 +34,21 @@ public partial class MipsCpu<T>
             _cpu = cpu;
 
             _blockCache = new();
-            _jitCompiler = new MipsJitCompiler<T>(cpu);
+            JitCompiler = new MipsJitCompiler<T>(cpu);
 
             bus.AddressWritten += OnAddressWritten;
         }
 
         /// <inheritdoc/>
+        public MipsJitCompiler<T> JitCompiler { get; }
+
+        /// <inheritdoc/>
+        JitCompiler<T> IExecutor<MipsInstruction, MipsTrap>.JitCompiler => JitCompiler;
+
+        /// <inheritdoc/>
         public void Insert(MipsInstruction instruction, out MipsTrap trap)
         {
-            var @delegate = _jitCompiler.CompileLoneInstruction(instruction, _cpu.ProgramCounter);
+            var @delegate = JitCompiler.CompileLoneInstruction(instruction, _cpu.ProgramCounter);
             _cpu.ProgramCounter = @delegate(_cpu, out trap);
         }
 
@@ -54,7 +60,7 @@ public partial class MipsCpu<T>
             if (!_blockCache.TryGet(_cpu.ProgramCounter, out var compiledBlock))
             {
                 // Cache Miss. Compile the basic block starting at ProgramCounter
-                compiledBlock = _jitCompiler.CompileBlock(_cpu.ProgramCounter);
+                compiledBlock = JitCompiler.CompileBlock(_cpu.ProgramCounter);
                 _blockCache.Store(_cpu.ProgramCounter, compiledBlock);
             }
 

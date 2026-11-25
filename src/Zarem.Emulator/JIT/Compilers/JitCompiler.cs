@@ -14,15 +14,13 @@ using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Emulator.Models.Enums;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.Emulator.JIT.Compilers;
 
 /// <summary>
 /// A base class for a component which recompiles blocks of assembly into .NET CIL code.
 /// </summary>
-public abstract partial class JitCompiler<T, TRegister, TTrap>
+public abstract partial class JitCompiler<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-    where TRegister : unmanaged, Enum
-    where TTrap : unmanaged, Enum
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="JitCompiler{T, TRegister, TTrap}"/> class.
@@ -50,7 +48,7 @@ public abstract partial class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Gets the cpu the JIT compiler operates on.
     /// </summary>
-    protected abstract ICpu Cpu { get; }
+    public abstract ICpu Cpu { get; }
 
     /// <summary>
     /// Gets a <see cref="MethodInfo"/> for retreiving the <see cref="ICpu.Memory"/> for the compiler.
@@ -73,12 +71,4 @@ public abstract partial class JitCompiler<T, TRegister, TTrap>
     /// <param name="startPc">The entry point of the JIT block.</param>
     /// <returns>The method block.</returns>
     public abstract JitBlock<T> CompileBlock(T startPc);
-
-    /// <summary>
-    /// Creates a <see cref="JitBlock{T}"/> from a method and <see cref="JitBlockContext{T, TRegister, TTrap}"/>.
-    /// </summary>
-    /// <param name="method">The method generated.</param>
-    /// <param name="context">The <see cref="JitBlockContext{T, TRegister, TTrap}"/>.</param>
-    /// <returns>A new <see cref="JitBlock{T}"/>.</returns>
-    protected abstract JitBlock<T> CreateBlockDelegate(DynamicMethod method, JitBlockContext<T, TRegister, TTrap> context);
 }

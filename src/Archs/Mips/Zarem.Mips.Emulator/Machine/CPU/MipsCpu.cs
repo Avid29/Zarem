@@ -3,10 +3,13 @@
 using CommunityToolkit.Diagnostics;
 using System.Numerics;
 using Zarem.Emulator.Config.Enums;
+using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
+using Zarem.Mips.Emulator.Machine.CPU;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Memory;
 using Zarem.Mips.Emulator.Machine.Memory.Tlb;
@@ -30,8 +33,6 @@ public partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     /// </summary>
     public const ulong BOOT_ADDRESS = 0xBFC0_0000;
 
-    private readonly IExecutor<MipsInstruction, MipsTrap> _executor;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsCpu{T}"/> class.
     /// </summary>
@@ -40,8 +41,15 @@ public partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         Config = config;
         RegisterFile = new(config.VersionInfo);
 
+        Executor = Config.ExecutionMode switch
+        {
+            ExecutionMode.Interpret => new MipsInterpretedExecutor(this),
+            ExecutionMode.JustInTime => new MipsJitExecutor(this, bus),
+            _ => ThrowHelper.ThrowArgumentException<IExecutor<MipsInstruction, MipsTrap>>(),
+        };
+
         var coProcessorCount = config.VersionInfo.Generation is < MipsGeneration.MipsIII ? 3 : 2;
-        CoProcessors = new ICoProcessor<T>[coProcessorCount];
+        CoProcessors = new IMipsCoProcessor<T>[coProcessorCount];
 
         var tlb = new MipsTlb<T>();
         ControlCoProcessor = new(tlb);
@@ -53,14 +61,12 @@ public partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
 
         Memory = new MemorySystem(bus, new MipsAddressTranslator<T>(ControlCoProcessor));
         ProgramCounter = T.CreateTruncating(BOOT_ADDRESS);
-
-        _executor = Config.ExecutionMode switch
-        {
-            ExecutionMode.Interpret => new MipsInterpretedExecutor(this),
-            ExecutionMode.JustInTime => new MipsJitExecutor(this, bus),
-            _ => ThrowHelper.ThrowArgumentException<IExecutor<MipsInstruction, MipsTrap>>(),
-        };
     }
+
+    /// <summary>
+    /// Gets the <see cref="CpuBase{T}.IExecutor{TInstruction, TTrap}"/>
+    /// </summary>
+    public IExecutor<MipsInstruction, MipsTrap> Executor { get; }
 
     /// <inheritdoc/>
     public override string ArchitectureName => "MIPS";
@@ -81,7 +87,7 @@ public partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     public IFloatCoProcessor<T> FloatCoProcessor { get; }
 
     /// <inheritdoc/>
-    public ICoProcessor<T>[] CoProcessors { get; }
+    public IMipsCoProcessor<T>[] CoProcessors { get; }
 
     /// <summary>
     /// Gets the system memory.
@@ -121,11 +127,11 @@ public partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
 
     /// <inheritdoc/>
     protected override long ExecutionLoop()
-        => _executor.ExecutionLoop();
+        => Executor.ExecutionLoop();
 
     /// <inheritdoc/>
     public void Insert(MipsInstruction instruction, out MipsTrap trap)
-        => _executor.Insert(instruction, out trap);
+        => Executor.Insert(instruction, out trap);
 
     /// <summary>
     /// Handles a trap.

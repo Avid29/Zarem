@@ -1,13 +1,15 @@
 ﻿// Avishai Dernis 2025
 
+using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Mips.Emulator.Machine;
+namespace Zarem.Mips.Emulator.Machine.CPU;
 
 /// <summary>
 /// A interface for a MIPS processor unit.

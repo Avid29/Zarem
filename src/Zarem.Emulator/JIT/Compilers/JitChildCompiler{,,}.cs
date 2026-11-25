@@ -1,0 +1,27 @@
+﻿// Avishai Dernis 2026
+
+using System;
+using System.Numerics;
+
+namespace Zarem.Emulator.JIT.Compilers;
+
+/// <summary>
+/// A base class for an auxilary component which helps a <see cref="JitCompiler{T, TRegister, TTrap}"/> recompile blocks of assembly into .NET CIL code.
+/// </summary>
+public abstract partial class JitChildCompiler<T, TRegister, TTrap> : JitChildCompiler<T>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TRegister : unmanaged, Enum
+    where TTrap : unmanaged, Enum
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JitChildCompiler{T, TRegister, TTrap}"/> class.
+    /// </summary>
+    public JitChildCompiler()
+    {
+    }
+
+    /// <summary>
+    /// Gets the parent <see cref="JitCompiler{T, TRegister, TTrap}"/>.
+    /// </summary>
+    public abstract JitCompiler<T, TRegister, TTrap> Parent { get; }
+}

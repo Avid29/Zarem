@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
+using Zarem.Emulator.JIT.Compilers;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Models;
 using Zarem.Emulator.Models.Enums;
@@ -37,6 +38,9 @@ public partial class MipsCpu<T>
                 ? new MipsInstructionServiceTable<T, long>(_cpu)
                 : new MipsInstructionServiceTable<T, int>(_cpu);
         }
+
+        /// <inheritdoc/>
+        public JitCompiler<T>? JitCompiler => null;
 
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

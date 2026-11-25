@@ -47,7 +47,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVGp
     }
 
     /// <inheritdoc/>
-    protected override RiscVJitCpu<T, TFloat> Cpu { get; }
+    public override RiscVJitCpu<T, TFloat> Cpu { get; }
 
     /// <summary>
     /// Compiles a block of RISC-V code to JIT starting at <paramref name="startPc"/>.

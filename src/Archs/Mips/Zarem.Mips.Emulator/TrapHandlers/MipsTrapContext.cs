@@ -2,7 +2,7 @@
 
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.TrapHandlers.Interfaces;
-using Zarem.Mips.Emulator.Machine;
+using Zarem.Mips.Emulator.Machine.CPU;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 

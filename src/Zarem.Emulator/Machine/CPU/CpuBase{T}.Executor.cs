@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
+using Zarem.Emulator.JIT.Compilers;
 
 namespace Zarem.Emulator.Machine.CPU;
 
@@ -12,9 +13,14 @@ public abstract partial class CpuBase<T>
     /// <summary>
     /// An interface for handling CPU execution.
     /// </summary>
-    protected interface IExecutor<TInstruction, TTrap>
+    public interface IExecutor<TInstruction, TTrap>
         where TTrap : Enum
     {
+        /// <summary>
+        /// Gets the <see cref="JitCompiler{T}"/> used by the executor, if any.
+        /// </summary>
+        public JitCompiler<T>? JitCompiler { get; }
+
         /// <summary>
         /// The base dispatch of the execution loop.
         /// </summary>
