@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -110,7 +111,8 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
 
-        var context = new JitBlockContext<T, MipsGpRegister, MipsTrap>(il ,pc, pc);
+        var context = new JitBlockContext<T, MipsGpRegister, MipsTrap>(il, pc, pc);
+        ScanRegisterUsage(context);
         LogRegisterUsage(context, inst);
         context.EmitSetupLocalRegisters(this);
         CompileInstruction(context, inst, pc);
@@ -119,6 +121,11 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         {
             EmitRet(context, pc + T.CreateTruncating(4));
         }
+
+#if DEBUG
+        byte[] ilBytes = GetDynamicMethodILBytes(il);
+        Debug.WriteLine($"[JIT Dump] {method.Name}: {BitConverter.ToString(ilBytes)}");
+#endif
 
         return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
     }
@@ -192,7 +199,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             }
 
             // Convert to T if neccesary
-            context.ILGenerator.EmitConv<TData, T>();
+            context.ILGenerator.EmitConv<TData, T>(IsSigned<TData>());
         });
     }
 
@@ -226,8 +233,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         EmitStoreRegister(context, inst.RD, il =>
         {
             il.Emit(OpCodes.Ldloc, result);
-            if (sizeof(TData) != sizeof(T))
-                il.EmitConv<T>(Sign.Signed);
+            il.EmitConv<TData, T>(Sign.Signed);
         });
     }
 
@@ -677,5 +683,16 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
             _ => ThrowHelper.ThrowArgumentOutOfRangeException<MipsTrap>(),
         };
+    }
+
+    private static byte[] GetDynamicMethodILBytes(ILGenerator il)
+    {
+        // Reflection fallback to read the underlying baked byte stream from DynamicMethod's ILGenerator
+        var bakeMethod = il.GetType().GetMethod("BakeByteArray", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (bakeMethod?.Invoke(il, null) is byte[] bytes)
+        {
+            return bytes;
+        }
+        return Array.Empty<byte>();
     }
 }

@@ -41,7 +41,7 @@ public partial class MipsJitCompiler<T>
         var file = Cpu.RegisterFile;
         context.RegisterLoadUsage(file, MipsGpRegister.Low);
         context.RegisterLoadUsage(file, MipsGpRegister.High);
-        context.RegisterStoreUsage(file, MipsGpRegister.High);
+        context.RegisterStoreUsage(file, MipsGpRegister.Low);
         context.RegisterStoreUsage(file, MipsGpRegister.High);
         context.RegisterStoreUsage(file, MipsGpRegister.ReturnAddress);
 

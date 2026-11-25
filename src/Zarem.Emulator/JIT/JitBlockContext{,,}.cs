@@ -155,12 +155,12 @@ public unsafe class JitBlockContext<T, TRegister, TTrap> : JitBlockContext<T>
         {
             locals = new LocalBuilder[file.Count];
             _locals.Add(file, locals);
-        }
 
-        // Allocate locals
-        for (int i = 0; i < file.Count; i++)
-        {
-            locals[i] = il.DeclareLocal(file.RegisterType);
+            // Allocate locals
+            for (int i = 0; i < file.Count; i++)
+            {
+                locals[i] = il.DeclareLocal(file.RegisterType);
+            }
         }
 
         return locals;

@@ -45,7 +45,7 @@ public unsafe abstract partial class JitCompiler<T, TRegister, TTrap>
     }
 
     /// <summary>
-    /// Emits the CIL to load a register to the CLR stack from locals.
+    /// Emits the CIL to store a register in locals from the CLR stack.
     /// </summary>
     public virtual void EmitStoreRegister(JitBlockContext<T, TRegister, TTrap> context, TRegister register, Action<ILGenerator> emitEvaluation)
     {
