@@ -28,6 +28,9 @@ public unsafe class RegisterFile<T> : IRegisterFile<T>, IDisposable
     /// <inheritdoc/>
     public int Count { get; }
 
+    /// <inheritdoc/>
+    public Type RegisterType => typeof(T);
+
     /// <summary>
     /// Gets or sets the value in a register.
     /// </summary>

@@ -118,7 +118,7 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Emits the CIL to load a register to the CLR stack from locals.
     /// </summary>
-    protected virtual void EmitLoadRegister<TData>(ILGenerator il, TRegister register)
+    protected internal virtual void EmitLoadRegister<TData>(ILGenerator il, TRegister register)
         where TData : unmanaged, INumber<TData>
     {
         // Load the register from local
@@ -143,7 +143,7 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Emits the CIL to load a register to the CLR stack from locals.
     /// </summary>
-    protected virtual void EmitStoreRegister(ILGenerator il, TRegister register, Action<ILGenerator> emitEvaluation)
+    protected internal virtual void EmitStoreRegister(ILGenerator il, TRegister register, Action<ILGenerator> emitEvaluation)
     {
         emitEvaluation(il);
 
@@ -164,7 +164,7 @@ public unsafe abstract class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Emits the CIL to load the address of a register from a register file in memory.
     /// </summary>
-    protected void EmitLoadRegisterAddress<TData>(ILGenerator il, int index , TData* regs)
+    protected internal void EmitLoadRegisterAddress<TData>(ILGenerator il, int index , TData* regs)
         where TData : unmanaged
     {
         // Calculate the address of the register in memory
