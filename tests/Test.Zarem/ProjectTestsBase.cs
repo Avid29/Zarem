@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Serialization;
 
@@ -30,14 +31,18 @@ public abstract class ProjectTestsBase
             testScenarios = JsonSerializer.Deserialize<string[][]>(json) ?? [[""]];
         }
 
-
         foreach (var inputLines in testScenarios)
         {
             var simulatedInput = string.Join(Environment.NewLine, inputLines);
 
-            // Run the actual emulator
-            var actualOutput = await ExecuteWithRedirectedStreams(simulatedInput, async () => {
-                await RunProjectAsync(projectPath);
+            // Run the actual emulator (interpreted)
+            var interpretedOutput = await ExecuteWithRedirectedStreams(simulatedInput, async () => {
+                await RunProjectAsync(projectPath, false);
+            });
+
+            // Run the actual emulator (jit)
+            var jitOutput = await ExecuteWithRedirectedStreams(simulatedInput, async () => {
+                await RunProjectAsync(projectPath, true);
             });
 
             // Run the expected C# script
@@ -46,7 +51,8 @@ public abstract class ProjectTestsBase
                 await CSharpScript.EvaluateAsync(expectedScript);
             });
 
-            Assert.AreEqual(expectedOutput, actualOutput, $"Mismatch for input: {simulatedInput}");
+            Assert.AreEqual(expectedOutput, interpretedOutput, $"Mismatch for input: {simulatedInput}");
+            Assert.AreEqual(expectedOutput, jitOutput, $"Mismatch for input with JIT: {simulatedInput}");
         }
     }
 
@@ -85,10 +91,13 @@ public abstract class ProjectTestsBase
         }
     }
 
-    private static async Task RunProjectAsync(string projectPath)
+    private static async Task RunProjectAsync(string projectPath, bool jit)
     {
         // Load project
         var project = ProjectFactory.Load(projectPath);
+
+        // Adjust project config
+        project.Config.ArchitectureConfig?.EmulatorConfig.ExecutionMode = jit ? ExecutionMode.JustInTime : ExecutionMode.Interpret;
 
         // Build project
         var buildResult = await project.BuildProjectAsync(true);

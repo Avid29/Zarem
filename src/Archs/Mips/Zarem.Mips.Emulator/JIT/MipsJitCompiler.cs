@@ -111,7 +111,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsJitBlock<T>,
     protected override MipsJitBlock<T> CreateBlockDelegate(DynamicMethod method, JitBlockContext<T, MipsGpRegister, MipsTrap> context)
     {
         var @delegate = (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
-        return new MipsJitBlock<T>(@delegate, context.End - context.End);
+        return new MipsJitBlock<T>(@delegate, context.End - context.Start);
     }
 
     /// <summary>

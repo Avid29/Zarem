@@ -30,14 +30,17 @@ public abstract partial class JitCompiler<T, TBlock, TRegister, TTrap> : JitComp
     /// <returns>The method block.</returns>
     public override TBlock CompileBlock(T startPc)
     {
-        Type[] parameterTypes = [Cpu.GetType(), typeof(TRegister).MakeByRefType()];
+        Type[] parameterTypes = [Cpu.GetType(), typeof(TTrap).MakeByRefType()];
         var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
         var context = new JitBlockContext<T, TRegister, TTrap>(il, startPc);
 
         T currentPc = startPc;
-        while (CompileNextInstruction(context, ref currentPc));
+        while (!CompileNextInstruction(context, ref currentPc))
+        {
+        }
 
+        context.End = currentPc;
         context.EmitSetupLocalRegisters(this);
         return CreateBlockDelegate(method, context);
     }
@@ -49,5 +52,4 @@ public abstract partial class JitCompiler<T, TBlock, TRegister, TTrap> : JitComp
     /// <param name="context">The <see cref="JitBlockContext{T, TRegister, TTrap}"/>.</param>
     /// <returns>A new <see cref="JitBlock{T}"/>.</returns>
     protected abstract TBlock CreateBlockDelegate(DynamicMethod method, JitBlockContext<T, TRegister, TTrap> context);
-
 }

@@ -92,7 +92,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVJi
     protected override RiscVJitBlock<T, TFloat> CreateBlockDelegate(DynamicMethod method, JitBlockContext<T, RiscVGpRegister, RiscVTrap> context)
     {
         var @delegate = (RiscVBlockDelegate<T, TFloat>)method.CreateDelegate(typeof(RiscVBlockDelegate<T, TFloat>));
-        return new(@delegate, context.End - context.End);
+        return new(@delegate, context.End - context.Start);
     }
 
     private RiscVInstruction Fetch(T pc, out RiscVInstruction decompressed)
