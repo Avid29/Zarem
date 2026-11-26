@@ -642,7 +642,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsJitBlock<T>,
         return false;
     }
 
-    private bool ExecuteCoProc(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
+    private bool ExecuteCoProcessor(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
     {
         var coProcIndex = inst.OpCode switch
         {
@@ -654,8 +654,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsJitBlock<T>,
         };
 
         var coProc = Cpu.CoProcessors[coProcIndex];
-        coProc.Executor.CompileInstruction(context, inst, pc);
-        return false;
+        return coProc.Executor.CompileInstruction(context, inst, pc);
     }
 
     private bool ReservedInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
