@@ -5,7 +5,7 @@ using Zarem.Mips.Emulator.Interpret;
 namespace Zarem.Mips.Emulator.Machine.Enums;
 
 /// <summary>
-/// An enum describing the secondary effect of an <see cref="MipsExecution{T}"/>.
+/// An enum describing the secondary effect of a <see cref="MipsExecution{T}"/>.
 /// </summary>
 public enum MipsSideEffect
 {
@@ -76,40 +76,4 @@ public enum MipsSideEffect
     /// Writes to CoProcessor1 control block.
     /// </summary>
     WriteCoProc1Control,
-
-    /// <summary>
-    /// Writes a word to the floating-point processor.
-    /// </summary>
-    /// <remarks>
-    /// Could be a float, could be an int.
-    /// </remarks>
-    WriteSingle,
-
-    /// <summary>
-    /// Writes a dword to the floating-point processor.
-    /// </summary>
-    /// <remarks>
-    /// Could be a double, could be a long.
-    /// </remarks>
-    WriteDouble,
-
-    /// <summary>
-    /// Reads a TLB entry into EntryHi/Lo registers.
-    /// </summary>
-    TLBRead,
-
-    /// <summary>
-    /// Writes EntryHi/Lo registers into a specific TLB slot.
-    /// </summary>
-    TLBWriteIndexed,
-
-    /// <summary>
-    /// Writes EntryHi/Lo registers into a random TLB slot.
-    /// </summary>
-    TLBWriteRandom,
-
-    /// <summary>
-    /// Searches TLB for an entry matching EntryHi and updates Index register.
-    /// </summary>
-    TLBProbe,
 }

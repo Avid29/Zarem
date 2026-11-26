@@ -1,38 +1,57 @@
 ﻿// Avishai Dernis 2024
 
+using CommunityToolkit.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Zarem.Emulator.Config.Enums;
+using Zarem.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
+using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Mips.Emulator.Machine.CoProcessors;
+namespace Zarem.Mips.Emulator.Machine.CoProcessors.Control;
 
 /// <summary>
 /// A class representing the status/control coprocessor unit.
 /// </summary>
-public class CoProcessor0<T> : ICoProcessor0
+public partial class ControlCoProcessor<T> : IMipsCoProcessor<T>, IControlCoProcessor
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private const uint NORMAL_EXCEPTION_VECTOR = 0x8000_0180;
     private const uint BOOT_STRAPPING_EXCEPTION_VECTOR = 0xBFC0_0180;
 
-    private readonly MipsTlb<T> _tlb;
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="CoProcessor0{T}"/> class.
+    /// Initializes a new instance of the <see cref="ControlCoProcessor{T}"/> class.
     /// </summary>
-    public CoProcessor0(MipsTlb<T> tlb)
+    public ControlCoProcessor(MipsCpu<T> cpu)
     {
-        _tlb = tlb;
-        RegisterFile = new(tlb.SlotCount);
+        Tlb = new MipsTlb<T>();
+        RegisterFile = new(Tlb.SlotCount);
+
+        Executor = cpu.Config.ExecutionMode switch {
+            ExecutionMode.Interpret => new ControlInterpretedExecutor(cpu, this),
+            ExecutionMode.JustInTime => new ControlJitExecutor(),
+            _ => ThrowHelper.ThrowArgumentException<ICoProcessor<T>.ICoExecutor<MipsInstruction, MipsExecution<T>, MipsGpRegister, MipsTrap>>(),
+        };
     }
+
+    /// <inheritdoc/>
+    public ICoProcessor<T>.ICoExecutor<MipsInstruction, MipsExecution<T>, MipsGpRegister, MipsTrap> Executor { get; }
+
 
     /// <summary>
     /// Gets the coprocessor0's register file.
     /// </summary>
     public MipsCo0RegisterFile<T> RegisterFile { get; }
+
+    /// <inheritdoc/>
+    public MipsTlb<T> Tlb { get; }
+
+    /// <inheritdoc/>
+    IMipsTlb IControlCoProcessor.Tlb => Tlb;
 
     /// <inheritdoc/>
     public PrivilegeMode ActingPrivilegeMode
@@ -113,7 +132,7 @@ public class CoProcessor0<T> : ICoProcessor0
     /// </summary>
     public unsafe void WritebackTlbp()
     {
-        int matchIndex = _tlb.Probe(RegisterFile.EntryHi);
+        int matchIndex = Tlb.Probe(RegisterFile.EntryHi);
         T index;
         if (matchIndex >= 0)
         {
@@ -133,7 +152,7 @@ public class CoProcessor0<T> : ICoProcessor0
     public void WritebackTlbr()
     {
         int targetIndex = int.CreateTruncating(this[CP0Registers.Index]) & 0x3F;
-        ref readonly var entry = ref _tlb.Read(targetIndex);
+        ref readonly var entry = ref Tlb.Read(targetIndex);
 
         RegisterFile.EntryHi = entry.Hi;
         RegisterFile.EntryLow0 = entry.Low0;
@@ -155,7 +174,7 @@ public class CoProcessor0<T> : ICoProcessor0
 
         // Writeback to the TLB
         int targetIndex = int.CreateTruncating(this[CP0Registers.Index]) & 0x3F;
-        _tlb.Write(targetIndex, in entry);
+        Tlb.Write(targetIndex, in entry);
     }
 
     /// <summary>
@@ -172,6 +191,6 @@ public class CoProcessor0<T> : ICoProcessor0
 
         // Writeback to the TLB
         int targetIndex = int.CreateTruncating(this[CP0Registers.Random]) & 0x3F;
-        _tlb.Write(targetIndex, in entry);
+        Tlb.Write(targetIndex, in entry);
     }
 }

@@ -1,13 +1,14 @@
 ﻿// Avishai Dernis 2026
 
+using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Registers;
 
-namespace Zarem.Mips.Emulator.Machine.CoProcessors;
+namespace Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 
 /// <summary>
-/// An interface for a <see cref="FloatProcessor{T}"/> without a concrete type.
+/// An interface for a <see cref="FloatCoProcessor{T, TFloat}"/> without a concrete type.
 /// </summary>
-public interface IFloatProcessor
+public interface IFloatCoProcessor : ICoProcessor
 {
     /// <summary>
     /// Gets an indexer for accessing the registers on the coprocessor as a <see cref="float"/>.

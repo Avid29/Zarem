@@ -1,5 +1,7 @@
 ﻿// Avishai Dernis 2026
 
+using System;
+
 namespace Zarem.Emulator.Machine.Registers;
 
 /// <summary>
@@ -16,4 +18,9 @@ public interface IRegisterFile
     /// Gets or sets the value in a register.
     /// </summary>
     ulong this[int register] { get; set; }
+
+    /// <summary>
+    /// Gets the type of values stored in the register file.
+    /// </summary>
+    Type RegisterType { get; }
 }

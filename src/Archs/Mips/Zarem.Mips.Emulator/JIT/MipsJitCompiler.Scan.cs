@@ -1,6 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-using System.Numerics;
+using System.Reflection.Emit;
+using Zarem.Emulator.JIT;
+using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Functions;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
@@ -8,11 +10,12 @@ using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Emulator.Models.JIT;
 
-public partial class MipsJitCompiler<T, TFloat>
+public partial class MipsJitCompiler<T>
 {
     private const int MaxBlockSize = 1024;
 
-    private T DiscoverBlock(T startPc)
+    /// <inheritdoc/>
+    protected override JitBlockContext<T, MipsGpRegister, MipsTrap> DiscoverBlock(ILGenerator il, T startPc)
     {
         T currentPc = startPc;
 
@@ -29,42 +32,41 @@ public partial class MipsJitCompiler<T, TFloat>
             currentPc += T.CreateTruncating(4);
         }
 
-        return currentPc;
+        return new(il, startPc, currentPc);
     }
 
-    private void ScanRegisterUsage(T start, T end)
+    /// <inheritdoc/>
+    protected override void ScanRegisterUsage(JitBlockContext<T, MipsGpRegister, MipsTrap> context)
     {
-        _loadRegs.Clear();
-        _storeRegs.Clear();
-
-        _loadRegs.Add(MipsGpRegister.Low);
-        _loadRegs.Add(MipsGpRegister.High);
-        _storeRegs.Add(MipsGpRegister.Low);
-        _storeRegs.Add(MipsGpRegister.High);
-        _storeRegs.Add(MipsGpRegister.ReturnAddress);
+        var file = Cpu.RegisterFile;
+        context.RegisterLoadUsage(file, MipsGpRegister.Low);
+        context.RegisterLoadUsage(file, MipsGpRegister.High);
+        context.RegisterStoreUsage(file, MipsGpRegister.Low);
+        context.RegisterStoreUsage(file, MipsGpRegister.High);
+        context.RegisterStoreUsage(file, MipsGpRegister.ReturnAddress);
 
         // TODO: Explicitly handle delay slot
-        for (T pc = start; pc <= end; pc += T.CreateTruncating(4))
-            LogRegisterUsage(Fetch(pc));
+        for (T pc = context.Start; pc <= context.End; pc += T.CreateTruncating(4))
+            LogRegisterUsage(context, Fetch(pc));
 
-        _loadRegs.Remove(MipsGpRegister.Zero);
-        _storeRegs.Remove(MipsGpRegister.Zero);
+        context.UnregisterLoadUsage(file, MipsGpRegister.Zero);
+        context.UnregisterStoreUsage(file, MipsGpRegister.Zero);
     }
 
-    private void LogRegisterUsage(MipsInstruction inst)
+    private void LogRegisterUsage(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst)
     {
         var rs = inst.RS;
         var rt = inst.RT;
         var rd = inst.RD;
 
-        _loadRegs.Add(rs);
-        _loadRegs.Add(rt);
-        _loadRegs.Add(rd);
-        _storeRegs.Add(rt);
-        _storeRegs.Add(rd);
+        context.RegisterLoadUsage(Cpu.RegisterFile, rs);
+        context.RegisterLoadUsage(Cpu.RegisterFile, rt);
+        context.RegisterLoadUsage(Cpu.RegisterFile, rd);
+        context.RegisterStoreUsage(Cpu.RegisterFile, rd);
+        context.RegisterStoreUsage(Cpu.RegisterFile, rt);
     }
 
-    private MipsInstruction Fetch(T pc) => (MipsInstruction)_cpu.Memory.Read<uint>(ulong.CreateTruncating(pc));
+    private MipsInstruction Fetch(T pc) => (MipsInstruction)Cpu.Memory.Read<uint>(ulong.CreateTruncating(pc));
 
     private static bool IsControlFlow(MipsInstruction inst)
     {

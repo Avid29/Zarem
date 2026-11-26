@@ -1,17 +1,23 @@
 ﻿// Avishai Dernis 2025
 
+using CommunityToolkit.Diagnostics;
 using System.Numerics;
+using Zarem.Emulator.Config.Enums;
+using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Machine.CoProcessors.Control;
+using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
+using Zarem.Mips.Emulator.Machine.CPU;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Memory;
-using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Emulator.Machine.Registers;
 using Zarem.Mips.Emulator.TrapHandlers;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
+using Zarem.Mips.Models.Versioning.Enums;
 using Zarem.Models.Enums;
 
 namespace Zarem.Mips.Emulator.Machine;
@@ -19,7 +25,7 @@ namespace Zarem.Mips.Emulator.Machine;
 /// <summary>
 /// A base class representing a processor unit.
 /// </summary>
-public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
+public partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     /// <summary>
@@ -35,12 +41,32 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         Config = config;
         RegisterFile = new(config.VersionInfo);
 
-        Tlb = new MipsTlb<T>();
-        Memory = new MemorySystem(bus, new MipsAddressTranslator<T>(this));
-        CoProcessor0 = new(Tlb);
+        Executor = Config.ExecutionMode switch
+        {
+            ExecutionMode.Interpret => new MipsInterpretedExecutor(this),
+            ExecutionMode.JustInTime => new MipsJitExecutor(this, bus),
+            _ => ThrowHelper.ThrowArgumentException<IExecutor<MipsInstruction, MipsTrap>>(),
+        };
 
+        var coProcessorCount = config.VersionInfo.Generation is < MipsGeneration.MipsIII ? 3 : 2;
+        CoProcessors = new IMipsCoProcessor<T>[coProcessorCount];
+
+        ControlCoProcessor = new(this);
+        FloatCoProcessor = config.VersionInfo.Generation is >= MipsGeneration.MipsIII
+            ? new FloatCoProcessor<T, ulong>(this)
+            : new FloatCoProcessor<T, uint>(this);
+
+        CoProcessors[0] = ControlCoProcessor;
+        CoProcessors[1] = FloatCoProcessor;
+
+        Memory = new MemorySystem(bus, new MipsAddressTranslator<T>(ControlCoProcessor));
         ProgramCounter = T.CreateTruncating(BOOT_ADDRESS);
     }
+
+    /// <summary>
+    /// Gets the <see cref="CpuBase{T}.IExecutor{TInstruction, TTrap}"/>
+    /// </summary>
+    public IExecutor<MipsInstruction, MipsTrap> Executor { get; }
 
     /// <inheritdoc/>
     public override string ArchitectureName => "MIPS";
@@ -55,19 +81,13 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     public override MipsGPRegisterFile<T> RegisterFile { get; }
 
     /// <inheritdoc/>
-    public CoProcessor0<T> CoProcessor0 { get; }
+    public ControlCoProcessor<T> ControlCoProcessor { get; }
 
     /// <inheritdoc/>
-    ICoProcessor0 IMipsCpu.CoProcessor0 => CoProcessor0;
+    public IFloatCoProcessor<T>? FloatCoProcessor { get; }
 
     /// <inheritdoc/>
-    public abstract IFloatProcessor FloatProcessor { get; }
-
-    /// <inheritdoc/>
-    public MipsTlb<T> Tlb { get; }
-
-    /// <inheritdoc/>
-    IMipsTlb IMipsCpu.Tlb => Tlb;
+    public IMipsCoProcessor<T>[] CoProcessors { get; }
 
     /// <summary>
     /// Gets the system memory.
@@ -80,7 +100,7 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     /// <inheritdoc/>
     ulong? IMipsCpu.DelaySlot => DelaySlot.HasValue
         ? ulong.CreateTruncating(DelaySlot.Value)
-        : null ;
+        : null;
 
     /// <summary>
     /// Gets or sets the value of a general-purpose register on the processor.
@@ -93,15 +113,25 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         set => RegisterFile[(int)reg] = value;
     }
 
-    /// <inheritdoc/>
     ulong IMipsCpu.this[MipsGpRegister reg]
     {
         get => ulong.CreateTruncating(RegisterFile[(int)reg]);
         set => RegisterFile[(int)reg] = T.CreateTruncating(value);
     }
 
+    IControlCoProcessor? IMipsCpu.ControlCoProcessor => ControlCoProcessor;
+
+    ICoProcessor[] IMipsCpu.CoProcessors => CoProcessors;
+
+    IFloatCoProcessor? IMipsCpu.FloatCoProcessor => FloatCoProcessor;
+
     /// <inheritdoc/>
-    public abstract void Insert(MipsInstruction instruction, out MipsTrap trap);
+    protected override long ExecutionLoop()
+        => Executor.ExecutionLoop();
+
+    /// <inheritdoc/>
+    public void Insert(MipsInstruction instruction, out MipsTrap trap)
+        => Executor.Insert(instruction, out trap);
 
     /// <summary>
     /// Handles a trap.
@@ -125,8 +155,8 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         }
         else
         {
-            CoProcessor0.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
-            ProgramCounter = CoProcessor0.ExceptionVector;
+            ControlCoProcessor.EnterTrap(trap, ProgramCounter, DelaySlot.HasValue);
+            ProgramCounter = ControlCoProcessor.ExceptionVector;
         }
     }
 
@@ -134,6 +164,6 @@ public abstract partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     public override void Dispose()
     {
         base.Dispose();
-        CoProcessor0.RegisterFile.Dispose();
+        ControlCoProcessor.RegisterFile.Dispose();
     }
 }

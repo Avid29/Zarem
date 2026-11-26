@@ -4,7 +4,6 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zarem.Helpers;
-using Zarem.Mips.Models.Instructions;
 
 namespace Zarem.Mips.Emulator.Machine.Memory.Tlb;
 

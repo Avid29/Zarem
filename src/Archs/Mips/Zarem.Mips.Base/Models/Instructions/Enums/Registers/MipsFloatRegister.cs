@@ -8,7 +8,6 @@ namespace Zarem.Mips.Models.Instructions.Enums.Registers;
 public enum MipsFloatRegister : byte
 {
 #pragma warning disable CS1591
-
     F0 = 0,
     F1 = 1,
     F2 = 2,

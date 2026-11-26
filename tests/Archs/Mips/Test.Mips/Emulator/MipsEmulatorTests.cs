@@ -6,12 +6,10 @@ using Zarem.Assembler.Tokenization;
 using Zarem.Emulator.Config.Enums;
 using Zarem.Mips.Assembler;
 using Zarem.Mips.Assembler.Models.Tables;
-using Zarem.Mips.Emulator.Interpret;
-using Zarem.Mips.Emulator.JIT;
 using Zarem.Mips.Emulator.Machine;
+using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
-using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Test.Mips.Emulator;
 
@@ -118,37 +116,64 @@ public partial class MipsEmulatorTests
     public void InstructionTests_Mips64R2_JIT(MipsEmulatorTestCase<ulong, ulong> @case) => RunTest(@case);
 
     private static void RunTest<T, TFloat>(MipsEmulatorTestCase<T, TFloat> @case)
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
-        where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
+    where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
     {
         var config = @case.Config;
 
-        // The instruction parser is only used to convert the instruction string into an Instruction struct, so we can test the interpreter with it.
+        // Parse the instruction
+        var instruction = ParseInstruction(@case);
+
+        // Initialize computer, CPU, and test environment state
+        var computer = new MipsComputer(config);
+        var cpu = (MipsCpu<T>)computer.Cpu;
+        InitializeState(@case, computer, cpu);
+
+        // Execute the instruction
+        cpu.Insert(instruction, out var trap);
+
+        // Verify all expected outcomes and assertions
+        VerifyResults(@case, computer, cpu, trap);
+    }
+
+    private static MipsInstruction ParseInstruction<T, TFloat>(MipsEmulatorTestCase<T, TFloat> @case)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
+    {
+        // The instruction parser is only used to convert the instruction string into an Instruction struct
         var tokenized = Tokenizer.TokenizeLine(@case.Input, MipsTokenizerProfile.Default)[0];
-        var table = new MipsInstructionTable(new MipsAssemblerConfig(config.VersionInfo));
+        var table = new MipsInstructionTable(new MipsAssemblerConfig(@case.Config.VersionInfo));
         var parser = new MipsInstructionParser(new(), table, default, null, null);
+
         var parsed = parser.Parse(tokenized, out _);
         if (parsed is null)
             Assert.Fail();
 
-        // TODO: Psuedo instruction support
-        var instruction = parsed[0];
-        var computer = new MipsComputer(config);
-        var cpu = (MipsCpu<T, TFloat>)computer.Cpu;
+        // TODO: Pseudo instruction support
+        return parsed[0];
+    }
 
+    private static void InitializeState<T, TFloat>(MipsEmulatorTestCase<T, TFloat> @case, MipsComputer computer, MipsCpu<T> cpu)
+        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
+        where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
+    {
         // Initialize the status register
-        cpu.CoProcessor0.RegisterFile.StatusRegister = @case.Status;
+        cpu.ControlCoProcessor.RegisterFile.StatusRegister = @case.Status;
 
-        // Initialize the register file with the provided values
+        // Initialize the register file with provided values
         foreach (var (reg, value) in @case.RegisterInitialization)
             cpu[reg] = value;
 
-        foreach (var (reg, value) in @case.FPRInitialization)
+        // Initialize floating-point registers
+        if (cpu.FloatCoProcessor is FloatCoProcessor<T, TFloat> floatProc)
         {
-            cpu.FloatProcessor[reg] = TFloat.CreateTruncating(value);
+            foreach (var (reg, value) in @case.FPRInitialization)
+            {
+                floatProc[reg] = TFloat.CreateTruncating(value);
+            }
         }
 
-        // Initialize the high and low registers if specified in the test case
+        // Initialize the high and low registers if specified
         if (@case.InitialHighLow.HasValue)
         {
             cpu.RegisterFile.Low = @case.InitialHighLow.Value.Low;
@@ -156,147 +181,66 @@ public partial class MipsEmulatorTests
         }
 
         // Initialize TLB
-        cpu.Tlb.InitilizeSegment(0, 0, 0x1_0000);
+        cpu.ControlCoProcessor.Tlb.InitilizeSegment(0, 0, 0x1_0000);
 
-        // Initialize the memory, if specified in the test case
+        // Initialize memory if specified
         foreach (var (address, data) in @case.MemoryInitialization)
             computer.Memory.Write(ulong.CreateTruncating(address), data);
 
         // Initialize the program counter
         cpu.ProgramCounter = @case.InitialPC;
-
-        if (cpu is MipsJitCpu<T, TFloat>)
-        {
-            RunJitChecks(computer, instruction, @case);
-        }
-        else if (cpu is MipsInterpretCpu<T, TFloat>)
-        {
-            RunInterpretChecks(computer, instruction, @case);
-        }
     }
 
-    private static void RunInterpretChecks<T, TFloat>(MipsComputer computer, MipsInstruction instruction, MipsEmulatorTestCase<T, TFloat> @case)
+    private static void VerifyResults<T, TFloat>(MipsEmulatorTestCase<T, TFloat> @case, MipsComputer computer, MipsCpu<T> cpu, MipsTrap? actualTrap)
         where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
         where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
     {
-        var cpu = (MipsInterpretCpu<T, TFloat>)computer.Cpu;
-        cpu.Insert(instruction, out var execution, out var trap);
-
         // Ensure that the expected trap was raised (if any)
-        Assert.AreEqual(@case.ExpectedTrap, trap);
+        Assert.AreEqual(@case.ExpectedTrap, actualTrap);
 
-        var writeback = @case.ExpectedWriteBack;
-        if (writeback.HasValue)
+        // Verify register writeback
+        if (@case.ExpectedWriteBack is { Value: var writeBackValue } && writeBackValue.HasValue)
         {
-            // Ensure that the expected register was written to with the expected value
-            Assert.AreEqual(writeback.Value.Register, execution.WritebackGPRegister);
+            Assert.AreEqual(writeBackValue.Value, cpu[@case.ExpectedWriteBack.Value.Register]);
+        }
 
-            var writeBackValue = writeback.Value.Value;
-            if (writeBackValue.HasValue)
+        // Verify High/Low registers
+        if (@case.ExpectedHighLow.HasValue)
+        {
+            Assert.AreEqual(@case.ExpectedHighLow.Value, (cpu.RegisterFile.High, cpu.RegisterFile.Low));
+        }
+
+        // Verify Memory contents
+        if (@case.ExpectedMemory is { } expectedMemory)
+        {
+            var buffer = new byte[expectedMemory.Data.Length];
+            computer.Memory.Read(ulong.CreateTruncating(expectedMemory.Address), buffer);
+            Assert.AreSequenceEqual(expectedMemory.Data, buffer);
+        }
+
+        // Verify Floating-Point Word Writeback
+        if (@case.ExpectedWordFloatWriteBack is { } expectedFloatWord)
+        {
+            Assert.AreEqual(expectedFloatWord.Value, computer.Cpu.FloatCoProcessor?.Words[(int)expectedFloatWord.Register]);
+        }
+
+        // Verify Floating-Point Long Writeback
+        if (@case.ExpectedLongFloatWriteBack is { } expectedFloatLong)
+        {
+            Assert.AreEqual(expectedFloatLong.Value, computer.Cpu.FloatCoProcessor?.Longs[(int)expectedFloatLong.Register]);
+        }
+
+        // Verify Program Counter (PC) and delay slots
+        if (@case.ExpectedPC is { } expectedPC)
+        {
+            if (cpu.DelaySlot is not null)
             {
-                Assert.AreEqual(writeBackValue.Value, cpu[execution.WritebackGPRegister]);
-            }
-        }
-        else
-        {
-            // If no register check was provided, we at least want to make sure no register was written to (as that would be unexpected)
-            Assert.AreEqual(MipsGpRegister.Zero, execution.WritebackGPRegister);
-        }
-
-        var highLow = @case.ExpectedHighLow;
-        if (highLow.HasValue)
-        {
-            Assert.AreEqual(highLow.Value, (cpu.RegisterFile.High, cpu.RegisterFile.Low));
-        }
-
-        var expectedMemory = @case.ExpectedMemory;
-        if (expectedMemory is not null)
-        {
-            var buffer = new byte[expectedMemory.Value.Data.Length];
-            computer.Memory.Read(ulong.CreateTruncating(expectedMemory.Value.Address), buffer);
-            CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
-        }
-
-        var expectedFloatWord = @case.ExpectedWordFloatWriteBack;
-        if (expectedFloatWord.HasValue)
-        {
-            Assert.AreEqual(expectedFloatWord.Value.Register, execution.FloatReg);
-            Assert.AreEqual(expectedFloatWord.Value.Value, execution.FWordWriteBack);
-            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatProcessor.Words[(int)execution.FloatReg]);
-        }
-
-        var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
-        if (expectedFloatLong.HasValue)
-        {
-            Assert.AreEqual(expectedFloatLong.Value.Register, execution.FloatReg);
-            Assert.AreEqual(expectedFloatLong.Value.Value, execution.FLongWriteBack);
-            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatProcessor.Longs[(int)execution.FloatReg]);
-        }
-
-        var expectedPC = @case.ExpectedPC;
-        if (expectedPC is not null)
-        {
-            if (!cpu.Config.DisableDelaySlots && execution.SideEffect is MipsSideEffect.ProgramCounter)
-            {
-                // Assert the branch has not occured, then execute a NOP to apply the delayed branch
+                // Assert the branch has not occurred, then execute a NOP to apply the delayed branch
                 Assert.AreEqual(ulong.CreateTruncating(@case.InitialPC) + 4, computer.Cpu.ProgramCounter);
-                computer.Cpu.Insert(MipsInstruction.NOP, out _);
+                cpu.Insert(MipsInstruction.NOP, out _);
             }
 
-            Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
-        }
-    }
-
-    private static void RunJitChecks<T, TFloat>(MipsComputer computer, MipsInstruction instruction, MipsEmulatorTestCase<T, TFloat> @case)
-        where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>, IMinMaxValue<T>
-        where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>, IMinMaxValue<TFloat>
-    {
-        var cpu = (MipsJitCpu<T, TFloat>)computer.Cpu;
-        cpu.Insert(instruction, out var trap);
-
-        // Ensure that the expected trap was raised (if any)
-        Assert.AreEqual(@case.ExpectedTrap, trap);
-
-        var writeback = @case.ExpectedWriteBack;
-        if (writeback.HasValue)
-        {
-            var writeBackValue = writeback.Value.Value;
-            if (writeBackValue.HasValue)
-            {
-                Assert.AreEqual(writeBackValue.Value, cpu[writeback.Value.Register]);
-            }
-        }
-
-        var highLow = @case.ExpectedHighLow;
-        if (highLow.HasValue)
-        {
-            Assert.AreEqual(highLow.Value, (cpu.RegisterFile.High, cpu.RegisterFile.Low));
-        }
-
-        var expectedMemory = @case.ExpectedMemory;
-        if (expectedMemory is not null)
-        {
-            var buffer = new byte[expectedMemory.Value.Data.Length];
-            computer.Memory.Read(ulong.CreateTruncating(expectedMemory.Value.Address), buffer);
-            CollectionAssert.AreEqual(expectedMemory.Value.Data, buffer);
-        }
-
-        var expectedFloatWord = @case.ExpectedWordFloatWriteBack;
-        if (expectedFloatWord.HasValue)
-        {
-            Assert.AreEqual(expectedFloatWord.Value.Value, computer.Cpu.FloatProcessor.Words[(int)expectedFloatWord.Value.Register]);
-        }
-
-        var expectedFloatLong = @case.ExpectedLongFloatWriteBack;
-        if (expectedFloatLong.HasValue)
-        {
-            Assert.AreEqual(expectedFloatLong.Value.Value, computer.Cpu.FloatProcessor.Longs[(int)expectedFloatLong.Value.Register]);
-        }
-
-        var expectedPC = @case.ExpectedPC;
-        if (expectedPC is not null)
-        {
-            Assert.AreEqual(expectedPC.Value, cpu.ProgramCounter);
+            Assert.AreEqual(expectedPC, cpu.ProgramCounter);
         }
     }
 }

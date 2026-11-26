@@ -1,32 +1,51 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
+using Zarem.Emulator.Config.Enums;
+using Zarem.Emulator.JIT;
+using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Registers;
+using Zarem.Mips.Emulator.Interpret;
+using Zarem.Mips.Emulator.Machine.CoProcessors.Control;
+using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Registers.FloatProcessor;
+using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Mips.Emulator.Machine.CoProcessors;
+namespace Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 
 /// <summary>
 /// a class representing the floating-point coprocessor unit.
 /// </summary>
-public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
+public unsafe partial class FloatCoProcessor<T, TFloat> : IFloatCoProcessor<T>, IDisposable
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
+    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {
-    private readonly ICoProcessor0 _co0;
+    private readonly ControlCoProcessor<T> _co0;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FloatProcessor{T}"/> class.
+    /// Initializes a new instance of the <see cref="FloatCoProcessor{T, TFloat}"/> class.
     /// </summary>
-    public FloatProcessor(ICoProcessor0 co0)
+    public FloatCoProcessor(MipsCpu<T> cpu)
     {
-        _co0 = co0;
+        _co0 = cpu.ControlCoProcessor;
         RegisterFile = new(32);
         ControlRegisterFile = new();
+
+        Executor = cpu.Config.ExecutionMode switch
+        {
+            ExecutionMode.Interpret => new FloatInterpretedExecutor(cpu, this),
+            ExecutionMode.JustInTime => new FloatJitExecutor(cpu, this),
+            _ => ThrowHelper.ThrowArgumentException<ICoProcessor<T>.ICoExecutor<MipsInstruction, MipsExecution<T>, MipsGpRegister, MipsTrap>>(),
+        };
     }
 
-    internal FormattedRegisterFile<T> RegisterFile { get; }
+    /// <inheritdoc/>
+    public ICoProcessor<T>.ICoExecutor<MipsInstruction, MipsExecution<T>, MipsGpRegister, MipsTrap> Executor { get; }
+
+    internal FormattedRegisterFile<TFloat> RegisterFile { get; }
 
     /// <summary>
     /// Gets the float-point processor control register file.
@@ -50,7 +69,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
     {
         get
         {
-            bool use64BitMode = sizeof(T) is sizeof(ulong) && _co0.FloatingPoint64BitMode;
+            bool use64BitMode = sizeof(TFloat) is sizeof(ulong) && _co0.FloatingPoint64BitMode;
             return use64BitMode
                 ? RegisterFile.Doubles
                 : new PairedDoubleIndexer(RegisterFile.Regs);
@@ -64,7 +83,7 @@ public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
     {
         get
         {
-            bool use64BitMode = sizeof(T) is sizeof(ulong) && _co0.FloatingPoint64BitMode;
+            bool use64BitMode = sizeof(TFloat) is sizeof(ulong) && _co0.FloatingPoint64BitMode;
             return use64BitMode
                 ? RegisterFile.Longs
                 : new PairedLongIndexer(RegisterFile.Regs);
@@ -76,18 +95,22 @@ public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
     /// </summary>
     /// <param name="reg">The register to get or set.</param>
     /// <returns>The value of the register.</returns>
-    public T this[MipsFloatRegister reg]
+    public TFloat this[MipsFloatRegister reg]
     {
         get => RegisterFile[(int)reg];
         set => RegisterFile[(int)reg] = value;
     }
 
+    /// <inheritdoc/>
+    public void CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
+        => Executor.CompileInstruction(context, instruction, pc);
+
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.
     /// </summary>
-    public readonly struct PairedDoubleIndexer(T* regs) : IFormattedRegisterIndexer<double>
+    public readonly struct PairedDoubleIndexer(TFloat* regs) : IFormattedRegisterIndexer<double>
     {
-        private readonly T* _regs = regs;
+        private readonly TFloat* _regs = regs;
 
         /// <inheritdoc/>
         public double this[int reg]
@@ -112,8 +135,8 @@ public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
 
                 // Split the double into two uints
                 var integer = BitConverter.DoubleToUInt64Bits(value);
-                _regs[reg] = T.CreateTruncating(integer & 0xFFFF_FFFF);
-                _regs[reg + 1] = T.CreateTruncating(integer >> 32);
+                _regs[reg] = TFloat.CreateTruncating(integer & 0xFFFF_FFFF);
+                _regs[reg + 1] = TFloat.CreateTruncating(integer >> 32);
             }
         }
     }
@@ -121,9 +144,9 @@ public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
     /// <summary>
     /// An wrapper to access floating-point register pairs as doubles.
     /// </summary>
-    public readonly struct PairedLongIndexer(T* regs) : IFormattedRegisterIndexer<long>
+    public readonly struct PairedLongIndexer(TFloat* regs) : IFormattedRegisterIndexer<long>
     {
-        private readonly T* _regs = regs;
+        private readonly TFloat* _regs = regs;
 
         /// <inheritdoc/>
         public long this[int reg]
@@ -146,8 +169,8 @@ public unsafe class FloatProcessor<T> : IFloatProcessor, IDisposable
                     return;
 
                 // Split the double into two uints
-                _regs[reg] = T.CreateTruncating(value & 0xFFFF_FFFF);
-                _regs[reg + 1] = T.CreateTruncating(value >> 32);
+                _regs[reg] = TFloat.CreateTruncating(value & 0xFFFF_FFFF);
+                _regs[reg + 1] = TFloat.CreateTruncating(value >> 32);
             }
         }
     }

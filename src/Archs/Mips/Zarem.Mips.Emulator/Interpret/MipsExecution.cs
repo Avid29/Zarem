@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-using System;
 using System.Numerics;
 using Zarem.Helpers;
 using Zarem.Mips.Emulator.Machine.Enums;
@@ -43,53 +42,6 @@ public readonly struct MipsExecution<T>
             CoProc0Reg = dest,
             CoProcWriteBack = writeBack,
         };
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
-    /// </summary>
-    public static MipsExecution<T> CreateWriteback(CP1CRegisters dest, uint writeBack)
-    {
-        return new MipsExecution<T>
-        {
-            CoProc1ControlReg = dest,
-            CoProc1ControlWriteBack = writeBack,
-        };
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
-    /// </summary>
-    public unsafe static MipsExecution<T> CreateFloatWriteback<TFloat>(MipsFloatRegister dest, TFloat writeBack)
-        where TFloat : unmanaged, INumber<TFloat>
-    {
-        long longValue = writeBack switch
-        {
-            int i => i,
-            uint ui => ui,
-            long l => l,
-            ulong ul => (long)ul,
-            float f => BitConverter.SingleToInt32Bits(f),
-            double d => BitConverter.DoubleToInt64Bits(d),
-            _ => long.CreateTruncating(writeBack),
-        };
-
-        if (sizeof(TFloat) == sizeof(float))
-        {
-            return new MipsExecution<T>
-            {
-                FloatReg = dest,
-                FWordWriteBack = (int)longValue,
-            };
-        }
-        else
-        {
-            return new MipsExecution<T>
-            {
-                FloatReg = dest,
-                FLongWriteBack = longValue,
-            };
-        }
     }
 
     /// <summary>
@@ -176,17 +128,6 @@ public readonly struct MipsExecution<T>
         return new MipsExecution<T>
         {
             High = high,
-        };
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
-    /// </summary>
-    public static MipsExecution<T> CreateEffect(MipsSideEffect sideEffect)
-    {
-        return new MipsExecution<T>
-        {
-            SideEffect = sideEffect,
         };
     }
 
@@ -291,28 +232,6 @@ public readonly struct MipsExecution<T>
     }
 
     /// <summary>
-    /// Gets the coproc1 control register for a co-process writeback.
-    /// </summary>
-    public CP1CRegisters CoProc1ControlReg
-    {
-        get => (CP1CRegisters)CoProcReg;
-        init
-        {
-            CoProcReg = (MipsGpRegister)value;
-            SideEffect = MipsSideEffect.WriteCoProc1Control;
-        }
-    }
-
-    /// <summary>
-    /// Gets the coproc1 register for a co-process writeback.
-    /// </summary>
-    public MipsFloatRegister FloatReg
-    {
-        get => (MipsFloatRegister)CoProcReg;
-        init => CoProcReg = (MipsGpRegister)value;
-    }
-
-    /// <summary>
     /// Gets the value writing back to a co-processor.
     /// </summary>
     public T CoProcWriteBack
@@ -326,41 +245,6 @@ public readonly struct MipsExecution<T>
     }
 
     /// <summary>
-    /// Gets the value writing back to coprocessor1 control.
-    /// </summary>
-    public uint CoProc1ControlWriteBack
-    {
-        get => uint.CreateTruncating(CoProcWriteBack);
-        init => CoProcWriteBack = T.CreateTruncating(value);
-    }
-
-    /// <summary>
-    /// Gets the value being written to the float processor as a <see cref="long"/>.
-    /// </summary>
-    public int FWordWriteBack
-    {
-        get => (int)FLongWriteBack;
-        init
-        {
-            _secondary2 = (uint)value;
-            SideEffect = MipsSideEffect.WriteSingle;
-        }
-    }
-
-    /// <summary>
-    /// Gets the value being written to the float processor as a <see cref="long"/>.
-    /// </summary>
-    public long FLongWriteBack
-    {
-        get => (long)_secondary2;
-        init
-        {
-            _secondary2 = (ulong)value;
-            SideEffect = MipsSideEffect.WriteDouble;
-        }
-    }
-
-    /// <summary>
     /// Gets a value indicating whether or not execution handled the PC changing.
     /// </summary>
     public bool PCHandled => SideEffect is MipsSideEffect.ProgramCounter;
@@ -369,9 +253,7 @@ public readonly struct MipsExecution<T>
     {
         if (SideEffect is MipsSideEffect.Low or
             MipsSideEffect.High or MipsSideEffect.HighLow)
-        {
             return SideEffect | @new;
-        }
 
         return @new;
     }

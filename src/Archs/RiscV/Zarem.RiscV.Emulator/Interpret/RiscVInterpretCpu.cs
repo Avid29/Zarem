@@ -20,7 +20,7 @@ namespace Zarem.RiscV.Emulator.Interpret;
 /// <summary>
 /// A class representing a RISC-V CPU.
 /// </summary>
-public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretCpu<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, RiscVExecution<T>, RiscVTrap>
+public class RiscVInterpretCpu<T, TFloat> : RiscVCpu<T, TFloat>, IInterpretedCpu<RiscVInterpretCpu<T, TFloat>, RiscVInstruction, RiscVExecution<T>, RiscVTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
     where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
 {

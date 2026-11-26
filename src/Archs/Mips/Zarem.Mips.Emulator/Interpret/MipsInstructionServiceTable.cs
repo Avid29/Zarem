@@ -1,31 +1,33 @@
 ﻿// Avishai Dernis 2026
 
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Models.Logic;
 using Zarem.Mips.Emulator.Interpret;
+using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models;
 using Zarem.Mips.Models.Instructions;
+using Zarem.Mips.Models.Instructions.Enums.Operations;
 
 namespace Zarem.Emulator.Models;
 
 /// <summary>
-/// A struct which handles converting decoded instructions into <see cref="MipsExecution{T}"/> models.
+/// A class which handles converting decoded instructions into <see cref="MipsExecution{T}"/> models.
 /// </summary>
-public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IMipsInstructionServiceTable<T>
+public unsafe partial class MipsInstructionServiceTable<T, TSigned> : IMipsInstructionServiceTable<T>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
-    where TFloat : unmanaged, IBinaryInteger<TFloat>, IUnsignedNumber<TFloat>
     where TSigned : unmanaged, IBinaryInteger<TSigned>, ISignedNumber<TSigned>
 {
     private readonly MipsInstructionDecodeTable<IntPtr> _instructionTable;
-    private readonly MipsInterpretCpu<T, TFloat> _cpu;
+    private readonly MipsCpu<T> _cpu;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MipsInstructionServiceTable{T, TS, TFloat}"/> struct.
+    /// Initializes a new instance of the <see cref="MipsInstructionServiceTable{T, TS}"/> struct.
     /// </summary>
-    public MipsInstructionServiceTable(MipsInterpretCpu<T, TFloat> cpu)
+    public MipsInstructionServiceTable(MipsCpu<T> cpu)
     {
         _cpu = cpu;
 
@@ -37,11 +39,11 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
     /// <inheritdoc/>
     public MipsTrap Execute(MipsInstruction instruction, out MipsExecution<T> execution)
     {
-        var func = (delegate*<MipsInterpretCpu<T, TFloat>, MipsInstruction, out MipsExecution<T>, MipsTrap>)_instructionTable.Lookup(instruction);
+        var func = (delegate*<MipsCpu<T>, MipsInstruction, out MipsExecution<T>, MipsTrap>)_instructionTable.Lookup(instruction);
         return func(_cpu, instruction, out execution);
     }
 
-    private static MipsTrap Shift<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Shift<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IShiftLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
@@ -50,7 +52,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap ShiftPlus32<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap ShiftPlus32<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IShiftLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
@@ -59,7 +61,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap ShiftVar<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap ShiftVar<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IShiftLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
@@ -69,7 +71,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap AluR<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap AluR<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, INumber<TFormat>
     {
@@ -79,7 +81,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap SignedAluR<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap SignedAluR<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, INumber<TFormat>
     {
@@ -90,7 +92,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap CheckedAluR<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CheckedAluR<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICheckedAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
     {
@@ -109,7 +111,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap AluI<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap AluI<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
     {
@@ -119,7 +121,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap AluISigned<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap AluISigned<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
     {
@@ -129,7 +131,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap CheckedAluI<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap CheckedAluI<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICheckedAluLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
     {
@@ -148,7 +150,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap MultR<TLogic, TFormat, TLong>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap MultR<TLogic, TFormat, TLong>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IMultLogic<TFormat, TLong>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
         where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>
@@ -167,7 +169,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap SignedMultR<TLogic, TFormat, TLong>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap SignedMultR<TLogic, TFormat, TLong>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IMultLogic<TFormat, TLong>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
         where TLong : unmanaged, IBinaryInteger<TLong>, ISignedNumber<TLong>
@@ -186,7 +188,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap MultAddR<TLogic, TFormat, TLong>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap MultAddR<TLogic, TFormat, TLong>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IMultAddLogic<TFormat, TLong>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, IUnsignedNumber<TFormat>
         where TLong : unmanaged, IBinaryInteger<TLong>, IUnsignedNumber<TLong>
@@ -210,7 +212,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap SignedMultAddR<TLogic, TFormat, TLong>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap SignedMultAddR<TLogic, TFormat, TLong>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IMultAddLogic<TFormat, TLong>
         where TFormat : unmanaged, IBinaryInteger<TFormat>, ISignedNumber<TFormat>
         where TLong : unmanaged, IBinaryInteger<TLong>, ISignedNumber<TLong>
@@ -234,7 +236,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap DivR<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap DivR<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IDivLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
@@ -246,7 +248,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap SignedDivR<TLogic, TFormat>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap SignedDivR<TLogic, TFormat>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, IDivLogic<TFormat>
         where TFormat : unmanaged, IBinaryInteger<TFormat>
     {
@@ -258,14 +260,14 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap Trap<TLogic>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
-        where TLogic : struct, ITrapLogic
+    private static MipsTrap Trap<TLogic>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+        where TLogic : struct, ITrapLogic<MipsTrap>
     {
         exec = default;
         return TLogic.Trap();
     }
 
-    private static MipsTrap BranchOn<TLogic>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap BranchOn<TLogic>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICondLogic<T>
     {
         var rs = T.CreateTruncating(cpu[inst.RS]);
@@ -275,7 +277,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap BranchLinkOn<TLogic>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap BranchLinkOn<TLogic>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
         var linkOffset = cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
@@ -287,7 +289,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap BranchOnLikely<TLogic>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap BranchOnLikely<TLogic>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : struct, ICondLogic<T>
     {
         var rs = T.CreateTruncating(cpu[inst.RS]);
@@ -316,7 +318,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap BranchLinkOnLikely<TLogic>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap BranchLinkOnLikely<TLogic>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
         var rs = T.CreateTruncating(cpu[inst.RS]);
@@ -346,7 +348,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap TrapOn<TLogic>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap TrapOn<TLogic>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
         var rs = T.CreateTruncating(cpu[inst.RS]);
@@ -355,7 +357,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return TLogic.Check(rs, rt) ? MipsTrap.Trap : MipsTrap.None;
     }
 
-    private static MipsTrap TrapOnI<TLogic>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap TrapOnI<TLogic>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
         var rs = T.CreateTruncating(cpu[inst.RS]);
@@ -364,7 +366,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return TLogic.Check(rs, imm) ? MipsTrap.Trap : MipsTrap.None;
     }
 
-    private static MipsTrap Move<TLogic>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Move<TLogic>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TLogic : ICondLogic<T>
     {
         var rs = T.CreateTruncating(cpu.RegisterFile.Regs[(int)inst.RS]);
@@ -373,7 +375,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap Load<TData>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Load<TData>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TData : unmanaged, IBinaryInteger<TData>
     {
         T offset = T.CreateTruncating(inst.Immediate);
@@ -393,7 +395,7 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap Store<TData>(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Store<TData>(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         where TData : unmanaged
     {
         T offset = T.CreateTruncating(inst.Immediate);
@@ -412,26 +414,26 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap Jump(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Jump(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateJump(T.CreateTruncating(inst.Address));
         return MipsTrap.None;
     }
 
-    private static MipsTrap JumpLink(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap JumpLink(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         var linkOffset = cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
         exec = MipsExecution<T>.CreateJumpAndLink(T.CreateTruncating(inst.Address), cpu.ProgramCounter + linkOffset);
         return MipsTrap.None;
     }
 
-    private static MipsTrap JumpR(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap JumpR(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateJump(cpu.RegisterFile.Regs[(int)inst.RS]);
         return MipsTrap.None;
     }
 
-    private static MipsTrap JumpLinkR(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap JumpLinkR(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         var linkOffset = cpu.Config.DisableDelaySlots ? T.CreateTruncating(4) : T.CreateTruncating(8);
         var rs = cpu.RegisterFile.Regs[(int)inst.RS];
@@ -439,42 +441,57 @@ public unsafe partial class MipsInstructionServiceTable<T, TFloat, TSigned> : IM
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mfhi(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Mfhi(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateWriteback(inst.RD, cpu.RegisterFile.High);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mthi(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Mthi(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateHigh(cpu.RegisterFile.Regs[(int)inst.RS]);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mflo(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Mflo(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateWriteback(inst.RD, cpu.RegisterFile.Low);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Mtlo(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Mtlo(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateLow(cpu.RegisterFile.Regs[(int)inst.RS]);
         return MipsTrap.None;
     }
 
-    private static MipsTrap Lui(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap Lui(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = MipsExecution<T>.CreateWriteback(inst.RT, T.CreateTruncating(inst.Immediate << 16));
         return MipsTrap.None;
     }
 
-    private static MipsTrap ReservedInstruction(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap ExecuteCoProcessor(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    {
+        var coProcIndex = inst.OpCode switch
+        {
+            MipsOpCode.Coprocessor0 => 0,
+            MipsOpCode.Coprocessor1 => 1,
+            MipsOpCode.Coprocessor2 => 2,
+            MipsOpCode.Coprocessor3 => 3,
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<int>(),
+        };
+
+        var coProc = cpu.CoProcessors[coProcIndex];
+        return coProc.Executor.Execute(inst, out exec);
+    }
+
+    private static MipsTrap ReservedInstruction(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
     {
         exec = default;
         return MipsTrap.ReservedInstruction;
     }
 
-    private static MipsTrap NotImplemented(MipsInterpretCpu<T, TFloat> cpu, MipsInstruction inst, out MipsExecution<T> exec)
+    private static MipsTrap NotImplemented(MipsCpu<T> cpu, MipsInstruction inst, out MipsExecution<T> exec)
         => throw new UnimplementedInstructionException(ulong.CreateTruncating(cpu.ProgramCounter));
 }

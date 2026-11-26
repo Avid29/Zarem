@@ -3,9 +3,9 @@
 using CommunityToolkit.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.Enums;
+using Zarem.Mips.Emulator.Machine.CoProcessors.Control;
 using Zarem.Mips.Emulator.Machine.Enums;
 
 namespace Zarem.Mips.Emulator.Machine.Memory;
@@ -16,14 +16,14 @@ namespace Zarem.Mips.Emulator.Machine.Memory;
 public class MipsAddressTranslator<T> : IAddressTranslator
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private readonly MipsCpu<T> _cpu;
+    private readonly ControlCoProcessor<T> _c0;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MipsAddressTranslator{T}"/> class.
     /// </summary>
-    public MipsAddressTranslator(MipsCpu<T> cpu)
+    public MipsAddressTranslator(ControlCoProcessor<T> cpu)
     {
-        _cpu = cpu;
+        _c0 = cpu;
     }
 
     /// <inheritdoc/>
@@ -45,7 +45,7 @@ public class MipsAddressTranslator<T> : IAddressTranslator
         // If the address does not require TLB translation, apply fixed segment translation rules
         if (!RequiresTlbTranslation(virtualAddress, out var isProtected))
         {
-            if (isProtected && _cpu.CoProcessor0.ActingPrivilegeMode is not PrivilegeMode.Kernel)
+            if (isProtected && _c0.ActingPrivilegeMode is not PrivilegeMode.Kernel)
                 return MemoryAccessResult.AccessViolation;
 
             // Apply the fixed physical mask for MIPS32 / MIPS64 compatibility windows
@@ -62,7 +62,7 @@ public class MipsAddressTranslator<T> : IAddressTranslator
         }
 
         // If the address requires TLB translation, delegate to the CPU's TLB
-        return _cpu.Tlb.TryTranslate(virtualAddress, out pAddress);
+        return _c0.Tlb.TryTranslate(virtualAddress, out pAddress);
     }
 
     private static bool RequiresTlbTranslation(ulong vAddress, out bool isProtected)
