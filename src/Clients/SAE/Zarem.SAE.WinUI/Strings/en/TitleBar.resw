@@ -153,4 +153,7 @@
   <data name="ToggleFullScreenMFI.Text" xml:space="preserve">
     <value>Toggle Full Screen</value>
   </data>
+  <data name="SettingsMFI.Text" xml:space="preserve">
+    <value>Zarem Settings</value>
+  </data>
 </root>

@@ -7,7 +7,7 @@
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editor="using:Zarem.IDE.Controls.CodeEditor"
-    xmlns:helpers="using:Zarem.IDE.Helpers"
+    xmlns:helpers="using:Zarem.Helpers"
     xmlns:local="using:Zarem.IDE.Views.Pages.Settings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:senums="using:Zarem.IDE.Services.Settings.Enums"

@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using Microsoft.UI.Xaml;
-using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Services.Settings.Enums;
 
 namespace Zarem.Services;
 

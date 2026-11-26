@@ -3,9 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Services;
 using Zarem.Services.Settings;
+using Zarem.Services.Settings.Enums;
 using Zarem.Services.Versioning;
 
 namespace Zarem.ViewModels.Pages.Settings;

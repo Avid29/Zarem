@@ -36,7 +36,7 @@ public partial class PageTemplateSelector : DataTemplateSelector
     public DataTemplate? GraphicalOuputPageTemplate { get; set; }
 
     /// <summary>
-    /// Gets the <see cref="DataTemplate"/> for a <see cref="SettingsPageViewModel"/>."/>
+    /// Gets the <see cref="DataTemplate"/> for a <see cref="IdeSettingsPageViewModel"/>."/>
     /// </summary>
     public DataTemplate? SettingsPageTemplate { get; set; }
 
@@ -54,7 +54,7 @@ public partial class PageTemplateSelector : DataTemplateSelector
             CreateProjectViewModel => CreateProjectPageTemplate,
             FilePageViewModel => FilePageTemplate,
             GraphicalOutputPageViewModel => GraphicalOuputPageTemplate,
-            SettingsPageViewModel => SettingsPageTemplate,
+            IdeSettingsPageViewModel => SettingsPageTemplate,
             WelcomePageViewModel => WelcomePageTemplate,
             _ => null,
         };

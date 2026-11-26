@@ -96,7 +96,7 @@ public partial class ZaremIDEApp : ZaremAppBase
             .AddTransient<CreateProjectViewModel>()
             .AddTransient<CheatSheetViewModel>()
             .AddTransient<FilePageViewModel>()
-            .AddTransient<SettingsPageViewModel>()
+            .AddTransient<IdeSettingsPageViewModel>()
             .AddTransient<WelcomePageViewModel>()
 
             // Panel ViewModels

@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:Zarem.IDE.Helpers"
+    xmlns:helpers="using:Zarem.Helpers"
     xmlns:hexbox="using:HexBox.WinUI"
     xmlns:local="using:Zarem.IDE.Views.Pages.Editor"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

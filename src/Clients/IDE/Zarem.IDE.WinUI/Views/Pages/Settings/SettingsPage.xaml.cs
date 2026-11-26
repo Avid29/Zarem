@@ -20,7 +20,7 @@ public sealed partial class SettingsPage : UserControl
         this.InitializeComponent();
     }
 
-    public SettingsPageViewModel? ViewModel { get; set; }
+    public IdeSettingsPageViewModel? ViewModel { get; set; }
 
     public static string? LanguageDisplayName(string? code)
     {

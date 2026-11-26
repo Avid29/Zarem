@@ -15,4 +15,9 @@ public partial class MainViewModel : ObservableRecipient
     public MainViewModel()
     {
     }
+
+    /// <summary>
+    /// Gets the current <see cref="WindowViewModel"/>.
+    /// </summary>
+    public WindowViewModel? WindowViewModel { get; set; }
 }

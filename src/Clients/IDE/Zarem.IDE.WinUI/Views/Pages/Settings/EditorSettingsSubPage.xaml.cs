@@ -3,10 +3,10 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
-using Zarem.IDE.Services.Settings.Enums;
 using Zarem.IDE.ViewModels.Pages.Settings;
 using Zarem.Messages;
 using Zarem.Services;
+using Zarem.Services.Settings.Enums;
 
 namespace Zarem.IDE.Views.Pages.Settings;
 

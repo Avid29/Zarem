@@ -19,5 +19,8 @@
 
         <!--  Title Bar  -->
         <shell:TitleBar DataContext="{x:Bind ViewModel, Mode=OneWay}" />
+
+        <!--  Overlay  -->
+        <shell:OverlayView Grid.RowSpan="2" DataContext="{x:Bind ViewModel.OverlayViewModel, Mode=OneWay}" />
     </Grid>
 </local:ZaremWindow>

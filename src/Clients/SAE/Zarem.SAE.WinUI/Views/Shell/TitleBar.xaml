@@ -133,9 +133,18 @@
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE730;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem
+                    x:Uid="/TitleBar/SettingsMFI"
+                    Command="{x:Bind ViewModel.OpenSettingsCommand, Mode=OneWay}"
+                    Text="Zarem Settings">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE713;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
                 <MenuFlyoutItem
                     x:Uid="/TitleBar/AboutMFI"
-                    IsEnabled="False"
+                    Command="{x:Bind ViewModel.OpenAboutCommand, Mode=OneWay}"
                     Text="About Zarem">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE946;" />

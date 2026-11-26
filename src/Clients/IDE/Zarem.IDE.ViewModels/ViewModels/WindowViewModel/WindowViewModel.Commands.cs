@@ -168,7 +168,7 @@ public partial class WindowViewModel
     private void OpenWelcome() => MainViewModel.GoToPageByType<WelcomePageViewModel>();
 
     [RelayCommand]
-    private void OpenSettings() => MainViewModel.GoToPageByType<SettingsPageViewModel>();
+    private void OpenSettings() => MainViewModel.GoToPageByType<IdeSettingsPageViewModel>();
 
     #endregion
 }

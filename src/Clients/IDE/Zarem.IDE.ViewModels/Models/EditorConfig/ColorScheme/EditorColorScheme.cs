@@ -1,7 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using System.Text.Json.Serialization;
-using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Services.Settings.Enums;
 
 namespace Zarem.IDE.Models.EditorConfig.ColorScheme;
 

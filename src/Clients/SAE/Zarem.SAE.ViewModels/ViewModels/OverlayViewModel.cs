@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
+using Zarem.Services;
 using Zarem.ViewModels.Pages.Abstract;
 
 namespace Zarem.SAE.ViewModels;
@@ -11,7 +12,7 @@ namespace Zarem.SAE.ViewModels;
 /// </summary>
 public partial class OverlayViewModel : ObservableObject
 {
-    private Stack<PageViewModel> _navStack;
+    private readonly Stack<PageViewModel> _navStack;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OverlayViewModel"/> class.
@@ -32,6 +33,17 @@ public partial class OverlayViewModel : ObservableObject
     /// Gets a value indicating whether or not a page is open.
     /// </summary>
     public bool IsPageOpen => CurrentPage is not null;
+
+    /// <summary>
+    /// Opens a page as an overlay 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public void OpenPage<T>()
+        where T : PageViewModel
+    {
+        var page = Service.Get<T>();
+        OpenPage(page);
+    }
 
     /// <summary>
     /// Opens a page as an overlay.

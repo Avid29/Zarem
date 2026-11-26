@@ -8,7 +8,7 @@
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     xmlns:cth="using:CommunityToolkit.WinUI.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:Zarem.IDE.Helpers"
+    xmlns:helpers="using:Zarem.Helpers"
     xmlns:local="using:Zarem.IDE.Views.Shell"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">

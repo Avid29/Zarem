@@ -3,10 +3,16 @@
 using System;
 using Zarem.Services;
 
-namespace Zarem.IDE.Helpers;
+namespace Zarem.Helpers;
 
+/// <summary>
+/// A class with localization helper methods.
+/// </summary>
 public static class LocalizationHelper
 {
+    /// <summary>
+    /// Localizes an enum display name.
+    /// </summary>
     public static string LocalizeEnum<TEnum>(TEnum value)
         where TEnum : Enum
     {
@@ -16,6 +22,9 @@ public static class LocalizationHelper
         return localizationService[key];
     }
 
+    /// <summary>
+    /// Localizes an object display value.
+    /// </summary>
     public static string Localize(object value)
     {
         var key = $"{value.GetType().Name}_{value}";

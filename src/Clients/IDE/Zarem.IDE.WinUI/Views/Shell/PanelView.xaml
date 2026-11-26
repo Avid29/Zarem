@@ -67,7 +67,7 @@
                 </DataTemplate>
             </selectors:PageTemplateSelector.GraphicalOuputPageTemplate>
             <selectors:PageTemplateSelector.SettingsPageTemplate>
-                <DataTemplate x:DataType="svmv:SettingsPageViewModel">
+                <DataTemplate x:DataType="svmv:IdeSettingsPageViewModel">
                     <TabViewItem HeaderTemplate="{StaticResource PageHeaderTemplate}">
                         <spages:SettingsPage ViewModel="{x:Bind Mode=OneWay}" />
                     </TabViewItem>

@@ -2,7 +2,6 @@
 
 using Microsoft.UI.Xaml.Controls;
 using Zarem.SAE.ViewModels;
-using Zarem.Services;
 
 namespace Zarem.SAE.Views.Shell;
 
@@ -14,8 +13,6 @@ public sealed partial class OverlayView : UserControl
     public OverlayView()
     {
         InitializeComponent();
-
-        this.DataContext = Service.Get<OverlayViewModel>();
     }
 
     private OverlayViewModel ViewModel => (OverlayViewModel)DataContext;

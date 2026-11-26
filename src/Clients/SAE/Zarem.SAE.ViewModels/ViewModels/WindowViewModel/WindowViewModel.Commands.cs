@@ -3,6 +3,8 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
 using Zarem.Emulator.Models.Enums;
+using Zarem.SAE.ViewModels.Pages;
+using Zarem.SAE.ViewModels.Pages.Settings;
 
 namespace Zarem.SAE.ViewModels;
 
@@ -51,11 +53,11 @@ public partial class WindowViewModel
 
     #region Help
 
-    //[RelayCommand]
-    //private void OpenAbout() => MainViewModel.GoToPageByType<AboutPageViewModel>();
+    [RelayCommand]
+    private void OpenAbout() => OverlayViewModel.OpenPage<SaeAboutPageViewModel>();
 
-    //[RelayCommand]
-    //private void OpenSettings() => MainViewModel.GoToPageByType<SettingsPageViewModel>();
+    [RelayCommand]
+    private void OpenSettings() => OverlayViewModel.OpenPage<SaeSettingsPageViewModel>();
 
     #endregion
 }

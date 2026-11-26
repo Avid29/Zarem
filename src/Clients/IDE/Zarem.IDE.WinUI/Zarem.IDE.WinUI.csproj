@@ -41,10 +41,6 @@
 		<PackageReference Include="CommunityToolkit.Labs.WinUI.Controls.Marquee" Version="0.1.260617-build.2640" />
 		<PackageReference Include="CommunityToolkit.Labs.WinUI.Controls.OpacityMaskView" Version="0.1.260617-build.2640" />
 		<PackageReference Include="CommunityToolkit.WinUI.Behaviors" Version="8.3.260402-preview2" />
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.3.260402-preview2" />
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.3.260402-preview2" />
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.3.260402-preview2" />
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.3.260402-preview2" />
 		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.3.260402-preview2" />
 		<PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.3.260402-preview2" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.4.0" />

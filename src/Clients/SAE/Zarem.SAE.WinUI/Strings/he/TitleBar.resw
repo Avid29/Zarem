@@ -153,4 +153,7 @@
   <data name="ToggleFullScreenMFI.Text" xml:space="preserve">
     <value>הפעלה/כיבוי מסך מלא</value>
   </data>
+  <data name="SettingsMFI.Text" xml:space="preserve">
+    <value>הגדרות זרם</value>
+  </data>
 </root>

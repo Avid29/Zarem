@@ -5,10 +5,10 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using Zarem.IDE.Services.Settings.Enums;
 using Zarem.Messages;
 using Zarem.Services;
 using Zarem.Services.Settings;
+using Zarem.Services.Settings.Enums;
 
 namespace Zarem;
 

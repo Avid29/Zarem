@@ -6,6 +6,8 @@ using Microsoft.UI.Xaml;
 using Zarem.SAE.Services;
 using Zarem.SAE.Services.Settings;
 using Zarem.SAE.ViewModels;
+using Zarem.SAE.ViewModels.Pages;
+using Zarem.SAE.ViewModels.Pages.Settings;
 using Zarem.SAE.Windows;
 using Zarem.Services;
 using Zarem.Services.Files;
@@ -57,6 +59,10 @@ public partial class ZaremSAEApp : ZaremAppBase
             .AddSingleton<IFileSystemService, FileSystemService>()
             .AddSingleton<ISettingsService, SettingsService>()
             .AddSingleton<IEmulatorService, EmulatorService>()
+
+            // Page ViewModels
+            .AddTransient<SaeAboutPageViewModel>()
+            .AddTransient<SaeSettingsPageViewModel>()
 
             // ViewModels
             .AddTransient<OverlayViewModel>()

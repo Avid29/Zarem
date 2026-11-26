@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2026
 
-using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Services.Settings.Enums;
 
 namespace Zarem.Services;
 

@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2025
 
-namespace Zarem.IDE.Services.Settings.Enums;
+namespace Zarem.Services.Settings.Enums;
 
 /// <summary>
 /// The theme settings 
