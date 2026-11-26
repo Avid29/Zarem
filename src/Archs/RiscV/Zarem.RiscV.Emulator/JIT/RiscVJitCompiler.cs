@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.JIT.Compilers;
@@ -359,11 +360,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat> : JitCompiler<T, RiscVJi
 
     private bool Lui(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
     {
-        var il = context.ILGenerator;
         uint value = (uint)inst.Immediate << 12;
 
         EmitStoreRegister(context, inst.RD, il => il.EmitLoadConstant(T.CreateTruncating(value)));
-        return true;
+        return false;
     }
 
     private bool IllegalInstruction(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
