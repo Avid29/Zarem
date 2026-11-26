@@ -43,7 +43,7 @@ public partial class MipsJitCompiler<T>
         _instructionTable.Register(MipsOpCode.OrImmediate, (il, inst, pc) => AluI<T>(il, inst, OpCodes.Or));
         _instructionTable.Register(MipsOpCode.ExclusiveOrImmediate, (il, inst, pc) => AluI<T>(il, inst, OpCodes.Xor));
         _instructionTable.Register(MipsOpCode.LoadUpperImmediate, Lui);
-        _instructionTable.Register(MipsOpCode.Coprocessor1, ExecuteFloatTable);
+        _instructionTable.Register(MipsOpCode.Coprocessor1, ExecuteCoProc);
         _instructionTable.Register(MipsOpCode.LoadByte, Load<sbyte>);
         _instructionTable.Register(MipsOpCode.LoadHalfWord, Load<short>);
         _instructionTable.Register(MipsOpCode.LoadWord, Load<int>);

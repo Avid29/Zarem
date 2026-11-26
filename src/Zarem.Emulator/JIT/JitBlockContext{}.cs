@@ -14,11 +14,10 @@ public  class JitBlockContext<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="JitBlockContext{T, TRegister, TTrap}"/> class.
     /// </summary>
-    public JitBlockContext(ILGenerator il, T start, T end)
+    public JitBlockContext(ILGenerator il, T start)
     {
         ILGenerator = il;
         Start = start;
-        End = end;
     }
 
     /// <summary>
@@ -32,7 +31,7 @@ public  class JitBlockContext<T>
     public T Start { get; }
 
     /// <summary>
-    /// Gets the end address for the block.
+    /// Gets or sets the end address for the block.
     /// </summary>
-    public T End { get; }
+    public T End { get; set; }
 }

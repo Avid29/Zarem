@@ -19,7 +19,7 @@ namespace Zarem.RiscV.Emulator.JIT;
 
 public unsafe partial class RiscVJitCompiler<T, TFloat>
 {
-    private void FloatAlu<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, OpCode ilOpCode)
+    private bool FloatAlu<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, OpCode ilOpCode)
         where TFormat : unmanaged
     {
         EmitStoreRegister<TFormat>(context, inst.FRD, () =>
@@ -28,9 +28,11 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             EmitLoadRegister<TFormat>(context, inst.FRS2);
             context.ILGenerator.Emit(ilOpCode);
         });
+
+        return false;
     }
 
-    private void FloatUnary<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, T pc, string methodName)
+    private bool FloatUnary<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, T pc, string methodName)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         // Resolve the method to call based on the method name
@@ -42,9 +44,11 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             EmitLoadRegister<TFormat>(context, inst.FRS1);
             context.ILGenerator.Emit(OpCodes.Call, method);
         });
+
+        return false;
     }
 
-    private void FloatMinMax<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, T pc, bool compressed)
+    private bool FloatMinMax<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, T pc, bool compressed)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         // If the instruction is not a float min or max, make an illegal instruction trap
@@ -66,9 +70,11 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             EmitLoadRegister<TFormat>(context, inst.FRS2);
             context.ILGenerator.Emit(OpCodes.Call, method);
         });
+
+        return false;
     }
 
-    private void FloatCompare<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, OpCode ilOpCode)
+    private bool FloatCompare<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, OpCode ilOpCode)
         where TFormat : unmanaged
     {
         EmitStoreRegister(context, ((RiscVInstruction)inst).RD, _ =>
@@ -77,9 +83,11 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             EmitLoadRegister<TFormat>(context, inst.FRS2);
             context.ILGenerator.Emit(ilOpCode);
         });
+
+        return false;
     }
 
-    private void FloatFle<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst)
+    private bool FloatFle<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
         // No direct IL opcode for floating-point less than or equal,
@@ -96,25 +104,27 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             context.ILGenerator.EmitLoadConstant(0);
             context.ILGenerator.Emit(OpCodes.Ceq);
         });
+
+        return false;
     }
 
-    private void FloatMacGuffin<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, T pc, bool compressed)
+    private bool FloatMacGuffin<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, T pc, bool compressed)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
-        Action<JitBlockContext<T, RiscVGpRegister, RiscVTrap>, RiscVInstruction, T, bool> func = inst.FRS2 switch
+        Func<JitBlockContext<T, RiscVGpRegister, RiscVTrap>, RiscVInstruction, T, bool, bool> func = inst.FRS2 switch
         {
             0 when inst.Funct3 is FloatFunct3Code.FloatMoveFrom => IllegalInstruction,
             0 when inst.Funct3 is FloatFunct3Code.FloatClassify => IllegalInstruction,
             _ => FloatConvertTo<TFormat>
         };
 
-        func(context, inst, pc, compressed);
+        return func(context, inst, pc, compressed);
     }
 
-    private void FloatConvertFrom<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, T pc, bool compressed)
+    private bool FloatConvertFrom<TFormat>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatInstruction inst, T pc, bool compressed)
         where TFormat : unmanaged, IBinaryFloatingPointIeee754<TFormat>
     {
-        Action<JitBlockContext<T, RiscVGpRegister, RiscVTrap>, RiscVInstruction, T, bool> func = inst.IntFormat switch
+        Func<JitBlockContext<T, RiscVGpRegister, RiscVTrap>, RiscVInstruction, T, bool, bool> func = inst.IntFormat switch
         {
             RiscVIntFormat.Word => FloatConvertFrom<TFormat, int>,
             RiscVIntFormat.WordUnsigned => FloatConvertFrom<TFormat, uint>,
@@ -123,15 +133,15 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             _ => IllegalInstruction,
         };
 
-        func(context, inst, pc, compressed);
+        return func(context, inst, pc, compressed);
     }
 
-    private void FloatConvertTo<TTo>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
+    private bool FloatConvertTo<TTo>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
         where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
     {
         var fInst = (RiscVFloatInstruction)inst;
 
-        Action<JitBlockContext<T, RiscVGpRegister, RiscVTrap>, RiscVInstruction, T, bool> func = fInst.IntFormat switch
+        Func<JitBlockContext<T, RiscVGpRegister, RiscVTrap>, RiscVInstruction, T, bool, bool> func = fInst.IntFormat switch
         {
             RiscVIntFormat.Word => FloatConvertTo<int, TTo>,
             RiscVIntFormat.WordUnsigned => FloatConvertTo<uint, TTo>,
@@ -140,10 +150,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             _ => IllegalInstruction,
         };
 
-        func(context, inst, pc, compressed);
+        return func(context, inst, pc, compressed);
     }
 
-    private void FloatConvertFrom<TFrom, TTo>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
+    private bool FloatConvertFrom<TFrom, TTo>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
         where TFrom : unmanaged, IBinaryFloatingPointIeee754<TFrom>
         where TTo : unmanaged, INumber<TTo>, IMinMaxValue<TTo>
     {
@@ -175,9 +185,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             // Convert
             il.Emit(OpCodes.Call, convert);
         });
+        return false;
     }
 
-    private void FloatConvertTo<TFrom, TTo>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
+    private bool FloatConvertTo<TFrom, TTo>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
         where TFrom : unmanaged, INumber<TFrom>, IMinMaxValue<TFrom>
         where TTo : unmanaged, IBinaryFloatingPointIeee754<TTo>
     {
@@ -193,6 +204,7 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             EmitLoadRegister<TFrom>(context, inst.RS1);
             context.ILGenerator.Emit(OpCodes.Call, convert);
         });
+        return false;
     }
 
     private void EmitLoadRegister<TFloatData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVFloatRegister register)

@@ -1,12 +1,12 @@
 ﻿// Avishai Dernis 2026
 
-using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Extensions;
+using Zarem.Emulator.JIT.Compilers;
 using Zarem.Emulator.Machine.Registers;
 
 namespace Zarem.Emulator.JIT;
@@ -19,32 +19,71 @@ public unsafe class JitBlockContext<T, TRegister, TTrap> : JitBlockContext<T>
     where TRegister : unmanaged, Enum
     where TTrap : unmanaged, Enum
 {
-    private readonly Dictionary<IRegisterFile, LocalBuilder[]> _locals;
-    private readonly Dictionary<IRegisterFile, HashSet<TRegister>> _loadRegisters;
-    private readonly Dictionary<IRegisterFile, HashSet<TRegister>> _storeRegisters;
+    private record struct RegisterFileTracker(
+        LocalBuilder[] Locals,
+        HashSet<TRegister> LoadRegisters,
+        HashSet<TRegister> DirtyRegister);
+
+    private readonly Dictionary<IRegisterFile, RegisterFileTracker> _fileTrackers;
+    private readonly Label _setupLabel;
+    private readonly Label _bodyLabel;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JitBlockContext{T, TRegister, TTrap}"/> class.
     /// </summary>
-    public JitBlockContext(ILGenerator il, T start, T end) : base(il, start, end)
+    public JitBlockContext(ILGenerator il, T start) : base(il, start)
     {
-        _locals = [];
-        _loadRegisters = [];
-        _storeRegisters = [];
+        _fileTrackers = [];
+
+        // Method layout structure:
+        // 0: [Entry]       -> Jumps forward to [Setup]
+        // 1: [Body]        -> Hot instruction stream (registers accumulate lazily here)
+        // 2: [Exit]        -> Flushes dirty registers back to physical memory and returns
+        // 3: [Setup]       -> Emits lazy register loads now that all used registers are known
+        // 4: [SetupDone]   -> Jumps back into the start of [Body]
+        //
+        // This deferred layout allows register usage to accumulate organically 
+        // while parsing the body before generating the entry setup and exit flush code.
+
+        // NOTE: Currently, traps create additional exit sections.
+
+        // Declare jump labels
+        _setupLabel = il.DefineLabel();
+        _bodyLabel = il.DefineLabel();
+
+        // Emit Entry section
+        il.Emit(OpCodes.Br, _setupLabel);
+        il.MarkLabel(_bodyLabel);
     }
 
     /// <summary>
     /// Gets the <see cref="LocalBuilder"/> for the specified <typeparamref name="TRegister"/>.
     /// </summary>
-    public LocalBuilder GetRegisterLocal(IRegisterFile file, TRegister register)
+    public LocalBuilder GetOrCreateRegisterLocal(IRegisterFile file, TRegister register, bool modify)
     {
-        if (!_locals.TryGetValue(file, out var locals))
+        if (!_fileTrackers.TryGetValue(file, out var tracker))
         {
-            ThrowHelper.ThrowArgumentException<LocalBuilder>();
+            tracker = new()
+            {
+                Locals = new LocalBuilder[file.Count],
+                LoadRegisters = [],
+                DirtyRegister = [],
+            };
+
+            for (int i = 0; i < file.Count; i++)
+            {
+                tracker.Locals[i] = ILGenerator.DeclareLocal(file.RegisterType);
+            }
+
+            _fileTrackers.Add(file, tracker);
         }
 
+        // Log register access for setup and/or flush
+        var logger = modify ? tracker.DirtyRegister : tracker.LoadRegisters;
+        logger.Add(register);
+
         var index = Unsafe.As<TRegister, int>(ref register);
-        return locals[index];
+        return tracker.Locals[index];
     }
 
     /// <summary>
@@ -52,14 +91,14 @@ public unsafe class JitBlockContext<T, TRegister, TTrap> : JitBlockContext<T>
     /// </summary>
     public void EmitSetupLocalRegisters(JitCompiler<T, TRegister, TTrap> compiler)
     {
-        // For each file / usage set pair ...
-        foreach (var (file, usageSet) in _loadRegisters)
-        {
-            // Allocate locals
-            var locals = AllocateLocalRegisters(ILGenerator, file);
+        // Mark the setup section
+        ILGenerator.MarkLabel(_setupLabel);
 
+        // For each file / usage set pair ...
+        foreach (var (file, tracker) in _fileTrackers)
+        {
             // Load registers
-            foreach (var reg in usageSet)
+            foreach (var reg in tracker.LoadRegisters)
             {
                 // Load register from memory into local i
                 compiler.EmitStoreRegister(this, reg, il =>
@@ -71,6 +110,9 @@ public unsafe class JitBlockContext<T, TRegister, TTrap> : JitBlockContext<T>
                 });
             }
         }
+
+        // Finalize setup by jumping back into the body
+        ILGenerator.Emit(OpCodes.Br, _bodyLabel);
     }
 
     /// <summary>
@@ -79,13 +121,10 @@ public unsafe class JitBlockContext<T, TRegister, TTrap> : JitBlockContext<T>
     public void EmitFlushLocalRegisters(JitCompiler<T, TRegister, TTrap> compiler)
     {
         // For each file / usage set pair ...
-        foreach (var (file, usageSet) in _storeRegisters)
+        foreach (var (file, tracker) in _fileTrackers)
         {
-            // Allocate locals
-            var locals = AllocateLocalRegisters(ILGenerator, file);
-
             // Flush registers
-            foreach (var reg in usageSet)
+            foreach (var reg in tracker.DirtyRegister)
             {
                 // Load the address and value of the register
                 var register = reg;
@@ -95,74 +134,5 @@ public unsafe class JitBlockContext<T, TRegister, TTrap> : JitBlockContext<T>
                 ILGenerator.EmitStind<T>();
             }
         }
-    }
-
-    /// <summary>
-    /// Logs the loading usage of a register.
-    /// </summary>
-    /// <param name="file">The register file the register belongs to.</param>
-    /// <param name="register">The register in the file.</param>
-    public void RegisterLoadUsage(IRegisterFile file, TRegister register)
-        => RegisterUsage(_loadRegisters, file, register);
-
-    /// <summary>
-    /// Logs the storage usage of a register.
-    /// </summary>
-    /// <param name="file">The register file the register belongs to.</param>
-    /// <param name="register">The register in the file.</param>
-    public void RegisterStoreUsage(IRegisterFile file, TRegister register)
-        => RegisterUsage(_storeRegisters, file, register);
-
-    /// <summary>
-    /// Removes log of a register loading usage.
-    /// </summary>
-    /// <param name="file">The register file the register belongs to.</param>
-    /// <param name="register">The register in the file.</param>
-    public void UnregisterLoadUsage(IRegisterFile file, TRegister register)
-        => UnregisterUsage(_loadRegisters, file, register);
-
-    /// <summary>
-    /// Removes log of a register storing usage.
-    /// </summary>
-    /// <param name="file">The register file the register belongs to.</param>
-    /// <param name="register">The register in the file.</param>
-    public void UnregisterStoreUsage(IRegisterFile file, TRegister register)
-        => UnregisterUsage(_storeRegisters, file, register);
-
-    private static void RegisterUsage(Dictionary<IRegisterFile, HashSet<TRegister>> dictionary, IRegisterFile file, TRegister register)
-    {
-        if (!dictionary.TryGetValue(file, out var set))
-        {
-            set = [];
-            dictionary.Add(file, set);
-        }
-
-        set.Add(register);
-    }
-
-    private static void UnregisterUsage(Dictionary<IRegisterFile, HashSet<TRegister>> dictionary, IRegisterFile file, TRegister register)
-    {
-        if (!dictionary.TryGetValue(file, out var set))
-            return;
-
-        set.Remove(register);
-    }
-
-    private LocalBuilder[] AllocateLocalRegisters(ILGenerator il, IRegisterFile file)
-    {
-        // Setup locals
-        if (!_locals.TryGetValue(file, out var locals))
-        {
-            locals = new LocalBuilder[file.Count];
-            _locals.Add(file, locals);
-
-            // Allocate locals
-            for (int i = 0; i < file.Count; i++)
-            {
-                locals[i] = il.DeclareLocal(file.RegisterType);
-            }
-        }
-
-        return locals;
     }
 }

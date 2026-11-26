@@ -23,5 +23,5 @@ public class EmulatorConfig : ConfigBase
     /// <summary>
     /// Gets or sets the emulator's execution mode.
     /// </summary>
-    public ExecutionMode ExecutionMode { get; init; }
+    public ExecutionMode ExecutionMode { get; set; }
 }
