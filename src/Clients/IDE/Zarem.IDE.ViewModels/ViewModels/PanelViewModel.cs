@@ -12,7 +12,7 @@ using Zarem.ViewModels.Pages.Abstract;
 namespace Zarem.IDE.ViewModels;
 
 /// <summary>
-/// A view model for tracking the open files.
+/// A view model for tracking the open pages.
 /// </summary>
 public partial class PanelViewModel : ObservableObject
 {
@@ -33,7 +33,7 @@ public partial class PanelViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Gets or sets the currently selected file.
+    /// Gets or sets the currently selected page.
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsPageOpen))]

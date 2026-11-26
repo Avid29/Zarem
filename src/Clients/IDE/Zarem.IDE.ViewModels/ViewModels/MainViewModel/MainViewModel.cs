@@ -17,7 +17,6 @@ public partial class MainViewModel : ObservableRecipient
 {
     private readonly IMessenger _messenger;
     private readonly IProjectService _projectService;
-    private readonly IBuildService _buildService;
     private readonly IFileService _fileService;
     private readonly IFileSystemService _fileSystemService;
 
@@ -26,7 +25,6 @@ public partial class MainViewModel : ObservableRecipient
     /// </summary>
     public MainViewModel(
         IMessenger messenger,
-        IBuildService buildService,
         IFileService fileService,
         IFileSystemService fileSystemService,
         IProjectService projectService,
@@ -35,7 +33,6 @@ public partial class MainViewModel : ObservableRecipient
     {
         _messenger = messenger;
         _projectService = projectService;
-        _buildService = buildService;
         _fileService = fileService;
         _fileSystemService = fileSystemService;
 

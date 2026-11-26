@@ -18,6 +18,9 @@
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Views\Shell\OverlayView.xaml" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<AppxManifest Include="Package-$(Configuration).appxmanifest">
@@ -59,6 +62,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Zarem.WinUI\Zarem.WinUI.csproj" />
 		<ProjectReference Include="..\Zarem.SAE.ViewModels\Zarem.SAE.ViewModels.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\Shell\OverlayView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">

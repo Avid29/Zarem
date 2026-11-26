@@ -16,8 +16,6 @@ public partial class WindowViewModel : ObservableRecipient
 {
     private readonly IMessenger _messenger;
     private readonly IEmulatorService _emulatorService;
-    private readonly IFileSystemService _fileSystemService;
-    private readonly ISettingsService _settingsService;
     private readonly IWindowingService _windowingService;
 
     /// <summary>
@@ -26,18 +24,16 @@ public partial class WindowViewModel : ObservableRecipient
     public WindowViewModel(
         IMessenger messenger,
         IEmulatorService emulatorService,
-        IFileSystemService fileSystemService,
-        ISettingsService settingsService,
         IWindowingService windowingService,
-        MainViewModel mainViewModel)
+        MainViewModel mainViewModel,
+        OverlayViewModel overlayViewModel)
     {
         _messenger = messenger;
         _emulatorService = emulatorService;
-        _fileSystemService = fileSystemService;
-        _settingsService = settingsService;
         _windowingService = windowingService;
 
         MainViewModel = mainViewModel;
+        OverlayViewModel = overlayViewModel;
 
         IsActive = true;
     }
@@ -46,4 +42,9 @@ public partial class WindowViewModel : ObservableRecipient
     /// Gets the <see cref="MainViewModel"/> for the app.
     /// </summary>
     public MainViewModel MainViewModel { get; }
+
+    /// <summary>
+    /// Gets the <see cref="OverlayViewModel"/> for the window.
+    /// </summary>
+    public OverlayViewModel OverlayViewModel { get; }
 }

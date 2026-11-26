@@ -59,6 +59,7 @@ public partial class ZaremSAEApp : ZaremAppBase
             .AddSingleton<IEmulatorService, EmulatorService>()
 
             // ViewModels
+            .AddTransient<OverlayViewModel>()
             .AddTransient<WindowViewModel>()
             .AddSingleton<MainViewModel>()
             .BuildServiceProvider();
