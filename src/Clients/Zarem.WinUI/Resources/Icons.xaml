@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Dark">
+            <!--  Services  -->
+            <ImageSource x:Key="CrowdinIcon">ms-appx:///Zarem.WinUI/Assets/Icons/Services/Crowdin-Dark.svg</ImageSource>
+            <ImageSource x:Key="GitHubIcon">ms-appx:///Zarem.WinUI/Assets/Icons/Services/GitHub-Dark.svg</ImageSource>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+            <!--  Services  -->
+            <ImageSource x:Key="CrowdinIcon">ms-appx:///Zarem.WinUI/Assets/Icons/Services/Crowdin-Light.svg</ImageSource>
+            <ImageSource x:Key="GitHubIcon">ms-appx:///Zarem.WinUI/Assets/Icons/Services/GitHub-Light.svg</ImageSource>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <!--  Services  -->
+    <ImageSource x:Key="DiscordIcon">ms-appx:///Zarem.WinUI/Assets/Icons/Services/Discord.svg</ImageSource>
+    <ImageSource x:Key="GitServiceIcon">ms-appx:///Zarem.WinUI/Assets/Icons/Services/Git.svg</ImageSource>
+    <ImageSource x:Key="RedditIcon">ms-appx:///Zarem.WinUI/Assets/Icons/Services/Reddit.svg</ImageSource>
+
+    <!--  Misc  -->
+    <ImageSource x:Key="IsraelFlagIcon">ms-appx:///Zarem.WinUI/Assets/Icons/Flags/Simple/IL.svg</ImageSource>
+</ResourceDictionary>

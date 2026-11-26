@@ -1,5 +1,6 @@
 ﻿// Avishai Dernis 2025
 
+using System.Collections.ObjectModel;
 using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Settings;
@@ -13,28 +14,17 @@ namespace Zarem.IDE.ViewModels.Pages.Settings;
 /// </summary>
 public class IdeSettingsPageViewModel : SettingsPageViewModelBase
 {
-    private readonly ILocalizationService _localizationService;
-    private readonly ISettingsService _settingsService;
-    private readonly IFileSystemService _fileSystemService;
-    private readonly IVersioningService _versioningService;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="IdeSettingsPageViewModel"/> class.
     /// </summary>
     public IdeSettingsPageViewModel(ILocalizationService localizationService, ISettingsService settingsService, IFileSystemService fileSystemService, IVersioningService versioningService) : base(localizationService)
     {
-        _localizationService = localizationService;
-        _settingsService = settingsService;
-        _fileSystemService = fileSystemService;
-        _versioningService = versioningService;
+        SubPages = [
+                new IdeAppSettingsViewModel(localizationService, settingsService, versioningService),
+                new EditorSettingsViewModel(localizationService, settingsService, fileSystemService),
+            ];
     }
 
     /// <inheritdoc/>
-    protected override SettingsSubPageViewModel[] InitSubPages()
-    {
-        return [
-                new IdeAppSettingsViewModel(_localizationService, _settingsService, _versioningService),
-                new EditorSettingsViewModel(_localizationService, _settingsService, _fileSystemService),
-            ];
-    }
+    public override ObservableCollection<SettingsSubPageViewModel> SubPages { get; }
 }

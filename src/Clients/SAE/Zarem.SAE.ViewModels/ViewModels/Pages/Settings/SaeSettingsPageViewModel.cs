@@ -1,6 +1,7 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
 using Zarem.Services;
 using Zarem.Services.Settings;
 using Zarem.Services.Versioning;
@@ -13,25 +14,16 @@ namespace Zarem.SAE.ViewModels.Pages.Settings;
 /// </summary>
 public partial class SaeSettingsPageViewModel : SettingsPageViewModelBase
 {
-    private readonly ILocalizationService _localizationService;
-    private readonly ISettingsService _settingsService;
-    private readonly IVersioningService _versioningService;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="SaeSettingsPageViewModel"/> class.
     /// </summary>
     public SaeSettingsPageViewModel(ILocalizationService localizationService, ISettingsService settingsService, IVersioningService versioningService) : base(localizationService)
     {
-        _localizationService = localizationService;
-        _settingsService = settingsService;
-        _versioningService = versioningService;
+        SubPages = [
+            new SaeAppSettingsViewModel(localizationService, settingsService, versioningService),
+            ];
     }
 
     /// <inheritdoc/>
-    protected override SettingsSubPageViewModel[] InitSubPages()
-    {
-        return [
-            new SaeAppSettingsViewModel(_localizationService, _settingsService, _versioningService),
-            ];
-    }
+    public override ObservableCollection<SettingsSubPageViewModel> SubPages { get; }
 }

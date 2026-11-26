@@ -19,8 +19,6 @@ public abstract class SettingsPageViewModelBase : PageViewModel
     public SettingsPageViewModelBase(ILocalizationService localizationService)
     {
         _localizationService = localizationService;
-
-        SubPages = [with(InitSubPages())];
     }
 
     /// <inheritdoc/>
@@ -29,11 +27,5 @@ public abstract class SettingsPageViewModelBase : PageViewModel
     /// <summary>
     /// Gets the collection of settings sub-pages.
     /// </summary>
-    public ObservableCollection<SettingsSubPageViewModel> SubPages { get; }
-
-    /// <summary>
-    /// Initializes the subpage list.
-    /// </summary>
-    
-    protected abstract SettingsSubPageViewModel[] InitSubPages();
+    public abstract ObservableCollection<SettingsSubPageViewModel> SubPages { get; }
 }

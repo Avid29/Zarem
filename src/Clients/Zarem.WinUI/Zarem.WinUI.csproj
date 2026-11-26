@@ -23,4 +23,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Zarem.ViewModels\Zarem.ViewModels.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Resources\Generic.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 </Project>

@@ -6,17 +6,11 @@
             <!--  App  -->
             <ImageSource x:Key="TrafficConeIcon">ms-appx:///Assets/Icons/TrafficCone-Dark.svg</ImageSource>
 
-            <!--  Services  -->
-            <ImageSource x:Key="CrowdinIcon">ms-appx:///Assets/Icons/Services/Crowdin-Dark.svg</ImageSource>
-            <ImageSource x:Key="GitHubIcon">ms-appx:///Assets/Icons/Services/GitHub-Dark.svg</ImageSource>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <!--  App  -->
             <ImageSource x:Key="TrafficConeIcon">ms-appx:///Assets/Icons/TrafficCone-Light.svg</ImageSource>
 
-            <!--  Services  -->
-            <ImageSource x:Key="CrowdinIcon">ms-appx:///Assets/Icons/Services/Crowdin-Light.svg</ImageSource>
-            <ImageSource x:Key="GitHubIcon">ms-appx:///Assets/Icons/Services/GitHub-Light.svg</ImageSource>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -65,11 +59,4 @@
     <ImageSource x:Key="LabelDisplayModeIcon">ms-appx:///Assets/Icons/RegisterDisplayModes/Label.svg</ImageSource>
     <ImageSource x:Key="StringDisplayModeIcon">ms-appx:///Assets/Icons/RegisterDisplayModes/String.svg</ImageSource>
 
-    <!--  Services  -->
-    <ImageSource x:Key="DiscordIcon">ms-appx:///Assets/Icons/Services/Discord.svg</ImageSource>
-    <ImageSource x:Key="GitServiceIcon">ms-appx:///Assets/Icons/Services/Git.svg</ImageSource>
-    <ImageSource x:Key="RedditIcon">ms-appx:///Assets/Icons/Services/Reddit.svg</ImageSource>
-
-    <!--  Misc  -->
-    <ImageSource x:Key="IsraelFlagIcon">ms-appx:///Assets/Icons/Flags/Simple/IL.svg</ImageSource>
 </ResourceDictionary>

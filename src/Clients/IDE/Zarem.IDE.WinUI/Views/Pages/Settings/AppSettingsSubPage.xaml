@@ -9,7 +9,7 @@
     xmlns:local="using:Zarem.IDE.Views.Pages.Settings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Zarem.Models"
-    xmlns:senums="using:Zarem.IDE.Services.Settings.Enums"
+    xmlns:senums="using:Zarem.Services.Settings.Enums"
     mc:Ignorable="d">
 
     <StackPanel>
