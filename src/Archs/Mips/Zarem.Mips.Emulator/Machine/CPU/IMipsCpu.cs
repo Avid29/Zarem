@@ -3,7 +3,7 @@
 using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Mips.Emulator.Config;
-using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Machine.CoProcessors.Control;
 using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;

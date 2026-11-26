@@ -1,18 +1,23 @@
 ﻿// Avishai Dernis 2024
 
+using CommunityToolkit.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Zarem.Emulator.Config.Enums;
+using Zarem.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Interpret;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
+using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
-namespace Zarem.Mips.Emulator.Machine.CoProcessors;
+namespace Zarem.Mips.Emulator.Machine.CoProcessors.Control;
 
 /// <summary>
 /// A class representing the status/control coprocessor unit.
 /// </summary>
-public class ControlCoProcessor<T> : IControlCoProcessor
+public partial class ControlCoProcessor<T> : IMipsCoProcessor<T>, IControlCoProcessor
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
     private const uint NORMAL_EXCEPTION_VECTOR = 0x8000_0180;
@@ -21,11 +26,21 @@ public class ControlCoProcessor<T> : IControlCoProcessor
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlCoProcessor{T}"/> class.
     /// </summary>
-    public ControlCoProcessor(MipsTlb<T> tlb)
+    public ControlCoProcessor(MipsCpu<T> cpu)
     {
-        Tlb = tlb;
-        RegisterFile = new(tlb.SlotCount);
+        Tlb = new MipsTlb<T>();
+        RegisterFile = new(Tlb.SlotCount);
+
+        Executor = cpu.Config.ExecutionMode switch {
+            ExecutionMode.Interpret => new ControlInterpretedExecutor(cpu, this),
+            ExecutionMode.JustInTime => new ControlJitExecutor(),
+            _ => ThrowHelper.ThrowArgumentException<ICoProcessor<T>.ICoExecutor<MipsInstruction, MipsExecution<T>, MipsGpRegister, MipsTrap>>(),
+        };
     }
+
+    /// <inheritdoc/>
+    public ICoProcessor<T>.ICoExecutor<MipsInstruction, MipsExecution<T>, MipsGpRegister, MipsTrap> Executor { get; }
+
 
     /// <summary>
     /// Gets the coprocessor0's register file.

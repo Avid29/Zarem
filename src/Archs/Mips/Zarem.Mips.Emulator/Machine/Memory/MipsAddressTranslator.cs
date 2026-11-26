@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models.Enums;
-using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Machine.CoProcessors.Control;
 using Zarem.Mips.Emulator.Machine.Enums;
 
 namespace Zarem.Mips.Emulator.Machine.Memory;

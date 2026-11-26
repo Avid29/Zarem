@@ -8,6 +8,7 @@ using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.CoProcessors;
+using Zarem.Mips.Emulator.Machine.CoProcessors.Control;
 using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 using Zarem.Mips.Emulator.Machine.CPU;
 using Zarem.Mips.Emulator.Machine.Enums;
@@ -51,12 +52,12 @@ public partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
         var coProcessorCount = config.VersionInfo.Generation is < MipsGeneration.MipsIII ? 3 : 2;
         CoProcessors = new IMipsCoProcessor<T>[coProcessorCount];
 
-        var tlb = new MipsTlb<T>();
-        ControlCoProcessor = new(tlb);
+        ControlCoProcessor = new(this);
         FloatCoProcessor = config.VersionInfo.Generation is >= MipsGeneration.MipsIII
             ? new FloatCoProcessor<T, ulong>(this)
             : new FloatCoProcessor<T, uint>(this);
 
+        CoProcessors[0] = ControlCoProcessor;
         CoProcessors[1] = FloatCoProcessor;
 
         Memory = new MemorySystem(bus, new MipsAddressTranslator<T>(ControlCoProcessor));

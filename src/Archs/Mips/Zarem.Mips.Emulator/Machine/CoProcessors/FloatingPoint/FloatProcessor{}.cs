@@ -8,6 +8,7 @@ using Zarem.Emulator.JIT;
 using Zarem.Emulator.Machine.CoProcessors;
 using Zarem.Emulator.Machine.Registers;
 using Zarem.Mips.Emulator.Interpret;
+using Zarem.Mips.Emulator.Machine.CoProcessors.Control;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Registers.FloatProcessor;
 using Zarem.Mips.Models.Instructions;

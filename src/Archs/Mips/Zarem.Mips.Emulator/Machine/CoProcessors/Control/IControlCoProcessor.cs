@@ -5,7 +5,7 @@ using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
 
-namespace Zarem.Mips.Emulator.Machine.CoProcessors;
+namespace Zarem.Mips.Emulator.Machine.CoProcessors.Control;
 
 /// <summary>
 /// An interface for a MIPS CoProcessor0 unit.

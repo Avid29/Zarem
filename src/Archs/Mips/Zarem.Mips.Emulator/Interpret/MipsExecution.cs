@@ -132,17 +132,6 @@ public readonly struct MipsExecution<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MipsExecution{T}"/> struct.
-    /// </summary>
-    public static MipsExecution<T> CreateEffect(MipsSideEffect sideEffect)
-    {
-        return new MipsExecution<T>
-        {
-            SideEffect = sideEffect,
-        };
-    }
-
-    /// <summary>
     /// Gets the writeback value to the selected GPR register.
     /// </summary>
     public T Writeback { get; init; }

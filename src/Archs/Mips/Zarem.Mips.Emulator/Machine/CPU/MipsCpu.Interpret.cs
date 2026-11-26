@@ -213,18 +213,6 @@ public partial class MipsCpu<T>
                 case MipsSideEffect.WriteCoProc0:
                     _cpu.ControlCoProcessor[execution.CoProc0Reg] = execution.CoProcWriteBack;
                     break;
-                case MipsSideEffect.TLBProbe:
-                    _cpu.ControlCoProcessor.WritebackTlbp();
-                    break;
-                case MipsSideEffect.TLBRead:
-                    _cpu.ControlCoProcessor.WritebackTlbr();
-                    break;
-                case MipsSideEffect.TLBWriteIndexed:
-                    _cpu.ControlCoProcessor.WritebackTlbwi();
-                    break;
-                case MipsSideEffect.TLBWriteRandom:
-                    _cpu.ControlCoProcessor.WritebackTlbwr();
-                    break;
             }
 
             // Apply the program counter update

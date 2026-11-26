@@ -40,8 +40,8 @@ public unsafe partial class MipsInstructionServiceTable<T, TSigned>
         Register(MipsOpCode.OrImmediate, &AluI<OrLogic<T>, T>);
         Register(MipsOpCode.ExclusiveOrImmediate, &AluI<XorLogic<T>, T>);
         Register(MipsOpCode.LoadUpperImmediate, &Lui);
-        Register(MipsOpCode.Coprocessor0, &CreateCoProc0Execution);
-        Register(MipsOpCode.Coprocessor1, &ExecuteCoProcessor); // TODO
+        Register(MipsOpCode.Coprocessor0, &ExecuteCoProcessor);
+        Register(MipsOpCode.Coprocessor1, &ExecuteCoProcessor);
         Register(MipsOpCode.Coprocessor2, &ExecuteCoProcessor); // TODO
         Register(MipsOpCode.LoadByte, &Load<sbyte>);
         Register(MipsOpCode.LoadHalfWord, &Load<short>);
