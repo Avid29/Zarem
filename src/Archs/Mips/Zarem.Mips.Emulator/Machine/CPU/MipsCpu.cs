@@ -13,7 +13,6 @@ using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 using Zarem.Mips.Emulator.Machine.CPU;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Emulator.Machine.Memory;
-using Zarem.Mips.Emulator.Machine.Memory.Tlb;
 using Zarem.Mips.Emulator.Machine.Registers;
 using Zarem.Mips.Emulator.TrapHandlers;
 using Zarem.Mips.Models.Instructions;
@@ -85,7 +84,7 @@ public partial class MipsCpu<T> : CpuBase<T>, IMipsCpu
     public ControlCoProcessor<T> ControlCoProcessor { get; }
 
     /// <inheritdoc/>
-    public IFloatCoProcessor<T> FloatCoProcessor { get; }
+    public IFloatCoProcessor<T>? FloatCoProcessor { get; }
 
     /// <inheritdoc/>
     public IMipsCoProcessor<T>[] CoProcessors { get; }

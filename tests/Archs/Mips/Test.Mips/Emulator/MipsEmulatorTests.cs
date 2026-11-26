@@ -165,10 +165,12 @@ public partial class MipsEmulatorTests
             cpu[reg] = value;
 
         // Initialize floating-point registers
-        var floatCoProcessor = (FloatCoProcessor<T, TFloat>)cpu.FloatCoProcessor;
-        foreach (var (reg, value) in @case.FPRInitialization)
+        if (cpu.FloatCoProcessor is FloatCoProcessor<T, TFloat> floatProc)
         {
-            floatCoProcessor[reg] = TFloat.CreateTruncating(value);
+            foreach (var (reg, value) in @case.FPRInitialization)
+            {
+                floatProc[reg] = TFloat.CreateTruncating(value);
+            }
         }
 
         // Initialize the high and low registers if specified
