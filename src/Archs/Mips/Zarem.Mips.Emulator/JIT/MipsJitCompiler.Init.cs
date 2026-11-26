@@ -1,15 +1,10 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using System.Numerics;
 using System.Reflection.Emit;
 using Zarem.Mips.Emulator.Config;
 using Zarem.Mips.Emulator.Machine.Enums;
-using Zarem.Mips.Models;
-using Zarem.Mips.Models.Instructions;
-using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Functions;
-using Zarem.Mips.Models.Instructions.Enums.Functions.FloatProc;
 using Zarem.Mips.Models.Instructions.Enums.Operations;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 using Zarem.Mips.Models.Versioning;

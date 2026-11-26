@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using System.Threading;
 using Zarem.Assembler.Config;
 using Zarem.Assembler.Extensions.System;
 using Zarem.Assembler.Logging;

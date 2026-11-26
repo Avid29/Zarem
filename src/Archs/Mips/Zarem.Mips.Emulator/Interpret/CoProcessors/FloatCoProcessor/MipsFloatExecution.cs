@@ -2,9 +2,6 @@
 
 using System;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using Zarem.Mips.Models.Instructions;
-using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 
 namespace Zarem.Mips.Emulator.Interpret.CoProcessors.FloatCoProcessor;

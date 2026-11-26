@@ -9,7 +9,6 @@ using Zarem.IDE.Messages.Editor;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Messages.Files;
 using Zarem.IDE.Messages.Navigation;
-using Zarem.IDE.Services;
 using Zarem.IDE.ViewModels.Pages;
 using Zarem.Services;
 

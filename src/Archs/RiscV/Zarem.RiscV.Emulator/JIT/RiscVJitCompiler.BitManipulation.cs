@@ -2,9 +2,7 @@
 
 using System;
 using System.Numerics;
-using System.Reflection;
 using System.Reflection.Emit;
-using System.Reflection.Metadata;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.Models.Enums;

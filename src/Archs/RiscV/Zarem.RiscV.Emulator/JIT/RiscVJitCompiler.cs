@@ -2,12 +2,10 @@
 
 using CommunityToolkit.Diagnostics;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.JIT.Compilers;

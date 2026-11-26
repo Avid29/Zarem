@@ -1,7 +1,5 @@
 // Avishai Dernis 2026
 
-using Microsoft.UI.Xaml;
-
 namespace Zarem.SAE.Windows;
 
 /// <summary>

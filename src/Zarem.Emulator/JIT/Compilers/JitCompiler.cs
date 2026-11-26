@@ -6,13 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
-using Zarem.Emulator.Machine.Registers;
-using Zarem.Emulator.Models.Enums;
 
 namespace Zarem.Emulator.JIT.Compilers;
 

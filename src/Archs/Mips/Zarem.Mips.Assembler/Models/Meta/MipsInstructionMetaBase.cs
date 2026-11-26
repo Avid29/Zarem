@@ -1,10 +1,8 @@
 ﻿// Avishai Dernis 2026
 
-using System.Text;
 using System.Text.Json.Serialization;
 using Zarem.Assembler;
 using Zarem.Assembler.Models.Meta;
-using Zarem.Assembler.Models.Tables;
 using Zarem.Mips.Models.Instructions.Enums;
 using Zarem.Mips.Models.Versioning;
 using Zarem.Mips.Models.Versioning.Enums;

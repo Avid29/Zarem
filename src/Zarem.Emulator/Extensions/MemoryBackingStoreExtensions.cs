@@ -2,7 +2,6 @@
 
 using System;
 using System.Numerics;
-using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Devices.MemoryBacking;
 using Zarem.Extensions.System;
 

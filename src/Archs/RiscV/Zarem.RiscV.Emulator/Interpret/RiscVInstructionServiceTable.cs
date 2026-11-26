@@ -4,13 +4,11 @@ using System;
 using System.Numerics;
 using Zarem.Emulator.Exceptions;
 using Zarem.Emulator.Models.Logic;
-using Zarem.Models.Interface;
 using Zarem.RiscV.Emulator.Helper;
 using Zarem.RiscV.Emulator.Interpret;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models;
 using Zarem.RiscV.Models.Instructions;
-using Zarem.RiscV.Models.Instructions.Enums.Functions;
 using Zarem.RiscV.Models.Versioning.Enums;
 
 namespace Zarem.Emulator.Models;
