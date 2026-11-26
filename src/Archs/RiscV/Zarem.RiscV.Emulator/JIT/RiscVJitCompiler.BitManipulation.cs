@@ -15,12 +15,12 @@ using Zarem.RiscV.Models.Instructions.Enums.Registers;
 
 namespace Zarem.RiscV.Emulator.JIT;
 
-public unsafe partial class RiscVJitCompiler<T, TFloat>
+public partial class RiscVJitCompiler<T, TFloat>
 {
-    private void BitCountSignExtend<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
+    private bool BitCountSignExtend<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
         where TData : unmanaged, IBinaryInteger<TData>, IUnsignedNumber<TData>
     {
-        Action<JitBlockContext<T, RiscVGpRegister, RiscVTrap>, RiscVInstruction, T, bool> func = inst.RSCode switch
+        Func<JitBlockContext<T, RiscVGpRegister, RiscVTrap>, RiscVInstruction, T, bool, bool> func = inst.RSCode switch
         {
             FunctRS2Code.CountLeadingZeros => BitCount<TData>,
             FunctRS2Code.CountTrailingZeros => BitCount<TData>,
@@ -30,10 +30,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
             _ => (il, inst, _, _) => MethodBinary<TData, int>(context, inst, nameof(T.RotateLeft)),
         };
 
-        func(context, inst, pc, compressed);
+        return func(context, inst, pc, compressed);
     }
 
-    private void BitCount<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
+    private bool BitCount<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
         where TData : unmanaged, INumber<TData>
     {
         string methodName = inst.RSCode switch
@@ -45,9 +45,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
         };
 
         MethodUnary<TData>(context, inst, methodName);
+        return false;
     }
 
-    private void ShiftAdd<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, int shiftAmount)
+    private bool ShiftAdd<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, int shiftAmount)
         where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(context, inst.RD, il =>
@@ -64,13 +65,14 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
 
         // Convert to T if neccesary
         context.ILGenerator.EmitConv<TData, T>(IsSigned<TData>());
+        return false;
     }
 
-    private void SignExtend<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
+    private bool SignExtend<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, T pc, bool compressed)
         where TData : unmanaged, IBinaryInteger<TData>
         => MethodUnary<T>(context, inst, il => il.EmitConv<TData>(Sign.Signed));
 
-    private void BitSetClearR<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, bool set)
+    private bool BitSetClearR<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, bool set)
         where TData : unmanaged, IBinaryInteger<TData>
     {
         BitManipulateR<TData>(context, inst, (il) =>
@@ -87,9 +89,11 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
                 il.Emit(OpCodes.And);
             }
         });
+
+        return false;
     }
 
-    private void BitSetClearI<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, bool set)
+    private bool BitSetClearI<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, bool set)
         where TData : unmanaged, IBinaryInteger<TData>
     {
         BitManipulateI<TData>(context, inst, il =>
@@ -106,15 +110,17 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
                 il.Emit(OpCodes.And);
             }
         });
+
+        return false;
     }
 
-    private void BitInvertR<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
+    private bool BitInvertR<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
         where TData : unmanaged, IBinaryInteger<TData> => BitManipulateR<TData>(context, inst, (il) => il.Emit(OpCodes.Xor));
 
-    private void BitInvertI<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
+    private bool BitInvertI<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
         where TData : unmanaged, IBinaryInteger<TData> => BitManipulateI<TData>(context, inst, (il) => il.Emit(OpCodes.Xor));
 
-    private void BitManipulateR<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, Action<ILGenerator> action)
+    private bool BitManipulateR<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, Action<ILGenerator> action)
         where TData : unmanaged, IBinaryInteger<TData>
     {
         EmitStoreRegister(context, inst.RD, il =>
@@ -132,9 +138,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
 
         // Convert to T if neccesary
         context.ILGenerator.EmitConv<TData, T>(IsSigned<TData>());
+        return false;
     }
 
-    private void BitManipulateI<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, Action<ILGenerator> action)
+    private bool BitManipulateI<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst, Action<ILGenerator> action)
         where TData : unmanaged, IBinaryInteger<TData>
     {
         EmitStoreRegister(context, inst.RD, il =>
@@ -150,9 +157,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
 
         // Convert to T if neccesary
         context.ILGenerator.EmitConv<TData, T>(IsSigned<TData>());
+        return false;
     }
 
-    private void BitExtractR<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
+    private bool BitExtractR<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
         where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(context, inst.RD, il =>
@@ -169,9 +177,10 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
 
         // Convert to T if neccesary
         context.ILGenerator.EmitConv<TData, T>(IsSigned<TData>());
+        return false;
     }
 
-    private void BitExtractI<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
+    private bool BitExtractI<TData>(JitBlockContext<T, RiscVGpRegister, RiscVTrap> context, RiscVInstruction inst)
         where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(context, inst.RD, il =>
@@ -188,5 +197,6 @@ public unsafe partial class RiscVJitCompiler<T, TFloat>
 
         // Convert to T if neccesary
         context.ILGenerator.EmitConv<TData, T>(IsSigned<TData>());
+        return false;
     }
 }

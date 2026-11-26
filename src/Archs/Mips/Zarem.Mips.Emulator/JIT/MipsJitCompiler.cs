@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
+using Zarem.Emulator.JIT.Compilers;
 using Zarem.Emulator.Models.Enums;
 using Zarem.Mips.Emulator.JIT;
 using Zarem.Mips.Emulator.Machine;
@@ -24,10 +25,10 @@ namespace Zarem.Emulator.Models.JIT;
 /// <summary>
 /// A class which compiles blocks of MIPS code into JIT IL code.
 /// </summary>
-public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, MipsTrap>
+public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsJitBlock<T>, MipsGpRegister, MipsTrap>
     where T : unmanaged, IBinaryInteger<T>, IUnsignedNumber<T>
 {
-    private delegate void MipsEmitter(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc);
+    private delegate bool MipsEmitter(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc);
 
     private readonly MipsInstructionDecodeTable<MipsEmitter> _instructionTable;
 
@@ -80,28 +81,6 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     /// <inheritdoc/>
     public override MipsCpu<T> Cpu { get; }
 
-    /// <inheritdoc/>
-    public override MipsJitBlock<T> CompileBlock(T startPc)
-    {
-        Type[] parameterTypes = [typeof(MipsCpu<T>), typeof(MipsTrap).MakeByRefType()];
-        var method = new DynamicMethod($"Block_0x{startPc:X}", typeof(T), parameterTypes, true);
-        var il = method.GetILGenerator();
-
-        var context = DiscoverBlock(il, startPc);
-        ScanRegisterUsage(context);
-        context.EmitSetupLocalRegisters(this);
-
-        T currentPc = startPc;
-
-        while (currentPc < context.End)
-        {
-            CompileInstruction(context, Fetch(currentPc), currentPc);
-            currentPc += T.CreateTruncating(4);
-        }
-
-        return CreateBlockDelegate(method, context);
-    }
-
     /// <summary>
     /// Compiles a single instruction as a cli dynamic method.
     /// </summary>
@@ -110,23 +89,21 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         Type[] parameterTypes = [typeof(MipsCpu<T>), typeof(MipsTrap).MakeByRefType()];
         var method = new DynamicMethod($"Insert_0x{pc:X}", typeof(T), parameterTypes, true);
         var il = method.GetILGenerator();
+        var context = new JitBlockContext<T, MipsGpRegister, MipsTrap>(il, pc);
+        
+        bool isControlFlow = CompileInstruction(context, inst, pc);
 
-        var context = new JitBlockContext<T, MipsGpRegister, MipsTrap>(il, pc, pc);
-        ScanRegisterUsage(context);
-        LogRegisterUsage(context, inst);
-        context.EmitSetupLocalRegisters(this);
-        CompileInstruction(context, inst, pc);
-
-        if (!IsControlFlow(inst))
+        if (!isControlFlow)
         {
             EmitRet(context, pc + T.CreateTruncating(4));
         }
+
+        context.EmitSetupLocalRegisters(this);
 
 #if DEBUG
         byte[] ilBytes = GetDynamicMethodILBytes(il);
         Debug.WriteLine($"[JIT Dump] {method.Name}: {BitConverter.ToString(ilBytes)}");
 #endif
-
         return (MipsBlockDelegate<T>)method.CreateDelegate(typeof(MipsBlockDelegate<T>));
     }
 
@@ -140,13 +117,26 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
     /// <summary>
     /// Compiles a single instruction as part of a <see cref="ILGenerator"/> block.
     /// </summary>
-    public virtual void CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
+    protected override bool CompileNextInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, ref T pc)
     {
-        var emitter = _instructionTable.Lookup(instruction);
-        emitter(context, instruction, pc);
+        var instruction = Fetch(pc);
+        bool isControlFlow = CompileInstruction(context, instruction, pc);
+        pc += T.CreateTruncating(4);
+        return isControlFlow;
     }
 
-    private void Shift<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode ilOpCode)
+    /// <summary>
+    /// Compiles a single instruction as part of a <see cref="ILGenerator"/> block.
+    /// </summary>
+    private bool CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
+    {
+        var emitter = _instructionTable.Lookup(instruction);
+        return emitter(context, instruction, pc);
+    }
+
+    private MipsInstruction Fetch(T pc) => (MipsInstruction)Cpu.Memory.Read<uint>(ulong.CreateTruncating(pc));
+
+    private bool Shift<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(context, inst.RD, il =>
@@ -155,9 +145,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             il.Emit(OpCodes.Ldc_I4, (int)inst.ShiftAmount);
             il.Emit(ilOpCode);
         });
+        return false;
     }
 
-    private void ShiftPlus32<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode ilOpCode)
+    private bool ShiftPlus32<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(context, inst.RD, il =>
@@ -166,9 +157,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             il.Emit(OpCodes.Ldc_I4, inst.ShiftAmount + 32);
             il.Emit(ilOpCode);
         });
+        return false;
     }
 
-    private void ShiftVar<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode ilOpCode)
+    private bool ShiftVar<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(context, inst.RD, il =>
@@ -182,9 +174,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
             il.Emit(ilOpCode);
         });
+        return false;
     }
 
-    private void AluR<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
+    private bool AluR<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode ilOpCode, OpCode? followUp = null)
         where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(context, inst.RD, il =>
@@ -201,9 +194,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             // Convert to T if neccesary
             context.ILGenerator.EmitConv<TData, T>(IsSigned<TData>());
         });
+        return false;
     }
 
-    private void CheckedAluR<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode ilOpCode, bool isSubtraction)
+    private bool CheckedAluR<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode ilOpCode, bool isSubtraction)
         where TData : unmanaged, INumber<TData>
     {
         var il = context.ILGenerator;
@@ -235,9 +229,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             il.Emit(OpCodes.Ldloc, result);
             il.EmitConv<TData, T>(Sign.Signed);
         });
+        return false;
     }
 
-    private void AluI<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode ilOpCode, bool signExtend = false)
+    private bool AluI<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode ilOpCode, bool signExtend = false)
         where TData : unmanaged, INumber<TData>
     {
         // Fetch the raw immediate from the instruction
@@ -251,9 +246,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
             il.Emit(ilOpCode);
         });
+        return false;
     }
 
-    private void CheckedAluI<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode ilOpCode)
+    private bool CheckedAluI<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode ilOpCode)
         where TData : unmanaged, INumber<TData>
     {
         var il = context.ILGenerator;
@@ -290,9 +286,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
                 il.EmitConv<T>(Sign.Signed);
             }
         });
+        return false;
     }
 
-    private void MultR<TData, TLong>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, int c = 0)
+    private bool MultR<TData, TLong>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, int c = 0)
         where TData : unmanaged, INumber<TData>
         where TLong : unmanaged, INumber<TLong>
     {
@@ -366,9 +363,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
             il.EmitConv<T>();
         });
+        return false;
     }
 
-    private void DivR<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, bool signed)
+    private bool DivR<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, bool signed)
         where TData : unmanaged, INumber<TData>
     {
         var il = context.ILGenerator;
@@ -408,9 +406,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         });
 
         il.MarkLabel(endDiv);
+        return false;
     }
 
-    private void Load<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
+    private bool Load<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
         where TData : unmanaged
     {
         var il = context.ILGenerator;
@@ -453,9 +452,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             il.EmitConv<TData>();
             il.EmitConv<T>();
         });
+        return false;
     }
 
-    private void Store<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
+    private bool Store<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
         where TData : unmanaged
     {
         var addrVar = EmitLoadEffectiveAddress<TData>(context, inst, pc, MipsTrap.AddressErrorStore);
@@ -487,21 +487,22 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
         // Success
         il.MarkLabel(successLabel);
+        return false;
     }
 
-    private void Jump(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, bool link = false)
+    private bool Jump(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, bool link = false)
         => Jump(context, pc, link: link, pushAddress: il =>
     {
         il.EmitLoadConstant(T.CreateTruncating(inst.Address));
     });
 
-    private void JumpR(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, bool link = false)
+    private bool JumpR(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, bool link = false)
         => Jump(context, pc, link: link, pushAddress: il =>
     {
         EmitLoadRegister(context, inst.RS);
     });
 
-    private void Jump(JitBlockContext<T, MipsGpRegister, MipsTrap> context, T pc, Action<ILGenerator> pushAddress, bool link = false)
+    private bool Jump(JitBlockContext<T, MipsGpRegister, MipsTrap> context, T pc, Action<ILGenerator> pushAddress, bool link = false)
     {
         bool delaySlots = !Cpu.Config.DisableDelaySlots;
 
@@ -522,23 +523,24 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
         // Exit the block by returning the new PC
         EmitRet(context, pushAddress);
+        return true;
     }
 
-    private void BranchCompareReg(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode conditionOpCode, bool likely = false)
+    private bool BranchCompareReg(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode conditionOpCode, bool likely = false)
         => Branch(context, inst, pc, conditionOpCode, likely: likely, pushOperands: il =>
         {
             EmitLoadRegister(context, inst.RS);
             EmitLoadRegister(context, inst.RT);
         });
 
-    private void BranchCompareZero(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode conditionOpCode, bool likely = false)
+    private bool BranchCompareZero(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode conditionOpCode, bool likely = false)
         => Branch(context, inst, pc, conditionOpCode, likely: likely, pushOperands: il =>
         {
             EmitLoadRegister(context, inst.RS);
             il.EmitLoadConstant(T.Zero);
         });
 
-    private void Branch(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode conditionOpCode, Action<ILGenerator> pushOperands, bool likely = false)
+    private bool Branch(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode conditionOpCode, Action<ILGenerator> pushOperands, bool likely = false)
     {
         bool delaySlotsEnabled = !Cpu.Config.DisableDelaySlots;
 
@@ -570,23 +572,24 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
         T targetPc = pc + T.CreateTruncating(4) + T.CreateTruncating(inst.Offset);
         EmitRet(context, targetPc);
+        return true;
     }
 
-    private void TrapCompareReg(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode invertedBranch)
+    private bool TrapCompareReg(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode invertedBranch)
         => ConditionalTrap(context, inst, pc, invertedBranch, il =>
     {
         EmitLoadRegister(context, inst.RS);
         EmitLoadRegister(context, inst.RT);
     });
 
-    private void TrapCompareImmediate(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode invertedBranch)
+    private bool TrapCompareImmediate(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode invertedBranch)
         => ConditionalTrap(context, inst, pc, invertedBranch, il =>
     {
         EmitLoadRegister(context, inst.RS);
         il.EmitLoadConstant(T.CreateTruncating(inst.Immediate));
     });
 
-    private void ConditionalTrap(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode invertedBranch, Action<ILGenerator> pushOperands)
+    private bool ConditionalTrap(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc, OpCode invertedBranch, Action<ILGenerator> pushOperands)
     {
         var il = context.ILGenerator;
         Label noTrap = il.DefineLabel();
@@ -601,9 +604,10 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
         // Do NOT trap
         il.MarkLabel(noTrap);
         EmitRet(context, pc);
+        return false;
     }
 
-    private void Move(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode invertedBranch)
+    private bool Move(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, OpCode invertedBranch)
     {
         var il = context.ILGenerator;
         Label noMove = il.DefineLabel();
@@ -616,26 +620,29 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
         // Do NOT move
         il.MarkLabel(noMove);
+        return false;
     }
 
-    private void MoveFromTo(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsGpRegister from, MipsGpRegister to)
+    private bool MoveFromTo(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsGpRegister from, MipsGpRegister to)
     {
         // Can't writeback to $zero.
         // Skip as no-op
         if (to is MipsGpRegister.Zero)
-            return;
+            return false;
 
         EmitStoreRegister(context, to, il => EmitLoadRegister(context, from));
+        return false;
     }
 
-    private void Lui(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
+    private bool Lui(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
     {
         uint value = (uint)inst.Immediate << 16;
 
         EmitStoreRegister(context, inst.RT, il => il.EmitLoadConstant(T.CreateTruncating(value)));
+        return false;
     }
 
-    private void ExecuteFloatTable(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
+    private bool ExecuteCoProc(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
     {
         var coProcIndex = inst.OpCode switch
         {
@@ -648,11 +655,16 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
 
         var coProc = Cpu.CoProcessors[coProcIndex];
         coProc.Executor.CompileInstruction(context, inst, pc);
+        return false;
     }
 
-    private void ReservedInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc) => EmitTrapRet(context, MipsTrap.ReservedInstruction, pc);
+    private bool ReservedInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, T pc)
+    {
+        EmitTrapRet(context, MipsTrap.ReservedInstruction, pc);
+        return false;
+    }
 
-    private void MethodUnary<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, Action<ILGenerator> method)
+    private bool MethodUnary<TData>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction inst, Action<ILGenerator> method)
         where TData : unmanaged, INumber<TData>
     {
         EmitStoreRegister(context, inst.RD, il =>
@@ -664,6 +676,7 @@ public unsafe partial class MipsJitCompiler<T> : JitCompiler<T, MipsGpRegister, 
             // Convert to T if neccesary
             context.ILGenerator.EmitConv<TData, T>();
         });
+        return false;
     }
 
     private static MipsTrap HandleMemoryAccessResult(MemoryAccessResult result, bool isWrite)

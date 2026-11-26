@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using Zarem.Emulator.Extensions;
 using Zarem.Emulator.Models.Enums;
 
-namespace Zarem.Emulator.JIT;
+namespace Zarem.Emulator.JIT.Compilers;
 
 /// <summary>
 /// A base class for a component which recompiles blocks of assembly into .NET CIL code.
@@ -53,15 +53,15 @@ public unsafe abstract partial class JitCompiler<T, TRegister, TTrap>
         emitEvaluation(il);
 
         // Store the value to the register's local
-        var regLocal = GetRegisterLocal(context, register);
+        var regLocal = GetRegisterLocal(context, register, true);
         il.Emit(OpCodes.Stloc, regLocal);
     }
 
     /// <summary>
     /// Gets the <see cref="LocalBuilder"/> for the specified <typeparamref name="TRegister"/>.
     /// </summary>
-    protected virtual LocalBuilder GetRegisterLocal(JitBlockContext<T, TRegister, TTrap> context, TRegister register)
-        => context.GetRegisterLocal(Cpu.RegisterFile, register);
+    protected virtual LocalBuilder GetRegisterLocal(JitBlockContext<T, TRegister, TTrap> context, TRegister register, bool modify = false)
+        => context.GetOrCreateRegisterLocal(Cpu.RegisterFile, register, modify);
 
     /// <summary>
     /// Emits the CIL to load the address of a register from a register file in memory.
@@ -150,13 +150,14 @@ public unsafe abstract partial class JitCompiler<T, TRegister, TTrap>
     /// <summary>
     /// Emits the CIL to return a trap.
     /// </summary>
-    public void EmitTrapRet(JitBlockContext<T, TRegister, TTrap> context, TTrap trap, T pc)
+    public bool EmitTrapRet(JitBlockContext<T, TRegister, TTrap> context, TTrap trap, T pc)
     {
         var il = context.ILGenerator;
         context.EmitFlushLocalRegisters(this);
         EmitTrapArg(il, trap);
         il.EmitLoadConstant(pc);
         il.Emit(OpCodes.Ret);
+        return true;
     }
 
     /// <summary>
