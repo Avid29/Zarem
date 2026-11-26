@@ -1,17 +1,11 @@
 ﻿// Avishai Dernis 2024
 
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using Zarem.Emulator.Config.Enums;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.JIT.Compilers;
 using Zarem.Emulator.Machine.CoProcessors;
-using Zarem.Emulator.Machine.CPU;
 using Zarem.Mips.Emulator.Interpret;
-using Zarem.Mips.Emulator.Interpret.CoProcessors.Control;
 using Zarem.Mips.Emulator.Machine.Enums;
-using Zarem.Mips.Emulator.Machine.Memory.Tlb;
-using Zarem.Mips.Emulator.Machine.Registers.CoProcessor0;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Registers;
 

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Zarem.Assembler.Tokenization.Models;
 using Zarem.Components.Interfaces;
 using Zarem.IDE.Bindables.Files.Interfaces;
-using Zarem.IDE.Messages;
 using Zarem.IDE.Messages.DebugSessions;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Messages.Project;

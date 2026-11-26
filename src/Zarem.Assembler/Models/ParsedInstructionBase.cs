@@ -1,9 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using System.Buffers.Binary;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Zarem.Extensions.System;
 using Zarem.Models.Enums;
 using Zarem.Models.Interface;

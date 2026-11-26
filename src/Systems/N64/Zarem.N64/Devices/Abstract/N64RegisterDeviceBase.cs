@@ -1,12 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using System.Buffers;
 using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 using Zarem.Emulator.Devices.MemoryBacking;
-using Zarem.Emulator.Machine.Memory;
-using Zarem.Emulator.Machine.Registers;
 
 namespace Zarem.N64.Devices.Abstract;
 

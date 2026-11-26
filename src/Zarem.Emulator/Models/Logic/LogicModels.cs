@@ -1,7 +1,6 @@
 ﻿// Avishai Dernis 2026
 
 using System.Numerics;
-using System.Runtime.CompilerServices;
 
 namespace Zarem.Emulator.Models.Logic;
 

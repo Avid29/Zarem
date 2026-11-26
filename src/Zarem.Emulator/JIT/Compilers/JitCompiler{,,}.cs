@@ -2,7 +2,6 @@
 
 using System;
 using System.Numerics;
-using System.Reflection.Emit;
 using Zarem.Emulator.Machine.CPU;
 
 namespace Zarem.Emulator.JIT.Compilers;

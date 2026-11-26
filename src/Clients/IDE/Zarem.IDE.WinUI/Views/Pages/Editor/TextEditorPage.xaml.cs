@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.IO;
 using System.Threading.Tasks;
-using Zarem.IDE.Messages;
 using Zarem.IDE.Messages.Editor.Enums;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
 using Zarem.IDE.Services.Settings.Enums;

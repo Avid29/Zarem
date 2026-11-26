@@ -8,7 +8,6 @@ using Zarem.Emulator.Machine.CPU;
 using Zarem.Emulator.Machine.Memory;
 using Zarem.Emulator.Models;
 using Zarem.RiscV.Emulator.Config;
-using Zarem.RiscV.Emulator.Helper;
 using Zarem.RiscV.Emulator.Machine;
 using Zarem.RiscV.Emulator.Machine.Enums;
 using Zarem.RiscV.Models.Instructions;

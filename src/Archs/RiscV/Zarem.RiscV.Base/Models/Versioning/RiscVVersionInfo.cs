@@ -1,12 +1,7 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Zarem.RiscV.Models.Versioning.Enums;
 

@@ -4,9 +4,6 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
-using Zarem.IDE.Services.Settings.Enums;
-using Zarem.Services;
-using Zarem.Services.Settings;
 
 namespace Zarem.IDE;
 

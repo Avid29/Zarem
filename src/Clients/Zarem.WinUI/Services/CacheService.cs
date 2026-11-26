@@ -1,13 +1,9 @@
 ﻿// Avishai Dernis 2025
 
 using CommunityToolkit.Mvvm.Messaging;
-using System;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Storage;
 using Zarem.Messages;
-using Zarem.Services;
 
 namespace Zarem.Services;
 

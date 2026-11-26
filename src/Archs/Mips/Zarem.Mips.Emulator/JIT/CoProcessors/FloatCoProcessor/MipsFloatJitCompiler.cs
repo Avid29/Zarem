@@ -8,7 +8,6 @@ using Zarem.Emulator.Extensions;
 using Zarem.Emulator.JIT;
 using Zarem.Emulator.JIT.Compilers;
 using Zarem.Emulator.Models.JIT;
-using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models;

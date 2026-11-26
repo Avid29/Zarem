@@ -1,15 +1,9 @@
 ﻿// Avishai Dernis 2026
 
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Text;
-using Zarem.Emulator.Machine.CPU;
-using Zarem.Mips.Emulator.Interpret.CoProcessors.FloatCoProcessor;
 using Zarem.Mips.Emulator.Machine;
 using Zarem.Mips.Emulator.Machine.CoProcessors.Control;
-using Zarem.Mips.Emulator.Machine.CoProcessors.FloatingPoint;
 using Zarem.Mips.Emulator.Machine.Enums;
 using Zarem.Mips.Models.Instructions;
 using Zarem.Mips.Models.Instructions.Enums.Functions.CoProc0;

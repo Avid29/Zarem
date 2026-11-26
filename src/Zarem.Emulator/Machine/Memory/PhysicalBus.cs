@@ -5,7 +5,6 @@ using System.Buffers.Binary;
 using System.IO;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Zarem.Emulator.Devices.Interfaces;
 using Zarem.Emulator.Helpers;
 using Zarem.Emulator.Models.Enums;
