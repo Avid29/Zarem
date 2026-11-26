@@ -45,10 +45,11 @@ public unsafe partial class MipsFloatJitCompiler<T, TFloat> : JitChildCompiler<T
     public override MipsJitCompiler<T> Parent { get; }
 
     /// <inheritdoc/>
-    public void CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
+    public bool CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
     {
         var emitter = _instructionTable.Lookup(instruction);
         emitter(context, instruction, pc);
+        return false;
     }
 
     private void FloatAlu<TFormat>(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsFloatInstruction inst, OpCode ilOpCode)

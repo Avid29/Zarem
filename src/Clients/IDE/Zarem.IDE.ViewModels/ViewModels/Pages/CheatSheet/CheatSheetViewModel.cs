@@ -5,9 +5,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Zarem.CheatSheet;
 using Zarem.Descriptors;
-using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.Registry;
 using Zarem.Services;
+using Zarem.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels.Pages.CheatSheet;
 

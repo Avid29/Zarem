@@ -5,7 +5,8 @@ using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Settings;
 using Zarem.Services.Versioning;
-using Zarem.IDE.ViewModels.Pages.Abstract;
+using Zarem.ViewModels.Pages.Abstract;
+using Zarem.ViewModels.Pages.Settings;
 
 namespace Zarem.IDE.ViewModels.Pages.Settings;
 
@@ -24,7 +25,7 @@ public class SettingsPageViewModel : PageViewModel
         _localizationService = localizationService;
 
         SubPages = [
-                new AppSettingsViewModel(localizationService, settingsService, versioningService),
+                new IdeAppSettingsViewModel(localizationService, settingsService, versioningService),
                 new EditorSettingsViewModel(localizationService, settingsService, fileSystemService),
                 //new AssemblerSettingsViewModel(localizationService, settingsService)
             ];

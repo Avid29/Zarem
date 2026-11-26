@@ -159,7 +159,7 @@ public partial class WindowViewModel
     #region Help
 
     [RelayCommand]
-    private void OpenAbout() => MainViewModel.GoToPageByType<AboutPageViewModel>();
+    private void OpenAbout() => MainViewModel.GoToPageByType<IdeAboutPageViewModel>();
 
     [RelayCommand]
     private void OpenMIPSCheatSheet() => MainViewModel.GoToPageByType<CheatSheetViewModel>();

@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using Zarem.Services;
 using Zarem.Services.Settings;
+using Zarem.ViewModels.Pages.Settings;
 
 namespace Zarem.IDE.ViewModels.Pages.Settings;
 
@@ -15,7 +16,7 @@ public class AssemblerSettingsViewModel : SettingsSubPageViewModel
     private readonly ISettingsService _settingsService;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AppSettingsViewModel"/> class.
+    /// Initializes a new instance of the <see cref="IdeAppSettingsViewModel"/> class.
     /// </summary>
     public AssemblerSettingsViewModel(ILocalizationService localizationService, ISettingsService settingsService)
     {

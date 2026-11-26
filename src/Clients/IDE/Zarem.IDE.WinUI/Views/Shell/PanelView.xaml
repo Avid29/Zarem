@@ -6,6 +6,7 @@
     xmlns:cheatpages="using:Zarem.IDE.Views.Pages.CheatSheet"
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ivmv="using:Zarem.IDE.ViewModels.Pages"
     xmlns:local="using:Zarem.IDE.Views.Shell"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="using:Zarem.IDE.Views.Pages"
@@ -13,8 +14,8 @@
     xmlns:spages="using:Zarem.IDE.Views.Pages.Settings"
     xmlns:svmv="using:Zarem.IDE.ViewModels.Pages.Settings"
     xmlns:vmcheat="using:Zarem.IDE.ViewModels.Pages.CheatSheet"
-    xmlns:vmv="using:Zarem.IDE.ViewModels.Pages"
-    xmlns:vmva="using:Zarem.IDE.ViewModels.Pages.Abstract"
+    xmlns:vmv="using:Zarem.ViewModels.Pages"
+    xmlns:vmva="using:Zarem.ViewModels.Pages.Abstract"
     GotFocus="UserControl_GotFocus"
     mc:Ignorable="d">
 
@@ -31,7 +32,7 @@
 
         <selectors:PageTemplateSelector x:Key="PageTemplateSelector">
             <selectors:PageTemplateSelector.AboutPageTemplate>
-                <DataTemplate x:DataType="vmv:AboutPageViewModel">
+                <DataTemplate x:DataType="ivmv:IdeAboutPageViewModel">
                     <TabViewItem HeaderTemplate="{StaticResource PageHeaderTemplate}">
                         <pages:AboutPage ViewModel="{x:Bind Mode=OneWay}" />
                     </TabViewItem>
@@ -45,21 +46,21 @@
                 </DataTemplate>
             </selectors:PageTemplateSelector.CheatSheetPageTemplate>
             <selectors:PageTemplateSelector.CreateProjectPageTemplate>
-                <DataTemplate x:DataType="vmv:CreateProjectViewModel">
+                <DataTemplate x:DataType="ivmv:CreateProjectViewModel">
                     <TabViewItem HeaderTemplate="{StaticResource PageHeaderTemplate}">
                         <pages:CreateProject ViewModel="{x:Bind Mode=OneWay}" />
                     </TabViewItem>
                 </DataTemplate>
             </selectors:PageTemplateSelector.CreateProjectPageTemplate>
             <selectors:PageTemplateSelector.FilePageTemplate>
-                <DataTemplate x:DataType="vmv:FilePageViewModel">
+                <DataTemplate x:DataType="ivmv:FilePageViewModel">
                     <TabViewItem HeaderTemplate="{StaticResource PageHeaderTemplate}">
                         <pages:FileViewer ViewModel="{x:Bind Mode=OneWay}" />
                     </TabViewItem>
                 </DataTemplate>
             </selectors:PageTemplateSelector.FilePageTemplate>
             <selectors:PageTemplateSelector.GraphicalOuputPageTemplate>
-                <DataTemplate x:DataType="vmv:GraphicalOutputPageViewModel">
+                <DataTemplate x:DataType="ivmv:GraphicalOutputPageViewModel">
                     <TabViewItem HeaderTemplate="{StaticResource PageHeaderTemplate}">
                         <pages:GraphicalOutputPage ViewModel="{x:Bind Mode=OneWay}" />
                     </TabViewItem>
@@ -73,7 +74,7 @@
                 </DataTemplate>
             </selectors:PageTemplateSelector.SettingsPageTemplate>
             <selectors:PageTemplateSelector.WelcomePageTemplate>
-                <DataTemplate x:DataType="vmv:WelcomePageViewModel">
+                <DataTemplate x:DataType="ivmv:WelcomePageViewModel">
                     <TabViewItem HeaderTemplate="{StaticResource PageHeaderTemplate}">
                         <pages:WelcomePage ViewModel="{x:Bind Mode=OneWay}" />
                     </TabViewItem>

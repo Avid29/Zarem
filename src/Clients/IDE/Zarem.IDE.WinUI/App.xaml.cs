@@ -92,7 +92,7 @@ public partial class ZaremIDEApp : ZaremAppBase
             .AddSingleton<IDebugService, DebugService>()
 
             // Page ViewModels
-            .AddTransient<AboutPageViewModel>()
+            .AddTransient<IdeAboutPageViewModel>()
             .AddTransient<CreateProjectViewModel>()
             .AddTransient<CheatSheetViewModel>()
             .AddTransient<FilePageViewModel>()

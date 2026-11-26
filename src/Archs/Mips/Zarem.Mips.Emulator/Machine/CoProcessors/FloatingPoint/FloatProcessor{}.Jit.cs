@@ -48,7 +48,7 @@ public partial class FloatCoProcessor<T, TFloat> : IFloatCoProcessor<T>, IDispos
         JitChildCompiler<T>? ICoProcessor<T>.ICoExecutor<MipsInstruction, MipsExecution<T>, MipsGpRegister, MipsTrap>.JitChildCompiler => JitChildCompiler;
 
         /// <inheritdoc/>
-        public void CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
+        public bool CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
             => JitChildCompiler.CompileInstruction(context, instruction, pc);
 
         /// <inheritdoc/>

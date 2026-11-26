@@ -1,27 +1,28 @@
 ﻿// Avishai Dernis 2025
 
 using System.Collections.Generic;
-using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.Models;
-using Zarem.Models.Enums;
 using Zarem.Services;
 using Zarem.Services.Versioning;
 using Zarem.Services.Versioning.Models;
+using Zarem.ViewModels.Pages.Abstract;
 
-namespace Zarem.IDE.ViewModels.Pages;
+namespace Zarem.ViewModels.Pages;
 
 /// <summary>
 /// A view model for the about page.
 /// </summary>
-public class AboutPageViewModel : PageViewModel
+public abstract class AboutPageViewModelBase : PageViewModel
 {
-    private readonly ILocalizationService _localizationService;
-    private readonly IVersioningService _versioningService;
+#pragma warning disable CS1591
+    protected readonly ILocalizationService _localizationService;
+    protected readonly IVersioningService _versioningService;
+#pragma warning restore CS1591
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AboutPageViewModel"/> class.
+    /// Initializes a new instance of the <see cref="AboutPageViewModelBase"/> class.
     /// </summary>
-    public AboutPageViewModel(ILocalizationService localizationService, IVersioningService versioningService)
+    public AboutPageViewModelBase(ILocalizationService localizationService, IVersioningService versioningService)
     {
         _localizationService = localizationService;
         _versioningService = versioningService;
@@ -52,11 +53,5 @@ public class AboutPageViewModel : PageViewModel
     /// <summary>
     /// Gets a list of third-party dependencies used in Zarem.
     /// </summary>
-    public IEnumerable<ThirdPartyNotice> ThirdPartyNotices { get; } =
-    [
-        new("GitInfo", "https://github.com/devlooped/GitInfo", LicenseType.MIT),
-        new("LibObjectFile", "https://github.com/xoofx/LibObjectFile", LicenseType.MIT),
-        new("Windows Community Toolkit", "https://github.com/CommunityToolkit/Windows", LicenseType.MIT),
-        new("WinUIEdit", "https://github.com/BreeceW/WinUIEdit", LicenseType.Other),
-    ];
+    public abstract IEnumerable<ThirdPartyNotice> ThirdPartyNotices { get; }
 }

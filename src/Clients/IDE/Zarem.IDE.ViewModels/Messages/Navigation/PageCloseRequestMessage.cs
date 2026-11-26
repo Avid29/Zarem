@@ -1,6 +1,6 @@
 ﻿// Avishai Dernis 2024
 
-using Zarem.IDE.ViewModels.Pages.Abstract;
+using Zarem.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.Messages.Navigation;
 

@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Zarem.DebugSessions;
 using Zarem.IDE.Messages.DebugSessions;
+using Zarem.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels.Pages.Abstract;
 

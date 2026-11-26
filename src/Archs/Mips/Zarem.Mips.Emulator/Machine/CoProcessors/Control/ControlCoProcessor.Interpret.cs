@@ -39,7 +39,7 @@ public partial class ControlCoProcessor<T> : IMipsCoProcessor<T>, IControlCoProc
         public JitChildCompiler<T>? JitChildCompiler => null;
 
         /// <inheritdoc/>
-        public void CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
+        public bool CompileInstruction(JitBlockContext<T, MipsGpRegister, MipsTrap> context, MipsInstruction instruction, T pc)
             => throw new System.NotImplementedException();
 
         /// <inheritdoc/>

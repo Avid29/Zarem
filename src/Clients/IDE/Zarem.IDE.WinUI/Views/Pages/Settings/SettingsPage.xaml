@@ -6,11 +6,12 @@
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:Zarem.IDE.Helpers"
+    xmlns:isvms="using:Zarem.IDE.ViewModels.Pages.Settings"
     xmlns:local="using:Zarem.IDE.Views.Pages.Settings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:selectors="using:Zarem.IDE.Selectors"
     xmlns:senums="using:Zarem.IDE.Services.Settings.Enums"
-    xmlns:svms="using:Zarem.IDE.ViewModels.Pages.Settings"
+    xmlns:svms="using:Zarem.ViewModels.Pages.Settings"
     mc:Ignorable="d">
 
     <ScrollViewer>
@@ -50,17 +51,17 @@
                 <ContentControl.ContentTemplateSelector>
                     <selectors:SettingsSubPageTemplateSelector>
                         <selectors:SettingsSubPageTemplateSelector.AppPageTemplate>
-                            <DataTemplate x:DataType="svms:AppSettingsViewModel">
+                            <DataTemplate x:DataType="isvms:IdeAppSettingsViewModel">
                                 <local:AppSettingsSubPage ViewModel="{x:Bind}" />
                             </DataTemplate>
                         </selectors:SettingsSubPageTemplateSelector.AppPageTemplate>
                         <selectors:SettingsSubPageTemplateSelector.AssemblerPageTemplate>
-                            <DataTemplate x:DataType="svms:AssemblerSettingsViewModel">
+                            <DataTemplate x:DataType="isvms:AssemblerSettingsViewModel">
                                 <local:AssemblerSettingsSubPage ViewModel="{x:Bind}" />
                             </DataTemplate>
                         </selectors:SettingsSubPageTemplateSelector.AssemblerPageTemplate>
                         <selectors:SettingsSubPageTemplateSelector.EditorPageTemplate>
-                            <DataTemplate x:DataType="svms:EditorSettingsViewModel">
+                            <DataTemplate x:DataType="isvms:EditorSettingsViewModel">
                                 <local:EditorSettingsSubPage ViewModel="{x:Bind}" />
                             </DataTemplate>
                         </selectors:SettingsSubPageTemplateSelector.EditorPageTemplate>

@@ -18,6 +18,5 @@ public sealed partial class AppSettingsSubPage : UserControl
         this.InitializeComponent();
     }
 
-    public AppSettingsViewModel? ViewModel { get; set; }
-
+    public IdeAppSettingsViewModel? ViewModel { get; set; }
 }

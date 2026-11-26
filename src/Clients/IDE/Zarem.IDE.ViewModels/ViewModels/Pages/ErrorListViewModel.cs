@@ -5,8 +5,8 @@ using System.Collections.ObjectModel;
 using Zarem.Assembler.Logging;
 using Zarem.Assembler.Logging.Interfaces;
 using Zarem.IDE.Messages.Build;
-using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.Services;
+using Zarem.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels.Pages;
 

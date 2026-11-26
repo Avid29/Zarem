@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Threading.Tasks;
 
-namespace Zarem.IDE.ViewModels.Pages.Abstract;
+namespace Zarem.ViewModels.Pages.Abstract;
 
 /// <summary>
 /// A base class for page view models.

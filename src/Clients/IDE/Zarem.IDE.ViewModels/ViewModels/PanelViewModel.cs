@@ -3,11 +3,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Zarem.Services;
 using Zarem.Services.Popup;
 using Zarem.Services.Popup.Enums;
 using Zarem.Services.Popup.Models;
-using Zarem.IDE.ViewModels.Pages.Abstract;
-using Zarem.Services;
+using Zarem.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.ViewModels;
 

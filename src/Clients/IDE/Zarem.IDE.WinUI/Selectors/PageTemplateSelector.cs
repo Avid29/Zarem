@@ -49,7 +49,7 @@ public partial class PageTemplateSelector : DataTemplateSelector
     {
         return item switch
         {
-            AboutPageViewModel => AboutPageTemplate,
+            IdeAboutPageViewModel => AboutPageTemplate,
             CheatSheetViewModel => CheatSheetPageTemplate,
             CreateProjectViewModel => CreateProjectPageTemplate,
             FilePageViewModel => FilePageTemplate,

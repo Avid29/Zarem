@@ -7,9 +7,9 @@ using Windows.UI.Text;
 using Zarem.IDE.Helpers;
 using Zarem.IDE.Messages.Navigation;
 using Zarem.IDE.ViewModels;
-using Zarem.IDE.ViewModels.Pages.Abstract;
 using Zarem.IDE.Windows;
 using Zarem.Services;
+using Zarem.ViewModels.Pages.Abstract;
 
 namespace Zarem.IDE.Views.Shell;
 

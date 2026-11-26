@@ -12,12 +12,13 @@ using System.Threading.Tasks;
 using Zarem.Components;
 using Zarem.Components.Interfaces;
 using Zarem.IDE.Models.EditorConfig.ColorScheme;
+using Zarem.IDE.Services.Settings.Enums;
+using Zarem.Mips;
+using Zarem.Mips.Assembler;
 using Zarem.Services;
 using Zarem.Services.Files;
 using Zarem.Services.Settings;
-using Zarem.IDE.Services.Settings.Enums;
-using Zarem.Mips.Assembler;
-using Zarem.Mips;
+using Zarem.ViewModels.Pages.Settings;
 
 namespace Zarem.IDE.ViewModels.Pages.Settings;
 
@@ -31,7 +32,7 @@ public partial class EditorSettingsViewModel : SettingsSubPageViewModel
     private readonly IFileSystemService _fileSystemService;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AppSettingsViewModel"/> class.
+    /// Initializes a new instance of the <see cref="IdeAppSettingsViewModel"/> class.
     /// </summary>
     public EditorSettingsViewModel(ILocalizationService localizationService, ISettingsService settingsService, IFileSystemService fileSystemService)
     {

@@ -1,6 +1,5 @@
 ﻿// Avishai Dernis 2025
 
-using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +8,18 @@ using Zarem.Services;
 using Zarem.Services.Settings;
 using Zarem.Services.Versioning;
 
-namespace Zarem.IDE.ViewModels.Pages.Settings;
+namespace Zarem.ViewModels.Pages.Settings;
 
 /// <summary>
 /// A view model for the app settings sub-page.
 /// </summary>
 public partial class AppSettingsViewModel : SettingsSubPageViewModel
 {
-    private readonly ILocalizationService _localizationService;
-    private readonly ISettingsService _settingsService;
-    private readonly IVersioningService _versioningService;
+    #pragma warning disable CS1591
+    protected readonly ILocalizationService _localizationService;
+    protected readonly ISettingsService _settingsService;
+    protected readonly IVersioningService _versioningService;
+#pragma warning restore CS1591
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AppSettingsViewModel"/> class.
@@ -52,8 +53,8 @@ public partial class AppSettingsViewModel : SettingsSubPageViewModel
     /// </summary>
     public string AppLanguage
     {
-        get => _settingsService.Local.GetValue<string>(Zarem.SettingsKeys.LanguageOverride) ?? "system";
-        set => _settingsService.Local.SetValue(Zarem.SettingsKeys.LanguageOverride, value is "system" ? null : value);
+        get => _settingsService.Local.GetValue<string>(SettingsKeys.LanguageOverride) ?? "system";
+        set => _settingsService.Local.SetValue(SettingsKeys.LanguageOverride, value is "system" ? null : value);
     }
 
     /// <summary>
@@ -65,30 +66,12 @@ public partial class AppSettingsViewModel : SettingsSubPageViewModel
     public IEnumerable<string> AppLanguageOptions => _localizationService.AvailableLanguages.Prepend("system");
 
     /// <summary>
-    /// Gets or sets the assembler language in settings.
-    /// </summary>
-    public string AssemblerLanguageOverride
-    {
-        get => _settingsService.Local.GetValue<string>(SettingsKeys.AssemblerLanguageOverride) ?? "app";
-        set => _settingsService.Local.SetValue(SettingsKeys.AssemblerLanguageOverride, value is "app" ? null : value);
-    }
-
-    /// <summary>
     /// Gets the list of available languages for the assembler.
     /// </summary>
     /// <remarks>
     /// "app" is a sentinel value since null and empty cannot be used in a ComboBox.
     /// </remarks>
     public IEnumerable<string> AssemblerLanguageOptions => ["app", "en", "he"]; // TODO: Retrieve programmatically
-
-    /// <summary>
-    /// Gets or sets whether or not the app should restore open projects when opened.
-    /// </summary>
-    public bool RestoreOpenProject
-    {
-        get => _settingsService.Local.GetValue<bool>(SettingsKeys.RestoreOpenProject);
-        set => _settingsService.Local.SetValue(SettingsKeys.RestoreOpenProject, value);
-    }
 
     /// <summary>
     /// Gets the app's version.
@@ -98,7 +81,4 @@ public partial class AppSettingsViewModel : SettingsSubPageViewModel
             _versioningService.AppVersion.MajorVersion,
             _versioningService.AppVersion.MinorVersion,
             _versioningService.AppVersion.Build];
-
-    [RelayCommand]
-    private void OpenAbout() => Service.Get<MainViewModel>().GoToPageByType<AboutPageViewModel>();
 }

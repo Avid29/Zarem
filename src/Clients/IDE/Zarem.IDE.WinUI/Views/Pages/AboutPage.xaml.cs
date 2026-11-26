@@ -22,7 +22,7 @@ public sealed partial class AboutPage : UserControl
         this.InitializeComponent();
     }
 
-    public AboutPageViewModel? ViewModel { get; set; }
+    public IdeAboutPageViewModel? ViewModel { get; set; }
 
     private async void SettingsCard_Click(object sender, RoutedEventArgs e)
     {
