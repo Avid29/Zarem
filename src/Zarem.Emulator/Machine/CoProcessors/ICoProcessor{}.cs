@@ -39,6 +39,7 @@ public interface ICoProcessor<T> : ICoProcessor
         /// <param name="context">The <see cref="JitBlockContext{T}"/> to write to.</param>
         /// <param name="instruction">The instruction to cross compile.</param>
         /// <param name="pc">The address the instruction is at.</param>
-        void CompileInstruction(JitBlockContext<T, TRegister, TTrap> context, TInstruction instruction, T pc);
+        /// <returns>Whether or not the instruction is a flow control instruction.</returns>
+        bool CompileInstruction(JitBlockContext<T, TRegister, TTrap> context, TInstruction instruction, T pc);
     }
 }
